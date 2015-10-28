@@ -223,7 +223,9 @@ public class WaterTaxConstants {
 
             put(WATERTAX_DONATION_CHARGE, "1100201");
             put(WATERTAX_SECURITY_CHARGE, "1100201");
+            put(WATERTAX_FIELDINSPECTION_CHARGE, "1100201");
             put(WATERTAXREASONCODE, "1405016");
+            
            
 
         }

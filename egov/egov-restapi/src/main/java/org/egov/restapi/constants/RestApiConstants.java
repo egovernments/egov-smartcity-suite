@@ -194,13 +194,13 @@ public class RestApiConstants {
         public static final String THIRD_PARTY_ERR_CODE_CONSUMER_NO_REQUIRED = "WTMS-REST-12";
         public static final String THIRD_PARTY_ERR_MSG_CONSUMER__NO_REQUIRED = "Cosumer Code is required";
         
-        public static final String THIRD_PARTY_ERR_CODE_DEMAND_AMOUNT_VALID = "WTMS-REST-13";
+        public static final String THIRD_PARTY_ERR_CODE_DEMAND_AMOUNT_VALID = "WTMS-REST-11";
         public static final String THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID= "Entered TotalAmount is not Valid";
         
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "WTMS-REST-13";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION__NO_REQUIRED = "Either Cosumer Code or Application number is required";
         
-        public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN = "WTMS-REST-9";
+        public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN = "WTMS-REST-10";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_LEN = "Application number length can not less than 13 digits";
 
 }

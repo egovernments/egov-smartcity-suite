@@ -74,6 +74,7 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -84,6 +85,7 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.PayWaterTaxDetails;
 import org.egov.wtms.masters.entity.WaterReceiptDetails;
+import org.egov.wtms.masters.entity.WaterTaxDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -177,6 +179,66 @@ public class WaterTaxExternalService {
             waterReceiptDetails.setErrorDetails(errorDetails);
         }
         return waterReceiptDetails;
+    }
+    
+    public WaterTaxDetails getWaterTaxDemandDet(PayWaterTaxDetails payWaterTaxDetails)
+    {
+        WaterTaxDetails waterTaxDetails=new WaterTaxDetails();
+        WaterConnectionDetails waterConnectionDetails =null;
+        ErrorDetails errorDetails=null;
+        BigDecimal donationChargesAmount=BigDecimal.ZERO;
+        BigDecimal estimationChargesAmount=BigDecimal.ZERO;
+        BigDecimal waterTaxAmount=BigDecimal.ZERO;
+        if(payWaterTaxDetails.getApplicaionNumber() !=null && !"".equals(payWaterTaxDetails.getApplicaionNumber())){
+            waterConnectionDetails=waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
+  
+        }else if(payWaterTaxDetails.getConsumerNo() != null){
+            waterConnectionDetails=waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
+       }
+        List<EgDemandDetails> demandDetList=new ArrayList<EgDemandDetails>(waterConnectionDetails.getDemand().getEgDemandDetails());
+        for(EgDemandDetails  ddDet: demandDetList){
+            if(ddDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(WaterTaxConstants.WATERTAX_DONATION_CHARGE))
+            {
+                
+                
+                donationChargesAmount= donationChargesAmount.add(ddDet.getAmount());
+                waterTaxDetails.setDonationCharges(donationChargesAmount);
+             }
+            if(ddDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE))
+            {
+                estimationChargesAmount= estimationChargesAmount.add(ddDet.getAmount());
+                waterTaxDetails.setEstimationCharges(estimationChargesAmount);
+           
+            }
+            if(ddDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(WaterTaxConstants.WATERTAXREASONCODE))
+            {
+                waterTaxAmount= waterTaxAmount.add(ddDet.getAmount());
+                waterTaxDetails.setWaterTax(waterTaxAmount);
+             
+            }
+        }
+        BigDecimal totalAmountDue=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        waterTaxDetails.setTotalTaxAmt(totalAmountDue);
+        if(waterTaxDetails.getEstimationCharges() ==null){
+            waterTaxDetails.setEstimationCharges(estimationChargesAmount);
+            waterTaxDetails.setEstimationCharges(BigDecimal.ZERO);
+        }
+        if(waterTaxDetails.getDonationCharges() ==null){
+            waterTaxDetails.setDonationCharges(donationChargesAmount);
+           
+        }
+        if(waterTaxDetails.getWaterTax() ==null){
+            waterTaxDetails.setWaterTax(waterTaxAmount);
+        }
+        waterTaxDetails.setPenalty(BigDecimal.ZERO);
+        waterTaxDetails.setArrears(BigDecimal.ZERO);
+        waterTaxDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
+        errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+        errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+
+        waterTaxDetails.setErrorDetails(errorDetails);
+        return waterTaxDetails;
     }
 
     @Transactional
