@@ -2,6 +2,8 @@ package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import org.egov.wtms.masters.entity.DonationDetails;
@@ -65,6 +67,7 @@ public class DonationMasterController {
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
         model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
         model.addAttribute("maxPipeSize", pipeSizeService.getAllActivePipeSize());
+
         model.addAttribute("minPipeSize", pipeSizeService.getAllActivePipeSize());
         return "donation-master";
     }
@@ -74,11 +77,26 @@ public class DonationMasterController {
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "donation-master";
-        donationDetails.getDonationHeader().setActive(true);
-        donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
-        donationDetailsService.createDonationDetails(donationDetails);
-        redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
-        model.addAttribute("message", "Donation Master Data created successfully");
+        final DonationDetails donationDetailsTemp = donationDetailsService
+                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(donationDetails.getDonationHeader()
+                        .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
+                        .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize(),
+                        donationDetails.getDonationHeader().getMaxPipeSize());
+        if (donationDetailsTemp != null) {
+            donationDetailsTemp.setFromDate(new Date());
+            donationDetailsTemp.setAmount(donationDetails.getAmount());
+            donationDetailsService.updateDonationDetails(donationDetailsTemp);
+            ;
+            redirectAttrs.addFlashAttribute("donationDetails", donationDetailsTemp);
+            model.addAttribute("message", "Donation Master Data updated successfully");
+        } else {
+            donationDetails.getDonationHeader().setActive(true);
+            donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
+            donationDetailsService.createDonationDetails(donationDetails);
+            redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
+            model.addAttribute("message", "Donation Master Data created successfully");
+        }
+
         return "donation-master-success";
     }
 }

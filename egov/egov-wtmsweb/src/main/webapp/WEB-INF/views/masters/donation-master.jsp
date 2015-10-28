@@ -139,7 +139,7 @@
 </div>
 <form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 <div class="form-group text-center" >
-						<button type="submit" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></button>
+						<form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
 	</form:form>
@@ -151,4 +151,4 @@
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
 	           <script src="<c:url value='/resources/js/app/connectiondetails.js'/>"></script>
-	           <script src="<c:url value='/resources/js/app/connectiondetails.js'/>"></script>					
+	           <script src="<c:url value='/resources/js/app/donation-master.js'/>"></script>					

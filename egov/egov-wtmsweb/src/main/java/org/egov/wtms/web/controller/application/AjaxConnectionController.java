@@ -39,9 +39,12 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,9 @@ public class AjaxConnectionController {
 
     @Autowired
     private NewConnectionService newConnectionService;
+
+    @Autowired
+    private DonationDetailsService donationDetailsService;
 
     @Autowired
     private UsageTypeService usageTypeService;
@@ -103,11 +109,12 @@ public class AjaxConnectionController {
         pipesizes.forEach(pipesize -> pipesize.toString());
         return pipesizes;
     }
+
     /**
-     * 
      * @param givenDate
      * @param requestConsumerCode
-     * @return True or False Based on Entered Date's Month Installment Meter Entry is present
+     * @return True or False Based on Entered Date's Month Installment Meter
+     *         Entry is present
      */
     @RequestMapping(value = "/ajax-meterReadingEntryExist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Boolean getMeterReadingEntryExist(
@@ -119,21 +126,32 @@ public class AjaxConnectionController {
                 waterConnectionDetails, givenDate);
         return enteredMonthReadingExist;
     }
-    
+
     @RequestMapping(value = "/ajax-consumerCodeExistFordataEntry", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Boolean validateconsumerNumberForDataEntry(
             @ModelAttribute("waterConnectionDetails") @RequestParam final String consumerCode) {
         Boolean enteredMonthReadingExist = Boolean.FALSE;
-        if(consumerCode !=null){
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
-         
-        if(waterConnectionDetails !=null && waterConnectionDetails.getConnection().getConsumerCode().equals(consumerCode))
-        {
-            enteredMonthReadingExist=Boolean.TRUE;
-        }
+        if (consumerCode != null) {
+            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumberOrConsumerCode(consumerCode);
+
+            if (waterConnectionDetails != null
+                    && waterConnectionDetails.getConnection().getConsumerCode().equals(consumerCode))
+                enteredMonthReadingExist = Boolean.TRUE;
         }
         return enteredMonthReadingExist;
     }
 
+    @RequestMapping(value = "/ajax-donationheadercombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
+            @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
+            @RequestParam final PipeSize maxPipeSize, @RequestParam final PipeSize minPipeSize) {
+        final DonationDetails donationDetailsTemp = donationDetailsService
+                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
+                        maxPipeSize, minPipeSize);
+        if (donationDetailsTemp == null)
+            return 0;
+        else
+            return donationDetailsTemp.getAmount();
+    }
 }

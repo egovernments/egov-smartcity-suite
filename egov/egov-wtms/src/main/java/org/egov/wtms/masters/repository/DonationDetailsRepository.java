@@ -39,8 +39,12 @@
  */
 package org.egov.wtms.masters.repository;
 
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.PropertyType;
+import org.egov.wtms.masters.entity.UsageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,6 +52,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DonationDetailsRepository extends JpaRepository<DonationDetails, Long> {
+
     @Query(" from DonationDetails dd where dd.fromDate<=current_date and dd.toDate>=current_date and dd.donationHeader =:donationHeader")
     DonationDetails findByDonationHeader(@Param("donationHeader") DonationHeader donationHeader);
+
+    @Query(" from DonationDetails dd where dd.donationHeader.propertyType=:propertyType and dd.donationHeader.category=:categoryType and dd.donationHeader.usageType=:usageType and dd.donationHeader.minPipeSize=:minPipeSize and dd.donationHeader.maxPipeSize=:maxPipeSize ")
+    DonationDetails findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
+            @Param("propertyType") PropertyType propertyType, @Param("categoryType") ConnectionCategory categoryType,
+            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize,
+            @Param("maxPipeSize") PipeSize maxPipeSize);
 }

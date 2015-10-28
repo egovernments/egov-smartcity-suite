@@ -58,4 +58,87 @@ $(document).ready(function(){
 				console.log("failed");
 			}
 		});
- });
+	  
+	  
+	  $('#propertyType').change(function(){
+		  $.ajax({
+				url: "/wtms/ajax-PipeSizesByPropertyType",     
+				type: "GET",
+				data: {
+					propertyType: $('#propertyType').val()  
+				},
+				dataType: "json",
+				success: function (response) {
+				    console.log("success"+response);
+					$('#minpipeSize').empty();
+					$('#minpipeSize').append($("<option value=''>Select from below</option>"));
+					$.each(response, function(index, value) {
+					$('#minpipeSize').append($('<option>').text(value.code).attr('value', value.id))
+					});
+				}, 
+				error: function (response) {
+					console.log("failed");
+				}
+			});
+		  
+	  });
+	  
+	  $('#buttonid').click(function() {
+		  if ($( "#donationDetailsform" ).valid())
+			  {
+				   var minimum = parseInt($('#minpipeSize').val());
+					var maximum = parseInt($('#pipeSize').val());
+					if( (minimum > 0) && (maximum  > 0) ){
+						if (minimum > maximum){
+							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
+							return false;
+						}else{
+							$.ajax({
+					            url: '/wtms/ajax-donationheadercombination',
+					            type: "GET",
+					            data: {
+					            	propertyType: $('#propertyType').val(),
+					            	categoryType: $('#connectionCategorie').val(),
+					            	usageType: $('#usageType').val(),
+					            	maxPipeSize :$('#pipeSize').val(),
+					            	minPipeSize :$('#minpipeSize').val()
+					            },
+					            dataType : 'json',
+					            success: function (response) {
+					    			console.log("success"+response);
+					    			alert("response"+response);
+					    			if(response > 0){
+					    				alert("overwrite block")
+					    				if(!overwritedonation(response))
+					    				return false;
+						    			}
+					    			else{
+					    				 alert("else block");
+					    				 document.forms[0].submit();
+					    				 return true;
+					    			}
+					    		},error: function (response) {
+					    			console.log("failed");
+					    		}
+					        });
+						}
+					}
+			  }
+		  		});
+     });
+
+
+function overwritedonation(res)
+{
+	var r=confirm("With entered combination ,Donation amount is already Present, Do you want to overwrite it?")
+	if (r ==true){	
+		console.log('came as true');
+		document.forms[0].submit();
+	}
+	else
+	{
+		console.log('came as false');
+	    //document.forms[0].reset();
+	    return false;
+	}
+}
