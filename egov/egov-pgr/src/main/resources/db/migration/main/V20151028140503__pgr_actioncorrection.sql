@@ -1,0 +1,5 @@
+delete from eg_roleaction where actionid in(select id from eg_action where name in('AjaxCallInReportForcomplaintType'));
+delete from eg_action where name in('AjaxCallInReportForcomplaintType');
+
+Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (nextval('seq_eg_action'),'AjaxCallInReportForcomplaintType','/complaint/pgrreport/complaintTypes',null,410,null,'AjaxCallInReportForcomplaintType','false','pgr',0,1,'2015-07-27 13:06:23.714353',1,'2015-07-27 13:06:23.714353',36);
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ( (select id from eg_role where name='Super User'),(select id from eg_action where name='AjaxCallInReportForcomplaintType'));
