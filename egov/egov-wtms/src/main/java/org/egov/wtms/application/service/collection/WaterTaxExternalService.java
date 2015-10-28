@@ -169,7 +169,7 @@ public class WaterTaxExternalService {
             waterReceiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
             waterReceiptDetails.setTotalAmountPaid(billReceiptInfo.getTotalAmount());
             waterReceiptDetails.setCollectionType(billReceiptInfo.getCollectionType());
-            waterReceiptDetails.setTransanctionId(billReceiptInfo.getManualReceiptNumber());
+            waterReceiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);

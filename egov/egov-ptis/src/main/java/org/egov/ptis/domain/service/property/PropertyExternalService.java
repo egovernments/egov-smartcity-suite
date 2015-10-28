@@ -596,7 +596,7 @@ public class PropertyExternalService {
             receiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
             receiptDetails.setTotalAmountPaid(billReceiptInfo.getTotalAmount());
             receiptDetails.setCollectionType(billReceiptInfo.getCollectionType());
-            receiptDetails.setTransanctionId(billReceiptInfo.getManualReceiptNumber());
+            receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
