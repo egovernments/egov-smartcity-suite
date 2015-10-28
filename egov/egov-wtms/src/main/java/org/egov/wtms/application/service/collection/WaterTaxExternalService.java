@@ -124,9 +124,13 @@ public class WaterTaxExternalService {
         ErrorDetails errorDetails = null;
         String currentInstallmentYear = null;
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCodeAndStatus(payWaterTaxDetails.getConsumerNo(),
-                        ConnectionStatus.ACTIVE);
+         WaterConnectionDetails waterConnectionDetails =null;
+        if(payWaterTaxDetails.getApplicaionNumber() !=null && !"".equals(payWaterTaxDetails.getApplicaionNumber())){
+            waterConnectionDetails=waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
+  
+        }else if(payWaterTaxDetails.getConsumerNo() != null){
+            waterConnectionDetails=waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
+       }
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
