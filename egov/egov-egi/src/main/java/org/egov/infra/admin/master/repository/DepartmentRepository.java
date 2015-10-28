@@ -46,7 +46,9 @@ import javax.persistence.QueryHint;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -56,7 +58,8 @@ import org.springframework.stereotype.Repository;
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
-    Department findByName(String name);
+    @Query("select d from Department d where upper(d.name)=:departmentname")
+    Department findByNameUpperCase(@Param("departmentname") String departmentname);
 
     List<Department> findByNameContainingIgnoreCase(String name);
 
