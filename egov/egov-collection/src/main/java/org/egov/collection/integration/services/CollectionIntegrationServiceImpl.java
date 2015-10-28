@@ -40,6 +40,7 @@
 package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -74,6 +75,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -463,6 +465,39 @@ CollectionIntegrationService {
          */
         LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader);
+    }
+
+    @Override
+    public Map<String, Object> getAggrgateReceiptTotal(final Date fromDate, final Date toDate) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        final StringBuilder queryBuilder = new StringBuilder(
+                "select count(*), sum(Totalamount) from egcl_collectionheader where receiptdate>='");
+        queryBuilder.append(formatter.format(fromDate)).append("' and receiptdate<='").append(formatter.format(toDate))
+        .append("'");
+
+        final Query query = getSession().createSQLQuery(queryBuilder.toString());
+        final Object[] queryResult = ((List<Object[]>) query.list()).get(0);
+        final Map<String, Object> resultMap = new HashMap<String, Object>(0);
+        resultMap.put("Count", queryResult[0]);
+        resultMap.put("Total Amount", queryResult[1]);
+        return resultMap;
+
+    }
+
+    @Override
+    public List<BillReceiptInfo> getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
+            final String serviceCode) {
+        final ArrayList<BillReceiptInfo> receipts = new ArrayList<BillReceiptInfo>(0);
+        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, fromDate,
+                toDate, serviceCode);
+        if (receiptHeaders == null || receiptHeaders.isEmpty())
+            return null;
+        else {
+            for (final ReceiptHeader receiptHeader : receiptHeaders)
+                receipts.add(new BillReceiptInfoImpl(receiptHeader));
+            return receipts;
+        }
     }
 
 }

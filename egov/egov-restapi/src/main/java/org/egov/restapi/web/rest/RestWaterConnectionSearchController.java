@@ -43,6 +43,7 @@ import static java.util.Arrays.asList;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.restapi.model.WaterConnectionSearchRequest;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
@@ -65,7 +66,7 @@ public class RestWaterConnectionSearchController {
 
     @RequestMapping(value = "/watercharges/searchconnection", method = RequestMethod.POST)
     @ResponseBody
-    public String searchConnection(@RequestBody final RestWaterConnectionSearchRequest searchRequest) {
+    public String searchConnection(@RequestBody final WaterConnectionSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), Sort.NULL, Page.NULL);

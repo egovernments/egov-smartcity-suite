@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.web.rest;
+package org.egov.restapi.model;
 
 import static org.egov.search.domain.Filter.queryStringFilter;
 
@@ -48,7 +48,7 @@ import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
-public class RestWaterConnectionSearchRequest {
+public class WaterConnectionSearchRequest {
 
     private String searchText;
     private String hscnumber;
@@ -56,7 +56,7 @@ public class RestWaterConnectionSearchRequest {
     private String locality;
     private String mobilenumber;
 
-    private static final Logger logger = Logger.getLogger(RestWaterConnectionSearchRequest.class);
+    private static final Logger logger = Logger.getLogger(WaterConnectionSearchRequest.class);
 
     public String getHscnumber() {
         return hscnumber;

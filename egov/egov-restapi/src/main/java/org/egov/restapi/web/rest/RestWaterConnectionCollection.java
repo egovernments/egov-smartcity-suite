@@ -68,7 +68,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RestWaterCOnnectionCollection {
+public class RestWaterConnectionCollection {
 
     @Autowired
     private WaterTaxExternalService waterTaxExternalService;
