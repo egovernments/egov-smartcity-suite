@@ -39,134 +39,155 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.entertradelicense;
 
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseAppType;
+import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.MotorDetails;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.service.BaseLicenseService;
 import org.egov.tl.domain.service.TradeService;
+import org.egov.tl.domain.service.masters.LicenseCategoryService;
+import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
+import org.egov.tl.web.actions.domain.CommonTradeLicenseAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.IntRangeFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-
 @ParentPackage("egov")
-@Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense", params = { "namespace", "/viewtradelicense/web",
-        "method", "view", "modelId", "${model.id}" })
+@Results({
+        @Result(name = EnterTradeLicenseAction.NEW, location = "enterTradeLicense-new.jsp"),
+        @Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense-view", params = { "namespace",
+                "/viewtradelicense",
+                "model.id", "${model.id}" }) })
 public class EnterTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
     private TradeService ts;
-    private final TradeLicense tradeLicense = new TradeLicense();
+    private TradeLicense tradeLicense = new TradeLicense();
     @Autowired
     private BoundaryService boundaryService;
+    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
+    private Map<String, String> ownerShipTypeMap;
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    private BaseLicenseService baseLicenseService;
+    @Autowired
+    private UnitOfMeasurementService unitOfMeasurementService;
+    /* to log errors and debugging information */
+    private final Logger LOGGER = Logger.getLogger(getClass());
 
     public EnterTradeLicenseAction() {
         super();
         tradeLicense.setLicensee(new Licensee());
     }
 
-    /* to log errors and debugging information */
-    private final Logger LOGGER = Logger.getLogger(getClass());
+    @Override
+    @SkipValidation
+    @Action(value = "/entertradelicense/enterTradeLicense-enterExistingForm")
+    public String enterExistingForm() {
+        tradeLicense.setApplicationDate(new Date());
+        return super.newForm();
+    }
 
     @Override
-    @Validations(
-            requiredFields = {
-                    @RequiredFieldValidator(fieldName = "oldLicenseNumber", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "dateOfCreation", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "licensee.applicantName", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "licenseeZoneId", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "licenseZoneId", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "tradeName", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "applicationDate", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "licensee.gender", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "nameOfEstablishment", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "address.houseNo", message = "", key = Constants.REQUIRED),
-                    @RequiredFieldValidator(fieldName = "licensee.address.houseNo", message = "", key = Constants.REQUIRED) },
-            emails = {
-                    @EmailValidator(message = "Please enter the valid Email Id", fieldName = "licensee.emailId", key = "Please enter the valid Email Id")
-            },
-            stringLengthFields = {
-                    @StringLengthFieldValidator(fieldName = "oldLicenseNumber", maxLength = "30", message = "", key = "Maximum Length for Old License Number is 30"),
-                    @StringLengthFieldValidator(fieldName = "nameOfEstablishment", maxLength = "100", message = "", key = "Name of Establishment can be upto 100 characters"),
-                    @StringLengthFieldValidator(fieldName = "remarks", maxLength = "500", message = "", key = "Maximum length for Remarks is 500"),
-                    @StringLengthFieldValidator(fieldName = "address.streetAddress1", maxLength = "500", message = "", key = "Maximum length for remaining address is 500"),
-                    @StringLengthFieldValidator(fieldName = "address.houseNo", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-                    @StringLengthFieldValidator(fieldName = "address.streetAddress2", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-                    @StringLengthFieldValidator(fieldName = "phoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-                    @StringLengthFieldValidator(fieldName = "licensee.applicantName", maxLength = "100", message = "", key = "Maximum length for Applicant Name is 100"),
-                    @StringLengthFieldValidator(fieldName = "licensee.nationality", maxLength = "50", message = "", key = "Maximum length for Nationality is 50"),
-                    @StringLengthFieldValidator(fieldName = "licensee.fatherOrSpouseName", maxLength = "100", message = "", key = "Maximum length for Father Or SpouseName is 100"),
-                    @StringLengthFieldValidator(fieldName = "licensee.qualification", maxLength = "50", message = "", key = "Maximum length for Qualification is 50"),
-                    @StringLengthFieldValidator(fieldName = "licensee.panNumber", maxLength = "10", message = "", key = "Maximum length for PAN Number is 10"),
-                    @StringLengthFieldValidator(fieldName = "licensee.address.houseNo", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-                    @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress2", maxLength = "10", message = "", key = "Maximum length for house number is 10"),
-                    @StringLengthFieldValidator(fieldName = "licensee.address.streetAddress1", maxLength = "500", message = "", key = "Maximum length for remaining address is 500"),
-                    @StringLengthFieldValidator(fieldName = "licensee.phoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-                    @StringLengthFieldValidator(fieldName = "licensee.mobilePhoneNumber", maxLength = "15", message = "", key = "Maximum length for Phone Number is 15"),
-                    @StringLengthFieldValidator(fieldName = "licensee.uid", maxLength = "12", message = "", key = "Maximum length for UID is 12")
-            },
-            intRangeFields = {
-                    @IntRangeFieldValidator(fieldName = "noOfRooms", min = "1", max = "999", message = "", key = "Number of rooms should be in the range 1 to 999"),
-                    @IntRangeFieldValidator(fieldName = "address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0"),
-                    @IntRangeFieldValidator(fieldName = "licensee.age", min = "1", max = "100", message = "", key = "Age should be in the range of 1 to 100"),
-                    @IntRangeFieldValidator(fieldName = "licensee.address.pinCode", min = "100000", max = "999999", message = "", key = "Minimum and Maximum length for Pincode is 6 and all Digit Cannot be 0")
-            }
-            )
-            @ValidationErrorPageExt(action = Constants.NEW, makeCall = true, toMethod = "prepareNewForm")
-            public String enterExisting() {
-        LOGGER.debug("Enter Existing Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        if (tradeLicense.getLicenseZoneId() != null && tradeLicense.getBoundary() == null) {
-            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseZoneId());
-            tradeLicense.setBoundary(boundary);
-        }
-
-        if (tradeLicense.getLicenseeZoneId() != null && tradeLicense.getLicensee().getBoundary() == null) {
-            final Boundary boundary = boundaryService.getBoundaryById(tradeLicense.getLicenseeZoneId());
-            tradeLicense.getLicensee().setBoundary(boundary);
-        }
-        if (ts.getTps().findAllBy("from License where oldLicenseNumber = ?", tradeLicense.getOldLicenseNumber()).isEmpty()) {
-            if (tradeLicense.getInstalledMotorList() != null) {
-                final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
-                while (motorDetails.hasNext()) {
-                    final MotorDetails installedMotor = motorDetails.next();
-                    if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
-                            && installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
-                            && installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0)
-                        installedMotor.setLicense(tradeLicense);
-                    else
-                        motorDetails.remove();
+    @ValidationErrorPage(Constants.NEW)
+    @Action(value = "/entertradelicense/enterTradeLicense-enterExisting")
+    public String create() {
+        try {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Enter Existing Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
+            if (ts.getTps().findAllBy("from License where oldLicenseNumber = ?", tradeLicense.getOldLicenseNumber()).isEmpty()) {
+                if (tradeLicense.getInstalledMotorList() != null) {
+                    final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
+                    while (motorDetails.hasNext()) {
+                        final MotorDetails installedMotor = motorDetails.next();
+                        if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
+                                && installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
+                                && installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0)
+                            installedMotor.setLicense(tradeLicense);
+                        else
+                            motorDetails.remove();
+                    }
                 }
-            }
-            LOGGER.debug(" Enter Existing Trade License Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
-                    + tradeLicense.getNameOfEstablishment());
-            super.enterExisting();
-            // doAuditing(AuditModule.TL,AuditEntity.TL_LIC,Constants.ENTER_LICENSE, this.license().getAuditDetails());
-            return "viewlicense";
-        } else
-            throw new ValidationException("oldLicenseNumber", "license.number.exist", license().getOldLicenseNumber());
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug(" Enter Existing Trade License Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
+                        + tradeLicense.getNameOfEstablishment());
+                final LicenseAppType newAppType = (LicenseAppType) persistenceService
+                        .find("from  LicenseAppType where name='New' ");
+                tradeLicense.setLicenseAppType(newAppType);
+                return super.enterExisting(tradeLicense);
+            } else
+                throw new ApplicationRuntimeException(getText("oldLicenseNumber", "license.number.exist", license()
+                        .getOldLicenseNumber()));
+        } catch (final RuntimeException e) {
+            final ValidationError vr = new ValidationError(e.getMessage(), e.getMessage());
+            throw new ValidationException(Arrays.asList(vr));
+        }
     }
 
     @Override
     public void prepareNewForm() {
         super.prepareNewForm();
+        if (license() != null && license().getId() != null)
+            tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", license().getId());
+        setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
         tradeLicense.setHotelSubCatList(ts.getHotelCategoriesForTrade());
+        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
+        final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                LOCALITY, LOCATION_HIERARCHY_TYPE);
+        addDropdownData("localityList", localityList);
+        addDropdownData("tradeTypeList", baseLicenseService.getAllNatureOfBusinesses());
+        addDropdownData("categoryList", licenseCategoryService.findAll());
+        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
+
+        final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction = new CommonTradeLicenseAjaxAction();
+        populateSubCategoryList(ajaxTradeLicenseAction, tradeLicense.getCategory() != null);
+
+    }
+
+    /**
+     * @param ajaxTradeLicenseAction
+     * @param categoryPopulated
+     */
+    protected void populateSubCategoryList(final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction,
+            final boolean categoryPopulated) {
+        if (categoryPopulated) {
+            ajaxTradeLicenseAction.setCategoryId(tradeLicense.getCategory().getId());
+            ajaxTradeLicenseAction.setLicenseSubCategoryService(licenseSubCategoryService);
+            ajaxTradeLicenseAction.populateSubCategory();
+            addDropdownData("subCategoryList", ajaxTradeLicenseAction.getSubCategoryList());
+        } else
+            addDropdownData("subCategoryList", Collections.emptyList());
     }
 
     @Override
@@ -187,6 +208,22 @@ public class EnterTradeLicenseAction extends BaseLicenseAction {
     protected BaseLicenseService service() {
         ts.getPersistenceService().setType(TradeLicense.class);
         return ts;
+    }
+
+    public List<LicenseDocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
+
+    public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
+
+    public Map<String, String> getOwnerShipTypeMap() {
+        return ownerShipTypeMap;
+    }
+
+    public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
+        this.ownerShipTypeMap = ownerShipTypeMap;
     }
 
 }

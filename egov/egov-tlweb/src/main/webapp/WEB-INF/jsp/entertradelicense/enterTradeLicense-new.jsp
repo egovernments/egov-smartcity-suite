@@ -37,50 +37,93 @@
 #  
 #    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------->
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
-		<title><s:text name="page.title.entertrade" />
-		</title>
-		<sx:head />
+		<title><s:text name="page.title.entertrade" /></title>
 		<script>
-	   		function validateForm(obj) {
-	   		clearWaterMark();
-    			if(validateForm_enterTradeLicense()==false) {
-    				return false;
-    			} else {
-      				return true;
-    			}
+	
+			function validateForm() {
+				if (document.getElementById("oldLicenseNumber").value == '' || document.getElementById("oldLicenseNumber").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.oldlicensenumber.null" />');
+					document.getElementById("oldLicenseNumber").focus();
+					return false;
+				} else if (document.getElementById("dateOfCreation").value == '' || document.getElementById("dateOfCreation").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.dateofcreation.null" />');
+					document.getElementById("dateOfCreation").focus();
+					return false;
+				} else if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
+					document.getElementById("mobilePhoneNumber").focus();
+					return false;
+				} else if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.applicantname.null" />');
+					document.getElementById("applicantName").focus();
+					return false;
+				} else if (document.getElementById("fatherOrSpouseName").value == '' || document.getElementById("fatherOrSpouseName").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.fatherorspousename.null" />');
+					document.getElementById("fatherOrSpouseName").focus();
+					return false;
+				} else if (document.getElementById("emailId").value == '' || document.getElementById("emailId").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.email.null" />');
+					document.getElementById("emailId").focus();
+					return false;
+				} else if (document.getElementById("licenseeAddress").value == '' || document.getElementById("licenseeAddress").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
+					document.getElementById("licenseeAddress").focus();
+					return false;
+				} else if (document.getElementById("boundary").value == '-1'){
+					showMessage('enterLicense_error', '<s:text name="newlicense.locality.null" />');
+					document.getElementById("boundary").focus();
+					return false;
+				} else if (document.getElementById("ownershipType").value == '-1'){
+					showMessage('enterLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
+					document.getElementById("ownershipType").focus();
+					return false;
+				} else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
+					document.getElementById("address").focus();
+					return false;
+				} else if (document.getElementById("buildingType").value == '-1'){
+					showMessage('enterLicense_error', '<s:text name="newlicense.buildingtype.null" />');
+					document.getElementById("buildingType").focus();
+					return false;
+				} else if (document.getElementById("category").value == '-1'){
+					showMessage('enterLicense_error', '<s:text name="newlicense.category.null" />');
+					document.getElementById("category").focus();
+					return false;
+				}  else if (document.getElementById("subCategory").value == '-1'){
+					showMessage('enterLicense_error', '<s:text name="newlicense.subcategory.null" />');
+					document.getElementById("subCategory").focus();
+					return false;
+				}	else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
+					document.getElementById("tradeArea_weight").focus();
+					return false;
+				}	else if (document.getElementById("uom").value == '-1'){
+					showMessage('enterLicense_error', '<s:text name="newlicense.uom.null" />');
+					document.getElementById("uom").focus();
+					return false;
+				} else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
+						 document.getElementById("workersCapacity").value == 0) {
+					showMessage('enterLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
+					document.getElementById("workersCapacity").focus();
+					return false;
+				} else{
+					clearMessage('enterLicense_error');
+					toggleFields(false,"");
+					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
+					document.registrationForm.submit();
+
+					}
   			}
-  
-			function clearWaterMark(){
-				if(document.getElementById('applicationDate') && document.getElementById('applicationDate').value=='dd/mm/yyyy') {
-					document.getElementById('applicationDate').value = '';
-				}	
-				if(document.getElementById('dateOfCreation') && document.getElementById('dateOfCreation').value=='dd/mm/yyyy') {
-					document.getElementById('dateOfCreation').value = '';
-				}				
-			}
-			
-			function closethis() {
-			   if(confirm("Do you want to close this window ?")) {
-			       window.close();
-			   }			   
-			}
-				
-			function onBodyLoad(){
-  				if (document.getElementById("motorInstalled").checked==true) {
-					document.getElementById("hpheader").style.display='';
-				} else {
-					document.getElementById("hpheader").style.display='none';
-				}
-			}
 
 			var motorcnt = 0;
 			var rowcnt = 1; // special counter to keep track of the number of Rows for id & name values
 			var labelCnt = 1; // special counter to keep track of the number of Rows for id & name values
 					
-			function totalHP() { 
+			function findtotalHP() { 
 				var tot = 0;
 				for( var i=0; i<=motorcnt ;i++) {			  		
 			  		if(document.getElementById('installedMotorList['+i+'].hp')!=null && document.getElementById('installedMotorList['+i+'].noOfMachines')) {
@@ -104,16 +147,13 @@
 					document.getElementById("hpheader").style.display='';
 					document.getElementById('totalHP').value=0;
 				} else {
-					for( var i=0; i<=motorcnt ;i++){
-						if(document.getElementById('installedMotorList['+i+'].noOfMachines') && document.getElementById('installedMotorList['+i+'].hp')){
-							document.getElementById('installedMotorList['+i+'].noOfMachines').style.display='none';
-							document.getElementById('installedMotorList['+i+'].noOfMachines').value='';
-							document.getElementById('installedMotorList['+i+'].hp').value='';
-							document.getElementById('installedMotorList['+i+'].hp').style.display='none';
-							document.getElementById('addImg'+i).style.display='none';
-							document.getElementById('delImg'+i).style.display='none';
-							document.getElementById('totalHP').value=0;
+					var table = document.getElementById('tb2Create');
+					var rowCount = table.rows.length;
+					if(rowCount>2){  // to skip table header
+						for (var i=rowCount-1; i >= 2; i--) {
+							table.deleteRow(i);
 						}
+						motorcnt=0;
 					}
 					addMotorRowToTable(false);
 					document.getElementById('totalHP').value=0;
@@ -123,7 +163,7 @@
 					document.getElementById("hpheader").style.display='none';
 				}
 			}
-			
+
 			function detailchange(){
 				document.getElementById("detailChanged").value = 'true';
 			}
@@ -161,7 +201,7 @@
 						var cellRight = row.insertCell(2);
 						cellRight.setAttribute("align","left");
 						adddel = document.createElement('label');
-						adddel.appendChild(document.createTextNode('Add/Del'))
+						adddel.appendChild(document.createTextNode('Actions'))
 						cellRight.appendChild(adddel);
 					</s:if>
 				}
@@ -174,9 +214,10 @@
 				var cellRight = row.insertCell(0);
 				cellRight.setAttribute("align","left");
 				noOfMachines = document.createElement('input');
-				noOfMachines.type = 'text';
-				noOfMachines.size = '8';
-				noOfMachines.onBlur= 'checkLength(this,6)';
+				noOfMachines.type = 'number';
+				noOfMachines.size = '10';
+				noOfMachines.onBlur= 'checkLength(this,3)';
+				noOfMachines.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
 				</s:if>
@@ -189,7 +230,7 @@
 				if(browser=='Microsoft Internet Explorer'){
 				    noOfMachines.onblur=totalHP;
 				} else {
-				    noOfMachines.setAttribute('onBlur', 'checkLength(this,6);totalHP(this);' );
+				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
 				}
 				cellRight.appendChild(noOfMachines);
 				    
@@ -197,9 +238,10 @@
 				var cellRight = row.insertCell(1);
 				cellRight.setAttribute("align","left");
 				horsepower = document.createElement('input');
-				horsepower.type = 'text';
-				horsepower.size = '12';
-				horsepower.onBlur = 'checkLength(this,6)';
+				horsepower.type = 'number';
+				horsepower.size = '10';
+				horsepower.onBlur = 'checkLength(this,3)';
+				horsepower.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
 				</s:if>
@@ -214,7 +256,7 @@
 				if(browser=='Microsoft Internet Explorer'){
 				    horsepower.onblur=totalHP;
 				} else{
-				    horsepower.setAttribute('onBlur', 'checkLength(this,6);totalHP(this);' );
+				    horsepower.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
 				}
 				  
 				 cellRight.appendChild(horsepower);
@@ -222,9 +264,10 @@
 				  //3rd column
 				<s:if test="%{!sControlDisabled}">  
 					var oCell = row.insertCell(2);
-					oCell.innerHTML = "<img src='${pageContext.request.contextPath}/images/addrow.gif' alt='Add' width='18' height='18' border='0' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'/> <img src='${pageContext.request.contextPath}/images/removerow.gif' alt='Remove' id='delImg"+motorcnt+"' width='18' height='18' border='0' onclick='removeRow1(this);'/>";
+					oCell.innerHTML = "<span class='add-padding' style='cursor:pointer;' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'><i class='fa fa-plus'></i></span><span class='add-padding' style='cursor:pointer;' id='delImg"+motorcnt+"'  onclick='removeRow1(this);'><i class='fa fa-trash'></i></span>";
 				</s:if>
 				 motorcnt++;  
+
 			}
 			
 			function removeRow1(src){  
@@ -241,7 +284,7 @@
  					{
  					document.all('tb2Create').deleteRow(oRow.rowIndex);
  					}
- 					totalHP();  
+ 					findtotalHP();  
 				 	detailchange();
 				}
 			}
@@ -260,232 +303,192 @@
             		obj.value=(parseFloat(obj.value)).toFixed(2);
        			}
     		}
-		</script>
-	</head>
-	<body onload="onBodyLoad()">
-		<table align="center" width="100%">
-			<tbody>
-				<tr>
-					<td>
-						<div align="center">
-							<center>
-								<div class="formmainbox">
-									<div class="headingbg">
-										<s:text name="page.title.entertrade" />
-									</div>
-									<table>
-										<tr>
-											<td align="left" style="color: #FF0000">
-												<div id="Errors">
-													<s:actionerror />
-													<s:fielderror />
-												</div>
-												<s:actionmessage />
-											</td>
-										</tr>
-									</table>
-									<s:form action="enterTradeLicense" theme="css_xhtml" name="registrationForm" validate="true">
-									<s:token/>
-										<s:push value="model">
-											<s:hidden name="actionName" value="create" />
-											<s:hidden id="detailChanged" name="detailChanged" />
-											<s:hidden name="docNumber" id="docNumber" />
-											<c:set var="trclass" value="greybox" />
-											<table border="0" cellpadding="0" cellspacing="0" width="100%">
-												<tbody>
-													<tr>
-														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-															</div>
-															<div class="headplacer">
-																<s:text name='license.title.applicantiondetails' />
-															</div>
-														</td>
-													</tr>
-													<tr>
-														<td class="<c:out value="${trclass}"/> width="5%"></td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name='license.old.license.number' /><span class="mandatory1">*</span>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:textfield name="oldLicenseNumber" maxlength="30"/>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name='license.enter.issuedate' /><span class="mandatory1">*</span>
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:date name="dateOfCreation" id="dateOfCreation"  format="dd/MM/yyyy"/>
-														 	<s:textfield name="dateOfCreation" id="dateOfCreation" onfocus="waterMarkTextIn('dateOfCreation','dd/mm/yyyy');" onblur="waterMarkTextOut('dateOfCreation','dd/mm/yyyy');lessThanOrEqualToCurrentDate(this)" maxlength="10" size="10" value="%{dateofcreation}" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-															<a href="javascript:show_calendar('forms[0].dateOfCreation',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" id="calenderImgId" />
-													 	</td>
-													</tr>
-													<%@ include file='../common/license.jsp'%>
-													<%@ include file='../common/address.jsp'%>
-													<tr>
-														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-															</div>
-															<div class="headplacer">
-																<s:text name='license.title.applicantdetails' />
-															</div>
-														</td>
-													</tr>
-													<%@ include file='../common/licensee.jsp'%>
-													<%@ include file='../common/licenseeAddress.jsp'%>
 
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
-													<tr>
-														<td class="<c:out value="${trclass}"/> width="5%"></td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name='license.othercharges' />
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:textfield name="otherCharges" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(otherCharges)" />
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name='license.deduction' />
-														</td>
-														<td class="<c:out value="${trclass}"/>"> <s:textfield name="deduction"  onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(deduction)" /></td>
-													</tr>
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
-													<tr>
-													<td class="<c:out value="${trclass}"/> width="5%"></td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name='license.swmfee' />
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:textfield name="swmFee" maxlength="8" onKeyPress="return numbersforamount(this, event)" onBlur="checkLength(this,8),formatCurrency(swmFee)" />
-														</td>
-														<td colspan="4" class="<c:out value="${trclass}"/> width="5%"></td>
-													</tr>
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
-													<tr>
-														<td colspan="5" class="headingwk">
-															<div class="arrowiconwk">
-																<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
-															</div>
-															<div class="headplacer">
-																<s:text name='license.title.motordetail' />
-															</div>
-														</td>
-													</tr>
-													<tr>
-														<td class="<c:out value="${trclass}"/>" width="5%">
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:text name="license.motor.installed" />
-														</td>
-														<td class="<c:out value="${trclass}"/>">
-															<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
-														</td>
-														<td class="<c:out value="${trclass}"/>" colspan="2"></td>
-													</tr>
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
-													<tr>
-														<td colspan="2" class="<c:out value="${trclass}"/>">
-														</td>
-														<td colspan="3" class="<c:out value="${trclass}"/>">
-															<table width="47%" border="0" cellspacing="1" cellpadding="0" id="tb2Create" align="left">
-																<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
-																	<b><s:text name="license.horsepower" /><span class="mandatory1">*</span> </b>
-																</th>
-															</table>
-														</td>
-													</tr>
-													<script>
+			// Calls propertytax REST api to retrieve property details for an assessment no
+			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
+    		function callPropertyTaxRest(){
+               	var propertyNo = jQuery("#propertyNo").val();
+            	if(propertyNo!="" && propertyNo!=null){
+					console.log(propertyNo); 
+					jQuery.ajax({
+						url: "/ptis/rest/property/" + propertyNo,
+						type:"GET",
+						contentType:"application/x-www-form-urlencoded",
+						success:function(data){
+							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
+								alert(data.errorDetails.errorMessage);
+							} else{
+								if(data.boundaryDetails!=null){
+									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
+									jQuery("#wardName").val(data.boundaryDetails.wardName);
+									jQuery("#address").val(data.propertyAddress);
+								}
+							}
+						},
+						error:function(e){
+							console.log('error:'+e.message);
+							document.getElementById("propertyNo").value="";
+							resetOnPropertyNumChange();
+							alert("Error getting property details");
+						}
+					});
+            	} else{
+					showMessage('enterLicense_error', '<s:text name="newlicense.propertyNo.null" />');
+            		document.getElementById("propertyNo").focus();
+                }
+            }
+
+            function resetOnPropertyNumChange(){
+            	var propertyNo = jQuery("#propertyNo").val();
+               	if(propertyNo!="" && propertyNo!=null){
+            		document.getElementById("address").disabled="true";
+	            	document.getElementById("boundary").disabled="true"; 
+            	} else {
+                    document.getElementById("address").disabled=false;
+	            	document.getElementById("boundary").disabled=false;  
+                }
+            	document.getElementById("boundary").value='-1';
+            	document.getElementById("zoneName").value="";
+            	document.getElementById("wardName").value="";
+            	document.getElementById("address").value="";
+            }
+
+ 		</script>
+ 		
+ 	</head>
+	<body onload="onBodyLoad()">
+		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
+                <div class="row">
+                    <div class="col-md-12">
+                     <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
+                     <s:if test="%{applicationNumber!=null}">
+                    	 <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num" /> : <s:property value="%{applicationNumber}" /></div>
+                 	</s:if>
+               		<s:if test="%{hasErrors()}">
+						<div align="center" class="error-msg" >
+							<s:actionerror />
+							<s:fielderror/>
+						</div>			 
+					</s:if>
+					<s:if test="%{hasActionMessages()}">
+						<div class="messagestyle">
+							<s:actionmessage theme="simple" />
+						</div>
+					</s:if>
+                 	
+                 	<s:form name="registrationForm" action="enterTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" 
+					cssClass="form-horizontal form-groups-bordered" validate="true" >    
+					<s:push value="model"> 
+							<s:token/>
+							<s:hidden name="actionName" value="create" />
+							<s:hidden id="detailChanged" name="detailChanged" />
+							<s:hidden id="applicationDate" name="applicationDate" />
+							<s:hidden name="id" id="id" />
+                        <div class="panel panel-primary" data-collapsed="0">
+                            <div class="panel-heading">
+								<div class="panel-title" style="text-align:center">
+										<s:text name='page.title.entertrade' /> 
+								</div>
+                            
+                                <ul class="nav nav-tabs" id="settingstab">
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
+                                </ul>
+                            </div>
+                            
+                             <div class="panel-body custom-form">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tradedetails">
+													
+											<div class="form-group">
+											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
+											    <div class="col-sm-3 add-margin">
+											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
+											    </div>
+											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
+											     <div class="col-sm-3 add-margin">
+											      	<s:date name="dateOfCreation" id="dateOfCreationformat" format="dd/MM/yyyy" />
+													<s:textfield  name="dateOfCreation" id="dateOfCreation" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{dateOfCreationformat}" />
+											   </div> 
+											</div>		
+                                    
+	                                         <%@ include file='../common/licensee.jsp'%>
+	                                          <%@ include file='../common/address.jsp'%>
+	                                         <%@ include file='../common/license.jsp'%>
+	                                         
+	                                         
+	                                         <div class="panel-heading custom_form_panel_heading">
+											    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
+											</div>
+											
+											<div class="form-group">
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
+											    <div class="col-sm-3 add-margin text-left">
+											         	<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
+											    </div>
+											</div>
+											<div class="form-group">
+											    <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
+															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
+																<b><s:text name="license.horsepower" /></b>
+															</th>
+												</table>			
+											</div>
+											<script>
 												<s:iterator var="p" value="installedMotorList">
 													addMotorRowToTable(true,'<s:property value="key"/>',  '<s:property value="#p.hp"/>', '<s:property value="#p.noOfMachines"/>');
 												</s:iterator>
-												</script>
-													<c:choose>
-														<c:when test="${trclass=='greybox'}">
-															<c:set var="trclass" value="bluebox" />
-														</c:when>
-														<c:when test="${trclass=='bluebox'}">
-															<c:set var="trclass" value="greybox" />
-														</c:when>
-													</c:choose>
-													<tr id="addmoremotor">
-														<td colspan="2" class="<c:out value="${trclass}"/>" />
-														<td colspan="2" class="<c:out value="${trclass}"/>" align="center" class="bluebox1">
-															<s:text name="license.total.horsepower" />
-															:
-															<span class="mandatory1">*</span>
-															<span class="greybox"> <s:textfield readonly="true" disabled="%{sDisabled}" name="totalHP" size="12" onBlur="trimAll(this.value);" id="totalHP" /> </span>
-														</td>
-														<td colspan="1" class="<c:out value="${trclass}"/>"></td>
-													</tr>
-													<script>
-														if(document.getElementById("motorInstalled").checked){															
-															document.getElementById("addmoremotor").style.display='';
-														}else{
-															document.getElementById("addmoremotor").style.display='none';
-														}														
-														totalHP();
-													</script>
-													<tr>
-														<td colspan="5" align="center">
-														    <br/>
-															<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManagerForDoc('docNumber');updateCurrentDocId('docNumber')" tabindex="1" />
-															<br/>
-															<br/>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											<div align="center" class="buttonbottom">
-												<table align="center">													
-													<tr  id="buttondiv" style="align: middle">
-														<td>
-															<s:submit type="submit" cssClass="buttonsubmit" name="SaveNew" value="Save" id="Save_New" method="enterExisting" onclick="validateForm(this)" />
-														</td>
-														<td>
-															<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-														</td>
-													</tr>
-												</table>
+											</script>
+											
+											<div class="form-group" id="addmoremotor">
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /><span class="mandatory"></span></label>
+											    <div class="col-sm-3 add-margin">	
+											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" cssClass="form-control" />
+											    </div>		
 											</div>
-											<div class="mandatory1" style="font-size: 11px;" align="left">
-												* Mandatory Fields
+											
+											<div class="form-group">
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.workersCapacity" /><span class="mandatory"></span></label>
+											    <div class="col-sm-3 add-margin">	
+											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" cssClass="form-control patternvalidation" data-pattern="number" />
+											    </div>		
 											</div>
-										</s:push>
-									</s:form>
-								</div>
-							</center>
+											
+											<script>
+												 if(document.getElementById("motorInstalled").checked){															
+													document.getElementById("addmoremotor").style.display='';
+												}else{
+													document.getElementById("addmoremotor").style.display='none';
+												} 														
+												findtotalHP();
+											</script>
+                                    </div>
+                                    <div class="tab-pane fade" id="tradeattachments"> 
+                                        <div>
+												<%@include file="../common/documentUpload.jsp" %>
+										</div>
+                                    </div>
+                            	</div>
+                            </div>
+                        </div> 
+                        <div class="row">
+							<div class="text-center">
+								<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateForm();">
+									Save</button>
+								<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+									Close</button>
+							</div>
 						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</body>
+                        </s:push>  
+                    </s:form> 
+                    </div>
+                </div>
+                <script>
+					jQuery(".datepicker").datepicker({
+						format: "dd/mm/yyyy",
+						autoclose: true 
+					}); 
+				</script>
+        <script src="../resources/app/js/newtrade.js"></script>
+    </body>
 </html>

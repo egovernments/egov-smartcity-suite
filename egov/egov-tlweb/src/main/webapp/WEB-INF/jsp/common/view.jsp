@@ -133,30 +133,32 @@
 		<div class="col-xs-3 add-margin view-content">
 			<s:checkbox theme="simple" key="motorInstalled" tabindex="17"  label="motorInstalled" id="motorInstalled" disabled="true" />
 		</div>
-		<s:if test="%{!installedMotorList.isEmpty()}">
-		 <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
-			<th id="hpheader" colspan="3" class="bluebgheadtd" align="center">
-				<b><s:text name="license.horsepower" /></b>
-			</th>
-			<tr>
-				<th id="hpheader"  class="bluebgheadtd" align="center">
-					<b><s:text name="license.noofmachines" /></b>
-				</th>
-				<th id="hpheader"  class="bluebgheadtd" align="center">
-					<b><s:text name="license.horsepower" /></b>
-				</th>
-			</tr>
-			<s:iterator var="p" value="installedMotorList">
-			<tr>
-				<td><s:property value="#p.hp"/></td>
-				<td><s:property value="#p.noOfMachines"/></td>
-			</tr>
-			</s:iterator>
-		</table>
-		
-		<div class="col-xs-3 add-margin"><s:text name='license.total.horsepower' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{totalHP}" /></div> 
-		</s:if>
+		<div>
+			<s:if test="%{!installedMotorList.isEmpty()}">
+				 <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
+					<th id="hpheader" colspan="3" class="bluebgheadtd" align="center">
+						<b><s:text name="license.horsepower" /></b>
+					</th>
+					<tr>
+						<th id="hpheader"  class="bluebgheadtd" align="center">
+							<b><s:text name="license.noofmachines" /></b>
+						</th>
+						<th id="hpheader"  class="bluebgheadtd" align="center">
+							<b><s:text name="license.horsepower" /></b>
+						</th>
+					</tr>
+					<s:iterator var="p" value="installedMotorList">
+					<tr>
+						<td><s:property value="#p.hp"/></td>
+						<td><s:property value="#p.noOfMachines"/></td>
+					</tr>
+					</s:iterator>
+				</table>
+			
+				<div class="col-xs-3 add-margin"><s:text name='license.total.horsepower' /></div>
+				<div class="col-xs-3 add-margin view-content"><s:property value="%{totalHP}" /></div> 
+			</s:if>
+		</div>
 	</div>
 	
 	<div class="row add-border">
@@ -164,4 +166,13 @@
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{workersCapacity}" /></div>
 	</div>
 	
+</div>
+
+<div class="panel-heading  custom_form_panel_heading">
+    <div class="panel-title"><s:text name='license.title.documentDetails' /></div>
+</div>
+<div class="panel-body">
+		<div class="row add-border">
+			<%@ include file="../common/documentView.jsp" %>
+		</div> 
 </div>
