@@ -60,7 +60,7 @@ public class MDCLoggingFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
         try {
-            MDC.put("ulbcode", EgovThreadLocals.getCityCode());
+            MDC.put("ulbcode", EgovThreadLocals.getCityName());
             chain.doFilter(request, response);
         } finally {
             MDC.remove("ulbcode");
