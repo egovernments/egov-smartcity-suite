@@ -168,7 +168,8 @@ public class ComplaintService {
                 throw new ValidationException("location.not.valid");
         }
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
+        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getUsername() + "::"
+                + complaint.getComplainant().getUserDetail().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
                 .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
@@ -203,7 +204,7 @@ public class ComplaintService {
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
         final Role goRole = roleService.getRoleByName(PGRConstants.GO_ROLE_NAME);
-        final String userName = securityUtils.getCurrentUser().getName();
+        final String userName = securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName();
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
@@ -323,20 +324,20 @@ public class ComplaintService {
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         map.put("date", state.getDateInfo());
         map.put("comments", state.getComments());
-        map.put("updatedBy", state.getLastModifiedBy().getName());
+        map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
         user = state.getOwnerUser();
         user = state.getOwnerUser();
         if (null != user) {
-            map.put("user", user.getUsername());
+            map.put("user", user.getName() + "::" + user.getUsername());
             map.put("usertype", null != user.getType() ? user.getType() : "");
             map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                     ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
         } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
             user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-            map.put("user", null != user.getUsername() ? user.getUsername() : "");
+            map.put("user", null != user.getUsername() ? user.getName() + "::" + user.getUsername() : "");
             map.put("usertype", null != user.getType() ? user.getType() : "");
             map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
@@ -348,19 +349,20 @@ public class ComplaintService {
             final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
             HistoryMap.put("date", stateHistory.getDateInfo());
             HistoryMap.put("comments", stateHistory.getComments());
-            HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+            HistoryMap.put("updatedBy",
+                    state.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
             HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
             HistoryMap.put("status", stateHistory.getValue());
             final Position owner = stateHistory.getOwnerPosition();
             user = stateHistory.getOwnerUser();
             if (null != user) {
-                HistoryMap.put("user", user.getUsername());
+                HistoryMap.put("user", user.getName() + "::" + user.getUsername());
                 HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
                 HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                         ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != owner && null != owner.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
+                HistoryMap.put("user", null != user.getUsername() ? user.getName() + "::" + user.getUsername() : "");
                 HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
                 HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
                         ? owner.getDeptDesig().getDepartment().getName() : "");
