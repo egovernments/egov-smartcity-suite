@@ -76,10 +76,13 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
         		REVENUE_HIERARCHY_TYPE);
+        final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
+                REVENUE_HIERARCHY_TYPE);
         addDropdownData("zoneList", zoneList);
+        addDropdownData("wardList", wardList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        prepareWardDropDownData(zoneId != null, wardId != null);
+        // prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
             addDropdownData("blockList", Collections.EMPTY_LIST);
         prepareBlockDropDownData(wardId != null, areaId != null);

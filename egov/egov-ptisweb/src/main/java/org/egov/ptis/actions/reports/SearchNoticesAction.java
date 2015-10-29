@@ -370,11 +370,14 @@ public class SearchNoticesAction extends SearchFormAction {
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ZONE.toUpperCase(),
                 REVENUE_HIERARCHY_TYPE);
+        final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
+                REVENUE_HIERARCHY_TYPE);
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAll();
         addDropdownData("Zone", zoneList);
+        addDropdownData("wardList", wardList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        prepareWardDropDownData(zoneId != null, wardId != null);
+        //prepareWardDropDownData(zoneId != null, wardId != null);
 
         addDropdownData("PropTypeMaster", propTypeList);
         setNoticeTypeMap(CommonServices.getNoticeTypeMstr());

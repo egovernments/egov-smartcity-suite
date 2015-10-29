@@ -45,6 +45,7 @@
 <html>
 <head>
 	<title>
+	<s:property value="%{mode}"/>
 		<s:if test="%{mode=='zoneWise'}">
 			<s:text name='zoneWiseCollectionReport.search' />
 		</s:if>
@@ -183,9 +184,9 @@
 										name="Ward" /> :</label>
 								<div class="col-sm-3 add-margin">
 									<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="wardId"
-										id="wardId" listKey="key" listValue="value"
-										list="dropdownData.wardList" cssClass="form-control" value="%{wardId}" 
+										headerValue="%{getText('default.all')}" name="boundaryId"
+										id="boundaryId" listKey="key" listValue="value"
+										list="wardBndryMap" cssClass="form-control" value="%{boundaryId}" 
 										onchange="populateBlock()"/>
 										<egov:ajaxdropdown id="areaId" fields="['Text','Value']"
 											dropdownId="areaId" url="common/ajaxCommon-areaByWard.action" />
