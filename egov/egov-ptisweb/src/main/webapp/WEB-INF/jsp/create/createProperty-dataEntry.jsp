@@ -94,7 +94,7 @@
 				<%@  include file="createPropertyForm.jsp"%>
 			</div>
 			<div class="buttonbottom" align="center">
-				<table>
+				<table style="width: 100%; text-align: center;">
 					<tr>
 						<td><input  type="submit" id="Create" class="btn btn-primary" value="Create" onclick="onSubmit();"/> 
 							<input type="button" name="button2" id="button2" value="Close" class="btn btn-primary" onclick="window.close();" /></td>

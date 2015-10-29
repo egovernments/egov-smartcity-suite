@@ -68,13 +68,12 @@
 					<s:text name="CreatePropertyAckHeader" />
 				</div>
 				<br />
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					
+				<table style="width: 100%; text-align: center;">
 					<tr>
-						<s:property value="%{ackMessage}" />
+						<td colspan="5"><s:property value="%{ackMessage}" /></td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="5">
 							<div class="buttonbottom" align="center">
 										<input type="button" value="Create Another" name="Create Another" id="createNew"
 											 class="buttonsubmit" align="center"

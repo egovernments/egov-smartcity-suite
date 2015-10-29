@@ -51,22 +51,13 @@
 <body onload="refreshInbox()">
 	<s:push value="model">
 		<div class="formmainbox">
-			<s:if test="%{hasActionMessages()}">
-				<font style='color: green; font-weight: bold'> <s:actionmessage />
-				</font>
-			</s:if>
+			<div class="text-center" style="padding:20px;">
+				<s:if test="%{hasActionMessages()}">
+					<font style='color: green; font-weight: bold'> <s:actionmessage />
+					</font>
+				</s:if>
+			</div>
 
-		
-		<div class="formheading"></div>
-	<%--	<div class="headingbg"><s:text name="objection.record.message.title" /></div>
-		 <s:if test="objectionRejected == true">
-			<script>
-	 			if(opener && opener.top.document.getElementById('inboxframe'))
-					opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-				alert("Generating Rejection Letter");
-				window.location = "${pageContext.request.contextPath}/objection/rejectionLetter-print.action?model.id="+'<s:property value="objection.id"/>';
-			</script>
-		</s:if> --%>
 		<s:if test="isShowAckMessage == true">			
 			<div align="center" style="font-size:15px;">
 				<p>
@@ -83,7 +74,7 @@
 			</div>
 		</s:if>
 		<div class="buttonbottom" align="center">
-			<table>				
+			<table style="width:100%;text-align:center;">				
 				<tr>
 					<s:if test="isShowAckMessage == true">
 						<td>
