@@ -194,6 +194,8 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script src="<c:url value='/resources/js/app/search-complaint.js'/>"
 	type="text/javascript"></script>
 <c:if test="${not empty param.crn}">
