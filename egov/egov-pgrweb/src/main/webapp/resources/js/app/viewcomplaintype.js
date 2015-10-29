@@ -68,7 +68,13 @@ $(document)
 										},{
 											"mData" : "description",
 											"sTitle" : "Description"
-										} ],
+										},{
+											"mData" : "slahours",
+											"sTitle" : "SLA Hours"
+										},{
+											"mData" : "hasfinancialImpact",
+											"sTitle" : "Has Financial Impact"
+										} ]
 									});
 
 					$('#view-complaint-type tbody').on(
