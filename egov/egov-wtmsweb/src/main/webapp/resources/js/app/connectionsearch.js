@@ -82,13 +82,13 @@ jQuery(document).ready(function($) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="6">Collect Tax</option></select>');
 			        				   }
 			        				   else if (cscUserRole!=null && cscUserRole!="") {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 			        				   else if (ulbUserRole!=null &&  ulbUserRole!="" && full.resource.clauses.connectiontype =='METERED'&&  full.resource.searchable.closureType==null  ) {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 			        				   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.connectiontype !='METERED' && full.resource.searchable.closureType ==null) {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 			        				   
 			        				   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='P') {
@@ -120,13 +120,13 @@ jQuery(document).ready(function($) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="6">Collect Tax</option></select>');
 			        				   }
 			        				   else if (cscUserRole!=null && cscUserRole!="") {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 			        				   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.connectiontype =='METERED' &&  full.resource.searchable.closureType==null  ) {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 			        				   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.connectiontype !='METERED' && full.resource.searchable.closureType ==null) {
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 			        				  else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='T') {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option></select>');
@@ -135,7 +135,7 @@ jQuery(document).ready(function($) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 			        				   }
 			        				   else if(superUserRole!=null && superUserRole!="" ){
-			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 			        				   }
 
 			        			   } else if ((cscUserRole!=null && cscUserRole!="" )&& full.resource.clauses.status == 'DISCONNECTED') {
@@ -154,10 +154,10 @@ jQuery(document).ready(function($) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Tax</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && full.resource.searchable.closureType==null) {
-			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option></select>');
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!="" &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && full.resource.searchable.closureType==null) {
-			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="9">Closure of Connection</option></select>');
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='T') {
 		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option></select>');
@@ -167,7 +167,7 @@ jQuery(document).ready(function($) {
 		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 		        				   }
 			        			   else if(superUserRole!=null && superUserRole!=""){
-			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T' ) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">ReConnectionn</option></select>');
@@ -279,7 +279,12 @@ jQuery(document).ready(function($) {
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
 										} 
-										
+										if (this.value == 11) {
+											var url = '/wtms/viewDcb/consumerCodeWis/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} 
 
 									});
 

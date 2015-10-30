@@ -147,6 +147,11 @@
         <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dCBReport-search.jsp"/>
     </definition>
+         <definition name="currentDcb-new" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/currentViewDcb-new.jsp"/>
+    </definition>
+    
      <definition name="newconnection-dataEntryEditForm" extends="base_layout">
         <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>

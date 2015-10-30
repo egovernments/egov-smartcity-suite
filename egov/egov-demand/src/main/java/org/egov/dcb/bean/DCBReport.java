@@ -62,6 +62,7 @@ public class DCBReport {
 	private BigDecimal totalRebate;
 	private BigDecimal totalBalance;
 	private String TAX = "TAX";
+	private String WTTAX = "WT_CHARGES"; 
 	private String PENALTY = "PENALTY";
 	private String FINES = "FINES";
 	private BigDecimal totalRcptAmt;
@@ -127,8 +128,9 @@ public class DCBReport {
 
 	public void setRecords(Map<Installment, DCBRecord> records) {
 		this.records = records;
-		calculateBalances();
 		calculateTotals();
+		calculateBalances();
+		
 	}
 
 	public void calculateBalances() {
@@ -185,6 +187,14 @@ public class DCBReport {
 							totalRebate = totalRebate.add(record.getValue()
 									.getRebates().get(fieldName));
 						}
+						if (fieldName.equals(WTTAX)) {
+                                                    totalDmdTax = totalDmdTax.add(record.getValue()
+                                                                    .getDemands().get(fieldName));
+                                                    totalColTax = totalColTax.add(record.getValue()
+                                                                    .getCollections().get(fieldName));
+                                                    totalRebate = totalRebate.add(record.getValue()
+                                                                    .getRebates().get(fieldName));
+                                            }
 						if (fieldName.equals(PENALTY)) {
 							totalDmdPnlty = totalDmdPnlty.add(record.getValue()
 									.getDemands().get(fieldName));

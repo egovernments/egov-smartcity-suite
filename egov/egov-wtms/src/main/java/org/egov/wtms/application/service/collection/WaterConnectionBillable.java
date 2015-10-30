@@ -40,13 +40,16 @@
 package org.egov.wtms.application.service.collection;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
+import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
@@ -93,6 +96,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private UserService userService;
     @Autowired
     private EgBillDao egBillDAO;
+    @Autowired
+    private EgDemandDao egDemandDAO;
 
     @Autowired
     private ModuleService moduleService;
@@ -118,8 +123,15 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public List<EgDemand> getAllDemands() {
-        // TODO Auto-generated method stub
-        return null;
+        List<EgDemand> demands = null;
+        System.out.println(getCurrentDemand() );
+        final Long demandIds = getCurrentDemand().getId();
+        if (demandIds != null ) {
+            demands = new ArrayList<EgDemand>();
+            
+                demands.add(egDemandDAO.findById(Long.valueOf(demandIds.toString()), false));
+        }
+        return demands;
     }
 
     @Override
