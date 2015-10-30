@@ -134,7 +134,7 @@ public class CurrentViewDcbController {
                         waterConnectionDetails.getConnectionType().name()));
         if (waterConnectionDetails.getDemand() != null) {
             final DCBServiceImpl dcbdemandService = (DCBServiceImpl) context.getBean("dcbdemandService");
-            final DCBDisplayInfo dcbDispInfo = currentDcbService.getdcbDispInfo();
+            final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo();
             final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                     .getBean("waterConnectionBillable");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -145,7 +145,6 @@ public class CurrentViewDcbController {
             dcbdemandService.setBillable(waterConnectionBillable);
             dCBReport = dcbdemandService.getCurrentDCBAndReceipts(dcbDispInfo);
             receiptsInDescendingOrderOfReceiptDate();
-            // dCBReport.setTotalRcptAmt(getNoReceiptTotal(waterConnectionBillable.getWaterConnectionDetails().getConnection().getConsumerCode()));
             cancelRcpt = populateCancelledReceiptsOnly();
             activeRcpts = populateActiveReceiptsOnly();
             model.addAttribute("totalRcptAmt", calculateReceiptTotal());
