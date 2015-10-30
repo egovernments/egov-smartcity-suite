@@ -92,6 +92,7 @@ public class HoardingService {
     public Hoarding createHoarding(final Hoarding hoarding) {
         if (hoarding != null && hoarding.getId() == null)
             hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
+        roundOfAllTaxAmount(hoarding);
         return hoardingRepository.save(hoarding);
     }
 
@@ -125,7 +126,19 @@ public class HoardingService {
         // update demand details.
         if (anyDemandPendingForCollection)
             advertisementDemandService.updateDemand(hoarding, actualHoarding.getDemandId());
+        roundOfAllTaxAmount(hoarding);
         return hoardingRepository.save(hoarding);
+    }
+
+    private void roundOfAllTaxAmount(final Hoarding hoarding) {
+        if(hoarding.getEncroachmentFee()!=null)
+            hoarding.setEncroachmentFee(hoarding.getEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
+        
+        if(hoarding.getTaxAmount()!=null)
+            hoarding.setTaxAmount( hoarding.getTaxAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+            
+        if(hoarding.getPendingTax()!=null)
+            hoarding.setPendingTax( hoarding.getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP)); 
     }
 
     private boolean checkPendingTaxChanged(Hoarding hoarding, Hoarding actualHoarding) {

@@ -155,7 +155,7 @@ public class AdvertisementDemandService {
         egDemand.getEgDemandDetails().addAll(demandDetailSet);
         egDemand.setIsHistory("N");
         egDemand.setCreateDate(new Date());
-        egDemand.setBaseDemand(totalDemandAmount);
+        egDemand.setBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         egDemand.setModifiedDate(new Date());
         return egDemand;
     }
@@ -196,7 +196,7 @@ public class AdvertisementDemandService {
                         && taxAmount.compareTo(BigDecimal.ZERO) > 0) {
                     // TODO: Also check whether fully collected ?
                     totalDemandAmount = totalDemandAmount.add(taxAmount.subtract(dmdDtl.getAmount()));
-                    dmdDtl.setAmount(taxAmount);
+                    dmdDtl.setAmount(taxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
                 }
                 // Encroachment fee may not mandatory. If already part of demand
@@ -207,7 +207,7 @@ public class AdvertisementDemandService {
                             && hoarding.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
                         totalDemandAmount = totalDemandAmount.add(hoarding.getEncroachmentFee().subtract(
                                 dmdDtl.getAmount()));
-                        dmdDtl.setAmount(hoarding.getEncroachmentFee());
+                        dmdDtl.setAmount(hoarding.getEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
@@ -226,7 +226,7 @@ public class AdvertisementDemandService {
                                 installment), BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(hoarding.getEncroachmentFee());
             }
-            demand.addBaseDemand(totalDemandAmount);
+            demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         }
         return demand;
@@ -251,7 +251,7 @@ public class AdvertisementDemandService {
  */
     public EgDemandDetails createDemandDetails(final BigDecimal dmdAmount, final EgDemandReason egDemandReason,
             final BigDecimal amtCollected) {
-        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
+        return EgDemandDetails.fromReasonAndAmounts(dmdAmount.setScale(0, BigDecimal.ROUND_HALF_UP), egDemandReason, amtCollected);
     }
 /**
  * 
