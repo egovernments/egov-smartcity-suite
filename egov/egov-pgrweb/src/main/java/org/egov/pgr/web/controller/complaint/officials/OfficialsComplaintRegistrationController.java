@@ -102,7 +102,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
         }
 
         try {
-
+            complaint.setSupportDocs(addToFileStore(files));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());
