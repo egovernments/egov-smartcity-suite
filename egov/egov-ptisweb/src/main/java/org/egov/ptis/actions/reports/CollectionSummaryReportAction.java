@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,7 +38,9 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.CollectionSummary;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -58,38 +59,46 @@ public class CollectionSummaryReportAction extends BaseFormAction {
      */
     private static final long serialVersionUID = -3560529685172919434L;
     private final Logger LOGGER = Logger.getLogger(getClass());
-    private String mode;
+    
     private Map<Long, String> zoneBndryMap;
     private Map<Long, String> wardBndryMap;
     private Map<Long, String> blockBndryMap;
     private Map<Long, String> localityBndryMap;
     private Map<Character, String> collectionModesMap;
-    private String fromDate;
-    private String toDate;
-    private String boundaryId;
-    private String collMode;
-    private String transMode;
+    private List<Map<String, Object>> resultList;
+    private List<PropertyUsage> propUsageList;
+    
     @Autowired
     public PropertyTaxUtil propertyTaxUtil;
     @Autowired
     public FinancialYearDAO financialYearDAO;
-    private List<Map<String, Object>> resultList;
+    @Autowired
+    public PropertyUsageDAO propertyUsageDAO;
+    @Autowired
+    private BoundaryService boundaryService;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    
     public static final String ZONEWISE = "zoneWise";
     public static final String WARDWISE = "wardWise";
     public static final String BLOCKWISE = "blockWise";
     public static final String LOCALITYWISE = "localityWise";
     public static final String USAGEWISE = "usageWise";
-    private String dateSelected;
     private static final String CURR_DATE = "currentDate";
-    @Autowired
-    private BoundaryService boundaryService;
-    private String finYearStartDate;
-    private Map<String, String> propTypeCategoryMap = new TreeMap<String, String>();
+    
     private Long zoneId;
     private Long wardId;
     private Long areaId;
+    
     private String propTypeCategoryId;
+    private String finYearStartDate;
+    private String dateSelected;
+    private String fromDate;
+    private String toDate;
+    private String boundaryId;
+    private String collMode;
+    private String transMode;
+    private String mode;
 
     BigDecimal taxAmount = ZERO, totTaxAmt = ZERO, arrearTaxAmount = ZERO, totArrearTaxAmt = ZERO, penaltyAmount = ZERO,
             totPenaltyAmt = ZERO;
@@ -139,9 +148,8 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         prepareBlockDropDownData(wardId != null, areaId != null);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepare method");
-        propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
-        propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
-        setPropTypeCategoryMap(propTypeCategoryMap);
+        propUsageList = propertyUsageDAO.getPropUsageAscOrder();
+        addDropdownData("propUsageList", propUsageList);
     }
 
     /**
@@ -560,12 +568,12 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         this.zoneBndryMap = zoneBndryMap;
     }
 
-    public Map<String, String> getPropTypeCategoryMap() {
-        return propTypeCategoryMap;
+    public List<PropertyUsage> getPropUsageList() {
+        return propUsageList;
     }
 
-    public void setPropTypeCategoryMap(final Map<String, String> propTypeCategoryMap) {
-        this.propTypeCategoryMap = propTypeCategoryMap;
+    public void setPropUsageList(List<PropertyUsage> propUsageList) {
+        this.propUsageList = propUsageList;
     }
 
     public Long getZoneId() {

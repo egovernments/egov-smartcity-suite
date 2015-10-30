@@ -156,13 +156,12 @@
 			            </s:elseif>
 			            <s:elseif test="%{mode=='usageWise'}"> 
 							<div class="form-group">
-								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
-											name="property.type" /> :</label>
+								<label for="field-1" class="col-sm-2 control-label text-right">Property Usages :</label>
 								<div class="col-sm-3 add-margin">
 										<s:select headerKey="-1"
 											headerValue="%{getText('default.all')}" name="propTypeCategoryId"
-											id="propTypeCategoryId" listKey="key" listValue="value"
-											list="propTypeCategoryMap" cssClass="form-control" value="%{propTypeCategoryId}" 
+											id="propTypeCategoryId" listKey="id" listValue="usageName"
+											list="propUsageList" cssClass="form-control" value="%{propTypeCategoryId}" 
 											/>
 								</div>			
 							

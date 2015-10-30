@@ -1931,7 +1931,7 @@ public class PropertyTaxUtil {
                 if (propTypeCategoryId != null && !propTypeCategoryId.equals("") && !propTypeCategoryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Transaction Mode = " + transMode);
-                    srchQryStr = srchQryStr + "and cs.property.propertyDetail.categoryType = '" + propTypeCategoryId + "' ";
+                    srchQryStr = srchQryStr + "and  EXISTS (select floor.propertyDetail from Floor floor where floor.propertyDetail = cs.property.propertyDetail and floor.propertyUsage = '" + propTypeCategoryId + "')) ";
                 }
                 if (zoneId != null && !zoneId.equals("") && zoneId != -1)
                     srchQryStr = srchQryStr + " and cs.zoneId.id =" + zoneId;
