@@ -1,0 +1,1 @@
+alter table egpt_basic_property alter column regd_doc_no type varchar(64);
