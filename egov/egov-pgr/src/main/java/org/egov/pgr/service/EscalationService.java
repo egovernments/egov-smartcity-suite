@@ -167,7 +167,7 @@ public class EscalationService {
                 superiorPosition = positionHierarchy.getToPosition();
                 superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
             } else {
-                final Set<User> users = userService.getUsersByRoleName("Grievance Officer");
+                final Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
                 if (!users.isEmpty())
                     superiorUser = users.iterator().next();
                 if (superiorUser != null)
