@@ -109,10 +109,10 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBillAddress() {
-        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null)
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null && agencyWiseCollection.getAgency().getAddress()!=null)
             return agencyWiseCollection.getAgency().getAddress();
 
-        return null;
+        return "";
     }
 
     @Override
