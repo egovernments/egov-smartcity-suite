@@ -97,7 +97,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("propertyTaxBillable")
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
-RebateCalculator {
+        RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "R";
     private static final String STRING_SERVICE_CODE = "PT";
@@ -492,12 +492,14 @@ RebateCalculator {
                     penaltyAndRebate = new PenaltyAndRebate();
                     penaltyAndRebate.setRebate(calculateEarlyPayRebate(tax));
 
-                    if (existingPenaltyDemandDetail == null)
-                        penaltyAndRebate.setPenalty(calculatePenalty(
-                                null,
-                                getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
-                                        basicProperty.getAssessmentdate()),
-                                        balance));
+                    if (existingPenaltyDemandDetail == null) {
+                        Date penaltyEffectiveDate = getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
+                                basicProperty.getAssessmentdate());
+                        if (penaltyEffectiveDate.before(new Date())) {
+                            penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate,
+                                    balance));
+                        }
+                    }
                     else
                         penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
                                 existingPenaltyDemandDetail.getAmtCollected()));
@@ -513,9 +515,9 @@ RebateCalculator {
             final Date assmentDate) {
         final DateTime installmentDate = new DateTime(installment.getFromDate());
         final DateTime firstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_FIRST_HALF.toDate())
-        .withYear(installmentDate.getYear());
+                .withYear(installmentDate.getYear());
         final DateTime secondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_SECOND_HALF.toDate())
-        .withYear(installmentDate.getYear());
+                .withYear(installmentDate.getYear());
         /**
          * If assessment date falls in the installment on which penalty is being calculated then penalty calculation will be
          * effective from two months after the assessment date
