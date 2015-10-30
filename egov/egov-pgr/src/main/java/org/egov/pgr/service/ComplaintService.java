@@ -331,13 +331,13 @@ public class ComplaintService {
         user = state.getOwnerUser();
         user = state.getOwnerUser();
         if (null != user) {
-            map.put("user", user.getName() + "::" + user.getUsername());
+            map.put("user", user.getUsername() + "::" + user.getName());
             map.put("usertype", null != user.getType() ? user.getType() : "");
             map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                     ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
         } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
             user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-            map.put("user", null != user.getUsername() ? user.getName() + "::" + user.getUsername() : "");
+            map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
             map.put("usertype", null != user.getType() ? user.getType() : "");
             map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
@@ -356,13 +356,13 @@ public class ComplaintService {
             final Position owner = stateHistory.getOwnerPosition();
             user = stateHistory.getOwnerUser();
             if (null != user) {
-                HistoryMap.put("user", user.getName() + "::" + user.getUsername());
+                HistoryMap.put("user", user.getUsername() + "::" + user.getName());
                 HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
                 HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                         ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != owner && null != owner.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                HistoryMap.put("user", null != user.getUsername() ? user.getName() + "::" + user.getUsername() : "");
+                HistoryMap.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                 HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
                 HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
                         ? owner.getDeptDesig().getDepartment().getName() : "");
