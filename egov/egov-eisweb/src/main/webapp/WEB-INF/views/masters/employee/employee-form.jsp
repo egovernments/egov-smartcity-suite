@@ -91,7 +91,7 @@
 							
 							<div class="panel-body custom-form">
 							<c:if test="${mode == 'create'}">
-                    			<form:hidden path="password" value="804Mqu@123"/>
+                    			<form:hidden path="password" value="demo"/>
                             </c:if>
 				 			<c:if test="${mode == 'update'}">
                     			<form:hidden path="password" value="${employee.password}"/>
