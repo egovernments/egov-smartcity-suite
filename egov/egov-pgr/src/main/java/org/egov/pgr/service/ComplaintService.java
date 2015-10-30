@@ -159,14 +159,17 @@ public class ComplaintService {
             complaint.getComplainant().setMobile(user.getMobileNumber());
         }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
-        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
-            final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-            if (bndryId != null && bndryId != 0) {
-                final Boundary location = boundaryService.getBoundaryById(bndryId);
-                complaint.setLocation(location);
-            } else
-                throw new ValidationException("location.not.valid");
-        }
+        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0)
+            try {
+                final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
+                if (bndryId != null && bndryId != 0) {
+                    final Boundary location = boundaryService.getBoundaryById(bndryId);
+                    complaint.setLocation(location);
+                } else
+                    throw new ValidationException("gis.location.info.not.found");
+            } catch (final Exception e) {
+                throw new ValidationException("gis.location.info.not.found");
+            }
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getUsername() + "::"
                 + complaint.getComplainant().getUserDetail().getName())
