@@ -41,6 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -312,13 +313,13 @@
 								<spring:message code="lbl.tax"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${hoarding.taxAmount}
+									  <fmt:formatNumber type="number" maxFractionDigits="2" minFractionDigits="2" value="${hoarding.taxAmount}" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.enc.fee"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.encroachmentFee}" default="N/A"/>
+									  <fmt:formatNumber type="number" maxFractionDigits="2" minFractionDigits="2" value="${hoarding.encroachmentFee}" />
 								</div>
 								
 								
@@ -329,7 +330,9 @@
 								<spring:message code="lbl.pendingtax"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.pendingTax}" default="N/A"/>
+									
+									  <fmt:formatNumber type="number"  maxFractionDigits="2" minFractionDigits="2" value="${hoarding.pendingTax}" />
+						
 								</div>
 							</div>
 					</div>

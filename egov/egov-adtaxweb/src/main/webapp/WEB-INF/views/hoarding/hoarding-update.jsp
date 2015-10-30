@@ -41,6 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -120,7 +121,7 @@
 								<spring:message code="lbl.hoarding.agency"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
+									<input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
 									<form:hidden path="agency" id="agencyId" value="${hoarding.agency.id}" />
 									<form:errors path="agency" cssClass="error-msg" />
 								</div>
@@ -307,14 +308,18 @@
 								<spring:message code="lbl.tax"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="taxAmount" id="taxAmount" required="required"/>
+								 
+								 <fmt:formatNumber var='vartaxAmount' type="number" pattern="###.##" maxFractionDigits="2" minFractionDigits="2" value="${hoarding.taxAmount}" />
+						  		 <form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  value="${vartaxAmount}" path="taxAmount" id="taxAmount" required="required"/>
                                		<form:errors path="taxAmount" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.enc.fee"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="encroachmentFee" id="encroachmentFee"/>
+									 <fmt:formatNumber var='varencroachmentFee' type="number" pattern="###.##"  maxFractionDigits="2" minFractionDigits="2" value="${hoarding.encroachmentFee}" />
+						  	
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15" value="${varencroachmentFee}" path="encroachmentFee" id="encroachmentFee"/>
                                		<form:errors path="encroachmentFee" cssClass="error-msg" />
 								</div>
 							</div>
@@ -325,7 +330,9 @@
 									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="pendingTax" id="pendingTax" required="required"/>
+								 <fmt:formatNumber var='varPendingTax' type="number" maxFractionDigits="2" pattern="###.##"  minFractionDigits="2" value="${hoarding.pendingTax}" />
+						  	
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  value="${varPendingTax}"  path="pendingTax" id="pendingTax" required="required"/>
                                		<form:errors path="pendingTax" cssClass="error-msg" />
 								</div>
 							</div>
@@ -346,13 +353,12 @@
 							<c:forEach var="docs" items="${hoardingDocumentTypes}" varStatus="status">	
 								<div class="form-group">
 									<div class="col-sm-1 text-center">${status.index+1}</div>
-									<div class="col-sm-5 text-center">${docs.mandatory ? "<span
-									class='mandatory'></span>" : ""}${docs.name}
+									<div class="col-sm-5 text-center">${hoarding.documents[status.index].doctype.mandatory ? "<span
+									class='mandatory'></span>" : ""}${hoarding.documents[status.index].doctype.name}
 									</div>
 									<div class="col-sm-3 text-center">
 										<input type="checkbox" ${hoarding.documents[status.index].enclosed && hoarding.documents[status.index].files.size()>0 ? "checked='checked'  disabled='disabled'" : ""} 
-										name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
-										
+										name="documents[${status.index}].enclosed" ${hoarding.documents[status.index].doctype.mandatory ? "required='required'" : ""}>
 									
 									</div>
 									<div class="col-sm-3 text-center">
@@ -363,11 +369,10 @@
 										</a>
 								 	
 										</c:forEach>
-									 		
-										
+									 	
 										<input type="file" name="documents[${status.index}].attachments" class="form-control" >
 										<form:errors path="documents[${status.index}].attachments" cssClass="add-margin error-msg" />
-										<form:hidden path="documents[${status.index}].doctype" value="${docs.id}" /> 
+										<form:hidden path="documents[${status.index}].doctype" value="${hoarding.documents[status.index].doctype.id}" /> 
 								 		<form:hidden path="documents[${status.index}].id" value="${hoarding.documents[status.index].id}" /> 
 								 		
 									</div>
@@ -384,7 +389,7 @@
 		</div>
 		<div class="text-center">
 			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+			<%-- <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button> --%>
 		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 		</div>
 	</form:form>

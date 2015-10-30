@@ -107,7 +107,7 @@
 								<spring:message code="lbl.hoarding.agency"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
+									<input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
 									<form:hidden path="agency" id="agencyId" value="${hoarding.agency.id}" />
 									<form:errors path="agency" cssClass="error-msg" />
 								</div>

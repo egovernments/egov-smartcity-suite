@@ -23,8 +23,8 @@ $(document).ready(function(){
 	});
 	
    agency.initialize(); // Instantiate the Typeahead UI
-	
-	$('.typeahead').typeahead({
+	 
+	/*$('.typeahead').typeahead({
 		  hint: true,
 		  highlight: true,
 		  minLength: 1
@@ -37,7 +37,21 @@ $(document).ready(function(){
    		if($('#agencyTypeAhead').val() == ''){
    			$("#agencyId").val(''); //reset hidden element value
    	    }
-   });
+   });*/
+	
+	
+	
+	var agency_typeahead=$('#agencyTypeAhead').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 1
+	}, {
+		displayKey : 'name',
+		source : agency.ttAdapter()
+	});
+	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
+	
+	
    
 	/*$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
