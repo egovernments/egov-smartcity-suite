@@ -239,7 +239,8 @@
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
 					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equals(userDesignation)}">
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equals(userDesignation) &&
+						  !@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equals(userDesignation)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
 							<td class="bluebox"><s:text name="docValue" /><span

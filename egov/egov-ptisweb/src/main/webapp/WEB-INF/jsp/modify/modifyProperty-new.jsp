@@ -140,8 +140,13 @@
 					<input type="button" name="button2" id="button2" value="Close" class="btn btn-primary" onclick="window.close();" /></td>
 				</div>
 				</s:if>
-				<s:else>
+				<s:elseif test="%{propertyByEmployee == true}">
 				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+				<div class="buttonbottom" align="center">
+					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+				</div>
+				</s:elseif>
+				<s:else>
 				<div class="buttonbottom" align="center">
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 				</div>

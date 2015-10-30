@@ -51,12 +51,8 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -73,22 +69,15 @@ public class MutationFeeCollection extends TaxCollection {
     private PropertyTransferService propertyTransferService;
     
     @Autowired
-    private PersistenceService persistenceService;
+    private PersistenceService<PropertyMutation, Long> propertyMutationService;
 
     @Autowired
     private EgBillDao egBillDAO;
     
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    protected AssignmentService assignmentService;
-
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo bri) {
-        final User user = securityUtils.getCurrentUser();
         final PropertyMutation propertyMutation = propertyTransferService.getPropertyMutationByApplicationNo(getEgBill(
                 bri.getBillReferenceNum()).getConsumerId());
         propertyMutation.setReceiptDate(bri.getReceiptDate());
@@ -96,8 +85,8 @@ public class MutationFeeCollection extends TaxCollection {
         propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
                 .withOwner(propertyMutation.getState().getOwnerPosition()).withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
                 .withNextAction(WF_STATE_COMMISSIONER_APPROVAL_PENDING);
-        persistenceService.persist(propertyMutation);
-        persistenceService.getSession().flush();
+        propertyMutationService.persist(propertyMutation);
+        propertyMutationService.getSession().flush();
     }
 
     @Override
@@ -107,14 +96,6 @@ public class MutationFeeCollection extends TaxCollection {
 
     private EgBill getEgBill(final String billRefNo) {
         return egBillDAO.findById(Long.valueOf(billRefNo), false);
-    }
-
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    public void setPersistenceService(PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
     }
 
     @Override

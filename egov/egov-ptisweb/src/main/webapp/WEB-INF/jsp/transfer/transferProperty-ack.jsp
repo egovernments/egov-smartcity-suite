@@ -57,7 +57,6 @@
 			<s:hidden name="mutationId" id="mutationId" value="%{id}"></s:hidden>
 			<s:token/>
 				<div class="formmainbox">
-					<div class="formheading"></div>
 					<div class="headingbg">
 						<s:text name="transOwnAck" />
 					</div>

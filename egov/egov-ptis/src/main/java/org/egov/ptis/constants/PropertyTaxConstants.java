@@ -563,6 +563,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REVENUE_CLERK_APPROVED = "Revenue Clerk Approved";
     public static final String WF_STATE_COMMISSIONER_APPROVAL_PENDING = "Commissioner Approval Pending";
     public static final String WF_STATE_CLOSED = "Closed";
+    public static final String WF_STATE_ASSISTANT_APPROVAL_PENDING = "Assistant Approval Pending";
+    
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -643,11 +645,13 @@ public interface PropertyTaxConstants {
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
     public static final String REVENUE_OFFICER_DESGN = "Revenue officer";
-    public static final String REVENUE_INSPECTOR_DESGN = "Revenue Inspector";
+    public static final String REVENUE_INSPECTOR_DESGN = "UD Revenue Inspector";
     public static final String REVENUE_CLERK_DESGN = "Revenue Clerk";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String BILL_COLLECTOR_DESGN = "Bill Collector";
     public static final String END_APPROVER_DESGN = "RO";
+    public static final String JUNIOR_ASSISTANT = "Junior Assistant";
+    public static final String SENIOR_ASSISTANT = "Senior Assistant";
 
     public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
     public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";

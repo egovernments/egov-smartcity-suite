@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPE
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
@@ -76,9 +77,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -583,7 +584,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -619,7 +620,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into forwardView");
         validateApproverDetails();
         if (hasErrors())
-            if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -706,7 +707,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
-            if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))

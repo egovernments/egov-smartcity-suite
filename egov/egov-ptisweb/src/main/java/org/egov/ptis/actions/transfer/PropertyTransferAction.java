@@ -44,15 +44,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVED;
 
 import java.io.IOException;
@@ -292,6 +293,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
+        approverName = "";
         if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
             mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
         else
@@ -404,8 +406,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
             if (mutationId != null) {
-				propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
-						mutationId);
+                propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
+                        mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
             }
 
@@ -463,7 +465,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     addActionError(getText("mandatory.guardian"));
             }
 
-        if (getMutationId() != null && !userDesignation.equalsIgnoreCase(REVENUE_CLERK_DESGN)) {
+        if (getMutationId() != null
+                && !(userDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) || userDesignation
+                        .equalsIgnoreCase(SENIOR_ASSISTANT))) {
             if (propertyMutation.getMutationFee() == null)
                 addActionError(getText("mandatory.mutationFee"));
             else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
@@ -511,7 +515,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 final String stateValue = WF_STATE_REJECTED;
                 propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -641,7 +645,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferor.add(transferOwnerService.getUserDesigantion().getName());
                 argsForTransferor.add(transferOwnerService.getCityName());
-                
+
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getFullTranferorName());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
