@@ -433,15 +433,15 @@
 								</div>
 							</s:else>
                             
-                                <ul class="nav nav-tabs" id="settingstab">
+                                <!-- <ul class="nav nav-tabs" id="settingstab">
                                     <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
                                     <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
-                                </ul>
+                                </ul> -->
                             </div>
                             
                              <div class="panel-body custom-form">
-                                <div class="tab-content">
-                                    <div class="tab-pane fade active in" id="tradedetails">
+                                <div class="">
+                                    <div class="" id="">
 	                                         <%@ include file='../common/licensee.jsp'%>
 	                                          <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
@@ -454,7 +454,7 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
 											    <div class="col-sm-3 add-margin text-left">
-											         	<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
+											         	<s:checkbox theme="simple" key="motorInstalled" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
 											    </div>
 											</div>
 											<div class="form-group">
@@ -471,7 +471,7 @@
 											</script>
 											
 											<div class="form-group" id="addmoremotor">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /><span class="mandatory"></span></label>
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /></label>
 											    <div class="col-sm-3 add-margin">	
 											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" cssClass="form-control" />
 											    </div>		
@@ -493,19 +493,18 @@
 														} 														
 														findtotalHP();
 												</script>
-                                    </div>
-                                    
-                                    <div class="tab-pane fade" id="tradeattachments"> 
-                                        <div>
+												
+											<div>
 												<%@include file="../common/documentUpload.jsp" %>
-										</div>
+											</div>
+											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
                                     </div>
                                     
                             	</div>
                             </div>
                         </div> 
-                        <%@ include file='../common/commonWorkflowMatrix.jsp'%>
-						<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
+                        
                         </s:push>  
                     </s:form> 
                     </div>

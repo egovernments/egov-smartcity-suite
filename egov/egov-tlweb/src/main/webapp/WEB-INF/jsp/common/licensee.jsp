@@ -39,7 +39,9 @@
 #------------------------------------------------------------------------------->
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
+	<div class="panel-heading custom_form_panel_heading">
+	    <div class="panel-title">Trade Owner Details</div>
+	</div>
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
 	    <div class="col-sm-3 add-margin">

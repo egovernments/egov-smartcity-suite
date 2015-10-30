@@ -45,6 +45,9 @@
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
 	}
 </script>
+<div class="panel-heading custom_form_panel_heading">
+    <div class="panel-title">Enclosed Documents</div>
+</div>
 <div class="col-sm-12 view-content header-color hidden-xs">
 	<div class="col-sm-1 table-div-column"><s:text name="doctable.sno" /></div>
     <div class="col-sm-5 table-div-column"><s:text name="doctable.docname" /></div>
@@ -69,19 +72,19 @@
        	<div class="col-sm-3 text-center">
        		<s:if test="%{documents.isEmpty()}">
        			<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button"/>
 				</s:else>
 			</s:if>
 			<s:elseif test="%{documents[#status.index].files.isEmpty()}">
 				<s:hidden name="documents[%{#status.index}].id"/>
 				<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button"/>
 				</s:else>
 			</s:elseif>
 			<s:else>

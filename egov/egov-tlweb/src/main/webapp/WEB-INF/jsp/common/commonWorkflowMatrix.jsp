@@ -115,14 +115,15 @@ function populateApprover() {
    <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
      <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
 </s:if> --%>
-
 		
-		<div class="panel-title">
-			<s:text name="title.approval.information"/>
+		<div class="panel-heading custom_form_panel_heading">
+		    <div class="panel-title">
+				<s:text name="title.approval.information"/>
+			</div>
 		</div>
 		
-		<div class="row">
-             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.department"/></label>
+		<div class="form-group">
+             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.department"/><span class="mandatory"></span></label>
              <div class="col-sm-3 add-margin">
                  <s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
@@ -131,7 +132,7 @@ function populateApprover() {
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/eis"/>
              </div>
-             <label class="col-sm-2 add-margin text-right"><s:text name="wf.approver.designation"/></label>
+             <label class="col-sm-2 add-margin text-right"><s:text name="wf.approver.designation"/><span class="mandatory"></span></label>
              <div class="col-sm-3 add-margin">
                  <s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="form-control" />
@@ -140,8 +141,8 @@ function populateApprover() {
              </div>
          </div>
          
-         <div class="row">
-             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver"/></label>
+         <div class="form-group">
+             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver"/><span class="mandatory"></span></label>
              <div class="col-sm-3 add-margin">
                  <s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
 			  			value="%{approverPositionId}" cssClass="form-control" />
@@ -151,8 +152,8 @@ function populateApprover() {
 </s:if>
 
  <div id="workflowCommentsDiv" align="center">
-         <div class="row">
-             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.remarks"/></label>
+         <div class="form-group">
+             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.remarks"/><span class="mandatory"></span></label>
              <div class="col-sm-8 add-margin">
                  <textarea id="approverComments" name="approverComments" class="form-control" ></textarea>  
              </div>
