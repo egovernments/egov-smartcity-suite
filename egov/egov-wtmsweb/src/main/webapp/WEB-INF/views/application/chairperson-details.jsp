@@ -42,19 +42,19 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-     <form role="form" class="form-horizontal form-groups-bordered">
-					<div class="form-group">
+ <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  id="chairPersonDetailsform"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
+ 					<div class="form-group">
 						<label for="field-1" class="col-sm-4 control-label"><spring:message code="lbl.chairpersonname" /></label>
 						<div class="col-sm-4 add-margin">
 							<input type="textbox" class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" maxlength="32" id ="name">
 						</div>
 					</div>
 					<div class="form-group text-center" >
-						<button type="submit" class="btn btn-primary" id="buttonid"><spring:message code="lbl.add"/></button>
+						<button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.add"/></button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
-	         </form>
 	              <div class="row">
 					<div class="col-sm-12">
 						<h4>Available Names in the drop down:</h4>
@@ -62,7 +62,7 @@
 				 </div>
 					<table  class="table table-bordered datatable" id="chairperson-table">
 					</table>
-					
+		</form:form>			
 				<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	            type="text/javascript"></script>

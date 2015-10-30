@@ -53,7 +53,7 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 
 public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
     
-    SimpleDateFormat dateformat =  new SimpleDateFormat("MM-dd-yyyy");
+    SimpleDateFormat dateformat =  new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
     public JsonElement serialize(final ChairPerson chairPerson, final Type type, final JsonSerializationContext jsc) {
