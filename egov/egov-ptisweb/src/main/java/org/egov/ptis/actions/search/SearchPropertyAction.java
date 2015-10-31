@@ -61,6 +61,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,7 +90,10 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -146,6 +150,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private String fromDemand;
     private String toDemand;
     private String applicationType;
+    private boolean enableVacancyRemission;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -162,6 +167,9 @@ public class SearchPropertyAction extends BaseFormAction {
     @Autowired
     private PropertyService propertyService;
 
+    @Autowired
+    private VacancyRemissionService vacancyRemissionService;
+    
     @Override
     public Object getModel() {
         return null;
@@ -455,6 +463,10 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("address", basicProperty.getAddress().toString());
                 searchResultMap.put("source", basicProperty.getSource().toString());
                 searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
+                searchResultMap.put("propType",property.getPropertyDetail().getPropertyTypeMaster().getCode());
+                searchResultMap.put("isTaxExempted",String.valueOf(property.getIsExemptedFromTax()));
+                searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
+                searchResultMap.put("enableVacancyRemission", String.valueOf(enableVacancyRemission(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
                     searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
@@ -519,6 +531,24 @@ public class SearchPropertyAction extends BaseFormAction {
         }
     }
 
+    private boolean enableVacancyRemission(String upicNo){
+    	boolean vrFlag = false;
+    	VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionForProperty(upicNo);
+    	if(vacancyRemission!=null){
+    		if(vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED)){
+    			vrFlag = true;
+    		}
+    		if(vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)){
+    			if(vacancyRemission.getVacancyToDate().before(new Date())){
+    				vrFlag = true;
+    			}
+    		}
+    	}else{
+    		vrFlag = true;
+    	}
+    	return vrFlag;
+    }
+    
     /**
      * @param pmv
      * @return
@@ -529,6 +559,7 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
         }
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
+        Property property = basicProperty.getProperty();
         if(basicProperty!=null){
         	checkIsDemandActive(basicProperty.getProperty());
         }
@@ -541,6 +572,10 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("address", pmv.getPropertyAddress());
                 searchResultMap.put("source", pmv.getSource().toString());
                 searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
+                searchResultMap.put("propType",property.getPropertyDetail().getPropertyTypeMaster().getCode());
+                searchResultMap.put("isTaxExempted",String.valueOf(property.getIsExemptedFromTax()));
+                searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
+                searchResultMap.put("enableVacancyRemission", String.valueOf(enableVacancyRemission(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
                     searchResultMap.put("currDemand", "0");
                     searchResultMap.put("arrDemandDue", "0");

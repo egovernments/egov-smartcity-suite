@@ -115,4 +115,20 @@
     	<put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/revenueHome.jsp"/>
     </definition>
+
+    <definition name="vacancyRemission-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-form.jsp"/>
+    </definition>
+    
+    <definition name="vacancyRemission-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-edit.jsp"/>
+    </definition>
+    
+    <definition name="vacancyRemission-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-success.jsp"/>
+    </definition>
+    
 </tiles-definitions>

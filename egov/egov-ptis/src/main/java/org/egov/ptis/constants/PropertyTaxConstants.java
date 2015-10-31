@@ -1143,6 +1143,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_DEMAND_BILL = "Generate_demand_bill";
     public static final String APPLICATION_TYPE_TAX_EXEMTION = "Tax Exemption";
     public static final String APPLICATION_TYPE_DEMOLITION = "Demolition";
+    public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy Remission";
     
    
 
@@ -1180,4 +1181,10 @@ public interface PropertyTaxConstants {
  
     public static final String PROP_MUTATION_RSN = "TRANSFER";
     public static final String FILESTORE_MODULE_NAME = "PTIS";
+    
+    //Vacancy Remission
+    public static final String VR_STATUS_REJECTION_ACK_GENERATED = "Rejection Acknowledgement Generated";
+    public static final String VR_STATUS_WORKFLOW = "IN_WORKFLOW";
+    public static final String VR_STATUS_APPROVED = "APPROVED";
+    public static final String VR_STATUS_REJECTED = "REJECTED";
 }

@@ -55,10 +55,14 @@
 				} else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
 				} else if (selectedValue == 'EDIT_DATAENTRY') {
-						window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
+					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
 				} else if (selectedValue == 'ADD_EDIT_DEMAND') {
-						window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
-				} 
+					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
+				}/* else if (selectedValue == 'VacancyRemission') {
+					window.location = "/ptis/property/vacancyremission/" + assessmentNum;
+				} else if(selectedValue = 'VacancyRemissionMonthlyUpdate'){
+					window.location = "/ptis/property/vacancyremission/monthlyupdate/" + assessmentNum;
+				} */
 			}
 
 			function gotoSearchForm(){
@@ -152,6 +156,15 @@
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>
 												</option>
+												
+												<%-- <c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
+													<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) &&  
+														(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
+														<option value="VacancyRemission">
+															<s:text name="vacancyRemission"></s:text>
+														</option>
+													</s:if>
+												</c:if> --%>
 											</s:if>
 											<s:else>
 												<option value="RevisionPetition">
