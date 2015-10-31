@@ -131,12 +131,13 @@ public class ComplaintUpdationController {
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
+            if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
                 model.addAttribute("ward",
-                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "Administration"));
-            if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
+                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
                 model.addAttribute("location",
-                        crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Ward", "Location"));
+                        crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
+            }
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
 
             model.addAttribute("mailBody", complaintService.getEmailBody(complaint));
