@@ -164,6 +164,14 @@
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/donation-master.jsp"/>
     </definition>
+     <definition name="waterRates-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master.jsp"/>
+    </definition>
+      <definition name="waterRates-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-success.jsp"/>
+    </definition>
     <definition name="donation-master-success" extends="base_layout">
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>

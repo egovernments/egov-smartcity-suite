@@ -43,10 +43,16 @@ import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.entity.WaterRatesDetails;
+import org.egov.wtms.masters.entity.WaterRatesHeader;
+import org.egov.wtms.masters.entity.WaterSource;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.masters.service.WaterRatesDetailsService;
+import org.egov.wtms.masters.service.WaterRatesHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -73,6 +79,12 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+    
+    @Autowired
+    private WaterRatesHeaderService waterRatesHeaderService;
+    
+    @Autowired
+    private WaterRatesDetailsService waterRatesDetailsService;
 
     @Autowired
     private PipeSizeService pipeSizeService;
@@ -153,5 +165,18 @@ public class AjaxConnectionController {
             return 0;
         else
             return donationDetailsTemp.getAmount();
+    }
+    
+    @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam final ConnectionType categoryType,@RequestParam final WaterSource waterSource,
+            @RequestParam final UsageType usageType,
+            @RequestParam final PipeSize pipeSize) {
+        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource, pipeSize);
+        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService. findByWaterRatesHeader(waterRatesHeader);
+       
+        if (waterRatesDetails == null)
+            return 0;
+        else
+            return waterRatesDetails.getMonthlyRate();
     }
 }
