@@ -203,7 +203,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
             } else {
-                if((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE) || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION) )&& waterConnectionDetails.getCurrentState().getValue().equals("Closed")){
+                if((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE) || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION) )&& (waterConnectionDetails.getCurrentState().getValue().equals("Closed")||
+                        waterConnectionDetails.getCurrentState().getValue().equals("END"))){
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                             null, additionalRule, null, null);
                     if(wfmatrix !=null && !wfmatrix.getNextAction().equalsIgnoreCase("END"))

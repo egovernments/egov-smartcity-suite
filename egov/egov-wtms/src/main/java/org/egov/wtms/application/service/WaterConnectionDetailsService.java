@@ -592,7 +592,10 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
                     || WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails
-                            .getStatus().getCode()))
+                            .getStatus().getCode()) ||(!"".equals(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                                    && waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)
+                                    && waterConnectionDetails.getState().getValue().equals("Rejected")))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
@@ -603,13 +606,16 @@ public class WaterConnectionDetailsService {
                     || waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED)
                     || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED))
+                    .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED)
+                    ||(workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                            && waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
-                    || !workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                    || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                     && waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))
                     || !waterConnectionDetails.getState().getValue().equals("Rejected")
                     && !workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                     && (waterConnectionDetails.getStatus().getCode()
