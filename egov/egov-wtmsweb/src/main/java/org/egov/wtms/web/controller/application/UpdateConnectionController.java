@@ -258,16 +258,17 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .getApplicationType().getCode(), "", ""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
-        if ((waterConnectionDetails.getStatus().getCode()
-                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS) || waterConnectionDetails.getStatus().getCode()
-                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)) && waterConnectionDetails.getReConnectionReason()==null
-                && waterConnectionDetails.getCloseConnectionType() != null )
-            model.addAttribute("mode", "closeredit");
+        
         if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason() == null
                 && (waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)||(waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS) && waterConnectionDetails.getState().getValue().equals("Rejected"))))
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))))
             model.addAttribute("mode", "closereditForAE");
+        if ((waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS) || waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)) && waterConnectionDetails.getReConnectionReason()==null
+                && waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getState().getValue().equals("Rejected"))
+            model.addAttribute("mode", "closeredit");
         if (waterConnectionDetails.getReConnectionReason() != null
                 && waterConnectionDetails.getState().getValue().equals("Rejected"))
             if(waterConnectionDetails.getReConnectionReason() != null && waterConnectionDetails.getStatus().getCode()
@@ -386,9 +387,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED)|| waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)||
                             waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))||
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)||
                             waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)){
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))){
                 approvalPosition = waterTaxUtils.getApproverPosition("Revenue Clerk", waterConnectionDetails);
             }
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
