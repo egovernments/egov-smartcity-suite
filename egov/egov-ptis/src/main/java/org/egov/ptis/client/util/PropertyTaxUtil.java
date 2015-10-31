@@ -2279,4 +2279,11 @@ public class PropertyTaxUtil {
         LOGGER.debug("Exiting from prepareDemandDetForWorkflowProperty");
         return DCBDetails;
     }
+    
+    public String getApproverUserName(final Long approvalPosition) {
+        Assignment assignment = null;
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        return assignment != null ? assignment.getEmployee().getUsername() : "";
+    }
 }
