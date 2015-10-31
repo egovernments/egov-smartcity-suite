@@ -66,6 +66,7 @@
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${changeOfUse.connectionStatus}"/>
 				<form:hidden path="connection.propertyIdentifier" value="${changeOfUse.connection.propertyIdentifier}"/>
 				<form:hidden path="waterSource" value="${changeOfUse.waterSource.id}"/>
+				<form:hidden path="category" value="${changeOfUse.category.id}"/>
 				
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 			</div>	

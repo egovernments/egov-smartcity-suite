@@ -90,7 +90,7 @@ $(document).ready(function(){
 		}
 	});
 	$('#propertyType').change(function(){
-		 loadPropertyCategories();
+		 //loadPropertyCategories();
 		 loadPropertyUsageTypes();
 		 loadPropertyPipeTypes();
 });
@@ -214,6 +214,8 @@ $(document).ready(function(){
 	
 	$("#propertytaxdue").addClass("error-msg");
 	$("#waterSourceDropdown").prop("disabled", true);
+	$("#connectionCategorie").prop("disabled", true);
+	
 	
 	var connectionType = $('#connectionType').val();
 	var usageType = $('#usageType').val();
@@ -223,14 +225,14 @@ $(document).ready(function(){
 	
 	$(".btn-primary").click(function (){
 		if(($('#connectionType').val()==connectionType) && ($('#usageType').val()==usageType) 
-				&& ($('#category').val()==category) && ($('#propertyType').val()==propertyType)
+				&&($('#propertyType').val()==propertyType)
 				&& ($('#pipeSize').val()==pipeSize)) {
 			alert("Please modify at least one mandatory field");
 			return false;
 		}
 	});
 	
-	$('#connectionType,#usageType,#category,#propertyType,#pipeSize').change(function (){
+	$('#connectionType,#usageType,#propertyType,#pipeSize').change(function (){
 		$(".btn-primary").show();
 	});
 	
