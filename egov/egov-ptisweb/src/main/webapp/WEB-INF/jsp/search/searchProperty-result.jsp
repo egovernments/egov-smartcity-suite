@@ -172,12 +172,14 @@
 												</option>
 											</s:else>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
-												<option value="CollectTax">
-													<s:text name="collectTax"></s:text>
-												</option>
-										</s:if>		
-									</select>
+										<s:if
+										test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) || 
+											roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+										<option value="CollectTax">
+											<s:text name="collectTax"></s:text>
+										</option>
+									</s:if>
+								</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />
 								<display:setProperty name="paging.banner.items_name"
