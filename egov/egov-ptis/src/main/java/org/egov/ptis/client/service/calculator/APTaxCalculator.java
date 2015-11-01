@@ -154,7 +154,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                     // TODO think about, these beans to be client
                     // specific
                     boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
-                            .getId(), occupationDate);
+                            .getId(), occupationDate, floorIF.getStructureClassification().getId());
                     final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateNonVacantTax(property, floorIF,
                             boundaryCategory, applicableTaxes, installment);
                     totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
@@ -344,10 +344,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
-            final Long usageId, final Date occupancyDate) {
+            final Long usageId, final Date occupancyDate , final Long classification) {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
 
-        categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
+        categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,classification ,
                 occupancyDate, installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
