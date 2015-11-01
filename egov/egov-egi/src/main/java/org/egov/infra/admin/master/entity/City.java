@@ -53,7 +53,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
@@ -258,11 +257,10 @@ public class City extends AbstractAuditable {
     public Map<String, Object> toMap() {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put("cityurl", domainURL);
-        if (preferences == null) {
+        cityPrefs.put("cityname", name);
+        if (preferences == null)
             cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");
-            cityPrefs.put("cityname", name);
-        } else {
-            cityPrefs.put("cityname", StringUtils.isEmpty(preferences.getMunicipalityName()) ? name : preferences.getMunicipalityName());
+        else {
             cityPrefs.put("citylogo",
                     preferences.logoExist() ? String.format(LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : "");
             cityPrefs.put("corpAddress", preferences.getMunicipalityAddress());
