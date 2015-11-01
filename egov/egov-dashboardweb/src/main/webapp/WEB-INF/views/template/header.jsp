@@ -52,7 +52,7 @@
 						<c:set var="titleKey">
                 			<tiles:getAsString name="page-title"/>
             			</c:set>
-						${sessionScope.cityname}&nbsp;<spring:message code="${titleKey}"/>
+						${sessionScope.citymunicipalityname}&nbsp;<spring:message code="${titleKey}"/>
 						</span>
 					</div>
 				</a>

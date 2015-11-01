@@ -117,7 +117,7 @@
 					</div>
 					
 					<div class="navbar-brand">
-						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.cityname}</h3>
+						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
 					</div>
 					
 					<!-- notifications and other links -->

@@ -1303,7 +1303,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
-        final String cityName = request.getSession().getAttribute("cityname").toString();
+        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
 
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();

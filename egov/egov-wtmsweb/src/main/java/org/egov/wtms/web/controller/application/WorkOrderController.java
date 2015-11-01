@@ -123,7 +123,7 @@ public class WorkOrderController {
                 reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
                 reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
             }
-            reportParams.put("municipality", session.getAttribute("cityname"));
+            reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));

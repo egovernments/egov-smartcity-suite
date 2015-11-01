@@ -258,11 +258,13 @@ public class City extends AbstractAuditable {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put("cityurl", domainURL);
         cityPrefs.put("cityname", name);
-        if (preferences == null)
+        if (preferences == null) {
             cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");
-        else {
+            cityPrefs.put("citymunicipalityname", name);
+        } else {
             cityPrefs.put("citylogo",
                     preferences.logoExist() ? String.format(LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : "");
+            cityPrefs.put("citymunicipalityname", preferences.getMunicipalityName());
             cityPrefs.put("corpAddress", preferences.getMunicipalityAddress());
             cityPrefs.put("corpCallCenterNo", preferences.getMunicipalityCallCenterNo());
             cityPrefs.put("corpContactNo", preferences.getMunicipalityContactNo());

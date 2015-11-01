@@ -87,7 +87,7 @@ public class HomeController {
         modelData.addAttribute("inboxMessages", getAllInboxMessages());
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
         modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
-        modelData.addAttribute("cityName", session.getAttribute("cityname"));
+        modelData.addAttribute("cityName", session.getAttribute("citymunicipalityname"));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         return "citizen-home";
     }
