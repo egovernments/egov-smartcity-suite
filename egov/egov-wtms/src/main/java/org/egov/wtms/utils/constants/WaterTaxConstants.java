@@ -83,15 +83,19 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPECHANGEOFUSEEXECUTION = "changeofuseexecution";
     public static final String SMSEMAILTYPECHANGEOFUSEREJECTION = "changeofuserejection";
     public static final String SMSEMAILTYPECHANGEOFUSEFEEPAID = "changeofusefeepaid";
+    public static final String SMSEMAILTYPECLOSINGCONNAPPROVE = "closureofconnectionapprove";
+    public static final String SMSEMAILTYPECLOSINGCONNSANCTIONED = "closureofconnectionsanctioned";
+    public static final String SMSEMAILTYPERECONNECTIONAPPROVE = "reconnectionofconnectionapprove";
+    public static final String SMSEMAILTYPERECONNECTIONSANCTIONED = "reconnectionofconnectionsanctioned";
 
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
     // User Roles
     public static final String CSCOPERTAORROLE = "CSC Operator";
     public static final String CLERKULB = "ULB Operator";
-    public static final String  CLERKROLEFORADONI="Senior Assistant,Junior Assistant";
+    public static final String CLERKROLEFORADONI = "Senior Assistant,Junior Assistant";
     public static final String APPROVERROLE = "Water Tax Approver";
-    public static final String COMMISSIONERDEPARTEMNT ="Administration";
+    public static final String COMMISSIONERDEPARTEMNT = "Administration";
     public static final String SUPERUSER = "Super User";
 
     // Rest API constants
@@ -199,7 +203,6 @@ public class WaterTaxConstants {
     public static final String NONMETEREDDEMANDREASON = "Water tax charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
-   
 
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
@@ -227,8 +230,6 @@ public class WaterTaxConstants {
             put(WATERTAX_SECURITY_CHARGE, "1100201");
             put(WATERTAX_FIELDINSPECTION_CHARGE, "1100201");
             put(WATERTAXREASONCODE, "1405016");
-            
-           
 
         }
     };
