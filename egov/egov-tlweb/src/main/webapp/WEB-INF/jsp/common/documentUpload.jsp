@@ -72,19 +72,19 @@
        	<div class="col-sm-3 text-center">
        		<s:if test="%{documents.isEmpty()}">
        			<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis"/>
 				</s:else>
 			</s:if>
 			<s:elseif test="%{documents[#status.index].files.isEmpty()}">
 				<s:hidden name="documents[%{#status.index}].id"/>
 				<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis button"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis"/>
 				</s:else>
 			</s:elseif>
 			<s:else>
