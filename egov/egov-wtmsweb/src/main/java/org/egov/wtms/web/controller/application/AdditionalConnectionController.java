@@ -131,7 +131,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
-            @RequestParam String workFlowAction, final HttpServletRequest request) {
+            @RequestParam String workFlowAction, final HttpServletRequest request,final BindingResult errors) {
 
         final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
                 .getConnection().getParentConnection());
@@ -193,8 +193,21 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition != null)
+            if(userPosition ==null)
+            {
+                final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+                        .getActiveConnectionDetailsByConnection(addConnection.getConnection());
+                loadBasicDetails(addConnection, model, parentConnectionDetails);
+                prepareWorkflow(model,addConnection,new WorkflowContainer());
+                model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
+                model.addAttribute("stateType", addConnection.getClass().getSimpleName());
+                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping", "err.validate.connection.user.mapping");
+                return "addconnection-form";
+            }
+            else {
                 approvalPosition = userPosition.getId();
+            }
         }
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent,

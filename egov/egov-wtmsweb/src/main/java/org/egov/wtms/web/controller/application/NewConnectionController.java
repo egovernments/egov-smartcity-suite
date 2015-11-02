@@ -151,7 +151,7 @@ public class NewConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
+            final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,final BindingResult errors) {
 
         validatePropertyID(waterConnectionDetails, resultBinder);
 
@@ -197,8 +197,20 @@ public class NewConnectionController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails
                     .getConnection().getPropertyIdentifier());
-            if (userPosition != null)
+            if(userPosition ==null)
+            {
+                model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+                prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+                model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping", "err.validate.connection.user.mapping");
+                return "newconnection-form";
+            }
+            else {
                 approvalPosition = userPosition.getId();
+            }
+           
         }
 
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,

@@ -105,7 +105,6 @@
 												</div></div>
 												<div class="form-group">	<label class="col-sm-4 control-label text-right"><spring:message
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label><div class="col-sm-3 add-margin"> <input type="text"
-														class="form-control low-width" value="${var1.fromDate}"
 														name="waterRatesDetails[${counter.index}].fromDate"
 														id="waterRatesDetails[${counter.index}].fromDate"
 														class="form-control datepicker" data-date-end-date="0d"
