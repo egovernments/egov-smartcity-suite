@@ -79,7 +79,7 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name" required="required"/>
+							<form:input  class="form-control patternvalidation" path="complainant.name" id="f-name" placeholder="Name" data-pattern="alphabetwithspace" required="required"/>
 							<form:errors path="complainant.name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
