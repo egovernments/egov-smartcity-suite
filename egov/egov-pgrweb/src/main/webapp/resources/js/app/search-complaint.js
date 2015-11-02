@@ -37,85 +37,88 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-var tableContainer;
-
-
-    /*$(":input").inputmask();*/
-	
-    tableContainer1 = $("#complaintSearchResults"); 
-       
-    $(".datepicker").datepicker({
-        format: "dd/mm/yyyy"
-	});
+	var tableContainer;
 	
     $('#toggle-searchcomp').click(function () {
-        if ($(this).html() == "Advanced..") {
+        if ($(this).html() == "More..") {
             $(this).html('Less..');
             $('.show-searchcomp-more').show();
 			} else {
-            $(this).html('Advanced..');
+            $(this).html('More..');
             $('.show-searchcomp-more').hide();
 		}
 		
 	});
     
+    function validateEmail($email) {
+	  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+	  return emailReg.test( $email );
+	}
+    
+    tableContainer1 = $("#complaintSearchResults"); 
+    
     $('#searchComplaints').click(function () {
     	
     	if(DateValidation($('#start_date').val(), $('#end_date').val())){
-    		var urlStr="";
-        	if($('#currentLoggedUser').val()=='anonymous'){
-        		//alert(" citizen");
-           		urlStr="/pgr/complaint/citizen/anonymous/search";
-        	}
-        	else{
-        		urlStr="/pgr/complaint/search";
-        	}
-        	
-    	//	$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
-        	$.post(urlStr,$('#searchComplaintForm').serialize())
-        	.done(function (searchResult) {
-    			console.log(JSON.stringify(searchResult));
-    			
-    			tableContainer1 = $('#complaintSearchResults').dataTable({
-    				destroy:true,
-    				"sPaginationType": "bootstrap",
-    				//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-    				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
-    				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    				"autoWidth": false,
-    				"oTableTools": {
-    					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-    					"aButtons": [
-    					             { "sExtends": "xls",
-    					                 "mColumns": [0,1,2, 3, 4,5.6]},
-    					             { "sExtends": "pdf",
-    					                 "mColumns": [0,1,2, 3, 4,5.6]},
-    					             { "sExtends": "print",
-    					                 "mColumns": [0,1,2, 3, 4,5.6]},
-    					             ]
-    				},
-    				searchable:true,
-    				data: searchResult,
-    				columns: [
-    				{title: 'Complaint Number', data: 'resource.clauses.crn'},
-    				{title: 'Grievance Type', data: 'resource.searchable.complaintType.name'},
-    				{title: 'Name', data: 'resource.common.citizen.name'},
-    				{title: 'Location', data: 'resource.common.boundary.name'},
-    				{title: 'Status', data: 'resource.clauses.status.name'},
-    				{title: 'Department', data: 'resource.searchable.department.name'},
-    				{title: 'Registration Date',
-    					render: function (data, type, full) {
-    						if(full!=null && full.resource!= undefined && full.resource.common.createdDate != undefined) {
-    							var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
-    							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-    						}
-    						else return "";
-    			    	}
-    				},
-    				{data:'resource.searchable.owner.id',visible: false}
-    				]
-    			});
-    		});
+    		
+    		if( validateEmail($('#ct-email').val())) { 
+    			var urlStr="";
+            	if($('#currentLoggedUser').val()=='anonymous'){
+            		//alert(" citizen");
+               		urlStr="/pgr/complaint/citizen/anonymous/search";
+            	}
+            	else{
+            		urlStr="/pgr/complaint/search";
+            	}
+            	
+        	//	$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
+            	$.post(urlStr,$('#searchComplaintForm').serialize())
+            	.done(function (searchResult) {
+        			console.log(JSON.stringify(searchResult));
+        			
+        			tableContainer1 = $('#complaintSearchResults').dataTable({
+        				destroy:true,
+        				"sPaginationType": "bootstrap",
+        				//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+        				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+        				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        				"autoWidth": false,
+        				"oTableTools": {
+        					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+        					"aButtons": [
+        					             { "sExtends": "xls",
+        					                 "mColumns": [0,1,2, 3, 4,5.6]},
+        					             { "sExtends": "pdf",
+        					                 "mColumns": [0,1,2, 3, 4,5.6]},
+        					             { "sExtends": "print",
+        					                 "mColumns": [0,1,2, 3, 4,5.6]},
+        					             ]
+        				},
+        				searchable:true,
+        				data: searchResult,
+        				columns: [
+        				{title: 'Complaint Number', data: 'resource.clauses.crn'},
+        				{title: 'Grievance Type', data: 'resource.searchable.complaintType.name'},
+        				{title: 'Name', data: 'resource.common.citizen.name'},
+        				{title: 'Location', data: 'resource.common.boundary.name'},
+        				{title: 'Status', data: 'resource.clauses.status.name'},
+        				{title: 'Department', data: 'resource.searchable.department.name'},
+        				{title: 'Registration Date',
+        					render: function (data, type, full) {
+        						if(full!=null && full.resource!= undefined && full.resource.common.createdDate != undefined) {
+        							var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
+        							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+        						}
+        						else return "";
+        			    	}
+        				},
+        				{data:'resource.searchable.owner.id',visible: false}
+        				]
+        			});
+        		});
+    		}else{
+    			alert('Enter valid Email ID!');
+    		}
     	}
 	});
     
@@ -151,10 +154,9 @@ var tableContainer;
 			window.open("/pgr/complaint/view/"+crn);
 	});
 	
-    /*$("#when_date").change(function () {
+    $("#when_date").change(function () {
         populatedate($('#when_date').val());
-	});*/
-	
+	});
 	
     function populatedate(id) {
         var d = new Date();
@@ -162,30 +164,30 @@ var tableContainer;
         var start, end;
         switch (id) {
 			
-			case "last7":
+			case "lastsevendays":
 			$("#end_date").datepicker("setDate", d);
 			start = new Date(d.setDate((d.getDate() - 7)));
 			var start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
 			$("#start_date").datepicker("setDate", start);
 			break;
 			
-			case "last30":
+			case "lastthirtydays":
 			$("#end_date").datepicker("setDate", d);
 			start = new Date(d.setDate((d.getDate() - 30)));
 			var start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
 			$("#start_date").datepicker("setDate", start);
 			break;
 			
-			case "last90":
+			case "lastninetydays":
 			$("#end_date").datepicker("setDate", d);
 			start = new Date(d.setDate((d.getDate() - 90)));
 			var start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
 			$("#start_date").datepicker("setDate", start);
 			break;
 			
-			case "cdate":
-			$("#end_date").val("");
-			$("#start_date").val("");
+			case "today":
+			$("#end_date").datepicker("setDate", d);
+			$("#start_date").datepicker("setDate", d);
 			break;
 			
 			case "all":
