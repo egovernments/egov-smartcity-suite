@@ -106,14 +106,11 @@ $(document).ready(function(){
 					            dataType : 'json',
 					            success: function (response) {
 					    			console.log("success"+response);
-					    			alert("response"+response);
 					    			if(response > 0){
-					    				alert("overwrite block")
 					    				if(!overwritedonation(response))
 					    				return false;
 						    			}
 					    			else{
-					    				 alert("else block");
 					    				 document.forms[0].submit();
 					    				 return true;
 					    			}
