@@ -185,7 +185,7 @@ $(document).ready(function()
     		    	 }, 100);
 	    		 }	    			 
 			 }
-			 else if(status=='WORKORDERGENERATED' && action=='Tap Execution Date') {
+			 else if(status=='WORKORDERGENERATED' && action=='Execute Tap') {
 				 validateTapExecutionDate();
 			 }
 			 else if(status=='CREATED' && action == 'Reject' && mode == 'fieldInspection') {
@@ -284,15 +284,14 @@ $(document).ready(function()
 			var applicationDate = $('#appDate').val();	 
 			var executionDate = $('#executionDate').val();
 			if(applicationDate !='' && executionDate != '') {
-				if(!validateDateRange(applicationDate, executionDate)) {
-					bootbox.alert("The Execution Date can not be less than the Date of Application.");
-					$('#executionDate').val('');
-					
-					return false;			
-				}
-				else{
+				if(validateDateRange(applicationDate, executionDate)) {
 					validateWorkFlowApprover(action);
 			    	document.forms[0].submit();	
+				}
+				else{
+					bootbox.alert("The Execution Date can not be less than the Date of Application.");
+					$('#executionDate').val('');
+					return false;	
 				}
 			}
 		}
