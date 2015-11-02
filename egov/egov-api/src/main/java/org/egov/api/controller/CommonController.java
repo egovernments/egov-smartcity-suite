@@ -11,14 +11,11 @@ import org.egov.infra.admin.master.entity.Device;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.DeviceRepository;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +54,7 @@ public class CommonController extends ApiController {
      * @return Citizen
      */
     @RequestMapping(value = ApiUrl.CITIZEN_REGISTER, method = RequestMethod.POST, consumes = { "application/json" })
-    public @ResponseBody ResponseEntity<String> register(@RequestBody JSONObject citizen, final BindingResult errors) {
+    public @ResponseBody ResponseEntity<String> register(@RequestBody JSONObject citizen) {
         ApiResponse res = ApiResponse.newInstance();
         String msg = "";
 
