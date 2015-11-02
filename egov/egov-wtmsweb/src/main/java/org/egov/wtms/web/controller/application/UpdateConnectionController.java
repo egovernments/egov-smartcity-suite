@@ -390,11 +390,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)||
                             waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))){
-                approvalPosition = waterTaxUtils.getApproverPosition("Revenue Clerk", waterConnectionDetails);
+                approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.CLERKROLEFORADONI, waterConnectionDetails);
             }
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
-            return "redirect:/application/application-success?pathVars=" + pathVars;
+             return "redirect:/application/application-success?pathVars=" + pathVars;
         } else {
             if (waterConnectionDetails.getStatus().getCode()
                     .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))

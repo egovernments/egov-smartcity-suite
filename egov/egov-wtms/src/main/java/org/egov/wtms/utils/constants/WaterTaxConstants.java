@@ -89,7 +89,9 @@ public class WaterTaxConstants {
     // User Roles
     public static final String CSCOPERTAORROLE = "CSC Operator";
     public static final String CLERKULB = "ULB Operator";
+    public static final String  CLERKROLEFORADONI="Senior Assistant,Junior Assistant";
     public static final String APPROVERROLE = "Water Tax Approver";
+    public static final String COMMISSIONERDEPARTEMNT ="Administration";
     public static final String SUPERUSER = "Super User";
 
     // Rest API constants

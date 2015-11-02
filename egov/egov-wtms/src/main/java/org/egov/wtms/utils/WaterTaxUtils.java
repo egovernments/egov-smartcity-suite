@@ -243,7 +243,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -262,7 +262,20 @@ public class WaterTaxUtils {
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
-        return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(0).getPosition();
+        String commdesgnname = "";
+        final String[] degnName = commissionerDesgn.split(",");
+        if (degnName.length > 1)
+            commdesgnname = degnName[0];
+        else
+            commdesgnname = commissionerDesgn;
+        final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
+        if (commissionerDesgn.equals("Commissioner")) {
+            final Department deptObj = departmentService.getDepartmentByName(WaterTaxConstants.COMMISSIONERDEPARTEMNT);
+            return assignmentService
+                    .getPositionsByDepartmentAndDesignationForGivenRange(deptObj.getId(), desgnObj.getId(), new Date())
+                    .get(0).getPosition();
+        } else
+            return assignmentService.findPrimaryAssignmentForDesignationName(commdesgnname).get(0).getPosition();
     }
 
     public String getApproverUserName(final Long approvalPosition) {
@@ -280,18 +293,21 @@ public class WaterTaxUtils {
 
         final List<StateHistory> stateHistoryList = waterConnectionDetails.getState().getHistory();
         Long approverPosition = 0l;
+        final String[] desgnArray = designationName.split(",");
+
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
-            for (final StateHistory stateHistory : stateHistoryList) {
-                if(stateHistory.getOwnerPosition() !=null){
-                final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateHistory
-                        .getOwnerPosition().getId(), new Date());
-                for (final Assignment assgn : assignmentList)
-                    if (assgn.getDesignation().getName().equals(designationName)) {
-                        approverPosition = stateHistory.getOwnerPosition().getId();
-                        break;
-                    }
-            }
-            }
+            for (final StateHistory stateHistory : stateHistoryList)
+                if (stateHistory.getOwnerPosition() != null) {
+                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateHistory
+                            .getOwnerPosition().getId(), new Date());
+                    for (final Assignment assgn : assignmentList)
+                        for (final String str : desgnArray)
+                            if (assgn.getDesignation().getName().equals(str)) {
+                                approverPosition = stateHistory.getOwnerPosition().getId();
+                                break;
+                            }
+
+                }
             if (approverPosition == 0) {
                 final State stateObj = waterConnectionDetails.getState();
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
@@ -332,10 +348,12 @@ public class WaterTaxUtils {
     @ModelAttribute(value = "checkOperator")
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
+        // as per Adoni allowing collection for ULB Operator
         final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
         if (userObj != null)
             for (final Role role : userObj.getRoles())
-                if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE)) {
+                if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
+                        && role.getName().contains(WaterTaxConstants.CLERKULB)) {
                     isCSCOperator = true;
                     break;
                 }
@@ -351,13 +369,12 @@ public class WaterTaxUtils {
         Double finalDueAmount = (double) 0;
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
                 .getAllConnectionDetailsByParentConnection(parentId);
-        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails){
-            if (waterconnectiondetails.getDemand()!= null)
-            finalDueAmount = finalDueAmount
-            + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                    .getDemand().getAmtCollected().doubleValue());
-        }
-        System.out.println("fianl due amount->"+finalDueAmount);
+        for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
+            if (waterconnectiondetails.getDemand() != null)
+                finalDueAmount = finalDueAmount
+                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                                .getDemand().getAmtCollected().doubleValue());
+        System.out.println("fianl due amount->" + finalDueAmount);
         return finalDueAmount;
     }
 }
