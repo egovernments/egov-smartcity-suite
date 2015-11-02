@@ -2,6 +2,7 @@ package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -86,11 +87,13 @@ public class DonationMasterController {
             donationDetailsTemp.setFromDate(new Date());
             donationDetailsTemp.setAmount(donationDetails.getAmount());
             donationDetailsService.updateDonationDetails(donationDetailsTemp);
-            ;
             redirectAttrs.addFlashAttribute("donationDetails", donationDetailsTemp);
             model.addAttribute("message", "Donation Master Data updated successfully");
         } else {
             donationDetails.getDonationHeader().setActive(true);
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, 365);
+            donationDetails.setToDate(cal.getTime());
             donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
             donationDetailsService.createDonationDetails(donationDetails);
             redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
