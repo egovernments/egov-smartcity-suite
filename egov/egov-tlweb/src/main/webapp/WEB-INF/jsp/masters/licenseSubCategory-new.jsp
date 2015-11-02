@@ -63,6 +63,7 @@
 			 dom.get("code").disabled=true;
 			 dom.get("name").disabled=true;
 			 dom.get("categoryId").disabled=true;
+			 jQuery("span").remove(".mandatory");
 		}
 	}
 
@@ -187,13 +188,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxLength="32" cssClass="form-control"/>
+								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="64" onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxLength="5" cssClass="form-control"/>
+								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32" onchange="return validateData(this,'code')"/>
 							</div>
 						</div>
 						
