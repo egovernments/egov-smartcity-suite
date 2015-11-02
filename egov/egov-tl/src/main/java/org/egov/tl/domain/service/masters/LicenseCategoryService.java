@@ -56,7 +56,7 @@ public class LicenseCategoryService extends PersistenceService<LicenseCategory, 
      * @return
      */
     public LicenseCategory findCategoryByName(final String name) {
-        return this.find("From LicenseCategory where name=?", name);
+        return this.find("From LicenseCategory where upper(name)=?", name.toUpperCase()); 
     }
 
     /**
@@ -65,7 +65,7 @@ public class LicenseCategoryService extends PersistenceService<LicenseCategory, 
      * @return
      */
     public LicenseCategory findCategoryByCode(final String code) {
-        return this.find("From LicenseCategory where code=?", code);
+        return this.find("From LicenseCategory where upper(code)=?", code.toUpperCase());
     }
 
 }

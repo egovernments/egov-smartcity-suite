@@ -61,7 +61,8 @@
 		if(dom.get("userMode").value=='view' || dom.get("userMode").value=='success'){
 			 dom.get("code").readOnly=true;
 			 dom.get("name").readOnly=true;
-		}
+			 jQuery("span").remove(".mandatory");
+		} 
 	}
 
 	function reload(){
@@ -164,15 +165,15 @@
 					
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
-									name="licenseCategory.name.lbl" /><span class="mandatory"></span></label>
+									name="licenseCategory.name.lbl" /><span id="mandatory" class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxLength="32"  onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="64"  onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
-									name="licenseCategory.code.lbl" /><span class="mandatory"></span></label>
+									name="licenseCategory.code.lbl" /><span id="mandatory" class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxLength="5"  onchange="return validateData(this,'code')"/>
+								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32"  onchange="return validateData(this,'code')"/>
 							</div>
 						</div>
 					</div>
