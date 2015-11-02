@@ -8,13 +8,18 @@ import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
 import org.egov.infra.admin.master.entity.Device;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.DeviceRepository;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +42,12 @@ public class CommonController extends ApiController {
 
     @Autowired
     private IdentityRecoveryService identityRecoveryService;
+    
+    @Autowired
+    private LocalValidatorFactoryBean validator;
+    
+    @Autowired
+    private UserService userservice;
 
     // -----------------------------------------------------------------
     /**
@@ -46,7 +57,7 @@ public class CommonController extends ApiController {
      * @return Citizen
      */
     @RequestMapping(value = ApiUrl.CITIZEN_REGISTER, method = RequestMethod.POST, consumes = { "application/json" })
-    public @ResponseBody ResponseEntity<String> register(@RequestBody JSONObject citizen) {
+    public @ResponseBody ResponseEntity<String> register(@RequestBody JSONObject citizen, final BindingResult errors) {
         ApiResponse res = ApiResponse.newInstance();
         String msg = "";
 
@@ -64,10 +75,25 @@ public class CommonController extends ApiController {
                 device.setType(citizen.get("deviceType").toString());
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
-            citizenCreate.getDevices().add(device);
-            citizenService.create(citizenCreate);
-            return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
-        } catch (ApplicationRuntimeException e) {
+            
+            User getUser=userservice.getUserByMobileNumber(citizen.get("mobileNumber").toString());
+            if(getUser != null)
+            {
+            	return res.error("A user with same mobile number already registered!");
+            }
+            
+            getUser=userservice.getUserByEmailId(citizen.get("emailId").toString());
+            if(getUser != null)
+            {
+            	return res.error("A user with same email already registered!");
+            }
+            
+           citizenCreate.getDevices().add(device);
+           citizenService.create(citizenCreate);
+           return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
             msg = e.getMessage();
         }
         return res.error(msg);
