@@ -460,9 +460,8 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
-                + " and dd.amount > dd.amt_collected  ";
-        		
-                //+ " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_modules where name='Property Tax' ))  ";
+                + " and dd.amount > dd.amt_collected  "
+                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_modules where name='Property Tax' ))  ";
         selectQuery=selectQuery+" order by inst.description desc ";
         
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
