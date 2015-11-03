@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class RestPropertyTaxDetails {
 
-	private String installment;
+	private String installment="";
 	private BigDecimal taxAmount =BigDecimal.ZERO;
 	private BigDecimal chqBouncePenalty=BigDecimal.ZERO;
 	private BigDecimal penalty=BigDecimal.ZERO;

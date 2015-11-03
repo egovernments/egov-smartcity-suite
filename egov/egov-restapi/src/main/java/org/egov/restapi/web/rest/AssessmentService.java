@@ -40,14 +40,12 @@
 package org.egov.restapi.web.rest;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -73,6 +71,7 @@ import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
+import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentNoRequest;
@@ -152,6 +151,21 @@ public class AssessmentService {
 		} else {
 			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
 			propertyTaxDetails.setErrorDetails(errorDetails);
+		}
+		if(propertyTaxDetails.getOwnerDetails()==null)
+		{
+			propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>());
+		}
+		if(propertyTaxDetails.getLocalityName()==null)  
+			propertyTaxDetails.setLocalityName("");
+		if(propertyTaxDetails.getPropertyAddress()==null)
+			propertyTaxDetails.setPropertyAddress("");
+		if(propertyTaxDetails.getArrearDetails()==null)
+		{
+			RestPropertyTaxDetails ar=new RestPropertyTaxDetails();
+			 List taxDetails=new ArrayList<RestPropertyTaxDetails>();
+			 taxDetails.add(ar);
+			propertyTaxDetails.setTaxDetails(taxDetails);
 		}
 		return getJSONResponse(propertyTaxDetails);
 	}

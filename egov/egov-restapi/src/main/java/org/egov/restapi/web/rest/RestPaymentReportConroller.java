@@ -48,10 +48,15 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.collection.service.ServiceCategoryService;
+import org.egov.commons.Bank;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
+import org.egov.infstr.models.ServiceCategory;
 import org.egov.restapi.model.PaymentInfoSearchRequest;
 import org.egov.search.domain.Document;
+import org.egov.services.masters.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,7 +71,12 @@ import com.google.gson.reflect.TypeToken;
 public class RestPaymentReportConroller {
 
     @Autowired
-    CollectionIntegrationService collectionService;
+  private  CollectionIntegrationService collectionService;
+    
+    @Qualifier
+  private   BankService bankService;
+    
+  
 
     @RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
@@ -86,6 +96,21 @@ public class RestPaymentReportConroller {
                 paymentInfoSearchRequest.getFromdate(),
                 paymentInfoSearchRequest.getTodate(), paymentInfoSearchRequest.getServicecode());
         return getJSONResponse(receiptInfoList);
+    }
+    
+    @RequestMapping(value="/banks",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public String bankNames() throws JsonGenerationException, JsonMappingException, IOException {
+    
+    	List<Bank> banks = bankService.findAll("code"); 
+        return	getJSONResponse(banks);
+    	
+    }
+    @RequestMapping(value="/services",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public String services() throws JsonGenerationException, JsonMappingException, IOException {
+    
+    	 List<ServiceCategory> services = collectionService.getActiveServiceCategories();
+        return	getJSONResponse(services);
+    	
     }
 
     /**

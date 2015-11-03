@@ -49,6 +49,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
+import org.egov.infstr.models.ServiceCategory;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -163,4 +164,6 @@ public interface CollectionIntegrationService {
      */
     public List<RestReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String serviceCode);
 
+    
+    public List<ServiceCategory>  getActiveServiceCategories();
 }

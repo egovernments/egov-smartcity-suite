@@ -64,6 +64,7 @@ import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.service.ServiceCategoryService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
@@ -74,11 +75,13 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Collections integration service implementation - exposes APIs that can be used by other applications (typically billing
@@ -100,6 +103,9 @@ CollectionIntegrationService {
     @Autowired
     private ReceiptHeaderService receiptHeaderService;
 
+   /* @Autowired
+    private  ServiceCategoryService serviceCategoryService;*/
+    
     List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
@@ -521,4 +527,11 @@ CollectionIntegrationService {
         }
     }
 
+    public List<ServiceCategory>  getActiveServiceCategories()
+    {
+        List<ServiceCategory> services =null;//= serviceCategoryService.getAllActiveServiceCategories();
+        return services;
+        
+    }
+    
 }

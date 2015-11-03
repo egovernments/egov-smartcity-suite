@@ -41,6 +41,8 @@ package org.egov.restapi.web.rest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
@@ -50,8 +52,11 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.dcb.bean.ChequePayment;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -116,13 +121,38 @@ public class RestWaterConnectionCollection {
             return getJSONResponse(errorDetails);
         else {
             final WaterTaxDetails waterTaxDetails = waterTaxExternalService.getWaterTaxDemandDet(payWaterTaxDetails);
+            
+            if(waterTaxDetails.getOwnerName()==null)
+    		{
+            	waterTaxDetails.setOwnerName("");
+    		}
+    		if(waterTaxDetails.getLocalityName()==null)  
+    			waterTaxDetails.setLocalityName("");
+    		if(waterTaxDetails.getPropertyAddress()==null) 
+    			waterTaxDetails.setPropertyAddress("");
+    		if(waterTaxDetails.getTaxDetails()==null)
+    		{
+    			RestPropertyTaxDetails ar=new RestPropertyTaxDetails();
+    			 List taxDetails=new ArrayList<RestPropertyTaxDetails>();
+    			 taxDetails.add(ar);
+    			 waterTaxDetails.setTaxDetails(taxDetails);
+    		}
+            
+            
+            
+            
             return getJSONResponse(waterTaxDetails);
+            
+            
+            
+            
         }
     }
 
     private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+        objectMapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         final String jsonResponse = objectMapper.writeValueAsString(obj);
         return jsonResponse;
     }
@@ -190,21 +220,21 @@ public class RestWaterConnectionCollection {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED);
-        }
+        }else
         
         if (payWaterTaxDetails.getChqddDate() == null ) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED);
-        }
+        }else
         
         if (payWaterTaxDetails.getBankName() == null || payWaterTaxDetails.getBankName().trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED);
-        }
+        }else
         
-        if (payWaterTaxDetails.getChqddDate() == null ) {
+        if (payWaterTaxDetails.getBranchName() == null ) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);

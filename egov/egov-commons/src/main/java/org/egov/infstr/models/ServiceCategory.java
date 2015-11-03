@@ -53,6 +53,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -69,6 +70,7 @@ public class ServiceCategory extends AbstractAuditable {
     private static final long serialVersionUID = 6424646245490617480L;
     public static final String SEQ_SERVICECATEGORY = "SEQ_EGCL_SERVICECATEGORY";
 
+    @JsonIgnore
     @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_SERVICECATEGORY, strategy = GenerationType.SEQUENCE)
@@ -84,9 +86,10 @@ public class ServiceCategory extends AbstractAuditable {
     @Column(name = "code")
     private String code;
 
+    @JsonIgnore
     @Column(name = "isactive")
     private Boolean isActive;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "serviceCategory", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ServiceDetails> services = new LinkedHashSet<ServiceDetails>(0);
 

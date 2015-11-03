@@ -509,7 +509,6 @@ public class PropertyExternalService {
           
            
          
-            final List<ArrearDetails> arrearDetailsList = new ArrayList<ArrearDetails>();
                 final List<Object> list = ptDemandDAO.getPropertyTaxDetails(assessmentNo);
                 if(list.size()>0)
                 {
@@ -567,9 +566,12 @@ public class PropertyExternalService {
                     System.out.println(data.toString());
                     
                 }
+                if(arrearDetails!=null)
+                {
                 arrearDetails.setTaxAmount(total);   
             	arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
             	propertyTaxDetails.getTaxDetails().add(arrearDetails);
+            	}
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
             propertyTaxDetails.setErrorDetails(errorDetails);
