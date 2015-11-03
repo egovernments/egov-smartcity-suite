@@ -238,7 +238,7 @@ function worklist(){
 		"aaSorting": [[0, 'desc']],
 		"fnInitComplete": function (oSettings, json) {
 	          response_json = JSON.stringify(json.data);
-	          console.log('response--->'+response_json);
+	          //console.log('response--->'+response_json);
 	          if(JSON.parse(response_json).length != 0){
 		          $.each(JSON.parse(response_json), function(key, value) {
 		        	  if (!counts.hasOwnProperty(value.task)) {
@@ -247,8 +247,8 @@ function worklist(){
 	        			  counts[value.task]++;
 	        		  }
 		          });
-		          console.log('Count object'+JSON.stringify(counts));
-		          console.log('Length of the count object-->'+Object.keys(counts).length);
+		          //console.log('Count object'+JSON.stringify(counts));
+		          //console.log('Length of the count object-->'+Object.keys(counts).length);
 		          
 		          if(Object.keys(counts).length > 1){
 		        	  $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
@@ -261,12 +261,12 @@ function worklist(){
 			        	    }
 				          }
 		          }else{
-		        	  console.log('Count length is '+Object.keys(counts).length+'.. Due to that not appended!!');
+		        	  //console.log('Count length is '+Object.keys(counts).length+'.. Due to that not appended!!');
 		          }
 		          
 		          
 	          }else{
-	        	  console.log('Response data is empty');
+	        	  //console.log('Response data is empty');
 	          }
 	     }
 	});
@@ -308,7 +308,7 @@ function notifications(){
 }
 
 function worklistwrtnow(json){
-	console.log('came to construct datatable!!');
+	//console.log('came to construct datatable!!');
 	//$("#official_inbox").empty();
 	tableContainer1 = $("#official_inbox"); 
 	tableContainer1.dataTable({
@@ -333,20 +333,20 @@ function worklistwrtnow(json){
 }
 
 function refreshnow(now){
-	console.log('came to refresh nature of work');
-    console.log('parent JSON-->'+response_json);
+	//console.log('came to refresh nature of work');
+    //console.log('parent JSON-->'+response_json);
     if(now != 'Reset' && now!= undefined){
-    	console.log('nature of work other than reset or undefined--->'+now);
+    	//console.log('nature of work other than reset or undefined--->'+now);
 	    $.each(JSON.parse(response_json), function(key, value) {
 	    	if (value.task === now) {
 	    		//console.log(JSON.stringify(value));
 	    		now_json.push(value);
 	    	}
 	    });
-	    console.log('NOW JSON-->'+JSON.stringify(now_json));
+	    //console.log('NOW JSON-->'+JSON.stringify(now_json));
 	    worklistwrtnow(now_json);
     }else{
-    	console.log('came as reset or undefined');
+    	//console.log('came as reset or undefined');
     	$('#natureofwork ul li a[data-now="Reset"]').parent().remove();
     	worklistwrtnow(JSON.parse(response_json));
     }
