@@ -10,8 +10,20 @@ update eg_appconfig_values set value='Senior Assistant,Junior Assistant' where k
 in(select id from eg_appconfig where key_name='CLERKDESIGNATIONFORCSCOPERATOR');
 
 
+delete from egeis_assignment where designation in(SELECT id FROM eg_designation WHERE name='Assistant engineer') and
+department in(SELECT id FROM eg_department WHERE name='Engineering') ;
 
+delete from eg_userrole where roleid in(select id from eg_role where name='ULB Operator') and userid in(select id from eg_user where username='rishi');
 
+delete from eg_position where name='R-Assistant-engineer-1' and  deptdesig in(select id from egeis_deptdesig where designation = (select id from eg_designation where name = 'Assistant engineer') 
+and department = 
+(select id from eg_department where name = 'Engineering'));
+
+delete from egeis_deptdesig where id in(select id from egeis_deptdesig where designation = (select id from eg_designation where name = 'Assistant engineer') 
+and department = 
+(select id from eg_department where name = 'Engineering'));
+
+delete from eg_department where name='Engineering';
 
 
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, 
@@ -44,6 +56,21 @@ WHERE name='R-Assistant-engineer-1'),1,1,now(),now(),1,'01-Apr-2015','31-Mar-202
 
 
 
+
+delete from egeis_assignment where designation in(SELECT id FROM eg_designation WHERE name='Commissioner') and
+department in(SELECT id FROM eg_department WHERE name='Administration') ;
+
+delete from eg_userrole where roleid in(select id from eg_role where name='ULB Operator') and userid in(select id from eg_user where username='rishi');
+
+delete from eg_position where name='ADM-Commissioner-1' and  deptdesig in(select id from egeis_deptdesig where designation = (select id from eg_designation where name = 'Commissioner') 
+and department = 
+(select id from eg_department where name = 'Administration'));
+
+delete from egeis_deptdesig where id in(select id from egeis_deptdesig where designation = (select id from eg_designation where name = 'Commissioner') 
+and department = 
+(select id from eg_department where name = 'Administration'));
+
+delete from eg_department where name='Administration';
 
 
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, 
