@@ -40,6 +40,8 @@
 
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,9 +89,8 @@ public class CurrentViewDcbController {
     protected WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    
+
     private DCBReport dCBReport = new DCBReport();
-    List<Receipt> sortedReceipts = new ArrayList<Receipt>();
     List<Receipt> cancelRcpt = new ArrayList<Receipt>();
     List<Receipt> activeRcpts = new ArrayList<Receipt>();
 
@@ -144,9 +145,8 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbdemandService.setBillable(waterConnectionBillable);
             dCBReport = dcbdemandService.getCurrentDCBAndReceipts(dcbDispInfo);
-            receiptsInDescendingOrderOfReceiptDate();
-            cancelRcpt = populateCancelledReceiptsOnly();
-            activeRcpts = populateActiveReceiptsOnly();
+            activeRcpts = populateActiveReceiptsOnly(dCBReport.getReceipts());
+            cancelRcpt = populateCancelledReceiptsOnly(dCBReport.getReceipts());
             model.addAttribute("totalRcptAmt", calculateReceiptTotal());
             model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal());
 
@@ -159,44 +159,49 @@ public class CurrentViewDcbController {
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
 
         for (final Receipt r : activeRcpts)
-            if (!rcpts.contains(r) &&  r.getReceiptStatus().equals('A')) {
+            if (!rcpts.contains(r) && r.getReceiptStatus().equals('A')) {
                 rcpts.add(r);
                 totalRcptAmt = totalRcptAmt.add(r.getReceiptAmt());
             }
         return totalRcptAmt;
     }
+
     public BigDecimal calculateCancelledReceiptTotal() {
         final List<Receipt> rcpts = new ArrayList<Receipt>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
 
         for (final Receipt r : activeRcpts)
-            if (!rcpts.contains(r) &&  r.getReceiptStatus().equals(EgdmCollectedReceipt.RCPT_CANCEL_STATUS)) {
+            if (!rcpts.contains(r) && r.getReceiptStatus().equals(EgdmCollectedReceipt.RCPT_CANCEL_STATUS)) {
                 rcpts.add(r);
                 totalRcptAmt = totalRcptAmt.add(r.getReceiptAmt());
             }
         return totalRcptAmt;
     }
 
-    private void receiptsInDescendingOrderOfReceiptDate() {
-        for (final Map.Entry<Installment, List<Receipt>> receiptMap : dCBReport.getReceipts().entrySet())
-            for (final Receipt r : receiptMap.getValue())
-                if (!sortedReceipts.contains(r))
-                    sortedReceipts.add(r);
-        Collections.sort(sortedReceipts, (r1, r2) -> {
-            int returnValue = 0;
+    /**
+     * This method populates Active receipts only.
+     *
+     * @param Map
+     *            <Installment, List<Receipt>> receipts
+     * @return List<Receipt>
+     */
 
-            if (r1.getReceiptDate().before(r2.getReceiptDate()))
-                returnValue = 1;
-            else if (r1.getReceiptDate().after(r2.getReceiptDate()))
-                returnValue = -1;
-            else if (r1.getReceiptDate().equals(r2.getReceiptDate()))
-                returnValue = 0;
+    private List<Receipt> populateActiveReceiptsOnly(final Map<Installment, List<Receipt>> receipts) {
 
-            return returnValue;
-        });
-
+        final List<Receipt> rcpt = new ArrayList<Receipt>();
+        for (final Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet())
+            for (final Receipt r : entry.getValue())
+                if (!rcpt.contains(r) && !r.getReceiptStatus().equals(RCPT_CANCEL_STATUS))
+                    rcpt.add(r);
+        return receiptsInDescendingOrderOfReceiptDate(rcpt);
     }
 
+    private List<Receipt> receiptsInDescendingOrderOfReceiptDate(final List<Receipt> receipts) {
+
+        Collections.sort(receipts, (r1, r2) -> r2.getReceiptDate().compareTo(r1.getReceiptDate()));
+
+        return receipts;
+    }
 
     /**
      * This method populates cancelled receipts only.
@@ -205,22 +210,15 @@ public class CurrentViewDcbController {
      *            <Installment, List<Receipt>> receipts
      * @return List<Receipt>
      */
-    public List<Receipt> populateCancelledReceiptsOnly() {
+
+    private List<Receipt> populateCancelledReceiptsOnly(final Map<Installment, List<Receipt>> receipts) {
 
         final List<Receipt> rcpt = new ArrayList<Receipt>();
-        for (final Receipt r : sortedReceipts)
-            if (!rcpt.contains(r) && r.getReceiptStatus().equals(EgdmCollectedReceipt.RCPT_CANCEL_STATUS))
-                rcpt.add(r);
-        return rcpt;
-    }
-
-    public List<Receipt> populateActiveReceiptsOnly() {
-
-        final List<Receipt> rcpt = new ArrayList<Receipt>();
-        for (final Receipt r : sortedReceipts)
-            if (!rcpt.contains(r) && !r.getReceiptStatus().equals(EgdmCollectedReceipt.RCPT_CANCEL_STATUS))
-                rcpt.add(r);
-        return rcpt;
+        for (final Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet())
+            for (final Receipt r : entry.getValue())
+                if (!rcpt.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS))
+                    rcpt.add(r);
+        return receiptsInDescendingOrderOfReceiptDate(rcpt);
     }
 
 }

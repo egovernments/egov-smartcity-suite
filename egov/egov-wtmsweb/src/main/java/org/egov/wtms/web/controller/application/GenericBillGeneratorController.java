@@ -105,7 +105,7 @@ public class GenericBillGeneratorController {
      @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
     public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,@RequestParam final String applicationTypeCode, final Model model) {
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE))
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE) || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                 applicationCode,ConnectionStatus.ACTIVE);
         else

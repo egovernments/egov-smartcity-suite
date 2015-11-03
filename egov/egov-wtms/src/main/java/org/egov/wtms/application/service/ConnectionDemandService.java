@@ -410,7 +410,7 @@ public class ConnectionDemandService {
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails;
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE))
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)|| applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     consumerCode, ConnectionStatus.ACTIVE);
         else
