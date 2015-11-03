@@ -42,18 +42,22 @@ package org.egov.collection.integration.models;
 import java.math.BigDecimal;
 
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.utils.CollectionsUtil;
+
 
 public class RestReceiptInfo {
     private String transactionId;
     private String receiptNo;
     private String referenceNo;
     private BigDecimal amount;
+    private String txnDate; 
     
     public RestReceiptInfo(final ReceiptHeader receiptHeader) {
         this.transactionId = receiptHeader.getManualreceiptnumber();
         this.receiptNo = receiptHeader.getReceiptnumber();
         this.referenceNo = receiptHeader.getConsumerCode();
         this.amount = receiptHeader.getTotalAmount();
+        this.txnDate=CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
     }
 
     public String getTransactionId() {

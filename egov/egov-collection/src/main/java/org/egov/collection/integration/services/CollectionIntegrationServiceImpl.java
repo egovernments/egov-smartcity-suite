@@ -491,7 +491,7 @@ CollectionIntegrationService {
         
         for (Object[] objectArray:queryResults) {
             RestAggregatePaymentInfo aggregatePaymentInfo = new RestAggregatePaymentInfo();
-            aggregatePaymentInfo.setUlbcode("Tirupati");
+            aggregatePaymentInfo.setUlbcode("Tirupati");//hardcoded ?
             aggregatePaymentInfo.setTxncount(Integer.parseInt(objectArray[0].toString()));
             aggregatePaymentInfo.setTxnamount(new BigDecimal(objectArray[1].toString()));
             listAggregatePaymentInfo.add(aggregatePaymentInfo);

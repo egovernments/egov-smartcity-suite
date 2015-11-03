@@ -40,6 +40,7 @@
 
 package org.egov.collection.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -96,6 +97,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CollectionsUtil {
     private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
+    public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private PersistenceService persistenceService;
     @Autowired
     private UserService userService;
