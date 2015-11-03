@@ -76,6 +76,7 @@ import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -235,8 +236,13 @@ public class AssessmentService {
 			if (null != errorDetails) {
 				responseJson = getJSONResponse(errorDetails);
 			} else {
-				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-						totalAmount, paidBy,null);
+				PayPropertyTaxDetails pt=new PayPropertyTaxDetails();
+				pt.setAssessmentNo(assessmentNo);
+				pt.setPaymentMode(paymentMode);
+				pt.setPaymentAmount(totalAmount);
+				pt.setPaidBy(paidBy);
+				
+				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(pt);
 				responseJson = getJSONResponse(receiptDetails);
 			}
 		}

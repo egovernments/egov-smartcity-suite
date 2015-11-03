@@ -42,21 +42,23 @@ package org.egov.wtms.masters.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @SuppressWarnings("serial")
 public class PayWaterTaxDetails implements Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = -1576929030506138500L;
     private String consumerNo;
-    
+    @JsonIgnore
     private String applicaionNumber;
     private String paymentMode;
-    private BigDecimal totalAmount;
+    private BigDecimal paymentAmount;
     private String paidBy;
     private String transactionId;
+    private String chqddNo;
+	private Date chqddDate;
+    private String bankName;
+	private String branchName;
 
     public String getConsumerNo() {
         return consumerNo;
@@ -75,11 +77,11 @@ public class PayWaterTaxDetails implements Serializable {
     }
 
     public BigDecimal getTotalAmount() {
-        return totalAmount;
+        return paymentAmount;
     }
 
     public void setTotalAmount(final BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
+        this.paymentAmount = totalAmount;
     }
 
     public String getPaidBy() {
@@ -95,7 +97,7 @@ public class PayWaterTaxDetails implements Serializable {
     @Override
     public String toString() {
         return "PayWaterTaxDetails [consumerNo=" + consumerNo + ", applicaionNumber=" + applicaionNumber
-                + ", paymentMode=" + paymentMode + ", totalAmount=" + totalAmount + ", paidBy=" + paidBy
+                + ", paymentMode=" + paymentMode + ", paymentAmount=" + paymentAmount + ", paidBy=" + paidBy
                 + ", transactionId=" + transactionId + "]";
     }
 
@@ -114,5 +116,45 @@ public class PayWaterTaxDetails implements Serializable {
     public void setApplicaionNumber(String applicaionNumber) {
         this.applicaionNumber = applicaionNumber;
     }
+
+	public BigDecimal getPaymentAmount() {
+		return paymentAmount;
+	}
+
+	public void setPaymentAmount(BigDecimal paymentAmount) {
+		this.paymentAmount = paymentAmount;
+	}
+
+	public String getChqddNo() {
+		return chqddNo;
+	}
+
+	public void setChqddNo(String chqddNo) {
+		this.chqddNo = chqddNo;
+	}
+
+	public Date getChqddDate() {
+		return chqddDate;
+	}
+
+	public void setChqddDate(Date chqddDate) {
+		this.chqddDate = chqddDate;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
 
 }

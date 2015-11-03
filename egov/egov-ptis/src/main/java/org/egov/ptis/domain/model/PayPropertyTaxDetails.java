@@ -38,25 +38,25 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.model;
+package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-
-import javax.ws.rs.FormParam;
-
-import org.egov.ptis.domain.model.FloorDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class PayPropertyTaxDetails implements Serializable {
 
 	private String assessmentNo;
 	private String paymentMode;
-	private BigDecimal totalAmount;
+	private BigDecimal paymentAmount;
 	private String paidBy;
 	private String transactionId;
+	
+	private String chqddNo;
+	private Date chqddDate;
+	private String bankName;
+	private String branchName;
 
 	public String getAssessmentNo() {
 		return assessmentNo;
@@ -74,12 +74,12 @@ public class PayPropertyTaxDetails implements Serializable {
 		this.paymentMode = paymentMode;
 	}
 
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
+	public BigDecimal getPaymentAmount() {
+		return paymentAmount;
 	}
 
-	public void setTotalAmount(BigDecimal totalAmount) {
-		this.totalAmount = totalAmount;
+	public void setPaymentAmount(BigDecimal totalAmount) {
+		this.paymentAmount = totalAmount;
 	}
 
 	public String getPaidBy() {
@@ -92,8 +92,8 @@ public class PayPropertyTaxDetails implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PayPropertyTaxDetails [assessmentNo=" + assessmentNo + ", paymentMode=" + paymentMode + ", totalAmount="
-				+ totalAmount + ", paidBy=" + paidBy + "]";
+		return "PayPropertyTaxDetails [assessmentNo=" + assessmentNo + ", paymentMode=" + paymentMode + ", paymentAmount="
+				+ paymentAmount + ", paidBy=" + paidBy + "]";
 	}
 
     public String getTransactionId() {
@@ -103,5 +103,37 @@ public class PayPropertyTaxDetails implements Serializable {
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
+
+	public String getChqddNo() {
+		return chqddNo;
+	}
+
+	public void setChqddNo(String chqddNo) {
+		this.chqddNo = chqddNo;
+	}
+
+	public Date getChqddDate() {
+		return chqddDate;
+	}
+
+	public void setChqddDate(Date chqddDate) {
+		this.chqddDate = chqddDate;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
 
 }

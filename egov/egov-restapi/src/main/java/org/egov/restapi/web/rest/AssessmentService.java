@@ -57,6 +57,7 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Document;
@@ -69,6 +70,7 @@ import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -81,7 +83,6 @@ import org.egov.restapi.model.CorrespondenceAddressDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.LocalityCodeDetails;
 import org.egov.restapi.model.OwnershipCategoryDetails;
-import org.egov.restapi.model.PayPropertyTaxDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTaxBoundaryDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
@@ -105,6 +106,8 @@ public class AssessmentService {
 
 	@Autowired
 	private PropertyExternalService propertyExternalService;
+	@Autowired
+	private ValidationUtil validationUtil;
 
 	/**
 	 * This method is used for handling user request for assessment details.
@@ -203,19 +206,13 @@ public class AssessmentService {
 		String responseJson = new String();
 		PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
 				payPropertyTaxDetails, PayPropertyTaxDetails.class);
-		String assessmentNo = payPropTaxDetails.getAssessmentNo();
-		String paymentMode = payPropTaxDetails.getPaymentMode();
-		BigDecimal totalAmount = payPropTaxDetails.getTotalAmount();
-		String paidBy = payPropTaxDetails.getPaidBy();
-		String transanctionId=payPropTaxDetails.getTransactionId();
+		
 
-		ErrorDetails errorDetails = propertyExternalService.validatePaymentDetails(assessmentNo, paymentMode,
-				totalAmount, paidBy);
+		ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails);
 		if (null != errorDetails) {
 			responseJson = getJSONResponse(errorDetails);
 		} else {
-			ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(assessmentNo, paymentMode,
-					totalAmount, paidBy,transanctionId);
+			ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails);
 			responseJson = getJSONResponse(receiptDetails);
 		}
 		return responseJson;
@@ -761,6 +758,7 @@ public class AssessmentService {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
 		mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
+		mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
 		return mapper.readValue(jsonString, cls);
 	}
 }

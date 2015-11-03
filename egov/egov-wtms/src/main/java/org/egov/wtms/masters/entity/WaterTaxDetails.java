@@ -40,9 +40,11 @@
 package org.egov.wtms.masters.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 
 /**
  * The WaterTaxDetails class is used to contain water tax details, arrears
@@ -56,69 +58,63 @@ public class WaterTaxDetails implements Serializable {
      *
      */
     private static final long serialVersionUID = -9178106359243528750L;
+    @JsonIgnore
     private String applicationNumber;
-    private BigDecimal penalty;
-    private BigDecimal arrears;
-    private BigDecimal donationCharges;
-    private BigDecimal estimationCharges;
-    private BigDecimal waterTax;
-    private BigDecimal totalTaxAmt;
+    private String consumerNo;
+    private String ownerName;
+    private String mobileNo;
+    private String propertyAddress;
+    private String localityName;
+    private List<RestPropertyTaxDetails> taxDetails;
     private ErrorDetails errorDetails;
-    public String getApplicationNumber() {
-        return applicationNumber;
-    }
-    public void setApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-    }
-    public BigDecimal getPenalty() {
-        return penalty;
-    }
-    public void setPenalty(BigDecimal penalty) {
-        this.penalty = penalty;
-    }
-    public BigDecimal getArrears() {
-        return arrears;
-    }
-    public void setArrears(BigDecimal arrears) {
-        this.arrears = arrears;
-    }
-    public BigDecimal getDonationCharges() {
-        return donationCharges;
-    }
-    public void setDonationCharges(BigDecimal donationCharges) {
-        this.donationCharges = donationCharges;
-    }
-    public BigDecimal getEstimationCharges() {
-        return estimationCharges;
-    }
-    public void setEstimationCharges(BigDecimal estimationCharges) {
-        this.estimationCharges = estimationCharges;
-    }
-    public BigDecimal getWaterTax() {
-        return waterTax;
-    }
-    public void setWaterTax(BigDecimal waterTax) {
-        this.waterTax = waterTax;
-    }
-    public BigDecimal getTotalTaxAmt() {
-        return totalTaxAmt;
-    }
-    public void setTotalTaxAmt(BigDecimal totalTaxAmt) {
-        this.totalTaxAmt = totalTaxAmt;
-    }
-    public ErrorDetails getErrorDetails() {
-        return errorDetails;
-    }
-    public void setErrorDetails(ErrorDetails errorDetails) {
-        this.errorDetails = errorDetails;
-    }
-    @Override
-    public String toString() {
-        return "WaterTaxDetails [applicationNumber=" + applicationNumber + ", penalty=" + penalty + ", arrears="
-                + arrears + ", donationCharges=" + donationCharges + ", estimationCharges=" + estimationCharges
-                + ", waterTax=" + waterTax + ", totalTaxAmt=" + totalTaxAmt + ", errorDetails=" + errorDetails + "]";
-    }
+	public String getApplicationNumber() {
+		return applicationNumber;
+	}
+	public void setApplicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
+	}
+	public String getConsumerNo() {
+		return consumerNo;
+	}
+	public void setConsumerNo(String consumerNo) {
+		this.consumerNo = consumerNo;
+	}
+	public String getOwnerName() {
+		return ownerName;
+	}
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+	public String getMobileNo() {
+		return mobileNo;
+	}
+	public void setMobileNo(String mobileNo) {
+		this.mobileNo = mobileNo;
+	}
+	public String getPropertyAddress() {
+		return propertyAddress;
+	}
+	public void setPropertyAddress(String propertyAddress) {
+		this.propertyAddress = propertyAddress;
+	}
+	public String getLocalityName() {
+		return localityName;
+	}
+	public void setLocalityName(String localityName) {
+		this.localityName = localityName;
+	}
+	public List<RestPropertyTaxDetails> getTaxDetails() {
+		return taxDetails;
+	}
+	public void setTaxDetails(List<RestPropertyTaxDetails> taxDetails) {
+		this.taxDetails = taxDetails;
+	}
+	public ErrorDetails getErrorDetails() {
+		return errorDetails;
+	}
+	public void setErrorDetails(ErrorDetails errorDetails) {
+		this.errorDetails = errorDetails;
+	}
 
-   
-
+    
 }

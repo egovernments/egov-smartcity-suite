@@ -57,6 +57,7 @@ public class ReceiptDetails implements Serializable {
     private String description;
     private String paidBy;
     private BigDecimal totalAmountPaid;
+    private BigDecimal paymentAmount;
     private String collectionType;
     private ErrorDetails errorDetails;
     private String transactionId;
@@ -164,5 +165,13 @@ public class ReceiptDetails implements Serializable {
                 + serviceName + ", description=" + description + ", paidBy=" + paidBy + ", totalAmountPaid="
                 + totalAmountPaid + ", collectionType=" + collectionType + ", errorDetails=" + errorDetails + "]";
     }
+
+	public BigDecimal getPaymentAmount() {
+		return paymentAmount;
+	}
+
+	public void setPaymentAmount(BigDecimal paymentAmount) {
+		this.paymentAmount = paymentAmount;
+	}
 
 }

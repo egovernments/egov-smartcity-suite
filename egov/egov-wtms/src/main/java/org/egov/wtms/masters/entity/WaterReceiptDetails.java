@@ -58,7 +58,7 @@ public class WaterReceiptDetails implements Serializable {
     private String serviceName;
     private String description;
     private String paidBy;
-    private BigDecimal totalAmountPaid;
+    private BigDecimal paymentAmount;
     private String collectionType;
     private String transactionId;
     private ErrorDetails errorDetails;
@@ -128,11 +128,11 @@ public class WaterReceiptDetails implements Serializable {
     }
 
     public BigDecimal getTotalAmountPaid() {
-        return totalAmountPaid;
+        return paymentAmount;
     }
 
     public void setTotalAmountPaid(final BigDecimal totalAmountPaid) {
-        this.totalAmountPaid = totalAmountPaid;
+        this.paymentAmount = totalAmountPaid;
     }
 
     public String getCollectionType() {
@@ -163,8 +163,8 @@ public class WaterReceiptDetails implements Serializable {
     public String toString() {
         return "ReceiptDetails [receiptNo=" + receiptNo + ", receiptDate=" + receiptDate + ", payeeName=" + payeeName
                 + ", payeeAddress=" + payeeAddress + ", billReferenceNo=" + billReferenceNo + ", serviceName="
-                + serviceName + ", description=" + description + ", paidBy=" + paidBy + ", totalAmountPaid="
-                + totalAmountPaid + ", collectionType=" + collectionType + ", errorDetails=" + errorDetails + "]";
+                + serviceName + ", description=" + description + ", paidBy=" + paidBy + ", paymentAmount="
+                + paymentAmount + ", collectionType=" + collectionType + ", errorDetails=" + errorDetails + "]";
     }
 
 }
