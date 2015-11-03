@@ -330,7 +330,7 @@ public class VoucherSearchUtil {
 		return sql;
 	}
 	public String excludeVoucherStatus(){
-		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(	"EGF", "statusexcludeReport");
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
 		return appList.get(0).getValue();
 	}
 

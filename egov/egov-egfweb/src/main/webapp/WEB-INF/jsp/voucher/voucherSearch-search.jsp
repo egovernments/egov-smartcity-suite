@@ -105,7 +105,7 @@
 				<s:hidden name="mode" value="%{mode}" id="mode"/>  
 			</table>
 		</div>
-			<div  class="buttonbottom">
+			<div align = "center" class="buttonbottom">
 				<s:submit value="Search" onclick="return validateAndSubmit()" cssClass="buttonsubmit" />
 				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 			</div>
