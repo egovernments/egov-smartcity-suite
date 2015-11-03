@@ -126,6 +126,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -287,7 +288,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         super.prepare();
         setUserInfo();
         // setupWorkflowDetails();
-        documentTypes = propService.getPropertyModificationDocumentTypes();
+        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(

@@ -2229,14 +2229,8 @@ public class PropertyService {
         return modProperty;
     }
 
-    public List<DocumentType> getPropertyModificationDocumentTypes() {
-        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
-                TransactionType.MODIFY);
-    }
-
-    public List<DocumentType> getPropertyCreateDocumentTypes() {
-        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
-                TransactionType.CREATE);
+    public List<DocumentType> getDocumentTypesForTransactionType(TransactionType transactionType) {
+        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,transactionType);
     }
 
     /**

@@ -114,6 +114,7 @@ import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -600,7 +601,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (null != property && null != property.getId())
             preparePropertyTaxDetails(property);
-        documentTypes = propService.getPropertyCreateDocumentTypes();
+        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypeList = getPersistenceService().findAllBy("from RoofType order by name");
         final List<WallType> wallTypeList = getPersistenceService().findAllBy("from WallType order by name");

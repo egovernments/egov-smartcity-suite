@@ -105,6 +105,7 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -1418,7 +1419,7 @@ public class PropertyExternalService {
     public List<MasterCodeNamePairDetails> getPropertyCreateDocumentTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
         PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final List<DocumentType> documentTypes = propService.getPropertyCreateDocumentTypes();
+        final List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         for (final DocumentType documentType : documentTypes) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(documentType.getId().toString());
@@ -1430,7 +1431,7 @@ public class PropertyExternalService {
 
     public DocumentType getDocumentTypeByCode(final String docTypeCode) {
         PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final List<DocumentType> documentTypes = propService.getPropertyCreateDocumentTypes();
+        final List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         DocumentType documentType = null;
         for (final DocumentType docType : documentTypes)
             if (docType.getId() == Long.valueOf(docTypeCode))

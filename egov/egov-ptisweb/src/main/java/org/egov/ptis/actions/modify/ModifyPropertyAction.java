@@ -140,6 +140,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
@@ -773,7 +774,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     indexNumber));
             preparePropertyTaxDetails(basicProp.getActiveProperty());
         }
-        documentTypes = propService.getPropertyModificationDocumentTypes();
+        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
         final List<FloorType> floorTypes = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
