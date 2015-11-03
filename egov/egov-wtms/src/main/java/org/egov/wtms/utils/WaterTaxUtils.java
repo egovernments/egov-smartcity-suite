@@ -142,10 +142,12 @@ public class WaterTaxUtils {
 
     public String getDesignationForThirdPartyUser() {
         String designation = "";
+        String [] desgnArray=null;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.CLERKDESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
-            designation = appConfigValue.get(0).getValue();
+            desgnArray=appConfigValue.get(0).getValue().split(",");
+            designation = desgnArray[0]!=null ? desgnArray[0]:"" ;
         return designation;
     }
 
@@ -332,16 +334,19 @@ public class WaterTaxUtils {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
+         List<Employee> employeeList=null;
         final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByName(assessmentDetails
                 .getBoundaryDetails().getZoneBoundaryType());
         final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
                 .getBoundaryDetails().getZoneNumber());
         final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
         final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        final List<Employee> employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
+        if(deptObj !=null && desgnObj!=null &&  boundaryObj!=null){
+        employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
                 desgnObj.getId(), boundaryObj.getId());
         if (!employeeList.isEmpty())
             assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
+        }
         return assignmentObj != null ? assignmentObj.getPosition() : null;
     }
 
