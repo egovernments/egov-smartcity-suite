@@ -58,7 +58,7 @@ public class UnitOfMeasurementService extends PersistenceService<UnitOfMeasureme
      * @return
      */
     public UnitOfMeasurement findUOMByName(final String name) {
-        return this.find("From UnitOfMeasurement where name=?", name);
+        return this.find("From UnitOfMeasurement where upper(name)=?", name.toUpperCase());
     }
 
     /**
@@ -67,7 +67,7 @@ public class UnitOfMeasurementService extends PersistenceService<UnitOfMeasureme
      * @return
      */
     public UnitOfMeasurement findUOMByCode(final String code) {
-        return this.find("From UnitOfMeasurement where code=?", code);
+        return this.find("From UnitOfMeasurement where upper(code)=?", code.toUpperCase());
     }
 
     /**

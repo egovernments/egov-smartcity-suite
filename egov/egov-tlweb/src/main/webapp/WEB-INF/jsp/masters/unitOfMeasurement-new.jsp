@@ -63,6 +63,7 @@
 			 dom.get("code").readOnly=true;
 			 dom.get("name").readOnly=true;
 			 dom.get("active").disabled=true;
+			 jQuery("span").remove(".mandatory");
 		}
 		if(dom.get("userMode").value=='new'){
 			 dom.get("active").checked=true;
@@ -74,9 +75,18 @@
 		dom.get("name").value="";
 		document.uomForm.action='${pageContext.request.contextPath}/masters/unitOfMeasurement-newform.action';
     	document.uomForm.submit();
-		
 	}
 
+	function checkOrUncheck(){
+		if(dom.get('active').checked==true){
+			dom.get('uomActive').value=true;
+			dom.get('uomActive').checked=true;
+		} else {
+			dom.get('uomActive').value=false;
+			dom.get('uomActive').checked=false;
+		}
+	}
+	
 	function validateFormAndSubmit(){
 		var code= dom.get("code").value;
 		var name= dom.get("name").value;
@@ -170,6 +180,7 @@
 					
 						<s:hidden name="id"/> 
 						<s:hidden name="userMode" id="userMode"/>
+						<s:hidden name="uomActive" id="uomActive"/>
 					
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
@@ -189,7 +200,7 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.active.lbl" /> :</label>
 							<div class="col-sm-3 add-margin text-left">
-								<s:checkbox id="active"	name="active" value="%{active}"/>
+								<s:checkbox id="active"	name="active" value="%{active}"  onclick="checkOrUncheck();"/>
 							</div>
 						</div>
 					</div>

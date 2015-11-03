@@ -40,6 +40,8 @@ public class UnitOfMeasurementAction extends BaseFormAction {
 
     // UI field
     private String userMode;
+    // used to persist active field in modify case
+    private boolean uomActive;
 
     @Override
     public Object getModel() {
@@ -48,7 +50,7 @@ public class UnitOfMeasurementAction extends BaseFormAction {
     }
 
     @Override
-    public void prepare() { 
+    public void prepare() {
         // In Modify and View Mode Load UOM dropdown.
         if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
             setLicenseUomMap(getFormattedUOMMap(unitOfMeasurementService.findAll()));
@@ -85,8 +87,7 @@ public class UnitOfMeasurementAction extends BaseFormAction {
             userMode = NEW;
         return NEW;
     }
-   
-    
+
     /**
      * This method is invoked to Edit a form.
      *
@@ -110,6 +111,8 @@ public class UnitOfMeasurementAction extends BaseFormAction {
     @Action(value = "/masters/unitOfMeasurement-save")
     public String save() throws NumberFormatException, ApplicationException {
         try {
+            if (userMode.equalsIgnoreCase(EDIT))
+                unitOfMeasurement.setActive(uomActive);
             unitOfMeasurement = unitOfMeasurementService.persist(unitOfMeasurement);
         } catch (final ValidationException valEx) {
             LOGGER.error("Exception found while persisting Unit of Measurement: " + valEx.getErrors());
@@ -153,5 +156,13 @@ public class UnitOfMeasurementAction extends BaseFormAction {
 
     public void setLicenseUomMap(final Map<Long, String> licenseUomMap) {
         this.licenseUomMap = licenseUomMap;
+    }
+
+    public boolean isUomActive() {
+        return uomActive;
+    }
+
+    public void setUomActive(final boolean uomActive) {
+        this.uomActive = uomActive;
     }
 }
