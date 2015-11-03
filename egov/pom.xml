@@ -93,7 +93,7 @@
 		<struts2-version>2.3.24</struts2-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.number>${timestamp}</build.number>
-		<app.version>${pom.version}</app.version>
+		<app.version>${project.version}</app.version>
 		<egov-search-version>1.0.1-SNAPSHOT</egov-search-version>
 	</properties>
 
