@@ -295,6 +295,11 @@ public class CollectionsUtil {
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
+        final List<AppConfigValues> deptCodesApp =appConfigValuesService.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<String> deptCodes = new ArrayList<String>();
+        for(AppConfigValues deptCode :deptCodesApp ){
+            deptCodes.add(deptCode.getValue());
+        }
         Department dept = null;
         if (!isEmployee(loggedInUser))
             dept = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
@@ -304,7 +309,7 @@ public class CollectionsUtil {
 
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (dept.getCode().equals("R")) {
+        } else if (!deptCodes.isEmpty() && deptCodes.contains(dept.getCode())) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
@@ -335,7 +340,7 @@ public class CollectionsUtil {
     public String getDepartmentForWorkFlow() {
         String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_WORKFLOWDEPARTEMENT);
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_WORKFLOWDEPARTMENT);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
         return department;
@@ -367,6 +372,15 @@ public class CollectionsUtil {
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
         return designation;
+    }
+    
+    public String getDepartmentForCollectionModes() {
+        String department = "";
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_WORKFLOWDEPARTMENT);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            department = appConfigValue.get(0).getValue();
+        return department;
     }
 
     /**
