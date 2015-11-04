@@ -67,7 +67,7 @@
 						<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 										  <div class="col-md-4 add-margin">
-							<form:input type="text" path="consumerCode" name="consumerCode" class="form-control is_valid_number" id="app-appcodo" required="required"/>
+							<form:input type="text" path="consumerCode" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo" required="required"/>
 						</div>
 						<form:errors path="consumerCode" cssClass="add-margin error-msg" />
 						</div>
