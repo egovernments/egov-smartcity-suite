@@ -40,6 +40,7 @@ import java.util.Locale;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
@@ -48,6 +49,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -55,6 +57,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -97,6 +100,9 @@ public class WaterTaxUtils {
 
     @Autowired
     private BoundaryTypeService boundaryTypeService;
+
+    @Autowired
+    private HierarchyTypeService hierarchyTypeService;
     @Autowired
     private DepartmentService departmentService;
 
@@ -244,7 +250,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -332,18 +338,22 @@ public class WaterTaxUtils {
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
-        List<Assignment> assignmentObjList = null;
-        final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByName(assessmentDetails
-                .getBoundaryDetails().getZoneBoundaryType());
+        Assignment assignmentObj = null;
+        List<Employee> employeeList = null;
+        final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName("ADMINISTRATION");
+        final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
+                assessmentDetails.getBoundaryDetails().getWardBoundaryType(), hierarchy);
         final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
                 .getBoundaryDetails().getZoneNumber());
         final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
         final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        if (deptObj != null && desgnObj != null && boundaryObj != null)
-            assignmentObjList = assignmentService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
-                    desgnObj.getId(), boundaryObj.getId());
-        return assignmentObjList != null && !assignmentObjList.isEmpty() ? assignmentObjList.get(0).getPosition()
-                : null;
+        if (deptObj != null && desgnObj != null && boundaryObj != null) {
+            employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(), desgnObj.getId(),
+                    boundaryObj.getId());
+            if (!employeeList.isEmpty())
+                assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
+        }
+        return assignmentObj != null ? assignmentObj.getPosition() : null;
     }
 
     @ModelAttribute(value = "checkOperator")
@@ -354,7 +364,7 @@ public class WaterTaxUtils {
         if (userObj != null)
             for (final Role role : userObj.getRoles())
                 if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
-                && role.getName().contains(WaterTaxConstants.CLERKULB)) {
+                        && role.getName().contains(WaterTaxConstants.CLERKULB)) {
                     isCSCOperator = true;
                     break;
                 }
@@ -373,8 +383,8 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
             if (waterconnectiondetails.getDemand() != null)
                 finalDueAmount = finalDueAmount
-                + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                        .getDemand().getAmtCollected().doubleValue());
+                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                                .getDemand().getAmtCollected().doubleValue());
         return finalDueAmount;
     }
 }
