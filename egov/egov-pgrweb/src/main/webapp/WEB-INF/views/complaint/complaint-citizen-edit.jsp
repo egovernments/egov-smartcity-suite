@@ -59,7 +59,6 @@
 					<spring:message code="lbl.change.status" />
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
-
 					<form:select path="status" data-first-option="true" id="status"
 						cssClass="form-control" cssErrorClass="form-control error">
 						<form:option  value="${complaint.status.id}">
@@ -118,3 +117,11 @@
 	</div>
 		
 </c:if>
+<script>
+$(document).ready(function()
+{
+	$("select").each(function() { 
+		  $(this).find('option').eq(0).prop('selected', true);
+	});
+});
+</script>
