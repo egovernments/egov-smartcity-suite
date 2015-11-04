@@ -58,11 +58,11 @@
 					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
 				} else if (selectedValue == 'ADD_EDIT_DEMAND') {
 					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
-				}/* else if (selectedValue == 'VacancyRemission') {
-					window.location = "/ptis/property/vacancyremission/" + assessmentNum;
+				} /* else if (selectedValue == 'VacancyRemission') {
+					window.location = "/ptis/vacancyremission/create/" + assessmentNum;
 				} else if(selectedValue = 'VacancyRemissionMonthlyUpdate'){
-					window.location = "/ptis/property/vacancyremission/monthlyupdate/" + assessmentNum;
-				} */
+					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
+				} */ 
 			}
 
 			function gotoSearchForm(){
@@ -179,6 +179,13 @@
 											<s:text name="collectTax"></s:text>
 										</option>
 									</s:if>
+									<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive}">
+										<c:if test="${currentRowObject.propType != 'VAC_LAND' && currentRowObject.enableMonthlyUpdate == true && currentRowObject.isTaxExempted == false}">
+											<option value="VacancyRemissionMonthlyUpdate">
+												<s:text name="vacancyRemission.monthly.update"></s:text>
+											</option>
+										</c:if>
+									</s:if> --%>
 								</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />

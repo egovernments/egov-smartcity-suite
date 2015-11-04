@@ -64,7 +64,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission")
 public class UpdateVacancyRemissionController extends GenericWorkFlowController {
 
-	private VacancyRemission vacancyRemission;
 	
 	private VacancyRemissionService vacancyRemissionService;
 	
@@ -78,12 +77,13 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 	
 	@ModelAttribute
 	public VacancyRemission vacancyRemissionModel(@PathVariable Long id ) {
-		vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
+		VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
 		return vacancyRemission;
 	}
 	
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
+		VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
 		if(vacancyRemission!=null){
 			model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
 			model.addAttribute("currentState", vacancyRemission.getCurrentState().getValue());

@@ -49,6 +49,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.egov.eis.entity.Assignment;
@@ -110,14 +111,27 @@ public class VacancyRemissionService {
 		this.vacancyRemissionRepository = vacancyRemissionRepository;
 	}
 	
-    public VacancyRemission getVacancyRemissionForProperty(final String upicNo) {
+    public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
+    }
+    
+    public VacancyRemission getRejectAckGeneratedVacancyRemissionForProperty(final String upicNo) {
+        return vacancyRemissionRepository.findRejectionAckGeneratedForUpicNo(upicNo);
     }
     
     public VacancyRemission getVacancyRemissionById(Long id){
     	return vacancyRemissionRepository.findOne(id);
     }
     
+    public List<VacancyRemission> getAllVacancyRemissionByUpicNo(final String upicNo){
+    	return vacancyRemissionRepository.getAllVacancyRemissionByUpicNo(upicNo);
+    }
+    
+    public VacancyRemission getRejectedVacancyRemissionForProperty(final String upicNo) {
+        return vacancyRemissionRepository.findRejectedByUpicNo(upicNo);
+    }
+    
+    @Transactional
     public void saveVacancyRemission(final VacancyRemission vacancyRemission,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
@@ -137,13 +151,13 @@ public class VacancyRemissionService {
         if(workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE)){
         	if (wfInitiator.equals(userAssignment)) {
         		vacancyRemission.setStatus(PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED);
-            	vacancyRemission.transition(true).end().withSenderName(user.getName())
+            	vacancyRemission.transition().end().withSenderName(user.getName())
                 .withComments(approvalComent).withDateInfo(currentDate.toDate());
             } 
         } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
                 final String stateValue = PropertyTaxConstants.WF_STATE_REJECTED;
                 vacancyRemission.setStatus(PropertyTaxConstants.VR_STATUS_REJECTED);
-                vacancyRemission.transition(true).withSenderName(user.getName()).withComments(approvalComent)
+                vacancyRemission.transition().withSenderName(user.getName()).withComments(approvalComent)
                 .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                 .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected");
         } else {
@@ -206,9 +220,9 @@ public class VacancyRemissionService {
         }
 	}
 	
-	/*@Transactional
+	@Transactional
     public void saveRemissionDetails(final VacancyRemission vacancyRemission) {
         vacancyRemissionRepository.save(vacancyRemission);
-    }*/
+    }
 		
 }

@@ -73,7 +73,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/property/vacancyremission/{assessmentNo}")
+@RequestMapping(value = "/vacancyremission")
 public class VacanyRemissionController extends GenericWorkFlowController {
 
 	@Autowired
@@ -97,10 +97,6 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 		this.vacancyRemissionService = vacancyRemissionService;
 	}
 	
-	/*public @ModelAttribute("documentTypesList") List<DocumentType> documentNamesList() {
-		return propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCY_REMISSION);
-    }*/
-	
 	@ModelAttribute
 	public VacancyRemission vacancyRemissionModel(@PathVariable String assessmentNo) {
 		vacancyRemission = new VacancyRemission();
@@ -111,7 +107,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 		return vacancyRemission;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/create/{assessmentNo}",method = RequestMethod.GET)
 	public String newForm(final Model model, @PathVariable String assessmentNo,final HttpServletRequest request) {
 	    if (basicProperty != null) {
 	    	final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
@@ -139,7 +135,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 	    return "vacancyRemission-form";
 	}
 	
-	@RequestMapping(method =RequestMethod.POST)
+	@RequestMapping(value = "/create/{assessmentNo}", method = RequestMethod.POST)
 	public String saveVacancyRemission(@Valid @ModelAttribute VacancyRemission vacancyRemission, final BindingResult resultBinder, RedirectAttributes redirectAttributes, 
 			final Model model,final HttpServletRequest request,@RequestParam String workFlowAction){
 		

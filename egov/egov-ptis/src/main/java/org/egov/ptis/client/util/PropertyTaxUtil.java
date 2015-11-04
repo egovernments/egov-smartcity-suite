@@ -182,6 +182,8 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
@@ -2285,5 +2287,44 @@ public class PropertyTaxUtil {
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         return assignment != null ? assignment.getEmployee().getUsername() : "";
+    }
+    
+    public boolean enableVacancyRemission(String upicNo){
+    	boolean vrFlag = false;
+    	List<VacancyRemission> remissionList = persistenceService.findAllBy("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? ", upicNo);
+    	if(remissionList.isEmpty()){
+    		vrFlag = true;
+    	}else{
+    		VacancyRemission vacancyRemission = remissionList.get(remissionList.size()-1);
+    		if(vacancyRemission!=null){
+    			if(vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)){
+    				if(org.egov.infstr.utils.DateUtils.isSameDay(vacancyRemission.getVacancyToDate(), new Date())){
+    					vrFlag = true;
+    				}else if(vacancyRemission.getVacancyToDate().compareTo(new Date()) < 0){
+    					vrFlag = true;
+    				}
+    			}else if(vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED)){
+    				vrFlag = true;
+    			}
+    		}
+    	}
+    	return vrFlag;
+    }
+    
+    public boolean enableMonthlyUpdate(String upicNo){
+    	boolean monthlyUpdateFlag = false;
+    	VacancyRemission vacancyRemission = (VacancyRemission) persistenceService.find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'", upicNo);
+    	if(vacancyRemission!=null){
+    		if(vacancyRemission.getVacancyRemissionDetails().isEmpty()){
+    			monthlyUpdateFlag = true;
+    		}else{
+    			VacancyRemissionDetails vrd = vacancyRemission.getVacancyRemissionDetails().get(vacancyRemission.getVacancyRemissionDetails().size()-1);
+    			int noOfMonths = DateUtils.noOfMonths(vrd.getCheckinDate(), new Date());
+    			if(noOfMonths!=0){
+    				monthlyUpdateFlag = true;
+    			}
+    		}
+    	}
+    	return monthlyUpdateFlag;
     }
 }
