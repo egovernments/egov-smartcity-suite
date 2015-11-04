@@ -1,0 +1,1 @@
+update eg_module set displayname='Water Charge Management' where displayname='Water Tax Management';
