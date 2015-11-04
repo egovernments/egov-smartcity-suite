@@ -1,0 +1,1 @@
+ALTER table egpt_floordemandcalc ADD COLUMN TOTALTAXPAYBLE DOUBLE PRECISION;

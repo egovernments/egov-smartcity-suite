@@ -61,6 +61,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTH
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
@@ -564,6 +565,7 @@ public class PropertyService {
                 // current installment for each floor.
                 for (final Floor floor : property.getPropertyDetail().getFloorDetails())
                     ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
+            
         }
         property.getPtDemandSet().addAll(ptDmdSet);
 
@@ -1379,12 +1381,13 @@ public class PropertyService {
         // LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
         // + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
         final FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
-
         floorDmdCalc.setPTDemandCalculations(ptDmdCal);
         floorDmdCalc.setFloor(floor);
 
-        for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos())
-            setFloorDmdCalTax(unitTax, floorDmdCalc);
+        for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos()) {
+            if (FLOOR_MAP.get(floorDmdCalc.getFloor().getFloorNo()).equals(unitTax.getFloorNumber()))
+                setFloorDmdCalTax(unitTax, floorDmdCalc);
+        }
 
         LOGGER.debug("floorDmdCalc: " + floorDmdCalc + "\nExiting from createFloorDmdCalc");
         return floorDmdCalc;
@@ -1400,6 +1403,7 @@ public class PropertyService {
         floorDmdCalc.setAlv(unitTax.getNetARV());
         floorDmdCalc.setMrv(unitTax.getMrv());
         floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
+        floorDmdCalc.setTotalTaxPayble(unitTax.getTotalTaxPayable());
         for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
             for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
                 if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
