@@ -258,6 +258,7 @@ public class WaterTaxExternalService {
             	
             }else
             {
+            	
             	arrearDetails.setTaxAmount(total);   
             	arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
             	waterTaxDetails.getTaxDetails().add(arrearDetails);
@@ -271,10 +272,12 @@ public class WaterTaxExternalService {
             System.out.println(data.toString());
             
         }
+        if(arrearDetails!=null)
+    	{
         arrearDetails.setTaxAmount(total);   
     	arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
     	waterTaxDetails.getTaxDetails().add(arrearDetails);
-    
+    	}    
         errorDetails = new ErrorDetails();
         errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
         errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
