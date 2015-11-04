@@ -100,7 +100,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.existingpipeline" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="10" id="existingPipeline" path="fieldInspectionDetails.existingPipeline" required="required" />
+							<form:input class="form-control patternvalidation" data-pattern="numericslashhyphen" maxlength="4" id="existingPipeline" path="fieldInspectionDetails.existingPipeline" required="required" />
 							<form:errors path="fieldInspectionDetails.existingPipeline" cssClass="add-margin error-msg" />		
 						</div>
 					</div>

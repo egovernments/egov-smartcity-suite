@@ -75,14 +75,14 @@
 							<spring:message code="lbl.initialreading"/><span class="mandatory"></span>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation" id="connection" path="connection.initialReading" data-pattern="number" required="required" />
+							<form:input class="form-control patternvalidation" id="connection" path="connection.initialReading" data-pattern="number" maxlength="12" required="required" />
 							<form:errors path="connection.initialReading" cssClass="add-margin error-msg" />
 						</div>
 						<div class="col-sm-3 control-label text-right">
 							<spring:message code="lbl.meter.serial.no"/><span class="mandatory"></span>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation" id="meterSerialNumber" path="connection.meterSerialNumber" data-pattern="alphanumericwithspacehyphenunderscore" required="required" />
+							<form:input class="form-control patternvalidation" id="meterSerialNumber" path="connection.meterSerialNumber" data-pattern="number" maxlength="12" required="required" />
 							<form:errors path="connection.meterSerialNumber" cssClass="add-margin error-msg" />
 						</div>
 					</c:if>

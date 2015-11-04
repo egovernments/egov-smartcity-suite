@@ -89,14 +89,14 @@
 						<label for="field-1" class="col-sm-3 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicantName" class="form-control" id="app-mobno"
+							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="number" maxlength="16" id="app-mobno"
 								 />
 						</div>
 							<label for="field-1" class="col-sm-2 control-label"><spring:message
 										code="lbl.application.no" />
 								</label>
 						<div class="col-sm-3 add-margin">
-						<input type="text" name="applicationNumber" class="form-control" id="app-mobno"
+						<input type="text" name="applicationNumber" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="16" id="app-mobno"
 								 />
 						</div>
 						</div>
@@ -105,14 +105,14 @@
 										code="lbl1.consumer.number" />
 								</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="consumerCode" class="form-control" id="app-appconsumercodo"
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appconsumercodo"
 								 />
 						</div>
 								<label for="field-1" class="col-sm-2 control-label"> <spring:message
 										code="lbl.application.mobileNo" />
 								</label>
 							<div class="col-sm-3 add-margin">
-							<input type="text" name="mobileNumber" class="form-control" id="app-appcodo" min="10" maxlength="12" />
+							<input type="text" name="mobileNumber" class="form-control patternvalidation" id="app-appcodo" data-pattern="number" min="10" maxlength="10" />
 						</div>
 						</div>
 						
