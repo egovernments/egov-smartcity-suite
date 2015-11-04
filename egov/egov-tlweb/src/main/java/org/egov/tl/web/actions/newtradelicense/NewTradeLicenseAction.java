@@ -134,7 +134,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", getSession().get("model.id"));
-        if(mode.equalsIgnoreCase(VIEW) && tradeLicense!=null && !tradeLicense.isPaid()){
+        if(mode.equalsIgnoreCase(VIEW) && tradeLicense!=null && !tradeLicense.isPaid() &&
+                (!workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT))){ 
             prepareNewForm();
             ValidationError vr=new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr) );
