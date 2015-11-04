@@ -63,6 +63,7 @@ import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -104,20 +105,23 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     @Mock
     private SecurityUtils securityUtils;
     @Mock
-    private CityService cityWebsiteService; 
-    
+    private CityService cityWebsiteService;
+
+    @Mock
+    private DepartmentService departmentService;
+
     @Override
     protected ComplaintSearchController initController() {
         MockitoAnnotations.initMocks(this);
         return new ComplaintSearchController(searchService, complaintService, complaintStatusService,
-                complaintTypeService,assignmentService,securityUtils,cityWebsiteService);
+                complaintTypeService, assignmentService, securityUtils, cityWebsiteService, departmentService);
     }
 
     @Before
     public void before() {
         mockMvc = mvcBuilder.build();
         final List<Department> departmentList = new ArrayList<Department>();
-        when(complaintTypeService.getAllComplaintTypeDepartments()).thenReturn(departmentList);
+        when(departmentService.getAllDepartments()).thenReturn(departmentList);
 
         final List<ComplaintStatus> complaintStatusList = new ArrayList<ComplaintStatus>();
         when(complaintStatusService.getAllComplaintStatus()).thenReturn(complaintStatusList);
