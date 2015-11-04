@@ -77,6 +77,7 @@ public class PropertyMaterlizeView implements Serializable {
     private Boolean isExempted;
     private Character source;
     private Set<FloorDetailsView> floorDetails;
+    private String mobileNumber;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -297,5 +298,15 @@ public class PropertyMaterlizeView implements Serializable {
     public void setFloorDetails(Set<FloorDetailsView> floorDetails) {
         this.floorDetails = floorDetails;
     }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+    
+    
     
 }

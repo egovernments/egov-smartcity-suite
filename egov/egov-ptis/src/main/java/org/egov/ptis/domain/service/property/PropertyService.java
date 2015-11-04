@@ -104,6 +104,7 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
@@ -2658,6 +2659,34 @@ public class PropertyService {
         if (ownerName != null && !ownerName.trim().isEmpty())
             query.setString("OwnerName", ownerName + "%");
 
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+    
+    public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        if(StringUtils.isNotBlank(doorNo)) {
+            queryStr.append("where pmv.houseNo like :doorNo ");
+        }
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        if(StringUtils.isNotBlank(doorNo)) {
+            query.setString("doorNo", doorNo + "%");
+        }
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    } 
+    
+    public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        if(StringUtils.isNotBlank(MobileNo)) {
+            queryStr.append("where pmv.mobileNumber =:MobileNo ");
+        }
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        if(StringUtils.isNotBlank(MobileNo)) {
+            query.setString("MobileNo", MobileNo);
+        }
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }

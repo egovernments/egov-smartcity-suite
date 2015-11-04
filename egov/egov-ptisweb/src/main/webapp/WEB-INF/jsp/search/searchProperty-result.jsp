@@ -81,7 +81,7 @@
 					<div class="headingsmallbgnew">
 						<s:text name="scrhCriteria"></s:text>
 						<span class="mandatory">
-							<s:property	value="%{searchCreteria}" />
+							<s:property	value="%{searchCriteria}" />
 						</span> / <s:text name="totProp"></s:text>
 						<span class="mandatory">
 							<s:property value="%{searchResultList.size}" /> 

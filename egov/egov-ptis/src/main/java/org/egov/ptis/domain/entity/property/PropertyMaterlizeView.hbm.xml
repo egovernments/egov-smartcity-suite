@@ -71,6 +71,7 @@
 		<property name="isExempted" column="ISEXEMPTED" />
 		<property name="source" column="SOURCE" />
 		<property name="alv" column="ALV"/>
+		<property name="mobileNumber" column="mobileno"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>
