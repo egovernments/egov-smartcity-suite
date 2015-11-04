@@ -88,7 +88,7 @@ public class RejectionAcknowledgementController {
     public @ResponseBody ResponseEntity<byte[]> generateRejectionAckNotice(final HttpServletRequest request,
             final HttpSession session) {
     	String pathvars[] = request.getParameter("pathVar").split(",");
-    	final VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionForProperty(pathvars[0]);
+    	final VacancyRemission vacancyRemission = vacancyRemissionService.getRejectAckGeneratedVacancyRemissionForProperty(pathvars[0]);
         return generateReport(vacancyRemission, request, session,pathvars[1]);
     }
 
