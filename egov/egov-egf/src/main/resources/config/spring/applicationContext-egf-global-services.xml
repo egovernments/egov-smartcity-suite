@@ -51,6 +51,10 @@
 		<property name="type" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
 	
+	<bean id="bankService" class="org.egov.services.masters.BankService" scope="prototype" autowire-candidate="default">
+		<property name="type" value="org.egov.commons.Bank" />
+	</bean>
+	
 	<bean id="instrumentVouherService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.model.instrument.InstrumentVoucher" />

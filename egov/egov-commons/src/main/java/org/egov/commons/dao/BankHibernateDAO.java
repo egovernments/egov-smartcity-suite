@@ -39,6 +39,8 @@
  */
 package org.egov.commons.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -71,5 +73,10 @@ public class BankHibernateDAO extends GenericHibernateDAO {
 		final Query qry = getCurrentSession().createQuery("from Bank where code=:bankCode");
 		qry.setString("bankCode", bankCode);
 		return (Bank) qry.uniqueResult();
+	}
+	
+	public List<Bank> getAllBanks() {
+		final Query qry = getCurrentSession().createQuery("from Bank order by code");
+		return qry.list();
 	}
 }

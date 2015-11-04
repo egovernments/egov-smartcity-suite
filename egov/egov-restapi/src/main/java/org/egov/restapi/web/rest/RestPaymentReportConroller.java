@@ -40,8 +40,11 @@
 package org.egov.restapi.web.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -50,14 +53,22 @@ import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.collection.service.ServiceCategoryService;
 import org.egov.commons.Bank;
+import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
+import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.PaymentInfoSearchRequest;
+import org.egov.restapi.util.JsonConvertor;
+import org.egov.restapi.util.ValidationUtil;
 import org.egov.search.domain.Document;
 import org.egov.services.masters.BankService;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,62 +81,104 @@ import com.google.gson.reflect.TypeToken;
 @RestController
 public class RestPaymentReportConroller {
 
-    @Autowired
-  private  CollectionIntegrationService collectionService;
-    
-    @Qualifier
-  private   BankService bankService;
-    
-  
+	@Autowired
+	private  CollectionIntegrationService collectionService;
 
-    @RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
-            throws JsonGenerationException, JsonMappingException, IOException {
+	@Autowired
+	private ServiceCategoryService serviceCategoryService;
 
-        List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(
-                paymentInfoSearchRequest.getFromdate(),
-                paymentInfoSearchRequest.getTodate());
-        return getJSONResponse(listAggregatePaymentInfo);
-    }
+	@Autowired
+	private  BankHibernateDAO bankHibernateDAO;
 
-    @RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
-            throws JsonGenerationException, JsonMappingException, IOException {
+	@Autowired
+	ApplicationContext applicationContext;
 
-        List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(
-                paymentInfoSearchRequest.getFromdate(),
-                paymentInfoSearchRequest.getTodate(), paymentInfoSearchRequest.getServicecode());
-        return getJSONResponse(receiptInfoList);
-    }
-    
-    @RequestMapping(value="/banks",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public String bankNames() throws JsonGenerationException, JsonMappingException, IOException {
-    
-    	List<Bank> banks = bankService.findAll("code"); 
-        return	getJSONResponse(banks);
-    	
-    }
-    @RequestMapping(value="/services",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public String services() throws JsonGenerationException, JsonMappingException, IOException {
-    
-    	 List<ServiceCategory> services = collectionService.getActiveServiceCategories();
-        return	getJSONResponse(services);
-    	
-    }
 
-    /**
-     * This method is used to prepare jSON response.
-     *
-     * @param obj - a POJO object
-     * @return jsonResponse - JSON response string
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     */
-    private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
-        final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
-                .disableHtmlEscaping().create();
-        return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
-        }.getType());
-    }
+
+	@RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
+			throws JsonGenerationException, JsonMappingException, IOException {
+
+		List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(
+				paymentInfoSearchRequest.getFromdate(),
+				paymentInfoSearchRequest.getTodate());
+		return getJSONResponse(listAggregatePaymentInfo);
+	}
+
+	@RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,BindingResult errors)
+			throws JsonGenerationException, JsonMappingException, IOException {
+
+
+		validatePaymentDetails(paymentInfoSearchRequest,errors);
+		List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(
+				paymentInfoSearchRequest.getFromdate(),
+				paymentInfoSearchRequest.getTodate(), paymentInfoSearchRequest.getServicecode());
+		return getJSONResponse(receiptInfoList);
+	}
+
+	private void validatePaymentDetails(PaymentInfoSearchRequest  payment, BindingResult errors) {
+		if(payment.getFromdate()==null )
+		{
+
+		}
+
+	}
+
+	@RequestMapping(value="/banks",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	public String bankNames() {
+		List<Bank> banks=null;
+		try {
+			banks = bankHibernateDAO.findAll(); 
+
+		} catch (Exception e) {
+			ErrorDetails er=new ErrorDetails();
+			er.setErrorCode(e.getMessage());
+			er.setErrorMessage(e.getMessage());
+			return	JsonConvertor.convert(er);
+		}
+		return	JsonConvertor.convert(banks);
+
+	}
+	@RequestMapping(value="/services",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	public String services() throws JsonGenerationException, JsonMappingException, IOException {
+
+		Map<String, String> serviceCategory=null;
+		List<ServiceCategory> services;
+		try {
+			services = serviceCategoryService.getAllActiveServiceCategories();
+			if(services!=null || services.size()>=0)
+			{
+				serviceCategory=new LinkedHashMap<String, String>();
+				for(ServiceCategory scs:services)
+				{
+					serviceCategory.put(scs.getCode(), scs.getName());
+				}
+			}
+		} catch (Exception e) {
+			ErrorDetails er=new ErrorDetails();
+			er.setErrorCode(e.getMessage());
+			er.setErrorMessage(e.getMessage());
+			return	JsonConvertor.convert(er);
+
+		}
+		return	JsonConvertor.convert(serviceCategory);
+
+	}
+
+	/**
+	 * This method is used to prepare jSON response.
+	 *
+	 * @param obj - a POJO object
+	 * @return jsonResponse - JSON response string
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+		final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+				.disableHtmlEscaping().create();
+		return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
+		}.getType());
+	}
 }

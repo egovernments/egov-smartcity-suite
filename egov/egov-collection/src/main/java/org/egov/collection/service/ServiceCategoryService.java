@@ -57,7 +57,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-@Service
+
 @Transactional(readOnly = true)
 public class ServiceCategoryService {
     private final ServiceCategoryRepository serviceCategoryRepository;
