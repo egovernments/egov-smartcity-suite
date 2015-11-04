@@ -73,17 +73,21 @@ public class CommonController extends ApiController {
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
             
-            User getUser=userservice.getUserByMobileNumber(citizen.get("mobileNumber").toString());
+            User getUser=userservice.getUserByMobileNumber(citizenCreate.getMobileNumber());
             if(getUser != null)
             {
             	return res.error("A user with same mobile number already registered!");
             }
             
-            getUser=userservice.getUserByEmailId(citizen.get("emailId").toString());
-            if(getUser != null)
+            if(citizenCreate.getEmailId() != null && ! citizenCreate.getEmailId().isEmpty())
             {
-            	return res.error("A user with same email already registered!");
+            	getUser=userservice.getUserByEmailId(citizenCreate.getEmailId());
+                if(getUser != null)
+                {
+                	return res.error("A user with same email already registered!");
+                }
             }
+            
             
            citizenCreate.getDevices().add(device);
            citizenService.create(citizenCreate);
