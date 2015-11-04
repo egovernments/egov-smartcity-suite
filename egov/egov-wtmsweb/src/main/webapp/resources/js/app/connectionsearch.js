@@ -72,7 +72,7 @@ jQuery(document).ready(function($) {
 			           {title : 'Status',data : 'resource.clauses.status'},
 			           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 			           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
-			           {title : 'WaterTax Due',data : 'resource.clauses.waterTaxDue'},
+			           {title : 'WaterCharge Due',data : 'resource.clauses.waterTaxDue'},
 				       {title : 'Actions',
 			        	   render : function(data,type,full) {
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
