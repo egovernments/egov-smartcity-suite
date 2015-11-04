@@ -1,0 +1,1 @@
+update eg_department set code='REV' where code='R' and name='Revenue';

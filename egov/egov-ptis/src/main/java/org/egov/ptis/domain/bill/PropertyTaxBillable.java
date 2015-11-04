@@ -99,7 +99,7 @@ import org.springframework.stereotype.Service;
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
 RebateCalculator {
 
-    private static final String STRING_DEPARTMENT_CODE = "R";
+    private static final String STRING_DEPARTMENT_CODE = "REV";
     private static final String STRING_SERVICE_CODE = "PT";
     private static final String STRING_MUTATION_SERVICE_CODE = "PTMF";
     private BasicProperty basicProperty;
