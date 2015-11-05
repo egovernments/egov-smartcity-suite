@@ -65,6 +65,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -79,6 +80,7 @@ import org.joda.time.format.DateTimeFormatter;
 @Entity
 @Table(name = "egpgr_complaint")
 @SequenceGenerator(name = Complaint.SEQ_COMPLAINT, sequenceName = Complaint.SEQ_COMPLAINT, allocationSize = 1)
+@Unique(id = "id", tableName = "egpgr_complaint", columnName = "crn", fields = "crn", enableDfltMsg = true)
 public class Complaint extends StateAware {
 
     private static final long serialVersionUID = 4020616083055647372L;

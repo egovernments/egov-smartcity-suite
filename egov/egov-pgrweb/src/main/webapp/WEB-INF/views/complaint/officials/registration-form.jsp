@@ -227,8 +227,9 @@
 	if(complaintTypeId !== ''){
 		$("#complaintTypeId").val(complaintTypeId);
 	}
-	/* var locationid = '${complaint.location.id}';
-	if(locationid !== ''){
-		$("#locationid").val(locationid);
-	} */
+	var receivingMode = '${complaint.receivingMode}';
+	if(receivingMode === 'MANUAL') {
+		enableRC();
+		enabledCRN();
+	}
 </script>
