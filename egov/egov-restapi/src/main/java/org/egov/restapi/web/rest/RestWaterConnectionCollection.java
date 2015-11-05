@@ -47,6 +47,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -77,6 +78,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RestWaterConnectionCollection {
+	private static Logger LOG=Logger.getLogger(RestWaterConnectionCollection.class);
 
     @Autowired
     private WaterTaxExternalService waterTaxExternalService;
@@ -207,6 +209,14 @@ public class RestWaterConnectionCollection {
         }
         if (waterConnDetailsObj != null) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
+            LOG.error("totalAmountDue:"+totalAmountDue);
+            
+            LOG.error("payWaterTaxDetails.getTotalAmount():"+payWaterTaxDetails.getTotalAmount());
+            
+            LOG.error("compare "+totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+            
+            LOG.error("compare "+totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+            
             if (totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()) == 1
                     || totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()) == -1) {
                 errorDetails = new ErrorDetails();
