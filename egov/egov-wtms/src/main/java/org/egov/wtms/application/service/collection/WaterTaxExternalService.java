@@ -64,7 +64,9 @@ import org.egov.collection.integration.models.PaymentInfoCard;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.commons.Bank;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.dcb.bean.CashPayment;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.CreditCardPayment;
@@ -132,6 +134,9 @@ public class WaterTaxExternalService {
     @Autowired
     private PtDemandDao ptDemandDAO;
 
+    @Autowired
+    private BankHibernateDAO bankHibernateDAO;
+    
     public WaterReceiptDetails payWaterTax(final PayWaterTaxDetails payWaterTaxDetails) {
         WaterReceiptDetails waterReceiptDetails = null;
         ErrorDetails errorDetails = null;
@@ -438,6 +443,8 @@ public class WaterTaxExternalService {
         paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payWaterTaxDetails.getChqddNo());
         paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, payWaterTaxDetails.getChqddDate());
         paymentDetailsMap.put(ChequePayment.BRANCHNAME, payWaterTaxDetails.getBranchName());
+        Long validatesBankId = validateBank(payWaterTaxDetails.getBankName());
+        paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
         paymentDetailsMap.put(ChequePayment.BANKNAME, payWaterTaxDetails.getBankName());
         final Payment payment = Payment.create(payWaterTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
       
@@ -450,6 +457,18 @@ public class WaterTaxExternalService {
         return sdf.format(date);
     }
 
+    
+    private Long validateBank(String bankCodeOrName) {
+		
+   	 Bank bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
+        if (bank == null) {
+            // Tries by name if code not found
+            bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
+        }
+        return new Long(bank.getId());
+   
+		
+	}
     // TODO:EgBillDao is not intialising Request is comes from RestController so
     // using BillCreation method here only
     public final EgBill generateBill(final Billable billObj) {

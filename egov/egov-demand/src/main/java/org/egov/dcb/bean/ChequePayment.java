@@ -81,7 +81,7 @@ public class ChequePayment extends Payment {
 		}
 		if (paymentInfo.get(BANKID) == null) {
 			this.setBankName(paymentInfo.get(BANKNAME));
-			this.setBankId(fetchBankIDFromCodeOrName(paymentInfo.get(BANKNAME)));
+			this.setBankId(Long.valueOf(paymentInfo.get(BANKID)));
 		} else {
 			this.setBankId(Long.valueOf(paymentInfo.get(BANKID)));
 		}

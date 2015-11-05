@@ -75,16 +75,18 @@ public class ServiceCategory extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_SERVICECATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
+    @Required(message = "serviceCategoryCode.null.validation")
+    @Length(max = 256, message = "masters.serviceCategory.codeLength")
+    @Column(name = "code")
+    private String code;
 
     @Required(message = "serviceCategoryName.null.validation")
     @Length(min = 1, max = 256, message = "masters.serviceCategory.nameLength")
     @Column(name = "name")
     private String name;
 
-    @Required(message = "serviceCategoryCode.null.validation")
-    @Length(max = 256, message = "masters.serviceCategory.codeLength")
-    @Column(name = "code")
-    private String code;
+    
 
     @JsonIgnore
     @Column(name = "isactive")

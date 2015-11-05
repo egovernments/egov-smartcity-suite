@@ -70,7 +70,9 @@ import javax.persistence.Query;
 import org.apache.commons.io.FilenameUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Area;
+import org.egov.commons.Bank;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
@@ -204,6 +206,9 @@ public class PropertyExternalService {
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    BankHibernateDAO bankHibernateDAO;
 
     public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag) {
         assessmentDetail = new AssessmentDetails();
@@ -600,8 +605,9 @@ public class PropertyExternalService {
         paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payPropertyTaxDetails.getChqddNo());
         paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, ChequePayment.CHEQUE_DATE_FORMAT.format(payPropertyTaxDetails.getChqddDate()));
         paymentDetailsMap.put(ChequePayment.BRANCHNAME, payPropertyTaxDetails.getBranchName());
-        paymentDetailsMap.put(ChequePayment.BANKNAME, payPropertyTaxDetails.getBankName());
-        final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode(), paymentDetailsMap);
+        Long validatesBankId = validateBank(payPropertyTaxDetails.getBankName());
+        paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
+        final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
         final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment);
 
         if (null != billReceiptInfo) {
@@ -626,7 +632,19 @@ public class PropertyExternalService {
         return receiptDetails;
     }
 
-    public ErrorDetails payWaterTax(final String consumerNo, final String paymentMode, final BigDecimal totalAmount,
+    private Long validateBank(String bankCodeOrName) {
+		
+    	 Bank bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
+         if (bank == null) {
+             // Tries by name if code not found
+             bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
+         }
+         return new Long(bank.getId());
+    
+		
+	}
+
+	public ErrorDetails payWaterTax(final String consumerNo, final String paymentMode, final BigDecimal totalAmount,
             final String paidBy) {
         ErrorDetails errorDetails = validatePaymentDetails(consumerNo, paymentMode, totalAmount, paidBy);
         if (null != errorDetails)

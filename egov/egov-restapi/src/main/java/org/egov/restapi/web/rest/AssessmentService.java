@@ -57,6 +57,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
@@ -217,17 +219,42 @@ public class AssessmentService {
 	@RequestMapping(value = "/property/payPropertyTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	public String payPropertyTax(@RequestBody String payPropertyTaxDetails)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		String responseJson = new String();
-		PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
-				payPropertyTaxDetails, PayPropertyTaxDetails.class);
-		
+		String responseJson;
+		try {
+			responseJson = new String();
+			PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
+					payPropertyTaxDetails, PayPropertyTaxDetails.class);
+			
 
-		ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails);
-		if (null != errorDetails) {
-			responseJson = getJSONResponse(errorDetails);
-		} else {
-			ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails);
-			responseJson = getJSONResponse(receiptDetails);
+			ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails);
+			if (null != errorDetails) {
+				responseJson = getJSONResponse(errorDetails);
+			} else {
+				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails);
+				responseJson = getJSONResponse(receiptDetails);
+			}
+		}catch (ValidationException e) {
+		
+			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
+			
+			List<ValidationError> errors = e.getErrors();
+			for(ValidationError ve:errors)
+			{
+				ErrorDetails er=new ErrorDetails();
+				er.setErrorCode(ve.getKey());
+				er.setErrorMessage(ve.getMessage());
+				errorList.add(er);
+			}
+			responseJson = getJSONResponse(errorList);  
+		}
+		catch (Exception e) {
+			
+			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
+			ErrorDetails er=new ErrorDetails();
+			er.setErrorCode(e.getMessage());
+			er.setErrorMessage(e.getMessage());
+			errorList.add(er);
+			responseJson = getJSONResponse(errorList);  
 		}
 		return responseJson;
 	}

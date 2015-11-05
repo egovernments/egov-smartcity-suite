@@ -53,10 +53,13 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.dcb.bean.ChequePayment;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.util.JsonConvertor;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
@@ -102,14 +105,41 @@ public class RestWaterConnectionCollection {
      */
     @RequestMapping(value = "/watercharges/paywatertax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String payWaterTax(@Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails)
-            throws JsonGenerationException, JsonMappingException, IOException, BindException {
-        final ErrorDetails errorDetails = validatePaymentDetails(payWaterTaxDetails);
-        if (null != errorDetails)
-            return getJSONResponse(errorDetails);
-        else {
-            final WaterReceiptDetails waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
-            return getJSONResponse(waterReceiptDetails);
-        }
+            {
+     String responseJson="";
+      WaterReceiptDetails waterReceiptDetails=null ;
+    	try {
+			final ErrorDetails errorDetails = validatePaymentDetails(payWaterTaxDetails);
+			if (null != errorDetails)
+			    return JsonConvertor.convert(errorDetails);
+			else {
+				waterReceiptDetails   = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
+			   
+			}
+		 }catch (ValidationException e) {
+		
+			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
+			
+			List<ValidationError> errors = e.getErrors();
+			for(ValidationError ve:errors)
+			{
+				ErrorDetails er=new ErrorDetails();
+				er.setErrorCode(ve.getKey());
+				er.setErrorMessage(ve.getMessage());
+				errorList.add(er);
+			}
+			responseJson = JsonConvertor.convert(errorList);  
+		}
+		catch (Exception e) {
+			
+			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
+			ErrorDetails er=new ErrorDetails();
+			er.setErrorCode(e.getMessage());
+			er.setErrorMessage(e.getMessage());
+			errorList.add(er);
+			responseJson = JsonConvertor.convert(errorList);  
+		}
+    	 return JsonConvertor.convert(waterReceiptDetails);
     }
 
     @RequestMapping(value = "/watercharges/getwatertaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -118,7 +148,7 @@ public class RestWaterConnectionCollection {
             JsonMappingException, IOException, BindException {
         final ErrorDetails errorDetails = validatePaymentDetBeforCollection(payWaterTaxDetails);
         if (null != errorDetails)
-            return getJSONResponse(errorDetails);
+            return JsonConvertor.convert(errorDetails);
         else {
             final WaterTaxDetails waterTaxDetails = waterTaxExternalService.getWaterTaxDemandDet(payWaterTaxDetails);
 
@@ -135,18 +165,12 @@ public class RestWaterConnectionCollection {
                 waterTaxDetails.setTaxDetails(taxDetails);
             }
 
-            return getJSONResponse(waterTaxDetails);
+            return JsonConvertor.convert(waterTaxDetails);
 
         }
     }
 
-    private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        objectMapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
-        final String jsonResponse = objectMapper.writeValueAsString(obj);
-        return jsonResponse;
-    }
+   
 
     public ErrorDetails validatePaymentDetBeforCollection(final PayWaterTaxDetails payWaterTaxDetails) {
         ErrorDetails errorDetails = null;

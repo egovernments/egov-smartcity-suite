@@ -166,6 +166,8 @@ public class RestApiConstants {
 	public static final String SURROUNDING_BOUNDARY_DETAILS_REQ_CODE = "41";
 	public static final String SURROUNDING_BOUNDARY_DETAILS_REQ_MSG = "Surrounding Boundary Details is required.";
 	
+	public static final String JSON_CONVERSION_ERROR_CODE= "EGOV-00";
+	public static final String JSON_CONVERSION_ERROR_MESSAGE="Error while returning  the result . Please contact Administrator";
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";
