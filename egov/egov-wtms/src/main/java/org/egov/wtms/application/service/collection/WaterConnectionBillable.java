@@ -76,7 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WaterConnectionBillable extends AbstractBillable implements Billable {
 
-    private static final String STRING_DEPARTMENT_CODE = "R";
+    private static final String STRING_DEPARTMENT_CODE = "REV";
     private static final String STRING_SERVICE_CODE = "WT";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
