@@ -1746,13 +1746,12 @@ function autocompletecodeBank(obj,myEvent)
 }
 function fillAfterSplitBank(obj)
 {
-
+	var currRow=getRow(obj);
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	if(temp[1])
 	{
 		obj.value=temp[0];
-		var currRow=getRow(obj);
 		getControlInBranch(currRow,'bankID').value=temp[1];
 		getControlInBranch(currRow,'bankName').value=temp[0];
 		
