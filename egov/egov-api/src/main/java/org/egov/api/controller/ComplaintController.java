@@ -38,18 +38,21 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.egov.api.adapter.ComplaintAdapter;
 import org.egov.api.adapter.ComplaintStatusAdapter;
 import org.egov.api.adapter.ComplaintTypeAdapter;
@@ -61,6 +64,7 @@ import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -74,6 +78,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.elasticsearch.search.sort.SortOrder;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -166,7 +171,7 @@ public class ComplaintController extends ApiController {
      * @param Complaint - As json Object
      * @return Complaint
      */
-    @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
+    /*@RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
     public ResponseEntity<String> complaintCreate(@RequestBody final JSONObject complaintRequest) {
 
         try {
@@ -200,7 +205,65 @@ public class ComplaintController extends ApiController {
         } catch (final Exception e) {
             return getResponseHandler().error(e.getMessage());
         }
+    }*/
+    
+    
+    @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
+    public ResponseEntity<String> complaintCreate(@RequestParam(value = "json_complaint", required = false) String complaintJSON, @RequestParam("files") final MultipartFile[] files) {
+    	
+    	try {
+    		
+    		JSONObject complaintRequest=(JSONObject)JSONValue.parse(complaintJSON);
+    		
+            final Complaint complaint = new Complaint();
+            final long complaintTypeId = (long) complaintRequest.get("complaintTypeId");
+            if (complaintRequest.get("locationId") != null && (long) complaintRequest.get("locationId") > 0) {
+                final long locationId = (long) complaintRequest.get("locationId");
+                final CrossHierarchy crosshierarchy = crossHierarchyService.findById(locationId);
+                complaint.setLocation(crosshierarchy.getParent());
+                complaint.setChildLocation(crosshierarchy.getChild());
+            }
+            if (complaintRequest.get("lng") != null && (double) complaintRequest.get("lng") > 0) {
+                final double lng = (double) complaintRequest.get("lng");
+                complaint.setLng(lng);
+            }
+            if (complaintRequest.get("lat") != null && (double) complaintRequest.get("lat") > 0) {
+                final double lat = (double) complaintRequest.get("lat");
+                complaint.setLat(lat);
+            }
+            if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
+                return getResponseHandler().error(getMessage("location.required"));
+            complaint.setDetails(complaintRequest.get("details").toString());
+            complaint.setLandmarkDetails(complaintRequest.get("landmarkDetails").toString());
+            if (complaintTypeId > 0) {
+                final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
+                complaint.setComplaintType(complaintType);
+            }
+            complaint.setSupportDocs(addToFileStore(files));
+            complaintService.createComplaint(complaint);
+            return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint,
+                   getMessage("msg.complaint.reg.success"));
+        } catch (final Exception e) {
+        	e.printStackTrace();
+            return getResponseHandler().error(e.getMessage());
+        }
+
     }
+    
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(),
+                            PGRConstants.MODULE_NAME);
+                } catch (final Exception e) {
+                    throw new ApplicationRuntimeException("err.input.stream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return null;
+    }
+    
 
     // --------------------------------------------------------------------------------//
     /**
