@@ -88,11 +88,13 @@ import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTaxBoundaryDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
+import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -141,35 +143,44 @@ public class AssessmentService {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/property/propertyTaxDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-	public String getPropertyTaxDetails(@RequestBody String assessmentNoRequest)
+	public String getPropertyTaxDetails(@RequestParam String assessmentNoRequest)
 			throws JsonGenerationException, JsonMappingException, IOException {
 
 		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
 		AssessmentNoRequest assessmentNoReq = (AssessmentNoRequest) getObjectFromJSONRequest(assessmentNoRequest,
 				AssessmentNoRequest.class);
-		String assessmentNo = assessmentNoReq.getAssessmentNo();
-		if (null != assessmentNo) {
-			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
-		} else {
-			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
-			propertyTaxDetails.setErrorDetails(errorDetails);
+		try {
+			String assessmentNo = assessmentNoReq.getAssessmentNo();
+			if (null != assessmentNo) {
+				propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+			} else {
+				ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
+				propertyTaxDetails.setErrorDetails(errorDetails);
+			}
+			if(propertyTaxDetails.getOwnerDetails()==null)
+			{
+				propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>());
+			}
+			if(propertyTaxDetails.getLocalityName()==null)  
+				propertyTaxDetails.setLocalityName("");
+			if(propertyTaxDetails.getPropertyAddress()==null)
+				propertyTaxDetails.setPropertyAddress("");
+			if(propertyTaxDetails.getTaxDetails()==null)
+			{
+				RestPropertyTaxDetails ar=new RestPropertyTaxDetails();
+				 List taxDetails=new ArrayList<RestPropertyTaxDetails>();
+				 taxDetails.add(ar);
+				propertyTaxDetails.setTaxDetails(taxDetails);
+			}
+		} catch (Exception e) {
+			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
+			ErrorDetails er=new ErrorDetails();
+			er.setErrorCode(e.getMessage());
+			er.setErrorMessage(e.getMessage());
+			errorList.add(er);
+			return  JsonConvertor.convert(errorList);  
 		}
-		if(propertyTaxDetails.getOwnerDetails()==null)
-		{
-			propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>());
-		}
-		if(propertyTaxDetails.getLocalityName()==null)  
-			propertyTaxDetails.setLocalityName("");
-		if(propertyTaxDetails.getPropertyAddress()==null)
-			propertyTaxDetails.setPropertyAddress("");
-		if(propertyTaxDetails.getArrearDetails()==null)
-		{
-			RestPropertyTaxDetails ar=new RestPropertyTaxDetails();
-			 List taxDetails=new ArrayList<RestPropertyTaxDetails>();
-			 taxDetails.add(ar);
-			propertyTaxDetails.setTaxDetails(taxDetails);
-		}
-		return getJSONResponse(propertyTaxDetails);
+		return JsonConvertor.convert(propertyTaxDetails);
 	}
 
 	/**
@@ -216,7 +227,7 @@ public class AssessmentService {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/property/payPropertyTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/payPropertyTax", method = {RequestMethod.POST,RequestMethod.OPTIONS}, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	public String payPropertyTax(@RequestBody String payPropertyTaxDetails)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String responseJson;
@@ -228,10 +239,10 @@ public class AssessmentService {
 
 			ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails);
 			if (null != errorDetails) {
-				responseJson = getJSONResponse(errorDetails);
+				responseJson = JsonConvertor.convert(errorDetails);
 			} else {
 				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails);
-				responseJson = getJSONResponse(receiptDetails);
+				responseJson =  JsonConvertor.convert(receiptDetails);
 			}
 		}catch (ValidationException e) {
 		
@@ -245,7 +256,7 @@ public class AssessmentService {
 				er.setErrorMessage(ve.getMessage());
 				errorList.add(er);
 			}
-			responseJson = getJSONResponse(errorList);  
+			responseJson = JsonConvertor.convert(errorList);  
 		}
 		catch (Exception e) {
 			
@@ -254,7 +265,7 @@ public class AssessmentService {
 			er.setErrorCode(e.getMessage());
 			er.setErrorMessage(e.getMessage());
 			errorList.add(er);
-			responseJson = getJSONResponse(errorList);  
+			responseJson = JsonConvertor.convert(errorList);  
 		}
 		return responseJson;
 	}
