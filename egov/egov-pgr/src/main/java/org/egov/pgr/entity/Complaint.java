@@ -161,7 +161,7 @@ public class Complaint extends StateAware {
     private CitizenFeedback citizenFeedback;
 
     @ManyToOne
-    @JoinColumn(name = "childLocation", nullable = false)
+    @JoinColumn(name = "childLocation", nullable = true)
     private Boundary childLocation;
 
     /*
