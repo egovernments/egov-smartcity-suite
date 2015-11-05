@@ -716,7 +716,7 @@ function validateEmail( obj)
           {
           if(!objRegExp.test(obj.value))
           {
-          alert('Pleasr Enter Valid Email Address');
+          alert('Please Enter Valid Email Address');
           obj.value="";
           obj.focus();
           return false;

@@ -72,19 +72,19 @@
        	<div class="col-sm-3 text-center">
        		<s:if test="%{documents.isEmpty()}">
        			<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file"/>
 				</s:else>
 			</s:if>
 			<s:elseif test="%{documents[#status.index].files.isEmpty()}">
 				<s:hidden name="documents[%{#status.index}].id"/>
 				<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis"/>
+					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file"/>
 				</s:else>
 			</s:elseif>
 			<s:else>
@@ -95,6 +95,10 @@
 					</a> 
 				</s:iterator>	
 			</s:else>
+			<form:errors path="documents[%{#status.index}].files" cssClass="add-margin error-msg" />
+			<div class="add-margin error-msg" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
        	</div>
    	</div>
 </s:iterator>
+
+<script src="<c:url value='/resources/app/js/documentupload.js'/>"></script> 

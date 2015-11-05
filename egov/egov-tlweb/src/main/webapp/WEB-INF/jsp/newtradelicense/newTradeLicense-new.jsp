@@ -45,63 +45,63 @@
 		<title><s:text name="page.title.newtrade" /></title>
 		<script>
 	
-			function validateForm(obj) {
+			function validateLicenseForm(obj) {
 				if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
-					document.getElementById("mobilePhoneNumber").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.applicantname.null" />');
-					document.getElementById("applicantName").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("fatherOrSpouseName").value == '' || document.getElementById("fatherOrSpouseName").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.fatherorspousename.null" />');
-					document.getElementById("fatherOrSpouseName").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("emailId").value == '' || document.getElementById("emailId").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.email.null" />');
-					document.getElementById("emailId").focus();
+					window.scroll(0, 0);
 					return false;
 				} else if (document.getElementById("licenseeAddress").value == '' || document.getElementById("licenseeAddress").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
-					document.getElementById("licenseeAddress").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("boundary").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.locality.null" />');
-					document.getElementById("boundary").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("ownershipType").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
-					document.getElementById("ownershipType").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
-					document.getElementById("address").focus();
+					window.scroll(0, 0);
 					return false;
 				} else if (document.getElementById("buildingType").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.buildingtype.null" />');
-					document.getElementById("buildingType").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("category").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.category.null" />');
-					document.getElementById("category").focus();
+					window.scroll(0, 0); 
 					return false;
 				}  else if (document.getElementById("subCategory").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.subcategory.null" />');
-					document.getElementById("subCategory").focus();
+					window.scroll(0, 0); 
 					return false;
 				}	else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
-					document.getElementById("tradeArea_weight").focus();
+					window.scroll(0, 0);
 					return false;
 				}	else if (document.getElementById("uom").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
-					document.getElementById("uom").focus();
+					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
+				}	else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
 						 document.getElementById("workersCapacity").value == 0) {
 					showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
-					document.getElementById("workersCapacity").focus();
+					window.scroll(0, 0); 
 					return false;
 				}
     			if(validateForm_newTradeLicense()==false) { 
@@ -226,7 +226,7 @@
 				noOfMachines = document.createElement('input');
 				noOfMachines.type = 'number';
 				noOfMachines.size = '10';
-				noOfMachines.onBlur= 'checkLength(this,3)';
+				noOfMachines.onBlur= 'checkLength(this,3)'; 
 				noOfMachines.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
@@ -241,6 +241,7 @@
 				    noOfMachines.onblur=totalHP;
 				} else {
 				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
+				    noOfMachines.setAttribute('onKeyPress', 'return numbersonly(this, event);' );
 				}
 				cellRight.appendChild(noOfMachines);
 				    
@@ -267,6 +268,7 @@
 				    horsepower.onblur=totalHP;
 				} else{
 				    horsepower.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
+				    horsepower.setAttribute('onKeyPress', 'return numbersonly(this, event);' );
 				}
 				  
 				 cellRight.appendChild(horsepower);
@@ -287,9 +289,9 @@
  					var oRow = src.parentNode.parentNode;
  					if (oRow.rowIndex == 2) 
  					{
- 						alert("Can not delete the first row!");
+ 						alert("Cannot delete the first row!");
  						return;
- 					}
+ 					} 
  					else
  					{
  					document.all('tb2Create').deleteRow(oRow.rowIndex);
@@ -315,7 +317,7 @@
     		}
 
 			function onSubmitValidations() {
-    			return validateForm(this);
+    			return validateLicenseForm(this);
         	}
 
     		function onSubmit() {
@@ -331,8 +333,8 @@
 					document.newTradeLicense.action = '${pageContext.request.contextPath}//newtradelicense/editTradeLicense-edit.action';
 					document.newTradeLicense.submit;
 				</s:elseif>
-				<s:else>                       	              
-					clearMessage('newLicense_error');
+				<s:else>   
+					clearMessage('newLicense_error'); 
 					toggleFields(false,"");
 	    			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
 			    	document.newTradeLicense.submit();
@@ -354,6 +356,7 @@
 								alert(data.errorDetails.errorMessage);
 							} else{
 								if(data.boundaryDetails!=null){
+									jQuery("#boundary").val(data.boundaryDetails.localityId)
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
 									jQuery("#address").val(data.propertyAddress);
@@ -392,7 +395,7 @@
  		
  			</head>
 	<body onload="onBodyLoad()">
-		<div id="newLicense_error" class="error-msg" style="display:none;"></div> 
+		<div id="newLicense_error" class="error-msg" style="display:none;" align="center"></div> 
                 <div class="row">
                     <div class="col-md-12">
                      <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
@@ -510,5 +513,6 @@
                     </div>
                 </div>
         <script src="../resources/app/js/newtrade.js"></script>
+        <script src="../resources/javascript/license/searchTrade.js"></script>
     </body>
 </html>
