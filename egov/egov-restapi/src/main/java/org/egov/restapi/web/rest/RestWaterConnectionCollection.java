@@ -117,7 +117,7 @@ public class RestWaterConnectionCollection {
 			   
 			}
 		 }catch (ValidationException e) {
-		
+		e.printStackTrace();
 			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
 			
 			List<ValidationError> errors = e.getErrors();
@@ -131,7 +131,7 @@ public class RestWaterConnectionCollection {
 			responseJson = JsonConvertor.convert(errorList);  
 		}
 		catch (Exception e) {
-			
+			e.printStackTrace();
 			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
 			ErrorDetails er=new ErrorDetails();
 			er.setErrorCode(e.getMessage());
@@ -142,7 +142,7 @@ public class RestWaterConnectionCollection {
     	 return JsonConvertor.convert(waterReceiptDetails);
     }
 
-    @RequestMapping(value = "/watercharges/getwatertaxdetails", method = {RequestMethod.POST,  RequestMethod.OPTIONS}, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/getwatertaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String getWaterTaxDetailsByAppLicationOrConsumerNumber(
             @Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails) throws JsonGenerationException,
             JsonMappingException, IOException, BindException {
