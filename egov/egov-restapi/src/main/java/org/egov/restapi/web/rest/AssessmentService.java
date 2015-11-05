@@ -94,7 +94,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -143,7 +142,7 @@ public class AssessmentService {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/property/propertyTaxDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-	public String getPropertyTaxDetails(@RequestParam String assessmentNoRequest)
+	public String getPropertyTaxDetails(@RequestBody String assessmentNoRequest)
 			throws JsonGenerationException, JsonMappingException, IOException {
 
 		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
@@ -227,7 +226,7 @@ public class AssessmentService {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/property/payPropertyTax", method = {RequestMethod.POST,RequestMethod.OPTIONS}, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/payPropertyTax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	public String payPropertyTax(@RequestBody String payPropertyTaxDetails)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String responseJson;
