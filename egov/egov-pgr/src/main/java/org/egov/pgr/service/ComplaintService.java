@@ -326,7 +326,7 @@ public class ComplaintService {
         final State state = complaint.getState();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         map.put("date", state.getDateInfo());
-        map.put("comments", state.getComments());
+        map.put("comments", state.getComments()!=null?state.getComments():"");
         map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
@@ -351,7 +351,7 @@ public class ComplaintService {
         for (final StateHistory stateHistory : complaint.getStateHistory()) {
             final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
             HistoryMap.put("date", stateHistory.getDateInfo());
-            HistoryMap.put("comments", stateHistory.getComments());
+            HistoryMap.put("comments", stateHistory.getComments() !=null ?stateHistory.getComments() : "");
             HistoryMap.put("updatedBy",
                     state.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
             HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
