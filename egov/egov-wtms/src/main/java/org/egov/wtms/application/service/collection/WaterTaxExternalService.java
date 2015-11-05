@@ -436,10 +436,10 @@ public class WaterTaxExternalService {
         paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payWaterTaxDetails.getPaymentAmount().toString());
         paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, payWaterTaxDetails.getPaidBy());
         paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payWaterTaxDetails.getChqddNo());
-        paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, ChequePayment.CHEQUE_DATE_FORMAT.format(payWaterTaxDetails.getChqddDate()));
+        paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, payWaterTaxDetails.getChqddDate());
         paymentDetailsMap.put(ChequePayment.BRANCHNAME, payWaterTaxDetails.getBranchName());
         paymentDetailsMap.put(ChequePayment.BANKNAME, payWaterTaxDetails.getBankName());
-        final Payment payment = Payment.create(payWaterTaxDetails.getPaymentMode(), paymentDetailsMap);
+        final Payment payment = Payment.create(payWaterTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
       
         final BillReceiptInfo billReceiptInfo = executeCollection(payment, egBill);
         return billReceiptInfo;
