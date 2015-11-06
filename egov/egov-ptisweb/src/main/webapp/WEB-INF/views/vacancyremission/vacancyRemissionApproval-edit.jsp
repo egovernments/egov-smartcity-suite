@@ -48,7 +48,6 @@
 <form:form id="editVacancyRemissionApprovalForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">
 	<div class="page-container" id="page-container">
-        	<div class="main-content">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 				
 				<div class="row">
@@ -106,12 +105,20 @@
 				</div>
 				
 			</div> <!-- end of main-content -->
-			
-			<div class="form-group text-center">
-				<button type="submit" class="btn btn-primary" ><spring:message code="lbl.submit"/></button>
-				&nbsp; <input type="button" class="button" value="Close" onclick="self.close()">
+			<c:if test="${userDesgn == 'Commissioner'}">
+		     <div class="row">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
+					<div class="col-sm-8 add-margin">
+						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
+					</div>
+				</div>
+		   </c:if>	
+		   <c:if test="${userDesgn != 'Commissioner' && userDesgn != 'Revenue Clerk' }">
+		   <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+		  </c:if>
+				<div class="buttonbottom" align="center">
+					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
-		</div>
 </form:form>
 
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

@@ -151,4 +151,9 @@
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionApproval-form.jsp"/>
     </definition>
     
+    <definition name="vacancyRemissionApproval-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission.final.approval" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionApproval-edit.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -62,6 +62,14 @@
          <constructor-arg index="0" ref="vacancyRemissionPersistenceService"/>
     </bean>
     
+    <bean id="vacancyRemissionApprovalPersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.ptis.domain.entity.property.VacancyRemissionApproval" />
+    </bean>
+    
+    <bean id="VacancyRemissionApprovalInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="vacancyRemissionApprovalPersistenceService"/>
+    </bean>
+    
     <bean id="revisionPetitionPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
     </bean>

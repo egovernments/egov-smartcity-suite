@@ -63,7 +63,7 @@
 				} else if(selectedValue == 'VacancyRemissionMonthlyUpdate'){
 					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
 				} else if(selectedValue == 'VacancyRemissionFinalApproval'){
-					window.location = "/ptis/vacancyremission/approval/" + assessmentNum;
+					window.location = "/ptis/vacancyremissionapproval/create/" + assessmentNum;
 				}
 			}
 
@@ -157,6 +157,12 @@
 												</option>
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>
+												</option>
+												<option value="VacancyRemission">
+															<s:text name="vacancyRemission"></s:text>
+														</option>
+												<option value="VacancyRemissionMonthlyUpdate">
+													<s:text name="vacancyRemission.monthly.update"></s:text>
 												</option>
 												
 												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">

@@ -36,7 +36,7 @@
            or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-*/
+ */
 package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
@@ -58,9 +58,9 @@ import org.egov.ptis.domain.entity.property.VacancyRemission;
 @Entity
 @Table(name = "egpt_vacancy_remission_approval")
 @SequenceGenerator(name = VacancyRemissionApproval.SEQ_VACANCY_REMISSION_APPROVAL, sequenceName = VacancyRemissionApproval.SEQ_VACANCY_REMISSION_APPROVAL, allocationSize = 1)
-public class VacancyRemissionApproval extends StateAware{
+public class VacancyRemissionApproval extends StateAware {
 
-	private static final long serialVersionUID = 1821640343172434474L;
+    private static final long serialVersionUID = 1821640343172434474L;
 
     public static final String SEQ_VACANCY_REMISSION_APPROVAL = "SEQ_EGPT_VACANCY_REMISSION_APPROVAL";
 
@@ -72,79 +72,78 @@ public class VacancyRemissionApproval extends StateAware{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancyremission", nullable = false)
     private VacancyRemission vacancyRemission;
-    
+
     @NotNull
     private String comments;
-    
-	private Date checkinDate;
-	
-	private String status;
-	
-	private Date approvalDate;
-	
-	private boolean isApproved;
-    
 
-	@Override
-	protected void setId(Long id) {
-		this.id = id;
-	}
+    private Date checkinDate;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private String status;
 
-	public VacancyRemission getVacancyRemission() {
-		return vacancyRemission;
-	}
+    private Date approvalDate;
 
-	public void setVacancyRemission(VacancyRemission vacancyRemission) {
-		this.vacancyRemission = vacancyRemission;
-	}
+    private boolean isApproved;
 
-	public String getComments() {
-		return comments;
-	}
+    @Override
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public Date getCheckinDate() {
-		return checkinDate;
-	}
+    public VacancyRemission getVacancyRemission() {
+        return vacancyRemission;
+    }
 
-	public void setCheckinDate(Date checkinDate) {
-		this.checkinDate = checkinDate;
-	}
+    public void setVacancyRemission(VacancyRemission vacancyRemission) {
+        this.vacancyRemission = vacancyRemission;
+    }
 
-	@Override
-	public String getStateDetails() {
-		return "Vacancy Remission Monthly Update"+ " - " +this.vacancyRemission.getBasicProperty().getUpicNo();
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public Date getCheckinDate() {
+        return checkinDate;
+    }
 
-	public Date getApprovalDate() {
-		return approvalDate;
-	}
+    public void setCheckinDate(Date checkinDate) {
+        this.checkinDate = checkinDate;
+    }
 
-	public void setApprovalDate(Date approvalDate) {
-		this.approvalDate = approvalDate;
-	}
+    @Override
+    public String getStateDetails() {
+        return "Vacancy Remission Monthly Update" + " - " + this.vacancyRemission.getBasicProperty().getUpicNo();
+    }
 
-	public boolean getIsApproved() {
-		return isApproved;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setIsApproved(boolean isApproved) {
-		this.isApproved = isApproved;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
+    }
+
+    public boolean getIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(boolean isApproved) {
+        this.isApproved = isApproved;
+    }
 }

@@ -48,7 +48,6 @@
 <form:form id="vacancyRemissionApprovalForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">
 	<div class="page-container" id="page-container">
-        	<div class="main-content">
         	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>	
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 				
@@ -105,11 +104,14 @@
 				
 			</div> <!-- end of main-content -->
 			
-			<div class="form-group text-center">
+			<%-- <div class="form-group text-center">
 				<button type="submit" class="btn btn-primary" ><spring:message code="lbl.submit"/></button>
 				&nbsp; <input type="button" class="button" value="Close" onclick="self.close()">
-			</div>
-			
+			</div> --%>
+
+		<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+		<div class="buttonbottom" align="center">
+			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		</div>
 </form:form>
 

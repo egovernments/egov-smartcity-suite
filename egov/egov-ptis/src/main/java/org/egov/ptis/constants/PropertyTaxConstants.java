@@ -565,6 +565,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_COMMISSIONER_APPROVAL_PENDING = "Commissioner Approval Pending";
     public static final String WF_STATE_CLOSED = "Closed";
     public static final String WF_STATE_ASSISTANT_APPROVAL_PENDING = "Assistant Approval Pending";
+    public static final String WF_STATE_REVENUE_INSPECTOR_REJECTED = "Revenue Inspector Rejected";
+    public static final String WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING = "Revenue Inspector Approval Pending";
     
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
