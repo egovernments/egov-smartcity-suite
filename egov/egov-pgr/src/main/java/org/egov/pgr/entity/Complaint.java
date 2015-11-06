@@ -92,6 +92,8 @@ public class Complaint extends StateAware {
 
     @Column(name = "crn", unique = true)
     @Searchable(name = "crn", group = Searchable.Group.CLAUSES)
+    @Length(max = 32)
+    @SafeHtml
     private String crn = "";
 
     @ManyToOne
