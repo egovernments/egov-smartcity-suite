@@ -66,6 +66,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseAppType;
@@ -224,23 +226,28 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     
 
     @Override
+    @ValidationErrorPage(Constants.BEFORE_RENEWAL)
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
-        LOGGER.debug("Trade license renew Parameters:<<<<<<<<<<>>>>>>>>>>>>>:"
-                + tradeLicense);
-        final BigDecimal deduction = tradeLicense.getDeduction();
-        final BigDecimal otherCharges = tradeLicense.getOtherCharges();
-        final BigDecimal swmFee = tradeLicense.getSwmFee();
-        tradeLicense = (TradeLicense) ts.getPersistenceService()
-                .find("from License where id=?", tradeLicense.getId());
-        tradeLicense.setOtherCharges(otherCharges);
-        tradeLicense.setDeduction(deduction);
-        tradeLicense.setSwmFee(swmFee);
-        LOGGER
-        .debug("Renew Trade License Application Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
-                + tradeLicense.getNameOfEstablishment());
-        return super.renew();
+        try {
+			LOGGER.debug("Trade license renew Parameters:<<<<<<<<<<>>>>>>>>>>>>>:"
+			        + tradeLicense);
+			final BigDecimal deduction = tradeLicense.getDeduction();
+			final BigDecimal otherCharges = tradeLicense.getOtherCharges();
+			final BigDecimal swmFee = tradeLicense.getSwmFee();
+			tradeLicense = (TradeLicense) ts.getPersistenceService()
+			        .find("from License where id=?", tradeLicense.getId());
+			tradeLicense.setOtherCharges(otherCharges);
+			tradeLicense.setDeduction(deduction);
+			tradeLicense.setSwmFee(swmFee);
+			LOGGER
+			.debug("Renew Trade License Application Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
+			        + tradeLicense.getNameOfEstablishment());
+			return super.renew();
+		} catch (Exception e) {
+			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
+		}
     }
 
     @Override
@@ -251,8 +258,15 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         .debug("Entering in the beforeRenew method:<<<<<<<<<<>>>>>>>>>>>>>:");
         tradeLicense = (TradeLicense) ts.getPersistenceService()
                 .find("from License where id=?", tradeLicense.getId());
-        LOGGER
-        .debug("Exiting from the beforeRenew method:<<<<<<<<<<>>>>>>>>>>>>>:");
+        
+      License license=(License)tradeLicense;
+      
+        if(!license.getState().getValue().isEmpty())
+        {
+        	license.transition(true).withStateValue("");
+        }
+        	
+        LOGGER.debug("Exiting from the beforeRenew method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return super.beforeRenew();
     }
     

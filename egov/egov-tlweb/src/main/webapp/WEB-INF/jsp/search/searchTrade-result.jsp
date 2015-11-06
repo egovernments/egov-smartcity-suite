@@ -207,13 +207,13 @@ String path = request.getContextPath();
 							</s:if>
 						</s:if>
 						<s:if test="%{roleName.contains('TLCREATOR') || roleName.contains('TLAPPROVER')}">
-							<s:if test="%{isRenewable(#attr.license.id)}">
+							
 							    <s:if test="%{#attr.license.status.statusCode=='ACT'}">
 			                    	<s:set name="licenseId" value="%{#attr.license.dateOfExpiry}" />
 									<option value="/newtradelicense/newTradeLicense-beforeRenew.action?model.id=">
 										<s:text name="license.action.renew" />
 									</option>
-								</s:if>
+							
 		                    </s:if>
 	                    </s:if>
 	                    <s:if test="%{roleName.contains('TLCREATOR')}">

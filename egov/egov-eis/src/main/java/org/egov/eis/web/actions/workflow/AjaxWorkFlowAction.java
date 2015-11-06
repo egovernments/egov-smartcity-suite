@@ -76,6 +76,8 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	@SuppressWarnings("unchecked")
 	@Action(value = "/workflow/ajaxWorkFlow-getDesignationsByObjectType")
 	public String getDesignationsByObjectType() {
+		if("END".equals(this.currentState))
+				this.currentState="";
 		this.designationList = this.customizedWorkFlowService.getNextDesignations(this.type,
 				this.departmentRule, this.amountRule, this.additionalRule, this.currentState,
 				this.pendingAction, new Date());
