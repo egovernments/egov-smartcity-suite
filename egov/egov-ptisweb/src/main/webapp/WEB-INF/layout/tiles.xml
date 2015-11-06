@@ -146,4 +146,9 @@
         <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-view.jsp"/>
      </definition>
     
+    <definition name="vacancyRemissionApproval-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission.final.approval" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionApproval-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -39,26 +39,12 @@
  */
 package org.egov.ptis.domain.repository.vacancyremission;
 
-import java.util.List;
-
-import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VacancyRemissionRepository extends JpaRepository<VacancyRemission, Long>{
+public interface VacancyRemissionApprovalRepository extends JpaRepository<VacancyRemissionApproval, Long>{
 
-	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'APPROVED'")
-	public VacancyRemission findByUpicNo(@Param("upicNo") String name);
 	
-	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'Rejection Acknowledgement Generated'")
-	public VacancyRemission findRejectionAckGeneratedForUpicNo(@Param("upicNo") String name);
-
-	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'REJECTED'")
-	public VacancyRemission findRejectedByUpicNo(@Param("upicNo") String name);
-	
-	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo ")
-    List<VacancyRemission> getAllVacancyRemissionByUpicNo(@Param("upicNo") String name);
 }

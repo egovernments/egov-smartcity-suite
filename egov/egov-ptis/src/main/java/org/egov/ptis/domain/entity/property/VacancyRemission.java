@@ -96,6 +96,9 @@ public class VacancyRemission extends StateAware{
 	@Column(name = "status")
     private String status;
 	
+	@OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
+
 
 	@Override
 	public String getStateDetails() {
@@ -158,5 +161,13 @@ public class VacancyRemission extends StateAware{
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public List<VacancyRemissionApproval> getVacancyRemissionApproval() {
+		return vacancyRemissionApproval;
+	}
+
+	public void setVacancyRemissionApproval(List<VacancyRemissionApproval> vacancyRemissionApproval) {
+		this.vacancyRemissionApproval = vacancyRemissionApproval;
 	}
 }
