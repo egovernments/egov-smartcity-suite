@@ -100,6 +100,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private List<PropertyOwnerInfo> propertyOwnerInfoProxy = new ArrayList<PropertyOwnerInfo>();
     private boolean underWorkflow;
     private Date assessmentdate;
+    private List<VacancyRemission> vacancyRemissions = new ArrayList<VacancyRemission>();
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -735,5 +736,13 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	public void setAssessmentdate(Date assessmentdate) {
 		this.assessmentdate = assessmentdate;
 	}
-
+    
+    @Override
+    public List<VacancyRemission> getVacancyRemissions() {
+		return vacancyRemissions;
+	}
+    @Override
+	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissions) {
+		this.vacancyRemissions = vacancyRemissions;
+	}
 }

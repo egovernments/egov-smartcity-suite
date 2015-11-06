@@ -275,4 +275,7 @@ public interface BasicProperty {
 	
 	public void setAssessmentdate(Date assessmentdate); 
 	
+	public List<VacancyRemission> getVacancyRemissions();
+
+	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissionSet);
 }
