@@ -104,12 +104,32 @@
 					window.scroll(0, 0); 
 					return false;
 				}
+				if(!verifyDocAttachment()){
+					return false;
+				}
     			if(validateForm_newTradeLicense()==false) { 
     				return false;
     			} else { 
 					return true;    	              
     			 } 
   			}
+
+			// verify whether document attached for selected check list
+  			function verifyDocAttachment(){
+  				var tbl=document.getElementById("docAttachmentTab");
+  			    var lastRow = (tbl.rows.length)-1;
+  			    for(var i=0;i<=lastRow;i++){
+  			    	var checkListval=getControlInBranch(tbl.rows[i],'checklist').checked;
+  			    	if(checkListval==true){
+  	  			    	if(getControlInBranch(tbl.rows[i],'uploadFile').value==''){
+	  	  			    	showMessage('newLicense_error', 'Please attach document for selected Check List'); 
+	  						window.scroll(0, 0); 
+	  						return false;
+  	  			    	}
+  	  			    }
+  	  			}
+  	  			return true;
+  	  		}
 
 			function onBodyLoad(){
   				if (document.getElementById("motorInstalled").checked==true) { 
@@ -124,9 +144,12 @@
 					  jQuery("#searchImg").removeAttr("onclick");
 					  // remove onclick event for add and delete button having class = add-padding
 					  jQuery('.add-padding').attr('onclick','').unbind('click');
-					  // renaming approver remarks label
-					  jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />')
-				}
+					  // renaming approver remarks label for second level of workflow
+					  <s:if test="%{getNextAction()!='END'}">
+					 	 jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+					</s:if>
+				} 
 			}
 
 			var motorcnt = 0;
@@ -339,7 +362,7 @@
 	    			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
 			    	document.newTradeLicense.submit();
 				</s:else>
-        	}
+        	} 
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
 			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)

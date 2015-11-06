@@ -46,7 +46,7 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.nameOfEst.lbl' /></label>
     <div class="col-sm-3 add-margin">
-         	<s:textfield name="nameOfEstablishment" pattern="[A-Za-z,. ]+" title="characters and . , space are only allowed" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="32" onBlur="checkLength(this,32)" class="form-control"/>
+         	<s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation"  data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="32" onBlur="checkLength(this,32)"/>
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl' /><span class="mandatory"></span></label>

@@ -44,6 +44,32 @@
 		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGTL";
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
 	}
+	
+	// checklist should be checked before attaching document
+	function verifyChecklist(obj){
+		var rowobj=getRow(obj);
+		var tbl = document.getElementById('docAttachmentTab');
+		var checkListval=getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked;
+		if(checkListval!=true){
+			alert("Please Check the Check List before attaching.");
+			return false; 
+		} 
+	}
+	
+	// Clear attached document on unselection of checklist
+	function checkFileAttachment(obj){
+		var rowobj=getRow(obj);
+		var tbl = document.getElementById('docAttachmentTab');
+		var checkListval=getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked;
+		if(checkListval!=true && getControlInBranch(tbl.rows[rowobj.rowIndex],'uploadFile').value!=''){
+			var r = confirm("Unselecting Check List will clear the Document attached!");
+			if(r==true)
+				getControlInBranch(tbl.rows[rowobj.rowIndex],'uploadFile').value='';
+			else{
+				getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked=true;
+			}
+		} 
+	}  
 </script>
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">Enclosed Documents</div>
@@ -54,7 +80,9 @@
     <div class="col-sm-3 table-div-column"><s:text name="doctable.checklist"/></div>
     <div class="col-sm-3 table-div-column"><s:text name="doctable.attach.doc" /></div>	
 </div>
+<table class="table" id="docAttachmentTab">  
 <s:iterator value="documentTypes" status="status" var="documentType">
+<tr><td style="border: 0">
 	<div class="form-group">
     	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
         <div class="col-sm-5 text-center">
@@ -63,28 +91,28 @@
 		</div>
        	<div class="col-sm-3 text-center">
        		<s:if test="mandatory">
-       			<s:checkbox name="documents[%{#status.index}].enclosed" required="true"/>
+       			<s:checkbox name="documents[%{#status.index}].enclosed" id="checklist" onclick="checkFileAttachment(this);" required="true"/>
        		</s:if>
        		<s:else>
-       			<s:checkbox name="documents[%{#status.index}].enclosed"/>
+       			<s:checkbox name="documents[%{#status.index}].enclosed" id="checklist" onclick="checkFileAttachment(this);" />
        		</s:else>
        	</div>
        	<div class="col-sm-3 text-center">
        		<s:if test="%{documents.isEmpty()}">
        			<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file"/>
+					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file"/>
 				</s:else>
 			</s:if>
 			<s:elseif test="%{documents[#status.index].files.isEmpty()}">
 				<s:hidden name="documents[%{#status.index}].id"/>
 				<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file" required="true"/>
+					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file" required="true"/>
 				</s:if>
 				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="file-ellipsis upload-file"/>
+					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file"/>
 				</s:else>
 			</s:elseif>
 			<s:else>
@@ -99,6 +127,8 @@
 			<div class="add-margin error-msg" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
        	</div>
    	</div>
+</td></tr> 
 </s:iterator>
+</table>
 
 <script src="<c:url value='/resources/app/js/documentupload.js'/>"></script> 

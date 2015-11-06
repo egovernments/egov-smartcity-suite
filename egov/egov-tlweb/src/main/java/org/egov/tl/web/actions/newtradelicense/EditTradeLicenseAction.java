@@ -219,7 +219,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             service().transitionWorkFlow(tradeLicense, workflowBean); 
         if (!isOldLicense)
             processWorkflow(NEW);
-        addActionMessage(this.getText("license.update.succesful"));
             if (installedMotorList != null) {
                 final List<MotorDetails> motorDetailsList = new ArrayList<MotorDetails>();
                 final Iterator<MotorDetails> motorDetails = installedMotorList.iterator();
