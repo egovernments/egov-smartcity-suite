@@ -136,4 +136,14 @@
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionDetails-form.jsp"/>
     </definition>
     
+    <definition name="demolition-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.property.demolition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-success.jsp"/>
+     </definition>
+     
+     <definition name="demolition-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.property.demolition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-view.jsp"/>
+     </definition>
+    
 </tiles-definitions>

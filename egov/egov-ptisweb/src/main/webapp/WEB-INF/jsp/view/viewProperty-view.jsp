@@ -139,6 +139,10 @@
 									onclick="window.location='/ptis/vacancyremission/create/<s:property value="%{basicProperty.upicNo}" />'" />
 							</s:if>
 						</s:if> --%>
+						<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code)}">
+					    <input type="button" class="buttonsubmit" name="btndemolitionProperty" id="btndemolitionProperty" value="Demolition"
+							onclick="window.location='/ptis/property/demolition/<s:property value="%{basicProperty.upicNo}" />';" />
+						</s:if>
 					</s:if>
 					<s:else>
 						<input type="button" class="buttonsubmit" name="objection" id="objection" value="Create Revision Petition"

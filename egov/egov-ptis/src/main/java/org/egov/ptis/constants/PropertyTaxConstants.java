@@ -548,6 +548,7 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_END = "END";
     public static final String WFLOW_ACTION_READY_FOR_PAYMENT = "Ready For Payment";
     public static final String WFLOW_ACTION_NEW = "NEW";
+    public static final String WFLOW_ACTION_NAME_DEMOLITION = "Demolition";
 
     // WORKFLOW property states
     public static final String WF_STATE_NEW = "New";
@@ -603,6 +604,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MODIFY_REASON_EDIT_OWNER = "EDIT_OWNER";
     public static final String PROPERTY_MODIFY_REASON_ADD_OR_ALTER = "ADD_OR_ALTER";
     public static final String PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY = "EDIT_DATA_ENTRY";
+    public static final String PROPERTY_MODIFY_REASON_FULL_DEMOLITION = "FULL DEMOLITION";
     public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
             PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
             PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
@@ -658,6 +660,7 @@ public interface PropertyTaxConstants {
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";
+    public static final String DEMOLITION = "DEMOLITION";
 
     // GIS
     public static final String GISCITY = "nmc";
@@ -1198,5 +1201,8 @@ public interface PropertyTaxConstants {
     public static final String VR_STATUS_WORKFLOW = "IN_WORKFLOW";
     public static final String VR_STATUS_APPROVED = "APPROVED";
     public static final String VR_STATUS_REJECTED = "REJECTED";
+    
+    
+    public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
 	
 }

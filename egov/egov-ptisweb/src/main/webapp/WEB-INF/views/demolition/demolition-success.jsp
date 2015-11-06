@@ -37,15 +37,36 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-Hi
-</body>
-</html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+
+<div class="row" id="page-content">
+	<div class="col-md-12">
+		<div class="panel" data-collapsed="0">
+		<div class="panel-body">
+		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="property" id="propertyAckForm" >
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading" align="center">
+					<div class="panel-title" align="center">
+						<strong>${successMessage}</strong>
+					</div>
+				</div> 
+			</div>
+			<div class="row">
+				<div class="text-center">
+			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
+				</div>
+			</div>
+		</form:form>
+		</div>
+        </div>
+    </div>
+</div>
+
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

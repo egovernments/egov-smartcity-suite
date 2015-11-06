@@ -61,6 +61,7 @@
 
 <div class="buttonbottom" align="center">
 	<table>
+	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 		<tr>
 			<td>
 		<c:forEach items="${validActionList}" var="validButtons">

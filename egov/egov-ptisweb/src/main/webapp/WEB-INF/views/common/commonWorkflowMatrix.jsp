@@ -64,7 +64,6 @@
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
-	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 				<div class="row show-row"  id="approverDetailHeading">
 				<div class="show-row form-group" >
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
@@ -106,7 +105,7 @@
 			
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
-					<div class="col-sm-8 add-margin">
+					<div class="col-sm-6 add-margin">
 						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>
