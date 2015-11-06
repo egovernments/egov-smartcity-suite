@@ -537,6 +537,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
                 searchResultMap.put("enableVacancyRemission", String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
                 searchResultMap.put("enableMonthlyUpdate", String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVRApproval", String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
                     searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
@@ -629,6 +630,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
                 searchResultMap.put("enableVacancyRemission", String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
                 searchResultMap.put("enableMonthlyUpdate", String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVRApproval", String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
                     searchResultMap.put("currDemand", "0");
                     searchResultMap.put("arrDemandDue", "0");

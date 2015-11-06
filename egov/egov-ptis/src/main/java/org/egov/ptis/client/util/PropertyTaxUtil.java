@@ -2327,4 +2327,18 @@ public class PropertyTaxUtil {
     	}
     	return monthlyUpdateFlag;
     }
+    
+    public boolean enableVRApproval(String upicNo){
+    	boolean vrApprovalFlag = false;
+    	VacancyRemission vacancyRemission = (VacancyRemission) persistenceService.find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'", upicNo);
+    	if(vacancyRemission!=null){
+    		if(!vacancyRemission.getVacancyRemissionDetails().isEmpty()){
+    			int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
+    			if(detailsSize % 5 == 0){
+    				vrApprovalFlag = true;
+    			}
+    		}
+    	}
+    	return vrApprovalFlag;
+    }
 }
