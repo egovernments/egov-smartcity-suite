@@ -212,7 +212,8 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 * All sql scripts should be named with following format.
 * Format `V<timestamp-in-YYYYMMDDHHMMSS-format>__<module-name>_<description>.sql`
 * DB migration will automatically happen when application server starts, incase required while maven build use the above given maven command.
-##### Examples
+
+###### Migration file name sample
 ```
 V20150918161507__egi_initial_data.sql
 
