@@ -133,7 +133,8 @@ public class WaterTaxConstants {
     public static final String SUBMITWORKFLOWACTION = "Submit";
 
     public static final String BPL_CATEGORY = "BPL";
-
+    public static final String HIERARCHYNAME_ADMIN = "ADMINISTRATION";
+    
     public static final String WF_STATE_BUTTON_GENERATEESTIMATE = "Generate Estimation Notice";
     public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON = "Tap Execution Date";
 

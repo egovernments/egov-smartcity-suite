@@ -340,7 +340,7 @@ public class WaterTaxUtils {
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
         List<Employee> employeeList = null;
-        final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName("ADMINISTRATION");
+        final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
         final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
                 assessmentDetails.getBoundaryDetails().getWardBoundaryType(), hierarchy);
         final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
