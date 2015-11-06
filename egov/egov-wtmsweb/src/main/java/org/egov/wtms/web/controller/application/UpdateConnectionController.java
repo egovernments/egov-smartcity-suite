@@ -261,12 +261,12 @@ public class UpdateConnectionController extends GenericConnectionController {
         
         if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason() == null
                 && (waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)||(waterConnectionDetails.getStatus().getCode()
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)||(waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))))
             model.addAttribute("mode", "closereditForAE");
         if ((waterConnectionDetails.getStatus().getCode()
                 .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS) || waterConnectionDetails.getStatus().getCode()
-                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)) && waterConnectionDetails.getReConnectionReason()==null
+                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)) && waterConnectionDetails.getReConnectionReason()==null
                 && waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getState().getValue().equals("Rejected"))
             model.addAttribute("mode", "closeredit");
         if (waterConnectionDetails.getReConnectionReason() != null
@@ -389,7 +389,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                             waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)||
                             waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))){
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED))){
                 approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.CLERKROLEFORADONI, waterConnectionDetails);
             }
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","

@@ -515,11 +515,11 @@ public class WaterConnectionDetailsService {
             } else if (WaterTaxConstants.APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails
                     .getStatus().getCode()) && waterConnectionDetails.getCloseConnectionType() != null) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                        WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED, WaterTaxConstants.MODULETYPE));
+                        WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED, WaterTaxConstants.MODULETYPE));
                 updateIndexes(waterConnectionDetails);
             } else if (!workFlowAction.equals("Reject"))
                 if (!mode.equals("closeredit")
-                        && WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED
+                        && WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                         && waterConnectionDetails.getCloseConnectionType() != null) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
@@ -594,7 +594,7 @@ public class WaterConnectionDetailsService {
                     || WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails
                             .getStatus().getCode()) ||(!"".equals(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                                     && waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)
                                     && waterConnectionDetails.getState().getValue().equals("Rejected")))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
@@ -609,13 +609,13 @@ public class WaterConnectionDetailsService {
                     .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED)
                     ||(workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                             && waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)) ))
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)) ))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (wfmatrix.getNextDesignation()!=null && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
                     || (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                     && waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED))
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED))
                     || !waterConnectionDetails.getState().getValue().equals("Rejected")
                     && !workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                     && (waterConnectionDetails.getStatus().getCode()
@@ -672,7 +672,7 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)
                             || waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERiNTITIATED)
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)
                             || waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
                             || waterConnectionDetails.getStatus().getCode()
