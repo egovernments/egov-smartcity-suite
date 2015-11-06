@@ -94,7 +94,7 @@ One can override any default settings available in `/egov/egov-egi/src/main/reso
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
  ```bash
- mvn clean package -s settings.xml -Pdb
+ mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=<driver_class_fqn> -Ddb.url=<jdbc_url>
  ```
 
 #### Deploying Application
@@ -206,30 +206,18 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 ##### 3. Database Migration Procedure
 
-* Any new sql files created should be added under directory `<CLONED_REPO_DIR>/egov/egov-database/src/main/resources/sql`
-* Uses the database properties from `<CLONED_REPO_DIR>/egov/egov-database/src/main/resources/liquibase.properties` for migration
-* All sql scripts should be named with incremental number prefix and .sql suffix
-* Format `<sequence>_<module>_<description>_<database-statement-type>.sql`
-
+* Any new sql files created should be added under directory `<CLONED_REPO_DIR>/egov/egov-<javaproject>/src/main/resources/db/migration`
+* Core product DDL and DML should be added under `<CLONED_REPO_DIR>/egov/egov-<javaproject>/src/main/resources/db/migration/main`
+* Core product sample data DML should be added under `<CLONED_REPO_DIR>/egov/egov-<javaproject>/src/main/resources/db/migration/sample`
+* All sql scripts should be named with following format.
+* Format `V<timestamp-in-YYYYMMDDHHMMSS-format>__<module-name>_<description>.sql`
+* DB migration will automatically happen when application server starts, incase required while maven build use the above given maven command.
 ##### Examples
 ```
-1_egi_create-deparment_DDL.sql
-2_eis_add-employee-role_DML.sql
-```
-For More details refer [Liquibase]
+V20150918161507__egi_initial_data.sql
 
-
-##### 4. Targets to Build, Package and Upgrade database
-* Run the following commands in developement enviornment when there is no database changes.
-```bash
-mvn -s settings.xml clean compile ## Cleans your build directory and compiles your java code
-mvn -s settings.xml clean test    ## Cleans, compiles and runs unit, integration tests
-mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear artifact along with jars and wars approproiately
 ```
-* When there is a database change then database upgrade also needs to be done before building. That case use the command
-```bash
-mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars approproiately
-```
+For More details refer [Flyway]
 
 #  
 Note: This system is supported
@@ -250,7 +238,7 @@ Browser:-
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
-[Liquibase]: http://www.liquibase.org/documentation/index.html
+[Flyway]: http://flywaydb.org/documentation/
 [eGov Tools Repository]: http://182.74.137.193/downloads/
 [PostgreSQL]: http://www.postgresql.org/download/
 [Maven]: http://maven.apache.org/download.cgi
