@@ -80,6 +80,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -155,12 +156,14 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "ack", location = "create/createProperty-ack.jsp"),
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
         @Result(name = "view", location = "create/createProperty-view.jsp"),
+        @Result(name = "error", location = "create/createProperty-error.jsp"),
         @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = -2329719786287615451L;
     private static final String RESULT_ACK = "ack";
     private static final String RESULT_NEW = "new";
+    private static final String RESULT_ERROR = "error";
     private static final String RESULT_VIEW = "view";
     private static final String MSG_REJECT_SUCCESS = " Property Rejected Successfully ";
     private static final String CREATE = "create";
@@ -240,7 +243,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private SecurityUtils securityUtils;
-
+    private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    
     public CreatePropertyAction() {
         super();
         property.setPropertyDetail(new BuiltUpProperty());
@@ -269,6 +273,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-newForm")
     public String newForm() {
+        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            if (request.getParameter("applicationNo") == null) {
+                addActionMessage(getText("mandatory.meesevaApplicationNumber"));
+                return RESULT_ERROR;
+            } else {
+                property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+            }
+        }
         return RESULT_NEW;
     }
 
@@ -290,7 +304,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        basicPropertyService.persist(basicProperty);
+        
+        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        if(!loggedUserIsMeesevaUser)
+          basicPropertyService.persist(basicProperty);
+        else {
+            HashMap<String,String> meesevaParams=   new HashMap<String,String>();
+            meesevaParams.put("ADMISSIONFEE", "0");
+            meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
+            basicPropertyService.createBasicProperty(basicProperty,meesevaParams);
+        }
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");

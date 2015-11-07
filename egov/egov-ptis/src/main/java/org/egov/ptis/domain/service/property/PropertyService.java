@@ -84,6 +84,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -2522,6 +2523,20 @@ public class PropertyService {
                     return false;
         return true;
     }
+    /**
+     * Checks whether user is an employee or not
+     *
+     * @param user
+     * @return
+     */
+    public Boolean isMeesevaUser(final User user) {
+        for (final Role role : user.getRoles())
+        {      if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
+                    return true;
+        }
+        return false;
+    }
+    
 
     /**
      * Returns User jurisdiction of property zone boundary

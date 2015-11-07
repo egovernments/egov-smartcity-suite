@@ -49,8 +49,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGOR
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -115,7 +115,7 @@ public class PropertyImpl extends StateAware implements Property {
     private List<Document> documents = new ArrayList<>();
     private String applicationNo;
     private String demolitionReason;
-
+    private String meesevaApplicationNumber;//Temporary number for meeseva integration.
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is because for the migrated property the tax xml is
      * not there so when we try to modify the migrated property the active property will not be having the unitCalculationDetails
@@ -653,6 +653,14 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public void setDemolitionReason(String demolitionReason) {
         this.demolitionReason = demolitionReason;
+    }
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
     }
 
 }
