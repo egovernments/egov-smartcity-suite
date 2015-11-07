@@ -192,44 +192,51 @@
 				<c:if test="${not empty param.activation}">
 					<form:form method="post" role="form" id="activationform" action="activation" modelAttribute="citizen">
 					<div class="login-content login-content-margin otp-section signup-formcontent">
-						<c:if test="${param.activated}">
-	                    <div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
-	                     <div><spring:message code="msg.signup.activation.success2" /> <a href="/egi/login/secure" class="btn btn-custom"><spring:message code="lbl.signin" /></a></div>
-	                    </div>
-		                </c:if>
-		                <c:if test="${not empty param.activated and not param.activated}">
-		                	<div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
-		                </c:if>
-                        <div class="login-body">
-                            <div class="form-group text-left">
-                                <div class="signin-title" style="padding:0;">
-                                   <spring:message code="lbl.signup.activate" />
-                                </div>
-                            </div>
-                            <div class="">
-                            	<c:if test="${not empty param.message}">
-                                <div class="form-group text-left font-green">
-                                    <spring:message code="${param.message}" />
-                                </div>
-                                </c:if>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-addon style-label">
-                                            <i class="entypo-key theme-color style-color"></i>
-                                        </div>
-                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />
-                                    </div>
-                                </div>
-                                <div class="form-group text-right">
-                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
-                                        <spring:message code="btn.signup.activate"/>
-                                    </button>
-                                </div>
-                                <div class="form-group text-left font-12">
-                                    <spring:message code="msg.signup.info"/>
-                                </div>
-                            </div>
-                        </div>
+						<c:choose>
+							<c:when test="${param.activated}">
+								<div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
+			                     	<spring:message code="msg.signup.activation.success2" />
+			                    </div>
+			                    <div class="form-group text-left" style="font-size:12px;color:#777">
+			                    	<a href="/egi/login/secure" class="btn btn-custom  btn-block btn-login signin-submit"><spring:message code="lbl.signin" /></a>
+			                    </div>
+							</c:when>
+							<c:otherwise>
+								<c:if test="${not empty param.activated and not param.activated}">
+				                	<div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
+				                </c:if>
+		                        <div class="login-body">
+		                            <div class="form-group text-left">
+		                                <div class="signin-title" style="padding:0;">
+		                                   <spring:message code="lbl.signup.activate" />
+		                                </div>
+		                            </div>
+		                            <div class="">
+		                            	<c:if test="${not empty param.message}">
+		                                <div class="form-group text-left font-green">
+		                                    <spring:message code="${param.message}" />
+		                                </div>
+		                                </c:if>
+		                                <div class="form-group">
+		                                    <div class="input-group">
+		                                        <div class="input-group-addon style-label">
+		                                            <i class="entypo-key theme-color style-color"></i>
+		                                        </div>
+		                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />
+		                                    </div>
+		                                </div>
+		                                <div class="form-group text-right">
+		                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
+		                                        <spring:message code="btn.signup.activate"/>
+		                                    </button>
+		                                </div>
+		                                <div class="form-group text-left font-12">
+		                                    <spring:message code="msg.signup.info"/>
+		                                </div>
+		                            </div>
+		                        </div>
+							</c:otherwise>
+						</c:choose>
                     </div>
                     </form:form>
                     </c:if>
