@@ -46,7 +46,9 @@
 		<div class="container-fluid">
 			<div class="navbar-header col-md-10 col-xs-10">
 				<a class="navbar-brand" href="javascript:void(0);">
+					<c:if test="${not empty sessionScope.citylogo}">
 					<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
+					</c:if>
 					<div>
 						<span class="title2">
 						<c:set var="titleKey">
