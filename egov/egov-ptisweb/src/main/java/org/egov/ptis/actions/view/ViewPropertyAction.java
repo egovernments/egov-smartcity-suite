@@ -203,6 +203,8 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
             else
                 viewMap.put("ARV", BigDecimal.ZERO);
+            
+            propertyTaxUtil.setPersistenceService(persistenceService);
             viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
             viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
             final Long userId = (Long) session().get(SESSIONLOGINID);
