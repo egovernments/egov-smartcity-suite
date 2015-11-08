@@ -84,7 +84,7 @@ public class ApiFilter implements Filter {
 			//LOG.info(cityService.findAll());
 			//City cityByCode = cityService.getCityByCode(ulbCode);
 			
-			String domainUrl=RestRedirectConstants.getCode_ulbNames().get(ulbCode);
+			String domainUrl=RestRedirectConstants.getCode_ulbNames().get(ulbCode).toLowerCase();
 			
 			if(! EgovThreadLocals.getDomainName().equalsIgnoreCase(domainUrl))
 			{
