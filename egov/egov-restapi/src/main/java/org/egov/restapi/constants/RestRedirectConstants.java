@@ -121,7 +121,7 @@ public class RestRedirectConstants {
 		code_ulbNames.put("1140","Yeleswaram");
 		code_ulbNames.put("1018","Yemmiganur");
 		code_ulbNames.put("1165","Yerraguntla");
-		code_ulbNames.put("0002","public1");
+		code_ulbNames.put("0001","public");//for local
 
 
 
