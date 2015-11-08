@@ -120,7 +120,7 @@
 								<s:select headerKey="-1" headerValue="%{getText('default.select')}"
 									name="zoneId" id="zoneId" listKey="id" listValue="name"
 									list="dropdownData.Zone" cssClass="selectnew"
-									onchange="populateWard();" value="%{zoneId}" cssStyle="width:150px" />
+									 value="%{zoneId}" cssStyle="width:150px" />
 							</td>
 						</tr>
 					</table>
@@ -133,8 +133,6 @@
 				<center>
 					<table border="0" cellspacing="0" cellpadding="0" width="300px">
 						<tr>
-							<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-								dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
 							<td class="bluebox" width="10px">
 								<s:text name="Ward" />
 								<span class="mandatory1">*</span> :

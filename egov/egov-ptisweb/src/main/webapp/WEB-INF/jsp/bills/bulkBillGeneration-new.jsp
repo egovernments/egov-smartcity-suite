@@ -89,10 +89,7 @@
 			<td class="greybox" style="width:50%;">
 				<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
 					listKey="key" listValue="value" headerKey="-1"
-					headerValue="%{getText('default.select')}" value="%{zoneId}"
-					onchange="populateWard()" />
-				<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-					dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
+					headerValue="%{getText('default.select')}" value="%{zoneId}"/>
 			</td>
 			
 		</tr>

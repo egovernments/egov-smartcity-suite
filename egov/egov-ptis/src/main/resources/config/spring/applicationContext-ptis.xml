@@ -83,7 +83,8 @@
 	    <property name="noticeService" ref="noticeService"/>
 	    <property name="propertyTaxUtil" ref="propertyTaxUtil"/>
 	    <property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
-	    <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>	    
+	    <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>	   
+	    <property name="persistenceService" ref="persistenceService"/> 
 	</bean>	
 	
 	<bean id="floorDemandCalcService" parent="persistenceService" scope="prototype">
