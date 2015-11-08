@@ -44,29 +44,29 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
 	<filter>
-		<filter-name>applicationTenantResolverFilter</filter-name>
+		<filter-name>applicationTenantResolverFilter</filter-name>       
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
-	
+	<filter>
+		<filter-name>apiFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
 	<filter>
 		<filter-name>applicationCoreFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
-
 	<filter>
 		<filter-name>mdcLoggingFilter</filter-name>
 		<filter-class>org.egov.infra.web.filter.MDCLoggingFilter</filter-class>
 	</filter>
-	
 	<filter>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
 		<filter-class>
 			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
 		</filter-class>
 	</filter>
-
+  
 	<!-- <filter>
 		<filter-name>securityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -77,10 +77,7 @@
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 
-	<filter>
-		<filter-name>apiFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
+	
 	
 	<!-- <filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -91,11 +88,23 @@
 		<filter-name>springSessionRepositoryFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
+	
+	
 	<filter-mapping>
 		<filter-name>applicationTenantResolverFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>apiFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>applicationCoreFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	
 
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
@@ -120,10 +129,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
-	<filter-mapping>
-		<filter-name>apiFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
 	
 	<!-- Processes application requests -->
 	<servlet>

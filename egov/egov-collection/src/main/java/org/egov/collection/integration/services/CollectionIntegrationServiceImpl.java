@@ -485,21 +485,22 @@ CollectionIntegrationService {
         
         List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<RestAggregatePaymentInfo>(0);
         
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+       // final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
-                "select count(*), sum(Totalamount) from egcl_collectionheader where receiptdate>='");
-        queryBuilder.append(formatter.format(fromDate)).append("' and receiptdate<='").append(formatter.format(toDate))
-        .append("' and status in (select id from egw_status where moduletype='ReceiptHeader' and code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED'))");
-
+                "select count(*),ulb, sum(total) from public.receipt_aggr_view where receipt_date>=:fromDate and receipt_date<=:toDate"
+                + " group by ulb ");
+        
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
+        query.setDate("fromDate", fromDate);
+        query.setDate("toDate", toDate);
         
         final List<Object[]> queryResults = (List<Object[]>) query.list();
         
         for (Object[] objectArray:queryResults) {
             RestAggregatePaymentInfo aggregatePaymentInfo = new RestAggregatePaymentInfo();
-            aggregatePaymentInfo.setUlbcode("Tirupati");//hardcoded ?
+            aggregatePaymentInfo.setUlbcode(objectArray[1].toString());//hardcoded ?
             aggregatePaymentInfo.setTxncount(Integer.parseInt(objectArray[0].toString()));
-            aggregatePaymentInfo.setTxnamount(new BigDecimal(objectArray[1].toString()));
+            aggregatePaymentInfo.setTxnamount(new BigDecimal(objectArray[2].toString()));
             listAggregatePaymentInfo.add(aggregatePaymentInfo);
         }
         return listAggregatePaymentInfo;

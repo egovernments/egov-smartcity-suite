@@ -48,6 +48,7 @@ import java.util.Date;
 public class PayPropertyTaxDetails implements Serializable {
 
 	private String assessmentNo;
+	private String ulbCode;
 	private String paymentMode;
 	private BigDecimal paymentAmount;
 	private String paidBy;
@@ -134,6 +135,14 @@ public class PayPropertyTaxDetails implements Serializable {
 
 	public void setBranchName(String branchName) {
 		this.branchName = branchName;
+	}
+
+	public String getUlbCode() {
+		return ulbCode;
+	}
+
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
 	}
 
 }

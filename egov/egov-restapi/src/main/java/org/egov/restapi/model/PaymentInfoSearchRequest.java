@@ -46,6 +46,7 @@ public class PaymentInfoSearchRequest {
     private Date fromdate;
     private Date todate;
     private String servicecode;
+    private String ulbCode;
 
     public Date getFromdate() {
         return fromdate;
@@ -70,5 +71,13 @@ public class PaymentInfoSearchRequest {
     public void setServicecode(final String servicecode) {
         this.servicecode = servicecode;
     }
+
+	public String getUlbCode() {
+		return ulbCode;
+	}
+
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
+	}
 
 }

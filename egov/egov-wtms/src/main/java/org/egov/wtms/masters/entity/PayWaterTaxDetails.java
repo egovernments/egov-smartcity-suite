@@ -52,6 +52,7 @@ public class PayWaterTaxDetails implements Serializable {
      */
     private static final long serialVersionUID = 7083364740584612941L;
     private String consumerNo;
+    private String ulbCode;
     @JsonIgnore
     private String applicaionNumber;
     private String paymentMode;
@@ -157,5 +158,13 @@ public class PayWaterTaxDetails implements Serializable {
     public void setBranchName(final String branchName) {
         this.branchName = branchName;
     }
+
+	public String getUlbCode() {
+		return ulbCode;
+	}
+
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
+	}
 
 }
