@@ -109,35 +109,29 @@
 				<label class="col-md-3 col-xs-12"><spring:message code="lbl.fwd.grievance"/></label>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<form:select path="" data-first-option="false"
-						id="approvalDepartment" cssClass="form-control"
-						cssErrorClass="form-control error">
+						id="approvalDepartment" cssClass="form-control" >
 						<form:option value="">
 							<spring:message code="lbl.selectdepartment" />
 						</form:option>
 						<form:options items="${approvalDepartmentList}" itemValue="id"
 							itemLabel="name" />     
 					</form:select>
-					
 				</div>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<form:select path="" data-first-option="false"
-						id="approvalDesignation" cssClass="form-control"
-						cssErrorClass="form-control error">  
+						id="approvalDesignation" cssClass="form-control">  
 						<form:option value="">
 							<spring:message code="lbl.selectdesignation" />
 						</form:option>
 						<form:options items="${approvalDesignationList}" itemValue="id"
 							itemLabel="name" />
 					</form:select>
-					
 				</div>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<select name="approvalPosition" id="approvalPosition"
 						class="form-control">
 						<option value=""><spring:message code="lbl.selectuser" /></option>
-
 					</select>
-					
 				</div>
 			</div>
 			

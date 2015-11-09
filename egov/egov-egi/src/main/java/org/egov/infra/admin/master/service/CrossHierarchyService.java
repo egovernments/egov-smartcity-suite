@@ -91,4 +91,10 @@ public class CrossHierarchyService {
     public List<CrossHierarchy> findAllByBoundaryTypes(final BoundaryType parentType, final BoundaryType childType) {
         return crossHierarchyRepository.findByParentTypeAndChildType(parentType, childType);
     }
+
+    public List<Boundary> findChildBoundariesByParentBoundary(final String boundaryTypeName,
+            final String hierarchyTypeName, final String parentBoundary) {
+        return crossHierarchyRepository.findChildBoundariesByParentBoundary(boundaryTypeName,
+                hierarchyTypeName, parentBoundary);
+    }
 }

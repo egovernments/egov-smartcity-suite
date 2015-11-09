@@ -41,6 +41,16 @@ $(document).ready(function(){
 	
 	var myCenter;
 	var map, geocoder, geolocate, marker;  
+	if (lat != '0.0') {
+		$.ajax({
+	        type: "POST",
+	        url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng,
+	        dataType: 'json',
+	        success : function(data){
+	            $('#address_locate').html(JSON.stringify(data.results[0].formatted_address))  
+	        }
+		});
+	}
 	$('#complaint-locate').on('show.bs.modal', function() {
 		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
 		//complaint view(update) map

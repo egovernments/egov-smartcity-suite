@@ -23,16 +23,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -137,7 +137,17 @@ public class ComplaintUpdationController {
                                 complaint.getLocation().getBoundaryType().getName(), "Administration"));
                 model.addAttribute("location",
                         crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
+            } else if(complaint.getLat() != 0 && complaint.getLng() != 0 ) {
+                model.addAttribute("ward",
+                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
+                model.addAttribute("location",
+                        crossHierarchyService.findChildBoundariesByParentBoundary(
+                                complaint.getLocation().getBoundaryType().getName(),
+                                complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
+                                complaint.getLocation().getName()));
             }
+
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
 
             model.addAttribute("mailBody", complaintService.getEmailBody(complaint));
@@ -175,12 +185,22 @@ public class ComplaintUpdationController {
             model.addAttribute("complaintHistory", historyTable);
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("zone",
-                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
-            model.addAttribute("ward", Collections.EMPTY_LIST);
-            if (complaint.getLocation() != null && complaint.getLocation().getParent() != null)
+            if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
                 model.addAttribute("ward",
-                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
+                model.addAttribute("location",
+                        crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
+            } else if(complaint.getLat() != 0 && complaint.getLng() != 0) {
+                model.addAttribute("ward",
+                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
+                model.addAttribute("location",
+                        crossHierarchyService.findChildBoundariesByParentBoundary(
+                                complaint.getLocation().getBoundaryType().getName(),
+                                complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
+                                complaint.getLocation().getName()));
+            }
             if (securityUtils.currentUserType().equals(UserType.CITIZEN))
                 result = COMPLAINT_CITIZEN_EDIT;
             else
