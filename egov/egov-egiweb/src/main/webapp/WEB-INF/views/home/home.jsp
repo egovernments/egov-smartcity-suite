@@ -162,13 +162,19 @@
 								<li>
 									<a href="javascript:void(0);"  onclick="jQuery('.add-feedback').modal('show', {backdrop: 'static'});">
 										<i class="fa fa-comment"></i>
-										<span class="title signout">Feedback</span>
+										<span class="title">Feedback</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);" data-strwindname="r&i"  class="open-popup">
+										<i class="fa fa-bug"></i>
+										<span class="title">Report an Issue</span>
 									</a>
 								</li>
 								<li>
 									<a href="help" data-strwindname="help"  class="open-popup">
 										<i class="fa fa-question"></i>
-										<span class="title signout">Help</span>
+										<span class="title">Help</span>
 									</a>
 								</li>
 								<li>
