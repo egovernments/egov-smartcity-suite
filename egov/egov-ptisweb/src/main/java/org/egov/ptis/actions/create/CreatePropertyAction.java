@@ -157,7 +157,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
         @Result(name = "view", location = "create/createProperty-view.jsp"),
         @Result(name = "error", location = "create/createProperty-error.jsp"),
-        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
+        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp"),
+        @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "create/createProperty-meesevaAck.jsp")})
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = -2329719786287615451L;
@@ -169,6 +170,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String CREATE = "create";
     private static final String RESULT_DATAENTRY = "dataEntry";
     public static final String PRINTACK = "printAck";
+    public static final String MEESEVA_RESULT_ACK = "meesevaAck";
+    
 
     private final Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
@@ -323,7 +326,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
             LOGGER.debug("create: Property creation ended");
         }
-        return RESULT_ACK;
+        if(!loggedUserIsMeesevaUser)
+            return RESULT_ACK;
+        else {
+            return MEESEVA_RESULT_ACK;
+        }            
+            
     }
 
     private void populateFormData() {
