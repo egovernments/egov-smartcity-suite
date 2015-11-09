@@ -49,6 +49,15 @@ public class WebUtils {
      **/
     public static String extractRequestedDomainName(final HttpServletRequest httpRequest) {
         final String requestURL = httpRequest.getRequestURL().toString();
+        return extractRequestedDomainName(requestURL);
+    }
+
+    /**
+     * This will return only domain name from given requestUrl <br/>
+     * eg: http://www.domain.com/cxt/xyz will return www.domain.com
+     * http://somehost:8090/cxt/xyz will return somehost
+     **/
+    public static String extractRequestedDomainName(final String requestURL) {
         final int domainNameStartIndex = requestURL.indexOf("://") + 3;
         String domainName = requestURL.substring(domainNameStartIndex, requestURL.indexOf('/', domainNameStartIndex));
         if (domainName.contains(":"))
