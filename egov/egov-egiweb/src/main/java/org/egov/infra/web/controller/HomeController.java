@@ -182,6 +182,7 @@ public class HomeController {
         modelData.addAttribute("app_version", applicationProperties.appVersion());
         modelData.addAttribute("app_buildno", applicationProperties.appBuildNo());
         modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
+        modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPassworResetRequired(user));
         session.setAttribute("app_release_no", applicationProperties.appVersion() + "_" + applicationProperties.appBuildNo());
         return "home";
     }
@@ -282,6 +283,10 @@ public class HomeController {
         submenuItem.getItems().add(submenu);
 
         return submenu;
+    }
+
+    private boolean checkDefaultPassworResetRequired(final User user) {
+        return passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword());
     }
 
 }

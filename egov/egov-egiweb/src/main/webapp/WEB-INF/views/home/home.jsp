@@ -349,7 +349,11 @@
 					</div>
 					
 					<div class="modal-body">
-						
+						<c:if test="${dflt_pwd_reset_req}">
+							<div class="alert alert-warning" role="alert">
+							<i class="fa fa-exclamation-triangle"></i> Security alert...! You are using default password, please reset your password.
+							</div>
+						</c:if>
 						<form id="password-form" class="form-horizontal form-groups-bordered">
 							<div class="form-group">
 								<div class="col-md-4">
@@ -359,12 +363,12 @@
 									<input type="password" class="form-control" id="old-pass" required="required">
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" id="wrap">
 								<div class="col-md-4">
 									<label class="control-label">New Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32">
+									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]">
 								</div>
 							</div>
 							<div class="form-group">
@@ -389,7 +393,11 @@
 				</div>
 			</div>
 		</div>
-		
+		<c:if test="${dflt_pwd_reset_req}">
+			<script>
+			$('.change-password').modal('show');
+			</script>
+		</c:if>
 		<div class="modal fade favourites" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -474,6 +482,7 @@
 		        document.getElementById("loading").style.display = "none";
 				document.getElementById("loadingMask").style.display = "none";
 		    });
+			$('#new-pass').popover({ trigger: "focus",placement: "bottom"})
 		</script>
 	</body>
 </html>																						

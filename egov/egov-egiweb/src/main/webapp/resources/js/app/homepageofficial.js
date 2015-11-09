@@ -79,20 +79,31 @@ $(document).ready(function()
 	                success: function(data) {
 	                	var msg = "";
 	                	if (data == "SUCCESS") {
-	                		msg = "Your password has been updated."
+	                		$("#old-pass").val("");
+	                		$("#new-pass").val("");
+	                		$("#retype-pass").val("");
+	                		$('.change-password').modal('hide');
+	                		bootbox.alert("Your password has been updated.");
 	                	} else if (data == "NEWPWD_UNMATCH") {
-	                		msg = "New password you have entered does not match with retyped password."
+	                		msg = "New password you have entered does not match with retyped password.";
+	                		$("#new-pass").val("");
+	                		$("#retype-pass").val("");
+	                		$('.change-password').modal('show');
 	                	} else if (data == "CURRPWD_UNMATCH") {
-	                		msg = "Old password you have entered is incorrect."
+	                		msg = "Old password you have entered is incorrect.";
+	                		$("#old-pass").val("");
+	                		$('.change-password').modal('show');
 	                	} else  if (data == "NEWPWD_INVALID") {
-	                		msg = "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]"
+	                		msg = "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]";
+	                		$("#new-pass").val("");
+	                		$("#retype-pass").val("");
+	                		$('.change-password').modal('show');
 	                	}
-	                	bootbox.alert(msg);
+	                	$('.password-error').html(msg).show();
+	                	
 	                },
 	                error: function() {
 	                	bootbox.alert("Internal server error occurred, please try after sometime.");
-	                }, complete : function() {
-	                	$('.change-password').modal('hide');
 	                }
 	        });
 	        
