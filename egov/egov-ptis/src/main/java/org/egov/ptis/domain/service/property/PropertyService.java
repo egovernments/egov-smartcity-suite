@@ -107,7 +107,7 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
@@ -2526,6 +2526,7 @@ public class PropertyService {
                     return false;
         return true;
     }
+
     /**
      * Checks whether user is an employee or not
      *
@@ -2533,39 +2534,68 @@ public class PropertyService {
      * @return
      */
     public Boolean isMeesevaUser(final User user) {
-        for (final Role role : user.getRoles())
-        {      if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
-                    return true;
+        for (final Role role : user.getRoles()) {
+            if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
+                return true;
         }
         return false;
     }
-    
 
     /**
-     * Returns User jurisdiction of property zone boundary
      *
+     * Getting User assignment based on designation ,department and zone boundary
+     * 
+     * Reading Designation and Department from appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * 'Revenue,Accounts,Administration' for department
      * @param basicProperty
      * @return
      */
     public Assignment getUserPositionByZone(final BasicProperty basicProperty) {
-        final List<AppConfigValues> designation = getDesignationForThirdPartyUser();
-        final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        List<Assignment> assignment = null;
-        for (AppConfigValues appConfigValue : designation) {
-            if (appConfigValue.getValue().equals(SENIOR_ASSISTANT)) { 
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(department.getId(),
-                        designationService.getDesignationByName(appConfigValue.getValue()).getId(), basicProperty
-                                .getPropertyID().getElectionBoundary().getId());
-                if (!assignment.isEmpty()) {
-                    break;
-                } else {
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(department.getId(),
-                            designationService.getDesignationByName(JUNIOR_ASSISTANT).getId(), basicProperty
+        final String designationStr = getDesignationForThirdPartyUser();
+        final String departmentStr = getDepartmentForWorkFlow();
+        String[] department = departmentStr.split(",");
+        String[] designation = designationStr.split(",");
+        List<Assignment> assignment = new ArrayList<Assignment>(); 
+        if (department.length > 0 && designation.length > 0) {
+            if (StringUtils.isNotBlank(department[0]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[0]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
+                                .getElectionBoundary().getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[0]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
                                     .getPropertyID().getElectionBoundary().getId());
+
+                }
+            } else if (StringUtils.isNotBlank(department[1]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[1]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
+                                .getElectionBoundary().getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[1]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
+                                    .getPropertyID().getElectionBoundary().getId());
+
+                }
+            } else if (StringUtils.isNotBlank(department[2]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[2]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
+                                .getElectionBoundary().getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[2]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
+                                    .getPropertyID().getElectionBoundary().getId());
+
                 }
             }
         }
-        return null != assignment ? assignment.get(0):null;
+        return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
     /**
@@ -2587,10 +2617,10 @@ public class PropertyService {
      *
      * @return
      */
-    public List<AppConfigValues> getDesignationForThirdPartyUser() {
+    public String getDesignationForThirdPartyUser() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 PROPERTYTAX_WORKFLOWDESIGNATION);
-        return null != appConfigValue ? appConfigValue : null;
+        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
     }
 
     /**

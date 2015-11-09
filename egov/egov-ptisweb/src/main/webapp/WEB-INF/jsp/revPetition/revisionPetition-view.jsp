@@ -266,12 +266,12 @@
 							<s:if
 								test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
         		state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
-								<jsp:include page="recordRevisionPetition.jsp" />	Hi
+								<jsp:include page="recordRevisionPetition.jsp" />
         		</s:if>
 							<s:elseif
 								test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) && 
 						egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)">
-								<jsp:include page="addHearingDate.jsp" />	Hello
+								<jsp:include page="addHearingDate.jsp" />
 					</s:elseif>
 							<s:elseif
 								test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 

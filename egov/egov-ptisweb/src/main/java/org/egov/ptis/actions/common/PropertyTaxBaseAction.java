@@ -433,8 +433,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (!propertyByEmployee) {
             currentState = "Created";
             final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
-            approverPositionId = assignment.getPosition().getId();
-            approverName = assignment.getEmployee().getUsername();
+            if (null != assignment) {
+                approverPositionId = assignment.getPosition().getId();
+                approverName = assignment.getEmployee().getUsername();
+            }
         } else
             currentState = null;
         if (null != property.getId())
@@ -533,7 +535,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
-                    	args.add(sMSEmailService.getCityName());
+                        args.add(sMSEmailService.getCityName());
                         emailSubject = getText("msg.newpropertycreate.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
@@ -543,7 +545,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
-                    	args.add(sMSEmailService.getCityName());
+                        args.add(sMSEmailService.getCityName());
                         emailSubject = getText("msg.alterAssessmentForward.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentForward.email", args);
