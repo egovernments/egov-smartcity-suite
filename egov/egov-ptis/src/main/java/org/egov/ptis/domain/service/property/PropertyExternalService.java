@@ -292,6 +292,7 @@ public class PropertyExternalService {
 
         // Owner Details
         assessmentDetail.setBoundaryDetails(prepareBoundaryInfo(basicProperty));
+        assessmentDetail.setHouseNo(basicProperty.getAddress().getHouseNoBldgApt());
         assessmentDetail.setPropertyAddress(basicProperty.getAddress().toString());
         if (null != property) {
             assessmentDetail.setOwnerNames(prepareOwnerInfo(property));
@@ -325,6 +326,12 @@ public class PropertyExternalService {
                 boundaryDetails.setWardNumber(propertyID.getWard().getBoundaryNum());
                 boundaryDetails.setWardName(propertyID.getWard().getName());
                 boundaryDetails.setWardBoundaryType(propertyID.getWard().getBoundaryType().getName());
+            }
+            if (null != propertyID.getElectionBoundary()) {
+                boundaryDetails.setAdminWardId(propertyID.getElectionBoundary().getId());
+                boundaryDetails.setAdminWardNumber(propertyID.getElectionBoundary().getBoundaryNum());
+                boundaryDetails.setAdminWardName(propertyID.getElectionBoundary().getName());
+                boundaryDetails.setAdminWardBoundaryType(propertyID.getElectionBoundary().getBoundaryType().getName());
             }
             if (null != propertyID.getArea()) {
                 boundaryDetails.setBlockId(propertyID.getArea().getId());

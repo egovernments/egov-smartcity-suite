@@ -66,6 +66,10 @@ public class BoundaryDetails implements Serializable {
     private String localityName;
     private Long streetId;
     private String streetName;
+    private Long adminWardId;
+    private Long adminWardNumber;
+    private String adminWardName;
+    private String adminWardBoundaryType;
 
     public Long getZoneNumber() {
         return zoneNumber;
@@ -185,6 +189,38 @@ public class BoundaryDetails implements Serializable {
 
     public void setStreetId(Long streetId) {
         this.streetId = streetId;
+    }
+
+    public Long getAdminWardId() {
+        return adminWardId;
+    }
+
+    public void setAdminWardId(Long adminWardId) {
+        this.adminWardId = adminWardId;
+    }
+
+    public Long getAdminWardNumber() {
+        return adminWardNumber;
+    }
+
+    public void setAdminWardNumber(Long adminWardNumber) {
+        this.adminWardNumber = adminWardNumber;
+    }
+
+    public String getAdminWardName() {
+        return adminWardName;
+    }
+
+    public void setAdminWardName(String adminWardName) {
+        this.adminWardName = adminWardName;
+    }
+
+    public String getAdminWardBoundaryType() {
+        return adminWardBoundaryType;
+    }
+
+    public void setAdminWardBoundaryType(String adminWardBoundaryType) {
+        this.adminWardBoundaryType = adminWardBoundaryType;
     }
 
     @Override

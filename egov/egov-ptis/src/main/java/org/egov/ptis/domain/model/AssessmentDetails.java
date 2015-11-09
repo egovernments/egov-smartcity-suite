@@ -44,85 +44,111 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 /**
- * The AssessmentDetails class is used to contain assessment details such as
- * property id, owner details, boundary details, and block details.
+ * The AssessmentDetails class is used to contain assessment details such as property id, owner details, boundary details, and
+ * block details.
  * 
  * @author ranjit
  *
  */
 @SuppressWarnings("serial")
 public class AssessmentDetails implements Serializable {
-	
-	private String propertyID;
-	private Set<OwnerName> ownerNames;
-	private BoundaryDetails boundaryDetails;
-	private String propertyAddress;
-	private PropertyDetails propertyDetails;
-	private ErrorDetails errorDetails;
-	private String primaryEmail;
-	private String primaryMobileNo;
-	private Integer flag;
-	
-	
-	public String getPropertyID() {
-		return propertyID;
-	}
-	public void setPropertyID(String propertyID) {
-		this.propertyID = propertyID;
-	}
-	public Set<OwnerName> getOwnerNames() {
-		return ownerNames;
-	}
-	public void setOwnerNames(Set<OwnerName> ownerNames) {
-		this.ownerNames = ownerNames;
-	}
-	public BoundaryDetails getBoundaryDetails() {
-		return boundaryDetails;
-	}
-	public void setBoundaryDetails(BoundaryDetails boundaryDetails) {
-		this.boundaryDetails = boundaryDetails;
-	}
-	public PropertyDetails getPropertyDetails() {
-		return propertyDetails;
-	}
-	public void setPropertyDetails(PropertyDetails propertyDetails) {
-		this.propertyDetails = propertyDetails;
-	}
-	public ErrorDetails getErrorDetails() {
-		return errorDetails;
-	}
-	public void setErrorDetails(ErrorDetails errorDetails) {
-		this.errorDetails = errorDetails;
-	}
-	public String getPropertyAddress() {
-		return propertyAddress;
-	}
-	public void setPropertyAddress(String propertyAddress) {
-		this.propertyAddress = propertyAddress;
-	}
-	public String getPrimaryEmail() {
-		return primaryEmail;
-	}
-	public void setPrimaryEmail(String primaryEmail) {
-		this.primaryEmail = primaryEmail;
-	}
-	public String getPrimaryMobileNo() {
-		return primaryMobileNo;
-	}
-	public void setPrimaryMobileNo(String primaryMobileNo) {
-		this.primaryMobileNo = primaryMobileNo;
-	}
-	public Integer getFlag() {
-		return flag;
-	}
-	public void setFlag(Integer flag) {
-		this.flag = flag;
-	}
-	@Override
-	public String toString() {
-		return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
-				+ boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
-				+ ", errorDetails=" + errorDetails + "]";
-	}
-	
+
+    private String propertyID;
+    private String houseNo;
+    private Set<OwnerName> ownerNames;
+    private BoundaryDetails boundaryDetails;
+    private String propertyAddress;
+    private PropertyDetails propertyDetails;
+    private ErrorDetails errorDetails;
+    private String primaryEmail;
+    private String primaryMobileNo;
+    private Integer flag;
+
+    public String getPropertyID() {
+        return propertyID;
+    }
+
+    public void setPropertyID(String propertyID) {
+        this.propertyID = propertyID;
+    }
+
+    public String getHouseNo() {
+        return houseNo;
+    }
+
+    public void setHouseNo(String houseNo) {
+        this.houseNo = houseNo;
+    }
+
+    public Set<OwnerName> getOwnerNames() {
+        return ownerNames;
+    }
+
+    public void setOwnerNames(Set<OwnerName> ownerNames) {
+        this.ownerNames = ownerNames;
+    }
+
+    public BoundaryDetails getBoundaryDetails() {
+        return boundaryDetails;
+    }
+
+    public void setBoundaryDetails(BoundaryDetails boundaryDetails) {
+        this.boundaryDetails = boundaryDetails;
+    }
+
+    public PropertyDetails getPropertyDetails() {
+        return propertyDetails;
+    }
+
+    public void setPropertyDetails(PropertyDetails propertyDetails) {
+        this.propertyDetails = propertyDetails;
+    }
+
+    public ErrorDetails getErrorDetails() {
+        return errorDetails;
+    }
+
+    public void setErrorDetails(ErrorDetails errorDetails) {
+        this.errorDetails = errorDetails;
+    }
+
+    public String getPropertyAddress() {
+        return propertyAddress;
+    }
+
+    public void setPropertyAddress(String propertyAddress) {
+        this.propertyAddress = propertyAddress;
+    }
+
+    public String getPrimaryEmail() {
+        return primaryEmail;
+    }
+
+    public void setPrimaryEmail(String primaryEmail) {
+        this.primaryEmail = primaryEmail;
+    }
+
+    public String getPrimaryMobileNo() {
+        return primaryMobileNo;
+    }
+
+    public void setPrimaryMobileNo(String primaryMobileNo) {
+        this.primaryMobileNo = primaryMobileNo;
+    }
+
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Integer flag) {
+        this.flag = flag;
+    }
+
+    @Override
+    public String toString() {
+        return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
+                + boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
+                + ", errorDetails=" + errorDetails + "]";
+    }
+
 }
