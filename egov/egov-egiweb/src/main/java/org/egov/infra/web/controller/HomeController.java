@@ -181,6 +181,7 @@ public class HomeController {
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         modelData.addAttribute("app_version", applicationProperties.appVersion());
         modelData.addAttribute("app_buildno", applicationProperties.appBuildNo());
+        modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
         session.setAttribute("app_release_no", applicationProperties.appVersion() + "_" + applicationProperties.appBuildNo());
         return "home";
     }

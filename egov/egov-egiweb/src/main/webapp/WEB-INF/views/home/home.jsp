@@ -165,12 +165,14 @@
 										<span class="title">Feedback</span>
 									</a>
 								</li>
+								<c:if test="${not empty issue_report_url}">
 								<li>
-									<a href="javascript:void(0);" data-strwindname="r&i"  class="open-popup">
+									<a href="${issue_report_url}" data-strwindname="r&i"  class="open-popup">
 										<i class="fa fa-bug"></i>
 										<span class="title">Report an Issue</span>
 									</a>
 								</li>
+								</c:if>
 								<li>
 									<a href="help" data-strwindname="help"  class="open-popup">
 										<i class="fa fa-question"></i>
