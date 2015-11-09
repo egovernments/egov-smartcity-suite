@@ -2565,7 +2565,7 @@ public class PropertyService {
                 }
             }
         }
-        return assignment.get(0);
+        return null != assignment ? assignment.get(0):null;
     }
 
     /**
