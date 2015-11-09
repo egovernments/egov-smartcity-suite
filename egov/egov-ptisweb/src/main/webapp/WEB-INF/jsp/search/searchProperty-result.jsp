@@ -158,12 +158,6 @@
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>
 												</option>
-												<option value="VacancyRemission">
-															<s:text name="vacancyRemission"></s:text>
-														</option>
-												<option value="VacancyRemissionMonthlyUpdate">
-													<s:text name="vacancyRemission.monthly.update"></s:text>
-												</option>
 												
 												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
 													<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) &&  
