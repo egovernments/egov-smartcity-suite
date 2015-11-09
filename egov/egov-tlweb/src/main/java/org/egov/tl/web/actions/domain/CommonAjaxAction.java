@@ -39,10 +39,6 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.domain;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -51,7 +47,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.service.DesignationService;
@@ -62,7 +57,9 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
+import org.egov.tl.domain.entity.FeeMatrixDetail;
 import org.egov.tl.domain.entity.LicenseSubCategory;
+import org.egov.tl.domain.service.FeeMatrixDetailService;
 import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +91,7 @@ public class CommonAjaxAction extends BaseFormAction {
     private int locationId;
     private int zoneId;
     private Long categoryId;
+    private Long feeMatrixDetailId;
     private List<Boundary> locationList = new LinkedList<Boundary>();
     private List<Boundary> areaList = new LinkedList<Boundary>();
     private List<Boundary> streetList = new LinkedList<Boundary>();
@@ -110,6 +108,8 @@ public class CommonAjaxAction extends BaseFormAction {
     private DesignationService designationService;
     @Autowired
     private EisCommonService eisCommonService;
+    @Autowired
+    private  FeeMatrixDetailService feeMatrixDetailService;
 	private LicenseSubCategoryService licenseSubCategoryService;
 	private List<LicenseSubCategory> subCategoryList;
 
@@ -205,6 +205,19 @@ public class CommonAjaxAction extends BaseFormAction {
     public String ajaxPopulateSubCategory() {
     subCategoryList = licenseSubCategoryService.findAllBy("select s from org.egov.tl.domain.entity.LicenseSubCategory s  where s.category.id ="+categoryId);
     return "subcategory";       
+    }
+    
+    /**
+     * @description delete feedetail
+     * @return
+     */
+    @Action(value="/domain/commonAjax-deleteFee")  
+    public String deleteFee(){
+        FeeMatrixDetail feeMatrixDetail=feeMatrixDetailService.findByFeeMatrixDetailId(feeMatrixDetailId);
+        if(feeMatrixDetail!=null){
+            feeMatrixDetailService.delete(feeMatrixDetail);
+        }
+        return "deleteFee"; 
     }
 
 
@@ -360,5 +373,13 @@ public class CommonAjaxAction extends BaseFormAction {
 	public void setSubCategoryList(List<LicenseSubCategory> subCategoryList) {
 		this.subCategoryList = subCategoryList;
 	}
+
+    public Long getFeeMatrixDetailId() {
+        return feeMatrixDetailId;
+    }
+
+    public void setFeeMatrixDetailId(Long feeMatrixDetailId) {
+        this.feeMatrixDetailId = feeMatrixDetailId;
+    }
 
 }
