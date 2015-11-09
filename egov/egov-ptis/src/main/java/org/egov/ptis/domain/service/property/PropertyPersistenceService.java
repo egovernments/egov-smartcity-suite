@@ -75,11 +75,11 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
+                	//If existing user, then do not add correspondence address
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
                     ownerInfo.setOwner(user);
-                    user.addAddress(ownerAddress);
                     ownerInfo.setOrderNo(orderNo);
                     ownerInfo.setBasicProperty(basicProperty);
                 }
