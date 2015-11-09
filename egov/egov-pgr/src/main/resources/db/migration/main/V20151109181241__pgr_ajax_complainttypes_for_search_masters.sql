@@ -1,0 +1,5 @@
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'ajaxsearchallcomplaintTypes', '/complaint/search/complaintTypes', NULL, 410, NULL, 'ajaxsearchallcomplaintTypes', false, 'pgr', 0, 1, '2015-08-28 10:45:30.32226', 1, '2015-08-28 10:45:30.32226', (select id from eg_module  where name='PGR' and parentmodule is null));
+
+
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='Super User'),(select id from eg_action where name  ='ajaxsearchallcomplaintTypes'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='Grivance Administrator'),(select id from eg_action where name  ='ajaxsearchallcomplaintTypes'));

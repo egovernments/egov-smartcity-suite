@@ -80,8 +80,12 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     private CrossHierarchyService crossHierarchyService;
 
     @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes",
-            "router/complaintTypes", "escalationTime/complaintTypes",
-            "pgrreport/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
+            "router/complaintTypes","escalationTime/complaintTypes"}, method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<ComplaintType> getAllActiveComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
+        return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
+    }
+    
+    @RequestMapping(value = {"pgrreport/complaintTypes","search/complaintTypes","search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllByNameLike(complaintTypeName);
     }

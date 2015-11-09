@@ -129,7 +129,7 @@ public class ComplaintUpdationController {
             return COMPLAINT_CITIZEN_EDIT;
         else {
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("complaintType", complaintTypeService.findAll());
+            model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
             model.addAttribute("ward", Collections.EMPTY_LIST);
             if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
                 model.addAttribute("ward",
@@ -183,7 +183,7 @@ public class ComplaintUpdationController {
         } else {
             final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
             model.addAttribute("complaintHistory", historyTable);
-            model.addAttribute("complaintType", complaintTypeService.findAll());
+            model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
             if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
                 model.addAttribute("ward",
