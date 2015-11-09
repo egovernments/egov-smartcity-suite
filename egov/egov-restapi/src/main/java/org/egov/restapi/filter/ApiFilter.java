@@ -51,23 +51,23 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.restapi.constants.RestRedirectConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.json.JSONObject;
 
-//This is an unnecessary class, the existence of this filter is due to customer is not ready to 
+//This is an unnecessary class, the existence of this filter is due to customer is not ready to
 //change their existing system to call appropriate url from their apps.
 public class ApiFilter implements Filter {
 
     private final static Logger LOG = Logger.getLogger(ApiFilter.class);
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private CityService cityService;
 
     @Override
     public void destroy() {
@@ -75,7 +75,8 @@ public class ApiFilter implements Filter {
     }
 
     @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
+            throws IOException, ServletException {
         final MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest((HttpServletRequest) servletRequest);
         String ulbCode = null;
         final byte[] b = new byte[5000];
@@ -83,8 +84,8 @@ public class ApiFilter implements Filter {
         if (ulbCode == null) {
             JSONObject jsonObject = null;
             String jb = new String();
-            try  {
-                ServletInputStream inputStream = multiReadRequest.getInputStream();
+            try {
+                final ServletInputStream inputStream = multiReadRequest.getInputStream();
                 inputStream.read(b);
                 jb = new String(b);
             } catch (final Exception e) {
@@ -106,18 +107,16 @@ public class ApiFilter implements Filter {
 
         if (StringUtils.isNotBlank(ulbCode)) {
             if (!ulbCode.equals(EgovThreadLocals.getCityCode())) {
-                HttpServletRequest request = ((HttpServletRequest)servletRequest);
-                final String cityName = RestRedirectConstants.getCode_ulbNames().get(ulbCode).toLowerCase();
-                final String newTenantUrl = request.getRequestURL().toString().replace(EgovThreadLocals.getTenantID(), cityName);
                 LOG.info("Request Reached Different city. Need to change domain details");
-                final String newTenantDomainName = WebUtils.extractRequestedDomainName(newTenantUrl);
-                String newTenantId = applicationProperties.getProperty("tenant." + newTenantDomainName);
-                EgovThreadLocals.setTenantID(newTenantId);
-                EgovThreadLocals.setDomainName(newTenantDomainName);
+                final String cityName = RestRedirectConstants.getCode_ulbNames().get(ulbCode).toLowerCase();
+                EgovThreadLocals.setTenantID(cityName);
+                final City city = cityService.getCityByCode(ulbCode);
+                EgovThreadLocals.setDomainName(city.getDomainURL());
                 EgovThreadLocals.setCityCode(ulbCode);
-            }
+            } else 
+                LOG.info("ULB code resolved to be same, continueing normal request flow"); 
         } else {
-            LOG.info("ULB Code missing in request");
+            LOG.error("ULB Code missing in request");
             throw new ApplicationRuntimeException("ULB Code missing in request");
         }
         filterChain.doFilter(multiReadRequest, servletResponse);
