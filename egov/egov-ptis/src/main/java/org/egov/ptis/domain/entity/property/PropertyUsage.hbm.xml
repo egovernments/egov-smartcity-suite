@@ -72,5 +72,6 @@
 		<property name="toDate" column="TO_DATE" type="date" />
 		<property name="isEnabled" column="IS_ENABLED" type="integer" />
 		<property name="isResidential" column="ISRESIDENTIAL" type="boolean" />
+		<property name="isActive" column="ISACTIVE" type="boolean" />
 	</class>
 </hibernate-mapping>

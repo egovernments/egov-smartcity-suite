@@ -1,0 +1,2 @@
+UPDATE egpt_property_usage_master SET isActive = false WHERE id NOT IN (SELECT distinct(id_usage) from egpt_mstr_category);
+UPDATE egpt_struc_cl SET isActive = false WHERE id NOT IN (SELECT distinct(id_struct_cl) from egpt_mstr_category);

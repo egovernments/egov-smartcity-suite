@@ -642,10 +642,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
         final List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
                 "from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
-        List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
+        List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage where isActive = true order by usageName");
 
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-        final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
+        final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification where isActive = true order by typeName ");
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
                 "from TaxExeptionReason order by name");

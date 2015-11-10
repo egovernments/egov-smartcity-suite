@@ -100,6 +100,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -372,6 +373,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         } else if (StringUtils.isNotBlank(areaOfPlot)
                                 && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                             addActionError(getText("assbleArea.notgreaterthan.extentsite"));
+
+                        if (null != floor.getStructureClassification()
+                                && null != floor.getStructureClassification().getId()
+                                && null != floor.getPropertyUsage() && null != floor.getPropertyUsage().getId()) {
+                            List<Category> category = getPersistenceService().findAllBy(
+                                    "From Category where propUsage.id = ? and structureClass.id = ? ",
+                                    floor.getPropertyUsage().getId(), floor.getStructureClassification().getId());
+                            if (category.isEmpty()) {
+                                addActionError(getText("unitrate.error"));
+                            }
+                        }
                     }
                 }
         if (LOGGER.isDebugEnabled())
