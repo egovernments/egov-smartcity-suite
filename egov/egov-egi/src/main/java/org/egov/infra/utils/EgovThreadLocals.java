@@ -98,12 +98,12 @@ public class EgovThreadLocals {
     }
 
     public static void clearValues() {
-        setDomainName(null);
-        setUserId(null);
-        setTenantID(null);
-        setCityCode(null);
-        setCityName(null);
-        setServletContext(null);
+        servletContext.remove();
+        domainName.remove();
+        userId.remove();
+        tenantID.remove();
+        cityCode.remove();
+        cityName.remove();
     }
 
 }
