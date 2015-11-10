@@ -62,7 +62,7 @@
 						name="propertyDetail.floorDetailsProxy[0].floorNo" listKey="key"	id="floorNo"
 						value="%{propertyDetail.floorDetailsProxy[0].floorNo}"
 						listValue="value" list="floorNoMap" cssClass="selectnew" cssStyle="width:100%"
-						data-optional="0" data-errormsg="Floor Number is mandatory!" />
+						data-optional="0" data-errormsg="Floor Number is mandatory!" title="Floor number of the property"/>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -73,7 +73,7 @@
 						value="%{propertyDetail.floorDetailsProxy[0].structureClassification.id}"
 						listValue="typeName" list="dropdownData.StructureList"
 						cssClass="selectnew" cssStyle="width:100%" 
-						data-optional="0" data-errormsg="Classification of building is required!"/>
+						data-optional="0" data-errormsg="Classification of building is required!" title="Classification of the Building"/>
 				</div>
 			</td>
 			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
@@ -87,7 +87,7 @@
 						listValue="usageName" list="dropdownData.UsageList"
 						cssClass="selectnew"
 						cssStyle="width:100%" 
-						data-optional="0" data-errormsg="Nature of usage is required!"/>
+						data-optional="0" data-errormsg="Nature of usage is required!" title="Nature of usage of the property"/>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -99,7 +99,7 @@
 						listValue="occupation" list="dropdownData.OccupancyList"
 						cssClass="selectnew"
 						cssStyle="width:100%" 
-						data-optional="0" data-errormsg="Occupancy is required!"/>
+						data-optional="0" data-errormsg="Occupancy is required!" title="Property occupied by"/>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -107,7 +107,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantName"
 						id="occupantName" size="20"
 						value="%{propertyDetail.floorDetailsProxy[0].occupantName}"
-						maxlength="32" cssStyle="width:100%"/>
+						maxlength="32" cssStyle="width:100%" title="Name of the occupied by person"/>
 				</div>
 			</td>
 
@@ -117,7 +117,7 @@
 					<s:textfield autocomplete="off"
 						name="propertyDetail.floorDetailsProxy[0].occupancyDate" data-optional="0" data-errormsg="Ocuupancy date is required!"
 						id="propertyDetail.floorDetailsProxy[0].occupancyDate" value="%{occDate}" size="10"
-						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+						maxlength="10" cssStyle="width:100%" cssClass="datepicker" title="Tax effective from entered installment"></s:textfield>
 				</div>
 			</td>
 
@@ -126,7 +126,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.area" 
 						maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
-						cssStyle="width:100%" data-optional="0" data-errormsg="Plinth area is mandatory!"/>
+						cssStyle="width:100%" data-optional="0" data-errormsg="Plinth area is mandatory!" title="Length X Width"/>
 				</div>
 			</td>
 			
@@ -134,7 +134,7 @@
 				<div align="center">
 					<s:select name="propertyDetail.floorDetailsProxy[0].drainage" id="propertyDetail.floorDetailsProxy[0].drainage" headerValue="select"
 							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[0].drainage}"
-							cssClass="selectnew" data-optional="1">
+							cssClass="selectnew" data-optional="1" title="UGD">
 					</s:select>
 				</div>
 			</td>
@@ -143,7 +143,7 @@
 				<div align="center">
 					<s:textfield autocomplete="off" name="propertyDetail.floorDetailsProxy[0].noOfSeats" 
 						id="propertyDetail.floorDetailsProxy[0].noOfSeats" value="%{propertyDetail.floorDetailsProxy[0].noOfSeats}" size="10"
-						maxlength="3" cssStyle="width:100%"></s:textfield>
+						maxlength="3" cssStyle="width:100%" title="NA"></s:textfield>
 				</div>
 			</td>
 
@@ -173,7 +173,7 @@
 						listKey="key" id="floorNo" listValue="value" list="floorNoMap"
 						cssClass="selectnew"
 						value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].floorNo}"
-						cssStyle="width:100%" /></td>
+						cssStyle="width:100%" title="Floor number of the property"/></td>
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
@@ -184,7 +184,7 @@
 								listKey="id" id="floorConstType"
 								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
-								cssClass="selectnew" cssStyle="width:100%" />
+								cssClass="selectnew" cssStyle="width:100%" title="Classification of the Building"/>
 						</s:if>
 						<s:else>
 							<s:select headerKey=""
@@ -193,7 +193,7 @@
 								listKey="id" id="floorConstType%{#floorsstatus.index-1}"
 								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
-								cssClass="selectnew" cssStyle="width:100%" />
+								cssClass="selectnew" cssStyle="width:100%" title="Classification of the Building"/>
 						</s:else>
 					</div>
 				</td>
@@ -208,7 +208,7 @@
 								listValue="usageName" list="dropdownData.UsageList"
 								cssClass="selectnew"
 								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
-								cssStyle="width:100%" />
+								cssStyle="width:100%"  title="Nature of usage of the property"/>
 					</div>
 				</td>
 
@@ -220,7 +220,7 @@
 							listKey="id" id="floorOccupation" listValue="occupation"
 							list="dropdownData.OccupancyList" cssClass="selectnew"
 							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyOccupation.id}"
-							cssStyle="width:100%" />
+							cssStyle="width:100%"  title="Property occupied by"/>
 					</div>
 				</td>
 
@@ -228,7 +228,7 @@
 					<div align="center">
 						<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupantName"
 							id="occupantname" size="25" maxlength="32" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
-							cssStyle="width:100%" />
+							cssStyle="width:100%"  title="Name of the occupied by person"/>
 					</div>
 				</td>
  
@@ -239,7 +239,7 @@
 							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupancyDate" 
 							value="%{occDate}"
 							id="propertyDetail.floorDetailsProxy[%#floorsstatus.index].occupancyDate" size="10"
-							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+							maxlength="10" cssStyle="width:100%" cssClass="datepicker"  title="Tax effective from entered installment"></s:textfield>
 					</div>
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
@@ -249,7 +249,7 @@
 							maxlength="10" size="10" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
 							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
-							cssStyle="width:100%" />
+							cssStyle="width:100%"  title="Length X Width"/>
 					</div>
 				</td>
 				
@@ -257,7 +257,7 @@
 					<div align="center">
 						<s:select name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].drainage" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].drainage" headerValue="select"
 								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].drainage}"
-								cssClass="selectnew" data-optional="1">
+								cssClass="selectnew" data-optional="1"  title="UGD">
 						</s:select>
 					</div>
 				</td>
@@ -266,7 +266,7 @@
 					<div align="center">
 						<s:textfield autocomplete="off" name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" 
 							id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].noOfSeats}" size="10"
-							maxlength="3" cssStyle="width:100%"></s:textfield>
+							maxlength="3" cssStyle="width:100%"  title="NA"></s:textfield>
 					</div>
 				</td>
 				

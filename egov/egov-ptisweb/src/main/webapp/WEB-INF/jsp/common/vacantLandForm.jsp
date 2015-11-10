@@ -53,26 +53,26 @@
 	<tr id="vacantLandRow">
         <td class="blueborderfortd" align="center">
 		 <s:textfield name="propertyDetail.surveyNumber" id="propertyDetail.surveyNumber"
-				maxlength="15" value="%{propertyDetail.surveyNumber}" />
+				maxlength="15" value="%{propertyDetail.surveyNumber}" title="Survey number of vacant land"/>
 		</td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyDetail.pattaNumber" id="propertyDetail.pattaNumber"
-				maxlength="15" value="%{propertyDetail.pattaNumber}" />
+				maxlength="15" value="%{propertyDetail.pattaNumber}" title="Patta number of vacant land"/>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.sitalArea.area" id="vacantLandArea"
+        	<s:textfield name="propertyDetail.sitalArea.area" id="vacantLandArea" title="Vacant land total area in meters"
 				maxlength="10" value="%{propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.marketValue" id="marketValue"
+        	<s:textfield name="propertyDetail.marketValue" id="marketValue" title="Market value of the vacant land"
 				maxlength="10" value="%{propertyDetail.marketValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
 		</td>
         
         <td class="blueborderfortd">
         	<s:textfield name="propertyDetail.currentCapitalValue"
-				id="currentCapitalValue" maxlength="15" readOnly="true" value="%{propertyDetail.currentCapitalValue}"
+				id="currentCapitalValue" maxlength="15" readOnly="true" value="%{propertyDetail.currentCapitalValue}" title="Current capital value of Land"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
         </td>
         
@@ -102,13 +102,13 @@
 					</tr>
 					<tr>
 						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="32"
-								value="%{northBoundary}" /></td>
+								value="%{northBoundary}" title="North side of Land"/></td>
 						<td class="blueborderfortd" align="center"><s:textfield name="eastBoundary" id="eastBoundary" maxlength="32"
-								value="%{eastBoundary}" /></td>
+								value="%{eastBoundary}"title="East side of Land" /></td>
 						<td class="blueborderfortd" align="center"><s:textfield name="westBoundary" id="westBoundary" maxlength="32"
-								value="%{westBoundary}" /></td>
+								value="%{westBoundary}" title="West side of land"/></td>
 						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="32"
-								value="%{southBoundary}" /></td>
+								value="%{southBoundary}" title="South side of land"/></td>
 					</tr>
 				</tbody>
 			</table>
