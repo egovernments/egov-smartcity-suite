@@ -313,10 +313,9 @@ public class ComplaintService {
 
     private String getDetailedMessage(final Complaint savedComplaint) {
         final StringBuilder detailedMessage = new StringBuilder();
-        detailedMessage.append("Complaint No. ").append(savedComplaint.getCrn()).append(" regarding ")
-                .append(savedComplaint.getComplaintType().getName()).append(" was ")
-                .append(savedComplaint.getStatus().getName())
-                .append(savedComplaint.getLastModifiedBy().getType().equals(UserType.CITIZEN) ? " by you." : ".");
+        detailedMessage.append("Grievance No. ").append(savedComplaint.getCrn()).append(" regarding ")
+                .append(savedComplaint.getComplaintType().getName()).append(" in ")
+                .append(savedComplaint.getStatus().getName()).append(" status.");
         return detailedMessage.toString();
     }
 
