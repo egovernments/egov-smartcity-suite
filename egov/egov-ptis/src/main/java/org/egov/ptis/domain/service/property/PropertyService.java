@@ -247,7 +247,9 @@ public class PropertyService {
     @Autowired
     private PropertyTaxCollection propertyTaxCollection;
 
-    /**
+    private BigDecimal totalAlv = BigDecimal.ZERO;
+
+	/**
      * Creates a new property if property is in transient state else updates
      * persisted property
      *
@@ -563,12 +565,14 @@ public class PropertyService {
             if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
-            else if (installment.equals(currentInstall))
-                // FloorwiseDemandCalculations should be set only for the
+            else if (installment.equals(currentInstall)){
+            	// FloorwiseDemandCalculations should be set only for the
                 // current installment for each floor.
-                for (final Floor floor : property.getPropertyDetail().getFloorDetails())
-                    ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
-
+                for (final Floor floor : property.getPropertyDetail().getFloorDetails()){
+                	ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
+                }
+                ptDmdCalc.setAlv(totalAlv);
+            }
         }
         property.getPtDemandSet().addAll(ptDmdSet);
 
@@ -1391,7 +1395,7 @@ public class PropertyService {
             if (FLOOR_MAP.get(floorDmdCalc.getFloor().getFloorNo()).equals(unitTax.getFloorNumber()))
                 setFloorDmdCalTax(unitTax, floorDmdCalc);
         }
-
+        totalAlv = totalAlv.add(floorDmdCalc.getAlv());
         LOGGER.debug("floorDmdCalc: " + floorDmdCalc + "\nExiting from createFloorDmdCalc");
         return floorDmdCalc;
     }
@@ -2769,4 +2773,11 @@ public class PropertyService {
         this.eisCommonsService = eisCommonsService;
     }
 
+    public BigDecimal getTotalAlv() {
+		return totalAlv;
+	}
+
+	public void setTotalAlv(BigDecimal totalAlv) {
+		this.totalAlv = totalAlv;
+	}
 }
