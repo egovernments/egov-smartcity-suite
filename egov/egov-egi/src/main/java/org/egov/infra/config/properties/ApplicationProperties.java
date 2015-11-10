@@ -176,4 +176,8 @@ public class ApplicationProperties {
     public String issueReportingUrl() {
         return environment.getProperty("issue.report.url", EMPTY);
     }
+
+    public List<String> portalEnabledFeatures() {
+        return Arrays.asList(environment.getProperty("portal.feature.enabled").split(","));
+    }
 }

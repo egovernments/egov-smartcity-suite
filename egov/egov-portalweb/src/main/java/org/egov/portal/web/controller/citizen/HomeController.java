@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.service.CitizenInboxService;
@@ -65,6 +66,9 @@ public class HomeController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @RequestMapping(method = RequestMethod.GET)
     public String LoginForm(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
@@ -88,6 +92,7 @@ public class HomeController {
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
         modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
         modelData.addAttribute("cityName", session.getAttribute("citymunicipalityname"));
+        modelData.addAttribute("enabledFeatures", applicationProperties.portalEnabledFeatures());
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         return "citizen-home";
     }
