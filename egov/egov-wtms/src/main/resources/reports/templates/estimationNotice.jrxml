@@ -1,47 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency,
-     accountability and the service delivery of the government  organizations.
-
-      Copyright (C) <2015>  eGovernments Foundation
-
-      The updated version of eGov suite of products as by eGovernments Foundation
-      is available at http://www.egovernments.org
-
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or
-      http://www.gnu.org/licenses/gpl.html .
-
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-
-  	1) All versions of this program, verbatim or modified must carry this
-  	   Legal Notice.
-
-  	2) Any misrepresentation of the origin of the material is prohibited. It
-  	   is required that all modified versions of this material be marked in
-  	   reasonable ways as different from the original version.
-
-  	3) This license does not grant any rights to any user of the program
-  	   with regards to rights under trademark law for use of the trade names
-  	   or trademarks of eGovernments Foundation.
-
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="268"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationType" class="java.lang.String"/>
@@ -52,6 +13,7 @@
 	<parameter name="estimationDate" class="java.lang.String"/>
 	<parameter name="estimationCharges" class="java.lang.String"/>
 	<parameter name="donationCharges" class="java.lang.String"/>
+	<parameter name="totalCharges" class="java.lang.String"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="unitRate" class="java.lang.Double"/>
 	<field name="itemDescription" class="java.lang.String"/>
@@ -320,9 +282,9 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="182" splitType="Stretch">
+		<band height="209" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="12" y="81" width="237" height="65" uuid="089a9d46-0c17-46f3-a998-7a7c2e981d06"/>
+				<reportElement x="9" y="110" width="237" height="65" uuid="089a9d46-0c17-46f3-a998-7a7c2e981d06"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -330,46 +292,53 @@
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="12" y="66" width="237" height="15" uuid="308016cd-d5f2-4be2-a19b-b9e9d6807f48"/>
+				<reportElement x="9" y="95" width="237" height="15" uuid="308016cd-d5f2-4be2-a19b-b9e9d6807f48"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="12" y="51" width="42" height="15" uuid="d0db9718-78a4-4a95-82cf-80f32b0af0d2"/>
+				<reportElement x="9" y="79" width="42" height="15" uuid="d0db9718-78a4-4a95-82cf-80f32b0af0d2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[To,]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="326" y="115" width="194" height="15" uuid="0ffe897f-e02e-4bd2-862a-df68075566ef"/>
+				<reportElement x="326" y="125" width="194" height="15" uuid="0ffe897f-e02e-4bd2-862a-df68075566ef"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="326" y="100" width="194" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
+				<reportElement x="326" y="110" width="194" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Municipal Assistant Engineer]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="15" y="22" width="260" height="15" uuid="4080b245-6445-4920-a00f-f917e1fb4e88"/>
+				<reportElement x="15" y="15" width="260" height="15" uuid="4080b245-6445-4920-a00f-f917e1fb4e88"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Donation Charges : </style>Rs. "+$P{donationCharges}+"/-"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="344" y="22" width="200" height="15" uuid="0f65d178-e901-463d-80af-0014adbcc9d5"/>
+				<reportElement x="344" y="15" width="200" height="15" uuid="0f65d178-e901-463d-80af-0014adbcc9d5"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Estimation Charges : </style>Rs. "+$P{estimationCharges}+"/-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="15" y="46" width="260" height="15" uuid="da99103a-8901-4949-a090-b858d4d6911c"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Total Charges : </style>Rs. "+$P{totalCharges}+"/-"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

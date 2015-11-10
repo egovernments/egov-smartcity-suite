@@ -122,6 +122,7 @@ public class EstimationNoticeController {
                     formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
             reportParams.put("estimationCharges", waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
             reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
+            reportParams.put("totalCharges", waterConnectionDetails.getDonationCharges()+ waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("address", assessmentDetails.getPropertyAddress());
