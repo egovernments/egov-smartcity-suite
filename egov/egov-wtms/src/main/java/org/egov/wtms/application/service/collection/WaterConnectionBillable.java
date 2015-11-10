@@ -81,7 +81,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
-    private static final String DISPLAY_MESSAGE = "Water Tax Collection";
+    private static final String DISPLAY_MESSAGE = "Water Charge Collection";
     private WaterConnectionDetails WaterConnectionDetails;
     private AssessmentDetails assessmentDetails;
     private Long userId;
@@ -234,9 +234,9 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getDescription() {
         if (null != getWaterConnectionDetails().getConnection().getConsumerCode())
-            return "Water Tax H.S.C No: " + getWaterConnectionDetails().getConnection().getConsumerCode();
+            return "Water Charge H.S.C No: " + getWaterConnectionDetails().getConnection().getConsumerCode();
         else
-            return "Water Tax Application Number: " + getWaterConnectionDetails().getApplicationNumber();
+            return "Water Charge Application Number: " + getWaterConnectionDetails().getApplicationNumber();
     }
 
     @Override
@@ -246,14 +246,10 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getCollModesNotAllowed() {
-        if (ConnectionStatus.ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus())) {
-            return CollectionConstants.INSTRUMENTTYPE_BANK;
-        } else {
+            
             StringBuilder collectionModesNotAllowed = new StringBuilder();
-            collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK).append(",").
-                    append(CollectionConstants.INSTRUMENTTYPE_DD).append(",").append(CollectionConstants.INSTRUMENTTYPE_CHEQUE);
+            collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK);
             return collectionModesNotAllowed.toString();
-        }
     }
 
     @Override
