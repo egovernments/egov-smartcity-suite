@@ -166,7 +166,7 @@ public class ConnectionDemandService {
             feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE,
                     fieldInspectionDetails.getEstimationCharges());
 
-        if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
+        //if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
             if (!(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) && (WaterTaxConstants.RESIDENTIAL
                     .equalsIgnoreCase(waterConnectionDetails.getPropertyType().getCode()) || ConnectionType.NON_METERED
                     .equals(waterConnectionDetails.getConnectionType()))))
