@@ -33,14 +33,15 @@ package org.egov.wtms.utils;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
@@ -147,12 +148,10 @@ public class WaterTaxUtils {
 
     public String getDesignationForThirdPartyUser() {
         String designation = "";
-        String[] desgnArray = null;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.CLERKDESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
-            desgnArray = appConfigValue.get(0).getValue().split(",");
-        designation = desgnArray[0] != null ? desgnArray[0] : "";
+            designation = appConfigValue.get(0).getValue();
         return designation;
     }
 
@@ -250,7 +249,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -296,6 +295,12 @@ public class WaterTaxUtils {
         return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
     }
 
+    /*
+     * public List<EgwStatus> getStatusByModuleType(final String moduleName) {
+     * return (List<EgwStatus> ) persistenceService.findAllBy(
+     * "from EgwStatus where moduleType=? order by code", moduleName); }
+     */
+
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
 
         final List<StateHistory> stateHistoryList = waterConnectionDetails.getState().getHistory();
@@ -339,21 +344,62 @@ public class WaterTaxUtils {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
-        List<Employee> employeeList = null;
-        final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
+        final HierarchyType hierarchy = hierarchyTypeService
+                .getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
         final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
                 assessmentDetails.getBoundaryDetails().getWardBoundaryType(), hierarchy);
         final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
                 .getBoundaryDetails().getZoneNumber());
-        final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
-        final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        if (deptObj != null && desgnObj != null && boundaryObj != null) {
-            employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(), desgnObj.getId(),
-                    boundaryObj.getId());
-            if (!employeeList.isEmpty())
-                assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
-        }
+        assignmentObj = getUserPositionByZone(asessmentNumber, assessmentDetails, boundaryObj);
+
         return assignmentObj != null ? assignmentObj.getPosition() : null;
+    }
+
+    /**
+     * Getting User assignment based on designation ,department and zone
+     * boundary Reading Designation and Department from appconfig values and
+     * Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * 'Revenue,Accounts,Administration' for department
+     * 
+     * @param asessmentNumber,
+     * @Param assessmentDetails
+     * @param boundaryObj
+     * @return Assignment
+     */
+    public Assignment getUserPositionByZone(final String asessmentNumber, final AssessmentDetails assessmentDetails,
+            final Boundary boundaryObj) {
+        final String designationStr = getDesignationForThirdPartyUser();
+        final String departmentStr = getDepartmentForWorkFlow();
+        final String[] department = departmentStr.split(",");
+        final String[] designation = designationStr.split(",");
+        List<Assignment> assignment = new ArrayList<Assignment>();
+        if (department.length > 0 && designation.length > 0)
+            if (StringUtils.isNotBlank(department[0]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[0]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[0]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
+            } else if (StringUtils.isNotBlank(department[1]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[1]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[1]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
+            } else if (StringUtils.isNotBlank(department[2]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[2]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[2]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
+            }
+        return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
     @ModelAttribute(value = "checkOperator")
@@ -364,7 +410,7 @@ public class WaterTaxUtils {
         if (userObj != null)
             for (final Role role : userObj.getRoles())
                 if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
-                        && role.getName().contains(WaterTaxConstants.CLERKULB)) {
+                && role.getName().contains(WaterTaxConstants.CLERKULB)) {
                     isCSCOperator = true;
                     break;
                 }
@@ -383,8 +429,8 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
             if (waterconnectiondetails.getDemand() != null)
                 finalDueAmount = finalDueAmount
-                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                                .getDemand().getAmtCollected().doubleValue());
+                + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                        .getDemand().getAmtCollected().doubleValue());
         return finalDueAmount;
     }
 }
