@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
-<html>
+<html oncontextmenu="return false;">
     <head>
         <%@ include file="/includes/meta.jsp" %>
         <title>eGov  - <decorator:title/> </title>
@@ -159,7 +159,15 @@
 		});
 		
 		jQuery('form').preventDoubleSubmission();
-	  
+
+		function disableRefresh(e) {
+            if ((e.which || e.keyCode) == 116)
+                    e.preventDefault();
+            if (e.ctrlKey)
+                    if ((e.which || e.keyCode) == 82)
+                            e.preventDefault();
+    	};
+    	jQuery(document).on("keydown", disableRefresh);
 	  </script>
 	  
 	   
