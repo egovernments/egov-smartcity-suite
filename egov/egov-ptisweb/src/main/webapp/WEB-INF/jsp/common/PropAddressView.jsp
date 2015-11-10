@@ -81,7 +81,7 @@
 	<tr>
 		<td class="greybox">&nbsp;</td>
 	    <td class="greybox"><s:text name="enumerationblock"/> : </td>
-	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
+	    <td class="greybox"><span class="bold">N/A</td>
 	    <td class="greybox"><s:text name="PinCode"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{pinCode}" /> </span></td>
 	</tr>
