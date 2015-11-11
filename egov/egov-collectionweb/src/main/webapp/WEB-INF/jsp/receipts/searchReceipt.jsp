@@ -380,12 +380,18 @@ function checkviewforselectedrecord()
       </logic:empty>
       
 </div>
-
-
-<logic:notEmpty name="searchResult">
+<logic:empty name="resultList">
+		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+		<tr> 
+			<div>&nbsp;</div>
+			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
+		</tr>
+		</table>
+</logic:empty>
+<logic:notEmpty name="resultList">
 
 <div align="center">		
-<display:table name="searchResult" uid="currentRow" pagesize = "20" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
+<display:table name="resultList" uid="currentRow" pagesize = "20" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 <display:caption media="pdf">&nbsp;</display:caption>
 <display:column headerClass="bluebgheadtd"  class="blueborderfortd" style="width:3%">
 <input name="selectedReceipts" type="checkbox" id="selectedReceipts"
@@ -414,7 +420,6 @@ function checkviewforselectedrecord()
 </display:table>	
 </div>
 <br/>
- 
 <div class="buttonbottom">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="View" onclick="return checkviewforselectedrecord()"/>&nbsp;
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Print" onclick="return checkprintforselectedrecord()"/>&nbsp;
@@ -423,24 +428,7 @@ function checkviewforselectedrecord()
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>
-
-	
-				
 </logic:notEmpty>
-<logic:empty name="searchResult">
-	<s:if test="target=='searchresult'">
-	
-		table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
-		<tr> 
-			<div>&nbsp;</div>
-			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
-		</tr>
-		</table
-	
-	</s:if>
-</logic:empty>
-
-
 </s:form>
 </body>
 

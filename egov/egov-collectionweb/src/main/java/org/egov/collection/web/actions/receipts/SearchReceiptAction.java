@@ -74,6 +74,7 @@ public class SearchReceiptAction extends SearchFormAction {
     private Integer searchStatus = -1;
     private String target = "new";
     private String manualReceiptNumber;
+    private List resultList;
 
     @Override
     public Object getModel() {
@@ -174,7 +175,9 @@ public class SearchReceiptAction extends SearchFormAction {
     @Action(value = "/receipts/searchReceipt-search")
     public String search() {
         target = "searchresult";
-        return super.search();
+        super.search();
+        resultList = searchResult.getList();
+        return SUCCESS;
     }
 
     /**
@@ -269,5 +272,13 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public void setManualReceiptNumber(final String manualReceiptNumber) {
         this.manualReceiptNumber = manualReceiptNumber;
+    }
+
+    public List getResultList() {
+        return resultList;
+    }
+
+    public void setResultList(List resultList) {
+        this.resultList = resultList;
     }
 }
