@@ -487,7 +487,7 @@ CollectionIntegrationService {
         
        // final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
-                "select count(*),ulb, sum(total) from public.receipt_aggr_view where receipt_date>=:fromDate and receipt_date<=:toDate"
+                "select sum(recordcount) as records,ulb, sum(total) as total from public.receipt_aggr_view where receipt_date>=:fromDate and receipt_date<=:toDate"
                 + " group by ulb ");
         
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
