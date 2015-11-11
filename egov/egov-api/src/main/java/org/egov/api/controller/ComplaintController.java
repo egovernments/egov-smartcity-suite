@@ -239,7 +239,10 @@ public class ComplaintController extends ApiController {
                 final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
                 complaint.setComplaintType(complaintType);
             }
-            complaint.setSupportDocs(addToFileStore(files));
+            if(files.length>0)
+            {
+            	complaint.setSupportDocs(addToFileStore(files));	
+            }
             complaintService.createComplaint(complaint);
             return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint,
                    getMessage("msg.complaint.reg.success"));
