@@ -123,7 +123,7 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = { ApiUrl.COMPLAINT_GET_TYPES }, method = GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     public ResponseEntity<String> getAllTypes() {
         try {
-            final List<ComplaintType> complaintTypes = complaintTypeService.findAll();
+            final List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypes();
             return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(complaintTypes);
         } catch (final Exception e) {
             return getResponseHandler().error(e.getMessage());
