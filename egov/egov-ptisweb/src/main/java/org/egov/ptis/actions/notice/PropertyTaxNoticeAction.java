@@ -55,6 +55,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -153,6 +154,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             else
                 reportParams.put("mode", APPLICATION_TYPE_DEMOLITION);
             setNoticeInfo(propertyNotice, basicProperty);
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())){
+            	reportParams.put("unauthorizedProperty", "yes");
+            }else{
+            	reportParams.put("unauthorizedProperty", "no");
+            }
             final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(propertyNotice.getOwnerInfo()
                     .getTotalTax());
             propertyNotice.setFloorDetailsForNotice(floorDetails);
@@ -212,6 +218,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                     || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                 ownerInfo.setGeneralTax(demandDetail.getAmount());
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())){
+            	if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
+            		ownerInfo.setUnauthorizedPenalty(demandDetail.getAmount());
+            }
         }
         ownerInfo.setTotalTax(totalTax);
         final PropertyID propertyId = basicProperty.getPropertyID();

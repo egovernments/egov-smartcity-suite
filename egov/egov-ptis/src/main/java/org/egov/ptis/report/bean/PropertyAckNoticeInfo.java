@@ -51,8 +51,10 @@ public class PropertyAckNoticeInfo {
     private BigDecimal amount = BigDecimal.ZERO;
     private BigDecimal rate = BigDecimal.ZERO;
     private String assessmentDate;
+    private BigDecimal unauthorizedPenalty = BigDecimal.ZERO;
 
-    public String getCreationReason() {
+
+	public String getCreationReason() {
         return creationReason;
     }
 
@@ -427,5 +429,12 @@ public class PropertyAckNoticeInfo {
     public void setAssessmentDate(String assessmentDate) {
         this.assessmentDate = assessmentDate;
     }
-    
+
+    public BigDecimal getUnauthorizedPenalty() {
+		return unauthorizedPenalty;
+	}
+
+	public void setUnauthorizedPenalty(BigDecimal unauthorizedPenalty) {
+		this.unauthorizedPenalty = unauthorizedPenalty;
+	}
 }

@@ -8,6 +8,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATI
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_FULL_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
@@ -224,15 +225,23 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
             model.addAttribute("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-            BigDecimal propertyTax = null;
+            BigDecimal propertyTax = BigDecimal.ZERO;
             if (null != demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
                 propertyTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX);
             else
                 propertyTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
+            BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+                    			.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)).add(propertyTax);
             model.addAttribute("propertyTax", propertyTax);
-            model.addAttribute("totalTax",
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)).add(propertyTax));
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()) 
+            		&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+            	model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+            	model.addAttribute("totalTax",totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            	model.addAttribute("showUnauthorisedPenalty", "yes");
+            }else{
+            	model.addAttribute("totalTax",totalTax);
+            	model.addAttribute("showUnauthorisedPenalty", "no");
+            }
         }
     }
 

@@ -50,6 +50,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATI
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -97,6 +98,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -622,24 +624,35 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             propertyTaxDetailsMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
         else
             propertyTaxDetailsMap.put("ARV", BigDecimal.ZERO);
+        
+        propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+        propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+        BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            propertyTaxDetailsMap.put(
-                    "totalTax",
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                            .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)));
+            totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+	                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                    .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+            //If unauthorized property, then add unauthorized penalty
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()) 
+            		&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+            	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+            	propertyTaxDetailsMap.put("totalTax",totalTax
+                                .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            }else{
+            	propertyTaxDetailsMap.put("totalTax",totalTax);
+            }
+            
         } else {
-            propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             propertyTaxDetailsMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-            propertyTaxDetailsMap.put(
-                    "totalTax",
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                            .add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)));
+            totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
+            if(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)!=null){
+            	totalTax = totalTax.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+            }
+            if(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)!=null){
+            	totalTax = totalTax.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+            }
+            propertyTaxDetailsMap.put("totalTax",totalTax);
         }
     }
 

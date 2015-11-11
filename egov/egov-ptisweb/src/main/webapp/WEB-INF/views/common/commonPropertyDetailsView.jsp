@@ -232,20 +232,24 @@
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.propertytax" />
 								</div>
-								<%-- 
-								<c:choose>
-								<c:when test="${generalTax != null}"> --%>
 								 <div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${propertyTax}" pattern="#,##0.00" /> 
 								</div>
-								<%-- </c:when>
-								<c:otherwise> 
-								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${vacantLandTax}" pattern="#,##0.00" /> 
-								</div>
-								</c:otherwise>
-								</c:choose> --%>
 							</div>
+							<c:choose>
+								<c:when test="${showUnauthorisedPenalty == 'yes'}">
+									<div class="row add-border">
+										<div class="col-xs-6 add-margin">
+										</div>
+										<div class="col-xs-3 add-margin">
+											Unauthorized <spring:message code="lbl.unauthorized.penalty" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											Rs. <fmt:formatNumber value="${unauthorisedPenalty}" pattern="#,##0.00" /> 
+										</div>
+									</div>
+								</c:when>
+							</c:choose>
 							<div class="row add-border">
 								<div class="col-xs-6 add-margin">
 								</div>
