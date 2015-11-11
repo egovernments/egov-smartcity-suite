@@ -408,8 +408,7 @@ public class CollectionCommon {
             for (final ReceiptHeader receiptHeader : receipts)
                 receiptList.add(new BillReceiptInfoImpl(receiptHeader));
 
-        final ReportRequest reportInput = new ReportRequest(templateName, new BillReceiptInfoImpl(receipts[0]),
-                reportParams);
+        ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
