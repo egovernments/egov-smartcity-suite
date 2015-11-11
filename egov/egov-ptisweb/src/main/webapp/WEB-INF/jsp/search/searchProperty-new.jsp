@@ -347,9 +347,9 @@
 					  <td class="bluebox" style="text-align:center;" colspan="4">
 					   <br/>
 					    From <span class="mandatory1">*</span>:  &nbsp;&nbsp;&nbsp; 
-					    <s:textfield name="fromDemand"  />
+					    <s:textfield name="fromDemand" onblur="validNumber(this);checkZero(this,'From Demand');" />
 					    &nbsp;&nbsp;&nbsp; To <span class="mandatory1">*</span>: &nbsp;&nbsp;&nbsp;
-					     <s:textfield name="toDemand"  />
+					     <s:textfield name="toDemand" onblur="validNumber(this);checkZero(this,'To Demand');" />
 					  </td>
 					</tr>
 					<tr>
