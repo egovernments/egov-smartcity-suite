@@ -329,14 +329,14 @@
 							<div class="msg">
 								<header>
 									<div class="row">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/search/waterSearch/" target="_blank" class="col-sm-11 col-xs-10">Search Connection</a>
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/search/waterSearch/" target="_blank" class="col-sm-11 col-xs-10">Pay Charges</a>
 									</div>
 								</header>
 							</div>
 							<div class="msg">
 								<header>
 									<div class="row">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/elastic/appSearch/" target="_blank" class="col-sm-11 col-xs-10">Search Application</a>
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/elastic/appSearch/" target="_blank" class="col-sm-11 col-xs-10">Pay Fees</a>
 									</div>
 								</header>
 							</div>
