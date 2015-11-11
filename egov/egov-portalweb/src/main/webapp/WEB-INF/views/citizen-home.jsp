@@ -262,11 +262,13 @@
 						if($(this).attr('data-section') == "newrequest"){
 							$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
 							$(this).addClass('tab-current-newreq');
+							$('.content-wrap section.newreq').removeClass('content-current-newreq');
+							$($(this).data('newreq-section')).addClass('content-current-newreq');
 						}
 					});
 					</script>
 					<div class="content-wrap">
-						<section id="section-newrequest-1"  class="content-current-newreq">
+						<section id="section-newrequest-1"  class="newreq content-current-newreq">
 							<div class="visible-xs visible-sm">Grievance Redressal</div>
 							<div class="msg">
 								<header>
@@ -283,7 +285,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-2">
+						<section id="section-newrequest-2" class="newreq">
 							<div class="visible-xs visible-sm">Property Tax</div>
 							<div class="msg">
 								<header>
@@ -314,7 +316,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-3">
+						<section id="section-newrequest-3" class="newreq">
 							<div class="visible-xs visible-sm">Building Plan Approval</div>
 							<div class="msg">
 								<header>
@@ -345,7 +347,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-4">
+						<section id="section-newrequest-4" class="newreq">
 							<div class="visible-xs visible-sm">Birth & Death</div>
 							<div class="msg">
 								<header>
@@ -376,7 +378,7 @@
 								</header>
 							</div-->
 						</section>
-						<section id="section-newrequest-5">
+						<section id="section-newrequest-5" class="newreq">
 							<div class="visible-xs visible-sm">Trade Licence</div>
 							<div class="msg">
 								<header>
@@ -400,7 +402,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-6">
+						<section id="section-newrequest-6" class="newreq">
 							<div class="visible-xs visible-sm">Professional Tax</div>
 							<div class="msg">
 								<header>
@@ -424,7 +426,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-7">
+						<section id="section-newrequest-7" class="newreq">
 							<div class="visible-xs visible-sm">Company Tax</div>
 							<div class="msg">
 								<header>
@@ -448,7 +450,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-8">
+						<section id="section-newrequest-8" class="newreq">
 							<div class="visible-xs visible-sm">Shops</div>
 							<div class="msg">
 								<header>
@@ -465,7 +467,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-9">
+						<section id="section-newrequest-9" class="newreq">
 							<div class="visible-xs visible-sm">Advertisement</div>
 							<div class="msg">
 								<header>
@@ -482,7 +484,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-10">
+						<section id="section-newrequest-10" class="newreq">
 							<div class="visible-xs visible-sm">Others</div>
 							<div class="msg">
 								<header>
