@@ -78,6 +78,7 @@
 				<div class="col-md-9 add-margin">
 					<textarea class="form-control" id="inc_messge" placeholder="" required="required"
 						maxlength="400" name="approvalComent"></textarea>
+					<form:errors path="" cssClass="error-msg" />
 				</div>
 			</div>
 			<c:if test="${complaint.status.name == 'COMPLETED'}">

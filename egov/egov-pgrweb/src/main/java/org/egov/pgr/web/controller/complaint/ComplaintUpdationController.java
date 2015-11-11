@@ -40,12 +40,11 @@ package org.egov.pgr.web.controller.complaint;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -112,51 +111,45 @@ public class ComplaintUpdationController {
     }
 
     @ModelAttribute
-    public Complaint getComplaint(@PathVariable final String crnNo) {
-        return complaintService.getComplaintByCRN(crnNo);
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String edit(final Model model, @PathVariable final String crnNo) {
+    public void getComplaint(@PathVariable final String crnNo, final Model model) {
         final Complaint complaint = complaintService.getComplaintByCRN(crnNo);
+        model.addAttribute("complaint", complaint);
         model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
         model.addAttribute("status",
                 complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
                         complaint.getStatus()));
-        model.addAttribute("complaint", complaint);
-
-        if (securityUtils.currentUserType().equals(UserType.CITIZEN))
-            return COMPLAINT_CITIZEN_EDIT;
-        else {
-            model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
-            model.addAttribute("ward", Collections.EMPTY_LIST);
-            if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
-                model.addAttribute("ward",
-                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
-                model.addAttribute("location",
-                        crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
-            } else if(complaint.getLat() != 0 && complaint.getLng() != 0 ) {
-                model.addAttribute("ward",
-                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
-                model.addAttribute("location",
-                        crossHierarchyService.findChildBoundariesByParentBoundary(
-                                complaint.getLocation().getBoundaryType().getName(),
-                                complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
-                                complaint.getLocation().getName()));
-            }
-
+        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
+        model.addAttribute("ward", Collections.EMPTY_LIST);
+        if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
+            model.addAttribute("ward",
+                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            complaint.getLocation().getBoundaryType().getName(), "Administration"));
+            model.addAttribute("location",
+                    crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
+        } else if (complaint.getLat() != 0 && complaint.getLng() != 0) {
+            model.addAttribute("ward",
+                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            complaint.getLocation().getBoundaryType().getName(), "Administration"));
+            model.addAttribute("location",
+                    crossHierarchyService.findChildBoundariesByParentBoundary(
+                            complaint.getLocation().getBoundaryType().getName(),
+                            complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
+                            complaint.getLocation().getName()));
+        }
+        if (null != complaint.getComplaintType()) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
-
             model.addAttribute("mailBody", complaintService.getEmailBody(complaint));
-            return COMPLAINT_EDIT;
         }
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public String edit(final Model model, @PathVariable final String crnNo) {
+        return securityUtils.currentUserType().equals(UserType.CITIZEN) ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
+    }
+
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@ModelAttribute Complaint complaint, final BindingResult errors,
+    public String update(@Valid @ModelAttribute Complaint complaint, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
             @RequestParam("files") final MultipartFile[] files) {
         // this validation is common for citizen and official. Any more
@@ -173,39 +166,16 @@ public class ComplaintUpdationController {
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        if (!securityUtils.currentUserType().equals(UserType.CITIZEN))
-            if (files != null)
-                complaint.getSupportDocs().addAll(addToFileStore(files));
+
         if (!errors.hasErrors()) {
+            if (!securityUtils.currentUserType().equals(UserType.CITIZEN))
+                if (files != null)
+                    complaint.getSupportDocs().addAll(addToFileStore(files));
             complaint = complaintService.update(complaint, approvalPosition, approvalComent);
             redirectAttrs.addFlashAttribute("complaint", complaint);
             result = "redirect:" + complaint.getCrn() + COMPLAINT_UPDATE_SUCCESS;
-        } else {
-            final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
-            model.addAttribute("complaintHistory", historyTable);
-            model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
-            model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
-                model.addAttribute("ward",
-                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
-                model.addAttribute("location",
-                        crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
-            } else if(complaint.getLat() != 0 && complaint.getLng() != 0) {
-                model.addAttribute("ward",
-                        boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                                complaint.getLocation().getBoundaryType().getName(), "Administration"));
-                model.addAttribute("location",
-                        crossHierarchyService.findChildBoundariesByParentBoundary(
-                                complaint.getLocation().getBoundaryType().getName(),
-                                complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
-                                complaint.getLocation().getName()));
-            }
-            if (securityUtils.currentUserType().equals(UserType.CITIZEN))
-                result = COMPLAINT_CITIZEN_EDIT;
-            else
-                result = COMPLAINT_EDIT;
-        }
+        } else
+            result = securityUtils.currentUserType().equals(UserType.CITIZEN) ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
         return result;
     }
 
@@ -221,6 +191,13 @@ public class ComplaintUpdationController {
 
         if (request.getParameter("approvalComent") == null || request.getParameter("approvalComent").trim().isEmpty())
             errors.addError(new ObjectError("approvalComent", messageSource.getMessage("comment.not.null", null, null)));
+
+        if (complaint.getLocation() == null && complaint.getLat() != 0 && complaint.getLng() != 0)
+            errors.rejectValue("location", "location.info.not.found");
+
+        if (complaint.getLocation() == null && complaint.getChildLocation() == null && complaint.getLat() == 0
+                && complaint.getLng() == 0)
+            errors.rejectValue("location", "location.info.not.found");
     }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

@@ -88,7 +88,7 @@ public class ViewEscalationController {
 
     @ModelAttribute("complaintTypes")
     public List<ComplaintType> complaintTypes() {
-        return complaintTypeService.findActiveComplaintTypes();
+        return complaintTypeService.findAll();
     }
 
     @ModelAttribute("positionMasterList")

@@ -70,6 +70,9 @@
 					<form:select path="complaintType" data-first-option="false"
 						id="complaintType" cssClass="form-control"
 						cssErrorClass="form-control error">
+						<form:option  value="${complaint.complaintType.id}">
+							<spring:message code="lbl.select" />
+						</form:option>
 						<form:options items="${complaintType}" itemValue="id"
 							itemLabel="name" />
 					</form:select>
@@ -87,7 +90,7 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${ward}" itemValue="id"
-							itemLabel="localName" />
+							itemLabel="name" />
 					</form:select>
 					
 				</div>
@@ -100,7 +103,7 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${location}" itemValue="id"
-							itemLabel="localName" />
+							itemLabel="name" />
 					</form:select>
 					<form:errors path="location" cssClass="error-msg" />
 				</div>
