@@ -59,115 +59,112 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
 
-
 @Entity
 @Table(name = "egpt_vacancy_remission")
 @SequenceGenerator(name = VacancyRemission.SEQ_VACANCYREMISSION, sequenceName = VacancyRemission.SEQ_VACANCYREMISSION, allocationSize = 1)
+public class VacancyRemission extends StateAware {
 
-public class VacancyRemission extends StateAware{
-	
-	private static final long serialVersionUID = 3387659460257524470L;
-	public static final String SEQ_VACANCYREMISSION = "SEQ_EGPT_VACANCY_REMISSION";
-	
-	@Id
+    private static final long serialVersionUID = 3387659460257524470L;
+    public static final String SEQ_VACANCYREMISSION = "SEQ_EGPT_VACANCY_REMISSION";
+
+    @Id
     @GeneratedValue(generator = SEQ_VACANCYREMISSION, strategy = GenerationType.SEQUENCE)
-	private Long id;
-    
-	@ManyToOne
+    private Long id;
+
+    @ManyToOne
     @NotNull
     @JoinColumn(name = "basicproperty", nullable = false)
-	private BasicPropertyImpl basicProperty;
-	
-	@NotNull
-	@Column(name = "vacancy_fromdate")
+    private BasicPropertyImpl basicProperty;
+
+    @NotNull
+    @Column(name = "vacancy_fromdate")
     private Date vacancyFromDate;
-	
-	@NotNull
-	@Column(name = "vacancy_todate")
+
+    @NotNull
+    @Column(name = "vacancy_todate")
     private Date vacancyToDate;
-	
-	@NotNull
-	@Column(name = "vacancy_comments")
+
+    @NotNull
+    @Column(name = "vacancy_comments")
     private String vacancyComments;
-	
-	@OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionDetails> vacancyRemissionDetails = new LinkedList<VacancyRemissionDetails>();
-    
-	@Column(name = "status")
+
+    @Column(name = "status")
     private String status;
-	
-	@OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
 
+    @Override
+    public String getStateDetails() {
+        return "Vacancy Remission" + " - " + this.basicProperty.getUpicNo();
+    }
 
-	@Override
-	public String getStateDetails() {
-		return "Vacancy Remission"+ " - " +this.basicProperty.getUpicNo();
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public BasicPropertyImpl getBasicProperty() {
+        return basicProperty;
+    }
 
-	public BasicPropertyImpl getBasicProperty() {
-		return basicProperty;
-	}
+    public void setBasicProperty(BasicPropertyImpl basicProperty) {
+        this.basicProperty = basicProperty;
+    }
 
-	public void setBasicProperty(BasicPropertyImpl basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+    public Date getVacancyFromDate() {
+        return vacancyFromDate;
+    }
 
-	public Date getVacancyFromDate() {
-		return vacancyFromDate;
-	}
+    public void setVacancyFromDate(Date vacancyFromDate) {
+        this.vacancyFromDate = vacancyFromDate;
+    }
 
-	public void setVacancyFromDate(Date vacancyFromDate) {
-		this.vacancyFromDate = vacancyFromDate;
-	}
+    public Date getVacancyToDate() {
+        return vacancyToDate;
+    }
 
-	public Date getVacancyToDate() {
-		return vacancyToDate;
-	}
+    public void setVacancyToDate(Date vacancyToDate) {
+        this.vacancyToDate = vacancyToDate;
+    }
 
-	public void setVacancyToDate(Date vacancyToDate) {
-		this.vacancyToDate = vacancyToDate;
-	}
+    public String getVacancyComments() {
+        return vacancyComments;
+    }
 
-	public String getVacancyComments() {
-		return vacancyComments;
-	}
+    public void setVacancyComments(String vacancyComments) {
+        this.vacancyComments = vacancyComments;
+    }
 
-	public void setVacancyComments(String vacancyComments) {
-		this.vacancyComments = vacancyComments;
-	}
+    public List<VacancyRemissionDetails> getVacancyRemissionDetails() {
+        return vacancyRemissionDetails;
+    }
 
-	public List<VacancyRemissionDetails> getVacancyRemissionDetails() {
-		return vacancyRemissionDetails;
-	}
+    public void setVacancyRemissionDetails(List<VacancyRemissionDetails> vacancyRemissionDetails) {
+        this.vacancyRemissionDetails = vacancyRemissionDetails;
+    }
 
-	public void setVacancyRemissionDetails(List<VacancyRemissionDetails> vacancyRemissionDetails) {
-		this.vacancyRemissionDetails = vacancyRemissionDetails;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	public List<VacancyRemissionApproval> getVacancyRemissionApproval() {
-		return vacancyRemissionApproval;
-	}
+    public List<VacancyRemissionApproval> getVacancyRemissionApproval() {
+        return vacancyRemissionApproval;
+    }
 
-	public void setVacancyRemissionApproval(List<VacancyRemissionApproval> vacancyRemissionApproval) {
-		this.vacancyRemissionApproval = vacancyRemissionApproval;
-	}
+    public void setVacancyRemissionApproval(List<VacancyRemissionApproval> vacancyRemissionApproval) {
+        this.vacancyRemissionApproval = vacancyRemissionApproval;
+    }
 }

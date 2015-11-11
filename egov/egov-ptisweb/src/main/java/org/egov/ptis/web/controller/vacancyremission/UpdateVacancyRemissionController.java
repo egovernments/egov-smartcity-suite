@@ -64,75 +64,77 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission")
 public class UpdateVacancyRemissionController extends GenericWorkFlowController {
 
-	
-	private VacancyRemissionService vacancyRemissionService;
-	
-	private PropertyTaxUtil propertyTaxUtil;
-	
-	@Autowired
-	public UpdateVacancyRemissionController(VacancyRemissionService vacancyRemissionService,PropertyTaxUtil propertyTaxUtil){
-		this.propertyTaxUtil = propertyTaxUtil;
-		this.vacancyRemissionService = vacancyRemissionService;
-	}
-	
-	@ModelAttribute
-	public VacancyRemission vacancyRemissionModel(@PathVariable Long id ) {
-		VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
-		return vacancyRemission;
-	}
-	
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+    private VacancyRemissionService vacancyRemissionService;
+
+    private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    public UpdateVacancyRemissionController(VacancyRemissionService vacancyRemissionService,
+            PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+        this.vacancyRemissionService = vacancyRemissionService;
+    }
+
+    @ModelAttribute
+    public VacancyRemission vacancyRemissionModel(@PathVariable Long id) {
+        VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
+        return vacancyRemission;
+    }
+
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-		VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
-		if(vacancyRemission!=null){
-			model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
-			model.addAttribute("currentState", vacancyRemission.getCurrentState().getValue());
-			prepareWorkflow(model,vacancyRemission,new WorkflowContainer());
-			BasicProperty basicProperty = vacancyRemission.getBasicProperty();
-			vacancyRemissionService.addModelAttributes(model, basicProperty);
-		}
+        VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
+        if (vacancyRemission != null) {
+            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+            model.addAttribute("currentState", vacancyRemission.getCurrentState().getValue());
+            prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
+            BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+            vacancyRemissionService.addModelAttributes(model, basicProperty);
+        }
         return "vacancyRemission-edit";
     }
-	
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute VacancyRemission vacancyRemission,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
-		
-		String senderName = vacancyRemission.getCurrentState().getSenderName();
+
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute VacancyRemission vacancyRemission, final BindingResult resultBinder,
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
+
+        String senderName = vacancyRemission.getCurrentState().getSenderName();
         if (!resultBinder.hasErrors()) {
-        	String workFlowAction = "";
-    		if (request.getParameter("workFlowAction") != null)
+            String workFlowAction = "";
+            if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
-    		
-    		Long approvalPosition = 0l;
+
+            Long approvalPosition = 0l;
             String approvalComent = "";
             String successMsg = "";
-            
+
             if (request.getParameter("approvalComent") != null)
                 approvalComent = request.getParameter("approvalComent");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            vacancyRemissionService.saveVacancyRemission(vacancyRemission,approvalPosition,approvalComent,null,workFlowAction);
+            vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
+                    workFlowAction);
 
-            if(StringUtils.isNotBlank(workFlowAction)){
-            	if(workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE)){
-            		successMsg = "Vacancy Remission Approved Successfully in the System";
-            	}else if(workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)){
-            		successMsg = "Vacancy Remission rejected successfully and forwarded to : "+vacancyRemission.getCreatedBy().getUsername();
-            	}else{
-            		successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "+propertyTaxUtil.getApproverUserName(approvalPosition);
-            	}
+            if (StringUtils.isNotBlank(workFlowAction)) {
+                if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE)) {
+                    successMsg = "Vacancy Remission Approved Successfully in the System";
+                } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
+                    successMsg = "Vacancy Remission rejected successfully and forwarded to : "
+                            + vacancyRemission.getCreatedBy().getUsername();
+                } else {
+                    successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
+                            + propertyTaxUtil.getApproverUserName(approvalPosition);
+                }
             }
-            
+
             model.addAttribute("successMessage", successMsg);
             if (StringUtils.isNotBlank(workFlowAction)
-                    && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE)){
-            	String pathVars = vacancyRemission.getBasicProperty().getUpicNo()+","+senderName;
-            	return "redirect:/vacancyremission/rejectionacknowledgement?pathVar=" + pathVars;
+                    && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
+                String pathVars = vacancyRemission.getBasicProperty().getUpicNo() + "," + senderName;
+                return "redirect:/vacancyremission/rejectionacknowledgement?pathVar=" + pathVars;
             }
         }
-		return "vacancyRemission-success";
-	}
+        return "vacancyRemission-success";
+    }
 }

@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 
 import java.math.BigDecimal;
@@ -56,12 +57,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +87,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
-    private PtDemandDao ptDemandDAO;
+    private PropertyService propertyService;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -99,7 +100,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
     @ModelAttribute
     public Property propertyModel(@PathVariable String assessmentNo) {
-        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (null != basicProperty) {
             oldProperty = basicProperty.getActiveProperty();
             propertyImpl = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
@@ -114,17 +115,22 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
-        if (!oldProperty.getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(oldProperty);
-            model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-            model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-            model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-        } else {
-            model.addAttribute("currTax", BigDecimal.ZERO);
-            model.addAttribute("currTaxDue", BigDecimal.ZERO);
-            model.addAttribute("totalArrDue", BigDecimal.ZERO);
+     
+        final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
+                .getActiveProperty());
+        final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
+        final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
+                propertyTaxDetails.get(CURR_COLL_STR));
+        final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                propertyTaxDetails.get(ARR_COLL_STR));
+        model.addAttribute("currentPropertyTax", currentPropertyTax);
+        model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
+        model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
+        if (currentPropertyTaxDue.add(arrearPropertyTaxDue).longValue() > 0) {
+            model.addAttribute("taxDuesErrorMsg", "Please clear property tax due for property demolition ");
+            return TARGET_TAX_DUES;
         }
-        
+        propertyDemolitionService.addModelAttributes(model, basicProperty);
         model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
         prepareWorkflow(model, propertyImpl, new WorkflowContainer());
         return DEMOLITION_FORM;
@@ -141,6 +147,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         if (errors.hasErrors()) {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
+            propertyDemolitionService.addModelAttributes(model, basicProperty);
             return DEMOLITION_FORM;
         } else {
             

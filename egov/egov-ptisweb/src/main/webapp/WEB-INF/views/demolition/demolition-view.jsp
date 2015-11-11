@@ -65,7 +65,7 @@
 									<label class="col-sm-3 control-label text-right"><spring:message
 											code="lbl.demolition.reason" />
 									</label>
-									<div class="col-sm-8 add-margin">
+									<div class="col-sm-3 add-margin">
 										<c:out default="N/A" value="${property.demolitionReason}"></c:out>
 									</div>
 								</div>

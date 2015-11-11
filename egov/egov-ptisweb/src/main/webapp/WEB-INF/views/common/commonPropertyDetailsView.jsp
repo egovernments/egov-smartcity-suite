@@ -232,19 +232,19 @@
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.propertytax" />
 								</div>
-								
+								<%-- 
 								<c:choose>
-								<c:when test="${generalTax != null}">
+								<c:when test="${generalTax != null}"> --%>
 								 <div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${generalTax}" pattern="#,##0.00" /> 
+									Rs. <fmt:formatNumber value="${propertyTax}" pattern="#,##0.00" /> 
 								</div>
-								</c:when>
+								<%-- </c:when>
 								<c:otherwise> 
 								<div class="col-xs-3 add-margin view-content">
 									Rs. <fmt:formatNumber value="${vacantLandTax}" pattern="#,##0.00" /> 
 								</div>
 								</c:otherwise>
-								</c:choose>
+								</c:choose> --%>
 							</div>
 							<div class="row add-border">
 								<div class="col-xs-6 add-margin">

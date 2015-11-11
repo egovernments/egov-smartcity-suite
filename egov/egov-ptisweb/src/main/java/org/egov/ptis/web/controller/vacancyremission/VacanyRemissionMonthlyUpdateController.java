@@ -39,7 +39,6 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,50 +64,57 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission/")
 public class VacanyRemissionMonthlyUpdateController {
 
-	private VacancyRemissionService vacancyRemissionService;
-	
-	@Autowired
-	public VacanyRemissionMonthlyUpdateController(VacancyRemissionService vacancyRemissionService, PropertyTaxUtil propertyTaxUtil){
-		this.vacancyRemissionService = vacancyRemissionService;
-	}
-	
-	@ModelAttribute
+    private VacancyRemissionService vacancyRemissionService;
+
+    @Autowired
+    public VacanyRemissionMonthlyUpdateController(VacancyRemissionService vacancyRemissionService,
+            PropertyTaxUtil propertyTaxUtil) {
+        this.vacancyRemissionService = vacancyRemissionService;
+    }
+
+    @ModelAttribute
     public VacancyRemission getVacancyRemission(@PathVariable final String assessmentNo) {
-        final VacancyRemission vacancyRemission = vacancyRemissionService.getApprovedVacancyRemissionForProperty(assessmentNo);
+        final VacancyRemission vacancyRemission = vacancyRemissionService
+                .getApprovedVacancyRemissionForProperty(assessmentNo);
         return vacancyRemission;
     }
-	
-	@RequestMapping(value = "/monthlyupdate/{assessmentNo}", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/monthlyupdate/{assessmentNo}", method = RequestMethod.GET)
     public String newform(final Model model, @PathVariable final String assessmentNo, final HttpServletRequest request) {
-		VacancyRemission vacancyRemission = vacancyRemissionService.getApprovedVacancyRemissionForProperty(assessmentNo);
-		VacancyRemissionDetails remissionDetails = new VacancyRemissionDetails();
-		model.addAttribute("remissionDetailsObj", remissionDetails);
-		vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());
-		return "vacancyRemissionDetails-form";
-	}
-	
-	public void populateRemissionDetails(final VacancyRemissionDetails vacancyRemissionDetails, final VacancyRemission vacancyRemission){
-		List<VacancyRemissionDetails> remissionDetailsList = new ArrayList<VacancyRemissionDetails>();
-		if(vacancyRemissionDetails!=null){
-			vacancyRemissionDetails.setVacancyRemission(vacancyRemission);
-			if(vacancyRemission.getVacancyRemissionDetails()== null || vacancyRemission.getVacancyRemissionDetails().isEmpty()){
-				remissionDetailsList.add(vacancyRemissionDetails);
-			}else{
-				remissionDetailsList = vacancyRemission.getVacancyRemissionDetails();
-				remissionDetailsList.add(vacancyRemissionDetails);
-			}
-			vacancyRemission.setVacancyRemissionDetails(remissionDetailsList);
-		}
-	}
-	
-	@RequestMapping(value = "/monthlyupdate/{assessmentNo}",method =RequestMethod.POST)
-	public String saveRemissionDetails(@Valid @ModelAttribute VacancyRemission vacancyRemission, final BindingResult errors, RedirectAttributes redirectAttrs, final Model model,final HttpServletRequest request){
-		VacancyRemissionDetails remissionDetailsObj = new VacancyRemissionDetails();
-		remissionDetailsObj.setComments(request.getParameter("remissionComments"));
-		remissionDetailsObj.setCheckinDate(new Date());
-		populateRemissionDetails(remissionDetailsObj,vacancyRemission);
-		vacancyRemissionService.saveRemissionDetails(vacancyRemission);
-		model.addAttribute("successMessage", "Remission details saved successfully!!");
-		return "vacancyRemission-success";
-	}
+        VacancyRemission vacancyRemission = vacancyRemissionService
+                .getApprovedVacancyRemissionForProperty(assessmentNo);
+        VacancyRemissionDetails remissionDetails = new VacancyRemissionDetails();
+        model.addAttribute("remissionDetailsObj", remissionDetails);
+        vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());
+        return "vacancyRemissionDetails-form";
+    }
+
+    public void populateRemissionDetails(final VacancyRemissionDetails vacancyRemissionDetails,
+            final VacancyRemission vacancyRemission) {
+        List<VacancyRemissionDetails> remissionDetailsList = new ArrayList<VacancyRemissionDetails>();
+        if (vacancyRemissionDetails != null) {
+            vacancyRemissionDetails.setVacancyRemission(vacancyRemission);
+            if (vacancyRemission.getVacancyRemissionDetails() == null
+                    || vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
+                remissionDetailsList.add(vacancyRemissionDetails);
+            } else {
+                remissionDetailsList = vacancyRemission.getVacancyRemissionDetails();
+                remissionDetailsList.add(vacancyRemissionDetails);
+            }
+            vacancyRemission.setVacancyRemissionDetails(remissionDetailsList);
+        }
+    }
+
+    @RequestMapping(value = "/monthlyupdate/{assessmentNo}", method = RequestMethod.POST)
+    public String saveRemissionDetails(@Valid @ModelAttribute VacancyRemission vacancyRemission,
+            final BindingResult errors, RedirectAttributes redirectAttrs, final Model model,
+            final HttpServletRequest request) {
+        VacancyRemissionDetails remissionDetailsObj = new VacancyRemissionDetails();
+        remissionDetailsObj.setComments(request.getParameter("remissionComments"));
+        remissionDetailsObj.setCheckinDate(new Date());
+        populateRemissionDetails(remissionDetailsObj, vacancyRemission);
+        vacancyRemissionService.saveRemissionDetails(vacancyRemission);
+        model.addAttribute("successMessage", "Remission details saved successfully!!");
+        return "vacancyRemission-success";
+    }
 }

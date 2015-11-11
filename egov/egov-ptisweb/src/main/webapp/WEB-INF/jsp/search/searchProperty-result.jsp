@@ -64,6 +64,8 @@
 					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
 				} else if(selectedValue == 'VacancyRemissionFinalApproval'){
 					window.location = "/ptis/vacancyremissionapproval/create/" + assessmentNum;
+				} else if(selectedValue == 'Demolition'){
+					window.location = "/ptis/property/demolition/" + assessmentNum;
 				}
 			}
 
@@ -164,6 +166,9 @@
 														(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
 														<option value="VacancyRemission">
 															<s:text name="vacancyRemission"></s:text>
+														</option>
+														<option value="Demolition">
+															<s:text name="Demolition"></s:text>
 														</option>
 													</s:if>
 												</c:if>

@@ -134,16 +134,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         model.addAttribute("currentState", property.getCurrentState().getValue());
         model.addAttribute("userDesgn", userDesgn);
         prepareWorkflow(model, property, new WorkflowContainer());
-        if (!property.getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-            model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-            model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-            model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-        } else {
-            model.addAttribute("currTax", BigDecimal.ZERO);
-            model.addAttribute("currTaxDue", BigDecimal.ZERO);
-            model.addAttribute("totalArrDue", BigDecimal.ZERO);
-        }
+        propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
 
         model.addAttribute("userDesgn", userDesgn);
         model.addAttribute("designation", COMMISSIONER_DESGN);
@@ -202,7 +193,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + property.getCreatedBy().getName() + "with assessment number "
+                            + property.getCreatedBy().getName() + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                     model.addAttribute(

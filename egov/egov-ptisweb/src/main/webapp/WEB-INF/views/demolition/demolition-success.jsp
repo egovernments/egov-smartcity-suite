@@ -53,7 +53,7 @@
 		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="property" id="propertyAckForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading" align="center">
-					<div class="panel-title" align="center">
+					<div class="panel-title text-center" align="center">
 						<strong>${successMessage}</strong>
 					</div>
 				</div> 

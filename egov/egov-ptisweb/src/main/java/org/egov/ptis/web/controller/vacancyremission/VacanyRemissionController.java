@@ -76,42 +76,41 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission")
 public class VacanyRemissionController extends GenericWorkFlowController {
 
-	@Autowired
+    @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-	
-	
-	private PropertyTaxUtil propertyTaxUtil;
-	
-	private BasicProperty basicProperty;
-	
-	private VacancyRemission vacancyRemission;
-	
-	private VacancyRemissionService vacancyRemissionService;
-	
-	@Autowired
+
+    private PropertyTaxUtil propertyTaxUtil;
+
+    private BasicProperty basicProperty;
+
+    private VacancyRemission vacancyRemission;
+
+    private VacancyRemissionService vacancyRemissionService;
+
+    @Autowired
     private PropertyService propertyService;
-	
-	@Autowired
-	public VacanyRemissionController(VacancyRemissionService vacancyRemissionService, PropertyTaxUtil propertyTaxUtil){
-		this.propertyTaxUtil = propertyTaxUtil;
-		this.vacancyRemissionService = vacancyRemissionService;
-	}
-	
-	@ModelAttribute
-	public VacancyRemission vacancyRemissionModel(@PathVariable String assessmentNo) {
-		vacancyRemission = new VacancyRemission();
-		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-	    if (basicProperty != null) {
-	    	vacancyRemission.setBasicProperty((BasicPropertyImpl) basicProperty);
-	    }
-		return vacancyRemission;
-	}
-	
-	@RequestMapping(value = "/create/{assessmentNo}",method = RequestMethod.GET)
-	public String newForm(final Model model, @PathVariable String assessmentNo,final HttpServletRequest request) {
-	    if (basicProperty != null) {
-	    	final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
-                    .getActiveProperty());
+
+    @Autowired
+    public VacanyRemissionController(VacancyRemissionService vacancyRemissionService, PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+        this.vacancyRemissionService = vacancyRemissionService;
+    }
+
+    @ModelAttribute
+    public VacancyRemission vacancyRemissionModel(@PathVariable String assessmentNo) {
+        vacancyRemission = new VacancyRemission();
+        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (basicProperty != null) {
+            vacancyRemission.setBasicProperty((BasicPropertyImpl) basicProperty);
+        }
+        return vacancyRemission;
+    }
+
+    @RequestMapping(value = "/create/{assessmentNo}", method = RequestMethod.GET)
+    public String newForm(final Model model, @PathVariable String assessmentNo, final HttpServletRequest request) {
+        if (basicProperty != null) {
+            final Map<String, BigDecimal> propertyTaxDetails = propertyService
+                    .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
             final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
             final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
                     propertyTaxDetails.get(CURR_COLL_STR));
@@ -123,57 +122,62 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
             model.addAttribute("currentWaterTaxDue", currentWaterTaxDue);
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
-                model.addAttribute("taxDuesErrorMsg", "Please clear property tax due for availing vacancy remission for your property ");
+                model.addAttribute("taxDuesErrorMsg",
+                        "Please clear property tax due for availing vacancy remission for your property ");
                 return TARGET_TAX_DUES;
             }
-            
-	    	prepareWorkflow(model,vacancyRemission,new WorkflowContainer());
-		    model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
-		    vacancyRemissionService.addModelAttributes(model, basicProperty);
-	    	
-	    }
-	    return "vacancyRemission-form";
-	}
-	
-	@RequestMapping(value = "/create/{assessmentNo}", method = RequestMethod.POST)
-	public String saveVacancyRemission(@Valid @ModelAttribute VacancyRemission vacancyRemission, final BindingResult resultBinder, RedirectAttributes redirectAttributes, 
-			final Model model,final HttpServletRequest request,@RequestParam String workFlowAction){
-		
-		validateDates(vacancyRemission,resultBinder,request);
-		if (resultBinder.hasErrors()){
-			if (basicProperty != null) {
-				prepareWorkflow(model,vacancyRemission,new WorkflowContainer());
-			    model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
-			    vacancyRemissionService.addModelAttributes(model, basicProperty);
-		    }
-		    return "vacancyRemission-form";
-		}else{
-			Long approvalPosition = 0l;
-	        String approvalComent = "";
 
-	        if (request.getParameter("approvalComent") != null)
-	            approvalComent = request.getParameter("approvalComent");
-	        if (request.getParameter("workFlowAction") != null)
-	            workFlowAction = request.getParameter("workFlowAction");
-	        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-	            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
+            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+            vacancyRemissionService.addModelAttributes(model, basicProperty);
 
-	        vacancyRemissionService.saveVacancyRemission(vacancyRemission,approvalPosition,approvalComent,null,workFlowAction);
-	        
-	        String successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "+propertyTaxUtil.getApproverUserName(approvalPosition);
-	        model.addAttribute("successMessage", successMsg);
-		}
-            
-		return "vacancyRemission-success";
-	}
-	
-	private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,
-            final HttpServletRequest request) {
-		
-		int noOfMonths = DateUtils.noOfMonths(vacancyRemission.getVacancyFromDate(), vacancyRemission.getVacancyToDate());
-		if(noOfMonths<6){
-			errors.rejectValue("vacancyToDate", "vacancyToDate.incorrect");
-		}
+        }
+        return "vacancyRemission-form";
     }
-	
+
+    @RequestMapping(value = "/create/{assessmentNo}", method = RequestMethod.POST)
+    public String saveVacancyRemission(@Valid @ModelAttribute VacancyRemission vacancyRemission,
+            final BindingResult resultBinder, RedirectAttributes redirectAttributes, final Model model,
+            final HttpServletRequest request, @RequestParam String workFlowAction) {
+
+        validateDates(vacancyRemission, resultBinder, request);
+        if (resultBinder.hasErrors()) {
+            if (basicProperty != null) {
+                prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
+                model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                vacancyRemissionService.addModelAttributes(model, basicProperty);
+            }
+            return "vacancyRemission-form";
+        } else {
+            Long approvalPosition = 0l;
+            String approvalComent = "";
+
+            if (request.getParameter("approvalComent") != null)
+                approvalComent = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+            vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
+                    workFlowAction);
+
+            String successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
+                    + propertyTaxUtil.getApproverUserName(approvalPosition);
+            model.addAttribute("successMessage", successMsg);
+        }
+
+        return "vacancyRemission-success";
+    }
+
+    private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,
+            final HttpServletRequest request) {
+
+        int noOfMonths = DateUtils.noOfMonths(vacancyRemission.getVacancyFromDate(),
+                vacancyRemission.getVacancyToDate());
+        if (noOfMonths < 6) {
+            errors.rejectValue("vacancyToDate", "vacancyToDate.incorrect");
+        }
+    }
+
 }
