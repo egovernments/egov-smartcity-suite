@@ -46,6 +46,9 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -70,6 +73,9 @@ public class GenericBillGeneratorController {
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ConnectionDemandService connectionDemandService;
     private final WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public GenericBillGeneratorController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -111,7 +117,8 @@ public class GenericBillGeneratorController {
         else
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
         model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode,applicationTypeCode));
+        model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";
     }
-
+    
 }

@@ -198,6 +198,12 @@
 									<span class="hidden-sm hidden-xs">Property Tax</span>
 								</a>
 							</li>
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-11" id="wats" class="features">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-rupee"></i></div>
+									<span class="hidden-sm hidden-xs">Water Charge Management</span>
+								</a>
+							</li>
 							<li data-section="newrequest" data-newreq-section="#section-newrequest-3" id="bpa" class="features">
 								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-building-o"></i></div>
@@ -316,6 +322,26 @@
 								</header>
 							</div>
 						</section>
+						
+						<section id="section-newrequest-11"  class="newreq">
+							<div class="visible-xs visible-sm">Water Charge Management</div>
+							
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/search/waterSearch/" target="_blank" class="col-sm-11 col-xs-10">Search Connection</a>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/elastic/appSearch/" target="_blank" class="col-sm-11 col-xs-10">Search Application</a>
+									</div>
+								</header>
+							</div>
+						</section>
+						
 						<section id="section-newrequest-3" class="newreq">
 							<div class="visible-xs visible-sm">Building Plan Approval</div>
 							<div class="msg">

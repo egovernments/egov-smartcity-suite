@@ -61,6 +61,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -90,6 +91,9 @@ public class WaterTaxUtils {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -249,7 +253,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -360,8 +364,9 @@ public class WaterTaxUtils {
      * boundary Reading Designation and Department from appconfig values and
      * Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
-     * 
-     * @param asessmentNumber,
+     *
+     * @param asessmentNumber
+     *            ,
      * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
@@ -406,14 +411,16 @@ public class WaterTaxUtils {
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
         // as per Adoni allowing collection for ULB Operator
-        final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
-        if (userObj != null)
-            for (final Role role : userObj.getRoles())
-                if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
-                && role.getName().contains(WaterTaxConstants.CLERKULB)) {
-                    isCSCOperator = true;
-                    break;
-                }
+        if (EgovThreadLocals.getUserId() != null) {
+            final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
+            if (userObj != null)
+                for (final Role role : userObj.getRoles())
+                    if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
+                            && role.getName().contains(WaterTaxConstants.CLERKULB)) {
+                        isCSCOperator = true;
+                        break;
+                    }
+        }
         return isCSCOperator;
     }
 
@@ -429,8 +436,19 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
             if (waterconnectiondetails.getDemand() != null)
                 finalDueAmount = finalDueAmount
-                + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                        .getDemand().getAmtCollected().doubleValue());
+                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                                .getDemand().getAmtCollected().doubleValue());
         return finalDueAmount;
+    }
+
+    public Boolean getCitizenUserRole() {
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        Boolean citizenrole = Boolean.FALSE;
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
+                citizenrole = Boolean.TRUE;
+                break;
+            }
+        return citizenrole;
     }
 }

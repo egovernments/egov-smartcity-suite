@@ -65,15 +65,17 @@
 					<input type="hidden"  id="cscUserRole" value="${cscUserRole}" />
 					<input type="hidden"  id="approverUserRole" value="${approverUserRole}" />
 					<input type="hidden"  id="operatorRole" value="${operatorRole}" />
-			
+					<input type="text"  id="citizenRole" value="${citizenRole}" />
+					
+			<c:if test="${!citizenRole }" >
 					<div class="form-group">
-						<label for="field-1" class="col-md-4 control-label"> <spring:message
+					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.mobileNo" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
-					</div>
+					</div></c:if>
 						<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 										  <div class="col-md-4 add-margin">
@@ -81,7 +83,7 @@
 						</div>
 						</div>
 						
-						
+						<c:if test="${!citizenRole}" >
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>
@@ -114,7 +116,7 @@
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="doorNumber" class="form-control "   id="app-appcodo" />
 						</div>
-					</div>
+					</div></c:if>
 					<div class="form-group">
 						<div class="text-center">
 							<a href="javascript:void(0);" id="searchapprvedapplication"

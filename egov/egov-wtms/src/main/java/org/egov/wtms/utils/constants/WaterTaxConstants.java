@@ -53,6 +53,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
+    public static final String CITIZENROLE ="Citizen";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
     public static final String EGMODULES_NAME = "Water Tax";

@@ -89,6 +89,7 @@ public class ViewConnectionController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(details));
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
+        model.addAttribute("citizenRole", waterTaxUtils.getCitizenUserRole());
         BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(details);
         model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
         model.addAttribute("mode", "search");

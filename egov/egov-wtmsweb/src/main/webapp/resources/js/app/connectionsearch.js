@@ -49,7 +49,7 @@ jQuery(document).ready(function($) {
 		var superUserRole = $('#superUserRole').val();
 		var approverUserRole = $('#approverUserRole').val();
 		var operatorRole = $('#operatorRole').val();
-		
+		var citizenRole = $('#citizenRole').val();
 		$('#searchapprvedapplication').click(function() {
 			$('#searchResultDiv').show();
 			$.post("/wtms/search/waterSearch/",$('#waterSearchRequestForm').serialize())
@@ -78,7 +78,10 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 			        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 			        			   if (full.resource.clauses.status == 'ACTIVE' ) {
-			        				   if (cscUserRole!=null && cscUserRole !=""  && full.resource.clauses.waterTaxDue > 0) {
+			        				   if ( citizenRole== 'true'   && full.resource.clauses.waterTaxDue > 0) { 
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
+			        				   }
+			        				   else if (cscUserRole!=null && cscUserRole !=""  && full.resource.clauses.waterTaxDue > 0) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="6">Collect Charge</option></select>');
 			        				   }
 			        				   else if (cscUserRole!=null && cscUserRole!="") {
@@ -125,7 +128,10 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
 			        				   && full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 			        			   if (full.resource.clauses.status == 'ACTIVE') {
-			        				   if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.waterTaxDue > 0) {
+			        				   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
+			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');   
+			        				   }
+			        				   else if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.waterTaxDue > 0) {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="6">Collect Charge</option></select>');
 			        				   }
 			        				   else if (cscUserRole!=null && cscUserRole!="") {
@@ -165,7 +171,10 @@ jQuery(document).ready(function($) {
 			        		   }	
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 			        				   full.resource.clauses.applicationcode == 'CHANGEOFUSE') {
-			        			   if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
+			        			   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
+		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
+		        				   }
+			        			   else if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && full.resource.searchable.closureType==null && full.resource.clauses.waterTaxDue > 0) {
@@ -196,7 +205,10 @@ jQuery(document).ready(function($) {
 			        		   } 
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 			        				   full.resource.clauses.applicationcode == 'RECONNECTION') {
-			        			   if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
+			        			   if (citizenRole== 'true'     && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) { 
+		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
+		        				   }
+			        			   else if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
 			        			   }
 			        			   else if (ulbUserRole!=null && ulbUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED'  && full.resource.clauses.waterTaxDue > 0 ) {
