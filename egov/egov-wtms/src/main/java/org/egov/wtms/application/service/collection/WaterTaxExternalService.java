@@ -211,6 +211,10 @@ public class WaterTaxExternalService {
         waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
         String propertyIdentifier = waterConnectionDetails.getConnection().getPropertyIdentifier();
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyIdentifier);
+        waterTaxDetails.setPropertyAddress(basicProperty.getAddress().toString());
+        waterTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+        
+        
         final List<PropertyOwnerInfo> propOwnerInfos =basicProperty.getPropertyOwnerInfo();
         if(propOwnerInfos.size()>0)
         {
@@ -218,7 +222,7 @@ public class WaterTaxExternalService {
         	waterTaxDetails.setMobileNo(propOwnerInfos.get(0).getOwner().getMobileNumber());
         }
         
-        final List<ArrearDetails> arrearDetailsList = new ArrayList<ArrearDetails>();
+       // final List<ArrearDetails> arrearDetailsList = new ArrayList<ArrearDetails>();
         final List<Object> list = ptDemandDAO.getTaxDetailsForWaterConnection(waterConnectionDetails.getConnection().getConsumerCode(),waterConnectionDetails.getConnectionType().name());
         if(list.size()>0)
         {
