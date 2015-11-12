@@ -219,7 +219,7 @@ public class WaterTaxExternalService {
         }
         
         final List<ArrearDetails> arrearDetailsList = new ArrayList<ArrearDetails>();
-        final List<Object> list = ptDemandDAO.getPropertyTaxDetails(propertyIdentifier);
+        final List<Object> list = ptDemandDAO.getTaxDetailsForWaterConnection(waterConnectionDetails.getConnection().getConsumerCode(),waterConnectionDetails.getConnectionType().name());
         if(list.size()>0)
         {
         	waterTaxDetails.setTaxDetails(new ArrayList<RestPropertyTaxDetails>());
@@ -274,8 +274,7 @@ public class WaterTaxExternalService {
             	
             }
             	
-            System.out.println(data.toString());
-            
+           
         }
         if(arrearDetails!=null)
     	{
