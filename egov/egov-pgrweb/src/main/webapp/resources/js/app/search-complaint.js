@@ -102,7 +102,7 @@
         				{title: 'Name', data: 'resource.common.citizen.name'},
         				{title: 'Location', data: 'resource.common.boundary.name'},
         				{title: 'Status', data: 'resource.clauses.status.name'},
-        				{title: 'Department', data: 'resource.searchable.department.name'},
+        				{title: 'Department', data: 'resource.clauses.department.name'},
         				{title: 'Registration Date',
         					render: function (data, type, full) {
         						if(full!=null && full.resource!= undefined && full.resource.common.createdDate != undefined) {

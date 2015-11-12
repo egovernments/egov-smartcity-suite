@@ -158,7 +158,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
-    @Searchable
+    @Searchable (name = "department",group = Searchable.Group.CLAUSES)
     private Department department;
 
     @Enumerated(EnumType.ORDINAL)
