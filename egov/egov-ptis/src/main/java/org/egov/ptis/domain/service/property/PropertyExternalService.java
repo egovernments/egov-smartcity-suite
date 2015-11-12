@@ -609,11 +609,14 @@ public class PropertyExternalService {
         final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
         paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
         paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, payPropertyTaxDetails.getPaidBy());
+        if(PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails.getPaymentMode().toLowerCase()))
+        {
         paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payPropertyTaxDetails.getChqddNo());
         paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, ChequePayment.CHEQUE_DATE_FORMAT.format(payPropertyTaxDetails.getChqddDate()));
         paymentDetailsMap.put(ChequePayment.BRANCHNAME, payPropertyTaxDetails.getBranchName());
         Long validatesBankId = validateBank(payPropertyTaxDetails.getBankName());
         paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
+        }
         final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
         final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment);
 

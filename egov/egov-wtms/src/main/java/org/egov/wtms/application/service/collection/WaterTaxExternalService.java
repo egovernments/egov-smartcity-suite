@@ -443,12 +443,15 @@ public class WaterTaxExternalService {
         final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
         paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payWaterTaxDetails.getPaymentAmount().toString());
         paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, payWaterTaxDetails.getPaidBy());
+        if(PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().toLowerCase()))
+        {
         paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payWaterTaxDetails.getChqddNo());
         paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, payWaterTaxDetails.getChqddDate());
         paymentDetailsMap.put(ChequePayment.BRANCHNAME, payWaterTaxDetails.getBranchName());
         Long validatesBankId = validateBank(payWaterTaxDetails.getBankName());
         paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
         paymentDetailsMap.put(ChequePayment.BANKNAME, payWaterTaxDetails.getBankName());
+        }
         final Payment payment = Payment.create(payWaterTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
       
         final BillReceiptInfo billReceiptInfo = executeCollection(payment, egBill);
