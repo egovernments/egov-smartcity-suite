@@ -68,13 +68,18 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     protected FileStoreService fileStoreService;
 
     /**
-     * This method populates the <code>PtNotice</code> object along with notice input stream
+     * This method populates the <code>PtNotice</code> object along with notice
+     * input stream
      *
-     * @param basicProperty the <code>BasicProperty</code> object for which the notice is generated
-     * @param noticeNo - notice no
-     * @param noticeType - type of notice
-     * @param fileStream - input stream of generated notice.
-     *
+     * @param basicProperty
+     *            the <code>BasicProperty</code> object for which the notice is
+     *            generated
+     * @param noticeNo
+     *            - notice no
+     * @param noticeType
+     *            - type of notice
+     * @param fileStream
+     *            - input stream of generated notice.
      */
     public PtNotice saveNotice(final String noticeNo, final String noticeType, final BasicProperty basicProperty,
             final InputStream fileStream) {
@@ -86,8 +91,10 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         ptNotice.setNoticeType(noticeType);
         ptNotice.setUserId(EgovThreadLocals.getUserId());
         ptNotice.setBasicProperty(basicProperty);
+        ptNotice.setApplicationNumber(basicProperty.getPropertyForBasicProperty().getApplicationNo());
         final String fileName = ptNotice.getNoticeNo() + ".pdf";
-        final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", FILESTORE_MODULE_NAME);
+        final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+                FILESTORE_MODULE_NAME);
         ptNotice.setFileStore(fileStore);
         basicProperty.addNotice(ptNotice);
         basicPropertyService.update(basicProperty);
@@ -101,6 +108,10 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         qry.setString("noticeNumber", noticeNo.toUpperCase());
         qry.setString("noticeType", noticeType.toUpperCase());
         return (PtNotice) qry.uniqueResult();
+    }
+
+    public PtNotice getNoticeByApplicationNumber(final String applicationNo) {
+        return (PtNotice) basicPropertyService.find("from PtNotice where applicationNumber = ?", applicationNo);
     }
 
     public PersistenceService<BasicProperty, Long> getBasicPropertyService() {

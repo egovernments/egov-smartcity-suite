@@ -202,13 +202,16 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     @Override
     public boolean validateBasicProp() {
         if (getAddress() == null)
-            throw new ApplicationRuntimeException("BasicProperty validation failed: Address is not set, Please Check !!");
+            throw new ApplicationRuntimeException(
+                    "BasicProperty validation failed: Address is not set, Please Check !!");
 
         if (getCreatedBy() == null)
-            throw new ApplicationRuntimeException("BasicProperty validation failed: CreatedBy is not set, Please Check !!");
+            throw new ApplicationRuntimeException(
+                    "BasicProperty validation failed: CreatedBy is not set, Please Check !!");
 
         if (getPropertyID() == null)
-            throw new ApplicationRuntimeException("BasicProperty validation failed: PropertyID is not set, Please Check !!");
+            throw new ApplicationRuntimeException(
+                    "BasicProperty validation failed: PropertyID is not set, Please Check !!");
 
         return true;
     }
@@ -728,21 +731,32 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         this.source = source;
 
     }
+
     @Override
-	public Date getAssessmentdate() {
-		return assessmentdate;
-	}
+    public Date getAssessmentdate() {
+        return assessmentdate;
+    }
+
     @Override
-	public void setAssessmentdate(Date assessmentdate) {
-		this.assessmentdate = assessmentdate;
-	}
-    
+    public void setAssessmentdate(Date assessmentdate) {
+        this.assessmentdate = assessmentdate;
+    }
+
     @Override
     public List<VacancyRemission> getVacancyRemissions() {
-		return vacancyRemissions;
-	}
+        return vacancyRemissions;
+    }
+
     @Override
-	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissions) {
-		this.vacancyRemissions = vacancyRemissions;
-	}
+    public void setVacancyRemissions(List<VacancyRemission> vacancyRemissions) {
+        this.vacancyRemissions = vacancyRemissions;
+    }
+
+    @Override
+    public Property getPropertyForBasicProperty() {
+        if (null != this.getProperty())
+            return this.getProperty();
+        else
+            return this.getActiveProperty();
+    }
 }

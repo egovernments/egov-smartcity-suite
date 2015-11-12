@@ -77,7 +77,7 @@ public class ReportService {
     public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block) {
 
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("from PropertyMaterlizeView pmv ");
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
 
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" where pmv.ward.id=:ward ");

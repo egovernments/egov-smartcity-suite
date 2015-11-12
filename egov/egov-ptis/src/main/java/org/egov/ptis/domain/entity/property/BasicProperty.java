@@ -278,4 +278,6 @@ public interface BasicProperty {
 	public List<VacancyRemission> getVacancyRemissions();
 
 	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissionSet);
+	
+	public Property getPropertyForBasicProperty();
 }

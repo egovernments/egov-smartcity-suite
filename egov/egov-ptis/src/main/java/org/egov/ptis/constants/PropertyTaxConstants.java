@@ -1207,4 +1207,10 @@ public interface PropertyTaxConstants {
     
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE	="MeeSeva Operator";
+    
+    //Status for Meseva
+    public static final String STATUS_REJECTED = "Rejected";
+    public static final String STATUS_APPROVED = "Approved";
+    public static final String STATUS_OPEN = "Open";
+    
 }

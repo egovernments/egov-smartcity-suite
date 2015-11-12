@@ -45,127 +45,136 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 
 public class PtNotice implements java.io.Serializable {
-        private Long id;
-        private Long moduleId;
-        private String noticeType;
-        private String noticeNo;
-        private Date noticeDate;
-        private BasicProperty basicProperty;
-        private Long userId;
-        private FileStoreMapper fileStore;
-        
-        /**
-         * @return the id
-         */
-        public Long getId() {
-                return id;
-        }
+    private Long id;
+    private Long moduleId;
+    private String noticeType;
+    private String noticeNo;
+    private Date noticeDate;
+    private BasicProperty basicProperty;
+    private Long userId;
+    private FileStoreMapper fileStore;
+    private String applicationNumber;
 
-        /**
-         * @param id
-         *            the id to set
-         */
-        public void setId(Long id) {
-                this.id = id;
-        }
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
 
-        /**
-         * @return the moduleId
-         */
-        public Long getModuleId() {
-                return moduleId;
-        }
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        /**
-         * @param moduleId
-         *            the moduleId to set
-         */
-        public void setModuleId(Long moduleId) {
-                this.moduleId = moduleId;
-        }
+    /**
+     * @return the moduleId
+     */
+    public Long getModuleId() {
+        return moduleId;
+    }
 
-        /**
-         * @return the noticeType
-         */
-        public String getNoticeType() {
-                return noticeType;
-        }
+    /**
+     * @param moduleId
+     *            the moduleId to set
+     */
+    public void setModuleId(Long moduleId) {
+        this.moduleId = moduleId;
+    }
 
-        /**
-         * @param noticeType
-         *            the noticeType to set
-         */
-        public void setNoticeType(String noticeType) {
-                this.noticeType = noticeType;
-        }
+    /**
+     * @return the noticeType
+     */
+    public String getNoticeType() {
+        return noticeType;
+    }
 
-        /**
-         * @return the noticeNo
-         */
-        public String getNoticeNo() {
-                return noticeNo;
-        }
+    /**
+     * @param noticeType
+     *            the noticeType to set
+     */
+    public void setNoticeType(String noticeType) {
+        this.noticeType = noticeType;
+    }
 
-        /**
-         * @param noticeNo
-         *            the noticeNo to set
-         */
-        public void setNoticeNo(String noticeNo) {
-                this.noticeNo = noticeNo;
-        }
+    /**
+     * @return the noticeNo
+     */
+    public String getNoticeNo() {
+        return noticeNo;
+    }
 
-        /**
-         * @return the noticeDate
-         */
-        public Date getNoticeDate() {
-                return noticeDate;
-        }
+    /**
+     * @param noticeNo
+     *            the noticeNo to set
+     */
+    public void setNoticeNo(String noticeNo) {
+        this.noticeNo = noticeNo;
+    }
 
-        /**
-         * @param noticeDate
-         *            the noticeDate to set
-         */
-        public void setNoticeDate(Date noticeDate) {
-                this.noticeDate = noticeDate;
-        }
+    /**
+     * @return the noticeDate
+     */
+    public Date getNoticeDate() {
+        return noticeDate;
+    }
 
-        /**
-         * @return the userId
-         */
-        public Long getUserId() {
-                return userId;
-        }
+    /**
+     * @param noticeDate
+     *            the noticeDate to set
+     */
+    public void setNoticeDate(Date noticeDate) {
+        this.noticeDate = noticeDate;
+    }
 
-        /**
-         * @param userId
-         *            the userId to set
-         */
-        public void setUserId(Long userId) {
-                this.userId = userId;
-        }
+    /**
+     * @return the userId
+     */
+    public Long getUserId() {
+        return userId;
+    }
 
-        public BasicProperty getBasicProperty() {
-                return basicProperty;
-        }
+    /**
+     * @param userId
+     *            the userId to set
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-        public void setBasicProperty(BasicProperty basicProperty) {
-                this.basicProperty = basicProperty;
-        }
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
 
-        @Override
-        public String toString() {
-                StringBuilder sbf = new StringBuilder();
-                sbf.append("Id: ").append(getId()).append("|NoticeType: ").append(getNoticeType()).append("|NoticeNo: ")
-                                .append(getNoticeNo());
-                return sbf.toString();
-        }
-        
-        public FileStoreMapper getFileStore() {
-            return fileStore;
-        }
-    
-        public void setFileStore(FileStoreMapper fileStore) {
-                this.fileStore = fileStore;
-        }
+    public void setBasicProperty(BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sbf = new StringBuilder();
+        sbf.append("Id: ").append(getId()).append("|NoticeType: ").append(getNoticeType()).append("|NoticeNo: ")
+                .append(getNoticeNo());
+        return sbf.toString();
+    }
+
+    public FileStoreMapper getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
 }
