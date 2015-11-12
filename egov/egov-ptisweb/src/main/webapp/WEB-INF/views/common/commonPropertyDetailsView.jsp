@@ -242,7 +242,7 @@
 										<div class="col-xs-6 add-margin">
 										</div>
 										<div class="col-xs-3 add-margin">
-											Unauthorized <spring:message code="lbl.unauthorized.penalty" />
+											<spring:message code="lbl.unauthorized.penalty" />
 										</div>
 										<div class="col-xs-3 add-margin view-content">
 											Rs. <fmt:formatNumber value="${unauthorisedPenalty}" pattern="#,##0.00" /> 

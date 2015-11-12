@@ -177,7 +177,7 @@
 		</bag>
 		
 		<bag name="vacancyRemissions" cascade="all-delete-orphan" >
-			<key column="BASICPROPERTY" not-null="true" />
+			<key column="BASICPROPERTY" />
 			<one-to-many class="org.egov.ptis.domain.entity.property.VacancyRemission"/>
 		</bag>
 		

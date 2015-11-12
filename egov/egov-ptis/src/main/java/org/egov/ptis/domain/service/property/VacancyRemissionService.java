@@ -177,13 +177,13 @@ public class VacancyRemissionService {
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
             if (wfInitiator.equals(userAssignment)) {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
-                vacancyRemission.transition().end().withSenderName(user.getName()).withComments(approvalComent)
+                vacancyRemission.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate());
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             final String stateValue = WF_STATE_REJECTED;
             vacancyRemission.setStatus(VR_STATUS_REJECTED);
-            vacancyRemission.transition().withSenderName(user.getName()).withComments(approvalComent)
+            vacancyRemission.transition(true).withSenderName(user.getName()).withComments(approvalComent)
                     .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                     .withNextAction("Application Rejected");
         } else {
@@ -208,7 +208,7 @@ public class VacancyRemissionService {
 
                 if (wfmatrix != null) {
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END")) {
-                        vacancyRemission.transition().end().withSenderName(user.getName()).withComments(approvalComent)
+                        vacancyRemission.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
                                 .withDateInfo(currentDate.toDate());
                     } else {
                         vacancyRemission.transition(false).withSenderName(user.getName()).withComments(approvalComent)
