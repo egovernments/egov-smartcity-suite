@@ -116,6 +116,7 @@ public class PropertyImpl extends StateAware implements Property {
     private String applicationNo;
     private String demolitionReason;
     private String meesevaApplicationNumber;//Temporary number for meeseva integration.
+    private String meesevaServiceCode;
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is because for the migrated property the tax xml is
      * not there so when we try to modify the migrated property the active property will not be having the unitCalculationDetails
@@ -661,6 +662,14 @@ public class PropertyImpl extends StateAware implements Property {
 
     public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+    public String getMeesevaServiceCode() {
+        return meesevaServiceCode;
+    }
+
+    public void setMeesevaServiceCode(String meesevaServiceCode) {
+        this.meesevaServiceCode = meesevaServiceCode;
     }
 
 }

@@ -594,7 +594,9 @@ public interface PropertyTaxConstants {
     // Property is default values
     public static final Character PROPERTY_IS_DEFAULT = 'Y';
     public static final Character PROPERTY_IS_NOT_DEFAULT = 'N';
-
+    public static final String PROP_CREATE_RSN_NEWPROPERTY_CODE = "NEW";
+    public static final String PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE = "BIFUR";
+     
     // Property Modification Reasons
     public static final String PROPERTY_MODIFY_REASON_AMALG = "AMALG";
     public static final String PROPERTY_MODIFY_REASON_BIFURCATE = "BIFURCATE";
