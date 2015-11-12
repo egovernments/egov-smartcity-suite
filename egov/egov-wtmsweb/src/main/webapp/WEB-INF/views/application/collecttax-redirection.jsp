@@ -54,7 +54,6 @@
 			var collectXML = '${collectxml}';
 			var citizenRole= '${citizenrole}';
 			if(citizenRole =='true'){
-				alert("citizenRole is true= "+ citizenRole);
 			jQuery('<form>.').attr({
 				method: 'post',
 				action: '/collection/citizen/onlineReceipt-newform.action',

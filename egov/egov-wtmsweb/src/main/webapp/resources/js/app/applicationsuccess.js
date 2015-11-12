@@ -74,7 +74,6 @@ $(document).ready(function(){
 });
 
 $('#payBtn').click(function() {
-	alert();
 	var url = '/wtms/application/generatebill/'+ $('#applicationCode').val()+"?applicationTypeCode="+$('#applicationTypeCode').val();
 	$('#waterConnectionSuccess').attr('method', 'post');
 	$('#waterConnectionSuccess').attr('action', url);
