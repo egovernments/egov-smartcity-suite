@@ -59,9 +59,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LA
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
@@ -174,8 +174,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public static final String PRINTACK = "printAck";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     private String MEESEVASERVICECODEFORNEWPROPERTY = "PTIS01";    
-    private String MEESEVASERVICECODEFORBIFURCATIONBOTHBUYERSELLER = "PTIS02";
-    private String MEESEVASERVICECODEFORBIFURCATIONEITHERBUYERSELLER = "PTIS03";
+    private String MEESEVASERVICECODEFORSUBDIVISION = "PTIS04";
 
     private final Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
@@ -292,8 +291,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                  
                 if(request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)){
                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-               } if(request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORBIFURCATIONBOTHBUYERSELLER) ||
-                       request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORBIFURCATIONEITHERBUYERSELLER)){
+               } if(request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)){
                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
                }
               property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
@@ -667,8 +665,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         {
             if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)){
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-            } if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORBIFURCATIONBOTHBUYERSELLER) ||
-                    property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORBIFURCATIONEITHERBUYERSELLER)){
+            } if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)){
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
             }
          }
@@ -958,8 +955,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         {
             if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)){
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-            } if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORBIFURCATIONBOTHBUYERSELLER) ||
-                    property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORBIFURCATIONEITHERBUYERSELLER)){
+            } if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)){
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
             }
         }
