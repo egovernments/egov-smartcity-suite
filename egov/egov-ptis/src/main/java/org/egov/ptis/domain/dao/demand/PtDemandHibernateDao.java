@@ -454,19 +454,42 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @SuppressWarnings("unchecked")
     public List<Object> getPropertyTaxDetails(final String assessmentNo) {
         List<Object> list = new ArrayList<Object>();
-        final String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected, dd.amt_rebate, dd.create_date, dd.modified_date "
+        String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
                 + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-                + " where bp.id = prop.id_basic_property and prop.status = 'A' "
+                + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
-                + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
-                + " and d.id_installment = 81 order by inst.start_date ";
+                + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
+                + " and dd.amount > dd.amt_collected  "
+                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' ))  ";
+        selectQuery=selectQuery+" order by inst.description desc ";
+        
+        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
+        list = qry.list();
+        return list;
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Object> getTaxDetailsForWaterConnection(final String assessmentNo) {
+        List<Object> list = new ArrayList<Object>();
+        String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
+                + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
+                + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
+                + " and dd.amount > dd.amt_collected  "
+                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Water Tax Management' ))  ";
+        selectQuery=selectQuery+" order by inst.description desc ";
+        
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
         list = qry.list();
         return list;
     }
 
     @Override
+    @Deprecated
     public Set<String> getDemandYears(final String assessmentNo) {
         final Set<String> demandYears = new LinkedHashSet<String>();
         final String selectQuery = " select inst.description "
@@ -475,7 +498,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
-                + " and d.id_installment = 81 order by inst.start_date ";
+                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' )) order by inst.start_date ";
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
         for (final Object record : qry.list())
             demandYears.add((String) record);

@@ -43,6 +43,8 @@
 <html>
 <head>
 <title><s:text name='transferProperty' /></title>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+
 <link
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
@@ -218,7 +220,7 @@
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64" /></td>
+								maxlength="64" onblur="checkNumber(this);" /></td>
 						<td class="greybox"><s:text name="docDate" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"

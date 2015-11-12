@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
-<html>
+<html oncontextmenu="return false;">
 	<head>
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -62,6 +62,7 @@
 				
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
 		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js'/>"></script>
@@ -103,5 +104,15 @@
 					</div>
 			</div>
 		</div>
+		<script>
+			function disableRefresh(e) {
+	            if ((e.which || e.keyCode) == 116)
+	                    e.preventDefault();
+	            if (e.ctrlKey)
+	                    if ((e.which || e.keyCode) == 82)
+	                            e.preventDefault();
+	    	};
+	    	jQuery(document).on("keydown", disableRefresh);
+		</script>
     </body>
 </html>

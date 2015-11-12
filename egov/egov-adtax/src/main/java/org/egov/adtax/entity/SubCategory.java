@@ -53,12 +53,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egadtax_SUBCATEGORY")
 @SequenceGenerator(name = SubCategory.SEQ_SUBCATEGORY, sequenceName = SubCategory.SEQ_SUBCATEGORY, allocationSize = 1)
+@Unique(id = "id", tableName = "egadtax_SUBCATEGORY", columnName = { "code","description" }, fields = { "code",
+"description" }, enableDfltMsg = true)
 public class SubCategory extends AbstractAuditable {
 
     private static final long serialVersionUID = -2340335623115410828L;

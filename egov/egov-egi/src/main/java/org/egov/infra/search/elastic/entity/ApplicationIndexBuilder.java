@@ -46,8 +46,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 /**
  * Builder class for Application Index
  *
- * @author rishi
- */
+*/
 public class ApplicationIndexBuilder {
 
     private final ApplicationIndex applicationIndex;

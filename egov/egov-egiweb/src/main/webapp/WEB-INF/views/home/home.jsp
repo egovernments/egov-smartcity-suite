@@ -117,7 +117,7 @@
 					</div>
 					
 					<div class="navbar-brand">
-						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.cityname}</h3>
+						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
 					</div>
 					
 					<!-- notifications and other links -->
@@ -162,13 +162,21 @@
 								<li>
 									<a href="javascript:void(0);"  onclick="jQuery('.add-feedback').modal('show', {backdrop: 'static'});">
 										<i class="fa fa-comment"></i>
-										<span class="title signout">Feedback</span>
+										<span class="title">Feedback</span>
 									</a>
 								</li>
+								<c:if test="${not empty issue_report_url}">
+								<li>
+									<a href="${issue_report_url}" data-strwindname="r&i"  class="open-popup">
+										<i class="fa fa-bug"></i>
+										<span class="title">Report an Issue</span>
+									</a>
+								</li>
+								</c:if>
 								<li>
 									<a href="help" data-strwindname="help"  class="open-popup">
 										<i class="fa fa-question"></i>
-										<span class="title signout">Help</span>
+										<span class="title">Help</span>
 									</a>
 								</li>
 								<li>
@@ -341,7 +349,11 @@
 					</div>
 					
 					<div class="modal-body">
-						
+						<c:if test="${dflt_pwd_reset_req}">
+							<div class="alert alert-warning" role="alert">
+							<i class="fa fa-exclamation-triangle"></i> Security alert...! You are using default password, please reset your password.
+							</div>
+						</c:if>
 						<form id="password-form" class="form-horizontal form-groups-bordered">
 							<div class="form-group">
 								<div class="col-md-4">
@@ -351,12 +363,12 @@
 									<input type="password" class="form-control" id="old-pass" required="required">
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" id="wrap">
 								<div class="col-md-4">
 									<label class="control-label">New Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32">
+									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]">
 								</div>
 							</div>
 							<div class="form-group">
@@ -381,7 +393,11 @@
 				</div>
 			</div>
 		</div>
-		
+		<c:if test="${dflt_pwd_reset_req}">
+			<script>
+			$('.change-password').modal('show');
+			</script>
+		</c:if>
 		<div class="modal fade favourites" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -466,6 +482,7 @@
 		        document.getElementById("loading").style.display = "none";
 				document.getElementById("loadingMask").style.display = "none";
 		    });
+			$('#new-pass').popover({ trigger: "focus",placement: "bottom"})
 		</script>
 	</body>
 </html>																						

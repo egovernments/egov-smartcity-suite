@@ -24,16 +24,16 @@
  *      In addition to the terms of the GPL license to be adhered to in using this
  *      program, the following additional terms are to be complied with:
  *
- *  	1) All versions of this program, verbatim or modified must carry this
- *  	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *  	2) Any misrepresentation of the origin of the material is prohibited. It
- *  	   is required that all modified versions of this material be marked in
- *  	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *  	3) This license does not grant any rights to any user of the program
- *  	   with regards to rights under trademark law for use of the trade names
- *  	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -41,7 +41,6 @@ package org.egov.tl.domain.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -56,152 +55,161 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "egtl_feematrix")
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ)
 public class FeeMatrix extends AbstractAuditable {
-	public static final String SEQ = "seq_egtl_feematrix";
-	private static final long serialVersionUID = 1L;
+        public static final String SEQ = "seq_egtl_feematrix";
+        private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+        @Id
+        @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+        private Long id;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "natureOfBusiness", nullable = false)
-	private NatureOfBusiness natureOfBusiness;
-	@ManyToOne
-	@JoinColumn(name = "licenseCategory", nullable = false)
-	private LicenseCategory licenseCategory;
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "subCategory", nullable = false)
-	// ajaxcall
-	private LicenseSubCategory subCategory;
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "licenseAppType", nullable = false)
-	private LicenseAppType licenseAppType;
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "feeType", nullable = false)
-	private FeeType feeType;
+        @ManyToOne(fetch=FetchType.LAZY)
+        @JoinColumn(name = "natureOfBusiness", nullable = false)
+        private NatureOfBusiness natureOfBusiness;
+        @ManyToOne
+        @JoinColumn(name = "licenseCategory", nullable = false)
+        private LicenseCategory licenseCategory;
+        @ManyToOne(fetch=FetchType.LAZY)
+        @JoinColumn(name = "subCategory", nullable = false)
+        // ajaxcall
+        private LicenseSubCategory subCategory;
+        @ManyToOne(fetch=FetchType.LAZY)
+        @JoinColumn(name = "licenseAppType", nullable = false)
+        private LicenseAppType licenseAppType;
+        @ManyToOne(fetch=FetchType.LAZY)
+        @JoinColumn(name = "feeType", nullable = false)
+        private FeeType feeType;
+        
+        @ManyToOne(fetch=FetchType.LAZY)
+        @JoinColumn(name = "financialYear", nullable = false)
+        private CFinancialYear financialYear;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "unitOfMeasurement", nullable = false)
-	private UnitOfMeasurement unitOfMeasurement;
-	
-	//update: update egtl_feematrix set uniqueno=natureOfBusiness||'-'||licenseAppType||'-'||licenseCategory||'-'||subCategory||'-'||feeType||'-'||unitOfMeasurement;
-	
-	private String uniqueNo;
-	
+        @ManyToOne(fetch=FetchType.LAZY)
+        @JoinColumn(name = "unitOfMeasurement", nullable = false)
+        private UnitOfMeasurement unitOfMeasurement;
+        
+        //update: update egtl_feematrix set uniqueno=natureOfBusiness||'-'||licenseAppType||'-'||licenseCategory||'-'||subCategory||'-'||feeType||'-'||unitOfMeasurement;
+        
+        private String uniqueNo;
+        
 
-	@Valid
-	@OrderBy("uomFrom")
-	@OneToMany(mappedBy = "feeMatrix", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<FeeMatrixDetail>(0);
+        @Valid
+        @OrderBy("uomFrom")
+        @OneToMany(mappedBy = "feeMatrix", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<FeeMatrixDetail>(0);
 
-	public FeeType getFeeType() {
-		return feeType;
-	}
+        public FeeType getFeeType() {
+                return feeType;
+        }
 
-	public void setFeeType(final FeeType feeType) {
-		this.feeType = feeType;
-	}
+        public void setFeeType(final FeeType feeType) {
+                this.feeType = feeType;
+        }
 
-	
+        
 
-	public NatureOfBusiness getNatureOfBusiness() {
-		return natureOfBusiness;
-	}
+        public NatureOfBusiness getNatureOfBusiness() {
+                return natureOfBusiness;
+        }
 
-	public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
-		this.natureOfBusiness = natureOfBusiness;
-	}
+        public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+                this.natureOfBusiness = natureOfBusiness;
+        }
 
-	public LicenseCategory getLicenseCategory() {
-		return licenseCategory;
-	}
+        public LicenseCategory getLicenseCategory() {
+                return licenseCategory;
+        }
 
-	public void setLicenseCategory(LicenseCategory licenseCategory) {
-		this.licenseCategory = licenseCategory;
-	}
+        public void setLicenseCategory(LicenseCategory licenseCategory) {
+                this.licenseCategory = licenseCategory;
+        }
 
-	public LicenseSubCategory getSubCategory() {
-		return subCategory;
-	}
+        public LicenseSubCategory getSubCategory() {
+                return subCategory;
+        }
 
-	public void setSubCategory(LicenseSubCategory subCategory) {
-		this.subCategory = subCategory;
-	}
+        public void setSubCategory(LicenseSubCategory subCategory) {
+                this.subCategory = subCategory;
+        }
 
-	public LicenseAppType getLicenseAppType() {
-		return licenseAppType;
-	}
+        public LicenseAppType getLicenseAppType() {
+                return licenseAppType;
+        }
 
-	public void setLicenseAppType(LicenseAppType licenseAppType) {
-		this.licenseAppType = licenseAppType;
-	}
+        public void setLicenseAppType(LicenseAppType licenseAppType) {
+                this.licenseAppType = licenseAppType;
+        }
 
-	public UnitOfMeasurement getUnitOfMeasurement() {
-		return unitOfMeasurement;
-	}
+        public UnitOfMeasurement getUnitOfMeasurement() {
+                return unitOfMeasurement;
+        }
 
-	public void setUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement) {
-		this.unitOfMeasurement = unitOfMeasurement;
-	}
+        public void setUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement) {
+                this.unitOfMeasurement = unitOfMeasurement;
+        }
 
-	public Long getId() {
-		return id;
-	}
+        public Long getId() {
+                return id;
+        }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+        public void setId(Long id) {
+                this.id = id;
+        }
 
-	public BigDecimal getAmount()
-	{
-		return null;
-	}
-	public List<FeeMatrixDetail> getFeeMatrixDetail() {
-		return feeMatrixDetail;
-	}
+        public BigDecimal getAmount()
+        {
+                return null;
+        }
+        public List<FeeMatrixDetail> getFeeMatrixDetail() {
+                return feeMatrixDetail;
+        }
 
-	public void setFeeMatrixDetail(List<FeeMatrixDetail> feeMatrixDetail) {
-		this.feeMatrixDetail = feeMatrixDetail;
-	}
+        public void setFeeMatrixDetail(List<FeeMatrixDetail> feeMatrixDetail) {
+                this.feeMatrixDetail = feeMatrixDetail;
+        }
 
-	public String getUniqueNo() {
-		return uniqueNo;
-	}
+        public String getUniqueNo() {
+                return uniqueNo;
+        }
 
-	public void setUniqueNo(String uniqueNo) {
-		this.uniqueNo = uniqueNo;
-	}
-	
-	public String genUniqueNo()
-	{
-		StringBuilder sb=new StringBuilder();
-		if(natureOfBusiness!=null)
-		 sb.append(natureOfBusiness.getId());
-		if(licenseAppType!=null)
-			sb.append("-"+licenseAppType.getId());
-		if(licenseCategory!=null)
-			sb.append("-"+licenseCategory.getId());
-		if(subCategory!=null)
-			sb.append("-"+subCategory.getId());
-		if(feeType!=null)
-			sb.append("-"+feeType.getId());
-		if(unitOfMeasurement!=null)
-			sb.append("-"+unitOfMeasurement.getId());
-		return sb.toString();
-		
-	}
+        public void setUniqueNo(String uniqueNo) {
+                this.uniqueNo = uniqueNo;
+        }
+        
+        public CFinancialYear getFinancialYear() {
+            return financialYear;
+        }
 
-	 
+        public void setFinancialYear(CFinancialYear financialYear) {
+            this.financialYear = financialYear;
+        }
+        
+        public String genUniqueNo()
+        {
+                StringBuilder sb=new StringBuilder();
+                if(natureOfBusiness!=null)
+                 sb.append(natureOfBusiness.getId());
+                if(licenseAppType!=null)
+                        sb.append("-"+licenseAppType.getId());
+                if(licenseCategory!=null)
+                        sb.append("-"+licenseCategory.getId());
+                if(subCategory!=null)
+                        sb.append("-"+subCategory.getId());
+                if(feeType!=null)
+                        sb.append("-"+feeType.getId());
+                if(unitOfMeasurement!=null)
+                        sb.append("-"+unitOfMeasurement.getId());
+                if(financialYear!=null)
+                    sb.append("-"+financialYear.getId()); 
+                return sb.toString();
+                
+        }
 }

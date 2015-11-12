@@ -68,17 +68,18 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     newOwner.setPassword("NOT SET");
                     newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
                     userService.createUser(newOwner);
+                    persistUponPaymentResponse( basicProperty);
                     ownerInfo.setBasicProperty(basicProperty);
                     ownerInfo.setOwner(newOwner);
                     ownerInfo.setOrderNo(orderNo);
                     LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
+                	//If existing user, then do not add correspondence address
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
                     ownerInfo.setOwner(user);
-                    user.addAddress(ownerAddress);
                     ownerInfo.setOrderNo(orderNo);
                     ownerInfo.setBasicProperty(basicProperty);
                 }
@@ -87,6 +88,17 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             basicProperty.addPropertyOwners(ownerInfo);
         }
     }
+
+    public BasicProperty persistUponPaymentResponse(BasicProperty basicProperty) {
+       return basicProperty;
+    }
+    
+    public BasicProperty createBasicProperty(BasicProperty basicProperty,HashMap meesevaParams) {
+        return   persist(basicProperty);
+     }
+     
+  
+    
     
     public ReportOutput propertyAcknowledgement(PropertyImpl property,String cityLogo,String cityName) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();

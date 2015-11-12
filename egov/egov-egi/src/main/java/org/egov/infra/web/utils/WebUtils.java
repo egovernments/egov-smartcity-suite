@@ -38,17 +38,27 @@
  ******************************************************************************/
 package org.egov.infra.web.utils;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 public class WebUtils {
 
     /**
      * This will return only domain name from http request <br/>
-     * eg: http://www.domain.com/cxt/xyz will return www.domain.com
-     * http://somehost:8090/cxt/xyz will return somehost
+     * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
      **/
     public static String extractRequestedDomainName(final HttpServletRequest httpRequest) {
         final String requestURL = httpRequest.getRequestURL().toString();
+        return extractRequestedDomainName(requestURL);
+    }
+
+    /**
+     * This will return only domain name from given requestUrl <br/>
+     * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
+     **/
+    public static String extractRequestedDomainName(final String requestURL) {
         final int domainNameStartIndex = requestURL.indexOf("://") + 3;
         String domainName = requestURL.substring(domainNameStartIndex, requestURL.indexOf('/', domainNameStartIndex));
         if (domainName.contains(":"))
@@ -57,22 +67,15 @@ public class WebUtils {
     }
 
     /**
-     * This will return full domain name including http scheme and optionally
-     * with contextroot depends on 'withContext' value eg:
-     * http://www.domain.com/cxt/xyz withContext value as true will return
-     * http://www.domain.com/cxt/ <br/>
-     * http://www.domain.com/cxt/xyz withContext
-     * value as false will return http://www.domain.com
+     * This will return full domain name including http scheme and optionally with contextroot depends on 'withContext' value eg:
+     * http://www.domain.com/cxt/xyz withContext value as true will return http://www.domain.com/cxt/ <br/>
+     * http://www.domain.com/cxt/xyz withContext value as false will return http://www.domain.com
      **/
     public static String extractRequestDomainURL(final HttpServletRequest httpRequest, final boolean withContext) {
         final StringBuffer url = httpRequest.getRequestURL();
         final String uri = httpRequest.getRequestURI();
-        String requestDomainURL = "";
-        if (withContext)
-            requestDomainURL = url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + "/";
-        else
-            requestDomainURL = url.substring(0, url.length() - uri.length());
-        return requestDomainURL;
+        return withContext ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + "/"
+                : url.substring(0, url.length() - uri.length());
     }
 
     public static String extractQueryParamsFromUrl(final String url) {
@@ -81,5 +84,9 @@ public class WebUtils {
 
     public static String extractURLWithoutQueryParams(final String url) {
         return url.substring(0, url.indexOf("?"));
+    }
+
+    public static String currentContextPath(final ServletRequest request) {
+        return request.getServletContext().getContextPath().toUpperCase().replace("/", EMPTY);
     }
 }

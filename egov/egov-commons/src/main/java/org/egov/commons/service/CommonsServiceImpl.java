@@ -16,7 +16,6 @@
  */
 package org.egov.commons.service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Connection;
@@ -82,7 +81,6 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
-import org.geotools.factory.FactoryRegistryException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.hibernate.Query;
@@ -983,7 +981,8 @@ public class CommonsServiceImpl implements CommonsService {
             Long boundaryId = 0L;
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
-                map.put("url", Thread.currentThread().getContextClassLoader().getResource("gis/"+EgovThreadLocals.getTenantID()+"/wards.shp"));
+                map.put("url", Thread.currentThread().getContextClassLoader()
+                        .getResource("gis/" + EgovThreadLocals.getTenantID() + "/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore.getFeatureSource(
                         dataStore.getTypeNames()[0])
@@ -1001,7 +1000,8 @@ public class CommonsServiceImpl implements CommonsService {
                             final String bndryType = (String) feature.getAttribute("bndrytype");
                             LOG.debug("Got boundary number {} and boundary type {} from GIS", boundaryNum, bndryType);
                             if (boundaryNum != null && StringUtils.isNotBlank(bndryType)) {
-                                final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(bndryType,"ADMINISTRATION");
+                                final BoundaryType boundaryType = boundaryTypeService
+                                        .getBoundaryTypeByNameAndHierarchyTypeName(bndryType, "ADMINISTRATION");
                                 final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
                                 if (boundary != null && true)
                                     boundaryId = boundary.getId();
@@ -1015,7 +1015,7 @@ public class CommonsServiceImpl implements CommonsService {
             }
             LOG.debug("Found boundary data in GIS with boundary id : {}", boundaryId);
             return boundaryId;
-        } catch (FactoryRegistryException | IOException e) {
+        } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }
     }

@@ -51,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATI
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -75,6 +76,7 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -167,25 +169,30 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
                 viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
 
+                viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+                BigDecimal totalTax = BigDecimal.ZERO;
                 if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-                    viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                    viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-                    viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-                    viewMap.put(
-                            "totalTax",
-                            demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                                    .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)));
+                	viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+                	totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                            .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+                	if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())
+                			&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+                		viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                		viewMap.put("totalTax",totalTax
+                                        .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                	}else{
+                		viewMap.put("totalTax",totalTax);
+                	}
+                    
                 } else {
-                    viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                    viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
                     viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    viewMap.put(
-                            "totalTax",
-                            demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS).
-                            add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)).
-                            add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)));
+                    totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                            .add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                    viewMap.put("totalTax",totalTax);
                 }
 
             } else {
@@ -203,6 +210,10 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
             else
                 viewMap.put("ARV", BigDecimal.ZERO);
+            
+            propertyTaxUtil.setPersistenceService(persistenceService);
+            viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
+            viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null)
                 setRoleName(getRolesForUserId(userId));

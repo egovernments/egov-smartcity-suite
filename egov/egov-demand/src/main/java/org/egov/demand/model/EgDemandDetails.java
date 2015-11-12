@@ -122,9 +122,9 @@ public class EgDemandDetails implements Serializable, Cloneable {
         clone.setEgwStatus(null);
         clone.setEgdmCollectedReceipts(new HashSet<EgdmCollectedReceipt>());
         for (EgdmCollectedReceipt receipt : getEgdmCollectedReceipts()) {
-            EgdmCollectedReceipt cloneRec = (EgdmCollectedReceipt) receipt.clone();
-            cloneRec.setEgdemandDetail(this);
-            clone.addEgdmCollectedReceipt(cloneRec);
+            EgdmCollectedReceipt cloneCollectedReceipt = (EgdmCollectedReceipt) receipt.clone();
+            cloneCollectedReceipt.setEgdemandDetail(clone);
+            clone.addEgdmCollectedReceipt(cloneCollectedReceipt);
         }
         return clone;
     }

@@ -270,85 +270,25 @@ public abstract class BaseLicenseService {
         return feeType;
     }
 
-    public void enterExistingLicense(License license) {
-
+    /**
+     * @description Create existing license via Data Entry Screen
+     * @param license
+     */
+    public void enterExistingLicense(TradeLicense license) {
         final LicenseAppType appType = getLicenseApplicationType();
         final NatureOfBusiness nature = getNatureOfBusiness();
-        final List<FeeMatrix> feeList = feeService.getFeeList(license.getTradeName(), appType, nature);
-        boolean isPFA = false;
-        for (final FeeMatrix fee : feeList)
-            if (fee.getFeeType().getName().equalsIgnoreCase(FeeService.PFA)) {
-                isPFA = true;
-                break;
-            }
-        final Calendar issueDate = Calendar.getInstance();
-        issueDate.setTime(license.getDateOfCreation());
-        final Calendar maxAllowdedDate = Calendar.getInstance();
-        final Calendar minAllowdedDate = Calendar.getInstance();
-        minAllowdedDate.setTime(license.getDateOfCreation());
-        final Calendar instance = Calendar.getInstance();
-        int year = instance.get(Calendar.YEAR);
-        if (issueDate.after(maxAllowdedDate))
-            throw new ValidationException("dateOfCreation", "license.issuedate.maxout");
-        final Module module = getModuleName();
-        if (isPFA && module.getName().contains("Hospital")) {
-            year = year - 3;
-            instance.set(year, 2, 31);
-            minAllowdedDate.setTime(instance.getTime());
-        } else if (isPFA && module.getName().contains("Hawker")) {
-            year = year - 1;
-            instance.set(year, 2, 31);
-            minAllowdedDate.setTime(instance.getTime());
-        } else if (isPFA) {
-            year = year - 5;
-            instance.set(year, 2, 31);
-            minAllowdedDate.setTime(instance.getTime());
-        } else if (module.getName().contains("Hospital")) {
-            year = year - 3;
-            instance.set(year, 2, 31);
-            minAllowdedDate.setTime(instance.getTime());
-        } else if (module.getName().contains("PwdContractor") || module.getName().contains("ElectricalContractor")) {
-            final int month = instance.get(Calendar.MONTH);
-            int day = instance.get(Calendar.DAY_OF_MONTH);
-            day = day - 1;
-            year = year - 3;
-            instance.set(year, month, day);
-            minAllowdedDate.setTime(instance.getTime());
-        } else {
-            year = year - 1;
-            instance.set(year, 2, 31);
-            minAllowdedDate.setTime(instance.getTime());
-        }
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        if (issueDate.before(minAllowdedDate))
-            throw new ValidationException("dateOfCreation", "license.issuedate.minout", sdf.format(minAllowdedDate.getTime()));
-        final BigDecimal totalAmount = BigDecimal.ZERO;
-        // final BigDecimal totalAmount = this.feeService.calculateFeeForExisting(license, license.getTradeName(),
-        // this.getLicenseApplicationTypeForRenew(), this.getNatureOfBusiness(), license.getOtherCharges(),
-        // license.getDeduction());
-        // Setting Fee Type String
-        feeService.setFeeType(feeList, license);
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, license.getDateOfCreation());
-        if (installment == null)
-            throw new ValidationException("dateOfCreation", "license.installment.notavail");
-        final EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
-                .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
-        final Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
-        String feeType = "";
-        if (getModuleName().getName().equals(Constants.ELECTRICALLICENSE_MODULENAME))
-            feeType = getFeeTypeForElectricalLicense(license);
-        else
-            feeType = license.getClass().getSimpleName().toUpperCase();
-        final String runningApplicationNumber = getNextRunningNumber(feeType + "_APPLICATION_NUMBER");
-        license = license.create(feeList, appType, nature, installment, egDemandReasonMasters, totalAmount,
-                runningApplicationNumber, license.getFeeTypeStr(), module);
-
+        final List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        totalAmount = raiseNewDemand(feeList,license);
         license.getLicensee().setLicense(license);
-        final LicenseStatus status = (LicenseStatus) persistenceService.find(
-                "from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
+        final LicenseStatus status = (LicenseStatus) persistenceService.find("from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.updateStatus(status);
-        license = additionalOperations(license, egDemandReasonMasters, installment);
-        license = license.updateCollectedForExisting(license);
+        final String runningApplicationNumber = applicationNumberGenerator.generate();
+        license.setApplicationNumber(runningApplicationNumber);
+        license.setLegacy(true);
+        setAuditEntries(license);
+        license = (TradeLicense) license.updateCollectedForExisting(license); 
+        updateLicenseForFinalApproval(license); 
         persistenceService.create(license);
     }
 
@@ -639,18 +579,18 @@ public abstract class BaseLicenseService {
         license.updateStatus(status);
     }
 
+    /**
+     * @description Data Entry Screen - update license number and license to active status
+     * @param license
+     * @return
+     */
     public License updateLicenseForFinalApproval(final License license) {
         final LicenseStatus status = (LicenseStatus) persistenceService
                 .find("from org.egov.tl.domain.entity.LicenseStatus where code='ACT'");
         license.setStatus(status);
         license.setCreationAndExpiryDateForEnterLicense();
-        String feeType = "";
-        if (getModuleName().getName().equals(Constants.ELECTRICALLICENSE_MODULENAME))
-            feeType = getFeeTypeForElectricalLicense(license);
-        else
-            feeType = license.getClass().getSimpleName().toUpperCase();
-        final String nextRunningLicenseNumber = getNextRunningLicenseNumber(feeType + "_" + license.getFeeTypeStr()
-                + "_LICENSE_NUMBER");
+        final String nextRunningLicenseNumber = getNextRunningLicenseNumber(
+                "egtl_license_number");
         license.generateLicenseNumber(nextRunningLicenseNumber);
         return license;
     }

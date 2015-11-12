@@ -44,18 +44,12 @@
 	<head>
 		<title>Trade License Certificate</title>
 		<script>
-	function refreshInbox() {
-		if (opener && opener.top.document.getElementById('inboxframe')) {
-			opener.top.document.getElementById('inboxframe').contentWindow.egovInbox
-					.refresh();
-		}
-	}
 	function printLicense() {
 		document.getElementById('printDiv').style.display = 'none';
 		window.print();
 	}
 
-	function submitandclose() {
+	/* function submitandclose() {
 		var printcomplete = confirm(
 				"Are you sure License Certificate print completed?", "YES",
 				"NO");
@@ -65,10 +59,10 @@
 		} else {
 			return false;
 		}
-	}
+	} */
 </script>
 	</head>
-	<body onload="refreshInbox()">
+	<body>
 		<div id="content">
 			<center>
 				<s:form name="certificateform" action="viewTradeLicense" theme="simple">
@@ -164,7 +158,7 @@
 											<b><s:property value="totalHP" /> </b>&nbsp;
 											<s:text name="license.certificate.at.house.no" />
 											&nbsp;
-											<b><s:property value="address.houseNo" /> </b>&nbsp;
+											<b><s:property value="address" /> </b>&nbsp;
 										</p> &nbsp;&nbsp;</span>
 								</td>
 							</tr>
@@ -261,11 +255,11 @@
 									<td>
 										<input type="button" id="print" value="Print" onclick="return printLicense()" />
 									</td>
-									<s:if test="%{!#parameters.duplicate}">
+									<%-- <s:if test="%{!#parameters.duplicate}">
 										<td>
 											<s:submit value="Print Complete" id="printcmplt" method="approve" onclick="return submitandclose();" />
 										</td>
-									</s:if>
+									</s:if> --%>
 									<td>
 										<input type="button" id="close" value="Close" onclick="javascript:window.close();" />
 									</td>

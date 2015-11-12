@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,9 +114,11 @@ public class BulkBillGenerationAction extends BaseFormAction {
                 LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
             }
             final List<Boundary> zoneList = boundaryService
-                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", ADMIN_HIERARCHY_TYPE);
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone", REVENUE_HIERARCHY_TYPE);
             setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
-            prepareWardDropDownData(zoneId != null, wardId != null);
+            final List<Boundary> wardList = boundaryService
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", REVENUE_HIERARCHY_TYPE);
+            addDropdownData("wardList", wardList);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Exit from prepare method");
         } catch (final Exception e) {

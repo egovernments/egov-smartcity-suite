@@ -507,6 +507,18 @@
 			</div>
 			</s:else>
 		</div>
+		<s:if test='%{propertyDetail.deviationPercentage != ""}'>
+		<div class="row add-border">
+			<div class="col-xs-6 add-margin">
+			</div>
+			<div class="col-xs-3 add-margin">
+				Unauthorized Penalty
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				Rs. <s:text name="format.money"><s:param value="viewMap.unauthorisedPenalty" /></s:text>
+			</div>
+		</div>
+		</s:if>
 		<div class="row add-border">
 			<div class="col-xs-6 add-margin">
 			</div>

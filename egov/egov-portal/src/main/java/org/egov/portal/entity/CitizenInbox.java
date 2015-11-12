@@ -77,7 +77,7 @@ import org.hibernate.validator.constraints.Length;
 public class CitizenInbox extends AbstractAuditable {
 
     private static final long serialVersionUID = -2303996521024126504L;
-    public static final String SEQ_CITIZENINBOX = "SEQ_egp_citizeninbox";
+    public static final String SEQ_CITIZENINBOX = "seq_egp_citizeninbox";
 
     @DocumentId
     @Id

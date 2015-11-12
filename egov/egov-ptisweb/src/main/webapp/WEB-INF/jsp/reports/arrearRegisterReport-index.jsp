@@ -122,10 +122,7 @@
 					<td class="greybox">
 						<s:select name="zoneId" id="zoneId" list="dropdownData.Zone"
 							listKey="id" listValue="name" headerKey="-1"
-							headerValue="%{getText('default.select')}" value="%{zoneId}"
-							onchange="populateWard()" />
-						<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-							dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
+							headerValue="%{getText('default.select')}" value="%{zoneId}"/>
 					</td>
 				 </tr>
 				

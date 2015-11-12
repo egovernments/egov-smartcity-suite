@@ -44,28 +44,31 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Bank implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	private Integer id;
 
 	private String code;
 
 	private String name;
-
+	@JsonIgnore
 	private String narration;
-
+	@JsonIgnore
 	private int isactive;
-
+	@JsonIgnore
 	private Date lastmodified;
-
+	@JsonIgnore
 	private Date created;
-
+	@JsonIgnore
 	private BigDecimal modifiedby;
-
+	@JsonIgnore
 	private String type;
-
+	@JsonIgnore
 	private Set<Bankbranch> bankbranchs = new HashSet<Bankbranch>(0);
 
 	public Bank() {

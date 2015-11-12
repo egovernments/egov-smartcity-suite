@@ -42,7 +42,6 @@ package org.egov.works.web.actions.estimate;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -571,15 +570,16 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             addRow(approvaldetailsTable, true, makePara("Approval Step"), centerPara("Name"),
                     centerPara("Designation"), centerPara("Approved on"), centerPara("Remarks"));
 
-            if (estimate != null && estimate.getCurrentState() != null
-                    && estimate.getCurrentState().getHistory() != null)
-                history = estimate.getCurrentState().getHistory();
-
-            if (history != null) {
-                Collections.reverse(history);
-                for (final StateHistory ad : history)
-                    displayHistory(ad, approvaldetailsTable);
+            if (estimate != null && estimate.getCurrentState() != null) {
+                history = new LinkedList<StateHistory>();
+                if (estimate.getCurrentState().getHistory() != null)
+                    history.addAll(estimate.getCurrentState().getHistory());
+                history.add(new StateHistory(estimate.getCurrentState()));
             }
+
+            if (history != null)
+                for (final StateHistory stateHistory : history)
+                    displayHistory(stateHistory, approvaldetailsTable);
             return approvaldetailsTable;
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Exception occured while getting approval details " + e);
@@ -750,32 +750,23 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         }
     }
 
-    public void displayHistory(final StateHistory ad, final PdfPTable approvaldetailsTable) throws Exception {
-        if (!ad.getValue().equals("NEW") && !ad.getValue().equals("END")) {
+    public void displayHistory(final StateHistory stateHistory, final PdfPTable approvaldetailsTable) throws Exception {
+        if (!stateHistory.getValue().equals("NEW") && !stateHistory.getValue().equals("END")) {
             String nextAction = "";
-            if (ad.getNextAction() != null)
-                nextAction = ad.getNextAction();
-            // EgwStatus status =(EgwStatus)
-            // getPersistenceService().find("from EgwStatus where code=?",ad.getValue());
-            String state = ad.getValue();
+            if (stateHistory.getNextAction() != null && !stateHistory.getNextAction().equals("END"))
+                nextAction = stateHistory.getNextAction();
+            String state = stateHistory.getValue();
             if (!nextAction.equalsIgnoreCase(""))
-                state = ad.getValue() + " - " + nextAction;
-            Long positionId = null;
-            String desgName = null;
-            DeptDesig deptdesig = null;
-            // if(ad.getPrevious()==null){
-            positionId = ad.getOwnerPosition().getId();
-            deptdesig = ad.getOwnerPosition().getDeptDesig();
-            desgName = deptdesig.getDesignation().getName();
-            /*
-             * } else{ positionId =ad.getPrevious().getOwner().getId(); deptdesig= ad.getPrevious().getOwner().getDeptDesigId();
-             * desgName = deptdesig.getDesigId().getDesignationName(); }
-             */
-            final Employee employee = assignmentService.getPrimaryAssignmentForPositionAndDate(positionId, ad.getCreatedDate())
+                state = stateHistory.getValue() + " - " + nextAction;
+            final Long positionId = stateHistory.getOwnerPosition().getId();
+            final DeptDesig deptdesig = stateHistory.getOwnerPosition().getDeptDesig();
+            final String desgName = deptdesig.getDesignation().getName();
+            final Employee employee = assignmentService
+                    .getPrimaryAssignmentForPositionAndDate(positionId, stateHistory.getCreatedDate())
                     .getEmployee();
             addRow(approvaldetailsTable, true, makePara(state), makePara(employee.getName()),
-                    makePara(desgName), makePara(DateUtils.getFormattedDate(ad.getCreatedDate(), "dd/MM/yyyy")),
-                    rightPara(ad.getComments()));
+                    makePara(desgName), makePara(DateUtils.getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy")),
+                    rightPara(stateHistory.getComments()));
         }
     }
 

@@ -64,8 +64,7 @@ import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
 
 /**
- * Utility class for interfacing with financials. This class should be used for
- * calling any financials APIs from erp collections.
+ * Utility class for interfacing with financials. This class should be used for calling any financials APIs from erp collections.
  */
 public class FinancialsUtil {
     private InstrumentService instrumentService;
@@ -76,8 +75,7 @@ public class FinancialsUtil {
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
     /**
-     * @param instrumentService
-     *            the Instrument Service to set
+     * @param instrumentService the Instrument Service to set
      */
     public void setInstrumentService(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
@@ -86,8 +84,7 @@ public class FinancialsUtil {
     /**
      * Fetches instrument type object for given instrument type as string
      *
-     * @param type
-     *            Instrument type as string e.g. cash/cheque
+     * @param type Instrument type as string e.g. cash/cheque
      * @return Instrument type object for given instrument type as string
      */
     public InstrumentType getInstrumentTypeByType(final String type) {
@@ -116,7 +113,7 @@ public class FinancialsUtil {
      * @param isVoucherApproved
      * @return
      */
-    
+
     public CVoucherHeader createVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails,
             final List<HashMap<String, Object>> subledgerdetails, final Boolean receiptBulkUpload,
@@ -145,10 +142,10 @@ public class FinancialsUtil {
      * @param subledgerdetails
      * @return CVoucherHeader
      */
-    
+
     public CVoucherHeader createPreApprovalVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-            throws ApplicationRuntimeException {
+                    throws ApplicationRuntimeException {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)
@@ -161,7 +158,6 @@ public class FinancialsUtil {
         return voucherHeaders;
     }
 
-    
     public CVoucherHeader createApprovedVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails) {
 
@@ -208,16 +204,15 @@ public class FinancialsUtil {
      * @param paramList
      * @return
      */
-    
-    public List<InstrumentVoucher> updateInstrument(final List<Map<String, Object>> paramList) {
+
+    public List<InstrumentVoucher> updateInstrumentVoucher(final List<Map<String, Object>> paramList) {
         final List<InstrumentVoucher> instrumentVoucherList = instrumentService
                 .updateInstrumentVoucherReference(paramList);
         return instrumentVoucherList;
     }
 
     /**
-     * Create Instrument Header for list of HashMap of instrument header
-     * properties
+     * Create Instrument Header for list of HashMap of instrument header properties
      *
      * @param paramList
      * @return List of InstrumentHeader
@@ -228,28 +223,28 @@ public class FinancialsUtil {
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
-     * Voucher(if the Bank Remittance voucher type is Contra)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
+     * Contra)
      *
      * @param payInId
      * @param toBankaccountGlcode
      * @param instrumentHeader
      */
-    
+
     public void updateCheque_DD_Card_Deposit(final Long payInId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
         contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader, instrumentMap);
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
-     * Voucher(if the Bank Remittance voucher type is Receipt)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
+     * Receipt)
      *
      * @param receiptId
      * @param toBankaccountGlcode
      * @param instrumentHeader
      */
-    
+
     public void updateCheque_DD_Card_Deposit_Receipt(final Long receiptId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
         contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,
@@ -263,7 +258,7 @@ public class FinancialsUtil {
      * @param toBankaccountGlcode
      * @param instrumentHeader
      */
-    
+
     public void updateCashDeposit(final Long payInId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
         contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader, instrumentMap);
@@ -277,16 +272,14 @@ public class FinancialsUtil {
     }
 
     /**
-     * @param contraService
-     *            the contraService to set
+     * @param contraService the contraService to set
      */
     public void setContraService(final ContraService contraService) {
         this.contraService = contraService;
     }
 
     /**
-     * @param voucherCreator
-     *            the Voucher Creator to set
+     * @param voucherCreator the Voucher Creator to set
      */
     public void setVoucherCreator(final CreateVoucher voucherCreator) {
         this.voucherCreator = voucherCreator;
@@ -295,8 +288,7 @@ public class FinancialsUtil {
     /**
      * Checks whether given account is a revenue account (cash/cheque in hand)
      *
-     * @param coa
-     *            the account object
+     * @param coa the account object
      * @return true if the account is a revenue account, else false
      */
     @SuppressWarnings("unchecked")
@@ -339,6 +331,10 @@ public class FinancialsUtil {
 
     }
 
+    public void updateInstrumentHeader(final InstrumentHeader instrumentHeader) {
+        instrumentHeaderService.persist(instrumentHeader);
+    }
+
     /**
      * This API return list of ChartOfAccount mapped with bank accounts
      *
@@ -358,7 +354,7 @@ public class FinancialsUtil {
         this.instrumentHeaderService = instrumentHeaderService;
     }
 
-    public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }
 

@@ -53,8 +53,8 @@
             <column name="CODE" length="256" not-null="true" unique="true" />
         </property>
         
-        <property name="isActive" type="java.lang.Boolean">
-         	<column name="ISACTIVE" precision="1" scale="0" />
+        <property name="active" type="boolean">
+         	<column name="ISACTIVE" />
 		</property>
 		
 		<property name="description" type="string">

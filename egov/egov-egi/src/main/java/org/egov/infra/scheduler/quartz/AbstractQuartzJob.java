@@ -52,13 +52,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * An abstract base class wrapper for {@link QuartzJobBean} and implements {@link GenericJob}. A class which extends this will be
- * eligible for doing Quartz Jobs. Those classes required Statefulness (Threadsafety) so need to annotate class with @DisallowConcurrentExecution.
- * This class also wrap up wiring of some of the common settings and beans.
+ * eligible for doing Quartz Jobs. Those classes required Statefulness (Threadsafety) so need to annotate class
+ * with @DisallowConcurrentExecution. This class also wrap up wiring of some of the common settings and beans.
  **/
 public abstract class AbstractQuartzJob extends QuartzJobBean implements GenericJob {
 
@@ -67,12 +66,12 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     private boolean isTransactional;
     private String userName;
 
-    @Resource(name="tenants")
+    @Resource(name = "tenants")
     protected List<String> tenants;
 
     @Autowired
     private UserService userService;
-    
+
     /**
      * This method will wrap up the Transaction (if isTransactional set to true) and call the executeJob implementation on
      * individual job class.
@@ -94,6 +93,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
             LOGGER.error("Unable to complete execution Scheduler ", ex);
             throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
         } finally {
+            clearTheadLocal();
             MDC.remove("ulbcode");
         }
     }
@@ -115,5 +115,10 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 
     protected void setUserInThreadLocal() {
         EgovThreadLocals.setUserId(userService.getUserByUsername(userName).getId());
+    }
+
+    protected void clearTheadLocal() {
+        EgovThreadLocals.setTenantID(null);
+        EgovThreadLocals.setUserId(null);
     }
 }

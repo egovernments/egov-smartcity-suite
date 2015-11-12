@@ -64,11 +64,8 @@
 					<s:actionerror />
 				</div>
 			</s:if>
-			<center>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 						<s:form action="search" name="assessmentform" theme="simple">
-							<div class="formheading"></div>
-							
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					

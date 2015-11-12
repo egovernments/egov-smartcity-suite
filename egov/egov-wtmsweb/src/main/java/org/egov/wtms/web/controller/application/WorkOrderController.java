@@ -123,11 +123,12 @@ public class WorkOrderController {
                 reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
                 reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
             }
-            reportParams.put("municipality", session.getAttribute("cityname"));
+            reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
             reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+            reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);

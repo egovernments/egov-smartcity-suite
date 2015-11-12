@@ -111,7 +111,7 @@ public class CloserAcknowledgmentController {
                 reportParams.put("applicationType",
                         WordUtils.capitalize(WaterTaxConstants.CLOSURECONN));
           
-            reportParams.put("cityName", session.getAttribute("cityname"));
+            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);

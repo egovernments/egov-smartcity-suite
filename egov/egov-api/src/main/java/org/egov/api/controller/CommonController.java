@@ -8,13 +8,15 @@ import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
 import org.egov.infra.admin.master.entity.Device;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.DeviceRepository;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +39,12 @@ public class CommonController extends ApiController {
 
     @Autowired
     private IdentityRecoveryService identityRecoveryService;
+    
+    @Autowired
+    private LocalValidatorFactoryBean validator;
+    
+    @Autowired
+    private UserService userservice;
 
     // -----------------------------------------------------------------
     /**
@@ -64,10 +72,29 @@ public class CommonController extends ApiController {
                 device.setType(citizen.get("deviceType").toString());
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
-            citizenCreate.getDevices().add(device);
-            citizenService.create(citizenCreate);
-            return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
-        } catch (ApplicationRuntimeException e) {
+            
+            User getUser=userservice.getUserByMobileNumber(citizenCreate.getMobileNumber());
+            if(getUser != null)
+            {
+            	return res.error("A user with same mobile number already registered!");
+            }
+            
+            if(citizenCreate.getEmailId() != null && ! citizenCreate.getEmailId().isEmpty())
+            {
+            	getUser=userservice.getUserByEmailId(citizenCreate.getEmailId());
+                if(getUser != null)
+                {
+                	return res.error("A user with same email already registered!");
+                }
+            }
+            
+            
+           citizenCreate.getDevices().add(device);
+           citizenService.create(citizenCreate);
+           return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
             msg = e.getMessage();
         }
         return res.error(msg);

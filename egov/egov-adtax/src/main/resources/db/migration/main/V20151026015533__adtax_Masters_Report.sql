@@ -1,0 +1,51 @@
+------------------START------------------
+update egadtax_category set version=0 where version is null;
+update egadtax_unitofmeasure set version=0 where version is null;
+update egadtax_rates_class set version=0 where version is null;
+
+update eg_module set enabled=true where  name='AdvertisementTaxReports';
+
+------------------END------------------
+------------------START------------------
+-- Report 
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'dcbReportSearch', '/reports/search-for-dcbreport', NULL, (select id from eg_module where name='AdvertisementTaxReports'), 1, 'Hoardingwise Collection Report', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'HoardingDcbReport', '/reports/getHoardingDcb', NULL, (select id from eg_module where name='AdvertisementTaxReports'), 1, 'Hoarding Dcb Result', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'dcbReportSearch'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') , (select id FROM eg_action  WHERE name = 'HoardingDcbReport'));
+
+--Rate class
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'createRateClass', '/ratesclass/create', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 2, 'Create Rate Class', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'savedRateClass', '/ratesclass/success', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 3, 'Saved Rate class', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'SearchRateClass', '/ratesclass/search', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 4, 'Search Rate Class', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule,ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'RateClassUpdate', '/ratesclass/update', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 5, 'Rates class Update', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'createRateClass'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'savedRateClass'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'SearchRateClass'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'RateClassUpdate'));
+
+------------ unit of measuere
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'CreateUnitOfMeasure', '/unitOfMeasure/create', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 6, 'Create Unit Of Measure', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'UnitOfMeasureSuccess', '/unitOfMeasure/success', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 7, 'Unit Of Measure Success', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'UnitOfMeasureUpdate', '/unitOfMeasure/update', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 8, 'Unit Of Measure Update', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'SearchUnitOfMeasure', '/unitOfMeasure/search', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 9, 'Search Unit Of Measure', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'CreateUnitOfMeasure'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'UnitOfMeasureSuccess'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'UnitOfMeasureUpdate'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'SearchUnitOfMeasure'));
+
+------- category 
+
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'Createcategory', '/category/create', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 10, 'Create category', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'categorySuccess', '/category/success', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 11, 'category Success', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'categoryUpdate', '/category/update', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 12, 'category Update', false, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'Searchcategory', '/category/search', NULL, (select id from eg_module where name='AdvertisementTaxMasters'), 13, 'Search category', true, 'adtax', 0, 1, current_date, 1, current_date, (select id from eg_module where name='Advertisement Tax' and parentmodule is null));
+
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'Createcategory'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'categorySuccess'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'categoryUpdate'));
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'Searchcategory'));
+
+------------------END------------------

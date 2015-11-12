@@ -55,10 +55,18 @@
 				} else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
 				} else if (selectedValue == 'EDIT_DATAENTRY') {
-						window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
+					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
 				} else if (selectedValue == 'ADD_EDIT_DEMAND') {
-						window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
-				} 
+					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
+				} else if (selectedValue == 'VacancyRemission') {
+					window.location = "/ptis/vacancyremission/create/" + assessmentNum;
+				} else if(selectedValue == 'VacancyRemissionMonthlyUpdate'){
+					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
+				} else if(selectedValue == 'VacancyRemissionFinalApproval'){
+					window.location = "/ptis/vacancyremissionapproval/create/" + assessmentNum;
+				} else if(selectedValue == 'Demolition'){
+					window.location = "/ptis/property/demolition/" + assessmentNum;
+				}
 			}
 
 			function gotoSearchForm(){
@@ -77,7 +85,7 @@
 					<div class="headingsmallbgnew">
 						<s:text name="scrhCriteria"></s:text>
 						<span class="mandatory">
-							<s:property	value="%{searchCreteria}" />
+							<s:property	value="%{searchCriteria}" />
 						</span> / <s:text name="totProp"></s:text>
 						<span class="mandatory">
 							<s:property value="%{searchResultList.size}" /> 
@@ -152,6 +160,18 @@
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>
 												</option>
+												
+												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
+													<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) &&  
+														(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
+														<option value="VacancyRemission">
+															<s:text name="vacancyRemission"></s:text>
+														</option>
+														<option value="Demolition">
+															<s:text name="Demolition"></s:text>
+														</option>
+													</s:if>
+												</c:if>
 											</s:if>
 											<s:else>
 												<option value="RevisionPetition">
@@ -159,12 +179,28 @@
 												</option>
 											</s:else>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
-												<option value="CollectTax">
-													<s:text name="collectTax"></s:text>
+										<s:if
+										test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) || 
+											roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+										<option value="CollectTax">
+											<s:text name="collectTax"></s:text>
+										</option>
+									</s:if>
+									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive}">
+										<c:if test="${currentRowObject.propType != 'VAC_LAND' && currentRowObject.isTaxExempted == false}">
+											<c:if test="${currentRowObject.enableMonthlyUpdate == true && currentRowObject.enableVRApproval == false}">
+												<option value="VacancyRemissionMonthlyUpdate">
+													<s:text name="vacancyRemission.monthly.update"></s:text>
 												</option>
-										</s:if>		
-									</select>
+											</c:if>
+											<c:if test="${currentRowObject.enableVRApproval == true}">
+												<option value="VacancyRemissionFinalApproval">
+													<s:text name="vacancyRemission.final.approval"></s:text>
+												</option>
+											</c:if>
+										</c:if>
+									</s:if>
+								</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />
 								<display:setProperty name="paging.banner.items_name"

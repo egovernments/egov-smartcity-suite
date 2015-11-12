@@ -98,6 +98,10 @@ public class ComplaintTypeService {
         return complaintTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
+    public List<ComplaintType> findAllActiveByNameLike(final String name) {
+        return complaintTypeRepository.findByIsActiveTrueAndNameContainingIgnoreCase(name);
+    }
+    
     public List<ComplaintType> findAllByNameLike(final String name) {
         return complaintTypeRepository.findByNameContainingIgnoreCase(name);
     }
@@ -127,10 +131,12 @@ public class ComplaintTypeService {
         previousDate = previousDate.minusMonths(1);
 
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint");
+        criteria.createAlias("complaint.complaintType", "compType");
         criteria.setProjection(Projections.projectionList().add(Projections.property("complaint.complaintType"))
                 .add(Projections.count("complaint.complaintType").as("count"))
                 .add(Projections.groupProperty("complaint.complaintType")));
         criteria.add(Restrictions.between("complaint.createdDate", previousDate.toDate(), currentDate.toDate()));
+        criteria.add(Restrictions.eq("compType.isActive", Boolean.TRUE));
         criteria.setMaxResults(5).addOrder(Order.desc("count"));
         final List<Object> resultList = criteria.list();
         final List<ComplaintType> complaintTypeList = new ArrayList<ComplaintType>();
@@ -150,5 +156,9 @@ public class ComplaintTypeService {
 
     public List<Department> getAllComplaintTypeDepartments() {
         return complaintTypeRepository.findAllComplaintTypeDepartments();
+    }
+    
+    public List<ComplaintType> findActiveComplaintTypes() {
+        return complaintTypeRepository.findByIsActiveTrueOrderByNameAsc();
     }
 }

@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -58,8 +59,8 @@ public interface DonationHeaderRepository extends JpaRepository<DonationHeader, 
 
     List<DonationHeader> findByCategoryAndUsageType(ConnectionCategory category, UsageType usageType);
 
-    @Query("select dh from DonationHeader dh where dh.category=:category and usageType=:usageType and dh.minPipeSize.sizeInInch =:pipeSize ")
-    DonationHeader findByCategoryAndUsageTypeAndPipeSize(@Param("category") ConnectionCategory category,
+    @Query("select dh from DonationHeader dh where dh.propertyType=:propertyType and dh.category=:category and usageType=:usageType and dh.minPipeSize.sizeInInch =:pipeSize ")
+    DonationHeader findByPropertyandCategoryAndUsageTypeAndPipeSize(@Param("propertyType") PropertyType propertyType ,@Param("category") ConnectionCategory category,
             @Param("usageType") UsageType usageType,
             @Param("pipeSize") double pipeSize);
 

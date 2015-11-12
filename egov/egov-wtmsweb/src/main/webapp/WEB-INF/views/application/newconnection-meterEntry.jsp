@@ -123,10 +123,10 @@
 									</tr>
 									<tr>
 										<td class="col-sm-3 add-margin"><form:input
-												class="form-control" id="metercurrentReading"
+												class="form-control patternvalidation" id="metercurrentReading"
 												name="metercurrentReading"
 												path="${meterReadingCurrentObj.currentReading}" min="3"
-												maxlength="50" required="required" /> <form:errors path=""
+												maxlength="12" data-pattern="number" required="required" /> <form:errors path=""
 												cssClass="add-margin error-msg" /></td>
 										<td class="col-sm-3 add-margin"><form:input
 												class="form-control datepicker today"

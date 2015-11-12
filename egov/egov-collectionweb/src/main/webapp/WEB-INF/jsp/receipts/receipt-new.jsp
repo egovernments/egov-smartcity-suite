@@ -1746,13 +1746,12 @@ function autocompletecodeBank(obj,myEvent)
 }
 function fillAfterSplitBank(obj)
 {
-
+	var currRow=getRow(obj);
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	if(temp[1])
 	{
 		obj.value=temp[0];
-		var currRow=getRow(obj);
 		getControlInBranch(currRow,'bankID').value=temp[1];
 		getControlInBranch(currRow,'bankName').value=temp[0];
 		
@@ -2184,7 +2183,7 @@ function showHideMandataryMark(obj){
 			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 			<div class="buttonbottom" align="center">
-			      <label><input align="center" type="button" class="buttonsubmit" id="button2" value="Create" onclick="return validate();"/></label>
+			      <label><input align="center" type="button" class="buttonsubmit" id="button2" value="Pay" onclick="return validate();"/></label>
 			      &nbsp;
 			      <input name="button" type="button" class="button" id="button" value="Reset" onclick="checkreset();"/>
 			      &nbsp;

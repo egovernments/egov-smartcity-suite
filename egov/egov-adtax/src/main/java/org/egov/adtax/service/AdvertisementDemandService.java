@@ -40,6 +40,7 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -56,13 +57,14 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.utils.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -153,7 +155,7 @@ public class AdvertisementDemandService {
         egDemand.getEgDemandDetails().addAll(demandDetailSet);
         egDemand.setIsHistory("N");
         egDemand.setCreateDate(new Date());
-        egDemand.setBaseDemand(totalDemandAmount);
+        egDemand.setBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         egDemand.setModifiedDate(new Date());
         return egDemand;
     }
@@ -194,7 +196,7 @@ public class AdvertisementDemandService {
                         && taxAmount.compareTo(BigDecimal.ZERO) > 0) {
                     // TODO: Also check whether fully collected ?
                     totalDemandAmount = totalDemandAmount.add(taxAmount.subtract(dmdDtl.getAmount()));
-                    dmdDtl.setAmount(taxAmount);
+                    dmdDtl.setAmount(taxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
                 }
                 // Encroachment fee may not mandatory. If already part of demand
@@ -205,7 +207,7 @@ public class AdvertisementDemandService {
                             && hoarding.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
                         totalDemandAmount = totalDemandAmount.add(hoarding.getEncroachmentFee().subtract(
                                 dmdDtl.getAmount()));
-                        dmdDtl.setAmount(hoarding.getEncroachmentFee());
+                        dmdDtl.setAmount(hoarding.getEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
@@ -224,7 +226,7 @@ public class AdvertisementDemandService {
                                 installment), BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(hoarding.getEncroachmentFee());
             }
-            demand.addBaseDemand(totalDemandAmount);
+            demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         }
         return demand;
@@ -249,7 +251,7 @@ public class AdvertisementDemandService {
  */
     public EgDemandDetails createDemandDetails(final BigDecimal dmdAmount, final EgDemandReason egDemandReason,
             final BigDecimal amtCollected) {
-        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
+        return EgDemandDetails.fromReasonAndAmounts(dmdAmount.setScale(0, BigDecimal.ROUND_HALF_UP), egDemandReason, amtCollected);
     }
 /**
  * 
@@ -305,18 +307,24 @@ public class AdvertisementDemandService {
 
     }
 
+    private int noOfMonths(final Date startDate, final Date endDate) {
+        DateTime sDate = new DateTime(startDate);
+        DateTime eDate = new DateTime(endDate);
+        final int yearDiff = eDate.getYear() - sDate.getYear();
+        int noOfMonths = yearDiff * 12 + eDate.getMonthOfYear() - sDate.getMonthOfYear();
+        return noOfMonths;
+
+    }
+    
     private BigDecimal calculatePenalty(BigDecimal penaltyAmt,final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
         int noofmonths = 0;
 
         if (penaltyCalculationDate != null)
-            noofmonths = (DateUtils.noOfMonths(penaltyCalculationDate, new Date()));
+            noofmonths = (noOfMonths(penaltyCalculationDate, new Date())); 
         else
-            noofmonths = (DateUtils.noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
+            noofmonths = (noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
                     new Date()));
-
-        if (noofmonths > 0)
-            noofmonths++;
-
+      
         if (noofmonths > 0) {
             penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(noofmonths))
                     .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
@@ -390,5 +398,10 @@ public class AdvertisementDemandService {
             demand, Arrays.asList(demandReason));
  
     }
-   
+
+    public List<BillReceipt> getBilReceiptsByDemand(EgDemand demand) {
+        List<BillReceipt> billReceiptList = new ArrayList<BillReceipt>();
+        billReceiptList = demandGenericDao.getBillReceipts(demand);
+        return billReceiptList;
+    }
   }

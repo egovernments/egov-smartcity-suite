@@ -171,7 +171,6 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     	return "";
     }
     
-
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(Constants.NEW)
     public String create(TradeLicense license) {
@@ -199,7 +198,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
     
     public String createDraftItems() {
-        try {
+        try { 
             this.setCheckList();
           //  service().create(license());  //mani when made changes from license to tradelicesne
             
@@ -259,15 +258,22 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             }
     }
 
+    /**
+     * @description called from Data Entry Screen
+     * @param license
+     * @return
+     */
+    @SuppressWarnings("unchecked")
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting() {
-        service().enterExistingLicense(license());
-        service().updateLicenseForFinalApproval(license());
-        addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
-        final Module module = license().getTradeName().getLicenseType().getModule();
-        /*if (module.getName().equals(Constants.PWDLICENSE_MODULENAME))
-            licenseUtils.updateContractorForDepartment(license(), Constants.LICENSE_STATUS_UPDATE,
-                    Constants.LICENSE_STATUS_ACTIVE);*/
+    public String enterExisting(TradeLicense license) {
+        try{
+            this.setCheckList();
+            service().processAndStoreDocument(license().getDocuments());
+            service().enterExistingLicense(license);
+            addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
+        } catch (final RuntimeException e) {
+            throw e;
+        }
         return "viewlicense";
     }
 
@@ -339,7 +345,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSEE, Collections.EMPTY_LIST);
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, Collections.EMPTY_LIST);
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, Collections.EMPTY_LIST);
-        addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
+      //  addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         if (getModel().getClass().getSimpleName().equalsIgnoreCase(Constants.ELECTRICALLICENSE_LICENSETYPE))
             addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, Collections.EMPTY_LIST);
         else

@@ -85,6 +85,7 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 //TODO name class as client specific
 public class APTaxCalculator implements PropertyTaxCalculator {
@@ -104,14 +105,19 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private Installment currInstallment = null;
 
     @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
     /**
-     * @param property Property Object
-     * @param applicableTaxes List of Applicable Taxes
-     * @param occupationDate Minimum Occupancy Date among all the units
+     * @param property
+     *            Property Object
+     * @param applicableTaxes
+     *            List of Applicable Taxes
+     * @param occupationDate
+     *            Minimum Occupancy Date among all the units
      * @return
      */
     @Override
@@ -150,14 +156,16 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 for (final Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
                     // TODO think about, these beans to be client
                     // specific
-                    boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
-                            .getId(), occupationDate);
-                    final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateNonVacantTax(property, floorIF,
-                            boundaryCategory, applicableTaxes, installment);
-                    totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
+                    if (betweenOrBefore(floorIF.getOccupancyDate(), installment.getFromDate(), installment.getToDate())) {
+                        boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
+                                .getId(), occupationDate, floorIF.getStructureClassification().getId());
+                        final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateNonVacantTax(property,
+                                floorIF, boundaryCategory, applicableTaxes, installment);
+                        totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
 
-                    totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
-                    taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
+                        totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
+                        taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
+                    }
                 }
                 taxCalculationInfo.setTotalNetARV(totalNetArv);
                 taxCalculationInfo.setTotalTaxPayable(totalTaxPayable);
@@ -341,11 +349,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
-            final Long usageId, final Date occupancyDate) {
+            final Long usageId, final Date occupancyDate, final Long classification) {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
 
         categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
-                occupancyDate, installment.getToDate());
+                classification, occupancyDate, installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
         return categories.get(0);
@@ -438,8 +446,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         BigDecimal roundedAmt;
         final BigDecimal remainder = amount.remainder(new BigDecimal(2));
         /*
-         * if reminder is less than 1, subtract reminder amount from passed amount else reminder is greater than 1, subtract
-         * reminder amount from passed amount and add 5 to result amount
+         * if reminder is less than 1, subtract reminder amount from passed
+         * amount else reminder is greater than 1, subtract reminder amount from
+         * passed amount and add 5 to result amount
          */
         if (remainder.compareTo(new BigDecimal("1")) == 1)
             roundedAmt = amount.subtract(remainder).add(new BigDecimal(2));

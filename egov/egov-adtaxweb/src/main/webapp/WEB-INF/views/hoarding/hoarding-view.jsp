@@ -41,6 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -93,14 +94,14 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<%-- <label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.name"/>
 								
 								</label>
 								<div class="col-sm-3 add-margin view-content">
 									${hoarding.hoardingName}
-								</div>
-								<label class="col-sm-2 control-label text-right">
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.type"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content dynamic-span capitalize">
@@ -259,13 +260,13 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<%-- <label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.breadth"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
 									${hoarding.breadth}
-								</div>
-								<label class="col-sm-2 control-label text-right">
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.total.height"/>
 								
 								</label>
@@ -295,10 +296,16 @@
 								<div class="col-sm-3 add-margin view-content">
 									<c:out value="${hoarding.advertisementDuration}" default="N/A"/>
 								</div>
+								<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.hoarding.electricityservicenumber"/>
+								</label>
+								<div class="col-sm-3 add-margin">
+								  		<c:out value="${hoarding.electricityServiceNumber}" default="N/A"/>
+								</div>
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-								<spring:message code="lbl.fee.details"/>
+								<spring:message code="lbl.hoarding.tax.feeDetails"/>
 								</div>
 							</div>
 							<div class="form-group">
@@ -306,13 +313,13 @@
 								<spring:message code="lbl.tax"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${hoarding.taxAmount}
+									  <fmt:formatNumber type="number" maxFractionDigits="2" minFractionDigits="2" value="${hoarding.taxAmount}" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.enc.fee"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.encroachmentFee}" default="N/A"/>
+									  <fmt:formatNumber type="number" maxFractionDigits="2" minFractionDigits="2" value="${hoarding.encroachmentFee}" />
 								</div>
 								
 								
@@ -323,7 +330,9 @@
 								<spring:message code="lbl.pendingtax"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${hoarding.pendingTax}" default="N/A"/>
+									
+									  <fmt:formatNumber type="number"  maxFractionDigits="2" minFractionDigits="2" value="${hoarding.pendingTax}" />
+						
 								</div>
 							</div>
 					</div>
@@ -345,7 +354,7 @@
 									<div class="col-sm-3 text-center">
 										<c:forEach var="file" items="${docs.files}">	
 										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=ADTAX&toSave=true"> 
-											${file.fileName}
+											${file.fileName}<br>
 										</a>
 										</c:forEach>
 									</div>

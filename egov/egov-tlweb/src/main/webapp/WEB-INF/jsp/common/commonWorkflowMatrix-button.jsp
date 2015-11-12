@@ -15,24 +15,40 @@
 			return false;
 		}
 	    document.getElementById("workFlowAction").value=name;
+	    var approverDeptId =document.getElementById("approverDepartment");
+	    var approverDesgId = document.getElementById("approverDesignation");
 	    var approverPosId = document.getElementById("approverPositionId");
+	    var approverComments = document.getElementById("approverComments").value;
 	    if(approverPosId && approverPosId.value != -1) {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
 		<s:if test="%{getNextAction()!='END'}">
-	    if((name=="Forward" || name=="forward") && approverPosId && approverPosId.value == -1) {
-	        alert("Please Select the Approver ");
-			return false;
+	    if(name=="Forward" || name=="forward") {
+	    	if(approverDeptId && approverDeptId.value == -1){
+		        alert("Please Select the Approver Department ");
+				return false;
+		    } else if(approverDesgId && approverDesgId.value == -1){
+		        alert("Please Select the Approver Designation ");
+				return false;
+		    } else if(approverPosId && approverPosId.value == -1){
+		        alert("Please Select the Approver ");
+				return false;
+		    }  
+	    }
+	    </s:if>
+	    if(name=="Forward" || name=="forward" || name=="approve" || name=="Approve") {
+	    	 if (approverComments == null || approverComments == "") { 
+	    		alert("Please Enter Approver Remarks ");
+				return false;
+	    	}  
 	    }
 	    if ((name=="Reject" || name=="reject")) {
-			var approverComments = document.getElementById("approverComments").value;
 	    	if (approverComments == null || approverComments == "") {
-	    		alert("Please Enter Approver Remarks ");
+	    		alert("Please Enter Rejection Remarks ");
 				return false;
 	    	}
 		}
-	    </s:if>
 	    return  onSubmit();
 	}
 </script>

@@ -69,7 +69,7 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      * @return
      */
     public LicenseSubCategory findSubCategoryByName(final String name) {
-        return this.find("From LicenseSubCategory where name=?", name);
+        return this.find("From org.egov.tl.domain.entity.LicenseSubCategory where upper(name)=?", name.toUpperCase());
     }
 
     /**
@@ -78,7 +78,7 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      * @return
      */
     public LicenseSubCategory findSubCategoryByCode(final String code) {
-        return this.find("From LicenseSubCategory where code=?", code);
+        return this.find("From org.egov.tl.domain.entity.LicenseSubCategory where upper(code)=?", code.toUpperCase()); 
     }
 
 }

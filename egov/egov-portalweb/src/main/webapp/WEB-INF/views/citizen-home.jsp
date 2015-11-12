@@ -186,70 +186,95 @@
 				<div class="citizen-screens tabs tabs-style-topline newrequest display-hide" id="newreq">
 					<nav>
 						<ul>
-							<li class="tab-current-newreq" data-section="newrequest" data-newreq-section="#section-newrequest-1">
+							<li class="tab-current-newreq features" data-section="newrequest" data-newreq-section="#section-newrequest-1" id="pgr">
 								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-book"></i></div>
 									<span class="hidden-sm hidden-xs">Grievance Redressal</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-2" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-2" id="ptis" class="features">
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Property Tax</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-3" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-11" id="wats" class="features">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-rupee"></i></div>
+									<span class="hidden-sm hidden-xs">Water Charge Management</span>
+								</a>
+							</li>
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-3" id="bpa" class="features">
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-building-o"></i></div>
 									<span class="hidden-sm hidden-xs">Building Plan Approval</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-4" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-4" id="bnd" class="features">
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-medkit"></i></div>
 									<span class="hidden-sm hidden-xs">Birth &amp; Death</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-5" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-5" id="tl" class="features">
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-text-width"></i></div>
 									<span class="hidden-sm hidden-xs">Trade Licence</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-6" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-6" id="proftax" class="features" >
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Professional Tax</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-7" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-7" id="comptax" class="features" >
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Company Tax</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-8" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-8" id="shops" class="features" >
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-money"></i></div>
 									<span class="hidden-sm hidden-xs">Shops</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-9" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-9" id="advtax" class="features" >
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-adn"></i></div>
 									<span class="hidden-sm hidden-xs">Advertisement</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-10" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
-								<a href="javascript:void(0);" class="custom-disabled">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-10" id="other" class="features" >
+								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-hand-o-right"></i></div>
 									<span class="hidden-sm hidden-xs">Others</span>
 								</a>
 							</li>
 						</ul>
 					</nav>
+					<script>
+						$(".features").hide();
+					</script>
+					<c:forEach items="${enabledFeatures}" var="feature">
+						<script>
+						var feature = '${feature}';
+						if (feature === 'all') { $(".features").show(); } else { $("#"+feature).show();}
+						</script>
+					</c:forEach>
+					<script>
+					$('.tabs-style-topline nav li').click(function(){
+						if($(this).attr('data-section') == "newrequest"){
+							$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
+							$(this).addClass('tab-current-newreq');
+							$('.content-wrap section.newreq').removeClass('content-current-newreq');
+							$($(this).data('newreq-section')).addClass('content-current-newreq');
+						}
+					});
+					</script>
 					<div class="content-wrap">
-						<section id="section-newrequest-1"  class="content-current-newreq">
+						<section id="section-newrequest-1"  class="newreq content-current-newreq">
 							<div class="visible-xs visible-sm">Grievance Redressal</div>
 							<div class="msg">
 								<header>
@@ -266,7 +291,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-2">
+						<section id="section-newrequest-2" class="newreq">
 							<div class="visible-xs visible-sm">Property Tax</div>
 							<div class="msg">
 								<header>
@@ -297,7 +322,27 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-3">
+						
+						<section id="section-newrequest-11"  class="newreq">
+							<div class="visible-xs visible-sm">Water Charge Management</div>
+							
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/search/waterSearch/" target="_blank" class="col-sm-11 col-xs-10">Pay Charges</a>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/wtms/elastic/appSearch/" target="_blank" class="col-sm-11 col-xs-10">Pay Fees</a>
+									</div>
+								</header>
+							</div>
+						</section>
+						
+						<section id="section-newrequest-3" class="newreq">
 							<div class="visible-xs visible-sm">Building Plan Approval</div>
 							<div class="msg">
 								<header>
@@ -328,7 +373,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-4">
+						<section id="section-newrequest-4" class="newreq">
 							<div class="visible-xs visible-sm">Birth & Death</div>
 							<div class="msg">
 								<header>
@@ -359,7 +404,7 @@
 								</header>
 							</div-->
 						</section>
-						<section id="section-newrequest-5">
+						<section id="section-newrequest-5" class="newreq">
 							<div class="visible-xs visible-sm">Trade Licence</div>
 							<div class="msg">
 								<header>
@@ -383,7 +428,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-6">
+						<section id="section-newrequest-6" class="newreq">
 							<div class="visible-xs visible-sm">Professional Tax</div>
 							<div class="msg">
 								<header>
@@ -407,7 +452,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-7">
+						<section id="section-newrequest-7" class="newreq">
 							<div class="visible-xs visible-sm">Company Tax</div>
 							<div class="msg">
 								<header>
@@ -431,7 +476,7 @@
 								</header>
 							</div>
 						</section>
-						<section id="section-newrequest-8">
+						<section id="section-newrequest-8" class="newreq">
 							<div class="visible-xs visible-sm">Shops</div>
 							<div class="msg">
 								<header>
@@ -448,7 +493,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-9">
+						<section id="section-newrequest-9" class="newreq">
 							<div class="visible-xs visible-sm">Advertisement</div>
 							<div class="msg">
 								<header>
@@ -465,7 +510,7 @@
 								</header>
 							</div> 
 						</section>
-						<section id="section-newrequest-10">
+						<section id="section-newrequest-10" class="newreq">
 							<div class="visible-xs visible-sm">Others</div>
 							<div class="msg">
 								<header>

@@ -36,9 +36,6 @@
 	<query name="getFunctionaryByCode">
 	<![CDATA[select f from Functionary f where f.code=?]]></query>
 
-	<query name="getEgwStatusByModuleAndCode">
-	<![CDATA[select status from EgwStatus status where status.moduletype=? and status.code=?]]></query>
-
 	<query name="getAllActiveCounters">
 	<![CDATA[from org.egov.lib.security.terminal.model.Location loc where loc.isActive = 1 and loc.isLocation = 0 order by loc.name]]></query>
 	
@@ -60,22 +57,22 @@
 	<query name="getAccountDetailkeyByDetailKey">
 	<![CDATA[select a from Accountdetailkey a where a.detailkey=? and a.accountdetailtype.id=?]]></query>
 	
-	<query name="getallDepartment">
+	<query name="getAllDepartment">
 	<![CDATA[select d from  Department d order by name]]></query>
 	
-	<query name="getallFunction">
+	<query name="getAllFunction">
 	<![CDATA[select f from  CFunction f where f.isActive=1 and f.isNotLeaf=0  order by f.name]]></query>
 	
-	<query name="getallFunctionary">
+	<query name="getAllFunctionary">
 	<![CDATA[select f from Functionary f where f.isactive=1 order by f.name]]></query>
 	
-	<query name="getallFund">
+	<query name="getAllFund">
 	<![CDATA[select f from Fund f where f.isactive=1 and f.isnotleaf=0 order by f.name]]></query>
 	
-	<query name="getallFundsource">
+	<query name="getAllFundsource">
 	<![CDATA[select f  from Fundsource f where f.isactive=1 and f.isnotleaf=0 order by name]]></query>
 	
-	<query name="getallField">
+	<query name="getAllField">
 	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query>
 	
 	<query name="SERVICE_BY_ID">

@@ -60,4 +60,7 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
     @Query("from SubCategory sc where sc.active=true AND sc.category.id = :categoryId order by sc.description ")
     List<SubCategory> getAllActiveSubCategoryByCategoryId(@Param("categoryId") Long categoryId);
 
+    @Query("from SubCategory sc order by sc.description ")
+    List<SubCategory> getAllSubCategory();
+
 }

@@ -54,7 +54,6 @@
 		<property name="houseNo" column="HOUSENO" />
 		<property name="propertyAddress" column="ADDRESS" />
 		<many-to-one name="propTypeMstrID" class="org.egov.ptis.domain.entity.property.PropertyTypeMaster" 	column="PROPTYMASTER"/>
-		<property name="propUsageMstrID" column="PROP_USAGE_MASTER" />
 		<many-to-one name="zone" class="org.egov.infra.admin.master.entity.Boundary" column="ZONEID"/>
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary" column="WARDID"/>
 		<many-to-one name="street" class="org.egov.infra.admin.master.entity.Boundary" column="STREETID"/>
@@ -72,6 +71,7 @@
 		<property name="isExempted" column="ISEXEMPTED" />
 		<property name="source" column="SOURCE" />
 		<property name="alv" column="ALV"/>
+		<property name="mobileNumber" column="mobileno"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>

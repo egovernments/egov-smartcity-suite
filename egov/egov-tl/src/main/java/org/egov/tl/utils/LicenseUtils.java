@@ -92,6 +92,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -421,6 +423,13 @@ public class LicenseUtils {
         diffMonth = endMonth - startMonth;
         // adding one month in the total difference of month as both dates are included
         return diffMonth + 1;
+    }
+    
+    public static int getNumberOfDays(final java.util.Date expiryDate, final java.util.Date dateOfRenew) {
+      
+    	int days = Days.daysBetween(new LocalDate(expiryDate), new LocalDate(dateOfRenew)).getDays() ;
+        return days;
+      
     }
 
     public Installment getCurrInstallment(final Module module)

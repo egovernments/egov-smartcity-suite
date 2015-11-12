@@ -411,7 +411,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
                  * persistenceService.setSessionFactory(new SessionFactory());
                  * persistenceService.setType(EmployeeServiceImpl.class);
                  */
-                List<EmployeeView> list = eisService.getPersistenceService().findAllBy(
+                List<EmployeeView> list = persistenceService.findAllBy(
                         " from EmployeeView ev where upper(ev.employeeCode) like ? ", code);
                 Iterator itr = list.iterator();
                 EmployeeView ev = null;

@@ -125,6 +125,7 @@ public abstract class License extends StateAware {
 
     private BigDecimal tradeArea_weight; 
     private UnitOfMeasurement uom;
+    private boolean legacy;
     
     public abstract String generateApplicationNumber(String runningNumber);
 
@@ -850,4 +851,12 @@ public abstract class License extends StateAware {
 	public void setLicenseAppType(LicenseAppType licenseAppType) {
 		this.licenseAppType = licenseAppType;
 	}
+
+    public boolean isLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(boolean legacy) {
+        this.legacy = legacy;
+    }
 }

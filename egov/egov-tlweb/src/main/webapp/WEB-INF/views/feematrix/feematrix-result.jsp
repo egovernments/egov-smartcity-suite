@@ -8,7 +8,6 @@
       <thead>
         <th><spring:message code="lbl.uomfrom" /></th>
         <th><spring:message code="lbl.uomto" /></th>
-        <th><spring:message code="lbl.fromdate" /></th>
         <th><spring:message code="lbl.amount" /></th>
         <th>action</th>
       </thead>
@@ -17,15 +16,14 @@
       <tbody>
       <c:forEach items="${feeMatrix.feeMatrixDetail}" var="feeMatrixDetail" varStatus="vs">
       <tr id="resultrow${vs.index}">
-        <td><input type="hidden"  name="feeMatrixDetail[${vs.index}]"  value="${feeMatrixDetail.id}" />
-        <input type="text"  name="feeMatrixDetail[${vs.index}].uomFrom"  value="${feeMatrixDetail.uomFrom}" class="form-control text-right patternvalidation"
-            data-pattern="number" maxlength="8" /></td>
-        <td><input type="text"  name="feeMatrixDetail[${vs.index}].uomTo" value="${feeMatrixDetail.uomTo}" class="form-control text-right patternvalidation"
-            data-pattern="number" maxlength="8"  /></td>
-        <td><input type="text"  name="feeMatrixDetail[${vs.index}].fromDate" value="<fmt:formatDate pattern="dd/MM/yyyy" value="${feeMatrixDetail.fromDate}" />" class="form-control datepicker" data-date-end-date="0d"
-            data-inputmask="'mask': 'd/m/y'" /></td>
-        <td><input type="text"  name="feeMatrixDetail[${vs.index}].amount" value="${feeMatrixDetail.amount}"  class="form-control text-right patternvalidation"
+        <td><input type="hidden"  name="feeMatrixDetail[${vs.index}]" id="detailId" value="${feeMatrixDetail.id}" />
+        <input type="text"  name="feeMatrixDetail[${vs.index}].uomFrom"  id="uomFrom" value="${feeMatrixDetail.uomFrom}" class="form-control text-right patternvalidation"
+            data-pattern="number" maxlength="8" readonly="readonly" /></td>
+        <td><input type="text"  name="feeMatrixDetail[${vs.index}].uomTo" id="uomTo" value="${feeMatrixDetail.uomTo}" class="form-control text-right patternvalidation"
+            data-pattern="number" maxlength="8" onchange="return checkValue(this);" /></td>
+        <td><input type="text"  name="feeMatrixDetail[${vs.index}].amount" id="amount" value="${feeMatrixDetail.amount}"  class="form-control text-right patternvalidation"
             data-pattern="number"  maxlength="8"  /></td>
+        <td><button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)">Delete Row</button></td>
      </tr>   
       </c:forEach>
        </tbody>
@@ -33,26 +31,23 @@
       <c:otherwise>
        <tbody>
        <tr id="resultrow0">
-       <td><input type="hidden"  name="feeMatrixDetail[0].id"/>
-        <input type="text"  name="feeMatrixDetail[0].uomFrom"   class="form-control text-right patternvalidation"
-            data-pattern="number" /></td>
-        <td><input type="text"  name="feeMatrixDetail[0].uomTo"  class="form-control text-right patternvalidation"
-            data-pattern="number" /></td>
-        <td><input type="text"  name="feeMatrixDetail[0].fromDate"  class="form-control datepicker" data-date-end-date="0d"
-            data-inputmask="'mask': 'd/m/y'"  /></td>
-        <td><input type="text"  name="feeMatrixDetail[0].amount"   class="form-control text-right patternvalidation"
+       <td><input type="hidden"  name="feeMatrixDetail[0].id" id="detailId"/>
+        <input type="text"  name="feeMatrixDetail[0].uomFrom"  id="uomFrom" value="0" class="form-control text-right patternvalidation"
+            data-pattern="number" readonly="readonly" /></td>
+        <td><input type="text"  name="feeMatrixDetail[0].uomTo" id="uomTo" class="form-control text-right patternvalidation"
+            data-pattern="number" onchange="return checkValue(this);"/></td>
+        <td><input type="text"  name="feeMatrixDetail[0].amount" id="amount"   class="form-control text-right patternvalidation"
             data-pattern="number"  /></td>
-         <td><span class="add-padding"><i class="fa fa-trash"></i></span></td>  
-         </tr>
+         <td><span class="add-padding"><i class="fa fa-trash">
+         	<button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)">Delete Row</button></i></span></td>  
+         </tr> 
          <tbody>
       </c:otherwise>
       </c:choose>
-    </table>
+    </table> 
   </div>
   <div class="col-sm-12 text-center">
     <button type="button" id="add-row" class="btn btn-primary">Add Row</button>
     <button type="button" id="save" class="btn btn-primary">Save</button>
   </div>
 </div>
-
-

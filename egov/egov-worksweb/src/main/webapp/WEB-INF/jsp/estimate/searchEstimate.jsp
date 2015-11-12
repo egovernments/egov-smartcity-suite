@@ -776,18 +776,7 @@ function jurisdictionSearchParameters(){
 																name="execDept" id="executingDepartment"
 																cssClass="selectwk"
 																list="dropdownData.executingDepartmentList" listKey="id"
-																listValue="name" value="%{execDept}" />														
-															<!-- <s:select headerKey="-1"
-																headerValue="%{getText('estimate.default.select')}"
-																name="execDept" id="executingDepartment"
-																cssClass="selectwk"
-																list="dropdownData.executingDepartmentList" listKey="id"
-																listValue="name" value="%{execDept}"
-																onChange="setupPreparedByList(this);" />
-															<egov:ajaxdropdown id="preparedBy"
-																fields="['Text','Value','Designation']"
-																dropdownId='preparedBy' optionAttributes='Designation'
-																url='estimate/ajaxEstimate-usersInExecutingDepartment.action' /> -->	
+																listValue="name" value="%{execDept}" />	
 														</s:else>
 													</td>
 													<s:if test="%{source=='wp'}">
@@ -851,7 +840,7 @@ function jurisdictionSearchParameters(){
 											</tr>
 											<tr>
 												<td class="greyboxwk">
-													Estimate Date From:
+													<s:text name="estimate.search.fromdate" /> :
 												</td>
 												<td class="greybox2wk">
 													<s:date name="fromDate" var="fromDateFormat"
@@ -871,7 +860,7 @@ function jurisdictionSearchParameters(){
 
 												</td>
 												<td width="17%" class="greyboxwk">
-													Estimate Date To:
+													<s:text name="estimate.search.todate" /> :
 												</td>
 												<td width="17%" class="greybox2wk">
 													<s:date name="toDate" var="toDateFormat"
@@ -1128,9 +1117,6 @@ function jurisdictionSearchParameters(){
 														<s:submit cssClass="buttonadd" value="SEARCH"
 															id="saveButton" name="button"
 															onClick="return validateSearch();enableSelect()" method="search"/>
-														<input type="button" class="buttonfinal" style="display:none;"
-															clcssClass="buttonadd" value="PRINT" id="printButton"
-															name="button" onclick="return checkPrint()" />
 													</div>
 												</td>
 											</tr>
@@ -1170,7 +1156,7 @@ function jurisdictionSearchParameters(){
 													<s:elseif
 														test="%{source=='createNegotiationNew' || source=='SearchEstimateforWO'}">
 														<tr>
-															<td><%@ include file='estimateNewSearch-list.jsp'%></td>
+															<td><%@ include file='estimateSearch-list.jsp'%></td>
 														</tr>
 														<tr>
 															<td>

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -50,75 +50,71 @@ import org.egov.portal.entity.enums.Priority;
 
 /**
  * Builder class for Citizen Inbox
- * 
+ *
  * @author rishi
  *
  */
 
 public class CitizenInboxBuilder {
 
-	private CitizenInbox citizenInbox;
+    private final CitizenInbox citizenInbox;
 
-	public CitizenInboxBuilder(MessageType messageType,String headerMessage,String detailedMessage,Date messageDate,User assignedToCitizen,Priority priority) {
-		citizenInbox = new CitizenInbox();
-		citizenInbox.setMessageType(messageType);
-		citizenInbox.setHeaderMessage(headerMessage);
-		citizenInbox.setDetailedMessage(detailedMessage);
-		citizenInbox.setMessageDate(messageDate);
-		citizenInbox.setAssignedToCitizen(assignedToCitizen);
-		citizenInbox.setPriority(priority);
-	}
+    public CitizenInboxBuilder(final MessageType messageType, final String headerMessage, final String detailedMessage,
+            final Date messageDate,
+            final User assignedToCitizen, final Priority priority) {
+        citizenInbox = new CitizenInbox();
+        citizenInbox.setMessageType(messageType);
+        citizenInbox.setHeaderMessage(headerMessage);
+        citizenInbox.setDetailedMessage(detailedMessage);
+        citizenInbox.setMessageDate(messageDate);
+        citizenInbox.setAssignedToCitizen(assignedToCitizen);
+        citizenInbox.setPriority(priority);
+    }
 
-	public CitizenInboxBuilder module(Module module) {
-		citizenInbox.setModule(module);
-		return this;
-	}
-	
-	public CitizenInboxBuilder identifier(String identifier) {
-		citizenInbox.setIdentifier(identifier);
-		return this;
-	}
+    public CitizenInboxBuilder module(final Module module) {
+        citizenInbox.setModule(module);
+        return this;
+    }
 
-	public CitizenInboxBuilder link(String link) {
-		citizenInbox.setLink(link);
-		return this;
-	}
+    public CitizenInboxBuilder identifier(final String identifier) {
+        citizenInbox.setIdentifier(identifier);
+        return this;
+    }
 
-	public CitizenInboxBuilder state(State state) {
-		citizenInbox.setState(state);
-		return this;
-	}
+    public CitizenInboxBuilder link(final String link) {
+        citizenInbox.setLink(link);
+        return this;
+    }
 
-	public CitizenInboxBuilder status(String status) {
-		citizenInbox.setStatus(status);
-		return this;
-	}
+    public CitizenInboxBuilder state(final State state) {
+        citizenInbox.setState(state);
+        return this;
+    }
 
-	public CitizenInbox build() throws ApplicationRuntimeException {
-		validate();
-		citizenInbox.setRead(false);
-		return citizenInbox;
-	}
+    public CitizenInboxBuilder status(final String status) {
+        citizenInbox.setStatus(status);
+        return this;
+    }
 
-	private void validate() throws ApplicationRuntimeException {
-		if (citizenInbox.getMessageType() == null) {
-			throw new ApplicationRuntimeException("Message Type is mandatory");
-		}
-		if (citizenInbox.getHeaderMessage() == null) {
-			throw new ApplicationRuntimeException("Header Message is mandatory");
-		}
-		if (citizenInbox.getDetailedMessage() == null) {
-			throw new ApplicationRuntimeException("Detailed Message is mandatory");
-		}
-		if (citizenInbox.getMessageDate() == null) {
-			throw new ApplicationRuntimeException("Message Date is mandatory");
-		}
-		if (citizenInbox.getAssignedToCitizen() == null) {
-			throw new ApplicationRuntimeException("Assigned To Citizen is mandatory");
-		}
-		if (citizenInbox.getPriority() == null) {
-			throw new ApplicationRuntimeException("Priority is mandatory");
-		}
-	}
+    public CitizenInbox build() throws ApplicationRuntimeException {
+        validate();
+        citizenInbox.setRead(false);
+        return citizenInbox;
+    }
+
+    private void validate() throws ApplicationRuntimeException {
+        if (citizenInbox.getMessageType() == null)
+            throw new ApplicationRuntimeException("Message Type is mandatory");
+        if (citizenInbox.getHeaderMessage() == null)
+            throw new ApplicationRuntimeException("Header Message is mandatory");
+        if (citizenInbox.getDetailedMessage() == null)
+            throw new ApplicationRuntimeException("Detailed Message is mandatory");
+        if (citizenInbox.getMessageDate() == null)
+            throw new ApplicationRuntimeException("Message Date is mandatory");
+        if (citizenInbox.getAssignedToCitizen() == null)
+            throw new ApplicationRuntimeException("Assigned To Citizen is mandatory");
+        if (citizenInbox.getPriority() == null)
+            throw new ApplicationRuntimeException("Priority is mandatory");
+    }
 
 }

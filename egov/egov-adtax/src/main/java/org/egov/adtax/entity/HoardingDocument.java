@@ -143,6 +143,11 @@ public class HoardingDocument extends AbstractAuditable {
     public void setFiles(final Set<FileStoreMapper> files) {
         this.files = files;
     }
+    
+    public void addFiles(final Set<FileStoreMapper> files) {
+        this.files.addAll(files);
+    }
+    
 
     public MultipartFile[] getAttachments() {
         return attachments;

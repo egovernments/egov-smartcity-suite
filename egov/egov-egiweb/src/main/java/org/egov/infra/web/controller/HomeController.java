@@ -41,7 +41,6 @@ package org.egov.infra.web.controller;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +61,6 @@ import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -102,10 +100,6 @@ public class HomeController {
 
     @Autowired
     private CityService cityService;
-
-    @Autowired
-    @Qualifier("manifest")
-    private Manifest manifest;
 
     @RequestMapping
     public String showHome(final HttpSession session, final HttpServletRequest request,
@@ -185,11 +179,11 @@ public class HomeController {
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
-        final String appVersion = manifest.getMainAttributes().getValue("Specification-Version");
-        final String appBuildNo = manifest.getMainAttributes().getValue("Implementation-Version");
-        modelData.addAttribute("app_version", appVersion);
-        modelData.addAttribute("app_buildno", appBuildNo);
-        session.setAttribute("app_release_no", appVersion + "_" + appBuildNo);
+        modelData.addAttribute("app_version", applicationProperties.appVersion());
+        modelData.addAttribute("app_buildno", applicationProperties.appBuildNo());
+        modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
+        modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPassworResetRequired(user));
+        session.setAttribute("app_release_no", applicationProperties.appVersion() + "_" + applicationProperties.appBuildNo());
         return "home";
     }
 
@@ -289,6 +283,10 @@ public class HomeController {
         submenuItem.getItems().add(submenu);
 
         return submenu;
+    }
+
+    private boolean checkDefaultPassworResetRequired(final User user) {
+        return passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword());
     }
 
 }

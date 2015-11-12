@@ -55,7 +55,7 @@
 				</div>
 			</div>
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
-				
+				<input type="text"  id="citizenRole" value="${citizenRole}" />
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
@@ -68,17 +68,24 @@
 	<input type="button" class="btn btn-primary" id="viewWorkOrder" value="Edit" onclick="showEdit('<c:out value="${waterConnectionDetails.connection.consumerCode}" />')"/>
 	</c:when>
 	<c:otherwise>
-	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && checkOperator }">
+	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && (checkOperator ) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if>
-	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && checkOperator }">
+	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && (checkOperator) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
+	
+	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && ( citizenRole && !checkOperator) }">
+		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
+	</c:if>
+	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && (citizenRole && !checkOperator) }">
+		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
+	</c:if>
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED' && waterConnectionDetails.status.code != 'VERIFIED' 
-	&& waterConnectionDetails.status.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy && waterConnectionDetails.applicationType.code !='CLOSINGCONNECTION'}">
+	&& waterConnectionDetails.status.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy && !citizenRole && waterConnectionDetails.applicationType.code !='CLOSINGCONNECTION'}">
 		<button type="submit" class="btn btn-primary" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
 	</c:if>
-	<c:if test="${!legacy&& (waterConnectionDetails.status.code == 'SANCTIONED' || waterConnectionDetails.status.code == 'WORKORDERGENERATED')}">
+	<c:if test="${!legacy &&  !citizenRole && (waterConnectionDetails.status.code == 'SANCTIONED' || waterConnectionDetails.status.code == 'WORKORDERGENERATED')}">
 		<button type="submit" class="btn btn-primary" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
 	</c:if>
 	</c:otherwise>

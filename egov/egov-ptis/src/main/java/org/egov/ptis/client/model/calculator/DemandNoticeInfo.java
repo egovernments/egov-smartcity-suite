@@ -29,8 +29,10 @@ public class DemandNoticeInfo {
     private ReportUtil reportUtil;
     private PropertyWiseConsumptions propertyWiseConsumptions;
     private String billPeriod;
-
-    @Autowired
+    private Boolean isVacancyRemissionDone;
+    
+    
+	@Autowired
     @Qualifier("cityService")
     private CityService cityService;
 
@@ -196,4 +198,11 @@ public class DemandNoticeInfo {
         this.cityService = cityService;
     }
 
+    public Boolean getIsVacancyRemissionDone() {
+		return isVacancyRemissionDone;
+	}
+
+	public void setIsVacancyRemissionDone(Boolean isVacancyRemissionDone) {
+		this.isVacancyRemissionDone = isVacancyRemissionDone;
+	}
 }

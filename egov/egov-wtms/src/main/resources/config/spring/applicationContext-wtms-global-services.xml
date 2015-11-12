@@ -57,5 +57,6 @@
 	</bean>
 	
     <bean id="applicationWorkflowCustomDefaultImpl" class="org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype" />
+     <bean id="dcbdemandService" class="org.egov.dcb.service.DCBServiceImpl" scope="prototype" />
 	
 </beans>

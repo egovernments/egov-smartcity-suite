@@ -67,9 +67,8 @@
         </many-to-one>
          -->
         
-       	<many-to-one name="property" fetch="join"
-			class="org.egov.ptis.domain.entity.property.PropertyImpl" column="id_property"
-			unique="true" cascade="none" />
+       	<many-to-one name="property" class="org.egov.ptis.domain.entity.property.PropertyImpl" column="id_property" fetch="select"
+			unique="true"/>
 			
 			
 			

@@ -2,19 +2,35 @@ package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+
 @SuppressWarnings("serial")
 public class OwnerDetails implements Serializable {
 
+	@JsonIgnore
 	private String aadhaarNo;
+	@JsonIgnore
 	private String salutationCode;
+	@JsonIgnore
 	private String name;
+	@JsonIgnore
 	private String gender;
+	@JsonIgnore
 	private String mobileNumber;
+	
+	@JsonIgnore
 	private String emailId;
+	@JsonIgnore
 	private String guardianRelation;
+	@JsonIgnore
 	private String guardian;
 
-	public String getAadhaarNo() {
+	private String ownerName;
+	
+	private String mobileNo;
+
+	public String getAadhaarNo() {  
 		return aadhaarNo;
 	}
 
@@ -83,6 +99,22 @@ public class OwnerDetails implements Serializable {
 		return "OwnerFieldDetails [aadhaarNo=" + aadhaarNo + ", salutationCode=" + salutationCode + ", name="
 				+ name + ", gender=" + gender + ", mobileNumber=" + mobileNumber + ", emailId=" + emailId
 				+ ", guardianRelation=" + guardianRelation + ", guardian=" + guardian + "]";
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getMobileNo() {
+		return mobileNo;
+	}
+
+	public void setMobileNo(String mobileNo) {
+		this.mobileNo = mobileNo;
 	}
 
 }

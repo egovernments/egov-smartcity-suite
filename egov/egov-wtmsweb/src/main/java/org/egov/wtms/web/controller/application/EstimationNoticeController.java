@@ -116,12 +116,13 @@ public class EstimationNoticeController {
             else
                 reportParams.put("applicationType",
                         WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-            reportParams.put("cityName", session.getAttribute("cityname"));
+            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("estimationDate",
                     formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
             reportParams.put("estimationCharges", waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
             reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
+            reportParams.put("totalCharges", waterConnectionDetails.getDonationCharges()+ waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("address", assessmentDetails.getPropertyAddress());

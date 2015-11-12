@@ -47,7 +47,7 @@ jQuery(document).ready(function($)
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '/pgr/complaint/router/complaintTypes?complaintTypeName=%QUERY',
+			url: '/pgr/complaint/search/complaintTypes?complaintTypeName=%QUERY',
 			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (ct) {

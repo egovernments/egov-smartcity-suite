@@ -1,0 +1,1 @@
+alter table eg_action add unique (name);

@@ -44,29 +44,14 @@
 	<head>
 		<title>Trade License Certificate</title>
 		<script>
-			function printLicense(){
-				document.getElementById('printDiv').style.display = 'none';
-   				window.print();
-			}
-      
-	      /* function submitandclose(){
-		      var printcomplete=confirm("Are you sure License Certificate print completed?","YES","NO");
-		      if(printcomplete) {
-		      	document.getElementById('workflowBean.actionName').value='generatedcertificate';
-		      	return true;
-		      }else{
-		      	return false;
-		      }	      
-	      }
-       */
+		function printDiv(divName) {
+		    var printContents = document.getElementById(divName).innerHTML;
+		    var originalContents = document.body.innerHTML;
+		    document.body.innerHTML = printContents;
+		    window.print();
+		    document.body.innerHTML = originalContents;
+		}
 		</script>
-		<%-- <% 
-			String cityUrl = (String) session.getAttribute("cityurl");
-		   	CityWebsiteDAO cityWebsiteDAO = new CityWebsiteDAO();
-			CityWebsite cityWebsite = cityWebsiteDAO.getCityWebSiteByURL(cityUrl);
-			String cityName = cityWebsite.getCityName();
-			String logoName = cityWebsite.getLogo();
-		%> --%>
 	</head>
 	<body onload="refreshInbox()">
 		<div id="content">
@@ -74,6 +59,7 @@
 				<s:form name="certificateform" action="viewTradeLicense" theme="simple">
 				<s:token/>
 					<s:push value="model">
+					<div id="main">
 						<table width="100%" border="0" cellpadding="3" cellspacing="3" style="margin-left: 14px; margin-right: 14px; font-size: 13px">
 							<tr>
 								<td colspan="4" align="center">
@@ -222,19 +208,15 @@
 								</td>
 							</tr>
 						</table>
+					</div>	
 						<s:hidden name="model.id" />
 						<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" />
 						<div align="center" id="printDiv">
 							<table width="30%" align="center">
 								<tr>
 									<td>
-										<input type="button" id="print" value="Print" onclick="return printLicense()" />
+										<input type="button" id="print" value="Print" onclick="printDiv('main')" />
 									</td>
-								<%-- 	<s:if test="%{!#parameters.duplicate}">
-										<td>
-											<s:submit value="Print Complete" id="printcmplt" method="approve" onclick="return submitandclose();" />
-										</td>
-									</s:if> --%>
 									<td>
 										<input type="button" id="close" value="Close" onclick="javascript:window.close();" />
 									</td>

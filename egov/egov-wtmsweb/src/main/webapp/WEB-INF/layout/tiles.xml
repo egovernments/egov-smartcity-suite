@@ -147,6 +147,17 @@
         <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dCBReport-search.jsp"/>
     </definition>
+    
+          <definition name="connectionReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.connectionreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/connectionReport-search.jsp"/>
+    </definition>
+    
+         <definition name="currentDcb-new" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/currentViewDcb-new.jsp"/>
+    </definition>
+    
      <definition name="newconnection-dataEntryEditForm" extends="base_layout">
         <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>
@@ -154,6 +165,22 @@
     <definition name="chairperson-details" extends="base_layout">
         <put-attribute name="page-title" value="title.chair.person.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/chairperson-details.jsp"/>
+    </definition>
+    <definition name="donation-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master.jsp"/>
+    </definition>
+     <definition name="waterRates-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master.jsp"/>
+    </definition>
+      <definition name="waterRates-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-success.jsp"/>
+    </definition>
+    <definition name="donation-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
     </definition>
     
 </tiles-definitions>

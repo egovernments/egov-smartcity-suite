@@ -90,7 +90,7 @@ function getZoneWard(){
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{boundary.id}" class="form-control" required="required"/>
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{boundary.id}" class="form-control" />
     </div>
 </div>
 <div class="form-group">
@@ -108,10 +108,10 @@ function getZoneWard(){
     <div class="col-sm-3 add-margin">
         <s:select headerKey="-1" headerValue="%{getText('default.select')}" name="ownershipType"
 										id="ownershipType" listKey="key" listValue="value"
-										list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}" required="required" />
+										list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}"  />
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.address.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-         <s:textarea name="address" id="address" maxlength="250" onBlur="checkLength(this,250)" class="form-control" required="required" />
+         <s:textarea name="address" id="address" maxlength="250" onBlur="checkLength(this,250)" class="form-control"  />
     </div>
 </div>

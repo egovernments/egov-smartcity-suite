@@ -58,8 +58,8 @@ public class ConnectionSearchAdaptor implements JsonSerializer<SearchResult> {
         final JsonArray jsonArray = new JsonArray();
         HashMap<String, Object> clausesMap = new HashMap<String, Object>(0);
         HashMap<String, Object> searchableMap = new HashMap<String, Object>(0);
-        for (Document document : searchResult.getDocuments()) {
-            JsonObject jsonObject = new JsonObject();
+        for (final Document document : searchResult.getDocuments()) {
+            final JsonObject jsonObject = new JsonObject();
             clausesMap = (HashMap) document.getResource().get("clauses");
             jsonObject.addProperty("consumercode", clausesMap.get("consumercode").toString());
             jsonObject.addProperty("assessmentnumber", clausesMap.get("propertyid").toString());

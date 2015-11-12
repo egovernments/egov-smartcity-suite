@@ -43,7 +43,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -132,7 +134,13 @@ public class AjaxController {
     public @ResponseBody String getPositions(@RequestParam final Integer approvalDepartment,
             @RequestParam final Integer approvalDesignation, final HttpServletResponse response) throws IOException {
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDesignation != null && approvalDesignation != 0) {
-            final List<User> users = eisService.getUsersByDeptAndDesig(approvalDepartment, approvalDesignation, new Date());
+            final Set<User> users = new HashSet<>();
+            eisService.getUsersByDeptAndDesig(approvalDepartment, approvalDesignation, new Date()).stream().forEach(user -> {
+                user.getRoles().stream().forEach(role -> {
+                    if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
+                        users.add(user);
+                });
+            });
             // below line should be removed once the commonService.getPosistions
             // apis query joins and returns user
             final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();

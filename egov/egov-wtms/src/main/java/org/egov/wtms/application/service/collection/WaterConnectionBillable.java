@@ -40,12 +40,16 @@
 package org.egov.wtms.application.service.collection;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
+import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
@@ -72,17 +76,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WaterConnectionBillable extends AbstractBillable implements Billable {
 
-    private static final String STRING_DEPARTMENT_CODE = "R";
+    private static final String STRING_DEPARTMENT_CODE = "REV";
     private static final String STRING_SERVICE_CODE = "WT";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
+    private static final String DISPLAY_MESSAGE = "Water Charge Collection";
     private WaterConnectionDetails WaterConnectionDetails;
     private AssessmentDetails assessmentDetails;
     private Long userId;
     private EgBillType billType;
     private Boolean isCallbackForApportion = Boolean.FALSE;
     private String referenceNumber;
+    private String transanctionReferenceNumber;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -90,6 +96,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private UserService userService;
     @Autowired
     private EgBillDao egBillDAO;
+    @Autowired
+    private EgDemandDao egDemandDAO;
 
     @Autowired
     private ModuleService moduleService;
@@ -115,8 +123,14 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public List<EgDemand> getAllDemands() {
-        // TODO Auto-generated method stub
-        return null;
+        List<EgDemand> demands = null;
+       final Long demandIds = getCurrentDemand().getId();
+        if (demandIds != null ) {
+            demands = new ArrayList<EgDemand>();
+            
+                demands.add(egDemandDAO.findById(Long.valueOf(demandIds.toString()), false));
+        }
+        return demands;
     }
 
     @Override
@@ -162,7 +176,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUNCTIONARY_CODE;
+        return DEFAULT_FUND_SRC_CODE;
     }
 
     @Override
@@ -220,22 +234,22 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getDescription() {
         if (null != getWaterConnectionDetails().getConnection().getConsumerCode())
-            return "Water Tax H.S.C No: " + getWaterConnectionDetails().getConnection().getConsumerCode();
+            return "Water Charge H.S.C No: " + getWaterConnectionDetails().getConnection().getConsumerCode();
         else
-            return "Water Tax Application Number: " + getWaterConnectionDetails().getApplicationNumber();
+            return "Water Charge Application Number: " + getWaterConnectionDetails().getApplicationNumber();
     }
 
     @Override
     public String getDisplayMessage() {
-        return "Water Tax Collection";
+        return DISPLAY_MESSAGE;
     }
 
     @Override
     public String getCollModesNotAllowed() {
-        if(ConnectionStatus.ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus()))
-            return "bankchallan";
-        else
-            return "bankchallan,dd,cheque";
+            
+            StringBuilder collectionModesNotAllowed = new StringBuilder();
+            collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK);
+            return collectionModesNotAllowed.toString();
     }
 
     @Override
@@ -289,7 +303,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     public String buildAddressDetails(final AssessmentDetails assessmentDetails) {
         final BoundaryDetails boundaryDetails = assessmentDetails.getBoundaryDetails();
-        final StringBuffer address = new StringBuffer();
+        final StringBuilder address = new StringBuilder();
         if (boundaryDetails.getZoneName() != null)
             address.append(boundaryDetails.getZoneName());
         if (boundaryDetails.getWardName() != null)
@@ -318,5 +332,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 }

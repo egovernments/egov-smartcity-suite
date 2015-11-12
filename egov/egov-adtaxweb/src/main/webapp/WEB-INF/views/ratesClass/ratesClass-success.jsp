@@ -49,8 +49,12 @@
                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
             </c:if>
 			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-				</div> 
+				<div class="panel-heading ">
+					<div class="panel-title">
+						<strong><spring:message code="title.ratesClass.details"/></strong>
+					</div>
+				</div>
+				
 				<div class="panel-body "> 										
 					<div class="row add-border">
                     	<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.ratesClass.name"/></div>
@@ -68,11 +72,11 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-				<c:if test="${not empty message}">
+				<%-- <c:if test="${not empty message}">
 					<button type="submit" id="buttonEdit" class="btn btn-success">
 						<spring:message code="lbl.edit" />
 					</button>
-				</c:if>
+				</c:if> --%>
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
 	       				<spring:message code="lbl.close"/>
 	       			</button>

@@ -207,6 +207,7 @@ public class CollectionHelper {
 				}
 			}
 		}
+		billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
 		return billInfoImpl;
 	}
 

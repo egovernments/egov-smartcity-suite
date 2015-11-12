@@ -143,5 +143,15 @@ public interface BillReceiptInfo {
      * @return the collectiontype
      */
     public abstract String getCollectionType();
+    
+    /**
+     * @return manual receipt number for back dated receipt
+     */
+    public abstract String getManualReceiptNumber();
+    
+    /**
+     * @return manual receipt date for back dated receipt
+     */
+    public abstract Date getManualReceiptDate();
 
 }

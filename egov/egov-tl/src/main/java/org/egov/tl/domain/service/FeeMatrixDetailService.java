@@ -36,5 +36,15 @@ public class FeeMatrixDetailService  {
 		
 	}
 	
+	public FeeMatrixDetail findByFeeMatrixDetailId(Long feeMatrixDetailId) {
+            FeeMatrixDetail feeMatrixDetail = feeMatrixDetailRepository.findOne(feeMatrixDetailId);  
+            return feeMatrixDetail;  
+        }
+	
+	@Transactional
+        public void delete(final FeeMatrixDetail feeMatrixDetail) {
+	    feeMatrixDetailRepository.delete(feeMatrixDetail);
+        } 
+	
 	
 }

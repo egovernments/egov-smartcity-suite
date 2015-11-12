@@ -98,7 +98,8 @@
 							</tr>
 							
 							<tr>
-							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) || 
+								roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:right">
 										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
@@ -125,6 +126,75 @@
 							</tr>
 						</s:form>
 					</table>			
+					<table border="0" cellspacing="0" cellpadding="0" width="100%">
+						<s:form action="searchProperty" name="mobileNoform" theme="simple" id="mobileNoform">
+							<tr>
+								<td width="100%" colspan="4" class="headingbg">												
+									<div class="headingbg">					
+										<s:text name="search.mobile" />									
+									</div>									
+								</td>
+							</tr>
+							<tr><td colspan="4"><br/></td></tr>							
+							<tr>
+								<td class="bluebox">&nbsp;</td>
+								<td class="bluebox">
+									<s:text name="MobileNumber" />:
+								</td>
+								
+								<td class="bluebox">
+									<s:textfield name="mobileNumber" id="mobileNumber" value="%{mobileNumber}" maxlength="15"/>
+								</td>
+								<td class="bluebox">&nbsp;</td>
+							</tr>	
+							
+							<tr>
+							<td class="greybox">&nbsp;</td>
+								<td class="greybox" colspan="2">
+								   <br/>
+									<div class="greybox" style="text-align:center">
+										<s:hidden id="mode" name="mode" value="mobileNo"></s:hidden>
+										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByMobileNumber.action', 'mobileNoform');"></s:submit>
+									</div>
+								</td>
+							</tr>
+						</s:form>
+					</table>
+					<table border="0" cellspacing="0" cellpadding="0" width="100%">
+						<s:form action="searchProperty" name="doorNoform" theme="simple" id="doorNoform">
+							<tr>
+								<td width="100%" colspan="4" class="headingbg">												
+									<div class="headingbg">					
+										<s:text name="search.door" />									
+									</div>									
+								</td>
+							</tr>
+							<tr><td colspan="4"><br/></td></tr>							
+							<tr>
+								<td class="bluebox">&nbsp;</td>
+								<td class="bluebox">
+									<s:text name="doorNo" />:
+								</td>
+								
+								<td class="bluebox">
+									<s:textfield name="doorNo" id="doorNo" value="%{doorNo}" maxlength="15"/>
+								</td>
+								<td class="bluebox">&nbsp;</td>
+							</tr>	
+							
+							<tr>
+							<td class="greybox">&nbsp;</td>
+								<td class="greybox" colspan="2">
+								   <br/>
+									<div class="greybox" style="text-align:center">
+										<s:hidden id="mode" name="mode" value="doorNo"></s:hidden>
+										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByDoorNo.action', 'doorNoform');"></s:submit>
+									</div>
+								</td>
+							</tr>
+						</s:form>
+					</table>
+					
 
 					<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<s:form name="zoneform" theme="simple" id="zoneform">
@@ -277,9 +347,9 @@
 					  <td class="bluebox" style="text-align:center;" colspan="4">
 					   <br/>
 					    From <span class="mandatory1">*</span>:  &nbsp;&nbsp;&nbsp; 
-					    <s:textfield name="fromDemand"  />
+					    <s:textfield name="fromDemand" onblur="validNumber(this);checkZero(this,'From Demand');" />
 					    &nbsp;&nbsp;&nbsp; To <span class="mandatory1">*</span>: &nbsp;&nbsp;&nbsp;
-					     <s:textfield name="toDemand"  />
+					     <s:textfield name="toDemand" onblur="validNumber(this);checkZero(this,'To Demand');" />
 					  </td>
 					</tr>
 					<tr>

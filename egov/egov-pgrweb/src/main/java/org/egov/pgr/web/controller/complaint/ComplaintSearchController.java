@@ -41,6 +41,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -74,9 +75,10 @@ public class ComplaintSearchController {
 
     private final ComplaintStatusService complaintStatusService;
 
-    private final ComplaintTypeService complaintTypeService;
-
     private final AssignmentService assignmentService;
+
+    private final DepartmentService departmentService;
+
     private final SecurityUtils securityUtils;
 
     private static final Logger logger = LoggerFactory.getLogger(ComplaintSearchController.class);
@@ -88,19 +90,19 @@ public class ComplaintSearchController {
     public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService,
             final ComplaintStatusService complaintStatusService, final ComplaintTypeService complaintTypeService,
             final AssignmentService assignmentService, final SecurityUtils securityUtils,
-            final CityService cityService) {
+            final CityService cityService, final DepartmentService departmentService) {
         this.searchService = searchService;
         this.complaintService = complaintService;
         this.complaintStatusService = complaintStatusService;
-        this.complaintTypeService = complaintTypeService;
         this.assignmentService = assignmentService;
         this.securityUtils = securityUtils;
         this.cityService = cityService;
+        this.departmentService = departmentService;
     }
 
     @ModelAttribute("complaintTypeDepartments")
     public List<Department> complaintTypeDepartments() {
-        return complaintTypeService.getAllComplaintTypeDepartments();
+        return departmentService.getAllDepartments();
     }
 
     @ModelAttribute("complaintStatuses")

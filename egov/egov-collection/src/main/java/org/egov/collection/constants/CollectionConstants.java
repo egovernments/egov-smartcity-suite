@@ -164,12 +164,12 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_SERVICES_BY_CODES = "getActiveServiceByCodes";
     public static final String QUERY_ACTIVE_SERVICES_BY_TYPE = "getActiveServiceByType";
     public static final String QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE";
+    public static final String QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE = "RECEIPTS_BY_DATE_AND_SERVICECODE";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
     public static final String QUERY_CREATEDBYUSERS_OF_RECEIPTS = "CREATEDBYUSERS_OF_RECEIPTS";
     public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
-    public static final String QUERY_STATUS_BY_MODULE_AND_CODE = "getEgwStatusByModuleAndCode";
     public static final String QUERY_SERVICES_BY_TYPE = "getServicesByType";
     public static final String QUERY_COLLECTION_SERVICS = "getCollectionServices";
     public static final String QUERY_FUNCTIONARY_BY_CODE = "getFunctionaryByCode";
@@ -189,17 +189,18 @@ public final class CollectionConstants {
     public static final String QUERY_ALL_STATUSES_FOR_MODULE = "getAllStatusesForModule";
     public static final String QUERY_STATUSES_FOR_MODULE_AND_CODES = "getStatusesForModuleAndCodes";
 
-    public static final String QUERY_ALL_DEPARTMENTS = "getallDepartment";
+    public static final String QUERY_ALL_DEPARTMENTS = "getAllDepartment";
     public static final String QUERY_ALL_LOCATIONS = "getAllLocations";
-    public static final String QUERY_ALL_FUNCTION = "getallFunction";
-    public static final String QUERY_ALL_FUNCTIONARY = "getallFunctionary";
-    public static final String QUERY_ALL_FUND = "getallFund";
-    public static final String QUERY_ALL_FUNDSOURCE = "getallFundsource";
-    public static final String QUERY_ALL_FIELD = "getallField";
+    public static final String QUERY_ALL_FUNCTION = "getAllFunction";
+    public static final String QUERY_ALL_FUNCTIONARY = "getAllFunctionary";
+    public static final String QUERY_ALL_FUND = "getAllFund";
+    public static final String QUERY_ALL_FUNDSOURCE = "getAllFundsource";
+    public static final String QUERY_ALL_FIELD = "getAllField";
     public static final String QUERY_VOUCHERHEADER_BY_VOUCHERNUMBER = "getVoucherHeaderByVoucherNumber";
     public static final String QUERY_GETFINANCIALYEARBYDATE = "getFinancialYearByDate";
     public static final String QUERY_GET_LOCATIONBYID = "getLocationById";
     public static final String QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID = "getContraVoucherbyVoucherHeaderId";
+    public static final String QUERY_GET_INSTRUMENTHEADER_BY_ID = "INSTRUMENTHEADERBYID";
 
     // Workflow actions
     public static final String WF_ACTION_CREATE_RECEIPT = "Create Receipt";
@@ -452,8 +453,9 @@ public final class CollectionConstants {
 
     public static final String PGI_BILLINGSERVICE_CONFIGKEY = "BILLINGSERVICEPAYMENTGATEWAY";
     public static final String COLLECTION_ROLEFORNONEMPLOYEE = "COLLECTIONROLEFORNONEMPLOYEE";
-    public static final String COLLECTION_WORKFLOWDEPARTEMENT = "COLLECTIONDEPARTMENTFORWORKFLOW";
+    public static final String COLLECTION_WORKFLOWDEPARTMENT = "COLLECTIONDEPARTMENTFORWORKFLOW";
     public static final String COLLECTION_DESIGNATIONFORCSCOPERATOR = "COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK";
+    public static final String COLLECTION_DEPARTMENT_COLLMODES = "COLLECTIONDEPARTMENTCOLLMODES";
 
     // AXIS payment gateway variables name
     public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA";
@@ -500,9 +502,8 @@ public final class CollectionConstants {
             put("dd", "DD");
         }
     };
- // Named query for dishonor changes
+    // Named query for dishonor changes
     public static final String QUERY_INSTRUMENT_DISHONOR_STATUSES = "INSTRUMENT_STATUS_FOR_DISHONOR";
     public static final String QUERY_DISHONOR_STATE_OWNERS = "DISHONOR_STATE_OWNERS";
-   
 
 }

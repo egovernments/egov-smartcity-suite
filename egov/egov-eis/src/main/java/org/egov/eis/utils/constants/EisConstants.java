@@ -43,6 +43,6 @@ public class EisConstants {
 
 	public static final String ROLE_EMPLOYEE = "Employee";
 	public static final String ANONYMOUS_EMPLOYEE = "anonymous";
-	public static final String DEFAULT_EMPLOYEE_PWD = "804Mqu@123";
+	public static final String DEFAULT_EMPLOYEE_PWD = "12345678";
 	
 }

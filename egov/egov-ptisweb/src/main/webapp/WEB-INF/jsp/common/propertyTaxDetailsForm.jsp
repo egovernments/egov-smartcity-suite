@@ -92,6 +92,17 @@
 		<td></td>
 		<td></td>
 	</tr>
-
+	<s:if test='%{propertyDetail.deviationPercentage != "" && propertyDetail.deviationPercentage != "-1"}'>
+		<tr>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="unauthorizedPenalty"></s:text> :</td>
+			<td class="greybox"><span class="bold">Rs. <s:text
+						name="format.money">
+						<s:param value="propertyTaxDetailsMap.unauthorisedPenalty" />
+					</s:text></span></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</s:if>
 
 </table>

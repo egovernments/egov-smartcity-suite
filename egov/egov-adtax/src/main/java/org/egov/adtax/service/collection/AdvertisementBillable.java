@@ -77,6 +77,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public static final String WARD = "Ward";
     public static final String ADDRESSTYPEASOWNER = "OWNER";
     private String referenceNumber;
+    private String transanctionReferenceNumber;
 
     @Autowired
     private ModuleService moduleService;
@@ -280,4 +281,14 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
+
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
+    }
+    
 }

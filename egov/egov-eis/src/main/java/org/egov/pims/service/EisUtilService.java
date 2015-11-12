@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/* eGov suite of products aim to improve the internal efficiency,transparency, 
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -69,33 +68,26 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-/**
- * @author DivyaShree
- */
 @Service("eisService")
 public class EisUtilService implements EISServeable {
     private static final Logger LOGGER = Logger.getLogger(EisUtilService.class);
     private final String EMPVIEWDEPTIDSLOGGEDINUSER = "EMPVIEW-DEPTIDS-LOGGEDINUSER";
 
     @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
     @Autowired
     private BoundaryService boundaryService;
+    
     @Autowired
     private PersonalInformationDAO personalInformationDAO;
     	
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    public void setPersistenceService(PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
 
     public List<Position> getPositionsForUser(Long user, Date date) {
 
@@ -110,7 +102,7 @@ public class EisUtilService implements EISServeable {
             }
 
             mainStr += " and ((a.toDate is null and a.fromDate<= ?) or (a.fromDate <= ? and a.toDate >= ?))";
-            positionList = (List) getPersistenceService().findAllBy(mainStr, user, date, date, date);
+            positionList = (List) persistenceService.findAllBy(mainStr, user, date, date, date);
 
         } catch (Exception e) {
             LOGGER.error("Exception while getting the getPositionsForUser=" + e.getMessage());
@@ -140,7 +132,7 @@ public class EisUtilService implements EISServeable {
             }
 
             mainStr += " and ((a.toDate is null and a.fromDate<= ?) or (a.fromDate <= ? and a.toDate >= ?))";
-            position = (Position) getPersistenceService().find(mainStr, userId, date, date, date);
+            position = (Position) persistenceService.find(mainStr, userId, date, date, date);
 
         } catch (Exception e) {
             LOGGER.error("Exception while getting the getPrimaryPositionForUser=" + e.getMessage());
@@ -163,7 +155,7 @@ public class EisUtilService implements EISServeable {
             }
 
             mainStr += " and ((emp.toDate is null and emp.fromDate<= ?) or (emp.fromDate <= ? and emp.toDate >= ?))";
-            user = (User) getPersistenceService().find(mainStr, positionId, date, date, date);
+            user = (User) persistenceService.find(mainStr, positionId, date, date, date);
         } catch (Exception e) {
             LOGGER.error("Exception while getting the getUserForPosition=" + e.getMessage());
             throw new ApplicationRuntimeException(e.getMessage(), e);
@@ -490,7 +482,7 @@ public class EisUtilService implements EISServeable {
         String filterByDept = appConfigValuesService.getAppConfigValue("EIS-PAYROLL", "FILTERBYDEPT", "NO");
         List<Department> deptlist = null;
         if (filterByDept != null && filterByDept.toUpperCase().equals("YES")) {
-            List<BigDecimal> deptList = getPersistenceService().findPageByNamedQuery("EMPVIEW-DEPTIDS-LOGGEDINUSER", 0,
+            List<BigDecimal> deptList = persistenceService.findPageByNamedQuery("EMPVIEW-DEPTIDS-LOGGEDINUSER", 0,
                     null, EgovThreadLocals.getUserId().intValue(), EgovThreadLocals.getUserId().intValue())
                     .getList();
             if (deptList.isEmpty())
@@ -502,11 +494,11 @@ public class EisUtilService implements EISServeable {
                         deptListInt.add(deptId.intValue());
                     }
                 }
-                deptlist = getPersistenceService().getSession().createCriteria(Department.class)
+                deptlist = persistenceService.getSession().createCriteria(Department.class)
                         .add(Restrictions.in("id", deptListInt)).list();
             }
         } else {
-            deptlist = getPersistenceService().getSession().createCriteria(Department.class).list();
+            deptlist = persistenceService.getSession().createCriteria(Department.class).list();
         }
         return deptlist;
     }
@@ -574,7 +566,7 @@ public class EisUtilService implements EISServeable {
                     qry.append(" and do.id=:doId ");
             }
             qry.append(" order by eee.name ");
-            Query query=getPersistenceService().getSession().createSQLQuery(qry.toString());
+            Query query=persistenceService.getSession().createSQLQuery(qry.toString());
             query.setDate("enteredDate", assignDate);
             if(null!=desigList && !desigList.isEmpty()){
                     query.setParameterList("desList",desigList);

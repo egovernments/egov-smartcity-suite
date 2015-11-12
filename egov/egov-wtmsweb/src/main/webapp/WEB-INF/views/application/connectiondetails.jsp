@@ -170,7 +170,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" maxlength="16" id="bplCardHolderName" path="bplCardHolderName" required="required"  />
+		<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="16" id="bplCardHolderName" path="bplCardHolderName" required="required"  />
 		<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
 	</div>
 </div>

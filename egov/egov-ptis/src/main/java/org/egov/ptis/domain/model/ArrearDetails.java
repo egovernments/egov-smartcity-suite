@@ -55,6 +55,7 @@ public class ArrearDetails implements Serializable{
 	private BigDecimal libraryCess;
 	private BigDecimal propertyTax;
 	private BigDecimal unAuthPenalty;
+	private BigDecimal chqBouncePenalty;
 	public BigDecimal getPenalty() {
 		return penalty;
 	}
@@ -108,6 +109,12 @@ public class ArrearDetails implements Serializable{
 		return "ArrearDetails [penalty=" + penalty + ", tax=" + tax + ", totalSum=" + totalSum + ", demandYear="
 				+ demandYear + ", educationCess=" + educationCess + ", libraryCess=" + libraryCess + ", propertyTax="
 				+ propertyTax + ", unAuthPenalty=" + unAuthPenalty + "]";
+	}
+	public BigDecimal getChqBouncePenalty() {
+		return chqBouncePenalty;
+	}
+	public void setChqBouncePenalty(BigDecimal chqBouncePenalty) {
+		this.chqBouncePenalty = chqBouncePenalty;
 	}
 	
 }

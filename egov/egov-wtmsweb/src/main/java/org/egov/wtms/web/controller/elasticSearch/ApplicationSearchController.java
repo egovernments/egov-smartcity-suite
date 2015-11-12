@@ -57,10 +57,12 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.entity.ApplicationSearchRequest;
 import org.egov.wtms.elasticSearch.service.ApplicationSearchService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,6 +76,9 @@ public class ApplicationSearchController {
     private final ApplicationSearchService applicationSearchService;
     private final SearchService searchService;
     private final CityService cityService;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
@@ -97,7 +102,8 @@ public class ApplicationSearchController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String newSearchForm() {
+    public String newSearchForm(final Model model) {
+        model.addAttribute("citizenRole", waterTaxUtils.getCitizenUserRole());
         return "applicationSearch-newForm";
     }
 

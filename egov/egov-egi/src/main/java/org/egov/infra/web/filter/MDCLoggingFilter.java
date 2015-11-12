@@ -48,6 +48,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.MDC;
 
 public class MDCLoggingFilter implements Filter {
@@ -60,10 +61,11 @@ public class MDCLoggingFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
         try {
-            MDC.put("ulbcode", EgovThreadLocals.getCityCode());
+            MDC.put("ulbcode", EgovThreadLocals.getCityName());
+            MDC.put("appname", WebUtils.currentContextPath(request));
             chain.doFilter(request, response);
         } finally {
-            MDC.remove("ulbcode");
+            MDC.clear();
         }
     }
 

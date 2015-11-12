@@ -128,6 +128,8 @@
 		<property name="companyDetails" column="COMPANY_DETAIL" />
 
 		<property name="rentalAgreement" column="rentalAgreement" type="boolean"/>
+		
+		<property name="legacy" column="islegacy" type="boolean" />
 
 		<property name="rentPaid" column="RENT_PAID" />
 		<property name="feeTypeStr" column="FEETYPETEXT" />

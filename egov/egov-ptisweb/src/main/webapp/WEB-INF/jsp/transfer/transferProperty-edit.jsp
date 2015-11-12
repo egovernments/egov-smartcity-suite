@@ -43,11 +43,10 @@
 <html>
 <head>
 <title><s:text name='transferProperty' /></title>
-<link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
@@ -240,7 +239,8 @@
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
 					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equals(userDesignation)}">
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equals(userDesignation) &&
+						  !@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equals(userDesignation)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
 							<td class="bluebox"><s:text name="docValue" /><span

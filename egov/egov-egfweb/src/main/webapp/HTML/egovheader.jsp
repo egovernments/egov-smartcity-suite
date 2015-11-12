@@ -52,16 +52,13 @@
 
 
 String cityurl=(String)session.getAttribute("cityurl");
-String cityname=(String)session.getAttribute("cityname");
+String cityname=(String)session.getAttribute("citymunicipalityname");
 String citynamelocal=(String)session.getAttribute("citynamelocal");
 
 String cityUrl="Hubli-Dharwad-headerLeftLogo";
 if(cityurl!=null)
 
 cityUrl="http://www."+cityurl+".gov.in";
-
- 
-System.out.println("City Name " + cityname +"   ***********   "+ citynamelocal);
 %>
 
 <div align="center">

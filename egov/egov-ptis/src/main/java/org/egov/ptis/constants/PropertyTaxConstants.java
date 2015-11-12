@@ -488,8 +488,9 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = 464912402295082366L;
 
         {
-            put(-2, "Basement-2");
-            put(-1, "Basement-1");
+            put(-3, "Basement-2");
+            put(-2, "Basement-1");
+            put(-1, "Stilt Floor");
             put(0, "Ground Floor");
             put(1, "1st floor");
             put(2, "2nd Floor");
@@ -547,6 +548,7 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_END = "END";
     public static final String WFLOW_ACTION_READY_FOR_PAYMENT = "Ready For Payment";
     public static final String WFLOW_ACTION_NEW = "NEW";
+    public static final String WFLOW_ACTION_NAME_DEMOLITION = "Demolition";
 
     // WORKFLOW property states
     public static final String WF_STATE_NEW = "New";
@@ -562,6 +564,10 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REVENUE_CLERK_APPROVED = "Revenue Clerk Approved";
     public static final String WF_STATE_COMMISSIONER_APPROVAL_PENDING = "Commissioner Approval Pending";
     public static final String WF_STATE_CLOSED = "Closed";
+    public static final String WF_STATE_ASSISTANT_APPROVAL_PENDING = "Assistant Approval Pending";
+    public static final String WF_STATE_REVENUE_INSPECTOR_REJECTED = "Revenue Inspector Rejected";
+    public static final String WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING = "Revenue Inspector Approval Pending";
+    
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -600,6 +606,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MODIFY_REASON_EDIT_OWNER = "EDIT_OWNER";
     public static final String PROPERTY_MODIFY_REASON_ADD_OR_ALTER = "ADD_OR_ALTER";
     public static final String PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY = "EDIT_DATA_ENTRY";
+    public static final String PROPERTY_MODIFY_REASON_FULL_DEMOLITION = "FULL DEMOLITION";
     public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
             PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
             PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
@@ -642,17 +649,20 @@ public interface PropertyTaxConstants {
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
     public static final String REVENUE_OFFICER_DESGN = "Revenue officer";
-    public static final String REVENUE_INSPECTOR_DESGN = "Revenue Inspector";
+    public static final String REVENUE_INSPECTOR_DESGN = "UD Revenue Inspector";
     public static final String REVENUE_CLERK_DESGN = "Revenue Clerk";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String BILL_COLLECTOR_DESGN = "Bill Collector";
     public static final String END_APPROVER_DESGN = "RO";
+    public static final String JUNIOR_ASSISTANT = "Junior Assistant";
+    public static final String SENIOR_ASSISTANT = "Senior Assistant";
 
     public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
     public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";
+    public static final String DEMOLITION = "DEMOLITION";
 
     // GIS
     public static final String GISCITY = "nmc";
@@ -1045,7 +1055,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND = "Assessment number not found";
     public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED = "PTIS-REST-12";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED = "Assessment number is required";
-    public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "PTIS-REST-13";
+     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "PTIS-REST-13";
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED = "Payment mode is required";
     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID = "PTIS-REST-14";
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID = "Payment mode is invalid";
@@ -1091,6 +1101,17 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING = "Please attach relevant documents for property transfer. Type: ";
     public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY = "PTIS-REST-33";
     public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY = "Please mention gender of transferee ";
+    
+    public static final String THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED = "PTIS-REST-34";
+    public static final String THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED = "Cheque/DD number is required";
+    public static final String THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED = "PTIS-REST-35";
+    public static final String THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED = "Cheque/DD Date is required";
+    
+    public static final String THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED =  "PTIS-REST-36";
+    public static final String THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED = "Bank Name is required";
+   
+    public static final String THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED =  "PTIS-REST-37";
+    public static final String THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED = "Branch Name  is required";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
@@ -1138,6 +1159,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_DEMAND_BILL = "Generate_demand_bill";
     public static final String APPLICATION_TYPE_TAX_EXEMTION = "Tax Exemption";
     public static final String APPLICATION_TYPE_DEMOLITION = "Demolition";
+    public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy Remission";
     
    
 
@@ -1175,4 +1197,14 @@ public interface PropertyTaxConstants {
  
     public static final String PROP_MUTATION_RSN = "TRANSFER";
     public static final String FILESTORE_MODULE_NAME = "PTIS";
+    
+    //Vacancy Remission
+    public static final String VR_STATUS_REJECTION_ACK_GENERATED = "Rejection Acknowledgement Generated";
+    public static final String VR_STATUS_WORKFLOW = "IN_WORKFLOW";
+    public static final String VR_STATUS_APPROVED = "APPROVED";
+    public static final String VR_STATUS_REJECTED = "REJECTED";
+    
+    
+    public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
+    public static final String MEESEVA_OPERATOR_ROLE	="MeeSeva Operator";
 }

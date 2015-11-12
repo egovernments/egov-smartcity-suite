@@ -51,11 +51,15 @@ public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Lo
 
     ComplaintType findByName(String name);
 
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
 
     ComplaintType findByCode(String code);
 
     @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
     List<Department> findAllComplaintTypeDepartments();
+    
+    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
+    
+    List<ComplaintType> findByNameContainingIgnoreCase(String name);
 
 }

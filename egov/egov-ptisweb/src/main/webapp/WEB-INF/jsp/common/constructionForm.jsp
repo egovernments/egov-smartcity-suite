@@ -41,11 +41,11 @@
 	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="floorTypeId"
+		<td class="greybox" width=""><s:select headerKey="-1" title="Floor type of the property" headerValue="%{getText('default.select')}" name="floorTypeId"
 				id="floorTypeId" listKey="id" listValue="name" list="dropdownData.floorType" value="%{floorTypeId}"
 				cssClass="selectnew" /></td>
 		<td class="greybox"><s:text name="rooftype"></s:text> <span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="roofTypeId"
+		<td class="greybox"><s:select headerKey="-1" title="Roof type of the property" headerValue="%{getText('default.select')}" name="roofTypeId"
 				id="roofTypeId" listKey="id" listValue="name" list="dropdownData.roofType" value="%{roofTypeId}"
 				cssClass="selectnew" /></td>
 	</tr>
@@ -53,11 +53,11 @@
 	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="wallTypeId"
+		<td class="greybox" width=""><s:select headerKey="-1" title="Wall type" headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name" list="dropdownData.wallType" value="%{wallTypeId}"
 				cssClass="selectnew" /></td>
 		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="woodTypeId"
+		<td class="greybox" width=""><s:select headerKey="-1" title="Wood type" headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name" list="dropdownData.woodType" value="%{woodTypeId}"
 				cssClass="selectnew" /></td>
 	</tr>

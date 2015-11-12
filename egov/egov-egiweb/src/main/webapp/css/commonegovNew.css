@@ -567,6 +567,10 @@ table.setborder tr{
 	border-bottom:1px solid #84B1AD;
 }
 
+div.buttonbottom table{
+	margin:0 auto;
+}
+
 @media print
 {
 	.no-print, .no-print *

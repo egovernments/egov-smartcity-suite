@@ -71,6 +71,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private EgBillDao egBillDao;
     private String referenceNumber;
     private Boolean isCallbackForApportion = Boolean.FALSE;
+    private String transanctionReferenceNumber;
 
     public License getLicense() {
         return license;
@@ -275,6 +276,14 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
 }

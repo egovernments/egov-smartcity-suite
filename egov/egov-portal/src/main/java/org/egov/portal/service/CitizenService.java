@@ -1,4 +1,4 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/** eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -115,8 +115,12 @@ public class CitizenService {
     }
 
     public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
-        messagingService.sendEmail(citizen.getEmailId(), "Portal Activation",
-                String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(), citizen.getActivationCode()));
+        messagingService
+        .sendEmail(
+                citizen.getEmailId(),
+                "Portal Activation",
+                String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
+                        citizen.getActivationCode()));
         messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
     }
 

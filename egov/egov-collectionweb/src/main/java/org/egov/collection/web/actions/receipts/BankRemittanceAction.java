@@ -40,8 +40,8 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -70,7 +70,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<HashMap<String, Object>> paramList = null;
     private ReceiptHeaderService receiptHeaderService;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
-    private List voucherHeaderValues = new ArrayList();
+    private List voucherHeaderValues = new ArrayList(0);
     private String[] serviceNameArray;
     private String[] totalCashAmountArray;
     private String[] totalChequeAmountArray;
@@ -91,8 +91,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private EmployeeService employeeService;
 
     /**
-     * @param collectionsUtil
-     *            the collectionsUtil to set
+     * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -112,15 +111,13 @@ public class BankRemittanceAction extends BaseFormAction {
         final long startTimeMillis = System.currentTimeMillis();
         final User user = collectionsUtil.getLoggedInUser();
         final Employee employee = employeeService.getEmployeeById(user.getId());
-        StringBuilder jurValuesId = new StringBuilder();
-        for (Iterator<Jurisdiction> iter = employee.getJurisdictions().iterator(); iter.hasNext();) {
-            Jurisdiction element = (Jurisdiction) iter.next();
-            if (jurValuesId.length() > 0) {
+        final StringBuilder jurValuesId = new StringBuilder();
+        for (final Jurisdiction element : employee.getJurisdictions()) {
+            if (jurValuesId.length() > 0)
                 jurValuesId.append(',');
-            }
             jurValuesId.append(element.getBoundary().getId());
 
-            for (Boundary boundary : element.getBoundary().getChildren()) {
+            for (final Boundary boundary : element.getBoundary().getChildren()) {
                 jurValuesId.append(',');
                 jurValuesId.append(boundary.getId());
             }
@@ -128,8 +125,8 @@ public class BankRemittanceAction extends BaseFormAction {
         paramList = receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
         addDropdownData("approverDepartmentList",
                 collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
-        addDropdownData("designationMasterList", new ArrayList());
-        addDropdownData("postionUserList", new ArrayList());
+        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
+        addDropdownData("postionUserList", Collections.EMPTY_LIST);
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
@@ -148,8 +145,8 @@ public class BankRemittanceAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("bankBranchList", new ArrayList());
-        addDropdownData("accountNumberList", new ArrayList());
+        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
+        addDropdownData("accountNumberList", Collections.EMPTY_LIST);
     }
 
     @Action(value = "/receipts/bankRemittance-create")
@@ -181,8 +178,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param paramList
-     *            the paramList to set
+     * @param paramList the paramList to set
      */
     public void setParamList(final List<HashMap<String, Object>> paramList) {
         this.paramList = paramList;
@@ -196,8 +192,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceName
-     *            the serviceName to set
+     * @param serviceName the serviceName to set
      */
     public void setServiceNameArray(final String[] serviceNameArray) {
         this.serviceNameArray = serviceNameArray;
@@ -211,8 +206,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalCashAmount
-     *            the totalCashAmount to set
+     * @param totalCashAmount the totalCashAmount to set
      */
     public void setTotalCashAmountArray(final String[] totalCashAmountArray) {
         this.totalCashAmountArray = totalCashAmountArray;
@@ -226,8 +220,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalChequeAmount
-     *            the totalChequeAmount to set
+     * @param totalChequeAmount the totalChequeAmount to set
      */
     public void setTotalChequeAmountArray(final String[] totalChequeAmountArray) {
         this.totalChequeAmountArray = totalChequeAmountArray;
@@ -241,8 +234,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptDate
-     *            the receiptDate to set
+     * @param receiptDate the receiptDate to set
      */
     public void setReceiptDateArray(final String[] receiptDateArray) {
         this.receiptDateArray = receiptDateArray;
@@ -256,8 +248,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherHeaderValues
-     *            the voucherHeaderValues to set
+     * @param voucherHeaderValues the voucherHeaderValues to set
      */
     public void setVoucherHeaderValues(final List voucherHeaderValues) {
         this.voucherHeaderValues = voucherHeaderValues;
@@ -271,8 +262,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param accountNumberMaster
-     *            the accountNumberMaster to set
+     * @param accountNumberMaster the accountNumberMaster to set
      */
     public void setAccountNumberMaster(final Integer accountNumberMaster) {
         this.accountNumberMaster = accountNumberMaster;
@@ -286,8 +276,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalOnlineAmountArray
-     *            the totalOnlineAmountArray to set
+     * @param totalOnlineAmountArray the totalOnlineAmountArray to set
      */
     public void setTotalOnlineAmountArray(final String[] totalOnlineAmountArray) {
         this.totalOnlineAmountArray = totalOnlineAmountArray;
@@ -301,8 +290,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param fundCodeArray
-     *            the fundCodeArray to set
+     * @param fundCodeArray the fundCodeArray to set
      */
     public void setFundCodeArray(final String[] fundCodeArray) {
         this.fundCodeArray = fundCodeArray;
@@ -316,8 +304,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param departmentCodeArray
-     *            the departmentCodeArray to set
+     * @param departmentCodeArray the departmentCodeArray to set
      */
     public void setDepartmentCodeArray(final String[] departmentCodeArray) {
         this.departmentCodeArray = departmentCodeArray;
@@ -331,8 +318,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalCardAmountArray
-     *            the totalCardAmountArray to set
+     * @param totalCardAmountArray the totalCardAmountArray to set
      */
     public void setTotalCardAmountArray(final String[] totalCardAmountArray) {
         this.totalCardAmountArray = totalCardAmountArray;
@@ -346,8 +332,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param positionUser
-     *            the positionUser to set
+     * @param positionUser the positionUser to set
      */
     public void setPositionUser(final Integer positionUser) {
         this.positionUser = positionUser;
@@ -361,8 +346,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId
-     *            the designationId to set
+     * @param designationId the designationId to set
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;

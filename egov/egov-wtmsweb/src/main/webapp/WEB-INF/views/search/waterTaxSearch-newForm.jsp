@@ -65,43 +65,58 @@
 					<input type="hidden"  id="cscUserRole" value="${cscUserRole}" />
 					<input type="hidden"  id="approverUserRole" value="${approverUserRole}" />
 					<input type="hidden"  id="operatorRole" value="${operatorRole}" />
-			
+					<input type="text"  id="citizenRole" value="${citizenRole}" />
+					
+			<c:if test="${!citizenRole }" >
 					<div class="form-group">
-						<label for="field-1" class="col-md-4 control-label"> <spring:message
+					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.mobileNo" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
-					</div>
+					</div></c:if>
 						<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 										  <div class="col-md-4 add-margin">
-							<input type="text" name="consumerCode" class="form-control is_valid_number" id="app-appcodo"/>
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo"/>
 						</div>
 						</div>
 						
-						
+						<c:if test="${!citizenRole}" >
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" class="form-control typeahead is_valid_alphabet" id="app-mobno" />
+							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="16" id="app-mobno" />
 						</div>
 						</div>
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl.locality'/> </label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="locality" class="form-control" id="app-mobno"
+							<input type="text" name="locality" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="32" id="app-mobno"
 								/>
 						</div>
 						</div>
-					
 						
-						
-						
-						
-					
+						<div class="form-group">
+					<label for="field-1" class="col-md-4 control-label"><spring:message
+										code="lbl.revenue.ward" /></label>
+						<div class="col-md-4 add-margin">
+							<input type="text" name="revenueWard" class="form-control "  id="app-mobno"
+								 />
+							
+				
+						</div>
+						</div>
+						<div class="form-group">
+						<label for="field-1" class="col-md-4 control-label"><spring:message
+										code="lbl.doornumber" /></label>
+				
+						<div class="col-md-4 add-margin">
+							<form:input path="" type="text" name="doorNumber" class="form-control "   id="app-appcodo" />
+						</div>
+					</div></c:if>
 					<div class="form-group">
 						<div class="text-center">
 							<a href="javascript:void(0);" id="searchapprvedapplication"

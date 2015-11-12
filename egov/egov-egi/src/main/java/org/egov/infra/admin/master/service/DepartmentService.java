@@ -78,7 +78,7 @@ public class DepartmentService {
     }
 
     public Department getDepartmentByName(final String name) {
-        return departmentRepository.findByName(name);
+        return departmentRepository.findByNameUpperCase(name.toUpperCase());
     }
 
     public List<Department> getAllDepartments() {

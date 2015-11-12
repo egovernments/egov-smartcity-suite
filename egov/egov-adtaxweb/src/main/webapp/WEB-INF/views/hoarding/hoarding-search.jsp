@@ -63,7 +63,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.name"/></label>
                         <div class="col-sm-3 add-margin">
-                            <input type="text" class="form-control typeahead" autocomplete="off">
+                            <input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off">
 							<form:hidden path="agency" id="agencyId" value="${hoarding.agency}" />
                         </div> 
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.no"/></label>
@@ -142,7 +142,7 @@
         	<div class="row">
        			<div class="text-center">
        				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
-          		    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+          		    <button type="reset" id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
           		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
           	</div>
         	</div>

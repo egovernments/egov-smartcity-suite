@@ -40,6 +40,7 @@
 package org.egov.collection.web.actions.citizen;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,7 +79,6 @@ import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -97,9 +97,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -109,20 +109,19 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionCommon collectionCommon;
-    private final List<ValidationError> errors = new ArrayList<ValidationError>();
+    private final List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
-    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
+    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>(0);
     private BillInfoImpl collDetails = new BillInfoImpl();
     private BillCollectXmlHandler xmlHandler;
     private String collectXML;
     private String serviceName;
-    private List<String> collectionModesNotAllowed = new ArrayList<String>();
+    private List<String> collectionModesNotAllowed = new ArrayList<String>(0);
     private Boolean overrideAccountHeads;
     private Boolean partPaymentAllowed;
     private BigDecimal totalAmountToBeCollected;
     private BigDecimal paymentAmount;
-    private FinancialsUtil financialsUtil;
     private ReceiptHeader onlinePaymentReceiptHeader;
     private Long receiptId;
     private ReceiptHeader[] receipts;
@@ -146,11 +145,12 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private FundHibernateDAO fundDAO;
-    private String brokenTransactionErrorMessage = "If the amount has been deducted from "
+    private final String brokenTransactionErrorMessage = "If the amount has been deducted from "
             + "your account, then no further action is required from you right now. Such transactions are normally "
             + "resolved within 24 hours so you can check and download the receipt then." + "\n \n"
             + "If the amount has not been deducted from your account, then please check your "
-            + "internet connection and try to pay again after some time. If the transaction fails again, " + "please contact cell in Corporation.";
+            + "internet connection and try to pay again after some time. If the transaction fails again, "
+            + "please contact cell in Corporation.";
 
     @Override
     public Object getModel() {
@@ -169,8 +169,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     @Action(value = "/citizen/onlineReceipt-saveNew")
     public String saveNew() {
         /**
-         * initialise receipt info,persist receipt, create bill desk payment
-         * object and redirect to payment screen
+         * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
         if (callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
@@ -186,8 +185,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             LOGGER.info("Response Msg :  " + responseMsg);
 
             /**
-             * TO DO : The below 'if loop' Is To be removed once the test URL is
-             * UP
+             * TO DO : The below 'if loop' Is To be removed once the test URL is UP
              */
             if (getTestReceiptId() != null) {
                 responseMsg = "MerchantID|CustomerID|TxnReferenceNo|BankReferenceNo|1000.0|BankID|"
@@ -196,9 +194,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                         + "|AdditionalInfo2|AdditionalInfo3|AdditionalInfo4|"
                         + "AdditionalInfo5|AdditionalInfo6|AdditionalInfo7|ErrorStatus|ErrorDescription";
                 /*
-                 * String checksum = PGIUtil.doDigest(responseMsg,
-                 * CollectionConstants.UNIQUE_CHECKSUM_KEY); responseMsg += "|"
-                 * + checksum;
+                 * String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY); responseMsg += "|" +
+                 * checksum;
                  */
                 serviceCode = "BDPGI";
             }
@@ -249,11 +246,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     @Action(value = "/citizen/onlineReceipt-acceptMessageFromPaymentGateway")
     public String acceptMessageFromPaymentGateway() {
 
-        /**
-         * TO DO : The below 'if loop' Is To be removed once the test URL is UP
-         */
-
-        final long startTimeInMilis = System.currentTimeMillis();
+        System.currentTimeMillis();
 
         if (getTestReceiptId() != null) {
             responseMsg = "MerchantID|CustomerID|TxnReferenceNo|BankReferenceNo|1000.0|BankID|"
@@ -262,8 +255,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     + "|AdditionalInfo2|AdditionalInfo3|AdditionalInfo4|"
                     + "AdditionalInfo5|AdditionalInfo6|AdditionalInfo7|ErrorStatus|ErrorDescription";
             /*
-             * String checksum = PGIUtil.doDigest(responseMsg,
-             * CollectionConstants.UNIQUE_CHECKSUM_KEY); responseMsg += "|" +
+             * String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY); responseMsg += "|" +
              * checksum;
              */
             serviceCode = "BDPGI";
@@ -272,8 +264,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         LOGGER.info("responseMsg:	" + responseMsg);
 
         /*
-         * ServiceDetails paymentService = (ServiceDetails)
-         * getPersistenceService().findByNamedQuery(
+         * ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
          * CollectionConstants.QUERY_SERVICE_BY_CODE, getServiceCode());
          */
         ServiceDetails paymentService;
@@ -297,8 +288,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                 processSuccessMsg();
             else if (paymentService.getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
-                    && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse.getAuthStatus())
-                   ) {
+                    && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse
+                            .getAuthStatus())) {
                 final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
@@ -341,10 +332,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * This method processes the failure message arriving from the payment
-     * gateway. The receipt and the online transaction are both cancelled. The
-     * authorisation status for reason of failure is also persisted. The reason
-     * for payment failure is displayed back to the user
+     * This method processes the failure message arriving from the payment gateway. The receipt and the online transaction are
+     * both cancelled. The authorisation status for reason of failure is also persisted. The reason for payment failure is
+     * displayed back to the user
      */
     private void processFailureMsg() {
 
@@ -369,17 +359,12 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * This method processes the success message arriving from the payment
-     * gateway. The receipt status is changed from PENDING to APPROVED and the
-     * online transaction status is changed from PENDING to SUCCCESS. The
-     * authorisation status for success(0300) for the online transaction is also
-     * persisted. An instrument of type 'ONLINE' is created with the transaction
-     * details and are persisted along with the receipt details. Voucher for the
-     * receipt is created and the Financial System is updated. The billing
-     * system is updated about the receipt creation. In case update to financial
-     * systems/billing system fails, the receipt creation is rolled back and the
-     * receipt/payment status continues to be in PENDING state ( and will be
-     * reconciled manually).
+     * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
+     * APPROVED and the online transaction status is changed from PENDING to SUCCCESS. The authorisation status for success(0300)
+     * for the online transaction is also persisted. An instrument of type 'ONLINE' is created with the transaction details and
+     * are persisted along with the receipt details. Voucher for the receipt is created and the Financial System is updated. The
+     * billing system is updated about the receipt creation. In case update to financial systems/billing system fails, the receipt
+     * creation is rolled back and the receipt/payment status continues to be in PENDING state ( and will be reconciled manually).
      */
     private void processSuccessMsg() {
         errors.clear();
@@ -400,26 +385,25 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             boolean updateToSystems = true;
 
-           /*TODO: Commented for Phoenix implementation uncomment once egf is enabled
-            *  try {
-                receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
-                LOGGER.debug("Updated financial systems and created voucher.");
-            } catch (final ApplicationRuntimeException ex) {
-                updateToSystems = false;
-                errors.add(new ValidationError(
-                        "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state.",
-                        "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."));
-                LOGGER.error("Update to financial systems failed");
-            }*/
+            /*
+             * TODO: Commented for Phoenix implementation uncomment once egf is enabled try {
+             * receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
+             * LOGGER.debug("Updated financial systems and created voucher."); } catch (final ApplicationRuntimeException ex) {
+             * updateToSystems = false; errors.add(new ValidationError(
+             * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state.",
+             * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."));
+             * LOGGER.error("Update to financial systems failed"); }
+             */
 
             try {
                 final HashSet<BillReceiptInfo> billReceipt = new HashSet<BillReceiptInfo>();
                 billReceipt.add(new BillReceiptInfoImpl(onlinePaymentReceiptHeader));
-                
-                  if (!receiptHeaderService.updateBillingSystem(
-                 onlinePaymentReceiptHeader.getService().getCode(),
-                 billReceipt)) { updateToSystems = false; }
-                 
+
+                if (!receiptHeaderService.updateBillingSystem(
+                        onlinePaymentReceiptHeader.getService().getCode(),
+                        billReceipt))
+                    updateToSystems = false;
+
             } catch (final ApplicationRuntimeException ex) {
                 // Receipt creation is rolled back, and payment continues to be
                 // in
@@ -449,12 +433,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         }
     }
 
-
     /**
-     * @param receipts
-     *            - list of receipts which have to be processed as successful
-     *            payments. For payments created as a response from bill desk,
-     *            size of the array will be 1.
+     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
+     * from bill desk, size of the array will be 1.
      */
     private void createSuccessPayment(final ReceiptHeader receipt, final Date transactionDate,
             final String transactionId, final BigDecimal transactionAmt, final String authStatusCode,
@@ -473,27 +454,24 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         // set online payment status as SUCCESS
         receipt.getOnlinePayment().setStatus(
-                collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
         receiptHeaderService.persist(receipt);
     }
 
     /**
-     * This method is invoked for manually reconciling online payments. If a
-     * payment is reconciled as a Success Payment, the receipt is created, the
-     * receipt is marked as APPROVED , the payment is marked as SUCCESS, and the
-     * voucher is created. If a payment is reconciled as To Be Refunded or
-     * Refunded, the transaction details are persisted, receipt is marked as
-     * FAILED and the payment is marked as TO BE REFUNDED/REFUNDED respectively.
-     * The billing system is updated about all the payments that have been
-     * successful.
+     * This method is invoked for manually reconciling online payments. If a payment is reconciled as a Success Payment, the
+     * receipt is created, the receipt is marked as APPROVED , the payment is marked as SUCCESS, and the voucher is created. If a
+     * payment is reconciled as To Be Refunded or Refunded, the transaction details are persisted, receipt is marked as FAILED and
+     * the payment is marked as TO BE REFUNDED/REFUNDED respectively. The billing system is updated about all the payments that
+     * have been successful.
      *
      * @return
      */
     @ValidationErrorPage(value = "reconresult")
     public String reconcileOnlinePayment() {
 
-        final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
+        final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
 
         final ReceiptHeader[] receipts = new ReceiptHeader[selectedReceipts.length];
 
@@ -527,8 +505,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     errors.add(new ValidationError(
                             "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
                                     + receipts[i].getId(),
-                            "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
-                                    + receipts[i].getId()));
+                                    "Manual Reconciliation Rolled back as Voucher Creation Failed For Payment Reference ID : "
+                                            + receipts[i].getId()));
                     LOGGER.error("Update to financial systems failed");
                     throw new ValidationException(errors);
                 }
@@ -550,11 +528,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 // set online payment status as TO BE REFUNDED/REFUNDED
                 if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED))
                     receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED));
                 else
                     receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED));
 
                 receiptHeaderService.persist(receipts[i]);
@@ -576,7 +554,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError("Manual Reconciliation of Online Payments Rolled back as "
                     + "update to billing system failed.", "Manual Reconciliation of Online Payments Rolled back as "
-                    + "update to billing system failed."));
+                            + "update to billing system failed."));
             LOGGER.error("Update to billing systems failed");
 
             throw new ValidationException(errors);
@@ -631,7 +609,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         // populates model when request is from the billing system
         if (StringUtils.isNotBlank(getCollectXML())) {
-            final String decodedCollectXml = java.net.URLDecoder.decode(getCollectXML());
+            final String decodedCollectXml = decodeBillXML();
             try {
                 collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXml);
                 // modelPayeeList.clear();
@@ -681,12 +659,20 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         constructServiceDetailsList();
     }
 
+    private String decodeBillXML() {
+        String decodedBillXml = "";
+        try {
+            decodedBillXml = java.net.URLDecoder.decode(getCollectXML(), "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return decodedBillXml;
+    }
+
     /**
-     * Construct list of Payment Gateway to appear in the UI based on the
-     * configuration defined in AppConfig. Default is ALL, which means all
-     * payment gateway will appear for the billing service. Otherwise, only the
-     * payment gateway codes defined as comma separated values will appear for
-     * the Billing Service.
+     * Construct list of Payment Gateway to appear in the UI based on the configuration defined in AppConfig. Default is ALL,
+     * which means all payment gateway will appear for the billing service. Otherwise, only the payment gateway codes defined as
+     * comma separated values will appear for the Billing Service.
      */
     private void constructServiceDetailsList() {
         final List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(
@@ -769,8 +755,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         // }// end of looping through receipt headers
 
         /**
-         * Persist the receipt payee details which will internally persist all
-         * the receipt headers
+         * Persist the receipt payee details which will internally persist all the receipt headers
          */
 
         receiptHeaderService.persistPendingReceipts(receiptHeader);
@@ -877,9 +862,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * This getter will be invoked by framework from UI. It returns the total
-     * number of bill accounts that are present in the XML arriving from the
-     * billing system
+     * This getter will be invoked by framework from UI. It returns the total number of bill accounts that are present in the XML
+     * arriving from the billing system
      *
      * @return
      */
@@ -889,9 +873,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * This getter will be invoked by framework from UI. It returns the total
-     * amount of bill accounts that are present in the XML arriving from the
-     * billing system
+     * This getter will be invoked by framework from UI. It returns the total amount of bill accounts that are present in the XML
+     * arriving from the billing system
      *
      * @return
      */
@@ -904,8 +887,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * This getter will be invoked by the framework from UI. It returns the
-     * amount payed by the citizen.
+     * This getter will be invoked by the framework from UI. It returns the amount payed by the citizen.
      *
      * @return the paymentAmount
      */
@@ -914,8 +896,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param paymentAmount
-     *            the paymentAmount to set
+     * @param paymentAmount the paymentAmount to set
      */
     public void setPaymentAmount(final BigDecimal paymentAmount) {
         this.paymentAmount = paymentAmount;
@@ -929,8 +910,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param paymentRequest
-     *            the paymentRequest to set
+     * @param paymentRequest the paymentRequest to set
      */
     public void setPaymentRequest(final PaymentRequest paymentRequest) {
         this.paymentRequest = paymentRequest;
@@ -952,8 +932,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param paymentServiceId
-     *            the paymentServiceId to set
+     * @param paymentServiceId the paymentServiceId to set
      */
     public void setPaymentServiceId(final Integer paymentServiceId) {
         this.paymentServiceId = paymentServiceId;
@@ -980,10 +959,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         responseMsg = successMsg;
     }
 
-    public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
-        this.financialsUtil = financialsUtil;
-    }
-
     public ReceiptHeader getOnlinePaymentReceiptHeader() {
         return onlinePaymentReceiptHeader;
     }
@@ -996,8 +971,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param serviceName
-     *            the serviceName to set
+     * @param serviceName the serviceName to set
      */
     public void setServiceName(final String serviceName) {
         this.serviceName = serviceName;
@@ -1011,8 +985,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param collectionModesNotAllowed
-     *            the collectionModesNotAllowed to set
+     * @param collectionModesNotAllowed the collectionModesNotAllowed to set
      */
     public void setCollectionModesNotAllowed(final List<String> collectionModesNotAllowed) {
         this.collectionModesNotAllowed = collectionModesNotAllowed;
@@ -1026,8 +999,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param overrideAccountHeads
-     *            the overrideAccountHeads to set
+     * @param overrideAccountHeads the overrideAccountHeads to set
      */
     public void setOverrideAccountHeads(final Boolean overrideAccountHeads) {
         this.overrideAccountHeads = overrideAccountHeads;
@@ -1041,16 +1013,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param partPaymentAllowed
-     *            the partPaymentAllowed to set
+     * @param partPaymentAllowed the partPaymentAllowed to set
      */
     public void setPartPaymentAllowed(final Boolean partPaymentAllowed) {
         this.partPaymentAllowed = partPaymentAllowed;
     }
 
     /**
-     * @param xmlHandler
-     *            the xmlHandler to set
+     * @param xmlHandler the xmlHandler to set
      */
     public void setXmlHandler(final BillCollectXmlHandler xmlHandler) {
         this.xmlHandler = xmlHandler;
@@ -1064,8 +1034,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param collectXML
-     *            the collectXML to set
+     * @param collectXML the collectXML to set
      */
     public void setCollectXML(final String collectXML) {
         this.collectXML = collectXML;
@@ -1079,8 +1048,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param receiptDetailList
-     *            the receiptDetailList to set
+     * @param receiptDetailList the receiptDetailList to set
      */
     public void setReceiptDetailList(final List<ReceiptDetail> receiptDetailList) {
         this.receiptDetailList = receiptDetailList;
@@ -1094,8 +1062,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param onlineInstrumenttotal
-     *            the onlineInstrumenttotal to set
+     * @param onlineInstrumenttotal the onlineInstrumenttotal to set
      */
     public void setOnlineInstrumenttotal(final BigDecimal onlineInstrumenttotal) {
         this.onlineInstrumenttotal = onlineInstrumenttotal;
@@ -1114,8 +1081,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param callbackForApportioning
-     *            the callbackForApportioning to set
+     * @param callbackForApportioning the callbackForApportioning to set
      */
     public void setCallbackForApportioning(final Boolean callbackForApportioning) {
         this.callbackForApportioning = callbackForApportioning;
@@ -1134,8 +1100,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param receiptNumber
-     *            the receiptNumber to set
+     * @param receiptNumber the receiptNumber to set
      */
     public void setReceiptNumber(final String receiptNumber) {
         this.receiptNumber = receiptNumber;
@@ -1149,8 +1114,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param consumerCode
-     *            the consumerCode to set
+     * @param consumerCode the consumerCode to set
      */
     public void setConsumerCode(final String consumerCode) {
         this.consumerCode = consumerCode;
@@ -1164,8 +1128,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param receiptResponse
-     *            the receiptResponse to set
+     * @param receiptResponse the receiptResponse to set
      */
     public void setReceiptResponse(final String receiptResponse) {
         this.receiptResponse = receiptResponse;

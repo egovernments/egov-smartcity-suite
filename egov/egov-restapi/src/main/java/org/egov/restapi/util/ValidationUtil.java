@@ -3,16 +3,22 @@ package org.egov.restapi.util;
 import java.util.List;
 
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+@Service
 public class ValidationUtil {
+	 @Autowired
+	    private BasicPropertyDAO basicPropertyDAO;
 	public static ErrorDetails validateCreateRequest(CreatePropertyDetails createPropDetails) {
 		ErrorDetails errorDetails = null;
 		String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
@@ -252,4 +258,60 @@ public class ValidationUtil {
 		}
 		return errorDetails;
 	}
+		public  ErrorDetails validatePaymentDetails(PayPropertyTaxDetails payPropTaxDetails) {
+		ErrorDetails errorDetails = null;
+        if (payPropTaxDetails.getAssessmentNo() == null || payPropTaxDetails.getAssessmentNo().trim().length() == 0) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
+        } else {
+            if (payPropTaxDetails.getAssessmentNo().trim().length() > 0 && payPropTaxDetails.getAssessmentNo().trim().length() < 10) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
+            }
+            if (!basicPropertyDAO.isAssessmentNoExist(payPropTaxDetails.getAssessmentNo())) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+            }
+        }
+        
+        if (payPropTaxDetails.getChqddNo() == null || payPropTaxDetails.getChqddNo().trim().length() == 0) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED);
+        }else
+        
+        if (payPropTaxDetails.getChqddDate() == null ) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED);
+        }else
+        
+        if (payPropTaxDetails.getBankName() == null || payPropTaxDetails.getBankName().trim().length() == 0) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED);
+        }else
+        
+        if (payPropTaxDetails.getBranchName() == null ) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
+        }else
+        
+        if (payPropTaxDetails.getPaymentMode() == null || payPropTaxDetails.getPaymentMode().trim().length() == 0) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED);
+        } else if (!PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CASH.equalsIgnoreCase(payPropTaxDetails.getPaymentMode().trim())
+                && !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropTaxDetails.getPaymentMode().trim())) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID);
+        }
+        return errorDetails;
+	}
+	
 }

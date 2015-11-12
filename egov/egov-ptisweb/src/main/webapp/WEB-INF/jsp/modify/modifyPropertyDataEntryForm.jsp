@@ -122,8 +122,8 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="areaOfPlot" id="areaOfPlot" size="12"
-				maxlength="15" value="%{areaOfPlot}"></s:textfield>
+		   <s:textfield name="areaOfPlot" id="areaOfPlot" size="12"	maxlength="15" value="%{areaOfPlot}"
+		   onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"></td>
 		<td class="greybox">

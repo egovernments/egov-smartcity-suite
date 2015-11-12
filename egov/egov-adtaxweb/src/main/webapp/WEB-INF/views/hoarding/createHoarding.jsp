@@ -85,7 +85,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+							<%-- 	<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.name"/>
 								<span class="mandatory"></span>
 								</label>
@@ -93,8 +93,8 @@
 									<form:input type="text" cssClass="form-control patternvalidation" 
                         	   data-pattern="alphanumericwithspace" maxlength="125"  path="hoardingName" id="hoardingName" required="required"/>
                                		<form:errors path="hoardingName" cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label text-right">
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.type"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin dynamic-span capitalize">
@@ -107,7 +107,7 @@
 								<spring:message code="lbl.hoarding.agency"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
+									<input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off" required="required" value="${hoarding.agency.name}">
 									<form:hidden path="agency" id="agencyId" value="${hoarding.agency.id}" />
 									<form:errors path="agency" cssClass="error-msg" />
 								</div>
@@ -227,14 +227,14 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+							<%-- 	<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.breadth"/>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="breadth" id="breadth"/>
                                		<form:errors path="breadth" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right">
+						 --%>		<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.total.height"/>
 								<span class="mandatory"></span>
 								</label>
@@ -276,10 +276,17 @@
 									</form:select>
 									<form:errors path="advertisementDuration" cssClass="error-msg" />
 								</div>
+								<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.hoarding.electricityservicenumber"/>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"  maxlength="25"  path="electricityServiceNumber" id="electricityServiceNumber"/>
+                               		<form:errors path="electricityServiceNumber" cssClass="error-msg" />
+                           		</div>
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-								<spring:message code="lbl.fee.details"/>
+								<spring:message code="lbl.hoarding.tax.feeDetails"/>
 								</div>
 							</div>
 							<div class="form-group">

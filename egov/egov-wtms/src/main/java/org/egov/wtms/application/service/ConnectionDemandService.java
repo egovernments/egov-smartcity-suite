@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -165,13 +166,13 @@ public class ConnectionDemandService {
             feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE,
                     fieldInspectionDetails.getEstimationCharges());
 
-        if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
+        //if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
             if (!(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) && (WaterTaxConstants.RESIDENTIAL
                     .equalsIgnoreCase(waterConnectionDetails.getPropertyType().getCode()) || ConnectionType.NON_METERED
                     .equals(waterConnectionDetails.getConnectionType()))))
 
                 donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                        .findByCategoryandUsageandMinPipeSize(waterConnectionDetails.getCategory(),
+                        .findByPropertyandCategoryandUsageandMinPipeSize(waterConnectionDetails.getPropertyType(),waterConnectionDetails.getCategory(),
                                 waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
                                         .getSizeInInch()));
 
@@ -402,19 +403,19 @@ public class ConnectionDemandService {
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
-    public String generateBill(final String consumerCode,String applicationTypeCode)  {
+    public String generateBill(final String consumerCode, String applicationTypeCode) {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
-        final WaterConnectionDetails waterConnectionDetails; 
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE))
+        final WaterConnectionDetails waterConnectionDetails;
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)|| applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    consumerCode,ConnectionStatus.ACTIVE);
-            else
-                waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
-       if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
+                    consumerCode, ConnectionStatus.ACTIVE);
+        else
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = formatYear.format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                     WaterTaxConstants.YEARLY, new Date()).getInstallmentYear());
         else if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
@@ -436,7 +437,11 @@ public class ConnectionDemandService {
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
         final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
-        collectXML = URLEncoder.encode(billXml);
+        try {
+            collectXML = URLEncoder.encode(billXml, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         return collectXML;
     }
 
@@ -454,8 +459,8 @@ public class ConnectionDemandService {
      * @param waterConnectionDetails
      * @param billAmount
      * @param currentDate
-     * @return Updates WaterConnectionDetails after Meter Entry Demand
-     *         Calculettion and Update Previous Bill and Generates New Bill
+     * @return Updates WaterConnectionDetails after Meter Entry Demand Calculettion and Update Previous Bill and Generates New
+     * Bill
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -486,8 +491,7 @@ public class ConnectionDemandService {
     /**
      * @param waterConnectionDetails
      * @param demandDeatilslist
-     * @return creation or updating demand and demanddetails for data Entry
-     *         Screen
+     * @return creation or updating demand and demanddetails for data Entry Screen
      */
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
@@ -564,10 +568,8 @@ public class ConnectionDemandService {
 
     /**
      * @param consumerCode
-     * @return Generates Eg_bill Entry and saved with Demand and As of now we
-     *         are generating Bill and its in XML format because no Method to
-     *         just to generate Bill and Save as of now in
-     *         connectionBillService.
+     * @return Generates Eg_bill Entry and saved with Demand and As of now we are generating Bill and its in XML format because no
+     * Method to just to generate Bill and Save as of now in connectionBillService.
      */
     @Transactional
     public String generateBillForMeterAndMonthly(final String consumerCode) {
@@ -591,20 +593,21 @@ public class ConnectionDemandService {
     }
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
-            final WaterConnectionDetails waterConnectionDetails,Installment installment,Boolean reconnInSameInstallment) throws ValidationException {
-        Date InstallemntStartDate=null;
-        if(installment==null){
-         installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
-                new Date());
-         InstallemntStartDate=new Date();
+            final WaterConnectionDetails waterConnectionDetails, Installment installment, Boolean reconnInSameInstallment)
+            throws ValidationException {
+        Date InstallemntStartDate = null;
+        if (installment == null) {
+            installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
+                    new Date());
+            InstallemntStartDate = new Date();
         }
         else
         {
-         if(reconnInSameInstallment)
-             InstallemntStartDate  =installment.getFromDate();
-         else{
-             InstallemntStartDate=waterConnectionDetails.getReconnectionApprovalDate();
-         }
+            if (reconnInSameInstallment)
+                InstallemntStartDate = installment.getFromDate();
+            else {
+                InstallemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
+            }
         }
         double totalWaterRate = 0;
         final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
@@ -715,10 +718,8 @@ public class ConnectionDemandService {
 
     /**
      * @param waterConnectionDetails
-     * @param givenDate
-     *            It Checks the Meter Entry Exist For the Entred Date Month and
-     *            Returns True if It Exists and checks with Demand Current
-     *            Installment
+     * @param givenDate It Checks the Meter Entry Exist For the Entred Date Month and Returns True if It Exists and checks with
+     * Demand Current Installment
      */
     public Boolean meterEntryAllReadyExistForCurrentMonth(final WaterConnectionDetails waterConnectionDetails,
             final Date givenDate) {
@@ -733,7 +734,5 @@ public class ConnectionDemandService {
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }
-    
-   
 
 }

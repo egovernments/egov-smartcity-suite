@@ -55,6 +55,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.hibernate.search.annotations.DocumentId;
@@ -128,22 +129,6 @@ public abstract class Address extends AbstractPersistable<Long> {
     public void setId(final Long id) {
         this.id = id;
     }
-
-   /* public String getIdentityBy() {
-        return identityBy;
-    }
-
-    public void setIdentityBy(final String identityBy) {
-        this.identityBy = identityBy;
-    }
-
-    public String getIdentityType() {
-        return identityType;
-    }
-
-    public void setIdentityType(final String identityType) {
-        this.identityType = identityType;
-    }*/
 
     public String getHouseNoBldgApt() {
         return houseNoBldgApt;
@@ -286,28 +271,28 @@ public abstract class Address extends AbstractPersistable<Long> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (houseNoBldgApt != null)
+        if (StringUtils.isNotBlank(houseNoBldgApt))
             builder.append(houseNoBldgApt).append(", ");
-        if (streetRoadLine != null)
+        if (StringUtils.isNotBlank(streetRoadLine))
             builder.append(streetRoadLine).append(", ");
-        if (areaLocalitySector != null)
+        if (StringUtils.isNotBlank(areaLocalitySector))
             builder.append(areaLocalitySector).append(", ");
-        if (landmark != null)
+        if (StringUtils.isNotBlank(landmark))
             builder.append(landmark).append(", ");
-        if (cityTownVillage != null)
+        if (StringUtils.isNotBlank(cityTownVillage))
             builder.append(cityTownVillage).append(", ");
-        if (postOffice != null)
+        if (StringUtils.isNotBlank(postOffice))
             builder.append(postOffice).append(", ");
-        if (subdistrict != null)
+        if (StringUtils.isNotBlank(subdistrict))
             builder.append(subdistrict).append(", ");
-        if (district != null)
+        if (StringUtils.isNotBlank(district))
             builder.append(district).append(", ");
-        if (state != null)
+        if (StringUtils.isNotBlank(state))
             builder.append(state).append(", ");
-        if (country != null)
+        if (StringUtils.isNotBlank(country))
             builder.append(country).append(", ");
-        if (pinCode != null)
-        	builder.append("PIN : ").append(pinCode);
+        if (StringUtils.isNotBlank(pinCode))
+            builder.append("PIN : ").append(pinCode);
         return builder.toString();
     }
 }

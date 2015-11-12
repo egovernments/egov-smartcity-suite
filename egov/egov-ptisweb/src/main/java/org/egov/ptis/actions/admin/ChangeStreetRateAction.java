@@ -41,9 +41,9 @@ package org.egov.ptis.actions.admin;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,19 +116,11 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		LOGGER.debug("Entered into the prepare method");
-		List<Boundary> zoneList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.ZONE, PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
-		/*List<Boundary> zoneList = getPersistenceService().findAllBy(
-				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.name", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
-		LOGGER.debug("prepare : zones: " + ((zoneList != null) ? zoneList : ZERO));
-	*/	/*List<Boundary> wardList = getPersistenceService().findAllBy(
-				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.name", WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);*/
-		List<Boundary> wardList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD, PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
+		List<Boundary> zoneList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
+		List<Boundary> wardList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
 		LOGGER.debug("prepare : wards: " + ((wardList != null) ? wardList : ZERO));
 		addDropdownData("Zone", zoneList);
-		prepareWardDropDownData(zoneId != null, wardId != null);
-		//prepareAreaDropDownData(wardId != null, areaId != null);//TODO PHOENIX commented area and used street by passing ward.
+		addDropdownData("wardList", wardList);
 		prepareStreetDropDownData(wardId != null);
 		addDropdownData("categoryList", Collections.EMPTY_LIST);
 

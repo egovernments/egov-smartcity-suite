@@ -166,7 +166,7 @@ public class WaterConnectionDetails extends StateAware {
 
     private Integer numberOfRooms;
 
-    @Length(max = 50)
+    @Length(max = 150)
     private String bplCardHolderName;
 
     @NotNull

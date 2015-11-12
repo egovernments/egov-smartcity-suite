@@ -57,6 +57,8 @@ import org.egov.common.entity.UOM;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -88,7 +90,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
     private EstimateNumberGenerator estimateNumberGenerator;
     private BudgetNumberGenerator budgetNumberGenerator;
+    @Autowired
     private ProjectCodeGenerator projectcodeGenerator;
+    @Autowired
     private PersistenceService<ProjectCode, Long> projectCodeService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private DepositWorksUsageService depositWorksUsageService;
@@ -112,6 +116,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private PersistenceService<BudgetUsage, Long> budgetUsageService;
     private WorkOrderService workOrderService;
     private WorksPackageService workspackageService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
     public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {
         this.budgetDetailsDAO = budgetDetailsDAO;
@@ -177,15 +185,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public void setProjectCode(final AbstractEstimate entity) {
         final CFinancialYear finYear = getCurrentFinancialYear(entity.getEstimateDate());
         final ProjectCode projectCode = new ProjectCode(entity, null);
-        try {
-            projectCode.setCode(projectcodeGenerator.generateProjectcode(entity, finYear));
-        } catch (final ValidationException sequenceException) {
-            throw sequenceException;
-        }
+        projectCode.setCode(projectcodeGenerator.generateProjectcode(entity, finYear));
+
         projectCode.setCodeName(entity.getName());
         projectCode.setDescription(entity.getName());
-        projectCode.setIsActive(true);
-        projectCode.setEgwStatus(commonsService.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(),
+        projectCode.setActive(true);
+        projectCode.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ProjectCode.class.getSimpleName(),
                 WorksConstants.DEFAULT_PROJECTCODE_STATUS));
         entity.setProjectCode(projectCode);
         projectCode.addEstimate(entity);
@@ -200,7 +205,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         adk.setDetailkey(proj.getId().intValue());
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
-        commonsService.createAccountdetailkey(adk);
+        accountdetailkeyHibernateDAO.create(adk);
 
     }
 
@@ -720,17 +725,13 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         this.estimateNumberGenerator = estimateNumberGenerator;
     }
 
-    public void setProjectcodeGenerator(final ProjectCodeGenerator projectcodeGenerator) {
-        this.projectcodeGenerator = projectcodeGenerator;
-    }
-
-    public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) {
+    /*public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) {
         this.projectCodeService = projectCodeService;
     }
 
     public PersistenceService<ProjectCode, Long> getProjectCodeService() {
         return projectCodeService;
-    }
+    }*/
 
     public BudgetGroupDAO getBudgetGroupDAO() {
         return budgetGroupDAO;

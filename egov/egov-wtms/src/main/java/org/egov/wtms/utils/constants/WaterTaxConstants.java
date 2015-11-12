@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.utils.constants;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class WaterTaxConstants {
@@ -52,6 +53,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
+    public static final String CITIZENROLE ="Citizen";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
     public static final String EGMODULES_NAME = "Water Tax";
@@ -71,6 +73,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNEXECUTION = "newconnexecutiondate";
     public static final String SMSEMAILTYPENEWCONNESTNOTICE = "newconnestnotice";
     public static final String SMSEMAILTYPEADDCONNESTNOTICE = "addconnestnotice";
+    public static final String DONATIONMASTER = "DONATIONMASTER";
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
@@ -81,13 +84,19 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPECHANGEOFUSEEXECUTION = "changeofuseexecution";
     public static final String SMSEMAILTYPECHANGEOFUSEREJECTION = "changeofuserejection";
     public static final String SMSEMAILTYPECHANGEOFUSEFEEPAID = "changeofusefeepaid";
+    public static final String SMSEMAILTYPECLOSINGCONNAPPROVE = "closureofconnectionapprove";
+    public static final String SMSEMAILTYPECLOSINGCONNSANCTIONED = "closureofconnectionsanctioned";
+    public static final String SMSEMAILTYPERECONNECTIONAPPROVE = "reconnectionofconnectionapprove";
+    public static final String SMSEMAILTYPERECONNECTIONSANCTIONED = "reconnectionofconnectionsanctioned";
 
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
     // User Roles
     public static final String CSCOPERTAORROLE = "CSC Operator";
     public static final String CLERKULB = "ULB Operator";
+    public static final String CLERKROLEFORADONI = "Senior Assistant,Junior Assistant";
     public static final String APPROVERROLE = "Water Tax Approver";
+    public static final String COMMISSIONERDEPARTEMNT = "Administration";
     public static final String SUPERUSER = "Super User";
 
     // Rest API constants
@@ -125,7 +134,8 @@ public class WaterTaxConstants {
     public static final String SUBMITWORKFLOWACTION = "Submit";
 
     public static final String BPL_CATEGORY = "BPL";
-
+    public static final String HIERARCHYNAME_ADMIN = "ADMINISTRATION";
+    
     public static final String WF_STATE_BUTTON_GENERATEESTIMATE = "Generate Estimation Notice";
     public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON = "Tap Execution Date";
 
@@ -139,7 +149,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
 
-    public static final String APPLICATION_STATUS_CLOSERiNTITIATED = "CLOSERINITIATED";
+    public static final String APPLICATION_STATUS_CLOSERINITIATED = "CLOSERINITIATED";
     public static final String APPLICATION_STATUS_CLOSERINPROGRESS = "CLOSERINPROGRESS";
     public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
@@ -208,4 +218,23 @@ public class WaterTaxConstants {
 
         }
     };
+    public static final String TOTAL_AMOUNT = "amount";
+    public final static String PAID_BY = "paidBy";
+    public static final HashMap<String, String> GLCODEMAP_FOR_CURRENTTAX = new HashMap<String, String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 540382999962934138L;
+
+        {
+
+            put(WATERTAX_DONATION_CHARGE, "1100201");
+            put(WATERTAX_SECURITY_CHARGE, "1100201");
+            put(WATERTAX_FIELDINSPECTION_CHARGE, "1100201");
+            put(WATERTAXREASONCODE, "1405016");
+
+        }
+    };
+    public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
+    public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
 }

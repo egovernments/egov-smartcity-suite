@@ -110,7 +110,7 @@ public class ReconnectionAckController {
 
             reportParams.put("applicationType",
                     WordUtils.capitalize(WaterTaxConstants.RECONNECTIONCONNECTION));
-            reportParams.put("cityName", session.getAttribute("cityname"));
+            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
            reportParams.put("reconnApprovalDate", formatter.format(waterConnectionDetails.getReconnectionApprovalDate()!=null ?waterConnectionDetails.getReconnectionApprovalDate():new Date()));

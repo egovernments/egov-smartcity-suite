@@ -61,7 +61,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long>imp
 
     @Override
     public List<ProjectCode> getAllActiveEntities(final Integer accountDetailTypeId) {
-        return findAllBy("from ProjectCode where isActive=1");
+        return findAllBy("from ProjectCode where active=true");
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long>imp
             final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;
         final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct pc from ProjectCode pc " + "where isActive=1 and upper(pc.code) like ? "
+        final String qry = "select distinct pc from ProjectCode pc " + "where active=true and upper(pc.code) like ? "
                 + "order by code";
         return findPageBy(qry, 0, pageSize, param).getList();
     }
@@ -111,7 +111,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long>imp
         final List<Object> paramList = new ArrayList<Object>();
         Object[] params;
 
-        projectCodeQry = "select pc from ProjectCode pc where pc in (select ae.projectCode from AbstractEstimate as ae inner join ae.financialDetails as fd where ae.state.value not in('CANCEL','COMP_CERTIFICATE')";
+        projectCodeQry = "select pc from ProjectCode pc where pc in (select ae.projectCode from AbstractEstimate as ae inner join ae.financialDetails as fd where ae.state.value not in('CANCELLED')";
 
         if (fundId != 0) {
             projectCodeQry = projectCodeQry + " and fd.fund.id= ?";

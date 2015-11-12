@@ -59,9 +59,11 @@ public class ConsumerIndexService {
             final AssessmentDetails assessmentDetails,final BigDecimal amountTodisplayInIndex) {
 
         String mobileNumber = null;
+        String doorNumber = null;
         Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr != null && ownerNameItr.hasNext())
             mobileNumber = ownerNameItr.next().getMobileNumber();
+       
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         
         final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
@@ -70,6 +72,8 @@ public class ConsumerIndexService {
 
         consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
         consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
+        consumerSearch.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
+        consumerSearch.setDoorno(assessmentDetails.getHouseNo());
         consumerSearch.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue());
         consumerSearch.setClosureType(waterConnectionDetails.getCloseConnectionType());
         consumerSearch.setLocality(assessmentDetails.getPropertyAddress() != null ? assessmentDetails

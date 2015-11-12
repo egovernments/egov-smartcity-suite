@@ -164,7 +164,7 @@ public final class ReportUtil {
 	
         //Reading from session
 	public static String getCityName() {
-	        return ServletActionContext.getRequest().getSession().getAttribute("cityname").toString();
+	        return ServletActionContext.getRequest().getSession().getAttribute("citymunicipalityname").toString();
 	}
 
 	/**

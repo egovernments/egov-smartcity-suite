@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -56,6 +56,8 @@ public class ConnectionSearchRequest {
     private String locality;
     private String mobileNumber;
     private String ulbName;
+    private String revenueWard;
+    private String doorNumber;
 
     private static final Logger logger = Logger.getLogger(ConnectionSearchRequest.class);
 
@@ -110,6 +112,8 @@ public class ConnectionSearchRequest {
         andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.locality", locality));
         andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
+        andFilters.add(queryStringFilter("searchable.doorno", doorNumber));
+        andFilters.add(queryStringFilter("clauses.ward", revenueWard));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
@@ -117,6 +121,22 @@ public class ConnectionSearchRequest {
 
     public String searchQuery() {
         return searchText;
+    }
+
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
+
+    public String getDoorNumber() {
+        return doorNumber;
+    }
+
+    public void setDoorNumber(String doorNumber) {
+        this.doorNumber = doorNumber;
     }
 
 }

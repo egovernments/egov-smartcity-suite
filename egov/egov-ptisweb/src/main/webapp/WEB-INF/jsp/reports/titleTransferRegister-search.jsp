@@ -74,10 +74,8 @@
 									<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="zoneId"
 										id="zoneId" listKey="id" listValue="name"
-										list="dropdownData.zoneList" cssClass="form-control" value="%{zoneId}" 
-										onchange="populateWard()"/>
-										<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-											dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
+										list="dropdownData.zoneList" cssClass="form-control" value="%{zoneId}"/>
+								
 								</div>
 								
 								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
@@ -85,7 +83,7 @@
 								<div class="col-sm-3 add-margin">
 									<s:select headerKey="-1"
 										headerValue="%{getText('default.select')}" name="wardId"
-										id="wardId" listKey="key" listValue="value"
+										id="wardId" listKey="id" listValue="name"
 										list="dropdownData.wardList" cssClass="form-control" value="%{wardId}" 
 										onchange="populateBlock()"/>
 										<egov:ajaxdropdown id="areaId" fields="['Text','Value']"

@@ -23,8 +23,8 @@ $(document).ready(function(){
 	});
 	
    agency.initialize(); // Instantiate the Typeahead UI
-	
-	$('.typeahead').typeahead({
+	 
+	/*$('.typeahead').typeahead({
 		  hint: true,
 		  highlight: true,
 		  minLength: 1
@@ -33,7 +33,25 @@ $(document).ready(function(){
 		source: agency.ttAdapter()
 	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
 		$("#agencyId").val(data.value);    
-   });
+	   }).on('change',function(event,data){
+   		if($('#agencyTypeAhead').val() == ''){
+   			$("#agencyId").val(''); //reset hidden element value
+   	    }
+   });*/
+	
+	
+	
+	var agency_typeahead=$('#agencyTypeAhead').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 1
+	}, {
+		displayKey : 'name',
+		source : agency.ttAdapter()
+	});
+	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
+	
+	
    
 	/*$('#subcategories').change(function(){
 		$("#subCategoryId").val($('#subcategories').val());    
@@ -150,6 +168,10 @@ $(document).ready(function(){
 		}
 		e.stopPropagation();
 	});
+
+	$("#reset").click(function(e){
+		$('#agencyId').val("");    
+	});
 	
 	var datatbl = $('#search-update-result-table');
 	$('#search-update').click(function(e){
@@ -173,11 +195,37 @@ $(document).ready(function(){
 		});
 		e.stopPropagation();
 	});
+	var datadcbtbl = $('#search-dcbresult-table');
+	$('#search-dcb').click(function(e){
+		datadcbtbl.dataTable({
+			"ajax": {url:"/adtax/hoarding/search-for-update?"+$("#hoardingsearchform").serialize(),
+				type:"POST"
+			},
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"bDestroy": true,
+			"autoWidth": false,
+			"columns" : [
+		      { "data" : "hoardingNumber", "title":"Hoarding No."},
+			  { "data" : "applicationNumber", "title": "Application No."},
+			  { "data" : "agencyName", "title": "Agency"},
+			  { "data" : "status", "title": "Hoarding Status"},
+			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'},
+			  ]
+		});
+		e.stopPropagation();
+	});
+	
+	$("#search-dcbresult-table").on('click','tbody tr td .fa-demandCollection',function(e) {
+		var hoardingNo = datadcbtbl.fnGetData($(this).parent().parent(),0);
+		window.open("getHoardingDcb/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+	});
+	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
 		window.open("update/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
-	
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);

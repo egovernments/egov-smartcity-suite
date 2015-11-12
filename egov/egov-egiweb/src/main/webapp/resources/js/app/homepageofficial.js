@@ -79,20 +79,31 @@ $(document).ready(function()
 	                success: function(data) {
 	                	var msg = "";
 	                	if (data == "SUCCESS") {
-	                		msg = "Your password has been updated."
+	                		$("#old-pass").val("");
+	                		$("#new-pass").val("");
+	                		$("#retype-pass").val("");
+	                		$('.change-password').modal('hide');
+	                		bootbox.alert("Your password has been updated.");
 	                	} else if (data == "NEWPWD_UNMATCH") {
-	                		msg = "New password you have entered does not match with retyped password."
+	                		msg = "New password you have entered does not match with retyped password.";
+	                		$("#new-pass").val("");
+	                		$("#retype-pass").val("");
+	                		$('.change-password').modal('show');
 	                	} else if (data == "CURRPWD_UNMATCH") {
-	                		msg = "Old password you have entered is incorrect."
+	                		msg = "Old password you have entered is incorrect.";
+	                		$("#old-pass").val("");
+	                		$('.change-password').modal('show');
 	                	} else  if (data == "NEWPWD_INVALID") {
-	                		msg = "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]"
+	                		msg = "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]";
+	                		$("#new-pass").val("");
+	                		$("#retype-pass").val("");
+	                		$('.change-password').modal('show');
 	                	}
-	                	bootbox.alert(msg);
+	                	$('.password-error').html(msg).show();
+	                	
 	                },
 	                error: function() {
 	                	bootbox.alert("Internal server error occurred, please try after sometime.");
-	                }, complete : function() {
-	                	$('.change-password').modal('hide');
 	                }
 	        });
 	        
@@ -238,7 +249,7 @@ function worklist(){
 		"aaSorting": [[0, 'desc']],
 		"fnInitComplete": function (oSettings, json) {
 	          response_json = JSON.stringify(json.data);
-	          console.log('response--->'+response_json);
+	          //console.log('response--->'+response_json);
 	          if(JSON.parse(response_json).length != 0){
 		          $.each(JSON.parse(response_json), function(key, value) {
 		        	  if (!counts.hasOwnProperty(value.task)) {
@@ -247,8 +258,8 @@ function worklist(){
 	        			  counts[value.task]++;
 	        		  }
 		          });
-		          console.log('Count object'+JSON.stringify(counts));
-		          console.log('Length of the count object-->'+Object.keys(counts).length);
+		          //console.log('Count object'+JSON.stringify(counts));
+		          //console.log('Length of the count object-->'+Object.keys(counts).length);
 		          
 		          if(Object.keys(counts).length > 1){
 		        	  $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
@@ -261,12 +272,12 @@ function worklist(){
 			        	    }
 				          }
 		          }else{
-		        	  console.log('Count length is '+Object.keys(counts).length+'.. Due to that not appended!!');
+		        	  //console.log('Count length is '+Object.keys(counts).length+'.. Due to that not appended!!');
 		          }
 		          
 		          
 	          }else{
-	        	  console.log('Response data is empty');
+	        	  //console.log('Response data is empty');
 	          }
 	     }
 	});
@@ -308,7 +319,7 @@ function notifications(){
 }
 
 function worklistwrtnow(json){
-	console.log('came to construct datatable!!');
+	//console.log('came to construct datatable!!');
 	//$("#official_inbox").empty();
 	tableContainer1 = $("#official_inbox"); 
 	tableContainer1.dataTable({
@@ -333,20 +344,20 @@ function worklistwrtnow(json){
 }
 
 function refreshnow(now){
-	console.log('came to refresh nature of work');
-    console.log('parent JSON-->'+response_json);
+	//console.log('came to refresh nature of work');
+    //console.log('parent JSON-->'+response_json);
     if(now != 'Reset' && now!= undefined){
-    	console.log('nature of work other than reset or undefined--->'+now);
+    	//console.log('nature of work other than reset or undefined--->'+now);
 	    $.each(JSON.parse(response_json), function(key, value) {
 	    	if (value.task === now) {
 	    		//console.log(JSON.stringify(value));
 	    		now_json.push(value);
 	    	}
 	    });
-	    console.log('NOW JSON-->'+JSON.stringify(now_json));
+	    //console.log('NOW JSON-->'+JSON.stringify(now_json));
 	    worklistwrtnow(now_json);
     }else{
-    	console.log('came as reset or undefined');
+    	//console.log('came as reset or undefined');
     	$('#natureofwork ul li a[data-now="Reset"]').parent().remove();
     	worklistwrtnow(JSON.parse(response_json));
     }

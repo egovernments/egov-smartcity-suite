@@ -52,8 +52,8 @@ public class ActivationPreAuthenticationChecker extends AccountStatusUserDetails
     @Override
     public void check(final UserDetails userDetail) {
         final SecureUser user = (SecureUser) userDetail;
-        if (user.getUserType().equals(UserType.CITIZEN) && !user.isEnabled())
-            throw new DisabledException("OTP not activated");
+        if (user.getUserType().equals(UserType.CITIZEN) && !userDetail.isEnabled())
+            throw new DisabledException("Inactive User");
 
         super.check(userDetail);
     }

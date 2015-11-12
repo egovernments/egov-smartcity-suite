@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.notice;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID;
 
 import java.io.ByteArrayInputStream;
@@ -54,6 +55,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -104,7 +106,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private Integer reportId = -1;
     private String noticeType;
-    private InputStream NoticePDF; 
+    private InputStream NoticePDF;
     private Long basicPropId;
     private String noticeMode;
     private PersistenceService<BasicProperty, Long> basicPropertyService;
@@ -142,14 +144,21 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             final String url = WebUtils.extractRequestDomainURL(request, false);
             final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                     (String) request.getSession().getAttribute("citylogo"));
-            final String cityName = request.getSession().getAttribute("cityname").toString();
+            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
             reportParams.put("logoPath", imagePath);
             reportParams.put("cityName", cityName);
             if (noticeMode.equalsIgnoreCase("create"))
                 reportParams.put("mode", "create");
-            else
+            else if (noticeMode.equalsIgnoreCase("modify"))
                 reportParams.put("mode", "modify");
+            else
+                reportParams.put("mode", APPLICATION_TYPE_DEMOLITION);
             setNoticeInfo(propertyNotice, basicProperty);
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())){
+            	reportParams.put("unauthorizedProperty", "yes");
+            }else{
+            	reportParams.put("unauthorizedProperty", "no");
+            }
             final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(propertyNotice.getOwnerInfo()
                     .getTotalTax());
             propertyNotice.setFloorDetailsForNotice(floorDetails);
@@ -193,22 +202,28 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ownerInfo.setAssessmentDate(sdf.format(basicProperty.getAssessmentdate()).toString());
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         BigDecimal totalTax = BigDecimal.ZERO;
-		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
-			if(demandDetail.getEgDemandReason().getEgInstallmentMaster().equals(PropertyTaxUtil.getCurrentInstallment())){
-				totalTax = totalTax.add(demandDetail.getAmount());
-			}
-			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
-				ownerInfo.setEducationTax(demandDetail.getAmount());
-			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
-				ownerInfo.setLibraryTax(demandDetail.getAmount());
-			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
-					|| demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-							.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
-				ownerInfo.setGeneralTax(demandDetail.getAmount());
-		}
+        for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
+            if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
+                    .equals(PropertyTaxUtil.getCurrentInstallment())) {
+                totalTax = totalTax.add(demandDetail.getAmount());
+            }
+            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
+                ownerInfo.setEducationTax(demandDetail.getAmount());
+            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
+                ownerInfo.setLibraryTax(demandDetail.getAmount());
+            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+                    || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
+                ownerInfo.setGeneralTax(demandDetail.getAmount());
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())){
+            	if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
+            		ownerInfo.setUnauthorizedPenalty(demandDetail.getAmount());
+            }
+        }
         ownerInfo.setTotalTax(totalTax);
         final PropertyID propertyId = basicProperty.getPropertyID();
         ownerInfo.setZoneName(propertyId.getZone().getName());
@@ -220,27 +235,27 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         propertyNotice.setOwnerInfo(ownerInfo);
     }
 
-	private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(final BigDecimal totalTax) {
-		final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
-		final PropertyDetail detail = property.getPropertyDetail();
-		PropertyAckNoticeInfo floorInfo = null;
-		for (final Floor floor : detail.getFloorDetails()) {
-			floorInfo = new PropertyAckNoticeInfo();
-			floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
-			floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
-			floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
-			floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
-			floorInfo.setMonthlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getMrv()
-					: BigDecimal.ZERO);
-			floorInfo.setYearlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getAlv()
-					: BigDecimal.ZERO);
-			floorInfo.setTaxPayableForCurrYear(totalTax);
-			floorInfo.setRate(floor.getFloorDmdCalc().getCategoryAmt());
+    private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(final BigDecimal totalTax) {
+        final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
+        final PropertyDetail detail = property.getPropertyDetail();
+        PropertyAckNoticeInfo floorInfo = null;
+        for (final Floor floor : detail.getFloorDetails()) {
+            floorInfo = new PropertyAckNoticeInfo();
+            floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
+            floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
+            floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
+            floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
+            floorInfo.setMonthlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getMrv()
+                    : BigDecimal.ZERO);
+            floorInfo.setYearlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getAlv()
+                    : BigDecimal.ZERO);
+            floorInfo.setTaxPayableForCurrYear(floor.getFloorDmdCalc().getTotalTaxPayble());
+            floorInfo.setRate(floor.getFloorDmdCalc().getCategoryAmt());
 
-			floorDetailsList.add(floorInfo);
-		}
-		return floorDetailsList;
-	}
+            floorDetailsList.add(floorInfo);
+        }
+        return floorDetailsList;
+    }
 
     /**
      * This method ends the workflow. The Property is transitioned to END state.

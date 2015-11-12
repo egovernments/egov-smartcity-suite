@@ -150,6 +150,11 @@ public class BillService {
                     .getUpicNo());
             demandNoticeInfo.setPropertyWiseConsumptions(pwc);
             demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty, pwc));
+            if(basicProperty.getVacancyRemissions().isEmpty()){
+            	demandNoticeInfo.setIsVacancyRemissionDone(false);
+            }else{
+            	demandNoticeInfo.setIsVacancyRemissionDone(true);
+            }
 
             ReportRequest reportRequest = null;
             reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,

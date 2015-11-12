@@ -61,6 +61,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTH
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
@@ -77,12 +79,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -103,6 +107,7 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
@@ -135,7 +140,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
@@ -243,7 +247,9 @@ public class PropertyService {
     @Autowired
     private PropertyTaxCollection propertyTaxCollection;
 
-    /**
+    private BigDecimal totalAlv = BigDecimal.ZERO;
+
+	/**
      * Creates a new property if property is in transient state else updates
      * persisted property
      *
@@ -559,11 +565,14 @@ public class PropertyService {
             if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
-            else if (installment.equals(currentInstall))
-                // FloorwiseDemandCalculations should be set only for the
+            else if (installment.equals(currentInstall)){
+            	// FloorwiseDemandCalculations should be set only for the
                 // current installment for each floor.
-                for (final Floor floor : property.getPropertyDetail().getFloorDetails())
-                    ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
+                for (final Floor floor : property.getPropertyDetail().getFloorDetails()){
+                	ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
+                }
+                ptDmdCalc.setAlv(totalAlv);
+            }
         }
         property.getPtDemandSet().addAll(ptDmdSet);
 
@@ -1379,13 +1388,14 @@ public class PropertyService {
         // LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
         // + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
         final FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
-
         floorDmdCalc.setPTDemandCalculations(ptDmdCal);
         floorDmdCalc.setFloor(floor);
 
-        for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos())
-            setFloorDmdCalTax(unitTax, floorDmdCalc);
-
+        for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos()) {
+            if (FLOOR_MAP.get(floorDmdCalc.getFloor().getFloorNo()).equals(unitTax.getFloorNumber()))
+                setFloorDmdCalTax(unitTax, floorDmdCalc);
+        }
+        totalAlv = totalAlv.add(floorDmdCalc.getAlv());
         LOGGER.debug("floorDmdCalc: " + floorDmdCalc + "\nExiting from createFloorDmdCalc");
         return floorDmdCalc;
     }
@@ -1400,6 +1410,7 @@ public class PropertyService {
         floorDmdCalc.setAlv(unitTax.getNetARV());
         floorDmdCalc.setMrv(unitTax.getMrv());
         floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
+        floorDmdCalc.setTotalTaxPayble(unitTax.getTotalTaxPayable());
         for (final MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes())
             for (final MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails())
                 if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName()))
@@ -2229,14 +2240,9 @@ public class PropertyService {
         return modProperty;
     }
 
-    public List<DocumentType> getPropertyModificationDocumentTypes() {
+    public List<DocumentType> getDocumentTypesForTransactionType(TransactionType transactionType) {
         return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
-                TransactionType.MODIFY);
-    }
-
-    public List<DocumentType> getPropertyCreateDocumentTypes() {
-        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
-                TransactionType.CREATE);
+                transactionType);
     }
 
     /**
@@ -2368,12 +2374,13 @@ public class PropertyService {
      * @return
      */
     public BigDecimal getWaterTaxDues(final String assessmentNo, HttpServletRequest request) {
-        final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
-                WebUtils.extractRequestDomainURL(request, false), assessmentNo);
+        final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
+                assessmentNo);
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
+
     /**
      * Method to validate bifurcation of property either using create assessment
      * or alter assessment
@@ -2525,17 +2532,74 @@ public class PropertyService {
     }
 
     /**
-     * Returns User jurisdiction of property zone boundary
+     * Checks whether user is an employee or not
      *
+     * @param user
+     * @return
+     */
+    public Boolean isMeesevaUser(final User user) {
+        for (final Role role : user.getRoles()) {
+            if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     * Getting User assignment based on designation ,department and zone boundary
+     * 
+     * Reading Designation and Department from appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * 'Revenue,Accounts,Administration' for department
      * @param basicProperty
      * @return
      */
     public Assignment getUserPositionByZone(final BasicProperty basicProperty) {
-        final Designation designation = designationService.getDesignationByName(getDesignationForThirdPartyUser());
-        final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        final List<Assignment> assignment = assignmentService.findByDepartmentDesignationAndBoundary(
-                department.getId(), designation.getId(), basicProperty.getPropertyID().getZone().getId());
-        return assignment.get(0);
+        final String designationStr = getDesignationForThirdPartyUser();
+        final String departmentStr = getDepartmentForWorkFlow();
+        String[] department = departmentStr.split(",");
+        String[] designation = designationStr.split(",");
+        List<Assignment> assignment = new ArrayList<Assignment>(); 
+        if (department.length > 0 && designation.length > 0) {
+            if (StringUtils.isNotBlank(department[0]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[0]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
+                                .getElectionBoundary().getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[0]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
+                                    .getPropertyID().getElectionBoundary().getId());
+
+                }
+            } else if (StringUtils.isNotBlank(department[1]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[1]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
+                                .getElectionBoundary().getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[1]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
+                                    .getPropertyID().getElectionBoundary().getId());
+
+                }
+            } else if (StringUtils.isNotBlank(department[2]) && StringUtils.isNotBlank(designation[0])) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[2]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
+                                .getElectionBoundary().getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
+                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[2]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
+                                    .getPropertyID().getElectionBoundary().getId());
+
+                }
+            }
+        }
+        return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
     /**
@@ -2558,12 +2622,9 @@ public class PropertyService {
      * @return
      */
     public String getDesignationForThirdPartyUser() {
-        String designation = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 PROPERTYTAX_WORKFLOWDESIGNATION);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            designation = appConfigValue.get(0).getValue();
-        return designation;
+        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
     }
 
     /**
@@ -2664,6 +2725,34 @@ public class PropertyService {
         return propertyList;
     }
 
+    public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        if (StringUtils.isNotBlank(doorNo)) {
+            queryStr.append("where pmv.houseNo like :doorNo ");
+        }
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(doorNo)) {
+            query.setString("doorNo", doorNo + "%");
+        }
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+
+    public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
+        if (StringUtils.isNotBlank(MobileNo)) {
+            queryStr.append("where pmv.mobileNumber =:MobileNo ");
+        }
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(MobileNo)) {
+            query.setString("MobileNo", MobileNo);
+        }
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
@@ -2684,4 +2773,11 @@ public class PropertyService {
         this.eisCommonsService = eisCommonsService;
     }
 
+    public BigDecimal getTotalAlv() {
+		return totalAlv;
+	}
+
+	public void setTotalAlv(BigDecimal totalAlv) {
+		this.totalAlv = totalAlv;
+	}
 }

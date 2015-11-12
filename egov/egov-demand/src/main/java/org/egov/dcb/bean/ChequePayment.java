@@ -60,7 +60,7 @@ public class ChequePayment extends Payment {
 	public final static String BRANCHNAME = "branchName";
 	public final static String BANKID = "bankId";
 	private static final Logger LOGGER = Logger.getLogger(ChequePayment.class);
-	private final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat(
+	public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat(
 			"dd-MM-yyyy");
 
 	public static ChequePayment create(Map<String, String> paymentInfo) {
@@ -81,7 +81,7 @@ public class ChequePayment extends Payment {
 		}
 		if (paymentInfo.get(BANKID) == null) {
 			this.setBankName(paymentInfo.get(BANKNAME));
-			this.setBankId(fetchBankIDFromCodeOrName(paymentInfo.get(BANKNAME)));
+			this.setBankId(Long.valueOf(paymentInfo.get(BANKID)));
 		} else {
 			this.setBankId(Long.valueOf(paymentInfo.get(BANKID)));
 		}

@@ -117,7 +117,7 @@ public class ChangeOfUseController extends GenericConnectionController {
     @RequestMapping(value = "/changeOfUse/changeOfUse-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails changeOfUse,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction) {
+            final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,final BindingResult errors) {
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
@@ -186,8 +186,20 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition != null)
+            if(userPosition ==null){
+                final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+                        .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
+                loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
+                prepareWorkflow(model,changeOfUse,new WorkflowContainer());
+                model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
+                model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
+                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));  
+                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping", "err.validate.connection.user.mapping");
+                return "changeOfUse-form";
+            }
+            else {
                 approvalPosition = userPosition.getId();
+            }
         }
 
         changeOfUse.setApplicationDate(new Date());

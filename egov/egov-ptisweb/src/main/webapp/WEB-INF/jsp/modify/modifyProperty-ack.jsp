@@ -95,7 +95,8 @@
 			</div>
 			<s:hidden name="modifyRsn" value="%{modifyRsn}"/>
 			<div class="buttonbottom" align="center">
-				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN) && !wfInitiatorRejected}">
+				<s:if test="%{(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
+							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)) && !wfInitiatorRejected}">
 					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" onclick="return onSubmit();" />
 				</s:if>
 				&nbsp;

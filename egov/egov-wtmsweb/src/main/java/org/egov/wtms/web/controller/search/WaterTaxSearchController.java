@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -50,6 +50,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Document;
@@ -59,6 +60,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,6 +82,9 @@ public class WaterTaxSearchController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public WaterTaxSearchController(final SearchService searchService, final CityService cityService) {
@@ -113,6 +118,18 @@ public class WaterTaxSearchController {
         return cscUserRole;
     }
 
+    @ModelAttribute("citizenRole")
+    public Boolean getCitizenUserRole() {
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        Boolean citizenrole = Boolean.FALSE;
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole != null
+            && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
+                citizenrole = Boolean.TRUE;
+                break;
+            }
+        return citizenrole;
+    }
     /**
      * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
      * List Contals 4th Entry "ULB Operator" order by value asc
@@ -122,7 +139,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
         String userRole = "";
-        final User currentUser = securityUtils.getCurrentUser();
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(
@@ -143,7 +160,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("superUserRole")
     public String getSuperUserRole() {
         String userRole = "";
-        final User currentUser = securityUtils.getCurrentUser();
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(
@@ -164,7 +181,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("approverUserRole")
     public String getApproverUserRole() {
         String userRole = "";
-        final User currentUser = securityUtils.getCurrentUser();
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(
@@ -185,7 +202,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("operatorRole")
     public String getOperatorUserRole() {
         String userRole = "";
-        final User currentUser = securityUtils.getCurrentUser();
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(

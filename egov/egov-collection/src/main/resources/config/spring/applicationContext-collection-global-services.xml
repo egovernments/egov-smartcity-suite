@@ -54,6 +54,11 @@
 		<property name="sequenceGenerator" ref="sequenceNumberGenerator" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>
+	<bean class="org.egov.collection.repository.ServiceCategoryRepository" id="serviceCategoryRepository" />
+	
+	<bean class="org.egov.collection.service.ServiceCategoryService" id="serviceCategoryService" >
+		<constructor-arg index="0" ref="serviceCategoryRepository" />
+	</bean>
 	
 	<bean class="org.egov.collection.service.ReceiptHeaderService"
 		id="receiptHeaderService" parent="persistenceService" scope="prototype">
@@ -126,11 +131,7 @@
 	
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
 	</bean>
-	
-	<bean id="bankService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.commons.Bank" />
-	</bean>
-   
+	   
    <bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
    </bean>
 
@@ -158,6 +159,7 @@
 	   <property name="persistenceService" ref="persistenceService" />
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="collectionsUtil" ref="collectionsUtil" />
+	   <property name="financialsUtil" ref="financialsUtil" />
 	</bean>
 	
 </beans>

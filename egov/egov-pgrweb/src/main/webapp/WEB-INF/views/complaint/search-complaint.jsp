@@ -111,17 +111,17 @@
 					</div>
 					<div class="form-group show-searchcomp-more display-hide">
 						<div class="col-md-4 add-margin">
-							<input type="text" name="complaintNumber" class="form-control"
+							<input type="text" name="complaintNumber" class="form-control patternvalidation" data-pattern="alphanumericwithhyphen"
 								id="ct-ctno"
 								placeholder="<spring:message code='lbl.complaint.number'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="complainantName" class="form-control" id="ct-name"
+							<input type="text" name="complainantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" id="ct-name"
 								placeholder="<spring:message code='lbl.name'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="complainantPhoneNumber" class="form-control" id="ct-mobno"
-								placeholder="<spring:message code='lbl.phoneNumber'/>" />
+							<input type="text" name="complainantPhoneNumber" class="form-control patternvalidation" data-pattern="number" id="ct-mobno"
+								placeholder="<spring:message code='lbl.phoneNumber'/>" maxlength="10"/>
 						</div>
 					</div>
 					<div class="form-group show-searchcomp-more display-hide">
@@ -130,7 +130,7 @@
 								placeholder="<spring:message code='lbl.email'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="complaintType" class="form-control" id="ct-type"
+							<input type="text" name="complaintType" class="form-control patternvalidation" data-pattern="alphabetwithspace" id="ct-type"
 								placeholder="<spring:message code='lbl.complaintType'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
@@ -157,8 +157,8 @@
 					<div class="form-group show-searchcomp-more display-hide"></div>
 					<div class="form-group">
 						<div class="text-center">
-							<a href="javascript:void(0);" id="searchComplaints" class="btn btn-primary">
-							<spring:message code='lbl.search' /></a>
+							<button type="button" id="searchComplaints" class="btn btn-primary">
+							<spring:message code='lbl.search' /></button>
 							<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
 							<a href="javascript:void(0);" id="closeComplaints" class="btn btn-default" onclick="self.close()">
 							<spring:message code='lbl.close' /></a>
@@ -170,7 +170,7 @@
 	</div>
 </div>
 <div>
-	<strong class="head-font"><spring:message code="msg.search.result"/></strong>
+	<strong class="head-font table-header"><spring:message code="msg.search.result"/></strong>
 	<table class="table table-bordered datatable dt-responsive" id="complaintSearchResults"></table>
 </div>
 
@@ -194,6 +194,8 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script src="<c:url value='/resources/js/app/search-complaint.js'/>"
 	type="text/javascript"></script>
 <c:if test="${not empty param.crn}">

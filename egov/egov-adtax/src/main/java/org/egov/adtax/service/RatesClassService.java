@@ -78,4 +78,13 @@ public class RatesClassService {
         return ratesClassRepository.save(ratesClass);
     }
 
+    public List<RatesClass> findAll() {
+        return ratesClassRepository.findAll();
+    }
+    @Transactional
+    public RatesClass updateRateClass(RatesClass rateClass) {
+        return ratesClassRepository.save(rateClass);
+             
+    }
+
 }

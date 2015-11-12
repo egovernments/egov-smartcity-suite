@@ -44,6 +44,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+
 /**
  * The PropertyTaxDetails class is used to contain property tax details, arrears
  * details and the corresponding error details if any.
@@ -53,19 +56,41 @@ import java.util.Set;
  */
 @SuppressWarnings("serial")
 public class PropertyTaxDetails implements Serializable{
+	@JsonIgnore
 	private String demandYear;
+	@JsonIgnore
 	private String guardianName;
+	
+	private String assessmentNo;
+	@JsonIgnore
 	private String ownerAddress;
+	
+	private String propertyAddress;
+	@JsonIgnore
 	private String ownerName;
+	@JsonIgnore
 	private Boolean hasArrears;
+	@JsonIgnore
 	private BigDecimal unAuthPenalty;
+	@JsonIgnore
 	private BigDecimal taxAmt;
+	@JsonIgnore
 	private BigDecimal educationCess;
+	@JsonIgnore
 	private BigDecimal libraryCess;
+	@JsonIgnore
 	private BigDecimal propertyTax;
+	@JsonIgnore
 	private BigDecimal penalty;
+	@JsonIgnore
+	private BigDecimal chqBouncePenalty;	
+	@JsonIgnore
 	private BigDecimal totalTaxAmt;
+	private String localityName;
+	@JsonIgnore
 	private Set<ArrearDetails> arrearDetails;
+	private List<OwnerDetails> ownerDetails;
+	private List<RestPropertyTaxDetails> taxDetails;
 	private ErrorDetails errorDetails;
 	public String getDemandYear() {
 		return demandYear;
@@ -158,6 +183,44 @@ public class PropertyTaxDetails implements Serializable{
 				+ unAuthPenalty + ", taxAmt=" + taxAmt + ", educationCess=" + educationCess + ", libraryCess="
 				+ libraryCess + ", propertyTax=" + propertyTax + ", penalty=" + penalty + ", totalTaxAmt=" + totalTaxAmt
 				+ ", arrearDetails=" + arrearDetails + ", errorDetails=" + errorDetails + "]";
+	}
+	public List<OwnerDetails> getOwnerDetails() {
+		return ownerDetails;
+	}
+	public void setOwnerDetails(List<OwnerDetails> ownerDetails) {
+		this.ownerDetails = ownerDetails;
+	}
+	public String getPropertyAddress() {
+		return propertyAddress;
+	}
+	public void setPropertyAddress(String propertyAddress) {
+		this.propertyAddress = propertyAddress;
+	}
+	
+	
+	public BigDecimal getChqBouncePenalty() {
+		return chqBouncePenalty;
+	}
+	public void setChqBouncePenalty(BigDecimal chqBouncePenalty) {
+		this.chqBouncePenalty = chqBouncePenalty;
+	}
+	public String getAssessmentNo() {
+		return assessmentNo;
+	}
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
+	}
+	public List<RestPropertyTaxDetails> getTaxDetails() {
+		return taxDetails;
+	}
+	public void setTaxDetails(List<RestPropertyTaxDetails> taxDetails) {
+		this.taxDetails = taxDetails;
+	}
+	public String getLocalityName() {
+		return localityName;
+	}
+	public void setLocalityName(String localityName) {
+		this.localityName = localityName;
 	}
 	
 	

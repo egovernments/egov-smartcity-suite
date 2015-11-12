@@ -1,4 +1,4 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/** eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -38,9 +38,6 @@
  */
 package org.egov.portal.web.controller.citizen;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -53,6 +50,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -67,15 +65,16 @@ public class CitizenRegistrationController {
         this.citizenService = citizenService;
     }
 
-    @RequestMapping(value = "/register", method = GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String registerCitizen(@ModelAttribute final Citizen citizen) {
         return "signup";
     }
 
-    @RequestMapping(value = "/register", method = POST)
-    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors, final HttpServletRequest request,
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
+            final HttpServletRequest request,
             final RedirectAttributes redirectAttrib) {
-       if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
+        if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");
@@ -88,7 +87,7 @@ public class CitizenRegistrationController {
         return "redirect:register?activation=true";
     }
 
-    @RequestMapping(value = "/activation", method = POST)
+    @RequestMapping(value = "/activation", method = RequestMethod.POST)
     public String citizenOTPActivation(@RequestParam final String activationCode) {
         return "redirect:register?activation=true&activated=" + (citizenService.activateCitizen(activationCode) != null);
     }

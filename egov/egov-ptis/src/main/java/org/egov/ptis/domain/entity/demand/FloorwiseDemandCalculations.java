@@ -55,445 +55,465 @@ import org.egov.ptis.domain.entity.property.Floor;
  * @since 1.00
  */
 public class FloorwiseDemandCalculations {
-	private Integer id = null;
-	private Floor floor = null;
-	private PTDemandCalculations pTDemandCalculations = null;
-	private Date lastUpdatedTimeStamp;
-	private Date createTimeStamp;
-	private BigDecimal categoryAmt;
-	private BigDecimal occupancyRebate;
-	private BigDecimal constructionRebate;
-	private BigDecimal depreciation;
-	private BigDecimal usageRebate;
-	private BigDecimal tax1 = BigDecimal.ZERO;
-	private BigDecimal tax2 = BigDecimal.ZERO;
-	private BigDecimal tax3 = BigDecimal.ZERO;
-	private BigDecimal tax4 = BigDecimal.ZERO;
-	private BigDecimal tax5 = BigDecimal.ZERO;
-	private BigDecimal tax6 = BigDecimal.ZERO;
-	private BigDecimal tax7 = BigDecimal.ZERO;
-	private BigDecimal tax8 = BigDecimal.ZERO;
-	private BigDecimal tax9 = BigDecimal.ZERO;
-	private BigDecimal tax10 = BigDecimal.ZERO;
-	private BigDecimal alv;
-	private BigDecimal mrv;
+    private Integer id = null;
+    private Floor floor = null;
+    private PTDemandCalculations pTDemandCalculations = null;
+    private Date lastUpdatedTimeStamp;
+    private Date createTimeStamp;
+    private BigDecimal categoryAmt;
+    private BigDecimal occupancyRebate;
+    private BigDecimal constructionRebate;
+    private BigDecimal depreciation;
+    private BigDecimal usageRebate;
+    private BigDecimal tax1 = BigDecimal.ZERO;
+    private BigDecimal tax2 = BigDecimal.ZERO;
+    private BigDecimal tax3 = BigDecimal.ZERO;
+    private BigDecimal tax4 = BigDecimal.ZERO;
+    private BigDecimal tax5 = BigDecimal.ZERO;
+    private BigDecimal tax6 = BigDecimal.ZERO;
+    private BigDecimal tax7 = BigDecimal.ZERO;
+    private BigDecimal tax8 = BigDecimal.ZERO;
+    private BigDecimal tax9 = BigDecimal.ZERO;
+    private BigDecimal tax10 = BigDecimal.ZERO;
+    private BigDecimal alv;
+    private BigDecimal mrv;
+    private BigDecimal totalTaxPayble;
 
-	public FloorwiseDemandCalculations() {
-		super();
-	}
+    public FloorwiseDemandCalculations() {
+        super();
+    }
 
-	public FloorwiseDemandCalculations(Integer id, Floor floor, PTDemandCalculations demandCalculations,
-			Date lastUpdatedTimeStamp, Date createTimeStamp, BigDecimal categoryAmt, BigDecimal occupancyRebate,
-			BigDecimal constructionRebate, BigDecimal depreciation, BigDecimal usageRebate) {
-		super();
-		this.id = id;
-		this.floor = floor;
-		pTDemandCalculations = demandCalculations;
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-		this.createTimeStamp = createTimeStamp;
-		this.categoryAmt = categoryAmt;
-		this.occupancyRebate = occupancyRebate;
-		this.constructionRebate = constructionRebate;
-		this.depreciation = depreciation;
-		this.usageRebate = usageRebate;
-	}
+    public FloorwiseDemandCalculations(Integer id, Floor floor, PTDemandCalculations demandCalculations,
+            Date lastUpdatedTimeStamp, Date createTimeStamp, BigDecimal categoryAmt, BigDecimal occupancyRebate,
+            BigDecimal constructionRebate, BigDecimal depreciation, BigDecimal usageRebate) {
+        super();
+        this.id = id;
+        this.floor = floor;
+        pTDemandCalculations = demandCalculations;
+        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+        this.createTimeStamp = createTimeStamp;
+        this.categoryAmt = categoryAmt;
+        this.occupancyRebate = occupancyRebate;
+        this.constructionRebate = constructionRebate;
+        this.depreciation = depreciation;
+        this.usageRebate = usageRebate;
+    }
 
-	public FloorwiseDemandCalculations(FloorwiseDemandCalculations thatFloorDmdCalc) {
-		this.floor = thatFloorDmdCalc.floor;
-		this.lastUpdatedTimeStamp = new Date();
-		this.createTimeStamp = new Date();
-		this.categoryAmt = thatFloorDmdCalc.categoryAmt;
-		this.occupancyRebate = thatFloorDmdCalc.occupancyRebate;
-		this.constructionRebate = thatFloorDmdCalc.constructionRebate;
-		this.depreciation = thatFloorDmdCalc.depreciation;
-		this.usageRebate = thatFloorDmdCalc.usageRebate;
-		this.tax1 = thatFloorDmdCalc.getTax1();
-		this.tax2 = thatFloorDmdCalc.getTax2();
-		this.tax3 = thatFloorDmdCalc.getTax3();
-		this.tax4 = thatFloorDmdCalc.getTax4();
-		this.tax5 = thatFloorDmdCalc.getTax5();
-		this.tax6 = thatFloorDmdCalc.getTax6();
-		this.tax7 = thatFloorDmdCalc.getTax7();
-		this.tax8 = thatFloorDmdCalc.getTax8();
-		this.tax9 = thatFloorDmdCalc.getTax9();
-		this.tax10 = thatFloorDmdCalc.getTax10();
-		this.alv = thatFloorDmdCalc.getAlv();
-		this.mrv = thatFloorDmdCalc.getMrv();
-	}
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
+    public FloorwiseDemandCalculations(FloorwiseDemandCalculations thatFloorDmdCalc) {
+        this.floor = thatFloorDmdCalc.floor;
+        this.lastUpdatedTimeStamp = new Date();
+        this.createTimeStamp = new Date();
+        this.categoryAmt = thatFloorDmdCalc.categoryAmt;
+        this.occupancyRebate = thatFloorDmdCalc.occupancyRebate;
+        this.constructionRebate = thatFloorDmdCalc.constructionRebate;
+        this.depreciation = thatFloorDmdCalc.depreciation;
+        this.usageRebate = thatFloorDmdCalc.usageRebate;
+        this.tax1 = thatFloorDmdCalc.getTax1();
+        this.tax2 = thatFloorDmdCalc.getTax2();
+        this.tax3 = thatFloorDmdCalc.getTax3();
+        this.tax4 = thatFloorDmdCalc.getTax4();
+        this.tax5 = thatFloorDmdCalc.getTax5();
+        this.tax6 = thatFloorDmdCalc.getTax6();
+        this.tax7 = thatFloorDmdCalc.getTax7();
+        this.tax8 = thatFloorDmdCalc.getTax8();
+        this.tax9 = thatFloorDmdCalc.getTax9();
+        this.tax10 = thatFloorDmdCalc.getTax10();
+        this.alv = thatFloorDmdCalc.getAlv();
+        this.mrv = thatFloorDmdCalc.getMrv();
+    }
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    /**
+     * @return the id
+     */
+    public Integer getId() {
+        return id;
+    }
 
-	/**
-	 * @return the floor
-	 */
-	public Floor getFloor() {
-		return floor;
-	}
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * @param floor
-	 *            the floor to set
-	 */
-	public void setFloor(Floor floor) {
-		this.floor = floor;
-	}
+    /**
+     * @return the floor
+     */
+    public Floor getFloor() {
+        return floor;
+    }
 
-	/**
-	 * @return the pTDemandCalculations
-	 */
-	public PTDemandCalculations getPTDemandCalculations() {
-		return pTDemandCalculations;
-	}
+    /**
+     * @param floor
+     *            the floor to set
+     */
+    public void setFloor(Floor floor) {
+        this.floor = floor;
+    }
 
-	/**
-	 * @param demandCalculations
-	 *            the pTDemandCalculations to set
-	 */
-	public void setPTDemandCalculations(PTDemandCalculations demandCalculations) {
-		pTDemandCalculations = demandCalculations;
-	}
+    /**
+     * @return the pTDemandCalculations
+     */
+    public PTDemandCalculations getPTDemandCalculations() {
+        return pTDemandCalculations;
+    }
 
-	/**
-	 * @return the lastUpdatedTimeStamp
-	 */
-	public Date getLastUpdatedTimeStamp() {
-		return lastUpdatedTimeStamp;
-	}
+    /**
+     * @param demandCalculations
+     *            the pTDemandCalculations to set
+     */
+    public void setPTDemandCalculations(PTDemandCalculations demandCalculations) {
+        pTDemandCalculations = demandCalculations;
+    }
 
-	/**
-	 * @param lastUpdatedTimeStamp
-	 *            the lastUpdatedTimeStamp to set
-	 */
-	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-	}
+    /**
+     * @return the lastUpdatedTimeStamp
+     */
+    public Date getLastUpdatedTimeStamp() {
+        return lastUpdatedTimeStamp;
+    }
 
-	/**
-	 * @return the createTimeStamp
-	 */
-	public Date getCreateTimeStamp() {
-		return createTimeStamp;
-	}
+    /**
+     * @param lastUpdatedTimeStamp
+     *            the lastUpdatedTimeStamp to set
+     */
+    public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
+        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+    }
 
-	/**
-	 * @param createTimeStamp
-	 *            the createTimeStamp to set
-	 */
-	public void setCreateTimeStamp(Date createTimeStamp) {
-		this.createTimeStamp = createTimeStamp;
-	}
+    /**
+     * @return the createTimeStamp
+     */
+    public Date getCreateTimeStamp() {
+        return createTimeStamp;
+    }
 
-	/**
-	 * @return the categoryAmt
-	 */
-	public BigDecimal getCategoryAmt() {
-		return categoryAmt;
-	}
+    /**
+     * @param createTimeStamp
+     *            the createTimeStamp to set
+     */
+    public void setCreateTimeStamp(Date createTimeStamp) {
+        this.createTimeStamp = createTimeStamp;
+    }
 
-	/**
-	 * @param categoryAmt
-	 *            the categoryAmt to set
-	 */
-	public void setCategoryAmt(BigDecimal categoryAmt) {
-		this.categoryAmt = categoryAmt;
-	}
+    /**
+     * @return the categoryAmt
+     */
+    public BigDecimal getCategoryAmt() {
+        return categoryAmt;
+    }
 
-	/**
-	 * @return the occupancyRebate
-	 */
-	public BigDecimal getOccupancyRebate() {
-		return occupancyRebate;
-	}
+    /**
+     * @param categoryAmt
+     *            the categoryAmt to set
+     */
+    public void setCategoryAmt(BigDecimal categoryAmt) {
+        this.categoryAmt = categoryAmt;
+    }
 
-	/**
-	 * @param occupancyRebate
-	 *            the occupancyRebate to set
-	 */
-	public void setOccupancyRebate(BigDecimal occupancyRebate) {
-		this.occupancyRebate = occupancyRebate;
-	}
+    /**
+     * @return the occupancyRebate
+     */
+    public BigDecimal getOccupancyRebate() {
+        return occupancyRebate;
+    }
 
-	/**
-	 * @return the constructionRebate
-	 */
-	public BigDecimal getConstructionRebate() {
-		return constructionRebate;
-	}
+    /**
+     * @param occupancyRebate
+     *            the occupancyRebate to set
+     */
+    public void setOccupancyRebate(BigDecimal occupancyRebate) {
+        this.occupancyRebate = occupancyRebate;
+    }
 
-	/**
-	 * @param constructionRebate
-	 *            the constructionRebate to set
-	 */
-	public void setConstructionRebate(BigDecimal constructionRebate) {
-		this.constructionRebate = constructionRebate;
-	}
+    /**
+     * @return the constructionRebate
+     */
+    public BigDecimal getConstructionRebate() {
+        return constructionRebate;
+    }
 
-	/**
-	 * @return the depreciation
-	 */
-	public BigDecimal getDepreciation() {
-		return depreciation;
-	}
+    /**
+     * @param constructionRebate
+     *            the constructionRebate to set
+     */
+    public void setConstructionRebate(BigDecimal constructionRebate) {
+        this.constructionRebate = constructionRebate;
+    }
 
-	/**
-	 * @param depreciation
-	 *            the depreciation to set
-	 */
-	public void setDepreciation(BigDecimal depreciation) {
-		this.depreciation = depreciation;
-	}
+    /**
+     * @return the depreciation
+     */
+    public BigDecimal getDepreciation() {
+        return depreciation;
+    }
 
-	/**
-	 * @return the usageRebate
-	 */
-	public BigDecimal getUsageRebate() {
-		return usageRebate;
-	}
+    /**
+     * @param depreciation
+     *            the depreciation to set
+     */
+    public void setDepreciation(BigDecimal depreciation) {
+        this.depreciation = depreciation;
+    }
 
-	/**
-	 * @param usageRebate
-	 *            the usageRebate to set
-	 */
-	public void setUsageRebate(BigDecimal usageRebate) {
-		this.usageRebate = usageRebate;
-	}
+    /**
+     * @return the usageRebate
+     */
+    public BigDecimal getUsageRebate() {
+        return usageRebate;
+    }
 
-	/**
-	 * @return the tax1
-	 */
-	public BigDecimal getTax1() {
-		return tax1;
-	}
+    /**
+     * @param usageRebate
+     *            the usageRebate to set
+     */
+    public void setUsageRebate(BigDecimal usageRebate) {
+        this.usageRebate = usageRebate;
+    }
 
-	/**
-	 * @param tax1 the tax1 to set
-	 */
-	public void setTax1(BigDecimal tax1) {
-		this.tax1 = tax1;
-	}
+    /**
+     * @return the tax1
+     */
+    public BigDecimal getTax1() {
+        return tax1;
+    }
 
-	/**
-	 * @return the tax2
-	 */
-	public BigDecimal getTax2() {
-		return tax2;
-	}
+    /**
+     * @param tax1
+     *            the tax1 to set
+     */
+    public void setTax1(BigDecimal tax1) {
+        this.tax1 = tax1;
+    }
 
-	/**
-	 * @param tax2 the tax2 to set
-	 */
-	public void setTax2(BigDecimal tax2) {
-		this.tax2 = tax2;
-	}
+    /**
+     * @return the tax2
+     */
+    public BigDecimal getTax2() {
+        return tax2;
+    }
 
-	/**
-	 * @return the tax3
-	 */
-	public BigDecimal getTax3() {
-		return tax3;
-	}
+    /**
+     * @param tax2
+     *            the tax2 to set
+     */
+    public void setTax2(BigDecimal tax2) {
+        this.tax2 = tax2;
+    }
 
-	/**
-	 * @param tax3 the tax3 to set
-	 */
-	public void setTax3(BigDecimal tax3) {
-		this.tax3 = tax3;
-	}
+    /**
+     * @return the tax3
+     */
+    public BigDecimal getTax3() {
+        return tax3;
+    }
 
-	/**
-	 * @return the tax4
-	 */
-	public BigDecimal getTax4() {
-		return tax4;
-	}
+    /**
+     * @param tax3
+     *            the tax3 to set
+     */
+    public void setTax3(BigDecimal tax3) {
+        this.tax3 = tax3;
+    }
 
-	/**
-	 * @param tax4 the tax4 to set
-	 */
-	public void setTax4(BigDecimal tax4) {
-		this.tax4 = tax4;
-	}
+    /**
+     * @return the tax4
+     */
+    public BigDecimal getTax4() {
+        return tax4;
+    }
 
-	/**
-	 * @return the tax5
-	 */
-	public BigDecimal getTax5() {
-		return tax5;
-	}
+    /**
+     * @param tax4
+     *            the tax4 to set
+     */
+    public void setTax4(BigDecimal tax4) {
+        this.tax4 = tax4;
+    }
 
-	/**
-	 * @param tax5 the tax5 to set
-	 */
-	public void setTax5(BigDecimal tax5) {
-		this.tax5 = tax5;
-	}
+    /**
+     * @return the tax5
+     */
+    public BigDecimal getTax5() {
+        return tax5;
+    }
 
-	/**
-	 * @return the tax6
-	 */
-	public BigDecimal getTax6() {
-		return tax6;
-	}
+    /**
+     * @param tax5
+     *            the tax5 to set
+     */
+    public void setTax5(BigDecimal tax5) {
+        this.tax5 = tax5;
+    }
 
-	/**
-	 * @param tax6 the tax6 to set
-	 */
-	public void setTax6(BigDecimal tax6) {
-		this.tax6 = tax6;
-	}
+    /**
+     * @return the tax6
+     */
+    public BigDecimal getTax6() {
+        return tax6;
+    }
 
-	/**
-	 * @return the tax7
-	 */
-	public BigDecimal getTax7() {
-		return tax7;
-	}
+    /**
+     * @param tax6
+     *            the tax6 to set
+     */
+    public void setTax6(BigDecimal tax6) {
+        this.tax6 = tax6;
+    }
 
-	/**
-	 * @param tax7 the tax7 to set
-	 */
-	public void setTax7(BigDecimal tax7) {
-		this.tax7 = tax7;
-	}
+    /**
+     * @return the tax7
+     */
+    public BigDecimal getTax7() {
+        return tax7;
+    }
 
-	/**
-	 * @return the tax8
-	 */
-	public BigDecimal getTax8() {
-		return tax8;
-	}
+    /**
+     * @param tax7
+     *            the tax7 to set
+     */
+    public void setTax7(BigDecimal tax7) {
+        this.tax7 = tax7;
+    }
 
-	/**
-	 * @param tax8 the tax8 to set
-	 */
-	public void setTax8(BigDecimal tax8) {
-		this.tax8 = tax8;
-	}
+    /**
+     * @return the tax8
+     */
+    public BigDecimal getTax8() {
+        return tax8;
+    }
 
-	/**
-	 * @return the tax9
-	 */
-	public BigDecimal getTax9() {
-		return tax9;
-	}
+    /**
+     * @param tax8
+     *            the tax8 to set
+     */
+    public void setTax8(BigDecimal tax8) {
+        this.tax8 = tax8;
+    }
 
-	/**
-	 * @param tax9 the tax9 to set
-	 */
-	public void setTax9(BigDecimal tax9) {
-		this.tax9 = tax9;
-	}
+    /**
+     * @return the tax9
+     */
+    public BigDecimal getTax9() {
+        return tax9;
+    }
 
-	/**
-	 * @return the tax10
-	 */
-	public BigDecimal getTax10() {
-		return tax10;
-	}
+    /**
+     * @param tax9
+     *            the tax9 to set
+     */
+    public void setTax9(BigDecimal tax9) {
+        this.tax9 = tax9;
+    }
 
-	/**
-	 * @param tax10 the tax10 to set
-	 */
-	public void setTax10(BigDecimal tax10) {
-		this.tax10 = tax10;
-	}
+    /**
+     * @return the tax10
+     */
+    public BigDecimal getTax10() {
+        return tax10;
+    }
 
-	public BigDecimal getAlv() {
-		return alv;
-	}
+    /**
+     * @param tax10
+     *            the tax10 to set
+     */
+    public void setTax10(BigDecimal tax10) {
+        this.tax10 = tax10;
+    }
 
-	public void setAlv(BigDecimal alv) {
-		this.alv = alv;
-	}
+    public BigDecimal getAlv() {
+        return alv;
+    }
 
-	public BigDecimal getMrv() {
-		return mrv;
-	}
+    public void setAlv(BigDecimal alv) {
+        this.alv = alv;
+    }
 
-	public void setMrv(BigDecimal mrv) {
-		this.mrv = mrv;
-	}
+    public BigDecimal getMrv() {
+        return mrv;
+    }
 
-	/**
-	 * @return true if the given Object is equal to
-	 */
-	public boolean equals(Object that) {
-		if (that == null)
-			return false;
+    public void setMrv(BigDecimal mrv) {
+        this.mrv = mrv;
+    }
 
-		if (this == that)
-			return true;
-		if (that.getClass() != this.getClass())
-			return false;
+    public BigDecimal getTotalTaxPayble() {
+        return totalTaxPayble;
+    }
 
-		final FloorwiseDemandCalculations thatFlWsDemand = (FloorwiseDemandCalculations) that;
+    public void setTotalTaxPayble(BigDecimal totalTaxPayble) {
+        this.totalTaxPayble = totalTaxPayble;
+    }
 
-		if (this.getId() != null && thatFlWsDemand.getId() != null) {
-			if (getId().equals(thatFlWsDemand.getId())) {
-				return true;
-			} else
-				return false;
-		} else if (this.getFloor() != null && thatFlWsDemand.getFloor() != null) {
-			if (getFloor().equals(thatFlWsDemand.getFloor())) {
-				return true;
-			} else
-				return false;
-		} else if (this.getPTDemandCalculations() != null && thatFlWsDemand.getPTDemandCalculations() != null) {
-			if (getPTDemandCalculations().equals(thatFlWsDemand.getPTDemandCalculations())) {
-				return true;
-			} else
-				return false;
-		} else
-			return false;
+    /**
+     * @return true if the given Object is equal to
+     */
+    public boolean equals(Object that) {
+        if (that == null)
+            return false;
 
-	}
+        if (this == that)
+            return true;
+        if (that.getClass() != this.getClass())
+            return false;
 
-	/**
-	 * @return Returns the hashCode
-	 */
-	public int hashCode() {
-		int hashCode = 0;
-		if (getId() != null) {
-			hashCode += this.getId().hashCode();
-		}
-		if (getFloor() != null) {
-			hashCode += this.getFloor().hashCode();
-		}
+        final FloorwiseDemandCalculations thatFlWsDemand = (FloorwiseDemandCalculations) that;
 
-		return hashCode;
-	}
+        if (this.getId() != null && thatFlWsDemand.getId() != null) {
+            if (getId().equals(thatFlWsDemand.getId())) {
+                return true;
+            } else
+                return false;
+        } else if (this.getFloor() != null && thatFlWsDemand.getFloor() != null) {
+            if (getFloor().equals(thatFlWsDemand.getFloor())) {
+                return true;
+            } else
+                return false;
+        } else if (this.getPTDemandCalculations() != null && thatFlWsDemand.getPTDemandCalculations() != null) {
+            if (getPTDemandCalculations().equals(thatFlWsDemand.getPTDemandCalculations())) {
+                return true;
+            } else
+                return false;
+        } else
+            return false;
 
-	/**
-	 * @return Returns the boolean after validating the current object
-	 */
-	public boolean validate() {
-		if (getFloor() == null)
-			throw new ApplicationRuntimeException("In  Validate : Property is Not Set, Please Check !!");
-		if (getPTDemandCalculations() == null)
-			throw new ApplicationRuntimeException("In  Validate : PTDemandCalculations is Not Set, Please Check !!");
+    }
 
-		return true;
-	}
+    /**
+     * @return Returns the hashCode
+     */
+    public int hashCode() {
+        int hashCode = 0;
+        if (getId() != null) {
+            hashCode += this.getId().hashCode();
+        }
+        if (getFloor() != null) {
+            hashCode += this.getFloor().hashCode();
+        }
 
-	@Override
-	public String toString() {
-		StringBuilder objStr = new StringBuilder();
+        return hashCode;
+    }
 
-		objStr.append("Id: ").append(getId()).append("|OccupRebate: ").append(getOccupancyRebate()).append(
-				"|ConstrucRebate : ").append(getConstructionRebate()).append("|Depreciation: ").append(
-				getDepreciation()).append("|UsageRebate: ").append(getUsageRebate());
-		return objStr.toString();
-	}
+    /**
+     * @return Returns the boolean after validating the current object
+     */
+    public boolean validate() {
+        if (getFloor() == null)
+            throw new ApplicationRuntimeException("In  Validate : Property is Not Set, Please Check !!");
+        if (getPTDemandCalculations() == null)
+            throw new ApplicationRuntimeException("In  Validate : PTDemandCalculations is Not Set, Please Check !!");
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder objStr = new StringBuilder();
+
+        objStr.append("Id: ").append(getId()).append("|OccupRebate: ").append(getOccupancyRebate())
+                .append("|ConstrucRebate : ").append(getConstructionRebate()).append("|Depreciation: ")
+                .append(getDepreciation()).append("|UsageRebate: ").append(getUsageRebate());
+        return objStr.toString();
+    }
 }

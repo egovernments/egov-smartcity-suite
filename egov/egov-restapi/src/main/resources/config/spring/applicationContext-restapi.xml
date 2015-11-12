@@ -59,4 +59,6 @@
     
 	<bean name="apiFilter" class="org.egov.restapi.filter.ApiFilter" />
 	<bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
+	<bean id="waterTaxExternalService" class="org.egov.wtms.application.service.collection.WaterTaxExternalService" scope="prototype"/>
+	
 </beans>

@@ -45,7 +45,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
-import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 public abstract class Payment {
@@ -64,7 +63,7 @@ public abstract class Payment {
 	private BigDecimal amount;
     private PAYMENTMODE paymentMode;
     private String paidBy;
-    private CommonsDAOFactory commonsDAOFactory;
+    private BankHibernateDAO bankHibernateDAO;
 	
 	// These two fields will be used in the case of walk-in payments from banks
     private String depositedInBankCode;
@@ -136,12 +135,12 @@ public abstract class Payment {
 	}
 
     protected Long fetchBankIDFromCodeOrName(String bankCodeOrName) {
-        BankHibernateDAO bankHibDao = commonsDAOFactory.getBankDAO();
+       
         // Tries by code first
-        Bank bank = bankHibDao.getBankByCode(bankCodeOrName);
+        Bank bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
         if (bank == null) {
             // Tries by name if code not found
-            bank = bankHibDao.getBankByCode(bankCodeOrName);
+            bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
         }
         return new Long(bank.getId());
     }
@@ -170,12 +169,14 @@ public abstract class Payment {
         this.paymentMode = paymentMode;
     }
 
-	public CommonsDAOFactory getCommonsDAOFactory() {
-		return commonsDAOFactory;
+	public BankHibernateDAO getBankHibernateDAO() {
+		return bankHibernateDAO;
 	}
 
-	public void setCommonsDAOFactory(CommonsDAOFactory commonsDAOFactory) {
-		this.commonsDAOFactory = commonsDAOFactory;
+	public void setBankHibernateDAO(BankHibernateDAO bankHibernateDAO) {
+		this.bankHibernateDAO = bankHibernateDAO;
 	}
+
+	
     
 }

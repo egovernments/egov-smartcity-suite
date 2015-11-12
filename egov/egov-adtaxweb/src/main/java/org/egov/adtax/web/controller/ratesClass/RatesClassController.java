@@ -41,6 +41,8 @@ package org.egov.adtax.web.controller.ratesClass;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.RatesClass;
@@ -51,6 +53,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -70,12 +73,20 @@ public class RatesClassController {
         return new RatesClass();
     }
 
+    @ModelAttribute(value = "rateClasses")
+    public List<RatesClass> getAllRatesClasses() {
+        return rateClassService.findAll();
+    }
     
     @RequestMapping(value = "create", method = GET)
     public String create() {
         return "ratesClass-form";
     }
-
+    
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String search() {
+        return "ratesClass-search";
+    }
     @RequestMapping(value = "create", method = POST)
     public String create(@Valid @ModelAttribute final RatesClass ratesClass,
             final BindingResult errors, final RedirectAttributes redirectAttrs) {
@@ -84,12 +95,12 @@ public class RatesClassController {
         rateClassService.createRatesClass(ratesClass);
         redirectAttrs.addFlashAttribute("ratesClass", ratesClass);
         redirectAttrs.addFlashAttribute("message", "message.ratesClass.create");
-        return "redirect:/ratesclass/success/" + ratesClass.getDescription();
+        return "redirect:/ratesclass/success/" + ratesClass.getId();
     }
 
     @RequestMapping(value = "/success/{description}", method = GET)
-    public ModelAndView successView(@PathVariable("description") final String description, @ModelAttribute final RatesClass ratesClass) {
-        return new ModelAndView("ratesClass/ratesClass-success", "ratesClass", rateClassService.getRatesClassByDescription(description));
+    public ModelAndView successView(@PathVariable("description") final Long description, @ModelAttribute final RatesClass ratesClass) {
+        return new ModelAndView("ratesClass/ratesClass-success", "ratesClass", rateClassService.getRateClassById(description));
 
     }
 

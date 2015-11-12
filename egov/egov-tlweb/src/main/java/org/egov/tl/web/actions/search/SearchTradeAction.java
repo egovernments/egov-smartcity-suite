@@ -129,7 +129,7 @@ public class SearchTradeAction extends BaseFormAction {
         super.prepare();
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSE, new ArrayList<Boundary>());
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, new ArrayList<Boundary>());
-        addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
+       // addDropdownData(Constants.DROPDOWN_ZONE_LIST, licenseUtils.getAllZone());
         addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, licenseUtils.getAllTradeNames("TradeLicense"));
         addDropdownData(Constants.DROPDOWN_NOTICE_LIST, noticelist);
         final Long userId = securityUtils.getCurrentUser().getId();

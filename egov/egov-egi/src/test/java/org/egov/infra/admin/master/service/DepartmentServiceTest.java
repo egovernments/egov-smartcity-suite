@@ -84,7 +84,7 @@ public class DepartmentServiceTest {
     public void shouldGetDepartmentByName() {
         when(departmentService.getDepartmentByName(anyString())).thenReturn(department);
         Department expectedDepartment = departmentService.getDepartmentByName("test");
-        verify(departmentRepository).findByName("test");
+        verify(departmentRepository).findByNameUpperCase("test".toUpperCase());
         assertTrue(department.equals(expectedDepartment));
     }
 

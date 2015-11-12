@@ -39,11 +39,20 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.entity.WaterRatesDetails;
+import org.egov.wtms.masters.entity.WaterRatesHeader;
+import org.egov.wtms.masters.entity.WaterSource;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.masters.service.WaterRatesDetailsService;
+import org.egov.wtms.masters.service.WaterRatesHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -60,6 +69,9 @@ public class AjaxConnectionController {
     private NewConnectionService newConnectionService;
 
     @Autowired
+    private DonationDetailsService donationDetailsService;
+
+    @Autowired
     private UsageTypeService usageTypeService;
 
     @Autowired
@@ -67,6 +79,12 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+    
+    @Autowired
+    private WaterRatesHeaderService waterRatesHeaderService;
+    
+    @Autowired
+    private WaterRatesDetailsService waterRatesDetailsService;
 
     @Autowired
     private PipeSizeService pipeSizeService;
@@ -103,11 +121,12 @@ public class AjaxConnectionController {
         pipesizes.forEach(pipesize -> pipesize.toString());
         return pipesizes;
     }
+
     /**
-     * 
      * @param givenDate
      * @param requestConsumerCode
-     * @return True or False Based on Entered Date's Month Installment Meter Entry is present
+     * @return True or False Based on Entered Date's Month Installment Meter
+     *         Entry is present
      */
     @RequestMapping(value = "/ajax-meterReadingEntryExist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Boolean getMeterReadingEntryExist(
@@ -119,21 +138,45 @@ public class AjaxConnectionController {
                 waterConnectionDetails, givenDate);
         return enteredMonthReadingExist;
     }
-    
+
     @RequestMapping(value = "/ajax-consumerCodeExistFordataEntry", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Boolean validateconsumerNumberForDataEntry(
             @ModelAttribute("waterConnectionDetails") @RequestParam final String consumerCode) {
         Boolean enteredMonthReadingExist = Boolean.FALSE;
-        if(consumerCode !=null){
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
-         
-        if(waterConnectionDetails !=null && waterConnectionDetails.getConnection().getConsumerCode().equals(consumerCode))
-        {
-            enteredMonthReadingExist=Boolean.TRUE;
-        }
+        if (consumerCode != null) {
+            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumberOrConsumerCode(consumerCode);
+
+            if (waterConnectionDetails != null
+                    && waterConnectionDetails.getConnection().getConsumerCode().equals(consumerCode))
+                enteredMonthReadingExist = Boolean.TRUE;
         }
         return enteredMonthReadingExist;
     }
 
+    @RequestMapping(value = "/ajax-donationheadercombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
+            @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
+            @RequestParam final PipeSize maxPipeSize, @RequestParam final PipeSize minPipeSize) {
+        final DonationDetails donationDetailsTemp = donationDetailsService
+                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
+                        maxPipeSize, minPipeSize);
+        if (donationDetailsTemp == null)
+            return 0;
+        else
+            return donationDetailsTemp.getAmount();
+    }
+    
+    @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam final ConnectionType categoryType,@RequestParam final WaterSource waterSource,
+            @RequestParam final UsageType usageType,
+            @RequestParam final PipeSize pipeSize) {
+        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource, pipeSize);
+        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService. findByWaterRatesHeader(waterRatesHeader);
+       
+        if (waterRatesDetails == null)
+            return 0;
+        else
+            return waterRatesDetails.getMonthlyRate();
+    }
 }

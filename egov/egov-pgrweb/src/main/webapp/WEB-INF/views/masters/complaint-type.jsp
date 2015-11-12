@@ -114,8 +114,8 @@
 						<label class="col-sm-3 control-label"> 
 						<spring:message	code="lbl.slahrs" /></label>
 						<div class="col-sm-6 add-margin">
-							<form:input path="slaHours" id="slahours"
-								cssClass="form-control"
+							<form:input path="slaHours" id="slahours" maxlength="4"
+								cssClass="form-control is_valid_number"
 								cssErrorClass="form-control error" />
 							<form:errors path="slaHours" cssClass="error-msg" />
 						</div>

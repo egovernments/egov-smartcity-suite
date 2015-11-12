@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------  -->
 <%
 String cityurl=(String)session.getAttribute("cityurl");
-String cityname=(String)session.getAttribute("cityname");
+String cityname=(String)session.getAttribute("citymunicipalityname");
 String citynamelocal=(String)session.getAttribute("citynamelocal");
 if(cityurl==null)
 cityurl="http://www."+cityname+".gov.in";

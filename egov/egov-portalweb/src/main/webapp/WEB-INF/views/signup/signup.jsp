@@ -74,7 +74,7 @@
 							<a class="navbar-brand" href="javascript:void(0);">
 								<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
 								<div>
-									<span class="title2">${sessionScope.cityname}</span>
+									<span class="title2">${sessionScope.citymunicipalityname}</span>
 								</div>
 							</a>
 						</div>
@@ -192,44 +192,51 @@
 				<c:if test="${not empty param.activation}">
 					<form:form method="post" role="form" id="activationform" action="activation" modelAttribute="citizen">
 					<div class="login-content login-content-margin otp-section signup-formcontent">
-						<c:if test="${param.activated}">
-	                    <div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
-	                     <div><spring:message code="msg.signup.activation.success2" /> <a href="/egi/login/secure" class="btn btn-custom"><spring:message code="lbl.signin" /></a></div>
-	                    </div>
-		                </c:if>
-		                <c:if test="${not empty param.activated and not param.activated}">
-		                	<div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
-		                </c:if>
-                        <div class="login-body">
-                            <div class="form-group text-left">
-                                <div class="signin-title" style="padding:0;">
-                                   <spring:message code="lbl.signup.activate" />
-                                </div>
-                            </div>
-                            <div class="">
-                            	<c:if test="${not empty param.message}">
-                                <div class="form-group text-left font-green">
-                                    <spring:message code="${param.message}" />
-                                </div>
-                                </c:if>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-addon style-label">
-                                            <i class="entypo-key theme-color style-color"></i>
-                                        </div>
-                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />
-                                    </div>
-                                </div>
-                                <div class="form-group text-right">
-                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
-                                        <spring:message code="btn.signup.activate"/>
-                                    </button>
-                                </div>
-                                <div class="form-group text-left font-12">
-                                    <spring:message code="msg.signup.info"/>
-                                </div>
-                            </div>
-                        </div>
+						<c:choose>
+							<c:when test="${param.activated}">
+								<div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
+			                     	<spring:message code="msg.signup.activation.success2" />
+			                    </div>
+			                    <div class="form-group text-left" style="font-size:12px;color:#777">
+			                    	<a href="/egi/login/secure" class="btn btn-custom  btn-block btn-login signin-submit"><spring:message code="lbl.signin" /></a>
+			                    </div>
+							</c:when>
+							<c:otherwise>
+								<c:if test="${not empty param.activated and not param.activated}">
+				                	<div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
+				                </c:if>
+		                        <div class="login-body">
+		                            <div class="form-group text-left">
+		                                <div class="signin-title" style="padding:0;">
+		                                   <spring:message code="lbl.signup.activate" />
+		                                </div>
+		                            </div>
+		                            <div class="">
+		                            	<c:if test="${not empty param.message}">
+		                                <div class="form-group text-left font-green">
+		                                    <spring:message code="${param.message}" />
+		                                </div>
+		                                </c:if>
+		                                <div class="form-group">
+		                                    <div class="input-group">
+		                                        <div class="input-group-addon style-label">
+		                                            <i class="entypo-key theme-color style-color"></i>
+		                                        </div>
+		                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />
+		                                    </div>
+		                                </div>
+		                                <div class="form-group text-right">
+		                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
+		                                        <spring:message code="btn.signup.activate"/>
+		                                    </button>
+		                                </div>
+		                                <div class="form-group text-left font-12">
+		                                    <spring:message code="msg.signup.info"/>
+		                                </div>
+		                            </div>
+		                        </div>
+							</c:otherwise>
+						</c:choose>
                     </div>
                     </form:form>
                     </c:if>
@@ -248,7 +255,7 @@
 					<div class="modal-body font-12">
 						<p>This website is designed, developed and maintained by
 							eGovernments Foundation under the supervision of
-							${sessionScope.cityname}, India.</p>
+							${sessionScope.citymunicipalityname}, India.</p>
 	
 						<p>Though all efforts have been made to ensure the accuracy and
 							currency of the content on this website, the same should not be
@@ -269,18 +276,18 @@
 	
 						<p>The information posted on this website could include
 							hypertext links or pointers to information created and maintained
-							by non-Government/private organisations. ${sessionScope.cityname}
+							by non-Government/private organisations. ${sessionScope.citymunicipalityname}
 							is providing these links and pointers solely for your information
 							and convenience. When you select a link to an outside website, you
-							are leaving the ${sessionScope.cityname} website and are subject
+							are leaving the ${sessionScope.citymunicipalityname} website and are subject
 							to the privacy and security policies of the owners/sponsors of the
-							outside website. ${sessionScope.cityname}, does not guarantee the
+							outside website. ${sessionScope.citymunicipalityname}, does not guarantee the
 							availability of such linked pages at all times.</p>
 	
-						<p>${sessionScope.cityname},cannot authorise the use of
+						<p>${sessionScope.citymunicipalityname},cannot authorise the use of
 							copyrighted materials contained in linked websites. Users are
 							advised to request such authorisation from the owner of the linked
-							website. ${sessionScope.cityname}, does not guarantee that linked
+							website. ${sessionScope.citymunicipalityname}, does not guarantee that linked
 							websites comply with Indian Government Web Guidelines.</p>
 					</div>
 					<div class="modal-footer">
@@ -299,7 +306,7 @@
 					<div class="modal-body font-12">
 						<h5>Privacy Policy</h5>
 						<p>
-						${sessionScope.cityname} Portal does not automatically capture any specific personal information from you
+						${sessionScope.citymunicipalityname} Portal does not automatically capture any specific personal information from you
                         (like name, phone number or e-mail address), that allows us to identify you individually.
                         If you choose to provide us with your personal information, like names or addresses, when
                         you visit our website, we use it only to fulfill your request for information. To use this website 
@@ -334,7 +341,7 @@
 								browser session. Again, once you close your browser, the cookie disappears.
 							</li>
 						</ul>
-						You may note additionally that when you visit sections of ${sessionScope.cityname} Portal 
+						You may note additionally that when you visit sections of ${sessionScope.citymunicipalityname} Portal 
 						where you are prompted to log in, or which are customizable, you may
 						be required to accept cookies. If you choose to have your browser refuse cookies, it is
 						possible that some sections of our web site may not function properly.
@@ -343,25 +350,25 @@
 						<h5>Security Policy</h5>
 						<p>
 							<ul>
-								<li>${sessionScope.cityname} Portal, has been placed in protected zones with implementation of firewalls
+								<li>${sessionScope.citymunicipalityname} Portal, has been placed in protected zones with implementation of firewalls
 									and IDS (Intrusion Detection System) and high availability solutions.
 								</li>
-								<li>${sessionScope.cityname} Portal, simulated penetration tests have been conducted.
-									Penetration testing has also been conducted 1 time after the launch of the ${sessionScope.cityname} Portal.
+								<li>${sessionScope.citymunicipalityname} Portal, simulated penetration tests have been conducted.
+									Penetration testing has also been conducted 1 time after the launch of the ${sessionScope.citymunicipalityname} Portal.
 								</li>
-								<li>${sessionScope.cityname} Portal has been audited for known application level vulnerabilities before
+								<li>${sessionScope.citymunicipalityname} Portal has been audited for known application level vulnerabilities before
 									the launch and all the known vulnerability has been addressed.
 								</li>
 								<li>Hardening of servers has been done as per the guideline of Cyber Security division
-									before the launch of the${sessionScope.cityname} Portal.
+									before the launch of the${sessionScope.citymunicipalityname} Portal.
 								</li>
-								<li>Access to web servers hosting the ${sessionScope.cityname} is restricted both physically and through the
+								<li>Access to web servers hosting the ${sessionScope.citymunicipalityname} is restricted both physically and through the
 									network as far as possible.
 								</li>
 								<li>Logs at 2 different locations are maintained for authorized physical
-									access of ${sessionScope.cityname} servers.
+									access of ${sessionScope.citymunicipalityname} servers.
 								</li>
-								<li>Web-servers hosting the ${sessionScope.cityname} are configured behind IDS, IPS (Intrusion Prevention
+								<li>Web-servers hosting the ${sessionScope.citymunicipalityname} are configured behind IDS, IPS (Intrusion Prevention
 									System) and with system firewalls on them.
 								</li>
 								<li>All the development work is done on separate development environment and is
@@ -383,7 +390,7 @@
 									and access to applications are maintained and archived. All rejected accesses and
 									services are logged and listed in exception reports for further scrutiny.
 								</li>
-								<li>Help Desk staff at the ${sessionScope.cityname} monitor the ${sessionScope.cityname} Portal at intervals of
+								<li>Help Desk staff at the ${sessionScope.citymunicipalityname} monitor the ${sessionScope.citymunicipalityname} Portal at intervals of
 									week to check the web pages to confirm that the web pages are up and
 									running, that no unauthorized changes have been made, and that no unauthorized
 									links have been established.
@@ -397,12 +404,12 @@
 								<li>Server passwords are changed at the interval of 1 months and are shared
 									by responsible persons.
 								</li>
-								<li>Responsible persons have been designated as Administrator for the ${sessionScope.cityname} Portal and
+								<li>Responsible persons have been designated as Administrator for the ${sessionScope.citymunicipalityname} Portal and
 									shall be responsible for implementing this policy for each of the web servers. The
 									administrator shall also coordinate with the Audit Team for required auditing of
 									the server(s).
 								</li>
-								<li>${sessionScope.cityname} Portal has been re-audited for the application level vulnerability after major
+								<li>${sessionScope.citymunicipalityname} Portal has been re-audited for the application level vulnerability after major
 									modification in application development [Not applicable at first launch].
 								</li>
 							</ul>

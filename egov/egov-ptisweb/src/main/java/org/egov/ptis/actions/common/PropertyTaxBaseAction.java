@@ -50,18 +50,18 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATI
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVED;
 
 import java.io.File;
@@ -102,12 +102,12 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -310,6 +310,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
                 addActionError(getText("mandatory.buildingPlanDate"));
+            else if (null != regDocDate
+                    && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate))
+                addActionError(getText("regDate.greaterThan.buildingPermDate"));
         }
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
@@ -359,14 +362,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.occ"));
-                        else {
-                            final PropertyOccupation occupancy = (PropertyOccupation) getPersistenceService()
-                                    .find("from PropertyOccupation po where po.id = ?",
-                                            floor.getPropertyOccupation().getId());
-                            if (occupancy.getOccupation().equalsIgnoreCase(OCC_TENANT)
-                                    && floor.getOccupantName().equals(""))
-                                addActionError(getText("mandatory.floor.occupantName"));
-                        }
 
                         if (floor.getOccupancyDate() == null || floor.getOccupancyDate().equals(""))
                             addActionError(getText("mandatory.floor.docOcc"));
@@ -380,6 +375,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         } else if (StringUtils.isNotBlank(areaOfPlot)
                                 && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                             addActionError(getText("assbleArea.notgreaterthan.extentsite"));
+
+                        if (null != floor.getStructureClassification()
+                                && null != floor.getStructureClassification().getId()
+                                && null != floor.getPropertyUsage() && null != floor.getPropertyUsage().getId()) {
+                            List<Category> category = getPersistenceService().findAllBy(
+                                    "From Category where propUsage.id = ? and structureClass.id = ? ",
+                                    floor.getPropertyUsage().getId(), floor.getStructureClassification().getId());
+                            if (category.isEmpty()) {
+                                addActionError(getText("unitrate.error"));
+                            }
+                        }
                     }
                 }
         if (LOGGER.isDebugEnabled())
@@ -441,8 +447,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (!propertyByEmployee) {
             currentState = "Created";
             final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
-            approverPositionId = assignment.getPosition().getId();
-            approverName = assignment.getEmployee().getUsername();
+            if (null != assignment) {
+                approverPositionId = assignment.getPosition().getId();
+                approverName = assignment.getEmployee().getUsername();
+            }
         } else
             currentState = null;
         if (null != property.getId())
@@ -458,7 +466,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -541,7 +549,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
-                    	args.add(sMSEmailService.getCityName());
+                        args.add(sMSEmailService.getCityName());
                         emailSubject = getText("msg.newpropertycreate.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
@@ -551,7 +559,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
-                    	args.add(sMSEmailService.getCityName());
+                        args.add(sMSEmailService.getCityName());
                         emailSubject = getText("msg.alterAssessmentForward.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentForward.email", args);
@@ -616,24 +624,35 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             propertyTaxDetailsMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
         else
             propertyTaxDetailsMap.put("ARV", BigDecimal.ZERO);
+        
+        propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+        propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+        BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            propertyTaxDetailsMap.put(
-                    "totalTax",
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                            .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)));
+            totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
+	                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                    .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+            //If unauthorized property, then add unauthorized penalty
+            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()) 
+            		&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+            	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+            	propertyTaxDetailsMap.put("totalTax",totalTax
+                                .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            }else{
+            	propertyTaxDetailsMap.put("totalTax",totalTax);
+            }
+            
         } else {
-            propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             propertyTaxDetailsMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-            propertyTaxDetailsMap.put(
-                    "totalTax",
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                            .add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)));
+            totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
+            if(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)!=null){
+            	totalTax = totalTax.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+            }
+            if(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)!=null){
+            	totalTax = totalTax.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+            }
+            propertyTaxDetailsMap.put("totalTax",totalTax);
         }
     }
 

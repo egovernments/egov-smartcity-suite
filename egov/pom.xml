@@ -87,10 +87,14 @@
 	</pluginRepositories>
 	
 	<properties>
+		<timestamp>${maven.build.timestamp}</timestamp>
+   		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<hibernate-version>4.3.7.Final</hibernate-version>
 		<struts2-version>2.3.24</struts2-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<build.number>Local</build.number>
+		<build.number>${timestamp}</build.number>
+		<app.version>${project.version}</app.version>
+		<egov-search-version>1.0.1-SNAPSHOT</egov-search-version>
 	</properties>
 
 	<modules>
@@ -133,7 +137,7 @@
 			<dependency>
 				<groupId>org.egov.search</groupId>
 				<artifactId>egov-search</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>${egov-search-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.jayway.jsonpath</groupId>
@@ -1252,14 +1256,13 @@
 				<version>2.5.2</version>
 				<configuration>
 					<goals>deploy</goals>
-					<arguments>-DskipTests</arguments>
+					<arguments>-DskipTests -Dbuild.number=${build.number}</arguments>
 					<pushChanges>true</pushChanges>
 					<localCheckout>true</localCheckout>
 					<preparationGoals>clean install</preparationGoals>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
 					<tagNameFormat>@{project.version}</tagNameFormat>
-					<scmCommentPrefix>Releasing${line.separator}</scmCommentPrefix>
 				</configuration>
 			</plugin>
 			

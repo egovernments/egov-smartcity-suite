@@ -44,4 +44,5 @@ public class PGRConstants {
     public static final String DASH_DELIM = "-";
     public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
     public static final String GO_ROLE_NAME = "Grievance Officer";
+    public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
 }

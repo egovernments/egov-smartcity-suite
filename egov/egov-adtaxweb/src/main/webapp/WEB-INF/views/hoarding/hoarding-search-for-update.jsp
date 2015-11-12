@@ -49,109 +49,13 @@
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
 	            </div>
-	            <div class="panel-body">
-	               <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.name"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <input type="text" class="form-control typeahead" autocomplete="off">
-							<form:hidden path="agency" id="agencyId" value="${hoardingSearch.agency}" />
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.no"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="hoardingnumber" path="hoardingNumber"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.no"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="applicationNumber" path="applicationNumber"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.permission.no"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="permissionNumber" path="permissionNumber"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.frm.date"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control datepicker" id="applicationFromDate" path="applicationFromDate"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.application.to.date"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control datepicker" id="applicationToDate" path="applicationToDate"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.category"/></label>
-                        <div class="col-sm-3 add-margin">
-                        	 <form:select path="category" id="categories" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-									<c:forEach items="${hoardingcategories}" var="hoardingcategory">
-                       				<option value="${hoardingcategory.id}"> ${hoardingcategory.name}</option>
-                       			</c:forEach>
-							</form:select>
-						 <form:errors path="category" cssClass="error-msg"/>
-                        
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.subcategory"/></label>
-                        <div class="col-sm-3 add-margin">
-		                   	<form:select path="subCategory" id="subcategories" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								</form:select>
-							<form:errors path="subCategory" cssClass="error-msg"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.locality"/></label>
-					    <div class="col-sm-3 add-margin">
-					    	<form:select path="adminBoundryParent" id="zoneList" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<c:forEach items="${localities}" var="zone">
-					   				<option value="${zone.id}"> ${zone.name}</option>
-					   			</c:forEach>
-							</form:select>
-					  		
-					    </div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.ward"/></label>
-					    <div class="col-sm-3 add-margin">
-							
-							<form:select path="adminBoundry" id="wardlist" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-							</form:select>
-							
-						</div>
-					</div>
-                    <div class="form-group">
-                    	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.status"/></label>
-                        <div class="col-sm-3 add-margin">
-                   			<form:select path="status" id="hoardingstatus" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${status}" />
-							</form:select>
-							<form:errors path="status" cssClass="error-msg"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.ri.no"/></label>
-                        <div class="col-sm-3 add-margin">
-                        	<form:select path="revenueInspector" id="revenueinspector" cssClass="form-control" 
-							cssErrorClass="form-control error" >
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${revenueinspectors}" itemLabel="name" itemValue="id" />
-							</form:select>
-							<form:errors path="revenueInspector" cssClass="error-msg"/>
-                        </div>
-                    </div>
-                    </div>
-	            </div>
+	         	<jsp:include page="commonSearchPage.jsp"></jsp:include>
+	      </div>
 	        </div>
 	        <div class="col-md-12">
        			<div class="text-center">
        				<button type="button" class="btn btn-primary" id="search-update"><spring:message code="lbl.submit"/></button>
-           			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+           			<button type="reset"  id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 		    		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
        			</div>
         	</div>

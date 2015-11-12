@@ -61,8 +61,8 @@
 		<!-- <intercept-url pattern="/api/test/**" access="isAuthenticated()" /> -->
 		<intercept-url pattern="/v*/test/**" access="isAuthenticated()"/>
 		
-		<intercept-url pattern="/v*/complaint/**" access="hasRole('ROLE_CITIZEN')" />
-		<intercept-url pattern="/v*/citizen/**" access="hasRole('ROLE_CITIZEN')" />
+		<intercept-url pattern="/v*/complaint/**" access="hasAnyRole('ROLE_CITIZEN','ROLE_EMPLOYEE')" />
+		<intercept-url pattern="/v*/citizen/**" access="hasAnyRole('ROLE_CITIZEN','ROLE_EMPLOYEE')" />
 		<intercept-url pattern="/v*/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
 		<access-denied-handler ref="oauthAccessDeniedHandler" />	

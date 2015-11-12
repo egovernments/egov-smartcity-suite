@@ -147,7 +147,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             isOldLicense = org.apache.commons.lang.StringUtils.isNotBlank(tradeLicense.getOldLicenseNumber());
         final Boundary licenseboundary = boundaryService.getBoundaryById(tradeLicense.getBoundary().getId());
         List cityZoneList = new ArrayList();
-        cityZoneList = licenseUtils.getAllZone();
+      //  cityZoneList = licenseUtils.getAllZone();
         tradeLicense.setLicenseZoneList(cityZoneList);
         if (licenseboundary.getName().contains("Zone"))
             addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, Collections.EMPTY_LIST);
@@ -219,7 +219,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             service().transitionWorkFlow(tradeLicense, workflowBean); 
         if (!isOldLicense)
             processWorkflow(NEW);
-        addActionMessage(this.getText("license.update.succesful"));
             if (installedMotorList != null) {
                 final List<MotorDetails> motorDetailsList = new ArrayList<MotorDetails>();
                 final Iterator<MotorDetails> motorDetails = installedMotorList.iterator();

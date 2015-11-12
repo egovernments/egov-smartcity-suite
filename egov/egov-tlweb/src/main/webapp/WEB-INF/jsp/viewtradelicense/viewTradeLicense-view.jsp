@@ -93,31 +93,6 @@
 												<c:set var="trclass" value="greybox" />
 												<table width="100%">
 													<%@ include file='../common/view.jsp'%>
-													<tr>
-														<td class="greybox" width="5%">
-															&nbsp;
-														</td>
-														<td class="greybox">
-															<b><s:text name="license.motor.installed" />
-															</b>
-														</td>
-														<td class="greybox">
-															<s:if test="%{motorInstalled}">
-																<s:text name="Yes" />
-															</s:if>
-															<s:else>
-																<s:text name="No" />
-															</s:else>
-														</td>
-														<td class="greybox" colspan="2">														
-													</tr>
-													<s:if test="%{motorInstalled}">
-														<tr>
-															<td colspan="8">
-																<%@ include file='../common/motordetailsview.jsp'%>
-															</td>
-														</tr>
-													</s:if>
 												</table>
 											</s:push>
 										</s:form>
@@ -128,9 +103,6 @@
 					</tr>
 				</tbody>
 			</table>
-			<div>
-				<%@ include file="../common/documentView.jsp" %>
-			</div>
 		</div>
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>

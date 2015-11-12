@@ -158,8 +158,7 @@ public class ReceiptMisc implements java.io.Serializable {
     }
 
     /**
-     * @param idFunctionary
-     *            the idFunctionary to set
+     * @param idFunctionary the idFunctionary to set
      */
     public void setIdFunctionary(final Functionary idFunctionary) {
         this.idFunctionary = idFunctionary;

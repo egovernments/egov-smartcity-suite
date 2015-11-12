@@ -59,7 +59,6 @@
 					<spring:message code="lbl.change.status" />
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
-
 					<form:select path="status" data-first-option="true" id="status"
 						cssClass="form-control" cssErrorClass="form-control error">
 						<form:option  value="${complaint.status.id}">
@@ -79,6 +78,7 @@
 				<div class="col-md-9 add-margin">
 					<textarea class="form-control" id="inc_messge" placeholder="" required="required"
 						maxlength="400" name="approvalComent"></textarea>
+					<form:errors path="" cssClass="error-msg" />
 				</div>
 			</div>
 			<c:if test="${complaint.status.name == 'COMPLETED'}">
@@ -118,3 +118,11 @@
 	</div>
 		
 </c:if>
+<script>
+$(document).ready(function()
+{
+	$("select").each(function() { 
+		  $(this).find('option').eq(0).prop('selected', true);
+	});
+});
+</script>

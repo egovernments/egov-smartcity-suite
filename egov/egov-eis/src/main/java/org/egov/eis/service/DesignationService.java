@@ -79,7 +79,7 @@ public class DesignationService {
     }
 
     public Designation getDesignationByName(final String desName) {
-        return designationRepository.findByName(desName);
+        return designationRepository.findByNameUpperCase(desName.toUpperCase());
     }
 
     public Designation getDesignationById(final Long desigId) {

@@ -64,13 +64,14 @@ public class CrossHierarchyService {
     }
 
     public List<CrossHierarchy> getChildBoundaryNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
-             final String hierarchyTypeName,final String parenthierarchyTypeName, final String name) {
-        return crossHierarchyRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName,parenthierarchyTypeName, name);
+            final String hierarchyTypeName, final String parenthierarchyTypeName, final String name) {
+        return crossHierarchyRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
+                hierarchyTypeName, parenthierarchyTypeName, name);
     }
 
     public List<Boundary> getChildBoundariesNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
-            final String parentTypeName, final String hierarchyTypeName) {
-        return crossHierarchyRepository.findChildBoundariesNameAndBndryTypeAndHierarchyType(boundaryTypeName, parentTypeName,
+            final String hierarchyTypeName) {
+        return crossHierarchyRepository.findChildBoundariesNameAndBndryTypeAndHierarchyType(boundaryTypeName,
                 hierarchyTypeName);
     }
 
@@ -86,8 +87,14 @@ public class CrossHierarchyService {
     public CrossHierarchy findById(final Long id) {
         return crossHierarchyRepository.findOne(id);
     }
-    
-    public List<CrossHierarchy> findAllByBoundaryTypes(BoundaryType parentType, BoundaryType childType){
+
+    public List<CrossHierarchy> findAllByBoundaryTypes(final BoundaryType parentType, final BoundaryType childType) {
         return crossHierarchyRepository.findByParentTypeAndChildType(parentType, childType);
+    }
+
+    public List<Boundary> findChildBoundariesByParentBoundary(final String boundaryTypeName,
+            final String hierarchyTypeName, final String parentBoundary) {
+        return crossHierarchyRepository.findChildBoundariesByParentBoundary(boundaryTypeName,
+                hierarchyTypeName, parentBoundary);
     }
 }

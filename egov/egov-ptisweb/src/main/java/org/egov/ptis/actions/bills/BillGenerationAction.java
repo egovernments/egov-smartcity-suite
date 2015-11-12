@@ -238,18 +238,18 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         final StringBuilder propQueryString = new StringBuilder();
         billQueryString
                 .append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-                .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
+                .append("from EgBill bill, Boundary bndry, PtNotice notice left join notice.basicProperty bp ")
                 .append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
                 .append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
                 .append("and :ToDate >= bill.issueDate ")
                 .append("and bill.egBillType.code = :BillType ")
                 .append("and bill.billNo = notice.noticeNo ")
                 .append("and notice.noticeType = 'Bill' ")
-                .append("and notice.noticeFile is not null ").append("group by bndry.boundaryNum ")
+                .append("and notice.fileStore is not null ").append("group by bndry.boundaryNum ")
                 .append("order by bndry.boundaryNum");
 
         propQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
-                .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
+                .append("from Boundary bndry, PropertyID pid left join pid.basicProperty bp ")
                 .append("where bp.active = true and pid.ward.id = bndry.id ")
                 .append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
         final Query billQuery = getPersistenceService().getSession().createQuery(
@@ -307,7 +307,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
         billQueryString
                 .append("select bp.partNo, count(bp.partNo) ")
-                .append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
+                .append("from EgBill bill, Boundary bndry, PtNotice notice left join notice.basicProperty bp ")
                 .append("where bp.propertyID.ward.id=bndry.id ")
                 .append("and bndry.boundaryNum = :bndryNum ").append("and bill.is_History = 'N' ")
                 .append("and :FromDate <= bill.issueDate ")
@@ -315,11 +315,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 .append("and bill.egBillType.code = :BillType ")
                 .append("and bill.billNo = notice.noticeNo ")
                 .append("and notice.noticeType = 'Bill' ")
-                .append("and notice.noticeFile is not null ").append("group by bp.partNo ")
+                .append("and notice.fileStore is not null ").append("group by bp.partNo ")
                 .append("order by bp.partNo");
 
         propQueryString.append("select bp.partNo, count(bp.partNo) ")
-                .append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
+                .append("from Boundary bndry, PropertyID pid left join pid.basicProperty bp ")
                 .append("where bp.active = true and pid.ward.id = bndry.id ")
                 .append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
                 .append("order by bp.partNo");

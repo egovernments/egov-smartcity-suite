@@ -148,10 +148,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
 
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
-        LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
         String certificate = Constants.CNCCERTIFICATE;
         setLicenseIdIfServletRedirect();
-
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tradeLicense.getId());
         /*
          * if (this.documentManagerService.getDocumentObject(this.tradeLicense.getApplicationNumber(), "egtradelicense") == null)
@@ -162,11 +160,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
          * this.request.put("noticeObject", notice); }
          */
         tradeLicense.setIsCertificateGenerated(true);
-        if (tradeLicense.getFeeTypeStr().equalsIgnoreCase(Constants.PFA))
+        if (tradeLicense.getFeeTypeStr()!=null && tradeLicense.getFeeTypeStr().equalsIgnoreCase(Constants.PFA))
             certificate = Constants.PFACERTIFICATE;
-        else if (tradeLicense.getFeeTypeStr().equalsIgnoreCase(Constants.CNC))
+        else if (tradeLicense.getFeeTypeStr()!=null && tradeLicense.getFeeTypeStr().equalsIgnoreCase(Constants.CNC))
             certificate = Constants.CNCCERTIFICATE;
-        LOGGER.debug("Exiting from the generateCertificate method:<<<<<<<<<<>>>>>>>>>>>>>:");
+        else
+            certificate = Constants.CNCCERTIFICATE;
         return certificate;
     }
 

@@ -302,7 +302,7 @@ function transitionStates(){
 		<input type="text" name="transactionId" id="transactionId" style='width:100px;' value="${currentRow.transactionNumber}" />
 		<span id="transactionIdError${currentRow_rowNum}" style='display:none;color:red;font-weight:bold'>&nbsp;x</span> 
 	</display:column>
-	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Transaction Date(dd/mm/yyy)" style="width:5%;text-align:center" >
+	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Transaction Date(dd/mm/yyyy)" style="width:5%;text-align:center" >
 	
 	
 	<fmt:formatDate value="${currentRow.transactionDate}" pattern="dd/MM/yyyy" var="trnDate"/>

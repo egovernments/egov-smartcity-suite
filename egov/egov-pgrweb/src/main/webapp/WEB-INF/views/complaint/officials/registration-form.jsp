@@ -72,14 +72,14 @@
 					<div class="form-group display-hide" id="regnoblock">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/><small id="crnReq" class="display-hide"></small></label>
 						<div class="col-sm-6">
-							<form:input path="crn" id="crn" cssClass="form-control" placeholder="" disabled="true"/>
+							<form:input path="crn" id="crn" cssClass="form-control patternvalidation" data-pattern="alphanumericwithhyphen" maxlength="32" placeholder="" disabled="true"/>
 							<form:errors path="crn" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name" required="required"/>
+							<form:input  class="form-control patternvalidation" path="complainant.name" id="f-name" placeholder="Name" data-pattern="alphabetwithspace" required="required"/>
 							<form:errors path="complainant.name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -227,8 +227,9 @@
 	if(complaintTypeId !== ''){
 		$("#complaintTypeId").val(complaintTypeId);
 	}
-	/* var locationid = '${complaint.location.id}';
-	if(locationid !== ''){
-		$("#locationid").val(locationid);
-	} */
+	var receivingMode = '${complaint.receivingMode}';
+	if(receivingMode === 'MANUAL') {
+		enableRC();
+		enabledCRN();
+	}
 </script>

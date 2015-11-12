@@ -89,6 +89,7 @@
 		<property name="tax10" column="TAX10" />
 		<property name="alv" column="ALV" />
 		<property name="mrv" column="MRV" />
+		<property name="totalTaxPayble" column="TOTALTAXPAYBLE" />
 			
 		<property name="createTimeStamp" update="false" column="CREATETIMESTAMP"/>
 		<many-to-one name="floor" class="org.egov.ptis.domain.entity.property.Floor" column="ID_FLOORDET" cascade="all" />

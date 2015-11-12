@@ -67,7 +67,7 @@
 				var userDesg = '<s:property value="%{userDesgn}"/>';
 				var state = '<s:property value="%{model.state.value}"/>';
 				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
-					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN}"/>' || state == 'Alter:Rejected') {
+					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT || @org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT}"/>' || state == 'Alter:Rejected') {
 						action = 'modifyProperty-forward.action';
 					} else {
 						action = 'modifyProperty-forwardView.action';
@@ -209,7 +209,8 @@
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
-						(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
+						((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) ||
+						@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
 							&& !model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}">
 						<tr>
 							<%@ include file="../modify/modifyPropertyForm.jsp"%>
@@ -218,7 +219,8 @@
 					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
-							(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
+							((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
+							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) }">
 						<tr>
 							<%@ include file="../modify/modifyPropertyView.jsp"%>
@@ -230,7 +232,8 @@
 						<tr>					
 					</s:if>
 					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
-						(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
+						((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
+							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)))}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

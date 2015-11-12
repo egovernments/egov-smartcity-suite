@@ -46,6 +46,9 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -70,6 +73,9 @@ public class GenericBillGeneratorController {
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ConnectionDemandService connectionDemandService;
     private final WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public GenericBillGeneratorController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -105,13 +111,14 @@ public class GenericBillGeneratorController {
      @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
     public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,@RequestParam final String applicationTypeCode, final Model model) {
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE))
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE) || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                 applicationCode,ConnectionStatus.ACTIVE);
         else
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
         model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode,applicationTypeCode));
+        model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";
     }
-
+    
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-05T16:22:46 -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-11-10T19:27:38 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.collection.constants.CollectionConstants"/>
@@ -347,12 +347,12 @@
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" uuid="488747bf-e344-4532-8f25-d6e603f717ea"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_accounts.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("PT_collection_receipt_accounts.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="61">
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="21" width="555" height="40" isRemoveLineWhenBlank="true" uuid="2f062c34-26be-4404-b77d-7e7d3cd48412">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="19" width="555" height="40" isRemoveLineWhenBlank="true" uuid="2f062c34-26be-4404-b77d-7e7d3cd48412">
 					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )==CollectionConstants.COLLECTION_TYPE_COUNTER]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -368,7 +368,7 @@
 				<text><![CDATA[This is computer generated receipt. Signature is not neccessary.Except Online payment the receipt is subject to realisation of cheque.]]></text>
 			</staticText>
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="21" uuid="fef46bfd-ffaa-48e6-ab01-823b4ab365f3"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="-1" width="555" height="21" uuid="fef46bfd-ffaa-48e6-ab01-823b4ab365f3"/>
 				<subreportParameter name="TOTAL_AMOUNT">
 					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
 				</subreportParameter>

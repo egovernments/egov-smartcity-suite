@@ -37,6 +37,12 @@ var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]/g ;
 //username pattern (eg: data-pattern="username")
 var regexp_username = /[^a-zA-Z0-9_.]/g ;
 
+//This will allow you to enter alphabets and numbers with hyphen(-). (eg: data-pattern="alphanumericwithhyphen")
+var regexp_alphanumerichyphen = /[^a-zA-Z0-9-]/g ;
+
+//This will allow you to enter numbers with hyphen(-) and (/). (eg: data-pattern="numericslashhyphen")
+var regexp_numericslashhyphen = /[^0-9/-]/g ;
+
 function patternvalidation(){
 	
 	jQuery('.patternvalidation').on("input", function(){
@@ -107,6 +113,18 @@ function alphanumerichyphenbackslash(obj){
 function username(obj){
 	if(jQuery(obj).val().match(regexp_username)){
 		jQuery(obj).val( jQuery(obj).val().replace(regexp_username,'') );
+	}
+}
+
+function alphanumericwithhyphen(obj){
+	if(jQuery(obj).val().match(regexp_alphanumerichyphen)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumerichyphen,'') );
+	}
+}
+
+function numericslashhyphen(obj){
+	if(jQuery(obj).val().match(regexp_numericslashhyphen)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_numericslashhyphen,'') );
 	}
 }
 

@@ -52,10 +52,11 @@
 	 	jQuery(document).ready( function() {
 
 			var collectXML = '${collectxml}';
-
+			var citizenRole= '${citizenrole}';
+			if(citizenRole =='true'){
 			jQuery('<form>.').attr({
 				method: 'post',
-				action: '/collection/receipts/receipt-newform.action',
+				action: '/collection/citizen/onlineReceipt-newform.action',
 				target: '_self'
 			}).append(jQuery('<input>').attr({
 			    type: 'hidden',
@@ -63,7 +64,19 @@
 			    name: 'collectXML',
 			    value: collectXML
 			})).appendTo( document.body ).submit();
-			
+			}
+			else{
+				jQuery('<form>.').attr({
+					method: 'post',
+					action: '/collection/receipts/receipt-newform.action',
+					target: '_self'
+				}).append(jQuery('<input>').attr({
+				    type: 'hidden',
+				    id: 'collectXML',
+				    name: 'collectXML',
+				    value: collectXML
+				})).appendTo( document.body ).submit();
+				}
 		});
 		
 		</script>

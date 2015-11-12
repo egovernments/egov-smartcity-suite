@@ -139,9 +139,7 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true"/>
 	
 	<!-- Use this only for generic hibernate query -->
 	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">

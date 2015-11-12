@@ -83,6 +83,7 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     public static final String FEECOLLECTION = "AgencyWise Fee Collection";
     public static final String AUTO = "AUTO";
     private String referenceNumber;
+    private String transanctionReferenceNumber;
 
     @Autowired
     private ModuleService moduleService;
@@ -108,10 +109,10 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBillAddress() {
-        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null)
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null && agencyWiseCollection.getAgency().getAddress()!=null)
             return agencyWiseCollection.getAgency().getAddress();
 
-        return null;
+        return "";
     }
 
     @Override
@@ -298,4 +299,13 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
         this.agencyWiseCollection = agencyWiseCollection;
     }
 
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
+
+    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
+    }
+    
 }

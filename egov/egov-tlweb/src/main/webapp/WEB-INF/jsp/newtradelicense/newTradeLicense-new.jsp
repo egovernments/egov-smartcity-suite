@@ -45,63 +45,66 @@
 		<title><s:text name="page.title.newtrade" /></title>
 		<script>
 	
-			function validateForm(obj) {
+			function validateLicenseForm(obj) {
 				if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
-					document.getElementById("mobilePhoneNumber").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.applicantname.null" />');
-					document.getElementById("applicantName").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("fatherOrSpouseName").value == '' || document.getElementById("fatherOrSpouseName").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.fatherorspousename.null" />');
-					document.getElementById("fatherOrSpouseName").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("emailId").value == '' || document.getElementById("emailId").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.email.null" />');
-					document.getElementById("emailId").focus();
+					window.scroll(0, 0);
 					return false;
 				} else if (document.getElementById("licenseeAddress").value == '' || document.getElementById("licenseeAddress").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
-					document.getElementById("licenseeAddress").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("boundary").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.locality.null" />');
-					document.getElementById("boundary").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("ownershipType").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
-					document.getElementById("ownershipType").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
-					document.getElementById("address").focus();
+					window.scroll(0, 0);
 					return false;
 				} else if (document.getElementById("buildingType").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.buildingtype.null" />');
-					document.getElementById("buildingType").focus();
+					window.scroll(0, 0); 
 					return false;
 				} else if (document.getElementById("category").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.category.null" />');
-					document.getElementById("category").focus();
+					window.scroll(0, 0); 
 					return false;
 				}  else if (document.getElementById("subCategory").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.subcategory.null" />');
-					document.getElementById("subCategory").focus();
+					window.scroll(0, 0); 
 					return false;
 				}	else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
-					document.getElementById("tradeArea_weight").focus();
+					window.scroll(0, 0);
 					return false;
 				}	else if (document.getElementById("uom").value == '-1'){
 					showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
-					document.getElementById("uom").focus();
+					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
+				}	else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
 						 document.getElementById("workersCapacity").value == 0) {
 					showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
-					document.getElementById("workersCapacity").focus();
+					window.scroll(0, 0); 
+					return false;
+				}
+				if(!verifyDocAttachment()){
 					return false;
 				}
     			if(validateForm_newTradeLicense()==false) { 
@@ -110,6 +113,23 @@
 					return true;    	              
     			 } 
   			}
+
+			// verify whether document attached for selected check list
+  			function verifyDocAttachment(){
+  				var tbl=document.getElementById("docAttachmentTab");
+  			    var lastRow = (tbl.rows.length)-1;
+  			    for(var i=0;i<=lastRow;i++){
+  			    	var checkListval=getControlInBranch(tbl.rows[i],'checklist').checked;
+  			    	if(checkListval==true){
+  	  			    	if(getControlInBranch(tbl.rows[i],'uploadFile').value==''){
+	  	  			    	showMessage('newLicense_error', 'Please attach document for selected Check List'); 
+	  						window.scroll(0, 0); 
+	  						return false;
+  	  			    	}
+  	  			    }
+  	  			}
+  	  			return true;
+  	  		}
 
 			function onBodyLoad(){
   				if (document.getElementById("motorInstalled").checked==true) { 
@@ -124,9 +144,12 @@
 					  jQuery("#searchImg").removeAttr("onclick");
 					  // remove onclick event for add and delete button having class = add-padding
 					  jQuery('.add-padding').attr('onclick','').unbind('click');
-					  // renaming approver remarks label
-					  jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />')
-				}
+					  // renaming approver remarks label for second level of workflow
+					  <s:if test="%{getNextAction()!='END'}">
+					 	 jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+					</s:if>
+				} 
 			}
 
 			var motorcnt = 0;
@@ -226,7 +249,7 @@
 				noOfMachines = document.createElement('input');
 				noOfMachines.type = 'number';
 				noOfMachines.size = '10';
-				noOfMachines.onBlur= 'checkLength(this,3)';
+				noOfMachines.onBlur= 'checkLength(this,3)'; 
 				noOfMachines.className = "form-control";
 				<s:if test="%{sControlDisabled}">
 				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
@@ -241,6 +264,7 @@
 				    noOfMachines.onblur=totalHP;
 				} else {
 				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
+				    noOfMachines.setAttribute('onKeyPress', 'return numbersonly(this, event);' );
 				}
 				cellRight.appendChild(noOfMachines);
 				    
@@ -267,6 +291,7 @@
 				    horsepower.onblur=totalHP;
 				} else{
 				    horsepower.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
+				    horsepower.setAttribute('onKeyPress', 'return numbersonly(this, event);' );
 				}
 				  
 				 cellRight.appendChild(horsepower);
@@ -287,9 +312,9 @@
  					var oRow = src.parentNode.parentNode;
  					if (oRow.rowIndex == 2) 
  					{
- 						alert("Can not delete the first row!");
+ 						alert("Cannot delete the first row!");
  						return;
- 					}
+ 					} 
  					else
  					{
  					document.all('tb2Create').deleteRow(oRow.rowIndex);
@@ -315,7 +340,7 @@
     		}
 
 			function onSubmitValidations() {
-    			return validateForm(this);
+    			return validateLicenseForm(this);
         	}
 
     		function onSubmit() {
@@ -331,13 +356,13 @@
 					document.newTradeLicense.action = '${pageContext.request.contextPath}//newtradelicense/editTradeLicense-edit.action';
 					document.newTradeLicense.submit;
 				</s:elseif>
-				<s:else>                       	              
-					clearMessage('newLicense_error');
+				<s:else>   
+					clearMessage('newLicense_error'); 
 					toggleFields(false,"");
 	    			document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
 			    	document.newTradeLicense.submit();
 				</s:else>
-        	}
+        	} 
 
 			// Calls propertytax REST api to retrieve property details for an assessment no
 			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
@@ -354,6 +379,7 @@
 								alert(data.errorDetails.errorMessage);
 							} else{
 								if(data.boundaryDetails!=null){
+									jQuery("#boundary").val(data.boundaryDetails.localityId)
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
 									jQuery("#address").val(data.propertyAddress);
@@ -392,7 +418,7 @@
  		
  			</head>
 	<body onload="onBodyLoad()">
-		<div id="newLicense_error" class="error-msg" style="display:none;"></div> 
+		<div id="newLicense_error" class="error-msg" style="display:none;" align="center"></div> 
                 <div class="row">
                     <div class="col-md-12">
                      <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
@@ -433,15 +459,15 @@
 								</div>
 							</s:else>
                             
-                                <ul class="nav nav-tabs" id="settingstab">
+                                <!-- <ul class="nav nav-tabs" id="settingstab">
                                     <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
                                     <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
-                                </ul>
+                                </ul> -->
                             </div>
                             
                              <div class="panel-body custom-form">
-                                <div class="tab-content">
-                                    <div class="tab-pane fade active in" id="tradedetails">
+                                <div class="">
+                                    <div class="" id="">
 	                                         <%@ include file='../common/licensee.jsp'%>
 	                                          <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
@@ -454,7 +480,7 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
 											    <div class="col-sm-3 add-margin text-left">
-											         	<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
+											         	<s:checkbox theme="simple" key="motorInstalled" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
 											    </div>
 											</div>
 											<div class="form-group">
@@ -471,7 +497,7 @@
 											</script>
 											
 											<div class="form-group" id="addmoremotor">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /><span class="mandatory"></span></label>
+											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /></label>
 											    <div class="col-sm-3 add-margin">	
 											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" cssClass="form-control" />
 											    </div>		
@@ -493,23 +519,23 @@
 														} 														
 														findtotalHP();
 												</script>
-                                    </div>
-                                    
-                                    <div class="tab-pane fade" id="tradeattachments"> 
-                                        <div>
+												
+											<div>
 												<%@include file="../common/documentUpload.jsp" %>
-										</div>
+											</div>
+											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
                                     </div>
                                     
                             	</div>
                             </div>
                         </div> 
-                        <%@ include file='../common/commonWorkflowMatrix.jsp'%>
-						<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
+                        
                         </s:push>  
                     </s:form> 
                     </div>
                 </div>
         <script src="../resources/app/js/newtrade.js"></script>
+        <script src="../resources/javascript/license/searchTrade.js"></script>
     </body>
 </html>

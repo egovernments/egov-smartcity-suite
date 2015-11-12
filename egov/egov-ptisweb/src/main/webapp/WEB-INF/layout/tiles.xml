@@ -115,4 +115,45 @@
     	<put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/revenueHome.jsp"/>
     </definition>
+
+    <definition name="vacancyRemission-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-form.jsp"/>
+    </definition>
+    
+    <definition name="vacancyRemission-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-edit.jsp"/>
+    </definition>
+    
+    <definition name="vacancyRemission-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-success.jsp"/>
+    </definition>
+    
+    <definition name="vacancyRemissionDetails-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission.monthly.update" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionDetails-form.jsp"/>
+    </definition>
+    
+    <definition name="demolition-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.property.demolition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-success.jsp"/>
+     </definition>
+     
+     <definition name="demolition-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.property.demolition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demolition/demolition-view.jsp"/>
+     </definition>
+    
+    <definition name="vacancyRemissionApproval-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission.final.approval" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionApproval-form.jsp"/>
+    </definition>
+    
+    <definition name="vacancyRemissionApproval-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission.final.approval" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionApproval-edit.jsp"/>
+    </definition>
+    
 </tiles-definitions>

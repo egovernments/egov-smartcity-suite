@@ -178,7 +178,7 @@ public class ComplaintSearchRequest {
         andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
         andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
         andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
-        andFilters.add(queryStringFilter("searchable.complaintType.department.name", complaintDepartment));
+        andFilters.add(termsStringFilter("clauses.department.name", complaintDepartment));
         andFilters.add(queryStringFilter("common.boundary.name", location));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");

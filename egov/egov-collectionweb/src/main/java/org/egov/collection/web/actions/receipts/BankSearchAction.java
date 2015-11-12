@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -53,44 +53,43 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.Action;
 
-@Result(name=Action.SUCCESS, type="redirect", location = "bankSearch-searchResults")  
-
-@ParentPackage("egov")  
-@Transactional(readOnly=true)
+@Result(name = Action.SUCCESS, type = "redirect", location = "bankSearch-searchResults")
+@ParentPackage("egov")
+@Transactional(readOnly = true)
 public class BankSearchAction extends BaseFormAction {
-	private static final long serialVersionUID = 1L;
-	private PersistenceService<Bank,Integer> bankService;  
-	private static final String SEARCH_RESULTS = "searchResults";
-	private final Bank bank = new Bank();
-	private List<Bank> bankList = new ArrayList<Bank>();
-	private String query;
-	
-	public String getQuery() {
-		return query;
-	}
+    private static final long serialVersionUID = 1L;
+    private PersistenceService<Bank, Integer> bankService;
+    private static final String SEARCH_RESULTS = "searchResults";
+    private final Bank bank = new Bank();
+    private List<Bank> bankList = new ArrayList<Bank>();
+    private String query;
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public String getQuery() {
+        return query;
+    }
 
-	public String searchAjax(){
-		return SEARCH_RESULTS;
-	}
+    public void setQuery(final String query) {
+        this.query = query;
+    }
 
-	public Object getModel() {
-		return bank;
-	}
+    public String searchAjax() {
+        return SEARCH_RESULTS;
+    }
 
-	public void setBankService(
-			PersistenceService<Bank, Integer> bankService) {
-		this.bankService = bankService;
-	}
+    @Override
+    public Object getModel() {
+        return bank;
+    }
 
-	public Collection<Bank> getBankList() {
-		if(StringUtils.isNotBlank(getQuery()))
-		bankList = bankService.findAllBy("from Bank where upper(name) like ? || '%'",getQuery().toUpperCase());
-		return bankList;
-	}
-	
+    public void setBankService(
+            final PersistenceService<Bank, Integer> bankService) {
+        this.bankService = bankService;
+    }
+
+    public Collection<Bank> getBankList() {
+        if (StringUtils.isNotBlank(getQuery()))
+            bankList = bankService.findAllBy("from Bank where upper(name) like ? || '%'", getQuery().toUpperCase());
+        return bankList;
+    }
+
 }
-

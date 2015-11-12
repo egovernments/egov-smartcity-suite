@@ -86,7 +86,7 @@
 						<div class="navbar-header col-md-10 col-xs-10">
 							<a class="navbar-brand" href="javascript:void(0);"> <img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
 								<div>
-									<span class="title2">${sessionScope.cityname}</span>
+									<span class="title2">${sessionScope.citymunicipalityname}</span>
 								</div>
 							</a>
 						</div>
@@ -181,6 +181,7 @@
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">
+									${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}
 										<c:choose>
 										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Maximum sessions of {0} for this principal exceeded'}">
 											<spring:message code="msg.multiple.login"/>
@@ -191,7 +192,7 @@
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'OTP not activated'}">
+										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Inactive User'}">
 		     							 	<div class="form-group signin-leftpadding">
 												<a href="/portal/citizen/register?activation=true" class="btn btn-custom btn-block btn-login signin-submit">
 												<spring:message code="msg.acc.not.activated"/>

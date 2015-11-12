@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-11-07T18:05:25 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionHearingNotice" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -74,18 +76,18 @@
 				<reportElement x="1" y="0" width="570" height="247" uuid="d06d0ece-151f-46e0-959d-a4f24633f33e"/>
 			</rectangle>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="11" width="566" height="103" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
-				<textElement verticalAlignment="Top">
+				<reportElement x="3" y="11" width="566" height="69" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
+				<textElement verticalAlignment="Top" markup="styled">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+ $P{receivedOn}+"</style> is considered, and the hearing date is fixed on date: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> " +$P{hearingNoticeDate}+ "</style> at Time: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{hearingTime}+ " </style> Hrs and Venue: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{hearingVenue}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	It is here by noted that revision petition submitted by you dated on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+ $P{receivedOn}+"</style> is considered, and the hearing date is fixed on date: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> " +$P{hearingNoticeDate}+ "</style> at Time: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{hearingTime}+ " </style> Hrs and Venue: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{hearingVenue}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="4" y="118" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
+				<reportElement x="3" y="85" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
 				<textElement verticalAlignment="Top">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["You are requested to attend the hearing as above or you can send the authorized person nominateed by you. Otherwise youre petition hearing will be solved without your presence."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["You are requested to attend the hearing as above or you can send the authorized person nominated by you. Otherwise your petition hearing will be solved without your presence."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="371" y="210" width="200" height="32" uuid="05d607a4-8727-447c-8c52-578a667914f2"/>

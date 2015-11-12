@@ -26,7 +26,7 @@ $('#licenseCategory').change(function(){
 	});
 
 $( "#search" ).click(function( event ) {
-	var valid = $('#feematrix-new').validate().form()
+	var valid = $('#feematrix-new').validate().form();
 	if(!valid)
 		{
 		alert("Please fill mandatory fields");
@@ -42,8 +42,8 @@ $( "#search" ).click(function( event ) {
 	  param=param+$('#licenseCategory').val()+"-";
 	  param=param+$('#subCategory').val()+"-";
 	  param=param+$('#feeType').val()+"-";
-	  param=param+$('#unitOfMeasurement').val();
-	//  alert(param);
+	  param=param+$('#unitOfMeasurement').val()+"-";
+	  param=param+$('#financialYear').val(); 
 	   $.ajax({
 			url: "/tl/feematrix/search?"+param,
 			type: "GET",
@@ -62,7 +62,6 @@ $( "#search" ).click(function( event ) {
 });
 
 $( "#add-row" ).click(function( event ) {
-	
 	  alert( "add-row event called." );
 	  $(this).closest("tr").remove(); // remove row
 	    return false;
@@ -70,16 +69,22 @@ $( "#add-row" ).click(function( event ) {
 
 $('body').on('click', '#add-row', function() {
 	var rowCount = $('#result tr').length;
+	if(!checkforNonEmptyPrevRow())      
+		return false;
+	var prevUOMFromVal=getPrevUOMFromData();
 	var content= $('#resultrow0').html();
-	resultContent=   content.replace(/0/g,rowCount-1);
+	resultContent=   content.replace(/0/g,rowCount-1);   
 	$(resultContent).find("input").val("");
-	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>");
-	$('#result tr:last').find("input").val("");
-	datepicker();
-});
-
+	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
+	$('#result tr:last').find("input").val("");   
+	datepicker();   
+	intiUOMFromData(prevUOMFromVal);          
+});    
+    
 $('body').on('click', '#save', function() {
- 
+if(!validateDetailsBeforeSubmit()){
+	return false;
+} 
 var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
 var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
 	$('#natureOfBusiness').removeAttr("disabled");
@@ -166,14 +171,3 @@ function datepicker(){
 	
 	try { $(":input").inputmask(); }catch(e){}
 }
-
-function validateDetail(){
-	
-	
-
-}
-
-
-
-
-

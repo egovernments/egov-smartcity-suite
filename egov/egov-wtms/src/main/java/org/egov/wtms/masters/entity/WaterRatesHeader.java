@@ -39,13 +39,14 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -92,8 +93,8 @@ public class WaterRatesHeader extends AbstractAuditable {
 
     private boolean active;
 
-    @OneToMany(mappedBy = "waterRatesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<WaterRatesDetails> waterRatesDetails = new HashSet<WaterRatesDetails>();
+    @OneToMany(mappedBy = "waterRatesHeader", fetch = FetchType.LAZY,orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<WaterRatesDetails> waterRatesDetails = new ArrayList<WaterRatesDetails>();
 
     @Override
     public Long getId() {
@@ -145,11 +146,13 @@ public class WaterRatesHeader extends AbstractAuditable {
         this.active = active;
     }
 
-    public Set<WaterRatesDetails> getWaterRatesDetails() {
+ 
+
+    public List<WaterRatesDetails> getWaterRatesDetails() {
         return waterRatesDetails;
     }
 
-    public void setWaterRatesDetails(final Set<WaterRatesDetails> waterRatesDetails) {
+    public void setWaterRatesDetails(List<WaterRatesDetails> waterRatesDetails) {
         this.waterRatesDetails = waterRatesDetails;
     }
 

@@ -40,9 +40,7 @@
 
 package org.egov.collection.web.actions.reports;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -50,15 +48,12 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "dishonoredChequeReport-index.jsp"),
-        @Result(name = BankRemittanceReportAction.REPORT, location = "dishonoredChequeReport-report.jsp") })
+    @Result(name = BankRemittanceReportAction.REPORT, location = "dishonoredChequeReport-report.jsp") })
 public class DishonoredChequeReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -87,7 +82,7 @@ public class DishonoredChequeReportAction extends ReportFormAction {
     }
 
     @Override
-    @Action(value="/reports/dishonoredChequeReport-criteria")
+    @Action(value = "/reports/dishonoredChequeReport-criteria")
     public String criteria() {
 
         setReportParam(EGOV_FROM_DATE, new Date());
@@ -101,7 +96,7 @@ public class DishonoredChequeReportAction extends ReportFormAction {
         return INDEX;
     }
 
-    @Action(value="/reports/dishonoredChequeReport-generateReport")
+    @Action(value = "/reports/dishonoredChequeReport-generateReport")
     public String generateReport() {
         return report();
     }
