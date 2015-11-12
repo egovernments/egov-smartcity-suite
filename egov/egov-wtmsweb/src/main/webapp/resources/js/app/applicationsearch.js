@@ -139,7 +139,6 @@ jQuery(document).ready(function ($) {
 		tableContainer.$('tr.row_selected').removeClass('row_selected');
         $(this).addClass('row_selected');
         var url= tableContainer.fnGetData( this,1);
-        alert("url ="+ url);
         $('#applicationSearchRequestForm').attr('method', 'get');
 		$('#applicationSearchRequestForm').attr('action', url);
 		$('#applicationSearchRequestForm').attr('mode', 'search');
