@@ -79,6 +79,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     @Override
     protected void executeInternal(final JobExecutionContext jobCtx) throws JobExecutionException {
         try {
+            MDC.put("appname", jobCtx.getJobDetail().getKey().getName());
             if (isTransactional)
                 for (final String tenant : tenants) {
                     MDC.put("ulbcode", tenant);
@@ -93,8 +94,8 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
             LOGGER.error("Unable to complete execution Scheduler ", ex);
             throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
         } finally {
-            clearTheadLocal();
-            MDC.remove("ulbcode");
+            EgovThreadLocals.clearValues();
+            MDC.clear();
         }
     }
 
@@ -115,10 +116,5 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 
     protected void setUserInThreadLocal() {
         EgovThreadLocals.setUserId(userService.getUserByUsername(userName).getId());
-    }
-
-    protected void clearTheadLocal() {
-        EgovThreadLocals.setTenantID(null);
-        EgovThreadLocals.setUserId(null);
     }
 }

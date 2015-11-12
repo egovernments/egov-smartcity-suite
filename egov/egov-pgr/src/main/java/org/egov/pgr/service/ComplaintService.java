@@ -29,11 +29,9 @@
  */
 package org.egov.pgr.service;
 
-import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,7 +94,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class ComplaintService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
@@ -145,6 +143,9 @@ public class ComplaintService {
 
     @Autowired
     private AssignmentService assignmentService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
@@ -257,9 +258,6 @@ public class ComplaintService {
         return complaintRepository.findOne(complaintID);
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -272,9 +270,7 @@ public class ComplaintService {
         final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.status", "complaintStatus");
 
-        criteria.add(Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
-                .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
-                .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
+        criteria.add(Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", REOPENED.name()))
                 .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
                 .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
                 .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
@@ -325,7 +321,7 @@ public class ComplaintService {
         final State state = complaint.getState();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         map.put("date", state.getDateInfo());
-        map.put("comments", state.getComments()!=null?state.getComments():"");
+        map.put("comments", state.getComments() != null ? state.getComments() : "");
         map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
@@ -350,7 +346,7 @@ public class ComplaintService {
         for (final StateHistory stateHistory : complaint.getStateHistory()) {
             final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
             HistoryMap.put("date", stateHistory.getDateInfo());
-            HistoryMap.put("comments", stateHistory.getComments() !=null ?stateHistory.getComments() : "");
+            HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
             HistoryMap.put("updatedBy",
                     state.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
             HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());

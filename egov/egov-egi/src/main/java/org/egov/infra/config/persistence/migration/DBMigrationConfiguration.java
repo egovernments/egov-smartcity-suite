@@ -91,6 +91,9 @@ public class DBMigrationConfiguration {
                         tenants.add(value.toString());
                 });
         });
+        if(!applicationProperties.devMode()) {
+            tenants.remove("public");
+        }
         return tenants;
     }
 }
