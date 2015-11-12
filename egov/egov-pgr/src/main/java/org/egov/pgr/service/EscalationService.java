@@ -155,6 +155,7 @@ public class EscalationService {
                 final PositionHierarchy positionHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
                         complaint.getAssignee().getId(),
                         objectType.getId(), complaint.getComplaintType().getCode());
+                final User previoususer = eisCommonService.getUserForPosition(complaint.getAssignee().getId(), new Date());
                 Position superiorPosition = null;
                 User superiorUser = null;
                 if (positionHierarchy != null) {
@@ -192,13 +193,17 @@ public class EscalationService {
                                     .append(complaint.getLocation().getName()).append("\n Complaint description - ")
                                     .append(complaint.getDetails()).append("\n Complaint status -")
                                     .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
-                                    .append(superiorUser.getName()).append("\n Escalation Time - ").append(formattedEscalationDate);
+                                    .append(superiorUser.getName()).append("\n Escalation Time - ")
+                                    .append(formattedEscalationDate);
                             final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
                                     .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
                             final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                                    .append(", The complaint Number (").append(complaint.getCrn())
-                                    .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
-                                    .append(formattedEscalationDate);
+                                    .append(", ").append(complaint.getCrn() + " by ")
+                                    .append(complaint.getComplainant().getName() != null ? complaint.getComplainant().getName()
+                                            : "Anonymous User")
+                                    .append(" for " + complaint.getComplaintType().getName() + " from ")
+                                    .append(complaint.getLocation().getName()).append(" handled by ")
+                                    .append(previoususer.getName() + " has been escalated to you. ");
                             messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
                             messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
                         }
@@ -206,8 +211,8 @@ public class EscalationService {
                 }
             }
         } catch (final Exception e) {
-            //Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining cities. 
-            LOG.error("An error occurred, escalation can't be completed ",  e);
+            // Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining cities.
+            LOG.error("An error occurred, escalation can't be completed ", e);
             return;
         }
     }

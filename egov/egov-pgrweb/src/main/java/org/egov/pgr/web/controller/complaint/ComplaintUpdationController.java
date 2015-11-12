@@ -195,7 +195,7 @@ public class ComplaintUpdationController {
         if (complaint.getLocation() == null && complaint.getLat() != 0 && complaint.getLng() != 0)
             errors.rejectValue("location", "location.info.not.found");
 
-        if (complaint.getLocation() == null && complaint.getChildLocation() == null && complaint.getLat() == 0
+        if ((complaint.getLocation() == null || complaint.getChildLocation() == null) && complaint.getLat() == 0
                 && complaint.getLng() == 0)
             errors.rejectValue("location", "location.info.not.found");
     }

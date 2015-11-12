@@ -150,6 +150,7 @@
                    				<form:hidden path="lng" id="lng"/>
 							</div>
 							<form:errors path="location" cssClass="add-margin error-msg"/>
+							<form:hidden path="latlngAddress" id="latlngaddress"/>
 						</div>
 					</div>
 					

@@ -158,7 +158,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
-    @Searchable (name = "department",group = Searchable.Group.CLAUSES)
+    @Searchable(name = "department", group = Searchable.Group.CLAUSES)
     private Department department;
 
     @Enumerated(EnumType.ORDINAL)
@@ -208,6 +208,9 @@ public class Complaint extends StateAware {
 
     @Transient
     private Long crossHierarchyId;
+
+    @Transient
+    private String latlngAddress;
 
     @Override
     public Long getId() {
@@ -435,6 +438,14 @@ public class Complaint extends StateAware {
 
     public void setCrossHierarchyId(final Long crossHierarchyId) {
         this.crossHierarchyId = crossHierarchyId;
+    }
+
+    public String getLatlngAddress() {
+        return latlngAddress;
+    }
+
+    public void setLatlngAddress(final String latlngAddress) {
+        this.latlngAddress = latlngAddress;
     }
 
 }

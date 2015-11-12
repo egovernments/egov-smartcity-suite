@@ -251,6 +251,9 @@ public class ComplaintService {
         complaint.setDistrict(cityWebsite.getDistrictName());
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
+        if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
+                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
+            sendEmailandSmsOnCompletion(savedComplaint);
         return savedComplaint;
     }
 
@@ -403,9 +406,24 @@ public class ComplaintService {
                         .append(", ")
                         .append(complaint.getComplainant().getMobile() == null ? "" : complaint.getComplainant().getMobile())
                         .append(" at ").append(complaint.getLocation().getName());
+                if (complaint.getLatlngAddress() != null)
+                    smsBodyOfficial.append(", " + complaint.getLatlngAddress());
+                else
+                    smsBodyOfficial
+                            .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName() : "");
+                smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails() : "");
                 messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
             }
         }
+
+    }
+
+    public void sendEmailandSmsOnCompletion(final Complaint complaint) {
+        final StringBuffer smsBody = new StringBuffer().append("Your Grievance regarding ")
+                .append(complaint.getComplaintType().getName())
+                .append(" with tracking number '").append(complaint.getCrn())
+                .append("' is updated to ").append(complaint.getStatus().getName());
+        messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
 
     }
 

@@ -62,6 +62,7 @@
 						<form:options items="${status}" itemValue="id" itemLabel="name" />
 					</form:select>
 					<form:errors path="status" cssClass="error-msg" />
+					<form:hidden path="latlngAddress" id="latlngaddress"/>
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
 					<spring:message code="lbl.change.complaint.type" />
