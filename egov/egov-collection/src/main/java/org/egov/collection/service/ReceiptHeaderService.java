@@ -615,7 +615,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
                 + "join receipt.receiptInstrument as instruments where ";
         final String serviceNameCondition = "receipt.service.name=? ";
-        final String receiptDateCondition = "and to_char(receipt.createdDate,'dd-MM-yyyy')=? ";
+        final String receiptDateCondition = "and to_char(receipt.receiptdate,'dd-MM-yyyy')=? ";
         final String instrumentStatusCondition = "and instruments.statusId.id=? ";
         final String instrumentTypeCondition = "and instruments.instrumentType.type = ? ";
         final String receiptFundCondition = "and receipt.receiptMisc.fund.code = ? ";
