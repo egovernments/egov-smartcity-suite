@@ -62,6 +62,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +83,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
@@ -115,23 +117,28 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
         @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
         @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
+        @Result(name =PropertyTransferAction.ERROR, location = "common/meeseva-errorPage.jsp"),
+        @Result(name = PropertyTransferAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
         @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
+
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
     private static final String PROPERTY_TRANSFER = "property transfer";
     private static final long serialVersionUID = 1L;
     public static final String ACK = "ack";
+    public static final String ERROR = "error";
     public static final String SEARCH = "search";
     public static final String REJECT_ON_TAXDUE = "balance";
     public static final String PRINTACK = "printAck";
     public static final String PRINTNOTICE = "printNotice";
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
-
+    public static final String MEESEVA_RESULT_ACK = "meesevaAck";
+    
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -151,6 +158,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
     private MessagingService messagingService;
@@ -179,7 +189,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String taxDueErrorMsg;
     private Boolean propertyByEmployee = Boolean.TRUE;
     private String userDesignation;
-
+    private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    
     private Map<String, String> guardianRelationMap;
 
     public PropertyTransferAction() {
@@ -203,8 +214,22 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
                 return REJECT_ON_TAXDUE;
-            } else
+            } else{
+                
+                loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
+                if (loggedUserIsMeesevaUser) {
+                    final HttpServletRequest request = ServletActionContext.getRequest();
+                    if (request.getParameter("applicationNo") == null) {
+                        addActionMessage(getText("mandatory.meesevaApplicationNumber"));
+                        return ERROR;
+                    } else {
+                        
+                        propertyMutation.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+                    }
+                }
+                
                 return NEW;
+            }
         }
     }
 
@@ -212,12 +237,29 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/save")
     public String save() {
         transitionWorkFlow(propertyMutation);
-        transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
+         
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
+        if (!loggedUserIsMeesevaUser) {
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
+        }
+        else {
+            HashMap<String,String> meesevaParams=   new HashMap<String,String>();
+            meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
+            propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation,meesevaParams);
+        }
+        
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
-        return ACK;
+         
+        if(!loggedUserIsMeesevaUser)
+            return ACK;
+        else {
+            return MEESEVA_RESULT_ACK;
+        }           
+        
     }
 
     @SkipValidation

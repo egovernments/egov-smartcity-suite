@@ -176,7 +176,8 @@ public class PropertyTransferService {
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
         propertyMutation.setMutationDate(new Date());
-        propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
+        if(propertyMutation.getApplicationNo()==null)
+            propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
@@ -428,6 +429,12 @@ public class PropertyTransferService {
         final Long userId = securityUtils.getCurrentUser().getId();
         final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
         return designation;
+    }
+
+    public PropertyMutation initiatePropertyTransfer(BasicProperty basicproperty, PropertyMutation propertyMutation,
+            HashMap<String, String> meesevaParams) {
+           initiatePropertyTransfer(basicproperty,propertyMutation);
+           return propertyMutation;
     }
 
 }

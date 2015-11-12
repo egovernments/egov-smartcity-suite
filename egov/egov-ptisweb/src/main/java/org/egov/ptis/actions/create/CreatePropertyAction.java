@@ -156,9 +156,9 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "ack", location = "create/createProperty-ack.jsp"),
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
         @Result(name = "view", location = "create/createProperty-view.jsp"),
-        @Result(name = "error", location = "create/createProperty-error.jsp"),
+        @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
         @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp"),
-        @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "create/createProperty-meesevaAck.jsp")})
+        @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp")})
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = -2329719786287615451L;

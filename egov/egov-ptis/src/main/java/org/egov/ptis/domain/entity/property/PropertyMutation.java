@@ -72,7 +72,7 @@ public class PropertyMutation extends StateAware {
     private String documentNumber;
     private String saleDetail;
     private List<Document> documents = new ArrayList<>();
-
+    private String meesevaApplicationNumber;//Temporary number for meeseva integration.
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -299,4 +299,14 @@ public class PropertyMutation extends StateAware {
         return user;
 
     }
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+   
 }

@@ -103,7 +103,9 @@
 						<td class="bluebox"><span class="bold"><s:property
 									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
 								name="assessmentNo" id="assessmentNo"
-								value="%{basicproperty.upicNo}" /></td>
+								value="%{basicproperty.upicNo}" />
+								<s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
+			</td>
 						<td class="bluebox">&nbsp;</td>
 						<td style="width: 25%;">&nbsp;</td>
 					</tr>
