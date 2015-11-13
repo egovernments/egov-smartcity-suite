@@ -7,6 +7,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -48,18 +48,20 @@ public class PropertyThirdPartyService {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
-    public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
+    public String getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
         PtNotice ptNotice = null;
         if (StringUtils.isNotBlank(applicationNo)) {
-            ptNotice = (PtNotice) persistenceService.find("from PtNotice where applicationNumber = ?", applicationNo);
+            ptNotice = (PtNotice) persistenceService.find(
+                    "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
+                    NOTICE_TYPE_SPECIAL_NOTICE);
         } else if (StringUtils.isNotBlank(assessmentNo)) {
             ptNotice = (PtNotice) persistenceService.find("from PtNotice where basicProperty.upicNo = ?", assessmentNo);
         }
         if (ptNotice != null && ptNotice.getFileStore() != null) {
             final FileStoreMapper fsm = ptNotice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-            return FileUtils.readFileToByteArray(file);
+            return file.getAbsolutePath();
         } else
             return null;
     }

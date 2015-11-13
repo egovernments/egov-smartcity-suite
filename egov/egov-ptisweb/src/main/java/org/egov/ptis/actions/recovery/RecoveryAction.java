@@ -241,7 +241,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream Notice155PDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.NOTICE155,
+			PtNotice ptNotice = noticeService.saveNotice(null,noticeNo, PropertyTaxConstants.NOTICE155,
 					recovery.getBasicProperty(), Notice155PDF);
 			recovery.getIntimationNotice().setNotice(ptNotice);
 		}
@@ -322,7 +322,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream warrantApplPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.WARRANT_APPLICATION,
+			PtNotice ptNotice = noticeService.saveNotice(null,noticeNo, PropertyTaxConstants.WARRANT_APPLICATION,
 					recovery.getBasicProperty(), warrantApplPDF);
 			recovery.getWarrant().setNotice(ptNotice);
 		}
@@ -370,7 +370,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream Notice156PDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.NOTICE156,
+			PtNotice ptNotice = noticeService.saveNotice(null,noticeNo, PropertyTaxConstants.NOTICE156,
 					recovery.getBasicProperty(), Notice156PDF);
 			recovery.getWarrantNotice().setNotice(ptNotice);
 		}
@@ -429,7 +429,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream Notice159PDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.NOTICE159,
+			PtNotice ptNotice = noticeService.saveNotice(null,noticeNo, PropertyTaxConstants.NOTICE159,
 					recovery.getBasicProperty(), Notice159PDF);
 			recovery.getCeaseNotice().setNotice(ptNotice);
 		}

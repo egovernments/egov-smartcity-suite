@@ -417,7 +417,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             hearingNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
         if (hearingNoticePdf != null)
-            noticeService.saveNotice(objection.getObjectionNumber(),
+            noticeService.saveNotice(objection.getObjectionNumber(), objection.getObjectionNumber(),
                     PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(),
                     hearingNoticePdf);// Save Notice
         revisionPetitionService.updateRevisionPetition(objection);
@@ -516,6 +516,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
+            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
             reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
         } else
             addActionMessage(getText("objection.nohearingNotice"));
@@ -716,6 +717,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             specialNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
         noticeService.saveNotice(
+                objection.getObjectionNumber(),
                 objection.getObjectionNumber().concat(
                         PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX),
                 PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE, objection.getBasicProperty(), specialNoticePdf);
@@ -867,6 +869,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             endoresementPdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
         noticeService.saveNotice(
+                objection.getObjectionNumber(),
                 objection.getObjectionNumber().concat(
                         PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
                 PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),

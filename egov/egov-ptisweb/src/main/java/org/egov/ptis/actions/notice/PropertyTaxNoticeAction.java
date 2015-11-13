@@ -172,7 +172,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-        noticeService.saveNotice(noticeNo, noticeType, basicProperty, NoticePDF);
+        noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),noticeNo, noticeType, basicProperty, NoticePDF);
         endWorkFlow(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_ALTER_ASSESSENT);
         basicPropertyService.update(basicProperty);

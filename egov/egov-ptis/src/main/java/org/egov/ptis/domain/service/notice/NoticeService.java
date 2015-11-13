@@ -81,7 +81,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
      * @param fileStream
      *            - input stream of generated notice.
      */
-    public PtNotice saveNotice(final String noticeNo, final String noticeType, final BasicProperty basicProperty,
+    public PtNotice saveNotice(final String applicationNumber,final String noticeNo, final String noticeType, final BasicProperty basicProperty,
             final InputStream fileStream) {
         final PtNotice ptNotice = new PtNotice();
         final Module module = moduleDao.getModuleByName(PTMODULENAME);
@@ -91,7 +91,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         ptNotice.setNoticeType(noticeType);
         ptNotice.setUserId(EgovThreadLocals.getUserId());
         ptNotice.setBasicProperty(basicProperty);
-        ptNotice.setApplicationNumber(basicProperty.getPropertyForBasicProperty().getApplicationNo());
+        ptNotice.setApplicationNumber(applicationNumber);
         final String fileName = ptNotice.getNoticeNo() + ".pdf";
         final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                 FILESTORE_MODULE_NAME);
