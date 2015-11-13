@@ -105,7 +105,13 @@ public class WaterTaxSearchController {
      */
     @ModelAttribute("cscUserRole")
     public String getCurrentUserRole() {
-        final User currentUser = securityUtils.getCurrentUser();
+        User currentUser =null;
+        if(EgovThreadLocals.getUserId()!=null){
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        }
+        else{
+            currentUser = securityUtils.getCurrentUser();
+        }
         String cscUserRole = "";
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
@@ -120,13 +126,18 @@ public class WaterTaxSearchController {
 
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
         Boolean citizenrole = Boolean.FALSE;
-        for (final Role userrole : currentUser.getRoles())
+        if(EgovThreadLocals.getUserId()!=null){
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+       for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
                 citizenrole = Boolean.TRUE;
                 break;
+            }
+        }
+            else{
+                citizenrole = Boolean.TRUE;  
             }
         return citizenrole;
     }
@@ -139,7 +150,13 @@ public class WaterTaxSearchController {
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
         String userRole = "";
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        User currentUser =null;
+        if(EgovThreadLocals.getUserId()!=null){
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        }
+        else{
+            currentUser = securityUtils.getCurrentUser();
+        }
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(
@@ -160,7 +177,13 @@ public class WaterTaxSearchController {
     @ModelAttribute("superUserRole")
     public String getSuperUserRole() {
         String userRole = "";
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+         User currentUser =null;
+        if(EgovThreadLocals.getUserId()!=null){
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        }
+        else{
+            currentUser = securityUtils.getCurrentUser();
+        }
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(
@@ -169,6 +192,7 @@ public class WaterTaxSearchController {
                 userRole = userrole.getName();
                 break;
             }
+        
         return userRole;
     }
 
@@ -181,7 +205,13 @@ public class WaterTaxSearchController {
     @ModelAttribute("approverUserRole")
     public String getApproverUserRole() {
         String userRole = "";
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        User currentUser =null;
+        if(EgovThreadLocals.getUserId()!=null){
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        }
+        else{
+            currentUser = securityUtils.getCurrentUser();
+        }
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(
@@ -202,7 +232,13 @@ public class WaterTaxSearchController {
     @ModelAttribute("operatorRole")
     public String getOperatorUserRole() {
         String userRole = "";
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        User currentUser =null;
+        if(EgovThreadLocals.getUserId()!=null){
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        }
+        else{
+            currentUser = securityUtils.getCurrentUser();
+        }
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null
             && userrole.getName().equals(

@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -116,6 +117,10 @@ public class GenericBillGeneratorController {
                 applicationCode,ConnectionStatus.ACTIVE);
         else
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        if(EgovThreadLocals.getUserId()==null)
+        if( securityUtils.getCurrentUser().getUsername().equals("anonymous")){
+            EgovThreadLocals.setUserId(Long.valueOf("2"));
+        }
         model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode,applicationTypeCode));
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";

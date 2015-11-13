@@ -442,13 +442,23 @@ public class WaterTaxUtils {
     }
 
     public Boolean getCitizenUserRole() {
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
         Boolean citizenrole = Boolean.FALSE;
+        if(EgovThreadLocals.getUserId()!=null){
+        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if(currentUser.getRoles().isEmpty()&&  securityUtils.getCurrentUser().getUsername().equals("anonymous"))
+        {
+            citizenrole = Boolean.TRUE;  
+        }
         for (final Role userrole : currentUser.getRoles())
             if (userrole != null && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
                 citizenrole = Boolean.TRUE;
                 break;
             }
+        }
+        else{
+            citizenrole = Boolean.TRUE;
+            
+        }
         return citizenrole;
     }
 }

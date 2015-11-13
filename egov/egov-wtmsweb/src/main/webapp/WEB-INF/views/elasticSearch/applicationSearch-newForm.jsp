@@ -59,7 +59,7 @@
 
 				<form:form  class="form-horizontal form-groups-bordered"
 					id="applicationSearchRequestForm" modelAttribute="applicationSearchRequest" action="">
-					<input type="text"  id="citizenRole" value="${citizenRole}" />
+					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 					<div class="form-group">
 					<label for="field-1" class="col-sm-3 control-label"> <spring:message
 										code="lbl.Service" /></label>
