@@ -418,7 +418,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_CODE_SEWERAGE_TAX = "SEW_TAX";
     public static final String DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES = "PRIMARY_SER_CHRG";
     public static final String DEMANDRSN_CODE_UNAUTHORIZED_PENALTY = "UNAUTH_PENALTY";
-    public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHEQUE_PENALTY";
+    public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHQ_BUNC_PENALTY";
     public static final String DEMANDRSN_CODE_PENALTY_FINES = "PENALTY_FINES";
     public static final String DEMANDRSN_CODE_ADVANCE = "ADVANCE";
     public static final String DEMANDRSN_CODE_ADVANCE_REBATE = "ADVANCE_REBATE";
