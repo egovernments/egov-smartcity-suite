@@ -434,7 +434,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_STR_LIBRARY_CESS = "Library Cess";
     public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "Education Cess";
     public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
-    public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
+    public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE_BOUNCE_PENALTY";
     public static final String DEMANDRSN_STR_PENALTY_FINES = "PENALTY_FINES";
     public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
     public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
