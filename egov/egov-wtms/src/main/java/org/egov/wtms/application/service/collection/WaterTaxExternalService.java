@@ -475,6 +475,10 @@ public class WaterTaxExternalService {
    
 		
 	}
+    
+    public BillReceiptInfo validateTransanctionIdPresent(final String transantion) {
+       return (BillReceiptInfo) collectionService.getReceiptInfo(WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE, transantion);
+    }
     // TODO:EgBillDao is not intialising Request is comes from RestController so
     // using BillCreation method here only
     public final EgBill generateBill(final Billable billObj) {

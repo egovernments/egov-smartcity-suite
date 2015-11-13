@@ -53,6 +53,8 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -225,7 +227,21 @@ public class RestWaterConnectionCollection {
             }
 
         }
-
+        if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId()) ){
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_REQUIRED);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED);
+        }
+        else if(payWaterTaxDetails.getTransactionId()!=null || !"".equals(payWaterTaxDetails.getTransactionId())){
+       BillReceiptInfo billReceipt=waterTaxExternalService.validateTransanctionIdPresent(payWaterTaxDetails.getTransactionId());
+        if(billReceipt!=null)
+        {
+             errorDetails = new ErrorDetails();
+             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE);
+             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE);
+       
+        }
+        }
         if (payWaterTaxDetails.getPaymentMode() == null || payWaterTaxDetails.getPaymentMode().trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED);

@@ -69,12 +69,14 @@ import javax.persistence.Query;
 
 import org.apache.commons.io.FilenameUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Area;
 import org.egov.commons.Bank;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
+import org.egov.dcb.service.EgovSpringBeanDefinition;
 import org.egov.demand.model.EgBill;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -194,6 +196,9 @@ public class PropertyExternalService {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    @Autowired
+    private CollectionIntegrationService collectionService;
     @Autowired
     private PropertyPersistenceService basicPropertyService;
     private final List<String> uploadFileNames = new ArrayList<String>();
@@ -1652,6 +1657,10 @@ public class PropertyExternalService {
         }
         return document;
     }
+
+    public BillReceiptInfo validateTransanctionIdPresent(final String transantion) {
+        return ( BillReceiptInfo ) collectionService.getReceiptInfo(PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE, transantion);
+     }
 
     private Document createDocument(final InputStream inputStream, final String fileName) {
         final Document document = new Document();

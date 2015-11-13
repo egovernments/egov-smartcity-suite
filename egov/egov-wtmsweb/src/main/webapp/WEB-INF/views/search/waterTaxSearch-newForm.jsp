@@ -65,7 +65,7 @@
 					<input type="hidden"  id="cscUserRole" value="${cscUserRole}" />
 					<input type="hidden"  id="approverUserRole" value="${approverUserRole}" />
 					<input type="hidden"  id="operatorRole" value="${operatorRole}" />
-					<input type="text"  id="citizenRole" value="${citizenRole}" />
+					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 					
 			<c:if test="${!citizenRole }" >
 					<div class="form-group">

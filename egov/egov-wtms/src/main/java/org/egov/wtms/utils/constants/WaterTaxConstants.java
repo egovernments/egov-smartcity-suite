@@ -205,6 +205,7 @@ public class WaterTaxConstants {
     public static final String NONMETEREDDEMANDREASON = "Water tax charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
+    public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
 
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
