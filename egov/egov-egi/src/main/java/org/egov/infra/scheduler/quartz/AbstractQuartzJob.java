@@ -66,8 +66,8 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     private boolean isTransactional;
     private String userName;
 
-    @Resource(name = "tenants")
-    protected List<String> tenants;
+    @Resource(name = "cities")
+    protected List<String> cities;
 
     @Autowired
     private UserService userService;
@@ -81,7 +81,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
         try {
             MDC.put("appname", jobCtx.getJobDetail().getKey().getName());
             if (isTransactional)
-                for (final String tenant : tenants) {
+                for (final String tenant : cities) {
                     MDC.put("ulbcode", tenant);
                     setTractionalSupport(tenant);
                     setUserInThreadLocal();

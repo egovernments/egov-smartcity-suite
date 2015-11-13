@@ -38,14 +38,20 @@
  ******************************************************************************/
 package org.egov.infra.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -58,6 +64,9 @@ public class ApplicationConfiguration {
 
     @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Resource(name = "tenants")
+    protected List<String> tenants;
 
     @Bean
     public FileStoreService fileStoreService() {
@@ -83,5 +92,14 @@ public class ApplicationConfiguration {
         mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
         mailSender.setJavaMailProperties(mailProperties);
         return mailSender;
+    }
+
+    @Bean(name = "cities", autowire = Autowire.BY_NAME)
+    @DependsOn(value = "tenants")
+    public List<String> cities() {
+        final List<String> cities = new ArrayList<>(tenants);
+        if (!applicationProperties.devMode())
+            cities.remove("public");
+        return cities;
     }
 }
