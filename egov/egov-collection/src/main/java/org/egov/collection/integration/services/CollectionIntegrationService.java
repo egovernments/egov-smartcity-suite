@@ -166,4 +166,6 @@ public interface CollectionIntegrationService {
 
     
     public List<ServiceCategory>  getActiveServiceCategories();
+    
+    public String cancelReceipt(String receiptNumber);
 }

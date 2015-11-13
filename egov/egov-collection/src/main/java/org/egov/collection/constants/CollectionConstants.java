@@ -497,6 +497,8 @@ public final class CollectionConstants {
     public static final String AXIS_ABORTED_STATUS_CODE = "3";
 
     public static final TreeMap<String, String> INSTRUMENT_MODES_MAP = new TreeMap<String, String>() {
+
+        private static final long serialVersionUID = -3923246500888439628L;
         {
             put("cheque", "Cheque");
             put("dd", "DD");
@@ -505,5 +507,10 @@ public final class CollectionConstants {
     // Named query for dishonor changes
     public static final String QUERY_INSTRUMENT_DISHONOR_STATUSES = "INSTRUMENT_STATUS_FOR_DISHONOR";
     public static final String QUERY_DISHONOR_STATE_OWNERS = "DISHONOR_STATE_OWNERS";
+
+    // Cancel Receipt
+    public static final String RECEIPT_DEPOSITED_CANCELLED = "Receipt cannot be cancelled since Instrument is already deposited";
+    public static final String RECEIPT_CANCELLED_SUCCESS = "Receipt Cancelled Successfully";
+    public static final String RECEIPT_CANCELLED_REASON = "Receipt Cancelled by meSeva";
 
 }
