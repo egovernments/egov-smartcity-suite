@@ -71,7 +71,7 @@
 		
 <div class="row">
 	<div class="col-md-12">
-		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" >
+		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" enctype="multipart/form-data" >
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                     <div class="alert alert-success" role="alert">${message}</div>
@@ -195,7 +195,7 @@
 											<form:errors path="employeeStatus" cssClass="error-msg" />
 										</div>
 									</div>
-
+					
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.emptype"/><span class="mandatory"></span></label>
 										
@@ -240,7 +240,44 @@
 											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
 										</div>
 									</div>
-
+									
+								    <c:if test="${not empty image}">
+								    <div class="form-group">
+									    <label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.sign"/></label>
+										<div class="col-md-3 col-xs-6 add-margin view-content">
+											<img width="100" height="70" src='data:image/png;base64,${image}' /> 
+									  	</div>
+								    </div>
+								    <div class="form-group">
+										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
+											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
+										</div>
+										<div class="col-sm-6 col-xs-12">
+											<div id="file1block" class="add-margin col-sm-3 col-xs-6">
+												<img id="preview1" src="#" alt="" class="display-hide "/>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+												<div class="add-padding" id="filename1"></div>
+										    </div>
+										</div>	
+					                 </div>	                 
+								     </c:if>
+								     
+									<c:if test="${ empty image}">
+                                    <div class="form-group">
+										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
+											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
+										</div>
+										<div class="col-sm-6 col-xs-12">
+											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+												<img id="preview1" src="#" alt="" class="display-hide "/>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+												<div class="add-padding" id="filename1"></div>
+										</div>
+										</div>
+					                </div>
+					                </c:if>
 
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.useractive"/><span class="mandatory"></span></label>
@@ -648,3 +685,4 @@
              </form:form>
     </div>
 </div>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
