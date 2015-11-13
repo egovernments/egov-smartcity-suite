@@ -172,8 +172,7 @@ public class ComplaintService {
                 throw new ValidationException("gis.location.info.not.found");
             }
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getUsername() + "::"
-                + complaint.getComplainant().getUserDetail().getName())
+        complaint.transition().start().withSenderName(complaint.getComplainant().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
                 .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
@@ -208,7 +207,11 @@ public class ComplaintService {
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
         final Role goRole = roleService.getRoleByName(PGRConstants.GO_ROLE_NAME);
-        final String userName = securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName();
+        String userName = null;
+        if (securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN))
+            userName = securityUtils.getCurrentUser().getName();
+        else
+            userName = securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName();
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
@@ -325,7 +328,11 @@ public class ComplaintService {
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         map.put("date", state.getDateInfo());
         map.put("comments", state.getComments() != null ? state.getComments() : "");
-        map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+        if (state.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                || state.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+            map.put("updatedBy", complaint.getComplainant().getName());
+        else
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
@@ -350,8 +357,12 @@ public class ComplaintService {
             final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
             HistoryMap.put("date", stateHistory.getDateInfo());
             HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
-            HistoryMap.put("updatedBy",
-                    state.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
+            if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                    || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+                HistoryMap.put("updatedBy", complaint.getComplainant().getName());
+            else
+                HistoryMap.put("updatedBy",
+                        stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
             HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
             HistoryMap.put("status", stateHistory.getValue());
             final Position owner = stateHistory.getOwnerPosition();
