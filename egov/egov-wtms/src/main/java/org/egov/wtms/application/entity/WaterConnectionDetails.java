@@ -194,10 +194,10 @@ public class WaterConnectionDetails extends StateAware {
 
     @Temporal(value = TemporalType.DATE)
     private Date executionDate;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date closeApprovalDate;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date reconnectionApprovalDate;
 
@@ -233,14 +233,17 @@ public class WaterConnectionDetails extends StateAware {
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     private String closeConnectionType;
-    
+
     private String previousApplicationType;
 
     @Length(max = 1024)
     private String closeconnectionreason;
-    
+
     @Length(max = 1024)
     private String reConnectionReason;
+
+    @Transient
+    private String meesevaApplicationNumber;
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -278,7 +281,7 @@ public class WaterConnectionDetails extends StateAware {
         return previousApplicationType;
     }
 
-    public void setPreviousApplicationType(String previousApplicationType) {
+    public void setPreviousApplicationType(final String previousApplicationType) {
         this.previousApplicationType = previousApplicationType;
     }
 
@@ -561,13 +564,11 @@ public class WaterConnectionDetails extends StateAware {
         this.nonmeteredBillDetails = nonmeteredBillDetails;
     }
 
-   
-
     public String getCloseConnectionType() {
         return closeConnectionType;
     }
 
-    public void setCloseConnectionType(String closeConnectionType) {
+    public void setCloseConnectionType(final String closeConnectionType) {
         this.closeConnectionType = closeConnectionType;
     }
 
@@ -583,7 +584,7 @@ public class WaterConnectionDetails extends StateAware {
         return reConnectionReason;
     }
 
-    public void setReConnectionReason(String reConnectionReason) {
+    public void setReConnectionReason(final String reConnectionReason) {
         this.reConnectionReason = reConnectionReason;
     }
 
@@ -591,7 +592,7 @@ public class WaterConnectionDetails extends StateAware {
         return closeApprovalDate;
     }
 
-    public void setCloseApprovalDate(Date closeApprovalDate) {
+    public void setCloseApprovalDate(final Date closeApprovalDate) {
         this.closeApprovalDate = closeApprovalDate;
     }
 
@@ -599,9 +600,16 @@ public class WaterConnectionDetails extends StateAware {
         return reconnectionApprovalDate;
     }
 
-    public void setReconnectionApprovalDate(Date reconnectionApprovalDate) {
+    public void setReconnectionApprovalDate(final Date reconnectionApprovalDate) {
         this.reconnectionApprovalDate = reconnectionApprovalDate;
     }
-    
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(final String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
 
 }

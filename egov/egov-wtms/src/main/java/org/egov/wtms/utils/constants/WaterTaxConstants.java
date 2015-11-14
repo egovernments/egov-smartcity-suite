@@ -53,7 +53,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
-    public static final String CITIZENROLE ="Citizen";
+    public static final String CITIZENROLE = "Citizen";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
     public static final String EGMODULES_NAME = "Water Tax";
@@ -135,7 +135,7 @@ public class WaterTaxConstants {
 
     public static final String BPL_CATEGORY = "BPL";
     public static final String HIERARCHYNAME_ADMIN = "ADMINISTRATION";
-    
+
     public static final String WF_STATE_BUTTON_GENERATEESTIMATE = "Generate Estimation Notice";
     public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON = "Tap Execution Date";
 
@@ -238,4 +238,5 @@ public class WaterTaxConstants {
     };
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
+    public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
 }

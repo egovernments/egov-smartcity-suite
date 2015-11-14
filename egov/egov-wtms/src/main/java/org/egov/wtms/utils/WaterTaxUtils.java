@@ -30,6 +30,7 @@
  */
 package org.egov.wtms.utils;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
@@ -193,6 +194,19 @@ public class WaterTaxUtils {
         return applicationByOthers;
     }
 
+    /**
+     * Checks whether user is an meeseva operator or not
+     *
+     * @param user
+     * @return
+     */
+    public Boolean isMeesevaUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
+                return true;
+        return false;
+    }
+
     public Boolean isEmailEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
@@ -253,7 +267,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -416,7 +430,7 @@ public class WaterTaxUtils {
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
                     if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
-                            && role.getName().contains(WaterTaxConstants.CLERKULB)) {
+                    && role.getName().contains(WaterTaxConstants.CLERKULB)) {
                         isCSCOperator = true;
                         break;
                     }
@@ -436,29 +450,24 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
             if (waterconnectiondetails.getDemand() != null)
                 finalDueAmount = finalDueAmount
-                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                                .getDemand().getAmtCollected().doubleValue());
+                + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                        .getDemand().getAmtCollected().doubleValue());
         return finalDueAmount;
     }
 
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if(EgovThreadLocals.getUserId()!=null){
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-        if(currentUser.getRoles().isEmpty()&&  securityUtils.getCurrentUser().getUsername().equals("anonymous"))
-        {
-            citizenrole = Boolean.TRUE;  
-        }
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole != null && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
+        if (EgovThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+            if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 citizenrole = Boolean.TRUE;
-                break;
-            }
-        }
-        else{
+            for (final Role userrole : currentUser.getRoles())
+                if (userrole != null && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
+                    citizenrole = Boolean.TRUE;
+                    break;
+                }
+        } else
             citizenrole = Boolean.TRUE;
-            
-        }
         return citizenrole;
     }
 }
