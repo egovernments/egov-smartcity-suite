@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -48,7 +49,7 @@ public class PropertyThirdPartyService {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
-    public String getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
+    public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
         PtNotice ptNotice = null;
         if (StringUtils.isNotBlank(applicationNo)) {
@@ -61,7 +62,7 @@ public class PropertyThirdPartyService {
         if (ptNotice != null && ptNotice.getFileStore() != null) {
             final FileStoreMapper fsm = ptNotice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-            return file.getAbsolutePath();
+            return FileUtils.readFileToByteArray(file);
         } else
             return null;
     }
