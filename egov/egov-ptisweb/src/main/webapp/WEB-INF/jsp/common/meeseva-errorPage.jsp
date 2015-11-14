@@ -48,8 +48,8 @@
 <title></title>
 </head>
 
-<body onload="refreshInbox()">
-	<s:push value="model">
+<body>
+	
 		<div class="formmainbox">
 			<div class="text-center" style="padding:20px;">
 				<s:if test="%{hasActionMessages()}">
@@ -68,9 +68,9 @@
 
 				</tr>
 			</table>
-		</div>
-	</s:push>
-	</div>
+		</div></div>
+ 
+	
 
 </body>
 

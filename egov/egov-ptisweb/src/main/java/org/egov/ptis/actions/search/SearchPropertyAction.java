@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -66,8 +67,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -76,6 +80,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -107,8 +112,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE" }),
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
+                        "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}","meesevaApplicationNumber","${meesevaApplicationNumber}" ,"meesevaServiceCode","${meesevaServiceCode}","applicationType","${applicationType}" }),
         @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
                 "namespace", "/revPetition", "propertyId", "${assessmentNum}" }),
+        @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),        
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "collectPropertyTax-generateBill", params = {
                 "namespace", "/collection", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
@@ -120,6 +128,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private static final long serialVersionUID = 6978874588028662454L;
     protected static final String COMMON_FORM = "commonForm";
     private final Logger LOGGER = Logger.getLogger(getClass());
+    private static final String RESULT_ERROR = "meesevaerror";
     public static final String TARGET = "result";
     private Long zoneId;
     private Long wardId;
@@ -149,7 +158,11 @@ public class SearchPropertyAction extends BaseFormAction {
     private boolean enableVacancyRemission;
     private String doorNo;
     private String mobileNumber;
-
+    private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private String meesevaApplicationNumber;
+    private String meesevaServiceCode;
+    
+    
     @Autowired
     private BoundaryService boundaryService;
 
@@ -167,7 +180,9 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private VacancyRemissionService vacancyRemissionService;
-
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     @Override
     public Object getModel() {
         return null;
@@ -191,6 +206,18 @@ public class SearchPropertyAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/search/searchProperty-commonForm")
     public String commonForm() {
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
+                addActionMessage(getText("mandatory.meesevaApplicationNumber"));
+                return RESULT_ERROR;
+
+            } else {
+                setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+                setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
+            }
+        }
         return COMMON_FORM;
     }
 
@@ -220,7 +247,15 @@ public class SearchPropertyAction extends BaseFormAction {
             if (!isDemandActive) {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
+            } 
+            
+            loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+            if (loggedUserIsMeesevaUser) {
+                if(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
+                    return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
             }
+            
+            
         } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType))
             if (basicProperty.getProperty().getIsExemptedFromTax()) {
                 addActionError(getText("error.msg.taxExempted"));
@@ -472,7 +507,7 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     @Override
-    public void validate() {
+    public void validate() { 
         if (StringUtils.equals(mode, "assessment")) {
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum)
                     || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))
@@ -854,6 +889,22 @@ public class SearchPropertyAction extends BaseFormAction {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+    public String getMeesevaServiceCode() {
+        return meesevaServiceCode;
+    }
+
+    public void setMeesevaServiceCode(String meesevaServiceCode) {
+        this.meesevaServiceCode = meesevaServiceCode;
     }
 
 }

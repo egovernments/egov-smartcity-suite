@@ -1166,7 +1166,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_TAX_EXEMTION = "Tax Exemption";
     public static final String APPLICATION_TYPE_DEMOLITION = "Demolition";
     public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy Remission";
-    
+    public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
    
 
     // AppConfig values
