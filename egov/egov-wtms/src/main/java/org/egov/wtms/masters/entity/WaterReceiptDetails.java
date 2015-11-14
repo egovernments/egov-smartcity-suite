@@ -57,9 +57,9 @@ public class WaterReceiptDetails implements Serializable {
     private String billReferenceNo;
     private String serviceName;
     private String description;
+    private String paymentMode;
     private String paidBy;
     private BigDecimal paymentAmount;
-    private String collectionType;
     private String transactionId;
     private ErrorDetails errorDetails;
 
@@ -127,20 +127,12 @@ public class WaterReceiptDetails implements Serializable {
         this.paidBy = paidBy;
     }
 
-    public BigDecimal getTotalAmountPaid() {
+    public BigDecimal getPaymentAmount() {
         return paymentAmount;
     }
 
-    public void setTotalAmountPaid(final BigDecimal totalAmountPaid) {
-        this.paymentAmount = totalAmountPaid;
-    }
-
-    public String getCollectionType() {
-        return collectionType;
-    }
-
-    public void setCollectionType(final String collectionType) {
-        this.collectionType = collectionType;
+    public void setPaymentAmount(BigDecimal paymentAmount) {
+        this.paymentAmount = paymentAmount;
     }
 
     public ErrorDetails getErrorDetails() {
@@ -158,13 +150,23 @@ public class WaterReceiptDetails implements Serializable {
     public void setTransactionId(final String transactionId) {
         this.transactionId = transactionId;
     }
+    
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
 
     @Override
     public String toString() {
-        return "ReceiptDetails [receiptNo=" + receiptNo + ", receiptDate=" + receiptDate + ", payeeName=" + payeeName
-                + ", payeeAddress=" + payeeAddress + ", billReferenceNo=" + billReferenceNo + ", serviceName="
-                + serviceName + ", description=" + description + ", paidBy=" + paidBy + ", paymentAmount="
-                + paymentAmount + ", collectionType=" + collectionType + ", errorDetails=" + errorDetails + "]";
+        return "WaterReceiptDetails [receiptNo=" + receiptNo + ", receiptDate=" + receiptDate + ", payeeName="
+                + payeeName + ", payeeAddress=" + payeeAddress + ", billReferenceNo=" + billReferenceNo
+                + ", serviceName=" + serviceName + ", description=" + description + ", paymentMode=" + paymentMode
+                + ", paidBy=" + paidBy + ", paymentAmount=" + paymentAmount + ", transactionId=" + transactionId
+                + ", errorDetails=" + errorDetails + "]";
     }
 
 }

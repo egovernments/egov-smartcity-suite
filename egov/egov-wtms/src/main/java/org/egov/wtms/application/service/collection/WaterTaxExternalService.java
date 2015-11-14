@@ -185,8 +185,10 @@ public class WaterTaxExternalService {
             waterReceiptDetails.setServiceName(billReceiptInfo.getServiceName());
             waterReceiptDetails.setDescription(billReceiptInfo.getDescription());
             waterReceiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
-            waterReceiptDetails.setTotalAmountPaid(billReceiptInfo.getTotalAmount());
-            waterReceiptDetails.setCollectionType(billReceiptInfo.getCollectionType());
+            waterReceiptDetails.setPaymentMode(payWaterTaxDetails.getPaymentMode());
+            waterReceiptDetails.setPaymentAmount(billReceiptInfo.getTotalAmount());
+            //waterReceiptDetails.setTotalAmountPaid(billReceiptInfo.getTotalAmount());
+            //waterReceiptDetails.setCollectionType(billReceiptInfo.getCollectionType());
             waterReceiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);

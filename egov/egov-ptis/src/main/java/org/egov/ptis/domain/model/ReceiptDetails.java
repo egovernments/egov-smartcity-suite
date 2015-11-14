@@ -56,9 +56,10 @@ public class ReceiptDetails implements Serializable {
     private String serviceName;
     private String description;
     private String paidBy;
-    private BigDecimal totalAmountPaid;
+    private String paymentMode;
+    //private BigDecimal totalAmountPaid;
     private BigDecimal paymentAmount;
-    private String collectionType;
+    //private String collectionType;
     private ErrorDetails errorDetails;
     private String transactionId;
 
@@ -126,21 +127,7 @@ public class ReceiptDetails implements Serializable {
         this.paidBy = paidBy;
     }
 
-    public BigDecimal getTotalAmountPaid() {
-        return totalAmountPaid;
-    }
 
-    public void setTotalAmountPaid(final BigDecimal totalAmountPaid) {
-        this.totalAmountPaid = totalAmountPaid;
-    }
-
-    public String getCollectionType() {
-        return collectionType;
-    }
-
-    public void setCollectionType(final String collectionType) {
-        this.collectionType = collectionType;
-    }
 
     public ErrorDetails getErrorDetails() {
         return errorDetails;
@@ -158,12 +145,22 @@ public class ReceiptDetails implements Serializable {
         this.transactionId = transactionId;
     }
 
+    
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
+
     @Override
     public String toString() {
         return "ReceiptDetails [receiptNo=" + receiptNo + ", receiptDate=" + receiptDate + ", payeeName=" + payeeName
                 + ", payeeAddress=" + payeeAddress + ", billReferenceNo=" + billReferenceNo + ", serviceName="
-                + serviceName + ", description=" + description + ", paidBy=" + paidBy + ", totalAmountPaid="
-                + totalAmountPaid + ", collectionType=" + collectionType + ", errorDetails=" + errorDetails + "]";
+                + serviceName + ", description=" + description + ", paidBy=" + paidBy + ", paymentMode=" + paymentMode
+                + ", paymentAmount=" + paymentAmount + ", errorDetails=" + errorDetails + ", transactionId="
+                + transactionId + "]";
     }
 
 	public BigDecimal getPaymentAmount() {
