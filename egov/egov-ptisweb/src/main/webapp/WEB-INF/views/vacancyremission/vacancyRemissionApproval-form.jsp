@@ -50,7 +50,7 @@
 	<div class="page-container" id="page-container">
         	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>	
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
-				
+				<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
@@ -104,11 +104,6 @@
 				
 			</div> <!-- end of main-content -->
 			
-			<%-- <div class="form-group text-center">
-				<button type="submit" class="btn btn-primary" ><spring:message code="lbl.submit"/></button>
-				&nbsp; <input type="button" class="button" value="Close" onclick="self.close()">
-			</div> --%>
-
 		<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 		<div class="buttonbottom" align="center">
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />

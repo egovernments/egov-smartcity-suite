@@ -53,7 +53,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
-	
+							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<div class="panel-heading" style="text-align: left">
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
@@ -87,8 +87,9 @@
 						</div>
 					</div>
 				</div>
-				
-				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				<c:if test="${propertyByEmployee == true}">
+					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				</c:if>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>

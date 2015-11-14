@@ -49,7 +49,7 @@
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">
 	<div class="page-container" id="page-container">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
-				
+				<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
@@ -94,9 +94,6 @@
 										</div>
 										</c:forEach>
 									</c:when>
-									<%-- <c:otherwise>
-										<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nohistorydetails.code"/></div>
-									</c:otherwise> --%>
 								</c:choose>
 							
 						</div>

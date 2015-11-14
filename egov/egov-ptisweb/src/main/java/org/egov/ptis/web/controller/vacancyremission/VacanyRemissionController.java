@@ -76,6 +76,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission")
 public class VacanyRemissionController extends GenericWorkFlowController {
 
+	private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
+    private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
+    
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
@@ -132,7 +135,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             vacancyRemissionService.addModelAttributes(model, basicProperty);
 
         }
-        return "vacancyRemission-form";
+        return VACANCYREMISSION_FORM;
     }
 
     @RequestMapping(value = "/create/{assessmentNo}", method = RequestMethod.POST)
@@ -147,7 +150,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
-            return "vacancyRemission-form";
+            return VACANCYREMISSION_FORM;
         } else {
             Long approvalPosition = 0l;
             String approvalComent = "";
@@ -159,15 +162,16 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
+            Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                    workFlowAction);
+                    workFlowAction,propertyByEmployee);
 
             String successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
-                    + propertyTaxUtil.getApproverUserName(approvalPosition);
+                    + propertyTaxUtil.getApproverUserName(vacancyRemission.getState().getOwnerPosition().getId())+" with application number : "+vacancyRemission.getApplicationNumber();
             model.addAttribute("successMessage", successMsg);
         }
 
-        return "vacancyRemission-success";
+        return VACANCYREMISSION_SUCCESS;
     }
 
     private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,

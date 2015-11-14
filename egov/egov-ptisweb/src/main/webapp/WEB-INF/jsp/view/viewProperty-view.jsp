@@ -131,7 +131,7 @@
 						<input type="button" class="buttonsubmit" name="btnTrnsProperty" id="btnTrnsProperty" value="Transfer Ownership"
 							onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
 							
-						<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && !property.getIsExemptedFromTax()
+						<s:if test="%{!property.getIsExemptedFromTax()
 							 && !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code) && !basicProperty.underWorkflow}">
 							<s:if test="%{viewMap.enableVacancyRemission}" >		
 								<input type="button" class="buttonsubmit" name="vacancyremissionbtn"
