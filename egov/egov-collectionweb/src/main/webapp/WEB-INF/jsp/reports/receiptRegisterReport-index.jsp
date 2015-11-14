@@ -40,64 +40,60 @@
 <head>
 <title><s:text name="receiptRegisterReport.title" /></title>
 <script>
-function clearErrors()
-{
-	// First clear all error messages 
-	dom.get("comparedatemessage").style.display="none";
-	dom.get("mandatoryfromdate").style.display="none";
-	dom.get("mandatorytodate").style.display="none";
-}
+<jsp:useBean id="now" class="java.util.Date" />
+
+<fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
+	var currDate = "${currDate}";
 
 function validate()
 {
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
+	document.getElementById("report_error_area").
+	innerHTML = "";
 
-	clearErrors();
-
-	if(fromdate == "")
-	{
-		dom.get("mandatoryfromdate").style.display="block";
-		valSuccess = false;
-	}
-	
-	if(todate == "")
-	{
-		dom.get("mandatorytodate").style.display="block";
-		valSuccess = false;
-	}
-	
-	if(fromdate!="" && todate!="" && fromdate!=todate)
-	{
-		if(!checkFdateTdate(fromdate,todate))
-		{
-			dom.get("comparedatemessage").style.display="block";
+		if (fromdate == "") {
+			document.getElementById("report_error_area").style.display = "block";
+			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+					+ '<br>';
 			valSuccess = false;
 		}
-	}
 
-	return valSuccess;
-}
+		if (todate == "") {
+			document.getElementById("report_error_area").style.display = "block";
+			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.todate" />'
+					+ '<br>';
+			valSuccess = false;
+		}
+
+		if (fromdate != "" && todate != "" && fromdate != todate) {
+			if (!checkFdateTdate(fromdate, todate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="common.comparedate.errormessage" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+			if (!validateNotFutureDate(fromdate, currDate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+			if (!validateNotFutureDate(todate, currDate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+		}
+
+		return valSuccess;
+	}
 </script>
 </head>
 <body>
-<span align="center" style="display: none" id="mandatoryfromdate">
-<li><font size="2" color="red"><b> <s:text
-	name="common.datemandatory.fromdate" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="mandatorytodate">
-<li><font size="2" color="red"><b> <s:text
-	name="common.datemandatory.todate" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="invaliddateformat">
-<li><font size="2" color="red"><b> <s:text
-	name="common.dateformat.errormessage" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="comparedatemessage">
-<li><font size="2" color="red"><b> <s:text
-	name="common.comparedate.errormessage" /> </b></font></li>
-</span>
+<div class="errorstyle" id="report_error_area" style="display:none;"></div>
 <s:form theme="simple" name="receiptRegisterForm"
 	action="receiptRegisterReport-report.action">
 	<div class="formmainbox">
@@ -106,11 +102,11 @@ function validate()
 		name="collectionReport.criteria" /></span></div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td width="4%" class="bluebox">&nbsp;</td>
-			<td width="21%" class="bluebox"><s:text
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox"><s:text
 				name="collectionReport.criteria.fromdate" /><span class="mandatory1">*</span></td>
 			<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
-			<td width="24%" class="bluebox"><s:textfield id="fromDate"
+			<td class="bluebox"><s:textfield id="fromDate"
 				name="fromDate" value="%{cdFormat}"
 				onfocus="javascript:vDateType='3';"
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -121,10 +117,10 @@ function validate()
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
-			<td width="21%" class="bluebox"><s:text
+			<td class="bluebox"><s:text
 				name="collectionReport.criteria.todate" /><span class="mandatory1">*</span></td>
 			<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-			<td width="30%" class="bluebox"><s:textfield id="toDate"
+			<td class="bluebox"><s:textfield id="toDate"
 				name="toDate" value="%{cdFormat1}"
 				onfocus="javascript:vDateType='3';"
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -137,32 +133,32 @@ function validate()
 			</td>
 		</tr>
 		<tr>
-			<td width="4%" class="bluebox2">&nbsp;</td>
-			<td width="21%" class="bluebox2"><s:text
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox"><s:text
 				name="collectionReport.criteria.dept" /></td>
-			<td width="24%" class="bluebox2"><s:select headerKey="-1"
+			<td class="bluebox"><s:select headerKey="-1"
 				headerValue="%{getText('collectionReport.dept.all')}"
 				name="deptId" id="dept" cssClass="selectwk"
 				list="dropdownData.departmentList" listKey="id" listValue="name"
 				value="%{deptId}" /></td>
-			<td width="21%" class="bluebox2">
+			<td class="bluebox">
 				<s:text name="collectionReport.criteria.payment.mode"/></td>
-	        <td width="30%" class="bluebox2"><s:select headerKey="ALL"
+	        <td class="bluebox"><s:select headerKey="ALL"
 				headerValue="%{getText('collectionReport.payment.mode.all')}" 
 				name="paymentMode" id="paymentMode" cssClass="selectwk" 
 				list="paymentModes" value="%{paymentMode}" /> </td>
 		</tr>
 		<tr>
-			<td width="4%" class="bluebox2">&nbsp;</td>
-			<td width="21%" class="bluebox2"><s:text
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox"><s:text
 				name="collectionReport.criteria.status" /></td>
-			<td width="24%" class="bluebox2"><s:select headerKey="-1"
+			<td class="bluebox"><s:select headerKey="-1"
 				headerValue="%{getText('collectionReport.status.all')}"
 				name="statusId" id="status" cssClass="selectwk"
 				list="%{receiptStatuses}" listKey="id" listValue="description"
 				value="%{id}" /></td>
-			<td width="21%" class="bluebox2">&nbsp;</td>
-	        	<td width="30%" class="bluebox2">&nbsp;</td>
+			<td class="bluebox">&nbsp;</td>
+	        	<td class="bluebox">&nbsp;</td>
 		</tr>
 	</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>

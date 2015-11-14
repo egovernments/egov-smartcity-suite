@@ -40,64 +40,60 @@
 <head>
 	<title><s:text name="chequeCollectionReport.title"/></title>
 <script>
-function clearErrors()
-{
-	// First clear all error messages 
-	dom.get("comparedatemessage").style.display="none";
-	dom.get("mandatoryfromdate").style.display="none";
-	dom.get("mandatorytodate").style.display="none";
-}
+<jsp:useBean id="now" class="java.util.Date" />
+
+<fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
+	var currDate = "${currDate}";
 
 function validate()
 {
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
+	document.getElementById("report_error_area").
+	innerHTML = "";
 
-	clearErrors();
-
-	if(fromdate == "")
-	{
-		dom.get("mandatoryfromdate").style.display="block";
-		valSuccess = false;
-	}
-	
-	if(todate == "")
-	{
-		dom.get("mandatorytodate").style.display="block";
-		valSuccess = false;
-	}
-	
-	if(fromdate!="" && todate!="" && fromdate!=todate)
-	{
-		if(!checkFdateTdate(fromdate,todate))
-		{
-			dom.get("comparedatemessage").style.display="block";
+		if (fromdate == "") {
+			document.getElementById("report_error_area").style.display = "block";
+			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+					+ '<br>';
 			valSuccess = false;
 		}
-	}
 
-	return valSuccess;
-}
+		if (todate == "") {
+			document.getElementById("report_error_area").style.display = "block";
+			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.todate" />'
+					+ '<br>';
+			valSuccess = false;
+		}
+
+		if (fromdate != "" && todate != "" && fromdate != todate) {
+			if (!checkFdateTdate(fromdate, todate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="common.comparedate.errormessage" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+			if (!validateNotFutureDate(fromdate, currDate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+			if (!validateNotFutureDate(todate, currDate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+		}
+
+		return valSuccess;
+	}
 </script>
 </head>
 <body>
-<span align="center" style="display: none" id="mandatoryfromdate">
-<li><font size="2" color="red"><b> <s:text
-	name="common.datemandatory.fromdate" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="mandatorytodate">
-<li><font size="2" color="red"><b> <s:text
-	name="common.datemandatory.todate" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="invaliddateformat">
-<li><font size="2" color="red"><b> <s:text
-	name="common.dateformat.errormessage" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="comparedatemessage">
-<li><font size="2" color="red"><b> <s:text
-	name="common.comparedate.errormessage" /> </b></font></li>
-</span>
+<div class="errorstyle" id="report_error_area" style="display:none;"></div>
 <s:form theme="simple" name="chequeCollectionForm" action="chequeCollectionReport-report.action">
 <div class="formmainbox"><div class="subheadnew"><s:text name="chequeCollectionReport.title"/></div>
 <div class="subheadsmallnew"><span class="subheadnew"><s:text name="collectionReport.criteria"/></span></div>
@@ -105,27 +101,27 @@ function validate()
 
 	   
 	     <tr>
-	      <td width="4%" class="bluebox">&nbsp;</td>
-	      <td width="21%" class="bluebox"><s:text name="collectionReport.criteria.fromdate"/><span class="mandatory1">*</span></td>
+	      <td class="bluebox">&nbsp;</td>
+	      <td class="bluebox"><s:text name="collectionReport.criteria.fromdate"/><span class="mandatory1">*</span></td>
 		  <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy"/>
-		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
-	      <td width="21%" class="bluebox"><s:text name="collectionReport.criteria.todate"/><span class="mandatory1">*</span></td>
+		  <td class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+	      <td class="bluebox"><s:text name="collectionReport.criteria.todate"/><span class="mandatory1">*</span></td>
 	      <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy"/>
-		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
 	    </tr>
 	    <tr>
-	      <td width="4%" class="bluebox2">&nbsp;</td>
-	      <td width="21%" class="bluebox2"><s:text name="collectionReport.criteria.counter"/></td>
-	      <td width="30%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('collectionReport.counter.all')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
-		  <td width="21%" class="bluebox2"><s:text name="collectionReport.criteria.user"/></td>
-	      <td width="30%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('collectionReport.user.all')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.receiptCreatorList" listKey="id" listValue="name" value="%{userId}" /> </td>
+	      <td class="bluebox">&nbsp;</td>
+	      <td class="bluebox"><s:text name="collectionReport.criteria.counter"/></td>
+	      <td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.counter.all')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
+		  <td class="bluebox"><s:text name="collectionReport.criteria.user"/></td>
+	      <td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.user.all')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.receiptCreatorList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	    </tr>
 		<tr>
-	      <td width="4%" class="bluebox">&nbsp;</td>
-	      <td width="21%" class="bluebox"><s:text name="collectionReport.criteria.zone"/></td>
-	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.zone.all')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.activeZoneList" listKey="id" listValue="localName" value="%{boundaryId}" /> </td>
-		  <td width="21%" class="bluebox">&nbsp;</td>
-	      <td width="30%" class="bluebox">&nbsp;</td>
+	      <td class="bluebox">&nbsp;</td>
+	      <td class="bluebox"><s:text name="collectionReport.criteria.zone"/></td>
+	      <td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.zone.all')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.activeZoneList" listKey="id" listValue="localName" value="%{boundaryId}" /> </td>
+		  <td class="bluebox">&nbsp;</td>
+	      <td class="bluebox">&nbsp;</td>
 	    </tr>
 	   
 	    </table>
