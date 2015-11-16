@@ -39,18 +39,12 @@
 package org.egov.pgr.web.controller.complaint;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
@@ -65,7 +59,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 public abstract class GenericComplaintController {
@@ -93,7 +86,7 @@ public abstract class GenericComplaintController {
     protected FileStoreService fileStoreService;
 
     @Autowired
-    private FileStoreUtils fileStoreUtils;
+    protected FileStoreUtils fileStoreUtils;
 
     @RequestMapping(value = "/complaint/reg-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
@@ -101,20 +94,6 @@ public abstract class GenericComplaintController {
             complaint = complaintService.getComplaintByCRN(request.getParameter("crn"));
         return new ModelAndView("complaint/reg-success", "complaint", complaint);
 
-    }
-
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(),
-                            PGRConstants.MODULE_NAME);
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("err.input.stream", e);
-                }
-            }).collect(Collectors.toSet());
-        else
-            return null;
     }
 
     @RequestMapping(value = "/complaint/downloadfile/{fileStoreId}")

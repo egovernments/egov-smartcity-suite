@@ -54,6 +54,7 @@ public class FileStoreUtils {
 
     @Autowired
     private FileStoreService fileStoreService;
+
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
@@ -74,6 +75,10 @@ public class FileStoreUtils {
     }
 
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files, final String moduleName) {
+        return addToFileStore(files, moduleName, false);
+    }
+
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files, final String moduleName, final boolean compressImage) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays
                     .asList(files)
@@ -81,10 +86,14 @@ public class FileStoreUtils {
                     .filter(file -> !file.isEmpty())
                     .map(file -> {
                         try {
-                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                                    file.getContentType(), moduleName);
+                            if (compressImage && file.getContentType().contains("image"))
+                                return fileStoreService.store(ImageUtils.compressImage(file.getInputStream()), file.getOriginalFilename(),
+                                        "image/jpeg", moduleName);
+                            else
+                                return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                        file.getContentType(), moduleName);
                         } catch (final Exception e) {
-                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                            throw new ApplicationRuntimeException("err.input.stream", e);
                         }
                     }).collect(Collectors.toSet());
         else
