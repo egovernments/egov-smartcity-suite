@@ -9,6 +9,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
@@ -56,15 +57,30 @@ public class PropertyThirdPartyService {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
+    //For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
         PtNotice ptNotice = null;
-        if (StringUtils.isNotBlank(applicationNo)) {
-            ptNotice = (PtNotice) persistenceService.find(
-                    "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
-                    NOTICE_TYPE_SPECIAL_NOTICE);
-        } else if (StringUtils.isNotBlank(assessmentNo)) {
-            ptNotice = (PtNotice) persistenceService.find("from PtNotice where basicProperty.upicNo = ?", assessmentNo);
+        if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
+                || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
+                || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+                || applicationType.equals(APPLICATION_TYPE_DEMOLITION)
+                || applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
+            if (StringUtils.isNotBlank(applicationNo)) {
+                ptNotice = (PtNotice) persistenceService.find(
+                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
+                        NOTICE_TYPE_SPECIAL_NOTICE);
+            } else if (StringUtils.isNotBlank(assessmentNo)) {
+                ptNotice = (PtNotice) persistenceService.find("from PtNotice where basicProperty.upicNo = ?",
+                        assessmentNo);
+            }
+        } else if (applicationType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+            if (StringUtils.isNotBlank(applicationNo)) {
+                ptNotice = (PtNotice) persistenceService.find(
+                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
+                        NOTICE_TYPE_MUTATION_CERTIFICATE);
+            }
+
         }
         if (ptNotice != null && ptNotice.getFileStore() != null) {
             final FileStoreMapper fsm = ptNotice.getFileStore();
@@ -84,7 +100,7 @@ public class PropertyThirdPartyService {
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-                || applicationType.equals(APPLICATION_TYPE_DEMOLITION)
+                || applicationType.equals(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 property = (PropertyImpl) persistenceService.find("From PropertyImpl where applicationNo = ? ",
@@ -92,7 +108,7 @@ public class PropertyThirdPartyService {
             }
             if (!property.getState().getHistory().isEmpty()) {
                 int size = property.getState().getHistory().size();
-                stateHistory = property.getState().getHistory().get(size-1);
+                stateHistory = property.getState().getHistory().get(size - 1);
             }
             if (property.getState().getValue().equals(WF_STATE_CLOSED)
                     && stateHistory.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
@@ -120,7 +136,7 @@ public class PropertyThirdPartyService {
             }
             if (!mutation.getState().getHistory().isEmpty()) {
                 int size = mutation.getState().getHistory().size();
-                stateHistory = mutation.getState().getHistory().get(size-1);
+                stateHistory = mutation.getState().getHistory().get(size - 1);
             }
             if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
                     && stateHistory.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
@@ -148,7 +164,7 @@ public class PropertyThirdPartyService {
             }
             if (!vacancyRemission.getState().getHistory().isEmpty()) {
                 int size = vacancyRemission.getState().getHistory().size();
-                stateHistory = vacancyRemission.getState().getHistory().get(size-1);
+                stateHistory = vacancyRemission.getState().getHistory().get(size - 1);
             }
             if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
                     && stateHistory.getValue().endsWith(WF_STATE_BILL_COLLECTOR_APPROVED)) {
@@ -172,7 +188,7 @@ public class PropertyThirdPartyService {
             }
             if (!revisionPetition.getState().getHistory().isEmpty()) {
                 int size = revisionPetition.getState().getHistory().size();
-                stateHistory = revisionPetition.getState().getHistory().get(size-1);
+                stateHistory = revisionPetition.getState().getHistory().get(size - 1);
             }
             if ((revisionPetition.getState().getValue().equals(WFLOW_ACTION_END) || revisionPetition.getState()
                     .getValue().equals("Print Special Notice"))

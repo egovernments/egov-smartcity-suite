@@ -76,14 +76,17 @@ public class PropertyTaxNumberGenerator {
     public String generateNoticeNumber(final String noticeType) {
         final StringBuffer noticeNo = new StringBuffer();
         try {
-            if (org.apache.commons.lang.StringUtils.isNotBlank(noticeType))
+            if (org.apache.commons.lang.StringUtils.isNotBlank(noticeType)) {
                 if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)) {
-                    final String cityCode = EgovThreadLocals.getCityCode();
                     noticeNo.append("SN").append("/");
-                    noticeNo.append(cityCode);
-                    final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER).toString();
-                    noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
+                } else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE)) {
+                    noticeNo.append("MC").append("/");
                 }
+                final String cityCode = EgovThreadLocals.getCityCode();
+                noticeNo.append(cityCode);
+                final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER).toString();
+                noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
+            }
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
         }
@@ -97,9 +100,11 @@ public class PropertyTaxNumberGenerator {
         installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
         // FIX ME
         /*
-         * String index = sequenceNumberGenerator.getNextNumberWithFormat( BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0',
-         * Long.valueOf(1)) .getFormattedNumber(); billNo.append(wardNo); billNo.append("/"); billNo.append(index);
-         * billNo.append("/"); billNo.append(finYear.getDescription());
+         * String index = sequenceNumberGenerator.getNextNumberWithFormat(
+         * BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0', Long.valueOf(1))
+         * .getFormattedNumber(); billNo.append(wardNo); billNo.append("/");
+         * billNo.append(index); billNo.append("/");
+         * billNo.append(finYear.getDescription());
          */
         return billNo.toString();
     }
@@ -111,7 +116,8 @@ public class PropertyTaxNumberGenerator {
     public String generateManualBillNumber(final PropertyID propertyID) {
         final StringBuffer billNo = new StringBuffer();
         try {
-            // reading from service to support bulkbillgeneration through schedular
+            // reading from service to support bulkbillgeneration through
+            // schedular
             billNo.append("B").append("/");
             final String cityCode = cityService.findAll().get(0).getCode();
             billNo.append(cityCode);
@@ -152,7 +158,8 @@ public class PropertyTaxNumberGenerator {
 
     public String generateUnitIdentifierPrefix() {
         /*
-         * return sequenceNumberGenerator .getNextNumber(UNIT_IDENTIFIER_SEQ_STR, 1).getFormattedNumber();
+         * return sequenceNumberGenerator
+         * .getNextNumber(UNIT_IDENTIFIER_SEQ_STR, 1).getFormattedNumber();
          */
         return null;
     }

@@ -57,9 +57,12 @@ import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
+@Service 
 public class NoticeService extends PersistenceService<PtNotice, Long> {
     private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
+    @Autowired
     PersistenceService<BasicProperty, Long> basicPropertyService;
     @Autowired
     private ModuleService moduleDao;
