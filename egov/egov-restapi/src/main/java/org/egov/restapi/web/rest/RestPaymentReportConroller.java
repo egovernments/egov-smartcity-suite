@@ -154,7 +154,7 @@ public class RestPaymentReportConroller {
 
 	}
 
-	@RequestMapping(value="/cancelReceipt",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/banks",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
 	public String bankNames() {
 		List<Bank> banks=null;
 		try {
