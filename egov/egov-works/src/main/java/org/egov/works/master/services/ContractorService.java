@@ -42,6 +42,7 @@ package org.egov.works.master.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.service.EntityTypeService;
@@ -52,7 +53,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.services.WorksService;
-import org.egov.works.web.actions.masters.ContractorAction;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -61,8 +62,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
 
 public class ContractorService extends PersistenceService<Contractor, Long>implements EntityTypeService {
-	private static final Logger logger = Logger.getLogger(ContractorAction.class);
-	private WorksService worksService;
+    private final Logger logger = Logger.getLogger(getClass());
+    private WorksService worksService;
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
         return findAllBy("select distinct contractorDet.contractor from ContractorDetail contractorDet " +
@@ -85,7 +86,6 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
     @Override
     public List getAssetCodesForProjectCode(final Integer accountdetailkey)
             throws ValidationException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -118,59 +118,69 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
     	return entities;
     }
     
-	public List<Contractor> getContractorListForCriterias(String contractorName, String contractorCode, Long departmentId, Integer statusId, Long gradeId) {
-		List<Contractor> contractorList = null;
-		String contractorStr = null;
-		final List<Object> paramList = new ArrayList<Object>();
-		Object[] params;
-		contractorStr = " select distinct contractor from Contractor contractor ";
-
-		if (statusId != null || departmentId != null || gradeId != null)
-			contractorStr = contractorStr + " left outer join fetch contractor.contractorDetails as detail ";
-
-		if (statusId != null || departmentId != null || gradeId != null
-				|| contractorCode != null && !contractorCode.equals("")
-				|| contractorName != null && !contractorName.equals(""))
-			contractorStr = contractorStr + " where contractor.code is not null";
-
-		if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode)) {
-			contractorStr = contractorStr + " and UPPER(contractor.code) like ?";
-			paramList.add("%" + contractorCode.toUpperCase() + "%");
-		}
-
-		if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName)) {
-			contractorStr = contractorStr + " and UPPER(contractor.name) like ?";
-			paramList.add("%" + contractorName.toUpperCase() + "%");
-		}
-
-		if (statusId != null) {
-			contractorStr = contractorStr + " and detail.status.id = ?";
-			paramList.add(statusId);
-		}
-
-		if (departmentId != null) {
-			contractorStr = contractorStr + " and detail.department.id = ?";
-			paramList.add(departmentId);
-		}
-
-		if (gradeId != null) {
-			contractorStr = contractorStr + " and detail.grade.id = ?";
-			paramList.add(gradeId);
-		}
-
-		if (paramList.isEmpty())
-			contractorList = findAllBy(contractorStr);
-		else {
-			params = new Object[paramList.size()];
-			params = paramList.toArray(params);
-			contractorList = findAllBy(contractorStr, params);
-		}
-		return contractorList;
-	}
-	
-	public SearchQuery prepareQuery(String contractorName, String contractorCode, Long departmentId, Integer statusId, Long gradeId) {
-		String contractorStr = null;
+    public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
+        List<Contractor> contractorList = null;
+        String contractorStr = null;
         final List<Object> paramList = new ArrayList<Object>();
+        Object[] params;
+        String contractorName = (String)criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
+        String contractorCode = (String)criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
+        Long departmentId = (Long)criteriaMap.get(WorksConstants.DEPARTMENT_ID);
+        Integer statusId = (Integer)criteriaMap.get(WorksConstants.STATUS_ID);
+        Long gradeId = (Long)criteriaMap.get(WorksConstants.GRADE_ID);
+        contractorStr = " select distinct contractor from Contractor contractor ";
+
+        if (statusId != null || departmentId != null || gradeId != null)
+            contractorStr = contractorStr + " left outer join fetch contractor.contractorDetails as detail ";
+
+        if (statusId != null || departmentId != null || gradeId != null
+                || contractorCode != null && !contractorCode.equals("")
+                || contractorName != null && !contractorName.equals(""))
+            contractorStr = contractorStr + " where contractor.code is not null";
+
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode)) {
+            contractorStr = contractorStr + " and UPPER(contractor.code) like ?";
+            paramList.add("%" + contractorCode.toUpperCase() + "%");
+        }
+
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName)) {
+            contractorStr = contractorStr + " and UPPER(contractor.name) like ?";
+            paramList.add("%" + contractorName.toUpperCase() + "%");
+        }
+
+        if (statusId != null) {
+            contractorStr = contractorStr + " and detail.status.id = ?";
+            paramList.add(statusId);
+        }
+
+        if (departmentId != null) {
+            contractorStr = contractorStr + " and detail.department.id = ?";
+            paramList.add(departmentId);
+        }
+
+        if (gradeId != null) {
+            contractorStr = contractorStr + " and detail.grade.id = ?";
+            paramList.add(gradeId);
+        }
+
+        if (paramList.isEmpty())
+            contractorList = findAllBy(contractorStr);
+        else {
+            params = new Object[paramList.size()];
+            params = paramList.toArray(params);
+            contractorList = findAllBy(contractorStr, params);
+        }
+        return contractorList;
+    }
+
+    public SearchQuery prepareQuery(final Map<String, Object> criteriaMap) {
+        String contractorStr = null;
+        final List<Object> paramList = new ArrayList<Object>();
+        String contractorName = (String)criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
+        String contractorCode = (String)criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
+        Long departmentId = (Long)criteriaMap.get(WorksConstants.DEPARTMENT_ID);
+        Integer statusId = (Integer)criteriaMap.get(WorksConstants.STATUS_ID);
+        Long gradeId = (Long)criteriaMap.get(WorksConstants.GRADE_ID);
         contractorStr = " from ContractorDetail detail ";
 
         if (statusId != null || departmentId != null || gradeId != null || contractorCode != null && !contractorCode.equals("")
@@ -205,14 +215,18 @@ public class ContractorService extends PersistenceService<Contractor, Long>imple
 
         final String countQuery = "select count(distinct detail.contractor) " + contractorStr;
         return new SearchQueryHQL(query, countQuery, paramList);
-	}
-	
-	public void searchContractor(String contractorName, String contractorCode, Long departmentId, Integer statusId, Long gradeId, Date searchDate) {
+    }
+
+    public void searchContractor(final Map<String, Object> criteriaMap) {
         logger.debug("Inside searchContractor");
+        String contractorName = (String)criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
+        String contractorCode = (String)criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
+        Long departmentId = (Long)criteriaMap.get(WorksConstants.DEPARTMENT_ID);
+        Long gradeId = (Long)criteriaMap.get(WorksConstants.GRADE_ID);
+        Date searchDate = (Date)criteriaMap.get(WorksConstants.SEARCH_DATE);
         List<Contractor> contractorList = null;
-        // Get default status to be searched from app config values
+        
         final List<AppConfigValues> configList = worksService.getAppConfigValue("Works", "CONTRACTOR_STATUS");
-        // Assuming that status is inserted using db script
         final String status = configList.get(0).getValue();
 
         final Criteria criteria = getSession().createCriteria(Contractor.class);

@@ -45,11 +45,8 @@
 <script type="text/javascript">
      
 	function validate(){	
-		//alert(document.forms[0].action='/egworks/masters/scheduleOfRate-searchSorDetails.action'
 		document.forms[0].action='<%=request.getContextPath()%>/masters/scheduleOfRate-searchSorDetails.action';
-		//alert(document.forms[0].action);
 		document.forms[0].submit();
-		//return false;
 	}
 	</script>
 	<body>
@@ -72,8 +69,7 @@
 			<div class="rbroundbox2">
 			<div class="rbtop2"><div></div></div>
 			<div class="rbcontent2">
-			<table id="formTable" width="100%" border="0" cellspacing="0"
-				cellpadding="0">
+			<table id="formTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td>
 						&nbsp;
@@ -106,11 +102,6 @@
 										name="scheduleCategoryId" id="scheduleCategory" cssClass="selectwk"
 										list="dropdownData.scheduleCategoryList" listKey="id"
 										listValue="code"/>
-									</s:if>
-									<s:if test="%{scheduleCategoryList.size == 0}">
-									<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" 
-										name="categoryType" id="categoryTypeId" cssClass="selectwk"
-										list="#{'1':'BRIDGES-NORTH'}"></s:select>
 									</s:if>
 								</td>
 								<td width="11%" class="whiteboxwk">
@@ -235,7 +226,7 @@
 														cellspacing="0">
 															<tr>
 																<td align="center">
-																	<font color="red">No record Found.</font>
+																	<font color="red"><s:text name="label.no.records.found"/></font>
 																</td>
 															</tr>
 														</table>

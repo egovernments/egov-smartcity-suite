@@ -86,15 +86,12 @@
 </div>
 </div>
 
-<script>
+
 <s:if test="%{mode=='view'}">
+	<script>
 	for(i=0;i<document.contractorGrade.elements.length;i++){
 		document.contractorGrade.elements[i].disabled=true;
 		document.contractorGrade.elements[i].readonly=true;
 	} 
-	
-	
+	</script>
 </s:if>
-
-
-</script>

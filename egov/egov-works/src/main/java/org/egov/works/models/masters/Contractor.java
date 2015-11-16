@@ -111,7 +111,6 @@ public class Contractor extends BaseModel implements EntityType {
     @Length(max = 50, message = "contractor.pwdApprovalCode.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
     private String pwdApprovalCode;
-    private boolean isEditEnabled;
 
     @Valid
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
@@ -296,14 +295,6 @@ public class Contractor extends BaseModel implements EntityType {
     public String getEntityDescription() {
 
         return getName();
-    }
-
-    public boolean getIsEditEnabled() {
-        return isEditEnabled;
-    }
-
-    public void setIsEditEnabled(final boolean isEditEnabled) {
-        this.isEditEnabled = isEditEnabled;
     }
 
     @Override

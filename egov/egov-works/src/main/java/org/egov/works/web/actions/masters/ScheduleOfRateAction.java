@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -74,10 +75,10 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-        @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
-        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
-        @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleOfRate-edit.jsp"),
-        @Result(name = ScheduleOfRateAction.INDEX, location = "scheduleOfRate-index.jsp")
+    @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
+    @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
+    @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleOfRate-edit.jsp"),
+    @Result(name = ScheduleOfRateAction.INDEX, location = "scheduleOfRate-index.jsp")
 })
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {
@@ -132,12 +133,12 @@ public class ScheduleOfRateAction extends SearchFormAction {
         return NEW;
     }
 
-    /*@Override
+    @Override
     @SkipValidation
     @Action(value = "/masters/scheduleOfRate-search")
     public String search() {
         return SEARCH;
-    }*/
+    }
 
     @Action(value = "/masters/scheduleOfRate-searchList")
     public String searchList() {
@@ -166,8 +167,10 @@ public class ScheduleOfRateAction extends SearchFormAction {
         populateRates();
         populateMarketRates();
         getPersistedRateDetails(scheduleOfRate);
-        getRateDetailsForSORId(true);
-        getRateDetailsForSORIdForREValidation(true);
+        if(mode.equals(WorksConstants.EDIT)) {
+            getRateDetailsForSORId(true);
+            getRateDetailsForSORIdForREValidation(true);
+        }
         scheduleOfRateService.persist(scheduleOfRate);
         scheduleOfRate = scheduleOfRateService.findById(scheduleOfRate.getId(), false);
         scheduleOfRateList = new ArrayList<ScheduleOfRate>();
@@ -253,8 +256,6 @@ public class ScheduleOfRateAction extends SearchFormAction {
     }
 
     /**
-     * prashanth
-     *
      * @return the displData
      */
     public String getDisplData() {
@@ -304,7 +305,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
             return SEARCH;
         } else {
             setPageSize(WorksConstants.PAGE_SIZE);
-            search();
+            super.search();
         }
         if (searchResult.getFullListSize() == 0)
             setDisplData(WorksConstants.NO_DATA);
@@ -328,8 +329,9 @@ public class ScheduleOfRateAction extends SearchFormAction {
         this.description = description;
     }
 
-    /*
-     * getRateDetailsForSORId
+    /**
+     * 
+     * @param validationMessageRequired
      */
     public void getRateDetailsForSORId(final boolean validationMessageRequired) {
         if (scheduleOfRate.getId() != null && validationMessageRequired)
@@ -594,15 +596,15 @@ public class ScheduleOfRateAction extends SearchFormAction {
         this.editableRateList = editableRateList;
     }
 
-	public List<ScheduleCategory> getScheduleCategoryList() {
-		return scheduleCategoryList;
-	}
+    public List<ScheduleCategory> getScheduleCategoryList() {
+	return scheduleCategoryList;
+    }
 
-	public void setScheduleCategoryList(List<ScheduleCategory> scheduleCategoryList) {
-		this.scheduleCategoryList = scheduleCategoryList;
-	}
+    public void setScheduleCategoryList(List<ScheduleCategory> scheduleCategoryList) {
+	this.scheduleCategoryList = scheduleCategoryList;
+    }
 
-	public void setScheduleOfRateList(List<ScheduleOfRate> scheduleOfRateList) {
-		this.scheduleOfRateList = scheduleOfRateList;
-	}
+    public void setScheduleOfRateList(List<ScheduleOfRate> scheduleOfRateList) {
+	this.scheduleOfRateList = scheduleOfRateList;
+    }
 }

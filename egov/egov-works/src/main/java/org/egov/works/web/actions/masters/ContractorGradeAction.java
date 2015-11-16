@@ -42,7 +42,9 @@ package org.egov.works.web.actions.masters;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -82,7 +84,8 @@ public class ContractorGradeAction extends SearchFormAction {
     private String mode;
     private List<String> maxAmountList;
     private List<String> minAmountList;
-
+    private Map<String, Object> criteriaMap = null;
+    
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
     	contractorGrade = contractorGradeService.persist(contractorGrade);
@@ -253,7 +256,7 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-    	return contractorGradeService.prepareSearchQuery(grade, minAmount, maxAmount);
+        return contractorGradeService.prepareSearchQuery(createCriteriaMap());
     }
 
     public List<String> getMaxAmountList() {
@@ -270,5 +273,13 @@ public class ContractorGradeAction extends SearchFormAction {
 
     public void setMinAmountList(final List<String> minAmountList) {
         this.minAmountList = minAmountList;
+    }
+    
+    private Map<String, Object> createCriteriaMap() {
+        criteriaMap = new HashMap<String, Object>();
+        criteriaMap.put(WorksConstants.GRADE, grade);
+        criteriaMap.put(WorksConstants.MIN_AMOUNT, minAmount);
+        criteriaMap.put(WorksConstants.MAX_AMOUNT, maxAmount);
+        return criteriaMap;
     }
 }
