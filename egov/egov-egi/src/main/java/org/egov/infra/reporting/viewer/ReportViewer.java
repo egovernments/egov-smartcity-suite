@@ -50,11 +50,11 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infstr.cache.LRUCache;
 
 /**
  * Report viewer servlet - displays a report in the browser setting appropriate content type
