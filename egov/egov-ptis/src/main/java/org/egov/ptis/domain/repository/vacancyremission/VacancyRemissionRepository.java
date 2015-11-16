@@ -59,6 +59,6 @@ public interface VacancyRemissionRepository extends JpaRepository<VacancyRemissi
 	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'REJECTED'")
 	public VacancyRemission findRejectedByUpicNo(@Param("upicNo") String name);
 	
-	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo ")
+	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo order by id asc ")
     List<VacancyRemission> getAllVacancyRemissionByUpicNo(@Param("upicNo") String name);
 }

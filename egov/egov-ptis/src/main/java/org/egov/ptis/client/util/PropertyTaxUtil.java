@@ -2348,7 +2348,7 @@ public class PropertyTaxUtil {
     public boolean enableVacancyRemission(String upicNo) {
         boolean vrFlag = false;
         List<VacancyRemission> remissionList = persistenceService.findAllBy(
-                "select vr from VacancyRemission vr where vr.basicProperty.upicNo=? ", upicNo);
+                "select vr from VacancyRemission vr where vr.basicProperty.upicNo=? order by id desc", upicNo);
         if (remissionList.isEmpty()) {
             vrFlag = true;
         } else {

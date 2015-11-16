@@ -59,7 +59,7 @@
 				} else if (selectedValue == 'ADD_EDIT_DEMAND') {
 					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
 				} else if (selectedValue == 'VacancyRemission') {
-					window.location = "/ptis/vacancyremission/create/" + assessmentNum;
+					window.location = "/ptis/vacancyremission/create/" + assessmentNum+",normalSearch";
 				} else if(selectedValue == 'VacancyRemissionMonthlyUpdate'){
 					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
 				} else if(selectedValue == 'VacancyRemissionFinalApproval'){

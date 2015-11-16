@@ -53,6 +53,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -88,6 +89,7 @@ public class VacancyRemission extends StateAware {
     @Column(name = "vacancy_comments")
     private String vacancyComments;
 
+    @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionDetails> vacancyRemissionDetails = new LinkedList<VacancyRemissionDetails>();
 
@@ -97,6 +99,7 @@ public class VacancyRemission extends StateAware {
     @Column(name = "applicationno")
     private String applicationNumber;
 
+    @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
 

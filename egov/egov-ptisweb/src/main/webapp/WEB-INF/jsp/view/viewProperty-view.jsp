@@ -136,7 +136,7 @@
 							<s:if test="%{viewMap.enableVacancyRemission}" >		
 								<input type="button" class="buttonsubmit" name="vacancyremissionbtn"
 									id="vacancyremissionbtn" value="Vacancy Remission" 
-									onclick="window.location='/ptis/vacancyremission/create/<s:property value="%{basicProperty.upicNo}" />'" />
+									onclick="window.location='/ptis/vacancyremission/create/<s:property value="%{basicProperty.upicNo}" />,normalSearch'" />
 							</s:if>
 						</s:if>
 						<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code)}">

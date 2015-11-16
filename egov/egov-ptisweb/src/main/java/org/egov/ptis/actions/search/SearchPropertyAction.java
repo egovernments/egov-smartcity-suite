@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMA
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -120,7 +121,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "collectPropertyTax-generateBill", params = {
                 "namespace", "/collection", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
-                "namespace", "/bills", "indexNumber", "${assessmentNum}" }), })
+                "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}") })
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -155,7 +157,6 @@ public class SearchPropertyAction extends BaseFormAction {
     private String fromDemand;
     private String toDemand;
     private String applicationType;
-    private boolean enableVacancyRemission;
     private String doorNo;
     private String mobileNumber;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
@@ -261,7 +262,9 @@ public class SearchPropertyAction extends BaseFormAction {
                 addActionError(getText("error.msg.taxExempted"));
                 return COMMON_FORM;
             }
-
+        
+        if(applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
+        	mode = "commonSearch";
         return applicationType;
     }
 
