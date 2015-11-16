@@ -72,6 +72,7 @@ import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.ServiceCategory;
@@ -586,7 +587,11 @@ CollectionIntegrationService {
         boolean isInstrumentDeposited = false;
         final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, receiptNumber);
-
+        if(receiptHeaderToBeCancelled==null)
+        {
+            throw new RuntimeException("Invalid receiptNumber:"+receiptNumber);
+            
+        }
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
         for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())

@@ -204,5 +204,10 @@ public class RestApiConstants {
         
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN = "WTMS-REST-10";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_LEN = "Application number length can not less than 13 digits";
+	
+        public static final String THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED = "EGCL-REST-1";
+        public static final String THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG = "receiptNumber is required";
+		public static final String THIRD_PARTY_ACTION_SUCCESS = "EGCL-REST-SUCCESS";
+		public static final String THIRD_PARTY_ACTION_FAILURE = "REST-FAILURE";
 
 }
