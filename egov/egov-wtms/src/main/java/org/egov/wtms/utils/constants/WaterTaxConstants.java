@@ -98,6 +98,7 @@ public class WaterTaxConstants {
     public static final String APPROVERROLE = "Water Tax Approver";
     public static final String COMMISSIONERDEPARTEMNT = "Administration";
     public static final String SUPERUSER = "Super User";
+    public static final String OPEN = "OPEN";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
@@ -193,6 +194,7 @@ public class WaterTaxConstants {
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
     public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
+    
 
     public static final String CURR_DUE = "CurrentDue";
     public static final String ARR_DUE = "ArrearDue";
