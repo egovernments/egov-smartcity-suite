@@ -47,6 +47,7 @@ public class PaymentInfoSearchRequest {
     private Date todate;
     private String servicecode;
     private String ulbCode;
+    private String receiptNumber;
 
     public Date getFromdate() {
         return fromdate;
@@ -78,6 +79,14 @@ public class PaymentInfoSearchRequest {
 
 	public void setUlbCode(String ulbCode) {
 		this.ulbCode = ulbCode;
+	}
+
+	public String getReceiptNumber() {
+		return receiptNumber;
+	}
+
+	public void setReceiptNumber(String receiptNumber) {
+		this.receiptNumber = receiptNumber;
 	}
 
 }

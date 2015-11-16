@@ -57,6 +57,7 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.PaymentInfoSearchRequest;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
@@ -124,8 +125,36 @@ public class RestPaymentReportConroller {
 		}
 
 	}
+	
+	
+	@RequestMapping(value="/cancelReceipt",method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+	public String cancelReceipt(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,BindingResult errors) {
+		
+			ErrorDetails successDetail=new ErrorDetails();
+			try{
+			if(paymentInfoSearchRequest.getReceiptNumber()!=null && !paymentInfoSearchRequest.getReceiptNumber().isEmpty()) {
+				String	cancelReceipt = collectionService.cancelReceipt(paymentInfoSearchRequest.getReceiptNumber());
+				successDetail.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+				successDetail.setErrorMessage(cancelReceipt);
+			} else
+			{
+				ErrorDetails errorDetails=new ErrorDetails();
+			    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED);
+                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
+                return	JsonConvertor.convert(errorDetails);
+			}
 
-	@RequestMapping(value="/banks",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+		} catch (Exception e) {
+			ErrorDetails er=new ErrorDetails();
+			er.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
+			er.setErrorMessage(e.getMessage());
+			return	JsonConvertor.convert(er);
+		}
+		return	JsonConvertor.convert(successDetail);
+
+	}
+
+	@RequestMapping(value="/cancelReceipt",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
 	public String bankNames() {
 		List<Bank> banks=null;
 		try {
