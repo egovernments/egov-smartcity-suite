@@ -250,7 +250,7 @@
 							<td class="bluebox"><s:text name="payablefee" /><span
 								class="mandatory1">*</span> :</td>
 							<td class="bluebox"><s:textfield name="mutationFee"
-									id="mutationFee" readOnly="true" /></td>
+									id="mutationFee"/></td>
 						</tr>
 					</s:if>
 				</table>
@@ -276,39 +276,7 @@
 			Mandatory Fields</div>
 	</div>
 	<script type="text/javascript">
-		jQuery("#marketValue")
-				.blur(
-						function() {
-							if (jQuery("#marketValue").val().length >= 5) {
-								var marketVal = parseInt(jQuery("#marketValue")
-										.val());
-								var transferReason = document
-										.getElementById("transRsnId").options[document
-										.getElementById("transRsnId").selectedIndex].text;
-								if (isNaN(marketVal) || marketVal < 1)
-									return false;
-								jQuery
-										.ajax(
-												{
-													type : "GET",
-													url : "calculate-mutationfee.action",
-													cache : true,
-													data : {
-														"marketValue" : marketVal,
-														"transferReason" : transferReason,
-														"mutationId" : jQuery(
-																"#mutationId")
-																.val()
-													}
-												}).done(
-												function(value) {
-													jQuery("#mutationFee").val(
-															roundoff(value));
-												});
-							} else {
-								alert("Minimum five digit value is required for document value");
-							}
-						});
+		
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
