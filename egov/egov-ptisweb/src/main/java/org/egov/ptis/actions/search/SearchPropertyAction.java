@@ -211,7 +211,7 @@ public class SearchPropertyAction extends BaseFormAction {
         if (loggedUserIsMeesevaUser) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
-                addActionMessage(getText("mandatory.meesevaApplicationNumber"));
+                addActionMessage(getText("MEESEVA.005"));
                 return RESULT_ERROR;
 
             } else {

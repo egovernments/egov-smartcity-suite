@@ -51,7 +51,7 @@
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
-			<s:hidden path="meesevaApplicationNumber" id="meesevaApplicationNumber" value="${waterConnectionDetails.meesevaApplicationNumber}" />
+			<form:hidden path="meesevaApplicationNumber" id="meesevaApplicationNumber" value="${waterConnectionDetails.meesevaApplicationNumber}" />
 			
 			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
 			<form:hidden id="mode" path=""  value="${mode}"/>

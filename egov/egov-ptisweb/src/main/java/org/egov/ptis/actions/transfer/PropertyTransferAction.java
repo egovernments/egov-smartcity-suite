@@ -222,7 +222,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                 if (loggedUserIsMeesevaUser) {
                      if (getMeesevaApplicationNumber() == null) {
-                        addActionMessage(getText("mandatory.meesevaApplicationNumber"));
+                        addActionMessage(getText("MEESEVA.005"));
                         return ERROR;
                     } else {
                        propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());

@@ -128,11 +128,12 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("typeOfConnection", WaterTaxConstants.NEWCONNECTION);
 
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        if (loggedUserIsMeesevaUser)
+        if (loggedUserIsMeesevaUser){
             if (request.getParameter("applicationNo") == null)
-                throw new ApplicationRuntimeException("mandatory.meesevaApplicationNumber");
+                throw new ApplicationRuntimeException("MEESEVA.005");
             else
                 waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+        }
         return "newconnection-form";
     }
 
@@ -237,10 +238,10 @@ public class NewConnectionController extends GenericConnectionController {
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
                         meesevaParams);
             }
-        } else
+        } else{
             waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
-
+        }
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
