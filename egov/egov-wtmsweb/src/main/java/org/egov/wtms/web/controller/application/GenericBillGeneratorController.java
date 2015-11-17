@@ -46,14 +46,12 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -74,9 +72,11 @@ public class GenericBillGeneratorController {
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ConnectionDemandService connectionDemandService;
     private final WaterTaxUtils waterTaxUtils;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public GenericBillGeneratorController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -96,7 +96,7 @@ public class GenericBillGeneratorController {
             final HttpServletRequest request, final Model model) {
         if (request.getParameter("applicationCode") != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(request
-                    .getParameter("applicationCode"),ConnectionStatus.ACTIVE);
+                    .getParameter("applicationCode"), ConnectionStatus.ACTIVE);
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
@@ -104,26 +104,27 @@ public class GenericBillGeneratorController {
         model.addAttribute("mode", "waterTaxCollection");
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }
 
-     @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
+    @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
     public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,@RequestParam final String applicationTypeCode, final Model model) {
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE) || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
+            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
+            @RequestParam final String applicationTypeCode, final Model model) {
+        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)
+                || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                applicationCode,ConnectionStatus.ACTIVE);
+                    applicationCode, ConnectionStatus.ACTIVE);
         else
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
-        if(EgovThreadLocals.getUserId()==null)
-        if( securityUtils.getCurrentUser().getUsername().equals("anonymous")){
-            EgovThreadLocals.setUserId(Long.valueOf("2"));
-        }
-        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode,applicationTypeCode));
+        if (EgovThreadLocals.getUserId() == null)
+            if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
+                EgovThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
+        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, applicationTypeCode));
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";
     }
-    
+
 }

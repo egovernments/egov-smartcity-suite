@@ -53,7 +53,6 @@ public class WaterTaxConstants {
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
-    public static final String CITIZENROLE = "Citizen";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
     public static final String EGMODULES_NAME = "Water Tax";
@@ -92,13 +91,14 @@ public class WaterTaxConstants {
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
     // User Roles
-    public static final String CSCOPERTAORROLE = "CSC Operator";
-    public static final String CLERKULB = "ULB Operator";
-    public static final String CLERKROLEFORADONI = "Senior Assistant,Junior Assistant";
-    public static final String APPROVERROLE = "Water Tax Approver";
-    public static final String COMMISSIONERDEPARTEMNT = "Administration";
-    public static final String SUPERUSER = "Super User";
-    public static final String OPEN = "OPEN";
+    public static final String ROLE_CSCOPERTAOR = "CSC Operator";
+    public static final String ROLE_ULBOPERATOR = "ULB Operator";
+    public static final String ROLE_CLERKFORADONI = "Senior Assistant,Junior Assistant";
+    public static final String ROLE_APPROVERROLE = "Water Tax Approver";
+    public static final String ROLE_COMMISSIONERDEPARTEMNT = "Administration";
+    public static final String ROLE_SUPERUSER = "Super User";
+    public static final String ROLE_CITIZEN = "Citizen";
+    public static final String ROLE_OPERATOR = "Operator";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
@@ -111,6 +111,7 @@ public class WaterTaxConstants {
     public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "WTAX101";
     public static final String WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Consumer code ";
     public static final String WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
+    public static final String OPEN = "OPEN";
 
     public static final String BILLTYPE_AUTO = "AUTO";
     public static final String BILLTYPE_MANUAL = "MANUAL";
@@ -194,7 +195,6 @@ public class WaterTaxConstants {
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
     public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
-    
 
     public static final String CURR_DUE = "CurrentDue";
     public static final String ARR_DUE = "ArrearDue";
@@ -241,4 +241,5 @@ public class WaterTaxConstants {
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
+    public static final String USERNAME_ANONYMOUS = "anonymous";
 }

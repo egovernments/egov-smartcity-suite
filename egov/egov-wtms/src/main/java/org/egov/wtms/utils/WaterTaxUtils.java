@@ -294,7 +294,7 @@ public class WaterTaxUtils {
             commdesgnname = commissionerDesgn;
         final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
         if (commissionerDesgn.equals("Commissioner")) {
-            final Department deptObj = departmentService.getDepartmentByName(WaterTaxConstants.COMMISSIONERDEPARTEMNT);
+            final Department deptObj = departmentService.getDepartmentByName(WaterTaxConstants.ROLE_COMMISSIONERDEPARTEMNT);
             return assignmentService
                     .getPositionsByDepartmentAndDesignationForGivenRange(deptObj.getId(), desgnObj.getId(), new Date())
                     .get(0).getPosition();
@@ -314,9 +314,8 @@ public class WaterTaxUtils {
     }
 
     /*
-     * public List<EgwStatus> getStatusByModuleType(final String moduleName) {
-     * return (List<EgwStatus> ) persistenceService.findAllBy(
-     * "from EgwStatus where moduleType=? order by code", moduleName); }
+     * public List<EgwStatus> getStatusByModuleType(final String moduleName) { return (List<EgwStatus> )
+     * persistenceService.findAllBy( "from EgwStatus where moduleType=? order by code", moduleName); }
      */
 
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
@@ -374,13 +373,11 @@ public class WaterTaxUtils {
     }
 
     /**
-     * Getting User assignment based on designation ,department and zone
-     * boundary Reading Designation and Department from appconfig values and
-     * Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
+     * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
      *
-     * @param asessmentNumber
-     *            ,
+     * @param asessmentNumber ,
      * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
@@ -429,8 +426,8 @@ public class WaterTaxUtils {
             final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
-                    if (role != null && role.getName().contains(WaterTaxConstants.CSCOPERTAORROLE) || role != null
-                    && role.getName().contains(WaterTaxConstants.CLERKULB)) {
+                    if (role != null && role.getName().contains(WaterTaxConstants.ROLE_CSCOPERTAOR) || role != null
+                            && role.getName().contains(WaterTaxConstants.ROLE_ULBOPERATOR)) {
                         isCSCOperator = true;
                         break;
                     }
@@ -450,8 +447,8 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
             if (waterconnectiondetails.getDemand() != null)
                 finalDueAmount = finalDueAmount
-                + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                        .getDemand().getAmtCollected().doubleValue());
+                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                                .getDemand().getAmtCollected().doubleValue());
         return finalDueAmount;
     }
 
@@ -462,7 +459,7 @@ public class WaterTaxUtils {
             if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
-                if (userrole != null && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
+                if (userrole != null && userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
                     citizenrole = Boolean.TRUE;
                     break;
                 }

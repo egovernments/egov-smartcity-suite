@@ -76,13 +76,13 @@ public class WaterTaxSearchController {
 
     private final SearchService searchService;
     private final CityService cityService;
-    
+
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private UserService userService;
 
@@ -98,26 +98,23 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 1st Entry "CSC Operator" order by value asc
-     * 
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 1st Entry "CSC Operator" order by value
+     * asc
+     *
      * @return String if Logged in User is CSC Operattor
      */
     @ModelAttribute("cscUserRole")
     public String getCurrentUserRole() {
-        User currentUser =null;
-        if(EgovThreadLocals.getUserId()!=null){
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-        }
-        else{
-            currentUser = securityUtils.getCurrentUser();
-        }
         String cscUserRole = "";
+        User currentUser = null;
+
+        if (EgovThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+
         for (final Role userrole : currentUser.getRoles())
-            if (userrole != null
-            && userrole.getName().equals(
-                            waterTaxUtils.getUserRolesForLoggedInUser().get(0) != null ? waterTaxUtils
-                                    .getUserRolesForLoggedInUser().get(0).getValue() : "")) {
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_CSCOPERTAOR)) {
                 cscUserRole = userrole.getName();
                 break;
             }
@@ -127,41 +124,34 @@ public class WaterTaxSearchController {
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if(EgovThreadLocals.getUserId()!=null){
-        final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-       for (final Role userrole : currentUser.getRoles())
-            if (userrole != null
-            && userrole.getName().equals(WaterTaxConstants.CITIZENROLE)) {
-                citizenrole = Boolean.TRUE;
-                break;
-            }
-        }
-            else{
-                citizenrole = Boolean.TRUE;  
-            }
+        if (EgovThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+            for (final Role userrole : currentUser.getRoles())
+                if (userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
+                    citizenrole = Boolean.TRUE;
+                    break;
+                }
+        } else
+            citizenrole = Boolean.TRUE;
         return citizenrole;
     }
+
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 4th Entry "ULB Operator" order by value asc
-     * 
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 4th Entry "ULB Operator" order by value
+     * asc
+     *
      * @return String if Logged in User is ULB Operattor
      */
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
         String userRole = "";
-        User currentUser =null;
-        if(EgovThreadLocals.getUserId()!=null){
+        User currentUser = null;
+        if (EgovThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-        }
-        else{
+        else
             currentUser = securityUtils.getCurrentUser();
-        }
         for (final Role userrole : currentUser.getRoles())
-            if (userrole != null
-            && userrole.getName().equals(
-                            waterTaxUtils.getUserRolesForLoggedInUser().get(3) != null ? waterTaxUtils
-                                    .getUserRolesForLoggedInUser().get(3).getValue() : "")) {
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_ULBOPERATOR)) {
                 userRole = userrole.getName();
                 break;
             }
@@ -169,54 +159,45 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 2nd Entry "Super User" order by value asc
-     * 
+     *
      * @return String if Logged in User is SUPER USER
      */
     @ModelAttribute("superUserRole")
     public String getSuperUserRole() {
         String userRole = "";
-         User currentUser =null;
-        if(EgovThreadLocals.getUserId()!=null){
+        User currentUser = null;
+
+        if (EgovThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-        }
-        else{
+        else
             currentUser = securityUtils.getCurrentUser();
-        }
         for (final Role userrole : currentUser.getRoles())
-            if (userrole != null
-            && userrole.getName().equals(
-                            waterTaxUtils.getUserRolesForLoggedInUser().get(2) != null ? waterTaxUtils
-                                    .getUserRolesForLoggedInUser().get(2).getValue() : "")) {
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
                 userRole = userrole.getName();
                 break;
             }
-        
+
         return userRole;
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 3th Entry "Water Tax Approver" order by value asc
-     * 
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 3th Entry "Water Tax Approver" order by
+     * value asc
+     *
      * @return String if Logged in User is Water Tax Approver
      */
     @ModelAttribute("approverUserRole")
     public String getApproverUserRole() {
         String userRole = "";
-        User currentUser =null;
-        if(EgovThreadLocals.getUserId()!=null){
+        User currentUser = null;
+        waterTaxUtils.getUserRolesForLoggedInUser();
+
+        if (EgovThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-        }
-        else{
+        else
             currentUser = securityUtils.getCurrentUser();
-        }
         for (final Role userrole : currentUser.getRoles())
-            if (userrole != null
-            && userrole.getName().equals(
-                            waterTaxUtils.getUserRolesForLoggedInUser().get(4) != null ? waterTaxUtils
-                                    .getUserRolesForLoggedInUser().get(4).getValue() : "")) {
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_APPROVERROLE)) {
                 userRole = userrole.getName();
                 break;
             }
@@ -224,26 +205,20 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 5th Entry "Operator"
-     * 
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 5th Entry "Operator"
+     *
      * @return String if Logged in User is Operator
      */
     @ModelAttribute("operatorRole")
     public String getOperatorUserRole() {
         String userRole = "";
-        User currentUser =null;
-        if(EgovThreadLocals.getUserId()!=null){
+        User currentUser = null;
+        if (EgovThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(EgovThreadLocals.getUserId());
-        }
-        else{
+        else
             currentUser = securityUtils.getCurrentUser();
-        }
         for (final Role userrole : currentUser.getRoles())
-            if (userrole != null
-            && userrole.getName().equals(
-                            waterTaxUtils.getUserRolesForLoggedInUser().get(1) != null ? waterTaxUtils
-                                    .getUserRolesForLoggedInUser().get(1).getValue() : "")) {
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_OPERATOR)) {
                 userRole = userrole.getName();
                 break;
             }
@@ -261,7 +236,7 @@ public class WaterTaxSearchController {
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
 
-        Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
+        final Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
