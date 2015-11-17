@@ -255,7 +255,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 if (applicableTax.equals(DEMANDRSN_CODE_VACANT_TAX)) {
                     taxRatePerc = getTaxRate(DEMANDRSN_CODE_VACANT_TAX);
                 } else {
-                    if (floor != null && floor.getPropertyUsage().getUsageCode().equals(USAGE_RESIDENTIAL)) {
+                    if (floor != null && floor.getPropertyUsage().getIsResidential()) {
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_RESD");
                     } else {
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_NR");
@@ -478,8 +478,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private String getUnAuthDeviationPerc(Property property) {
-        return property.getPropertyDetail().getDeviationPercentage() != null ? property.getPropertyDetail()
-                .getDeviationPercentage() : "";
+        return property.getPropertyDetail().getDeviationPercentage() != null
+                && !property.getPropertyDetail().getDeviationPercentage().isEmpty() ? property.getPropertyDetail()
+                .getDeviationPercentage() : "100";
     }
 
     private BigDecimal calculateUnAuthPenalty(String deviationPerc, BigDecimal totalPropertyTax) {
