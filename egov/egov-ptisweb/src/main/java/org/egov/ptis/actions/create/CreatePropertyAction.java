@@ -284,7 +284,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (loggedUserIsMeesevaUser) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
-                addActionMessage(getText("mandatory.meesevaApplicationNumber"));
+                addActionMessage(getText("MEESEVA.005"));
                 return RESULT_ERROR; 
             } else {
                 
@@ -333,6 +333,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             HashMap<String,String> meesevaParams=   new HashMap<String,String>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
+            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             basicPropertyService.createBasicProperty(basicProperty,meesevaParams);
         }
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);

@@ -246,6 +246,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         else {
             HashMap<String,String> meesevaParams=   new HashMap<String,String>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
+            basicproperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation,meesevaParams);
         }
