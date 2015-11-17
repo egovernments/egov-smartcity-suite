@@ -44,6 +44,10 @@ import java.math.BigDecimal;
 
 public class FloorDetailsView implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2878836256360657101L;
     private Integer basicPropertyId;
     private Integer propertyId;
     private String propertyUsage;

@@ -46,7 +46,11 @@ import org.egov.infstr.models.BaseModel;
 
 public class PropertyReceipt extends BaseModel{
 
-	private BasicPropertyImpl basicProperty;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private BasicPropertyImpl basicProperty;
 	private String bookNumber;
 	private String receiptNumber;
 	private Date receiptDate;

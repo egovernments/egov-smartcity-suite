@@ -44,7 +44,11 @@ import java.math.BigDecimal;
 
 public class CurrFloorDmdCalcMaterializeView implements Serializable {
 
-	private Long floorId;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private Long floorId;
 	private PropertyMaterlizeView propMatView;
 	private String unitNo;
 	private String unitTypeConst;

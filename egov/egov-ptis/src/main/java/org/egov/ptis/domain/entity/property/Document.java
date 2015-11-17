@@ -67,7 +67,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name="egpt_document")
+@Table(name = "egpt_document")
 @SequenceGenerator(name = Document.SEQ_DOCUMENT, sequenceName = Document.SEQ_DOCUMENT, allocationSize = 1)
 public class Document extends AbstractAuditable {
 
@@ -78,23 +78,23 @@ public class Document extends AbstractAuditable {
     @DocumentId
     private Long id;
     @ManyToOne
-    @JoinColumn(name="type")
+    @JoinColumn(name = "type")
     private DocumentType type;
     private String description;
     @Temporal(TemporalType.DATE)
     private Date docDate;
     private boolean enclosed;
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egpt_document_files", joinColumns = @JoinColumn(name = "document") , inverseJoinColumns = @JoinColumn(name = "filestore") )
+    @JoinTable(name = "egpt_document_files", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
-    
+
     @Transient
     private List<File> uploads = new ArrayList<>();
     @Transient
     private List<String> uploadsFileName = new ArrayList<>();
     @Transient
     private List<String> uploadsContentType = new ArrayList<>();
-    
+
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -149,7 +149,7 @@ public class Document extends AbstractAuditable {
         return uploads;
     }
 
-    public void setUploads(List<File> uploads) {
+    public void setUploads(final List<File> uploads) {
         this.uploads = uploads;
     }
 
@@ -157,7 +157,7 @@ public class Document extends AbstractAuditable {
         return uploadsFileName;
     }
 
-    public void setUploadsFileName(List<String> uploadsFileName) {
+    public void setUploadsFileName(final List<String> uploadsFileName) {
         this.uploadsFileName = uploadsFileName;
     }
 
@@ -165,7 +165,7 @@ public class Document extends AbstractAuditable {
         return uploadsContentType;
     }
 
-    public void setUploadsContentType(List<String> uploadsContentType) {
+    public void setUploadsContentType(final List<String> uploadsContentType) {
         this.uploadsContentType = uploadsContentType;
     }
 }

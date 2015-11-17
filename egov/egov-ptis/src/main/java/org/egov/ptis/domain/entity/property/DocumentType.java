@@ -60,63 +60,63 @@ import org.hibernate.search.annotations.DocumentId;
 @SequenceGenerator(name = DocumentType.EQ_DOCUMENT_TYPE, sequenceName = DocumentType.EQ_DOCUMENT_TYPE, allocationSize = 1)
 @NamedQuery(name = DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, query = "Select doctypes from DocumentType doctypes WHERE transactionType=?")
 public class DocumentType extends AbstractPersistable<Long> {
-	private static final long serialVersionUID = -8493641513653418834L;
-	public static final String EQ_DOCUMENT_TYPE = "SEQ_EGPT_DOCUMENT_TYPE";
-	public static final String DOCUMENTTYPE_BY_TRANSACTION_TYPE = "DOCUMENTTYPE_BY_TRANSACTION_TYPE";
+    private static final long serialVersionUID = -8493641513653418834L;
+    public static final String EQ_DOCUMENT_TYPE = "SEQ_EGPT_DOCUMENT_TYPE";
+    public static final String DOCUMENTTYPE_BY_TRANSACTION_TYPE = "DOCUMENTTYPE_BY_TRANSACTION_TYPE";
 
-	@Id
-	@GeneratedValue(generator = EQ_DOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
-	@DocumentId
-	private Long id;
-	private String name;
-	@Enumerated(EnumType.STRING)
-	private TransactionType transactionType;
-	private boolean mandatory;
+    @Id
+    @GeneratedValue(generator = EQ_DOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
+    private String name;
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
+    private boolean mandatory;
 
-	@ManyToOne
-	@JoinColumn(name = "id_application_type", nullable = false, updatable = false)
-	private PtApplicationType applicationType;
+    @ManyToOne
+    @JoinColumn(name = "id_application_type", nullable = false, updatable = false)
+    private PtApplicationType applicationType;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public boolean isMandatory() {
-		return mandatory;
-	}
+    public boolean isMandatory() {
+        return mandatory;
+    }
 
-	public void setMandatory(final boolean mandatory) {
-		this.mandatory = mandatory;
-	}
+    public void setMandatory(final boolean mandatory) {
+        this.mandatory = mandatory;
+    }
 
-	public TransactionType getTransactionType() {
-		return transactionType;
-	}
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
 
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
-	}
+    public void setTransactionType(final TransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
 
-	public PtApplicationType getApplicationType() {
-		return applicationType;
-	}
+    public PtApplicationType getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(PtApplicationType applicationType) {
-		this.applicationType = applicationType;
-	}
+    public void setApplicationType(final PtApplicationType applicationType) {
+        this.applicationType = applicationType;
+    }
 
 }
