@@ -454,7 +454,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         } else
             currentState = null;
         if (null != property.getId())
-            wfInitiator = getWorkflowInitiator(property);
+            wfInitiator = propertyService.getWorkflowInitiator(property);
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
@@ -500,19 +500,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
 
         LOGGER.debug("Exiting method : transitionWorkFlow");
-    }
-
-    protected Assignment getWorkflowInitiator(final PropertyImpl property) {
-        Assignment wfInitiator;
-        if (propertyService.isEmployee(property.getCreatedBy()))
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-        else if (!property.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-                    .getId());
-        return wfInitiator;
     }
 
     public void validateApproverDetails() {

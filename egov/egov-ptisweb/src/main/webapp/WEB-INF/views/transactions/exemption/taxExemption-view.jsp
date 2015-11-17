@@ -42,9 +42,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<script type="text/javascript">
-alert("taxExemption"+taxExemption);
-</script>
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
@@ -54,8 +51,8 @@ alert("taxExemption"+taxExemption);
 				style="text-align: left">
 				<jsp:include page="../../common/commonPropertyDetailsView.jsp"></jsp:include>
 			    <jsp:include page="../../common/ownerDetailsView.jsp"></jsp:include>
-			    <form:hidden path="" name="mode" id="mode" value="${mode}"/>
 			    <form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
+			    <form:hidden path="" name="mode" id="mode" value="${mode}"/>
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="lbl.exemption.heading" />
@@ -64,28 +61,29 @@ alert("taxExemption"+taxExemption);
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-xs-3">
-							<spring:message code="lbl.exemption.reason" /><span class="mandatory"></span>
+							<spring:message code="lbl.exemption.reason" />
 						</div>
-						<div class="col-sm-3 add-margin control-label text-right">
-							<form:select path="taxExemptedReason" id="taxExemptedReason" name="taxExemptedReason"
-								data-first-option="false" cssClass="form-control"
-								required="required">
-								<form:option value="-1">
-									<spring:message code="lbl.option.none" />
-								</form:option>
-								<form:options items="${taxExemptionReasons}" itemValue="id" 
-									itemLabel="name" />
-							</form:select>
-							<form:errors path="taxExemptedReason"
-								cssClass="add-margin error-msg" />
+						<div class="col-sm-3 add-margin">
+							<c:out default="N/A" value="${property.taxExemptedReason.name}"></c:out>
 						</div>
 					</div>
 				</div>
 			</div>
-			<c:if test="${propertyByEmployee == true}">
-			<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
-			</c:if>
-			<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+			 <c:choose>
+            <c:when test="${userDesgn != designation}">
+			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
+			</c:when>
+			<c:otherwise>
+			<div class="row">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
+					<div class="col-sm-8 add-margin">
+						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
+					</div>
+				</div></c:otherwise> 
+			</c:choose> 
+	 	    <jsp:include page="../../common/commonWorkflowMatrix-button.jsp"/>
 		</form:form>
 	</div>
 </div>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/app/taxExemption.js'/>"></script>

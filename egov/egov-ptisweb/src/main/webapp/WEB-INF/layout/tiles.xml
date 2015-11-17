@@ -94,6 +94,16 @@
     	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-form.jsp"/>
     </definition>
     
+    <definition name="taxExemption-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.taxexemption.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-success.jsp"/>
+    </definition> 
+    
+    <definition name="taxExemption-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.taxexemption.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-view.jsp"/>
+    </definition>
+    
     <definition name="workFlowError" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/common/workflowError.jsp"/>

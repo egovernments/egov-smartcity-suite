@@ -81,10 +81,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission")
 public class VacanyRemissionController extends GenericWorkFlowController {
 
-	private static final String PROPERTY_VALIDATION = "propertyValidation";
-	private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
+    private static final String PROPERTY_VALIDATION = "propertyValidation";
+    private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
-    
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
@@ -116,54 +116,58 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable String assessmentNo,@PathVariable String mode, final HttpServletRequest request) {
+    public String newForm(final Model model, @PathVariable String assessmentNo, @PathVariable String mode,
+            final HttpServletRequest request) {
         if (basicProperty != null) {
-        	Property property = basicProperty.getProperty();
-        	if(property!=null){
-        		//When called from common search 
-        		if(mode.equalsIgnoreCase("commonSearch")){
-        			Boolean enableVacancyRemission = Boolean.FALSE;
-            		if(property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
-        				model.addAttribute("errorMsg","Vacancy Remission cannot be done for Vacant Land ");
-        				return PROPERTY_VALIDATION;
-            		}
-        			else if(property.getIsExemptedFromTax()){
-        				model.addAttribute("errorMsg","This property is exempted from taxes");
-        				return PROPERTY_VALIDATION;
-        			}
-        			else if(basicProperty.isUnderWorkflow()){
-        				model.addAttribute("errorMsg","This property is under workflow");
-        				return PROPERTY_VALIDATION;
-        			}
-        			else{
-        				List<VacancyRemission> remissionList = vacancyRemissionService.getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
-            	        if (!remissionList.isEmpty()) {
-            	            VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
-            	            if (vacancyRemission != null) {
-            	                if (vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)) {
-            	                    if (org.egov.infstr.utils.DateUtils.isSameDay(vacancyRemission.getVacancyToDate(), new Date())) {
-            	                    	enableVacancyRemission = true;
-            	                    } else if (vacancyRemission.getVacancyToDate().compareTo(new Date()) < 0) {
-            	                    	enableVacancyRemission = true;
-            	                    }
-            	                } else if (vacancyRemission.getStatus().equalsIgnoreCase(
-            	                        PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED)) {
-            	                	enableVacancyRemission = true;
-            	                } else if(vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_WORKFLOW)){
-            	                	model.addAttribute("errorMsg","This property is under workflow");
-            	                	return PROPERTY_VALIDATION;
-            	                }
-            	            }
-            	        }
-            	        if(remissionList.isEmpty() || enableVacancyRemission){
-            	        	final Map<String, BigDecimal> propertyTaxDetails = propertyService
+            Property property = basicProperty.getProperty();
+            if (property != null) {
+                // When called from common search
+                if (mode.equalsIgnoreCase("commonSearch")) {
+                    Boolean enableVacancyRemission = Boolean.FALSE;
+                    if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
+                            .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+                        model.addAttribute("errorMsg", "Vacancy Remission cannot be done for Vacant Land ");
+                        return PROPERTY_VALIDATION;
+                    } else if (property.getIsExemptedFromTax()) {
+                        model.addAttribute("errorMsg", "This property is exempted from taxes");
+                        return PROPERTY_VALIDATION;
+                    } else if (basicProperty.isUnderWorkflow()) {
+                        model.addAttribute("errorMsg", "This property is under workflow");
+                        return PROPERTY_VALIDATION;
+                    } else {
+                        List<VacancyRemission> remissionList = vacancyRemissionService
+                                .getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
+                        if (!remissionList.isEmpty()) {
+                            VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
+                            if (vacancyRemission != null) {
+                                if (vacancyRemission.getStatus().equalsIgnoreCase(
+                                        PropertyTaxConstants.VR_STATUS_APPROVED)) {
+                                    if (org.egov.infstr.utils.DateUtils.isSameDay(vacancyRemission.getVacancyToDate(),
+                                            new Date())) {
+                                        enableVacancyRemission = true;
+                                    } else if (vacancyRemission.getVacancyToDate().compareTo(new Date()) < 0) {
+                                        enableVacancyRemission = true;
+                                    }
+                                } else if (vacancyRemission.getStatus().equalsIgnoreCase(
+                                        PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED)) {
+                                    enableVacancyRemission = true;
+                                } else if (vacancyRemission.getStatus().equalsIgnoreCase(
+                                        PropertyTaxConstants.VR_STATUS_WORKFLOW)) {
+                                    model.addAttribute("errorMsg", "This property is under workflow");
+                                    return PROPERTY_VALIDATION;
+                                }
+                            }
+                        }
+                        if (remissionList.isEmpty() || enableVacancyRemission) {
+                            final Map<String, BigDecimal> propertyTaxDetails = propertyService
                                     .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
                             final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
                             final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
                                     propertyTaxDetails.get(CURR_COLL_STR));
                             final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                                     propertyTaxDetails.get(ARR_COLL_STR));
-                            final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(), request);
+                            final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(
+                                    basicProperty.getUpicNo(), request);
                             model.addAttribute("currentPropertyTax", currentPropertyTax);
                             model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
                             model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
@@ -177,17 +181,18 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
                             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
                             vacancyRemissionService.addModelAttributes(model, basicProperty);
-            	        }
-        			}
-            	}else{
-            		final Map<String, BigDecimal> propertyTaxDetails = propertyService
+                        }
+                    }
+                } else {
+                    final Map<String, BigDecimal> propertyTaxDetails = propertyService
                             .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
                     final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
                     final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
                             propertyTaxDetails.get(CURR_COLL_STR));
                     final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                             propertyTaxDetails.get(ARR_COLL_STR));
-                    final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(), request);
+                    final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(),
+                            request);
                     model.addAttribute("currentPropertyTax", currentPropertyTax);
                     model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
                     model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
@@ -201,8 +206,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
                     model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
                     vacancyRemissionService.addModelAttributes(model, basicProperty);
-            	}
-        	}
+                }
+            }
         }
         return VACANCYREMISSION_FORM;
     }
@@ -233,10 +238,11 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
             Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                    workFlowAction,propertyByEmployee);
+                    workFlowAction, propertyByEmployee);
 
             String successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
-                    + propertyTaxUtil.getApproverUserName(vacancyRemission.getState().getOwnerPosition().getId())+" with application number : "+vacancyRemission.getApplicationNumber();
+                    + propertyTaxUtil.getApproverUserName(vacancyRemission.getState().getOwnerPosition().getId())
+                    + " with application number : " + vacancyRemission.getApplicationNumber();
             model.addAttribute("successMessage", successMsg);
         }
 

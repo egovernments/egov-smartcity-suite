@@ -249,7 +249,7 @@ public class PropertyService {
 
     private BigDecimal totalAlv = BigDecimal.ZERO;
 
-	/**
+    /**
      * Creates a new property if property is in transient state else updates
      * persisted property
      *
@@ -565,11 +565,11 @@ public class PropertyService {
             if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
-            else if (installment.equals(currentInstall)){
-            	// FloorwiseDemandCalculations should be set only for the
+            else if (installment.equals(currentInstall)) {
+                // FloorwiseDemandCalculations should be set only for the
                 // current installment for each floor.
-                for (final Floor floor : property.getPropertyDetail().getFloorDetails()){
-                	ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
+                for (final Floor floor : property.getPropertyDetail().getFloorDetails()) {
+                    ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
                 }
                 ptDmdCalc.setAlv(totalAlv);
             }
@@ -2546,11 +2546,11 @@ public class PropertyService {
     }
 
     /**
-     *
-     * Getting User assignment based on designation ,department and zone boundary
-     * 
-     * Reading Designation and Department from appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone
+     * boundary Reading Designation and Department from appconfig values and
+     * Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
+     * 
      * @param basicProperty
      * @return
      */
@@ -2563,9 +2563,8 @@ public class PropertyService {
         for (String dept : department) {
             for (String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(),
-                        designationService.getDesignationByName(desg).getId(), basicProperty.getPropertyID()
-                                .getElectionBoundary().getId());
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        basicProperty.getPropertyID().getElectionBoundary().getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -2726,6 +2725,19 @@ public class PropertyService {
         return propertyList;
     }
 
+    public Assignment getWorkflowInitiator(final PropertyImpl property) {
+        Assignment wfInitiator;
+        if (isEmployee(property.getCreatedBy()))
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+        else if (!property.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                    .getId());
+        return wfInitiator;
+    }
+
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
@@ -2747,10 +2759,10 @@ public class PropertyService {
     }
 
     public BigDecimal getTotalAlv() {
-		return totalAlv;
-	}
+        return totalAlv;
+    }
 
-	public void setTotalAlv(BigDecimal totalAlv) {
-		this.totalAlv = totalAlv;
-	}
+    public void setTotalAlv(BigDecimal totalAlv) {
+        this.totalAlv = totalAlv;
+    }
 }

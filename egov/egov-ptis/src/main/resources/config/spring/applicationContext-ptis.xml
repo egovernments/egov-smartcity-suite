@@ -112,4 +112,5 @@
 	</bean>
 	
 	<bean id="demolitionService" class="org.egov.ptis.domain.service.demolition.PropertyDemolitionService" />
+	<bean id="taxExemptionService" class="org.egov.ptis.domain.service.exemption.TaxExemptionService" />
 </beans>

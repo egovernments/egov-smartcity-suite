@@ -67,6 +67,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
@@ -160,7 +161,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "view", location = "create/createProperty-view.jsp"),
         @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
         @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp"),
-        @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp")})
+        @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp") })
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = -2329719786287615451L;
@@ -173,7 +174,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String RESULT_DATAENTRY = "dataEntry";
     public static final String PRINTACK = "printAck";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-    private String MEESEVASERVICECODEFORNEWPROPERTY = "PTIS01";    
+    private String MEESEVASERVICECODEFORNEWPROPERTY = "PTIS01";
     private String MEESEVASERVICECODEFORSUBDIVISION = "PTIS04";
 
     private final Logger LOGGER = Logger.getLogger(getClass());
@@ -250,7 +251,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @Autowired
     private SecurityUtils securityUtils;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
-    
+
     public CreatePropertyAction() {
         super();
         property.setPropertyDetail(new BuiltUpProperty());
@@ -285,26 +286,26 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
                 addActionMessage(getText("MEESEVA.005"));
-                return RESULT_ERROR; 
+                return RESULT_ERROR;
             } else {
-                
-                 
-                if(request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)){
-                   getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-               } if(request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)){
-                   getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
-               }
-              property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
-              property.setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
+
+                if (request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)) {
+                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+                }
+                if (request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)) {
+                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
+                }
+                property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+                property.setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
             }
-       }
+        }
         return RESULT_NEW;
     }
 
     private void getMutationListByCode(String code) {
-        List<PropertyMutationMaster>  mutationList = getPersistenceService().findAllBy(
-                   "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN,code);
-           addDropdownData("MutationList", mutationList);
+        List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
+                "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN, code);
+        addDropdownData("MutationList", mutationList);
     }
 
     @Action(value = "/createProperty-create")
@@ -327,14 +328,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
 
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-        if(!loggedUserIsMeesevaUser)
-          basicPropertyService.persist(basicProperty);
+        if (!loggedUserIsMeesevaUser)
+            basicPropertyService.persist(basicProperty);
         else {
-            HashMap<String,String> meesevaParams=   new HashMap<String,String>();
+            HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-            basicPropertyService.createBasicProperty(basicProperty,meesevaParams);
+            basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
         }
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
@@ -345,12 +346,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
             LOGGER.debug("create: Property creation ended");
         }
-        if(!loggedUserIsMeesevaUser)
+        if (!loggedUserIsMeesevaUser)
             return RESULT_ACK;
         else {
             return MEESEVA_RESULT_ACK;
-        }            
-            
+        }
+
     }
 
     private void populateFormData() {
@@ -554,7 +555,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("approve: Property approval started for Property: " + property + " BasicProperty: "
                     + basicProp);
-        property.setStatus(STATUS_DEMAND_INACTIVE);
+        // For exempted property on approve setting status as 'A'
+        if (property.getIsExemptedFromTax())
+            property.setStatus(STATUS_ISACTIVE);
+        else
+            property.setStatus(STATUS_DEMAND_INACTIVE);
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProp.setUpicNo(assessmentNo);
         basicProp.setAssessmentdate(new Date());
@@ -661,19 +666,21 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
         final List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
                 "from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
-        
-        if(null != property && property.getMeesevaServiceCode()!=null)
-        {
-            if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)){
+
+        if (null != property && property.getMeesevaServiceCode() != null) {
+            if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)) {
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-            } if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)){
+            }
+            if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)) {
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
             }
-         }
-        List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage where isActive = true order by usageName");
+        }
+        List<PropertyUsage> usageList = getPersistenceService().findAllBy(
+                "from PropertyUsage where isActive = true order by usageName");
 
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-        final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification where isActive = true order by typeName ");
+        final List<String> StructureList = getPersistenceService().findAllBy(
+                "from StructureClassification where isActive = true order by typeName ");
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
                 "from TaxExeptionReason order by name");
@@ -951,16 +958,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Override
     public void validate() {
-        
-        if(null != property && property.getMeesevaServiceCode()!=null && !property.getMeesevaServiceCode().equals("") )
-        {
-            if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)){
+
+        if (null != property && property.getMeesevaServiceCode() != null
+                && !property.getMeesevaServiceCode().equals("")) {
+            if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)) {
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-            } if(property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)){
+            }
+            if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)) {
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
             }
         }
-        
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
                     + ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", MutationId: " + mutationId);
@@ -988,7 +996,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
             addActionError(getText("mandatory.regdocno"));
         }
-        
+
         if (electionWardId == null || electionWardId == -1) {
             addActionError(getText("mandatory.election.ward"));
         }

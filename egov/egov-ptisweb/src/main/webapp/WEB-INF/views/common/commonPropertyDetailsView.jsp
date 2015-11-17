@@ -187,6 +187,14 @@
 				</div>
 				
 				<div class="row">
+				<%-- <c:choose>
+				<c:when test="${property.isExemptedFromTax == 'true'}">
+				<div class="panel-heading">
+	               This property tax is exempted with reason <span class="bold"><c:out default="N/A" value="${property.taxExemptedReason.name}" /></span>
+                 </div>
+				</c:when>
+				<c:otherwise> --%>
+				<c:if test="${property.isExemptedFromTax == 'false'}">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0"
 						style="text-align: left">
@@ -263,4 +271,7 @@
 						</div>
 					</div>
 				</div>
+				</c:if>
+				<%-- </c:otherwise>
+				</c:choose> --%>
 		</div>

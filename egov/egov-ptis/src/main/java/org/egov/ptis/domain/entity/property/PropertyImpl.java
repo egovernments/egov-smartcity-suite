@@ -50,6 +50,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 import java.math.BigDecimal;
@@ -623,6 +624,8 @@ public class PropertyImpl extends StateAware implements Property {
             url = "/ptis/create/createProperty-view.action" + "?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null && getState().getValue().startsWith(WFLOW_ACTION_NAME_DEMOLITION))
             url = "/ptis/demolition/update/" + getId();
+        else if (getState() != null && getState().getValue() != null && getState().getValue().startsWith(WFLOW_ACTION_NAME_EXEMPTION))
+            url = "/ptis/exemption/update/" + getId();
         return url;
     }
 

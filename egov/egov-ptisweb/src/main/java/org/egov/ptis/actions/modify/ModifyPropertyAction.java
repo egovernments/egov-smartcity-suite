@@ -737,7 +737,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             username = propertyModel.getCreatedBy().getUsername();
         else
             username = userAssignment.getEmployee().getUsername();
-        final Assignment wfInitiator = getWorkflowInitiator(propertyModel);
+        final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
         if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
             wfInitiatorRejected = Boolean.TRUE;
             setAckMessage(getText(PROPERTY_MODIFY_FINAL_REJECT_SUCCESS, new String[] { getModifyReasonString() }));
