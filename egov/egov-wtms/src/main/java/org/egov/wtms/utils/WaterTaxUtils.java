@@ -183,14 +183,14 @@ public class WaterTaxUtils {
 
     public Boolean getCurrentUserRole(final User currentUser) {
         Boolean applicationByOthers = false;
+
         for (final Role userrole : currentUser.getRoles())
-            for (final AppConfigValues appconfig : getThirdPartyUserRoles()) {
+            for (final AppConfigValues appconfig : getThirdPartyUserRoles())
                 if (userrole != null && userrole.getName().equals(appconfig.getValue())) {
                     applicationByOthers = true;
                     break;
                 }
-                break;
-            }
+
         return applicationByOthers;
     }
 
@@ -267,7 +267,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -427,7 +427,7 @@ public class WaterTaxUtils {
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
                     if (role != null && role.getName().contains(WaterTaxConstants.ROLE_CSCOPERTAOR) || role != null
-                            && role.getName().contains(WaterTaxConstants.ROLE_ULBOPERATOR)) {
+                    && role.getName().contains(WaterTaxConstants.ROLE_ULBOPERATOR)) {
                         isCSCOperator = true;
                         break;
                     }
@@ -447,8 +447,8 @@ public class WaterTaxUtils {
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
             if (waterconnectiondetails.getDemand() != null)
                 finalDueAmount = finalDueAmount
-                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                                .getDemand().getAmtCollected().doubleValue());
+                + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
+                        .getDemand().getAmtCollected().doubleValue());
         return finalDueAmount;
     }
 
