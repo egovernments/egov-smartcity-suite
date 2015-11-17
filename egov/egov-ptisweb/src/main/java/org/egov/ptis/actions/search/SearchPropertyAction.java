@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLL
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -114,15 +115,18 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
-                        "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}","meesevaApplicationNumber","${meesevaApplicationNumber}" ,"meesevaServiceCode","${meesevaServiceCode}","applicationType","${applicationType}" }),
+                "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
+                "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
                 "namespace", "/revPetition", "propertyId", "${assessmentNum}" }),
-        @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),        
+        @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "collectPropertyTax-generateBill", params = {
                 "namespace", "/collection", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
-        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}") })
+        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}"),
+        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}") })
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -162,8 +166,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
-    
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -183,7 +186,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private VacancyRemissionService vacancyRemissionService;
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Override
     public Object getModel() {
         return null;
@@ -248,24 +251,30 @@ public class SearchPropertyAction extends BaseFormAction {
             if (!isDemandActive) {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
-            } 
-            
+            }
+
             loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
             if (loggedUserIsMeesevaUser) {
-                if(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
+                if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
                     return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
             }
-            
-            
+
         } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType))
             if (basicProperty.getProperty().getIsExemptedFromTax()) {
                 addActionError(getText("error.msg.taxExempted"));
                 return COMMON_FORM;
             }
-        
-        if(applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
-        	mode = "commonSearch";
+
+        if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
+                || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
+            if (!isDemandActive) {
+                addActionError(getText("taxExemption.demandActive"));
+                return COMMON_FORM;
+            } else
+                mode = "commonSearch";
+        }
         return applicationType;
+
     }
 
     /**
@@ -510,7 +519,7 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     @Override
-    public void validate() { 
+    public void validate() {
         if (StringUtils.equals(mode, "assessment")) {
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum)
                     || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))
@@ -571,9 +580,12 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
                 searchResultMap.put("isTaxExempted", String.valueOf(property.getIsExemptedFromTax()));
                 searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
-                searchResultMap.put("enableVacancyRemission", String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
-                searchResultMap.put("enableMonthlyUpdate", String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
-                searchResultMap.put("enableVRApproval", String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVacancyRemission",
+                        String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
+                searchResultMap.put("enableMonthlyUpdate",
+                        String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVRApproval",
+                        String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
                     searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
@@ -664,9 +676,12 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
                 searchResultMap.put("isTaxExempted", String.valueOf(property.getIsExemptedFromTax()));
                 searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
-                searchResultMap.put("enableVacancyRemission", String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
-                searchResultMap.put("enableMonthlyUpdate", String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
-                searchResultMap.put("enableVRApproval", String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVacancyRemission",
+                        String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
+                searchResultMap.put("enableMonthlyUpdate",
+                        String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVRApproval",
+                        String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
                     searchResultMap.put("currDemand", "0");
                     searchResultMap.put("arrDemandDue", "0");
