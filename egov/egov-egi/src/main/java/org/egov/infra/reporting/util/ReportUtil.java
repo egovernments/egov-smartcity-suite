@@ -55,7 +55,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -67,7 +66,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Provides utility methods related to reports
@@ -82,9 +80,6 @@ public final class ReportUtil {
      */
     private ReportUtil() {
     }
-
-    @Autowired
-    private static UserService userService;
 
     /**
      * Returns input stream for given file. First checks in the custom location
@@ -120,7 +115,7 @@ public final class ReportUtil {
      * @return user signature for the given user id
      */
     public static InputStream getUserSignature(final Long userId) {
-        User user = userService.getUserById(userId);
+        final User user = (User) HibernateUtil.getCurrentSession().load(User.class, userId);
         if (user != null && user.getSignature() != null) {
             return new ByteArrayInputStream(user.getSignature());
         } else {
@@ -377,14 +372,6 @@ public final class ReportUtil {
         String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                 .concat((String) request.getSession().getAttribute("citylogo"));
         return imagePath;
-    }
-
-    public static UserService getUserService() {
-        return userService;
-    }
-
-    public static void setUserService(UserService userService) {
-        ReportUtil.userService = userService;
     }
 
 }

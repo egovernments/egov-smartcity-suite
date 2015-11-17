@@ -107,10 +107,6 @@
 		<property name="daoService" ref="persistenceService" />
 		<property name="authRuleService" ref="authRuleService" />
 	</bean>
-	
-	<bean id="reportUtil" class="org.egov.infra.reporting.util.ReportUtil" scope="prototype">
-		<property name="userService" ref="userService" />
-	</bean>
 
 	<bean id="applicationCoreFilter" class="org.egov.infra.web.filter.ApplicationCoreFilter"/>
 	
