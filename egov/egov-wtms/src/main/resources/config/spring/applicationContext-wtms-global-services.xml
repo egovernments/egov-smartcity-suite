@@ -56,6 +56,9 @@
     <bean id="waterChargesIntegrationServiceImpl" class="org.egov.wtms.integration.WaterChargesIntegrationServiceImpl" scope="prototype">
 	</bean>
 	
+	<bean id="waterChargesThirdPartyService" class="org.egov.wtms.integration.WaterChargesThirdPartyService" scope="prototype">
+	</bean>
+	
     <bean id="applicationWorkflowCustomDefaultImpl" class="org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype" />
      <bean id="dcbdemandService" class="org.egov.dcb.service.DCBServiceImpl" scope="prototype" />
 	
