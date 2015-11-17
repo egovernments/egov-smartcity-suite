@@ -45,7 +45,6 @@ import java.math.BigDecimal;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-@SuppressWarnings("serial")
 public class PayWaterTaxDetails implements Serializable {
     /**
      *
@@ -159,12 +158,12 @@ public class PayWaterTaxDetails implements Serializable {
         this.branchName = branchName;
     }
 
-	public String getUlbCode() {
-		return ulbCode;
-	}
+    public String getUlbCode() {
+        return ulbCode;
+    }
 
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
+    public void setUlbCode(final String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
 
 }

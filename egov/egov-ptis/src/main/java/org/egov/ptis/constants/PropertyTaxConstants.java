@@ -1072,6 +1072,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID = "Payment mode is invalid";
     public static final String THIRD_PARTY_PAYMENT_MODE_CASH = "CASH";
     public static final String THIRD_PARTY_PAYMENT_MODE_CHEQUE = "CHEQUE";
+    public static final String THIRD_PARTY_PAYMENT_MODE_DD = "DD";
     public static final String THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS = "PTIS-REST-15";
     public static final String THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS = "Aadhaar number {0} already exists";
     public static final String THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS = "PTIS-REST-16";

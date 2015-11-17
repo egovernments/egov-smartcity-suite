@@ -49,13 +49,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -80,7 +75,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RestWaterConnectionCollection {
-	private static Logger LOG=Logger.getLogger(RestWaterConnectionCollection.class);
+    private static Logger LOG = Logger.getLogger(RestWaterConnectionCollection.class);
 
     @Autowired
     private WaterTaxExternalService waterTaxExternalService;
@@ -94,14 +89,10 @@ public class RestWaterConnectionCollection {
     /**
      * This method is used to pay the water tax.
      *
-     * @param consumerNo
-     *            - consumer number
-     * @param paymentMode
-     *            - mode of payment
-     * @param totalAmount
-     *            - total amount paid
-     * @param paidBy
-     *            - payer's name
+     * @param consumerNo - consumer number
+     * @param paymentMode - mode of payment
+     * @param totalAmount - total amount paid
+     * @param paidBy - payer's name
      * @return responseJson - server response in JSON format
      * @throws JsonGenerationException
      * @throws JsonMappingException
@@ -109,41 +100,37 @@ public class RestWaterConnectionCollection {
      */
     @RequestMapping(value = "/watercharges/paywatertax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String payWaterTax(@Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails)
+    {
+        WaterReceiptDetails waterReceiptDetails = null;
+        try {
+            final ErrorDetails errorDetails = validatePaymentDetails(payWaterTaxDetails);
+            if (null != errorDetails)
+                return JsonConvertor.convert(errorDetails);
+            else
+                waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
+        } catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+
+            final List<ValidationError> errors = e.getErrors();
+            for (final ValidationError ve : errors)
             {
-     String responseJson="";
-      WaterReceiptDetails waterReceiptDetails=null ;
-    	try {
-			final ErrorDetails errorDetails = validatePaymentDetails(payWaterTaxDetails);
-			if (null != errorDetails)
-			    return JsonConvertor.convert(errorDetails);
-			else {
-				waterReceiptDetails   = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
-			   
-			}
-		 }catch (ValidationException e) {
-		e.printStackTrace();
-			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
-			
-			List<ValidationError> errors = e.getErrors();
-			for(ValidationError ve:errors)
-			{
-				ErrorDetails er=new ErrorDetails();
-				er.setErrorCode(ve.getKey());
-				er.setErrorMessage(ve.getMessage());
-				errorList.add(er);
-			}
-			responseJson = JsonConvertor.convert(errorList);  
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			List<ErrorDetails> errorList=new ArrayList<ErrorDetails>();
-			ErrorDetails er=new ErrorDetails();
-			er.setErrorCode(e.getMessage());
-			er.setErrorMessage(e.getMessage());
-			errorList.add(er);
-			responseJson = JsonConvertor.convert(errorList);  
-		}
-    	 return JsonConvertor.convert(waterReceiptDetails);
+                final ErrorDetails er = new ErrorDetails();
+                er.setErrorCode(ve.getKey());
+                er.setErrorMessage(ve.getMessage());
+                errorList.add(er);
+            }
+            JsonConvertor.convert(errorList);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+            final ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            errorList.add(er);
+            JsonConvertor.convert(errorList);
+        }
+        return JsonConvertor.convert(waterReceiptDetails);
     }
 
     @RequestMapping(value = "/watercharges/getwatertaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -164,7 +151,7 @@ public class RestWaterConnectionCollection {
                 waterTaxDetails.setPropertyAddress("");
             if (waterTaxDetails.getTaxDetails() == null) {
                 final RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
-                final List taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
+                final List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
                 taxDetails.add(ar);
                 waterTaxDetails.setTaxDetails(taxDetails);
             }
@@ -173,8 +160,6 @@ public class RestWaterConnectionCollection {
 
         }
     }
-
-   
 
     public ErrorDetails validatePaymentDetBeforCollection(final PayWaterTaxDetails payWaterTaxDetails) {
         ErrorDetails errorDetails = null;
@@ -211,14 +196,14 @@ public class RestWaterConnectionCollection {
         }
         if (waterConnDetailsObj != null) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
-            LOG.error("totalAmountDue:"+totalAmountDue);
-            
-            LOG.error("payWaterTaxDetails.getTotalAmount():"+payWaterTaxDetails.getTotalAmount());
-            
-            LOG.error("compare "+totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
-            
-            LOG.error("compare "+totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
-            
+            LOG.error("totalAmountDue:" + totalAmountDue);
+
+            LOG.error("payWaterTaxDetails.getTotalAmount():" + payWaterTaxDetails.getTotalAmount());
+
+            LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+
+            LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+
             if (totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()) == 1
                     || totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()) == -1) {
                 errorDetails = new ErrorDetails();
@@ -227,20 +212,21 @@ public class RestWaterConnectionCollection {
             }
 
         }
-        if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId()) ){
+        if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_REQUIRED);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED);
         }
-        else if(payWaterTaxDetails.getTransactionId()!=null || !"".equals(payWaterTaxDetails.getTransactionId())){
-       BillReceiptInfo billReceipt=waterTaxExternalService.validateTransanctionIdPresent(payWaterTaxDetails.getTransactionId());
-        if(billReceipt!=null)
-        {
-             errorDetails = new ErrorDetails();
-             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE);
-             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE);
-       
-        }
+        else if (payWaterTaxDetails.getTransactionId() != null || !"".equals(payWaterTaxDetails.getTransactionId())) {
+            final BillReceiptInfo billReceipt = waterTaxExternalService.validateTransanctionIdPresent(payWaterTaxDetails
+                    .getTransactionId());
+            if (billReceipt != null)
+            {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE);
+
+            }
         }
         if (payWaterTaxDetails.getPaymentMode() == null || payWaterTaxDetails.getPaymentMode().trim().length() == 0) {
             errorDetails = new ErrorDetails();
@@ -255,33 +241,31 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID);
         }
 
-        if(payWaterTaxDetails.getPaymentMode() != null && 
-        		PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().trim()))
-        {
-        if (payWaterTaxDetails.getChqddNo() == null || payWaterTaxDetails.getChqddNo().trim().length() == 0) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED);
-        } else
-
-            if (payWaterTaxDetails.getChqddDate() == null) {
+        if (payWaterTaxDetails.getPaymentMode() != null &&
+                PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().trim()))
+            if (payWaterTaxDetails.getChqddNo() == null || payWaterTaxDetails.getChqddNo().trim().length() == 0) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED);
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED);
             } else
 
-                if (payWaterTaxDetails.getBankName() == null || payWaterTaxDetails.getBankName().trim().length() == 0) {
+                if (payWaterTaxDetails.getChqddDate() == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED);
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED);
                 } else
 
-                    if (payWaterTaxDetails.getBranchName() == null) {
+                    if (payWaterTaxDetails.getBankName() == null || payWaterTaxDetails.getBankName().trim().length() == 0) {
                         errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED);
-                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
-                    }
-        }
+                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED);
+                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED);
+                    } else
+
+                        if (payWaterTaxDetails.getBranchName() == null) {
+                            errorDetails = new ErrorDetails();
+                            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED);
+                            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
+                        }
 
         return errorDetails;
     }
