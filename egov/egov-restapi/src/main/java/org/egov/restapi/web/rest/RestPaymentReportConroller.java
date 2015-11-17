@@ -54,6 +54,7 @@ import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.collection.service.ServiceCategoryService;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -132,7 +133,9 @@ public class RestPaymentReportConroller {
 		
 			ErrorDetails successDetail=new ErrorDetails();
 			try{
+				
 			if(paymentInfoSearchRequest.getReceiptNumber()!=null && !paymentInfoSearchRequest.getReceiptNumber().isEmpty()) {
+				  EgovThreadLocals.setUserId(Long.valueOf("2"));
 				String	cancelReceipt = collectionService.cancelReceipt(paymentInfoSearchRequest.getReceiptNumber());
 				successDetail.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
 				successDetail.setErrorMessage(cancelReceipt);
