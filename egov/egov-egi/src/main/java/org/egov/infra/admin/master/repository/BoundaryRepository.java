@@ -23,16 +23,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -42,6 +42,7 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.QueryHint;
 
@@ -95,6 +96,9 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'%'")
     List<Boundary> findActiveChildrenWithParent(@Param("parentId") Long parentId);
+    
+    @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath in :mpath ")
+    List<Boundary> findActiveBoundariesForMpath(@Param("mpath") final Set<String> mpath);
 
     @Query("select b from Boundary b where b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
