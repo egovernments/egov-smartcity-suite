@@ -126,7 +126,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}" ,params={"meesevaApplicationNumber","${meesevaApplicationNumber}"}),
-        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}") })
+        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}",params={"meesevaApplicationNumber","${meesevaApplicationNumber}"}) })
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -210,7 +210,7 @@ public class SearchPropertyAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/search/searchProperty-commonForm")
     public String commonForm() {
-        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        loggedUserIsMeesevaUser =propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
@@ -253,7 +253,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
 
-            loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+            loggedUserIsMeesevaUser =propertyService.isMeesevaUser(securityUtils.getCurrentUser());
             if (loggedUserIsMeesevaUser) {
                 if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
                     return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;

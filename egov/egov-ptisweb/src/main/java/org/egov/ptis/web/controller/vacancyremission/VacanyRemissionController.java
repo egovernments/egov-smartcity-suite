@@ -192,11 +192,12 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         }
                         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService
                                 .getLoggedInUser());
-                        if (loggedUserIsMeesevaUser)
+                        if (loggedUserIsMeesevaUser){
                             if (meesevaApplicationNumber == null)
                                 throw new ApplicationRuntimeException("MEESEVA.005");
                             else
                                 vacancyRemission.setMeesevaApplicationNumber(meesevaApplicationNumber);
+                        }
                     }
                 } else {
                     final Map<String, BigDecimal> propertyTaxDetails = propertyService

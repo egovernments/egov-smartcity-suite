@@ -1,0 +1,4 @@
+---eg_action---
+
+INSERT into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'PrintMeesevaReceiptForVacancyRem','/vacancyremission/generate-meesevareceipt', null,(select id from EG_MODULE where name = 'Existing property'),1,'PrintMeesevaReceiptForVacancyRem','f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));
+INSERT into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'PrintMeesevaReceiptForexemption','/exemption/generate-meesevareceipt', null,(select id from EG_MODULE where name = 'Existing property'),1,'PrintMeesevaReceiptForexemption','f','ptis',0,1,now(),1,now(),(select id from eg_module  where name = 'Property Tax'));

@@ -50,14 +50,20 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -76,13 +82,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @author subhash
  */
 @Controller
-@RequestMapping(value = "/exemption/form/{assessmentNo}")
+@RequestMapping(value = "/exemption")
 public class TaxExemptionController extends GenericWorkFlowController {
 
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
@@ -94,12 +103,16 @@ public class TaxExemptionController extends GenericWorkFlowController {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
-    private PropertyService propertyService;
-    private TaxExemptionService taxExemptionService;
-    
+    private final PropertyService propertyService;
+    private final TaxExemptionService taxExemptionService;
+    private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
-    public TaxExemptionController(TaxExemptionService taxExemptionService, PropertyService propertyService) {
+    public TaxExemptionController(final TaxExemptionService taxExemptionService, final PropertyService propertyService) {
         this.taxExemptionService = taxExemptionService;
         this.propertyService = propertyService;
     }
@@ -124,8 +137,9 @@ public class TaxExemptionController extends GenericWorkFlowController {
         return taxExemptionService.getSession().createQuery("from TaxExeptionReason order by name").list();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
     public String exemptionForm(final HttpServletRequest request, final Model model,
+            @RequestParam(required = false) final String meesevaApplicationNumber,
             @PathVariable("assessmentNo") final String assessmentNo) {
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (null != basicProperty && basicProperty.isUnderWorkflow()) {
@@ -151,6 +165,12 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 return TARGET_TAX_DUES;
             }
         }
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser)
+            if (meesevaApplicationNumber == null)
+                throw new ApplicationRuntimeException("MEESEVA.005");
+            else
+                propertyImpl.setMeesevaApplicationNumber(meesevaApplicationNumber);
         model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
         taxExemptionService.addModelAttributes(model, basicProperty);
         prepareWorkflow(model, propertyImpl, new WorkflowContainer());
@@ -158,8 +178,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
     }
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
-    public String exemptionFormSubmit(@ModelAttribute Property property, final BindingResult errors,
+    @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.POST)
+    public String exemptionFormSubmit(@ModelAttribute final Property property, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
             @RequestParam String workFlowAction) {
         final Character status = STATUS_WORKFLOW;
@@ -167,7 +187,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String approvalComent = "";
         String taxExemptedReason = "";
 
-        if(request.getParameter("taxExemptedReason") != null) 
+        if (request.getParameter("taxExemptedReason") != null)
             taxExemptedReason = request.getParameter("taxExemptedReason");
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
@@ -176,16 +196,44 @@ public class TaxExemptionController extends GenericWorkFlowController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
-        taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                approvalPosition, taxExemptedReason,propertyByEmployee,EXEMPTION);
+        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+
+        loggedUserIsMeesevaUser =propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+
+        if (loggedUserIsMeesevaUser) {
+            final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+            meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+
+            if (StringUtils.isBlank(property.getApplicationNo()))
+                property.setApplicationNo(applicationNumberGenerator.generate());
+            taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
+                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
+        } else
+            taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
+                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
 
         model.addAttribute(
                 "successMessage",
-                "Property exemption data saved successfully in the system and forwarded to " 
-                        + propertyTaxUtil.getApproverUserName(((PropertyImpl)property).getState().getOwnerPosition().getId())+ " with application number "
-                                + property.getApplicationNo());;
-        return TAX_EXEMPTION_SUCCESS;
+                "Property exemption data saved successfully in the system and forwarded to "
+                        + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition()
+                                .getId()) + " with application number " + property.getApplicationNo());
+        if (loggedUserIsMeesevaUser)
+            return "redirect:/exemption/generate-meesevareceipt/"
+            + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+            + ((PropertyImpl) property).getApplicationNo();
+        else
+
+            return TAX_EXEMPTION_SUCCESS;
     }
 
+    @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)
+    public RedirectView generateMeesevaReceipt(final HttpServletRequest request, final Model model) {
+        final String keyNameArray = request.getParameter("transactionServiceNumber");
+
+        final RedirectView redirect = new RedirectView(PropertyTaxConstants.MEESEVA_REDIRECT_URL + keyNameArray, false);
+        final FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
+        if (outputFlashMap != null)
+            outputFlashMap.put("url", request.getRequestURL());
+        return redirect;
+    }
 }
