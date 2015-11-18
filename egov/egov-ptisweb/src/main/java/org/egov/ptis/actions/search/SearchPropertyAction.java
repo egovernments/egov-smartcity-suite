@@ -125,7 +125,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "namespace", "/collection", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
-        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}"),
+        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}" ,params={"meesevaApplicationNumber","${meesevaApplicationNumber}"}),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}") })
 public class SearchPropertyAction extends BaseFormAction {
     /**

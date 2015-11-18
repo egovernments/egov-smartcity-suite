@@ -247,7 +247,7 @@ public class NewConnectionController extends GenericConnectionController {
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                 + waterTaxUtils.getApproverUserName(approvalPosition);
         if (loggedUserIsMeesevaUser)
-            return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + pathVars;
+            return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + waterConnectionDetails.getApplicationNumber();
         else
             return "redirect:/application/application-success?pathVars=" + pathVars;
 
