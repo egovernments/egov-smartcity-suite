@@ -80,6 +80,7 @@ import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.masters.entity.enums.Source;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -118,7 +119,6 @@ public class WaterConnectionDetails extends StateAware {
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ExistingConnectionDetails existingConnection;
 
-    // @Column(name = "applicationNumber", unique = true)
     @SafeHtml
     private String applicationNumber;
 
@@ -244,6 +244,9 @@ public class WaterConnectionDetails extends StateAware {
 
     @Transient
     private String meesevaApplicationNumber;
+
+    @Enumerated(EnumType.STRING)
+    private Source source;
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -610,6 +613,14 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setMeesevaApplicationNumber(final String meesevaApplicationNumber) {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(final Source source) {
+        this.source = source;
     }
 
 }
