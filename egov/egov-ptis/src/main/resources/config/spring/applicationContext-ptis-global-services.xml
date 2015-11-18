@@ -140,4 +140,7 @@
 		<property name="eisCommonsService" ref="eisCommonsService" />
 		<property name="basicPropertyService" ref="basicPropertyService" />
 	</bean>  
+	<bean id="taxExemptionService" class="org.egov.ptis.domain.service.exemption.TaxExemptionService" scope="prototype" />
+	<bean id="vacancyRemissionService" class="org.egov.ptis.domain.service.property.VacancyRemissionService" scope="prototype" autowire-candidate="true" />
+	
 </beans>
