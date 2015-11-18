@@ -658,7 +658,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportParams.put("logoPath", cityLogo);
             reportParams.put("cityName", cityName);
 
-            reportParams.put("recievedBy", objection.getRecievedBy());
+            reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
             reportParams.put("docNumberObjection", objection.getObjectionNumber());
 
             reportParams.put("currentDate", dateformat.format(new Date()));
