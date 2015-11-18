@@ -59,6 +59,7 @@ import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.masters.entity.enums.Source;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -234,6 +235,7 @@ public class NewConnectionController extends GenericConnectionController {
             meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
             if (waterConnectionDetails.getApplicationNumber() == null) {
                 waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
+                waterConnectionDetails.setSource(Source.MEESEVA);
                 waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
                         meesevaParams);
