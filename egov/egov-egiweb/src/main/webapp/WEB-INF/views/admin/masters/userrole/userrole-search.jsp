@@ -60,7 +60,7 @@
 						<span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-6">
-							<input id="user_name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+							<input id="user_name" type="text" class="form-control typeahead is_valid_alphanumeric" placeholder="" autocomplete="off" />
 							<input type="hidden" name="userId" id="usernameId"/>
 						</div>
 					</div>
