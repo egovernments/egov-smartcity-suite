@@ -59,7 +59,7 @@ function EnableVoucherDetails(obj){
 
 </head>
 <body onLoad="onBodyLoad();loadDropDownCodes();loadDropDownCodesFunction();loadGridOnValidationFail();">
-<s:form theme="simple" name="serviceDetailsForm" action="serviceDetails-create" method="post">
+<s:form theme="simple" name="serviceDetailsForm" action="serviceDetails-create.action" method="post">
 <s:token />
 <s:push value="model">
 	

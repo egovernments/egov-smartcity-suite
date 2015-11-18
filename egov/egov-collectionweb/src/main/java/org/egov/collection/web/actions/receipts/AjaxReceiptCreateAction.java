@@ -74,12 +74,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @ResultPath("/WEB-INF/jsp/receipts/")
 @Results({
         @Result(name = "schemeList", location = "ajaxReceiptCreate-schemeList.jsp"),
-        @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp")
+        @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp"),
+        @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp")
 })
 public class AjaxReceiptCreateAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String DETAILTYPEID = "detailtypeid";
-    private static final String RESULT = "result";
+    protected static final String RESULT = "result";
     private String value;
     private List<EntityType> entityList;
     private static final String accountDetailTypeQuery = " from Accountdetailtype where id=?";
@@ -123,6 +124,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         return RESULT;
     }
 
+   @Action( value="/ajaxReceiptCreate-getDetailCode")
     public String getDetailCode() throws Exception
     {
         value = "";

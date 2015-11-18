@@ -179,7 +179,7 @@ function loadGridOnValidationFail(){
 		accountCodes[i] = document.getElementById('accountDetails['+i+'].glCodeId.glcode').value;
 	}
 	}
-	var url = path+'/receipts/ajaxReceiptCreate!getDetailCode.action?accountCodes='+accountCodes;
+	var url = path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackSLAccCode, null);
 }
 var callbackSLAccCode = {

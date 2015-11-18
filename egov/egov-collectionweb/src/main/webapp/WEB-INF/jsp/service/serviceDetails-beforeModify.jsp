@@ -65,7 +65,7 @@ function EnableVoucherDetails(obj){
 </head>
 
 <body onload="onBodyLoad();loadDropDownCodes();loadDropDownCodesFunction();loadGridOnValidationFail();">
-<s:form theme="simple" name="serviceDetailsForm" action="serviceDetails" method="post">
+<s:form theme="simple" name="serviceDetailsForm" action="serviceDetails-modify.action" method="post">
 <s:token />
 <s:push value="model">
 	
@@ -73,7 +73,7 @@ function EnableVoucherDetails(obj){
 	<div class="buttonbottom">
 			<label>
 				<s:submit type="submit" cssClass="buttonsubmit" id="button"
-					value="Save" method="modify" onClick = "return validate();"/>
+					value="Save" onClick = "return validate();"/>
 			</label>&nbsp;
 			
 			<label>
