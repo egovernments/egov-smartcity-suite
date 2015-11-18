@@ -566,6 +566,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return RECONRESULT;
     }
 
+    @Action(value = "/citizen/onlineReceipt-view")
     public String view() {
         setReceipts(new ReceiptHeader[1]);
         receipts[0] = receiptHeaderService.findById(getReceiptId(), false);

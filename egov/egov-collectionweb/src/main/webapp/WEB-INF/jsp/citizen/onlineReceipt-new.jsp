@@ -120,7 +120,7 @@ function populateapportioningamountnew(){
 		   		return;
 		    	}
 		    	if(collectiontotal==""){
-		   		waterMarkInitialize('paymentAmount','0.0');
+		   		waterMarkInitialize('paymentAmount','');
 		    		return;
 		    	}
 			if(collectiontotal <= billingtotal)
@@ -477,7 +477,7 @@ function onLoad(){
 	             <tr>
 		          <!--td class="tablestyle3">&nbsp;</td-->
 		          <td colspan="1" class="blueborderfortd text-right bg-gray"><span class="justbold"><s:text name="onlineReceipts.balanceamounttopay"/> :<span class="mandatory1">*</span></span></td>
-		          <td class="blueborderfortd text-right bg-gray"><s:textfield label="paymentAmount" id="paymentAmount" maxlength="12" name="paymentAmount" size="12" value="0.0" cssStyle="color:DarkGray; text-align:right" onfocus = "waterMarkTextIn('paymentAmount','0.0');" onkeyup="populateapportioningamountnew()" onload="waterMarkInitialize('paymentAmount','0.0');"/></td>
+		          <td class="blueborderfortd text-right bg-gray"><s:textfield label="paymentAmount" id="paymentAmount" maxlength="12" name="paymentAmount" size="12" placeholder="0.0" cssStyle="color:DarkGray; text-align:right" onkeyup="populateapportioningamountnew()" onload="waterMarkInitialize('paymentAmount','0.0');"/></td>
 	            </tr>
 	      
 		       <td colspan="2">

@@ -57,6 +57,7 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,14 +104,15 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_LOCALE, EGovConfig.getMessage(
                 CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_LOCALE));
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
+        fields.put(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
                 .append(paymentServiceDetails.getId());
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
         fields.put(
                 CollectionConstants.AXIS_AMOUNT,
-                receiptHeader.getTotalAmount()
-                        .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP).toString());
+                receiptHeader.getTotalAmount()/*
+                        .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP)*/.toString());
         // fields.put(CollectionConstants.AXIS_AMOUNT, "400");
         if (CollectionConstants.AXIS_SECURE_SECRET != null && CollectionConstants.AXIS_SECURE_SECRET.length() > 0) {
             final String secureHash = hashAllFields(fields);
@@ -211,7 +213,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
         Date transactionDate = null;
         try {
-            transactionDate = sdf.parse(fields.get(CollectionConstants.AXIS_AMOUNT));
+            transactionDate = sdf.parse(fields.get(CollectionConstants.AXIS_BATCH_NO));
             axisResponse.setTxnDate(transactionDate);
         } catch (final ParseException e) {
             LOGGER.error("Error occured in parsing the transaction date [" + fields.get("vpc_BatchNo") + "]", e);
