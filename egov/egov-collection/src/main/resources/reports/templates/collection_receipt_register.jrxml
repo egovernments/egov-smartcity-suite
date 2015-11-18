@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-26T12:44:16 -->
+<!-- 2015-11-18T18:31:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -421,7 +421,7 @@ ORDER BY
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
@@ -435,7 +435,7 @@ ORDER BY
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
 			</textField>
@@ -449,12 +449,12 @@ ORDER BY
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="570" y="112" width="80" height="20" uuid="66915ce9-d247-4ebb-b90a-a748cc22c9dd"/>
+				<reportElement x="552" y="112" width="98" height="20" uuid="66915ce9-d247-4ebb-b90a-a748cc22c9dd"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -463,7 +463,7 @@ ORDER BY
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
@@ -488,7 +488,7 @@ ORDER BY
 				<text><![CDATA[Payment Mode:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="130" y="132" width="232" height="25" uuid="0880ba3a-3e8a-4b9f-b50e-5aaf65468aec"/>
+				<reportElement stretchType="RelativeToTallestObject" x="130" y="132" width="232" height="25" printWhenGroupChanges="DEPT_PAYMENT_MODE" uuid="0880ba3a-3e8a-4b9f-b50e-5aaf65468aec"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
