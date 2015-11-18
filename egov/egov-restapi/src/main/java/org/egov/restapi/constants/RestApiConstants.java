@@ -207,6 +207,15 @@ public class RestApiConstants {
 	
         public static final String THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED = "EGCL-REST-1";
         public static final String THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG = "receiptNumber is required";
+        
+        public static final String THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQUIRED = "REST-51";
+        public static final String THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG = "ulbCode Required ";
+        
+        
+        public static final String THIRD_PARTY_ERR_CODE_REFNO_NO_REQUIRED = "EGCL-REST-2";
+        public static final String THIRD_PARTY_ERR_CODE_REFNO_NO_REQ_MSG = "referenceNo Required ";
+        
+        
 		public static final String THIRD_PARTY_ACTION_SUCCESS = "EGCL-REST-SUCCESS";
 		public static final String THIRD_PARTY_ACTION_FAILURE = "REST-FAILURE";
 

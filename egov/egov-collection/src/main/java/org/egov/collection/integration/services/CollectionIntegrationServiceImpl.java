@@ -60,6 +60,7 @@ import org.egov.collection.integration.models.PaymentInfo;
 import org.egov.collection.integration.models.PaymentInfoBank;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
+import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.service.ReceiptHeaderService;
@@ -524,28 +525,30 @@ CollectionIntegrationService {
      * getAggregateReceiptTotal (Date fromDate, Date toDate)
      */
     @Override
-    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(final Date fromDate, final Date toDate) {
+    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest aggrReq) {
 
         final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<RestAggregatePaymentInfo>(0);
 
         // final SimpleDateFormat formatter = new
         // SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
-                "select sum(recordcount) as records,ulb, sum(total) as total from public.receipt_aggr_view where receipt_date>=:fromDate and receipt_date<=:toDate"
-                        + " group by ulb ");
+                "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
+                + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode"
+                        + " group by ulb,service  ");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
-        query.setDate("fromDate", fromDate);
-        query.setDate("toDate", toDate);
+        query.setDate("fromDate", aggrReq.getFromdate());
+        query.setDate("toDate", aggrReq.getTodate());
+        query.setString("serviceCode", aggrReq.getServicecode());
 
         final List<Object[]> queryResults = query.list();
 
         for (final Object[] objectArray : queryResults) {
             final RestAggregatePaymentInfo aggregatePaymentInfo = new RestAggregatePaymentInfo();
-            aggregatePaymentInfo.setUlbcode(objectArray[1].toString());// hardcoded
-            // ?
             aggregatePaymentInfo.setTxncount(Integer.parseInt(objectArray[0].toString()));
+            aggregatePaymentInfo.setUlbcode(objectArray[1].toString());
             aggregatePaymentInfo.setTxnamount(new BigDecimal(objectArray[2].toString()));
+            aggregatePaymentInfo.setServiceCode(objectArray[3].toString());
             listAggregatePaymentInfo.add(aggregatePaymentInfo);
         }
         return listAggregatePaymentInfo;
@@ -581,17 +584,21 @@ CollectionIntegrationService {
     }
 
     @Override
-    public String cancelReceipt(final String receiptNumber) {
+    public String cancelReceipt(PaymentInfoSearchRequest cancelReq){
         String statusMessage = null;
         String instrumentType = "";
         boolean isInstrumentDeposited = false;
         final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService.findByNamedQuery(
-                CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, receiptNumber);
+                CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, cancelReq.getReceiptNo());
         if(receiptHeaderToBeCancelled==null)
         {
-            throw new RuntimeException("Invalid receiptNumber:"+receiptNumber);
-            
+            throw new RuntimeException("Invalid receiptNumber:"+cancelReq.getReceiptNo());
+
+        }else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
+        {
+            throw new RuntimeException("transactionId doesnot match with receiptNo  " +cancelReq.getReceiptNo());
         }
+        
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
         for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())

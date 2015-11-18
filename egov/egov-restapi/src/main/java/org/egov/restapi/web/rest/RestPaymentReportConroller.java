@@ -47,6 +47,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -56,9 +57,9 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
-import org.egov.restapi.model.PaymentInfoSearchRequest;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.search.domain.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class RestPaymentReportConroller {
 
 	@Autowired
 	private  CollectionIntegrationService collectionService;
-	
+
 	@Autowired
 	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 
@@ -95,9 +96,7 @@ public class RestPaymentReportConroller {
 	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
 			throws JsonGenerationException, JsonMappingException, IOException {
 
-		List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(
-				paymentInfoSearchRequest.getFromdate(),
-				paymentInfoSearchRequest.getTodate());
+		List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(paymentInfoSearchRequest);
 		return getJSONResponse(listAggregatePaymentInfo);
 	}
 
@@ -120,25 +119,26 @@ public class RestPaymentReportConroller {
 		}
 
 	}
-	
-	
+
+
 	@RequestMapping(value="/cancelReceipt",method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
 	public String cancelReceipt(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,BindingResult errors) {
-		
-			ErrorDetails successDetail=new ErrorDetails();
-			try{
-				
-			if(paymentInfoSearchRequest.getReceiptNumber()!=null && !paymentInfoSearchRequest.getReceiptNumber().isEmpty()) {
-				  EgovThreadLocals.setUserId(Long.valueOf("2"));
-				String	cancelReceipt = collectionService.cancelReceipt(paymentInfoSearchRequest.getReceiptNumber());
+
+		ErrorDetails successDetail=new ErrorDetails();
+		try{
+
+			validateCancelReceipt(paymentInfoSearchRequest);
+			if(paymentInfoSearchRequest.getReceiptNo()!=null && !paymentInfoSearchRequest.getReceiptNo().isEmpty()) {
+				EgovThreadLocals.setUserId(Long.valueOf("2"));
+				String	cancelReceipt = collectionService.cancelReceipt(paymentInfoSearchRequest);
 				successDetail.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
 				successDetail.setErrorMessage(cancelReceipt);
 			} else
 			{
 				ErrorDetails errorDetails=new ErrorDetails();
-			    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
-                return	JsonConvertor.convert(errorDetails);
+				errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED);
+				errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
+				return	JsonConvertor.convert(errorDetails);
 			}
 
 		} catch (Exception e) {
@@ -148,6 +148,25 @@ public class RestPaymentReportConroller {
 			return	JsonConvertor.convert(er);
 		}
 		return	JsonConvertor.convert(successDetail);
+
+	}
+
+	private void validateCancelReceipt(
+			PaymentInfoSearchRequest cancelReq) {
+		if (cancelReq.getTransactionId()==null ||  cancelReq.getTransactionId().isEmpty())
+		{
+			throw new RuntimeException(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED);
+		}else if (cancelReq.getReceiptNo()==null || cancelReq.getReceiptNo().isEmpty() )
+		{
+			throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
+
+		}else if (cancelReq.getUlbCode()==null || cancelReq.getUlbCode().isEmpty() )
+		{
+			throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG);
+		}else if (cancelReq.getReferenceNo()==null || cancelReq.getReferenceNo().isEmpty())
+		{
+			throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_REFNO_NO_REQ_MSG);
+		}
 
 	}
 

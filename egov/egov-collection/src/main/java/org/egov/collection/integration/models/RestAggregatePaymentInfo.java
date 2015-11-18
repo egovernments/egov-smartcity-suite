@@ -45,6 +45,7 @@ public class RestAggregatePaymentInfo {
     private String ulbcode;
     private Integer txncount;
     private BigDecimal txnamount;
+    private String serviceCode;
 
     public String getUlbcode() {
         return ulbcode;
@@ -68,6 +69,14 @@ public class RestAggregatePaymentInfo {
 
     public void setTxnamount(BigDecimal txnamount) {
         this.txnamount = txnamount;
+    }
+
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
     }
 
 }

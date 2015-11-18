@@ -37,9 +37,11 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.model;
+package org.egov.collection.integration.models;
 
 import java.util.Date;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class PaymentInfoSearchRequest {
 
@@ -47,7 +49,12 @@ public class PaymentInfoSearchRequest {
     private Date todate;
     private String servicecode;
     private String ulbCode;
-    private String receiptNumber;
+    @JsonIgnore
+    private String receiptNo;
+    @JsonIgnore
+    private String transactionId;
+    @JsonIgnore
+    private String referenceNo;
 
     public Date getFromdate() {
         return fromdate;
@@ -81,12 +88,31 @@ public class PaymentInfoSearchRequest {
 		this.ulbCode = ulbCode;
 	}
 
-	public String getReceiptNumber() {
-		return receiptNumber;
+	
+
+	public String getTransactionId() {
+		return transactionId;
 	}
 
-	public void setReceiptNumber(String receiptNumber) {
-		this.receiptNumber = receiptNumber;
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
+
+
+    public String getReceiptNo() {
+        return receiptNo;
+    }
+
+    public void setReceiptNo(String receiptNo) {
+        this.receiptNo = receiptNo;
+    }
+
+    public String getReferenceNo() {
+        return referenceNo;
+    }
+
+    public void setReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
+    }
 
 }
