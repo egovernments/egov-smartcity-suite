@@ -2680,14 +2680,22 @@ public class PropertyService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
-                .append("and bp.active='Y' and pmv.zone.id=:ZoneID and pmv.ward.id=:WardID ");
+                .append("and bp.active='Y' ");
+        if (null != zoneId && zoneId != -1)
+            queryStr.append(" and pmv.zone.id=:ZoneID");
+        if (null != wardId && wardId != -1)
+            queryStr.append(" and pmv.ward.id=:WardID");
         if (houseNum != null && !houseNum.trim().isEmpty())
             queryStr.append("and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
             queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
-        query.setLong("ZoneID", zoneId);
-        query.setLong("WardID", wardId);
+
+        if (null != zoneId && zoneId != -1)
+            query.setLong("ZoneID", zoneId);
+        if (null != wardId && wardId != -1)
+            query.setLong("WardID", wardId);
         if (houseNum != null && !houseNum.trim().isEmpty())
             query.setString("HouseNo", houseNum + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())

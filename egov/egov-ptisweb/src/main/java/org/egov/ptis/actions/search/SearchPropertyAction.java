@@ -381,10 +381,14 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "House Num : "
                     + houseNumBndry + ", " + "Owner Name : " + ownerNameBndry);
         }
-        final String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
-        final String strWardNum = boundaryService.getBoundaryById(wardId).getName();
+        String strZoneNum = "";
+        String strWardNum = "";
+        if (null != zoneId && zoneId != -1)
+            strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
+        if (null != wardId && wardId != -1)
+            strWardNum = boundaryService.getBoundaryById(wardId).getName();
 
-        if (zoneId != null && zoneId != -1 && wardId != null && wardId != -1)
+        if (zoneId != null && zoneId != -1 || wardId != null && wardId != -1)
             try {
 
                 final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByBoundary(zoneId, wardId,
@@ -525,10 +529,8 @@ public class SearchPropertyAction extends BaseFormAction {
                     || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))
                 addActionError(getText("mandatory.assessmentNo"));
         } else if (StringUtils.equals(mode, "bndry")) {
-            if (zoneId == null || zoneId == -1)
-                addActionError(getText("mandatory.zone"));
-            if (wardId == null || wardId == -1)
-                addActionError(getText("mandatory.ward"));
+            if ((zoneId == null || zoneId == -1) && (wardId == null || wardId == -1))
+                addActionError(getText("mandatory.zoneorward"));
         } else if (StringUtils.equals(mode, "location")) {
             if (locationId == null || locationId == -1)
                 addActionError(getText("mandatory.location"));

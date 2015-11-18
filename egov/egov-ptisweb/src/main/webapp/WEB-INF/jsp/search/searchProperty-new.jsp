@@ -43,11 +43,6 @@
 	<head>
 		<%-- <sx:head /> --%>
 		<script type="text/javascript">
-			function populateWard() {
-				populatewardId( {
-					zoneId : document.getElementById("zoneId").value
-				});
-			}
 			function onSubmit(obj,formId){
 				var formObj = document.getElementById(formId);
 				formObj.action=obj;
@@ -63,12 +58,19 @@
 	</head>
 	<body>
 		<div class="formmainbox">
-			<s:if test="%{hasErrors()}">
+			<%-- <s:if test="%{hasErrors()}">
 				<div align="left">
 					<s:actionerror />
 					<s:fielderror/>
 				</div>			
-			</s:if>
+			</s:if> --%>
+			<s:if test="%{hasErrors()}">
+		<div class="errorstyle" id="property_error_area">
+			<div class="errortext">
+				<s:actionerror />
+			</div>
+		</div>
+	</s:if>
 			<s:if test="%{hasActionMessages()}">
 			    <div id="actionMessages" class="messagestyle">
 			    	<s:actionmessage theme="simple"/>
@@ -209,23 +211,19 @@
 						<tr>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">
-								<s:text name="Zone" />
-								<span class="mandatory1">*</span> :
+								<s:text name="Zone" /> :
 							</td>
 							<td class="bluebox">
 								<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
 									listKey="key" listValue="value" headerKey="-1"
 									headerValue="%{getText('default.select')}" value="%{zoneId}" />
-								<%-- <egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-									dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" /> --%>
 							</td>
 							<td class="bluebox">&nbsp;</td>
 						</tr>
 						<tr>
 							<td class="greybox">&nbsp;</td>
 							<td class="greybox">
-								<s:text name="Ward" />
-								<span class="mandatory1">*</span> :
+								<s:text name="Ward" />:
 							</td>
 							<td class="greybox">
 								<s:select name="wardId" id="wardId" list="WardndryMap"
