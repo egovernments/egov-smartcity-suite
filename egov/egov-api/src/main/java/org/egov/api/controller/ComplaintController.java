@@ -73,6 +73,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -252,6 +253,7 @@ public class ComplaintController extends ApiController {
                 final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
                 complaint.setComplaintType(complaintType);
             }
+            complaint.setReceivingMode(ReceivingMode.MOBILE);
             if(files.length>0)
             {
             	complaint.setSupportDocs(addToFileStore(files));	
