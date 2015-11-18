@@ -60,9 +60,9 @@ function onSubmit(obj){
 		
 		<s:form action="serviceCategory" theme="simple" >  
 		   		<div class="subheadnew"><s:text name="serviceCategory.edit.title"/></div>
-		   
+		   		<s:push value="model">
+		   <s:hidden name="id" id="id" value="%{id}"/> 
 			<%@ include file='serviceCategory-form.jsp'%>
-			<s:hidden  name="model.id" />	
 			<div align="left" class="mandatory1"> &nbsp;&nbsp;&nbsp;&nbsp;* Mandatory Fields</div>
 	 		
 	 		<div class="buttonbottom">
@@ -71,6 +71,7 @@ function onSubmit(obj){
 				<s:reset name="button3" cssClass="button" id="button" value="Reset"/>
 				<input name="button4" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 			</div>
+			</s:push>
  		</s:form>  
     </body>  
 </html>

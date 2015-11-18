@@ -40,7 +40,6 @@
 package org.egov.restapi.web.rest;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,26 +50,21 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
-import org.egov.collection.service.ServiceCategoryService;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.PaymentInfoSearchRequest;
 import org.egov.restapi.util.JsonConvertor;
-import org.egov.restapi.util.ValidationUtil;
 import org.egov.search.domain.Document;
-import org.egov.services.masters.BankService;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -85,9 +79,9 @@ public class RestPaymentReportConroller {
 
 	@Autowired
 	private  CollectionIntegrationService collectionService;
-
+	
 	@Autowired
-	private ServiceCategoryService serviceCategoryService;
+	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 
 	@Autowired
 	private  BankHibernateDAO bankHibernateDAO;
@@ -178,7 +172,7 @@ public class RestPaymentReportConroller {
 		Map<String, String> serviceCategory=null;
 		List<ServiceCategory> services;
 		try {
-			services = serviceCategoryService.getAllActiveServiceCategories();
+			services = serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL");
 			if(services!=null || services.size()>=0)
 			{
 				serviceCategory=new LinkedHashMap<String, String>();

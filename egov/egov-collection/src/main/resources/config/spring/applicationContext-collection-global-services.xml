@@ -55,11 +55,7 @@
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>
 	<bean class="org.egov.collection.repository.ServiceCategoryRepository" id="serviceCategoryRepository" />
-	
-	<bean class="org.egov.collection.service.ServiceCategoryService" id="serviceCategoryService" >
-		<constructor-arg index="0" ref="serviceCategoryRepository" />
-	</bean>
-	
+
 	<bean class="org.egov.collection.service.ReceiptHeaderService"
 		id="receiptHeaderService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.ReceiptHeader" />
@@ -125,9 +121,14 @@
 		<!-- <property name="challanWorkflowService" ref="challanWorkflowService" /> -->
 	</bean>
 	
+	<bean id="serviceCategoryService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infstr.models.ServiceCategory" />
+	</bean>
+	
 	<bean id="serviceDetailsService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
 	</bean>
+	
 	
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
 	</bean>

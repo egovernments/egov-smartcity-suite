@@ -68,7 +68,6 @@ import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.service.ReceiptHeaderService;
-import org.egov.collection.service.ServiceCategoryService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -104,6 +103,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.NumberUtil;
@@ -246,8 +246,7 @@ public class ReceiptAction extends BaseFormAction {
 
     private Boolean receiptBulkUpload = Boolean.FALSE;
 
-    @Autowired
-    private ServiceCategoryService serviceCategoryService;
+    private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
@@ -341,7 +340,7 @@ public class ReceiptAction extends BaseFormAction {
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }
-        addDropdownData("serviceCategoryList", serviceCategoryService.getAllServiceCategoriesOrderByCode());
+        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
         if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
             addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
                     service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
@@ -1883,5 +1882,9 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
+    }
+    
+    public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
+        this.serviceCategoryService = serviceCategoryService;
     }
 }
