@@ -1478,7 +1478,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final List<Employee> emp = employeeService.findByDepartmentDesignationAndBoundary(department.getId(),
                     designation.getId(), boundary.getId());
             final Position approverPosition = collectionsUtil.getPositionOfUser(emp.get(0));
-            System.out.println(approverPosition.getName());
             if (actionName.equals(CollectionConstants.WF_ACTION_SUBMIT))
                 perform(receiptHeader, CollectionConstants.WF_ACTION_APPROVE,
                         CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE,

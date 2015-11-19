@@ -398,7 +398,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
         return INDEX;
     }
 

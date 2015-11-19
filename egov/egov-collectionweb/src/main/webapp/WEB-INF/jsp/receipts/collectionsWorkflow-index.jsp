@@ -109,11 +109,11 @@ function addCommas(nStr)
 
 //Displays the summary of amounts
 function refreshSummary() {
-	document.collectionsWorkflowForm.totalAmount.value = addCommas(totalAmount.toFixed(2));
+	/* //document.collectionsWorkflowForm.totalAmount.value = addCommas(totalAmount.toFixed(2));
 	document.collectionsWorkflowForm.cashAmount.value = addCommas(cashAmount.toFixed(2));
 	document.collectionsWorkflowForm.chequeAmount.value = addCommas(chequeAmount.toFixed(2));
 	document.collectionsWorkflowForm.ddAmount.value = addCommas(ddAmount.toFixed(2));
-	document.collectionsWorkflowForm.cardAmount.value = addCommas(cardAmount.toFixed(2));
+	document.collectionsWorkflowForm.cardAmount.value = addCommas(cardAmount.toFixed(2)); */
 }
 
 // Handle the event when user selects/deselects a receipt to be submitted/approved/rejected
@@ -303,8 +303,8 @@ function readOnlyCheckBox() {
 					headerKey="%{getText('collectionsWorkflow.users.all')}"
 					headerValue="%{getText('collectionsWorkflow.users.all')}"
 					name="userName" id="userName" cssClass="selectwk"
-					list="dropdownData.receiptCreatorList" listKey="userName"
-					listValue="userName" onchange="return changeUserName(this.value)" /></td>
+					list="dropdownData.receiptCreatorList" listKey="name"
+					listValue="name" onchange="return changeUserName(this.value)" /></td>
 			</tr>
 		</table>
 		<br />
