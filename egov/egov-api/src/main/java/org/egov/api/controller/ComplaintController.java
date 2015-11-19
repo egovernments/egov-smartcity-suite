@@ -73,6 +73,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
@@ -544,6 +545,10 @@ public class ComplaintController extends ApiController {
         try {
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(jsonData.get("action").toString());
+            if(complaint.getStatus().getName().equals("COMPLETED"))
+            {
+            	complaint.setCitizenFeedback(CitizenFeedback.valueOf(jsonData.get("feedback").toString()));
+            }
             complaint.setStatus(cmpStatus);
             complaintService.update(complaint, Long.valueOf(0), jsonData.get("comment").toString());
             return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
