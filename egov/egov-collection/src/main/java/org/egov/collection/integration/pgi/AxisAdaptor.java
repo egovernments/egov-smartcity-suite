@@ -104,7 +104,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_LOCALE, EGovConfig.getMessage(
                 CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_LOCALE));
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
-        fields.put(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode());
+        fields.put(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode()+"-"+EgovThreadLocals.getCityName());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
                 .append(paymentServiceDetails.getId());

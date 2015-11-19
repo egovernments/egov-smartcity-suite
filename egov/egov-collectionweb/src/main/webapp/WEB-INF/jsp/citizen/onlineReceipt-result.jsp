@@ -41,7 +41,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><s:text name="coc.title"/></title>
+<title><s:text name="onlineReceipts.title"/></title>
 <script type="text/javascript">
 function onBodyLoad(){
 	
