@@ -172,9 +172,12 @@
 												<option value="Bifurcation">
 													<s:text name="Bifurcation"></s:text>
 												</option>
+												<option value="TransferProperty">
+													<s:text name="transferProperty"></s:text>
+												</option>
 												<option value="TaxExemption">
 													<s:text name="TaxExemption"></s:text>
-										         </option>
+										        </option>
 												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
 													<s:if test="%{(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
 														<option value="VacancyRemission">
