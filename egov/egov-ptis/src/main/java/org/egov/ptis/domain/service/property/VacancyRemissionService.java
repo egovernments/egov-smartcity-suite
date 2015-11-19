@@ -97,20 +97,29 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @Service
 @Transactional(readOnly = true)
 public class VacancyRemissionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VacancyRemissionService.class);
 
-    private final VacancyRemissionRepository vacancyRemissionRepository;
+    public VacancyRemissionService() {
+        super();
+    }
 
-    private final VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository;
+    @Autowired
+    private VacancyRemissionRepository vacancyRemissionRepository;
 
+    @Autowired
+    private VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository;
     @Autowired
     private EisCommonService eisCommonService;
 
@@ -138,12 +147,12 @@ public class VacancyRemissionService {
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
-    @Autowired
+   /* @Autowired
     public VacancyRemissionService(final VacancyRemissionRepository vacancyRemissionRepository,
             final VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository) {
         this.vacancyRemissionRepository = vacancyRemissionRepository;
         this.vacancyRemissionApprovalRepository = vacancyRemissionApprovalRepository;
-    }
+    }*/
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);

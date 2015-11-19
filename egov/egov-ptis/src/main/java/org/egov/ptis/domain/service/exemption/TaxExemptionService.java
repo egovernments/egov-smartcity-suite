@@ -51,12 +51,21 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
+    
+    public TaxExemptionService() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
