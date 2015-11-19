@@ -175,9 +175,9 @@ public class ViewPropertyAction extends BaseFormAction {
                 if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                 	viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-                	totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                            .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+                	totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
+	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
                 	if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())
                 			&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
                 		viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
@@ -189,9 +189,9 @@ public class ViewPropertyAction extends BaseFormAction {
                     
                 } else {
                     viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                            .add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                    totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
+	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
                     viewMap.put("totalTax",totalTax);
                 }
 
