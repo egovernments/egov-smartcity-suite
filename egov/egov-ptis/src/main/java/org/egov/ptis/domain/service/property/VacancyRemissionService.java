@@ -160,8 +160,13 @@ public class VacancyRemissionService {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
     }
 
-    public VacancyRemission getRejectAckGeneratedVacancyRemissionForProperty(final String upicNo) {
-        return vacancyRemissionRepository.findRejectionAckGeneratedForUpicNo(upicNo);
+    public VacancyRemission getLatestRejectAckGeneratedVacancyRemissionForProperty(final String upicNo) {
+    	VacancyRemission vacancyRemission = null;
+    	List<VacancyRemission> rejectedRemissionList = vacancyRemissionRepository.findAllRejectionAckGeneratedForUpicNo(upicNo);
+    	if(!rejectedRemissionList.isEmpty()){
+    		vacancyRemission = rejectedRemissionList.get(0);
+    	}
+    	return vacancyRemission;
     }
 
     public VacancyRemission getVacancyRemissionById(final Long id) {
