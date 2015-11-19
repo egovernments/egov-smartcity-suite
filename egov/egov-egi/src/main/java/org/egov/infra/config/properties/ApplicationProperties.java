@@ -173,6 +173,10 @@ public class ApplicationProperties {
         return environment.getProperty("app.build.no", EMPTY);
     }
 
+    public String appCoreBuildNo() {
+        return environment.getProperty("app.core.build.no", EMPTY);
+    }
+
     public String issueReportingUrl() {
         return environment.getProperty("issue.report.url", EMPTY);
     }

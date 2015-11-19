@@ -181,6 +181,8 @@ public class HomeController {
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         modelData.addAttribute("app_version", applicationProperties.appVersion());
         modelData.addAttribute("app_buildno", applicationProperties.appBuildNo());
+        if (!applicationProperties.devMode())
+            modelData.addAttribute("app_core_build_no", applicationProperties.appCoreBuildNo());
         modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
         modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPassworResetRequired(user));
         session.setAttribute("app_release_no", applicationProperties.appVersion() + "_" + applicationProperties.appBuildNo());
