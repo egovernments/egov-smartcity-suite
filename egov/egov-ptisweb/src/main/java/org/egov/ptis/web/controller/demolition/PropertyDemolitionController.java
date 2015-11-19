@@ -87,7 +87,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
-    private PropertyService propertyService;
+    private PropertyService propService;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -115,8 +115,8 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
-     
-        final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
+
+        final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProperty
                 .getActiveProperty());
         final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
         final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
@@ -143,14 +143,14 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             @RequestParam String workFlowAction) {
 
         propertyDemolitionService.validateProperty(property, errors, request);
-        
+
         if (errors.hasErrors()) {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
             propertyDemolitionService.addModelAttributes(model, basicProperty);
             return DEMOLITION_FORM;
         } else {
-            
+
             final Character status = STATUS_WORKFLOW;
             Long approvalPosition = 0l;
             String approvalComent = "";
