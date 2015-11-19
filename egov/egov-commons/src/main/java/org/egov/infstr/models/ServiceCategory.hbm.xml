@@ -78,7 +78,7 @@ from  org.egov.infstr.models.ServiceCategory where isActive='1' order by name
 	
 		<query name="SERVICE_CATEGORY_CODE">
 <![CDATA[
-select s from  org.egov.infstr.models.ServiceCategory s where s.isActive='1' and s.code=?
+select s from  org.egov.infstr.models.ServiceCategory s where s.code=?
 ]]>
 	</query>
 </hibernate-mapping>
