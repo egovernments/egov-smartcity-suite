@@ -78,7 +78,20 @@ public class DBMigrationConfiguration {
             flyway.setSchemas(schema);
             flyway.migrate();
         }
+        runStatewideMigration(dataSource);
         return flyway;
+    }
+
+    private void runStatewideMigration(final DataSource dataSource) {
+        if (!applicationProperties.devMode()) {
+            final Flyway flyway = new Flyway();
+            flyway.setBaselineOnMigrate(true);
+            flyway.setOutOfOrder(true);
+            flyway.setLocations("classpath:/db/migration/statewide/");
+            flyway.setDataSource(dataSource);
+            flyway.setSchemas("public");
+            flyway.migrate();
+        }
     }
 
     @Bean(name = "tenants", autowire = Autowire.BY_NAME)
