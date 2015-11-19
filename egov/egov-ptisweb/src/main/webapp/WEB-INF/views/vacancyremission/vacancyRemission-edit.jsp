@@ -42,6 +42,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
 

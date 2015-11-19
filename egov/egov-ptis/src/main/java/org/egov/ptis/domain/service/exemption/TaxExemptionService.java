@@ -61,7 +61,7 @@ import org.springframework.ui.Model;
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
-    
+
     public TaxExemptionService() {
         super();
         // TODO Auto-generated constructor stub
@@ -142,6 +142,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     }
 
+    @Transactional
     public void updateProperty(final Property newProperty, final String comments, final String workFlowAction,
             final Long approverPosition, final Boolean propertyByEmployee, final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,
@@ -177,14 +178,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 property.transition(true).end().withSenderName(user.getName()).withComments(approvarComments)
-                .withDateInfo(currentDate.toDate());
+                        .withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getName()).withComments(approvarComments)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -197,8 +198,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         currentState, null);
                 property.transition().start().withSenderName(user.getName()).withComments(approvarComments)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction());
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
             } else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), null);
@@ -206,11 +207,11 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 if (wfmatrix != null)
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                         property.transition().end().withSenderName(user.getName()).withComments(approvarComments)
-                        .withDateInfo(currentDate.toDate());
+                                .withDateInfo(currentDate.toDate());
                     else
                         property.transition(false).withSenderName(user.getName()).withComments(approvarComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                                .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             }
         }
         if (LOGGER.isDebugEnabled())

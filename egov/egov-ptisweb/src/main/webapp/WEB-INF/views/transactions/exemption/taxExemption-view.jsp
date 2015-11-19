@@ -42,6 +42,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
@@ -63,7 +70,7 @@
 						<div class="col-xs-3">
 							<spring:message code="lbl.exemption.reason" />
 						</div>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-3 add-margin view-content">
 							<c:out default="N/A" value="${property.taxExemptedReason.name}"></c:out>
 						</div>
 					</div>

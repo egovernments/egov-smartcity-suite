@@ -41,7 +41,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
@@ -53,7 +59,7 @@
 		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission" id="vacancyRemissionAckForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">
+					<div class="panel-title" style="text-align:center;">
 						<strong>${successMessage}</strong>
 					</div>
 				</div> 

@@ -42,6 +42,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <script type="text/javascript">
 alert("taxExemption"+taxExemption);
 </script>
