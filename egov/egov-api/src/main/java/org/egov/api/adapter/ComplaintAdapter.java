@@ -17,12 +17,18 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("lastModifiedBy", complaint.getLastModifiedBy().getUsername());
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
         jo.addProperty("complainantName", complaint.getCreatedBy().getName());
-        if (complaint.getLocation() != null) {
-            jo.addProperty("locationName", complaint.getLocation().getLocalName());
-        } else if (complaint.getLat() > 0 && complaint.getLat() > 0) {
+        
+        if (complaint.getLat() > 0 && complaint.getLng() > 0) {
             jo.addProperty("lat", complaint.getLat());
             jo.addProperty("lng", complaint.getLng());
+        } else if (complaint.getLocation() != null) {
+        	if(complaint.getChildLocation().getLocalName() !=null)
+        	{
+        		jo.addProperty("childLocationName", complaint.getChildLocation().getLocalName());
+        	}
+            jo.addProperty("locationName", complaint.getLocation().getLocalName());
         }
+        
         if (complaint.getComplaintType() != null) {
             jo.addProperty("complaintTypeId", complaint.getComplaintType().getId());
             jo.addProperty("complaintTypeName", complaint.getComplaintType().getName());
