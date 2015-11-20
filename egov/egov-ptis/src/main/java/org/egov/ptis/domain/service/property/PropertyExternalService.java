@@ -73,6 +73,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
+import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -171,7 +172,7 @@ public class PropertyExternalService {
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     @Autowired
-    PropertyTaxUtil propertyTaxUtil;
+    private EgBillDao egBillDAO;
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
@@ -519,7 +520,8 @@ public class PropertyExternalService {
         EgovThreadLocals.setUserId(2L);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
-        propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
+        //propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
+        propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_MANUAL));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
