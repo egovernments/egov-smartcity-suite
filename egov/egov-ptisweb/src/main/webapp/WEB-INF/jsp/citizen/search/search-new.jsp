@@ -78,7 +78,7 @@
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
 									<s:text name="prop.Id" />
-									<span class="mandatory">*</span> :
+									<span class="mandatory"></span> :
 								</td>
 								
 								<td class="bluebox">
