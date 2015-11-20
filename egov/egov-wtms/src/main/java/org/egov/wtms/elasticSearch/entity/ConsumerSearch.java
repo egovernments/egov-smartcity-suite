@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.infra.search.elastic.Indexable;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 
 public class ConsumerSearch implements Indexable {
@@ -123,9 +124,9 @@ public class ConsumerSearch implements Indexable {
 
     @Override
     public String getIndexId() {
-        return consumerCode;
+        return EgovThreadLocals.getCityCode()+"-"+consumerCode;
     }
-
+    
     public String getZone() {
         return zone;
     }
@@ -222,8 +223,6 @@ public class ConsumerSearch implements Indexable {
         this.waterTaxDue = waterTaxDue;
     }
 
-   
-    
     public String getClosureType() {
         return closureType;
     }
@@ -236,7 +235,6 @@ public class ConsumerSearch implements Indexable {
         return ulbName;
     }
 
-   
     public String getAdminWard() {
         return adminWard;
     }
@@ -252,6 +250,4 @@ public class ConsumerSearch implements Indexable {
     public void setDoorno(String doorno) {
         this.doorno = doorno;
     }
-
-
 }

@@ -59,7 +59,6 @@ public class ConsumerIndexService {
             final AssessmentDetails assessmentDetails,final BigDecimal amountTodisplayInIndex) {
 
         String mobileNumber = null;
-        String doorNumber = null;
         Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr != null && ownerNameItr.hasNext())
             mobileNumber = ownerNameItr.next().getMobileNumber();
