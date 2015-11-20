@@ -57,12 +57,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +87,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
-    private PropertyService propService;
+    private PtDemandDao ptDemandDAO;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -116,7 +116,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             return TARGET_WORKFLOW_ERROR;
         }
 
-        final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProperty
+        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
         final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
         final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
