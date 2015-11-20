@@ -809,7 +809,7 @@ public class ReceiptAction extends BaseFormAction {
             receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
             receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
             receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
-                    CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED));
+                    CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
             receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
 
             // If this is a new receipt in lieu of cancelling old
