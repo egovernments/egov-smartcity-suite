@@ -80,6 +80,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
@@ -215,12 +216,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private APTaxCalculationInfo addPropertyInfo(final Property property) {
         final APTaxCalculationInfo taxCalculationInfo = new APTaxCalculationInfo();
         // Add Property Info
+        PropertyID propertyId = property.getBasicProperty().getPropertyID();
         taxCalculationInfo.setPropertyOwnerName(property.getBasicProperty().getFullOwnerName());
         taxCalculationInfo.setPropertyAddress(property.getBasicProperty().getAddress().toString());
         taxCalculationInfo.setHouseNumber(property.getBasicProperty().getAddress().getHouseNoBldgApt());
-        taxCalculationInfo.setZone(property.getBasicProperty().getPropertyID().getZone().getName());
-        taxCalculationInfo.setWard(property.getBasicProperty().getPropertyID().getWard().getName());
-        taxCalculationInfo.setBlock(property.getBasicProperty().getPropertyID().getArea().getName());
+        taxCalculationInfo.setZone(propertyId.getZone().getName());
+        taxCalculationInfo.setWard(propertyId.getWard().getName());
+        taxCalculationInfo.setBlock(propertyId.getArea() != null ? propertyId.getArea().getName() : "");
         taxCalculationInfo.setLocality(property.getBasicProperty().getPropertyID().getLocality().getName());
         if (property.getPropertyDetail().getSitalArea().getArea() != null)
             if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
