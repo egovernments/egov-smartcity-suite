@@ -268,7 +268,7 @@ public class SearchPropertyAction extends BaseFormAction {
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
             if (!isDemandActive) {
-                addActionError(getText("taxExemption.demandActive"));
+                addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";

@@ -1,0 +1,2 @@
+update eg_action set queryparams = 'applicationType=Vacancy_Remission' where queryparams ='applicationType=Vacancy Remission';
+update eg_action set queryparams = 'applicationType=Tax_Exemption' where queryparams ='applicationType=Tax Exemption';

@@ -568,7 +568,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_ASSISTANT_APPROVAL_PENDING = "Assistant Approval Pending";
     public static final String WF_STATE_REVENUE_INSPECTOR_REJECTED = "Revenue Inspector Rejected";
     public static final String WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING = "Revenue Inspector Approval Pending";
-    public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved";
+    public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved"; 
+    public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Approved";
     
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
@@ -1169,9 +1170,9 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP = "Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_COLLECT_TAX = "Collect_Tax";
     public static final String APPLICATION_TYPE_DEMAND_BILL = "Generate_demand_bill";
-    public static final String APPLICATION_TYPE_TAX_EXEMTION = "Tax Exemption";
+    public static final String APPLICATION_TYPE_TAX_EXEMTION = "Tax_Exemption";
     public static final String APPLICATION_TYPE_DEMOLITION = "Demolition";
-    public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy Remission";
+    public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy_Remission";
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
    
 
