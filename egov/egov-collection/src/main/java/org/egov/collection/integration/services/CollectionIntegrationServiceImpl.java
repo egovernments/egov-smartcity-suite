@@ -533,7 +533,7 @@ CollectionIntegrationService {
         // SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
                 "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
-                + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode"
+                        + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode"
                         + " group by ulb,service  ");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
@@ -594,11 +594,16 @@ CollectionIntegrationService {
         {
             throw new RuntimeException("Invalid receiptNumber:"+cancelReq.getReceiptNo());
 
-        }else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
+        }
+        else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
         {
             throw new RuntimeException("transactionId doesnot match with receiptNo  " +cancelReq.getReceiptNo());
         }
-        
+        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled.getStatus().getCode()))
+        {
+            throw new RuntimeException("Receipt is already Cancelled  " +cancelReq.getReceiptNo());
+        }
+
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
         for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())
