@@ -38,79 +38,41 @@
  */
 package org.egov.pgr.web.controller.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.List;
-
 import javax.validation.Valid;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
-import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/complainttype")
-public class CreateComplaintTypeController {
+@RequestMapping("/complainttype-category")
+public class ComplaintTypeCategoryCreateController {
 
-    private final DepartmentService departmentService;
-    private final ComplaintTypeService complaintTypeService;
-    private @Autowired ComplaintTypeCategoryService complaintTypeCategoryService;
+    private final ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
-    public CreateComplaintTypeController(final DepartmentService departmentService, final ComplaintTypeService complaintTypeService) {
-        this.departmentService = departmentService;
-        this.complaintTypeService = complaintTypeService;
-    }
-
-    @ModelAttribute("categories")
-    public List<ComplaintTypeCategory> categories() {
-        return complaintTypeCategoryService.findAll();
-    }
-
-    @ModelAttribute("departments")
-    public List<Department> departments() {
-        return departmentService.getAllDepartments();
-    }
-
-    @ModelAttribute
-    public ComplaintType complaintTypeModel() {
-        return new ComplaintType();
+    public ComplaintTypeCategoryCreateController(final ComplaintTypeCategoryService complaintTypeCategoryService) {
+        this.complaintTypeCategoryService = complaintTypeCategoryService;
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String complaintTypeForm() {
-        return "complaint-type";
+    public String createComplaintTypeCategoryForm(@ModelAttribute final ComplaintTypeCategory complaintTypeCategory) {
+        return "complainttype-category-create";
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String createComplaintType(@Valid @ModelAttribute final ComplaintType complaintType, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+    public String createComplaintType(@Valid @ModelAttribute final ComplaintTypeCategory complaintTypeCategory,
+            final BindingResult errors, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
-            return "complaint-type";
-        complaintTypeService.createComplaintType(complaintType);
-        redirectAttrs.addFlashAttribute("complaintType", complaintType);
-        redirectAttrs.addFlashAttribute("message", "msg.comp.type.success");
-        return "redirect:/complainttype/success/" + complaintType.getName();
+            return "complainttype-category-create";
+        complaintTypeCategoryService.createComplaintTypeCategory(complaintTypeCategory);
+        redirectAttrs.addFlashAttribute("message", "msg.comp.type.catgory.creation.success");
+        return "redirect:/complainttype-category/create";
     }
-
-    @RequestMapping(value = "/success/{name}", method = GET)
-    public ModelAndView successView(@PathVariable("name") final String name, @ModelAttribute final ComplaintType complaintType) {
-        return new ModelAndView("complaintType/complaintType-success", "complaintType",
-                complaintTypeService.findByName(name));
-
-    }
-
 }

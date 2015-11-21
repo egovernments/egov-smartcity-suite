@@ -49,7 +49,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.utils.constants.PGRConstants;
@@ -66,27 +68,22 @@ public abstract class GenericComplaintController {
     public static final String ERROR = "error";
     public static final String MESSAGE = "message";
 
-    @Autowired
-    protected ComplaintTypeService complaintTypeService;
-
-    @Autowired(required = true)
-    protected ComplaintService complaintService;
-
+    protected @Autowired ComplaintTypeService complaintTypeService;
+    protected @Autowired(required = true) ComplaintService complaintService;
     protected @Autowired CrossHierarchyService crossHierarchyService;
+    protected @Autowired ReceivingCenterService receivingCenterService;
+    protected @Autowired ComplaintTypeCategoryService complaintTypeCategoryService;
+    @Qualifier("fileStoreService")
+    protected @Autowired FileStoreService fileStoreService;
+    protected @Autowired FileStoreUtils fileStoreUtils;
 
-    @Autowired
-    protected ReceivingCenterService receivingCenterService;
+    public @ModelAttribute("categories") List<ComplaintTypeCategory> complaintTypeCategories() {
+        return complaintTypeCategoryService.findAll();
+    }
 
     public @ModelAttribute("complaintTypes") List<ComplaintType> frequentlyFiledComplaintTypes() {
         return complaintTypeService.getFrequentlyFiledComplaints();
     }
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
-    @Autowired
-    protected FileStoreUtils fileStoreUtils;
 
     @RequestMapping(value = "/complaint/reg-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
@@ -97,8 +94,7 @@ public abstract class GenericComplaintController {
     }
 
     @RequestMapping(value = "/complaint/downloadfile/{fileStoreId}")
-    public void download(@PathVariable final String fileStoreId,
-            final HttpServletResponse response) throws IOException {
+    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
         fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
     }
 

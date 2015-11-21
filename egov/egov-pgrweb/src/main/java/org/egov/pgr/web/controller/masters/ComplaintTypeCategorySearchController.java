@@ -36,32 +36,40 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.repository;
+package org.egov.pgr.web.controller.masters;
 
-import java.util.List;
+import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+@Controller
+@RequestMapping("/complainttype-category")
+public class ComplaintTypeCategorySearchController {
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+    private final ComplaintTypeCategoryService complaintTypeCategoryService;
 
-    ComplaintType findByName(String name);
+    @Autowired
+    public ComplaintTypeCategorySearchController(final ComplaintTypeCategoryService complaintTypeCategoryService) {
+        this.complaintTypeCategoryService = complaintTypeCategoryService;
+    }
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
-    
-    List<ComplaintType> findByIsActiveTrueAndCategoryId(Long categoryId);
+    @RequestMapping(value = "search-for-edit", method = RequestMethod.GET)
+    public String searchComplaintTypeCategoryForm(@ModelAttribute final ComplaintTypeCategory complaintTypeCategory, final Model model) {
+        model.addAttribute("categories", complaintTypeCategoryService.findAll());
+        return "complainttype-category-search";
+    }
 
-    ComplaintType findByCode(String code);
-
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-    
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-    
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    @RequestMapping(value = "search-for-edit", method = RequestMethod.POST)
+    public String goToEditComplaintTypeCategoryForm(@ModelAttribute final ComplaintTypeCategory complaintTypeCategory, final BindingResult errors) {
+        if (errors.hasErrors())
+            return "complainttype-category-search";
+        return "redirect:/complainttype-category/update/" + complaintTypeCategory.getName();
+    }
 
 }

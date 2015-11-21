@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -145,7 +144,7 @@ public class Complaint extends StateAware {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
+    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     @Searchable(name = "longitude")

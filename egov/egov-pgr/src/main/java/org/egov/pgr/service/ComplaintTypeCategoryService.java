@@ -36,32 +36,42 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.repository;
+package org.egov.pgr.service;
 
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.repository.ComplaintTypeCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+@Service
+@Transactional(readOnly = true)
+public class ComplaintTypeCategoryService {
 
-    ComplaintType findByName(String name);
+    private final ComplaintTypeCategoryRepository complaintTypeCategoryRepository;
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
-    
-    List<ComplaintType> findByIsActiveTrueAndCategoryId(Long categoryId);
+    @Autowired
+    public ComplaintTypeCategoryService(final ComplaintTypeCategoryRepository complaintTypeCategoryRepository) {
+        this.complaintTypeCategoryRepository = complaintTypeCategoryRepository;
+    }
 
-    ComplaintType findByCode(String code);
+    public ComplaintTypeCategory findById(final Long categoryId) {
+        return complaintTypeCategoryRepository.findOne(categoryId);
+    }
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-    
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-    
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    @Transactional
+    public ComplaintTypeCategory createComplaintTypeCategory(final ComplaintTypeCategory complaintTypeCategory) {
+        return complaintTypeCategoryRepository.save(complaintTypeCategory);
+    }
 
+    public List<ComplaintTypeCategory> findAll() {
+        return complaintTypeCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public ComplaintTypeCategory findByName(final String categoryName) {
+        return complaintTypeCategoryRepository.findByName(categoryName);
+    }
 }

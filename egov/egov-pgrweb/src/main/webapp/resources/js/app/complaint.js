@@ -37,42 +37,31 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-	
+
+var currentType = "";
 jQuery(document).ready(function($)
 {
-	// Instantiate the Bloodhound suggestion engine
-	var complaintype = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: 'complaintTypes?complaintTypeName=%QUERY',
-			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (ct) {
-					return {
-						name: ct.name,
-						value: ct.id
-					};
+	$('#complaintTypeCategory').change(function() {
+		$('#complaintType').find('option:gt(0)').remove();
+		if (this.value === '') {
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "complainttypes-by-category",
+				cache: true,
+				data:{'categoryId' : this.value}
+			}).done(function(data) {
+				$.each(data, function(key,value) {
+					$('#complaintType').append('<option value="'+value.id+'">' + value.name + '</option>');
 				});
-			}
+				if (currentType != "") {
+					$("#complaintType").val(currentType);
+					currentType="";
+				}
+			});
 		}
 	});
-	
-	// Initialize the Bloodhound suggestion engine
-	complaintype.initialize();
-	// Instantiate the Typeahead UI
-	$('.typeahead').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 1
-		}, {
-		displayKey: 'name',
-		source: complaintype.ttAdapter()
-	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
-		$("#complaintTypeId").val(data.value);    
-    });
 	
 	// Instantiate the Bloodhound suggestion engine
 	var complaintlocation = new Bloodhound({
@@ -245,6 +234,12 @@ $("#receivingCenter").change(function(){
 	}
 });	
 
+function setComplaintTypeId(type,category) {
+	$("#complaintTypeCategory").val(category);
+	$("#complaintTypeCategory").trigger('change');
+	currentType = type;
+}
+
 function typingfeel(text, input){
 	$.each(text.split(''), function(i, letter){
         setTimeout(function(){
@@ -269,10 +264,6 @@ function typingfeelintypeahead(text, input, typeaheadtext){
         	}
         }, 1000*(i+1));
     });
-}
-
-function setComplaintTypeId(obj) {
-	$("#complaintTypeId").val(obj)
 }
 
 function enableRC() {

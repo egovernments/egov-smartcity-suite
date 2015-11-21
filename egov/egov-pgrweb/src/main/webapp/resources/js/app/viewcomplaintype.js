@@ -60,6 +60,9 @@ $(document)
 											"mData" : "code",
 											"sTitle" : "Code"
 										}, {
+											"mData" : "category",
+											"sTitle" : "Category",
+										},{
 											"mData" : "department",
 											"sTitle" : "Department"
 										}, {

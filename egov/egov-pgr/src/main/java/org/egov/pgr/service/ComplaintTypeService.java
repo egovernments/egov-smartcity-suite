@@ -101,7 +101,11 @@ public class ComplaintTypeService {
     public List<ComplaintType> findAllActiveByNameLike(final String name) {
         return complaintTypeRepository.findByIsActiveTrueAndNameContainingIgnoreCase(name);
     }
-    
+
+    public List<ComplaintType> findActiveComplaintTypesByCategory(final Long categoryId) {
+        return complaintTypeRepository.findByIsActiveTrueAndCategoryId(categoryId);
+    }
+
     public List<ComplaintType> findAllByNameLike(final String name) {
         return complaintTypeRepository.findByNameContainingIgnoreCase(name);
     }
@@ -157,7 +161,7 @@ public class ComplaintTypeService {
     public List<Department> getAllComplaintTypeDepartments() {
         return complaintTypeRepository.findAllComplaintTypeDepartments();
     }
-    
+
     public List<ComplaintType> findActiveComplaintTypes() {
         return complaintTypeRepository.findByIsActiveTrueOrderByNameAsc();
     }

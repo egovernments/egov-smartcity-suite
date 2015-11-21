@@ -70,13 +70,23 @@
 						</div>
 					</div>
 					<div class="row">
+					
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.category" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:out value="${complaintType.category.name}" default="NA"/>
+						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.department" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
 							<c:out value="${complaintType.department.name}" default="NA"></c:out>
 						</div>
-
+						
+					</div>
+										
+					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.isactive" />
 						</div>
@@ -87,29 +97,26 @@
 								<c:otherwise>No</c:otherwise>
 							</c:choose>
 						</div>
-					</div>
-										
-					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.complaintTypeDesc" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content"
-							id="ct-isactive">
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-isactive">
 							<c:choose>
 								<c:when test="${complaintType.description != null}">${complaintType.description}</c:when>
 								<c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
 							</c:choose>
 						</div>
+					</div>
+					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.slahrs" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-slahrs">
 							<c:out value="${complaintType.slaHours}"></c:out>
 						</div>
-					</div>
-					<div class="row">
-						<label for="field-1" class="col-md-3 col-xs-6 add-margin">
-						<spring:message	code="lbl.hasFinImpact"></spring:message></label>
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message	code="lbl.hasFinImpact"></spring:message>
+						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-hasfinimpact">
 							<c:choose>
 								<c:when test="${complaintType.hasFinancialImpact == true}">

@@ -38,30 +38,13 @@
  */
 package org.egov.pgr.repository;
 
-import java.util.List;
-
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+public interface ComplaintTypeCategoryRepository extends JpaRepository<ComplaintTypeCategory, Long> {
 
-    ComplaintType findByName(String name);
-
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
-    
-    List<ComplaintType> findByIsActiveTrueAndCategoryId(Long categoryId);
-
-    ComplaintType findByCode(String code);
-
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-    
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-    
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    ComplaintTypeCategory findByName(String name);
 
 }

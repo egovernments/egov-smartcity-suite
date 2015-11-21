@@ -38,16 +38,10 @@
  */
 package org.egov.pgr.web.controller.masters;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
-import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,59 +50,44 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/complainttype/update/{code}")
-public class UpdateComplaintTypeController {
-    private static final String COMPLAINTTYPE_UPDATE_SUCCESS = "/complaintType-success";
+@RequestMapping("/complainttype-category")
+public class ComplaintTypeCategoryUpdateController {
 
-    private final DepartmentService departmentService;
-    private final ComplaintTypeService complaintTypeService;
-    private @Autowired ComplaintTypeCategoryService complaintTypeCategoryService;
+    private final ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
-    public UpdateComplaintTypeController(final DepartmentService departmentService, final ComplaintTypeService complaintTypeService) {
-        this.departmentService = departmentService;
-        this.complaintTypeService = complaintTypeService;
-    }
-
-    @ModelAttribute("categories")
-    public List<ComplaintTypeCategory> categories() {
-        return complaintTypeCategoryService.findAll();
-    }
-
-    @ModelAttribute("departments")
-    public List<Department> departments() {
-        return departmentService.getAllDepartments();
+    public ComplaintTypeCategoryUpdateController(final ComplaintTypeCategoryService complaintTypeCategoryService) {
+        this.complaintTypeCategoryService = complaintTypeCategoryService;
     }
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel(@PathVariable final String code, final Model model) {
-        model.addAttribute("mode", "update");
-        return complaintTypeService.findByCode(code);
+    public ComplaintTypeCategory complaintTypeCategory(@PathVariable final String categoryName) {
+        return complaintTypeCategoryService.findByName(categoryName);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String complaintTypeFormForUpdate() {
-        return "complaint-type";
+    @RequestMapping(value = "update/{categoryName}", method = RequestMethod.GET)
+    public String editComplaintTypeCategoryForm(@PathVariable final String categoryName,
+            @ModelAttribute final ComplaintTypeCategory complaintTypeCategory, final RedirectAttributes redirectAttrs, final Model model) {
+        if (complaintTypeCategory == null) {
+            redirectAttrs.addFlashAttribute("error", "grievance.category.not.found");
+            redirectAttrs.addFlashAttribute("categoryname", categoryName);
+            return "redirect:/complainttype-category/search-for-edit";
+        }
+        return "complainttype-category-update";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors())
-            return "complaint-type";
-        complaintType = complaintTypeService.updateComplaintType(complaintType);
-        redirectAttrs.addFlashAttribute("complaintType", complaintType);
-        redirectAttrs.addFlashAttribute("message", "msg.comp.type.update.success");
-        return "redirect:" + complaintType.getCode() + COMPLAINTTYPE_UPDATE_SUCCESS;
+    @RequestMapping(value = "update/{categoryName}", method = RequestMethod.POST)
+    public String editComplaintTypeCategory(@PathVariable final String categoryName,
+            @Valid @ModelAttribute final ComplaintTypeCategory complaintTypeCategory,
+            final BindingResult error, final RedirectAttributes redirectAttrs) {
+        if (error.hasErrors())
+            return "complainttype-category-update";
+        complaintTypeCategoryService.createComplaintTypeCategory(complaintTypeCategory);
+        redirectAttrs.addFlashAttribute("message", "msg.comp.type.catgory.update.success");
+        return "redirect:/complainttype-category/update/" + categoryName;
     }
 
-    @RequestMapping(COMPLAINTTYPE_UPDATE_SUCCESS)
-    public ModelAndView successView(@PathVariable final String code, @ModelAttribute final ComplaintType complaintType) {
-        return new ModelAndView("complaintType/complaintType-success", "complaintType",
-                complaintTypeService.findByCode(code));
-    }
 }
