@@ -1041,7 +1041,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService.find(
                             "From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                    if (null != basicProperty) {
+                    if (null != basicProperty && null != basicProperty.getActiveProperty()) {
                         property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
                         final String errorKey = propService.validationForBifurcation(property, basicProperty,
                                 propertyMutationMaster.getCode());
@@ -1055,6 +1055,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         } else
             addActionError(getText("mandatory.createRsn"));
 
+        if (loggedUserIsMeesevaUser || !propertyByEmployee) {
+            PropertyID propertyid = new PropertyID();
+            propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
+            property.getBasicProperty().setPropertyID(propertyid);
+            if (null != getElectionWardId() && null != property.getBasicProperty()
+                    && null == propService.getUserPositionByZone(property.getBasicProperty())) {
+                addActionError(getText("notexists.position"));
+            }
+        }
         validateApproverDetails();
         super.validate();
     }
