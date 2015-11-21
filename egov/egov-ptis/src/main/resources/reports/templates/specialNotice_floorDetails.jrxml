@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-11-21T23:19:33 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_floorDetails" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6e1de6a4-8ac0-4dd3-982a-e9687e471c14">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -59,7 +61,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Plinth Area]]></text>
+				<text><![CDATA[Plinth Area (sq.mtrs)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="202" y="0" width="62" height="67" uuid="9bb261ea-2cdf-4221-81aa-6496f1d24297"/>
