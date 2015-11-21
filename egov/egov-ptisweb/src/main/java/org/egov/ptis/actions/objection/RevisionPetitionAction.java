@@ -75,6 +75,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -703,7 +704,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         reportParams.put("cityName", cityName);
         reportParams.put("logoPath", imagePath);
         reportParams.put("mode", "create");
-
+        if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())){
+        	reportParams.put("unauthorizedProperty", "yes");
+        }else{
+        	reportParams.put("unauthorizedProperty", "no");
+        }
         setNoticeInfo(property, propertyNotice, basicProperty);
         final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(property, propertyNotice
                 .getOwnerInfo().getTotalTax());
