@@ -55,7 +55,7 @@
 				</div>
 			</div>
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
-				<input type="text"  id="citizenRole" value="${citizenRole}" />
+				<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
