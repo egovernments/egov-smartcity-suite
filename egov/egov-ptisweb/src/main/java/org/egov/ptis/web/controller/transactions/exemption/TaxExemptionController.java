@@ -102,20 +102,15 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private PtDemandDao ptDemandDAO;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
-    private final PropertyService propertyService;
-    private final TaxExemptionService taxExemptionService;
+    @Autowired
+    private PropertyService propertyService;
+    @Autowired
+    private TaxExemptionService taxExemptionService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-
-    @Autowired
-    public TaxExemptionController(final TaxExemptionService taxExemptionService, final PropertyService propertyService) {
-        this.taxExemptionService = taxExemptionService;
-        this.propertyService = propertyService;
-    }
 
     BasicProperty basicProperty;
     PropertyImpl propertyImpl = new PropertyImpl();
@@ -198,7 +193,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
 
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
 
-        loggedUserIsMeesevaUser =propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
 
         if (loggedUserIsMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<String, String>();
@@ -219,8 +214,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
                                 .getId()) + " with application number " + property.getApplicationNo());
         if (loggedUserIsMeesevaUser)
             return "redirect:/exemption/generate-meesevareceipt/"
-            + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
-            + ((PropertyImpl) property).getApplicationNo();
+                    + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+                    + ((PropertyImpl) property).getApplicationNo();
         else
 
             return TAX_EXEMPTION_SUCCESS;

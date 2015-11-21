@@ -111,10 +111,6 @@ public class VacancyRemissionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VacancyRemissionService.class);
 
-    public VacancyRemissionService() {
-        super();
-    }
-
     @Autowired
     private VacancyRemissionRepository vacancyRemissionRepository;
 

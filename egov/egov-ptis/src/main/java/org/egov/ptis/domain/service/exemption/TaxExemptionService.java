@@ -62,11 +62,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
 
-    public TaxExemptionService() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
 

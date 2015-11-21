@@ -113,6 +113,7 @@ public class WaterTaxUtils {
     private DepartmentService departmentService;
 
     @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
     @Autowired
