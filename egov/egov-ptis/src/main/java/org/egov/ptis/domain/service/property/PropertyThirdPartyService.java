@@ -100,7 +100,6 @@ public class PropertyThirdPartyService {
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-                || applicationType.equals(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 property = (PropertyImpl) persistenceService.find("From PropertyImpl where applicationNo = ? ",
