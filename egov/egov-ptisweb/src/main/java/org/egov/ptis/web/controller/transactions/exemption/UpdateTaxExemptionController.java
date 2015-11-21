@@ -151,14 +151,15 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             }
             String successMessage = "";
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                if (propertyByEmployee) {
+                if (taxExemptionService.isPropertyByEmployee(property)) {
                     successMessage = "Property Exemption approved successfully and forwarded to  "
                             + property.getCreatedBy().getName() + " with assessment number "
                             + property.getBasicProperty().getUpicNo();
                 } else {
                     successMessage = "Property Exemption approved successfully and forwarded to  "
-                            + ((PropertyImpl) property).getStateHistory().get(0).getSenderName()
-                            + " with assessment number " + property.getBasicProperty().getUpicNo();
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getStateHistory().get(0)
+                                    .getOwnerPosition().getId()) + " with assessment number "
+                            + property.getBasicProperty().getUpicNo();
                 }
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                 if (taxExemptionService.isPropertyByEmployee(property)) {
@@ -167,8 +168,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                             + property.getApplicationNo();
                 } else {
                     successMessage = "Property Exemption rejected successfully and forwared to initiator "
-                            + ((PropertyImpl) property).getStateHistory().get(0).getSenderName()
-                            + " with application number " + property.getApplicationNo();
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getStateHistory().get(0)
+                                    .getOwnerPosition().getId()) + " with application number "
+                            + property.getApplicationNo();
                 }
             } else
                 successMessage = "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
