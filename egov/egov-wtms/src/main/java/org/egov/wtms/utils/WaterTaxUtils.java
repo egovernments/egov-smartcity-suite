@@ -390,32 +390,17 @@ public class WaterTaxUtils {
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
         List<Assignment> assignment = new ArrayList<Assignment>();
-        if (department.length > 0 && designation.length > 0)
-            if (StringUtils.isNotBlank(department[0]) && StringUtils.isNotBlank(designation[0])) {
+        for (String dept : department) {
+            for (String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(department[0]).getId(),
-                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
-                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                            .getDepartmentByName(department[0]).getId(),
-                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
-            } else if (StringUtils.isNotBlank(department[1]) && StringUtils.isNotBlank(designation[0])) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(department[1]).getId(),
-                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
-                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                            .getDepartmentByName(department[1]).getId(),
-                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
-            } else if (StringUtils.isNotBlank(department[2]) && StringUtils.isNotBlank(designation[0])) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(department[2]).getId(),
-                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
-                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                            .getDepartmentByName(department[2]).getId(),
-                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        boundaryObj.getId());
+                if (!assignment.isEmpty())
+                    break;
             }
+            if (!assignment.isEmpty())
+                break;
+        }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
