@@ -244,7 +244,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private PropertyImpl newProperty = new PropertyImpl();
-    private Address ownerAddress;
+    private Address ownerAddress = new CorrespondenceAddress();
     Date propCompletionDate = null;
     @Autowired
     private BoundaryService boundaryService;
