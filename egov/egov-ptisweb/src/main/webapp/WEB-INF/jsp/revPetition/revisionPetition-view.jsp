@@ -84,7 +84,7 @@
 		loadDesignationFromMatrix();
 	}
 	function enableAppartnaumtLandDetailsView() {
-		if (document.forms[0].appurtenantLandChecked.checked == true) {
+		if (document.forms[0].appurtenantLandChecked != null && document.forms[0].appurtenantLandChecked.checked == true) {
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('#appurtenantRow').show();
 			jQuery('tr.floordetails').show();
@@ -144,11 +144,11 @@
 				action = 'revPetition-validateInspectionDetails.action';
 
 			} else if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
-				if (validateObjectionOutcome()) {
+				//if (validateObjectionOutcome()) {
 					action = 'revPetition-recordObjectionOutcome.action';
-				} else
+				/* } else
 					return false;
-
+ 				*/
 			}
 		} else if (actionName == 'Print HearingNotice') {
 			url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
@@ -178,14 +178,15 @@
 			action = 'revPetition-reject.action';
 		} else if (actionName == 'Approve') {
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
-				if (validateObjectionOutcome()) {
+				//if (validateObjectionOutcome()) {
 					/*  if(document.getElementById('approverPositionId').value=="-1") {
 					        alert("Please Select the Approver ");
 							return false;
 					    } */
-					action = 'revPetition-recordObjectionOutcome.action';
-				} else
-					return false;
+					action = 'revPetition-recordObjectionOutcome.action?objectionId='
+						+ document.getElementById("model.id").value;
+				/* } else
+					return false; */
 
 			}
 		}
@@ -294,12 +295,6 @@
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED))
 							">
 
-							</s:elseif>
-							<s:elseif
-								test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY))
-							">
-								<jsp:include page="objectionOutcome.jsp" />
 							</s:elseif>
 
 						</div>

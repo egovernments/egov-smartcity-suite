@@ -609,10 +609,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (hasErrors())
             return "view";
 
-        if (objection.getDateOfOutcome() != null && objection.getDateOfOutcome().after(new Date())) {
+       /* if (objection.getDateOfOutcome() != null && objection.getDateOfOutcome().after(new Date())) {
             addActionMessage(getText("dateOfOutcome.greaterThan.todaydate"));
             return "view";
-        }
+        }*/
         // Commented for time being. Client confirmation required.
         /*
          * else if (objection.getDateOfOutcome() != null &&
