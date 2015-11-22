@@ -1661,7 +1661,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value="Payee" + '<s:property value="%{payeeName}"/>';
+	document.getElementById('paidBy').value='<s:property value="%{payeeName}"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
