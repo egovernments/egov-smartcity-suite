@@ -166,6 +166,9 @@ function callAjaxForTitleTransfer() {
 						}, {
 							"data" : "commissionerOrder",
 							"sTitle" : "Commissioner Orders"
+						}, {
+							"data" : "mutationFee",
+							"sTitle" : "Mutation Fee"
 						}]				
 			});
 }

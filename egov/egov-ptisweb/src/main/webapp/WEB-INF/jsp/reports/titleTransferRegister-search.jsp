@@ -160,6 +160,7 @@
 								<th>Changed Title</th>
 								<th>Date of Transfer</th>
 								<th>Commissioner Orders</th>
+								<th>Mutation Fee</th>
 							</tr>
 						</thead>
 					</table>
