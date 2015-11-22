@@ -175,6 +175,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                 	viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+                	viewMap.put("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
                 	totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
 	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
 	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));

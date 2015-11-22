@@ -496,7 +496,7 @@
 			<div class="col-xs-3 add-margin">
 				Property Tax
 			</div>
-			<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND.equals(propertyDetail.propertyTypeMaster.code)}">
+			<s:if test="%{viewMap.propertyType != @org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND}">
 			<div class="col-xs-3 add-margin view-content">
 				Rs. <s:text name="format.money"><s:param value="viewMap.generalTax" /></s:text>
 			</div>
