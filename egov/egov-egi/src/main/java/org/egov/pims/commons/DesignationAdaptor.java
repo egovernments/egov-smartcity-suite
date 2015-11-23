@@ -13,6 +13,7 @@ public class DesignationAdaptor implements JsonSerializer<Designation> {
     public JsonElement serialize(Designation designation, Type type, JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", designation.getName());
+        jsonObject.addProperty("code", designation.getCode());
         jsonObject.addProperty("description", null != designation.getDescription() ? designation.getDescription() : "NA");
         return jsonObject;
     }
