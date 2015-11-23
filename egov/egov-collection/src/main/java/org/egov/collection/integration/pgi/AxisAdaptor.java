@@ -114,7 +114,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 receiptHeader.getTotalAmount()/*
                         .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP)*/.toString());
         // fields.put(CollectionConstants.AXIS_AMOUNT, "400");
-        if (CollectionConstants.AXIS_SECURE_SECRET != null && CollectionConstants.AXIS_SECURE_SECRET.length() > 0) {
+        String axisSecureSecret=EGovConfig.getMessage(CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.AXIS_SECURE_SECRET);
+        if (axisSecureSecret != null) {
             final String secureHash = hashAllFields(fields);
             fields.put(CollectionConstants.AXIS_SECURE_HASH, secureHash);
         }
@@ -134,7 +135,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
         // create a buffer for the md5 input and add the secure secret first
         final StringBuffer buf = new StringBuffer();
-        buf.append(CollectionConstants.AXIS_SECURE_SECRET);
+        String axisSecureSecret=EGovConfig.getMessage(CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.AXIS_SECURE_SECRET);
+        buf.append(axisSecureSecret);
 
         // iterate through the list and add the remaining field values
         final Iterator<String> itr = fieldNames.iterator();
@@ -234,9 +236,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         final String vpc_Txn_Secure_Hash = null2unknown(fields.remove("vpc_SecureHash"));
         // defines if error message should be output
         boolean errorExists = false;
-
-        if (CollectionConstants.AXIS_SECURE_SECRET != null
-                && CollectionConstants.AXIS_SECURE_SECRET.length() > 0
+        String axisSecureSecret=EGovConfig.getMessage(CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.AXIS_SECURE_SECRET);
+        if (axisSecureSecret != null 
                 && (fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != null || fields
                         .get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != "No Value Returned")) {
 

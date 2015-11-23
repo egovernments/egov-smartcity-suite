@@ -489,7 +489,7 @@ public final class CollectionConstants {
     public static final String MESSAGEKEY_AXIS_OPERATOR_ID = "axis.operator.id";
     public static final String MESSAGEKEY_AXIS_PASSWORD = "axis.password";
     public static final String MESSAGEKEY_AXIS_RECONCILE_URL = "axis.reconcile.url";
-    public static final String AXIS_SECURE_SECRET = "60D7AA77F54504B6057CCB7B3AEE86D4";
+    public static final String AXIS_SECURE_SECRET = "axis.secure.secret";
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
