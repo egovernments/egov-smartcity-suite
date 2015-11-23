@@ -181,44 +181,53 @@ public class TaxExemptionController extends GenericWorkFlowController {
         Long approvalPosition = 0l;
         String approvalComent = "";
         String taxExemptedReason = "";
-
-        if (request.getParameter("taxExemptedReason") != null)
-            taxExemptedReason = request.getParameter("taxExemptedReason");
-        if (request.getParameter("approvalComent") != null)
-            approvalComent = request.getParameter("approvalComent");
-        if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
-
+        String target = "";
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        if ((!propertyByEmployee || loggedUserIsMeesevaUser) && null == propertyService.getUserPositionByZone(property.getBasicProperty())) {
+                model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
+                model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
+                taxExemptionService.addModelAttributes(model, basicProperty);
+                prepareWorkflow(model, propertyImpl, new WorkflowContainer());
+                target = TAX_EXEMPTION_FORM;
+        } else {
 
-        if (loggedUserIsMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<String, String>();
-            meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+            if (request.getParameter("taxExemptedReason") != null)
+                taxExemptedReason = request.getParameter("taxExemptedReason");
+            if (request.getParameter("approvalComent") != null)
+                approvalComent = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            if (StringUtils.isBlank(property.getApplicationNo()))
-                property.setApplicationNo(applicationNumberGenerator.generate());
-            taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
-        } else
-            taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+            if (loggedUserIsMeesevaUser) {
+                final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+                meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
 
-        model.addAttribute(
-                "successMessage",
-                "Property exemption data saved successfully in the system and forwarded to "
-                        + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition()
-                                .getId()) + " with application number " + property.getApplicationNo());
-        if (loggedUserIsMeesevaUser)
-            return "redirect:/exemption/generate-meesevareceipt/"
-                    + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
-                    + ((PropertyImpl) property).getApplicationNo();
-        else
+                if (StringUtils.isBlank(property.getApplicationNo()))
+                    property.setApplicationNo(applicationNumberGenerator.generate());
+                taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
+            } else
+                taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
 
-            return TAX_EXEMPTION_SUCCESS;
+            model.addAttribute(
+                    "successMessage",
+                    "Property exemption data saved successfully in the system and forwarded to "
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState()
+                                    .getOwnerPosition().getId()) + " with application number "
+                            + property.getApplicationNo());
+            if (loggedUserIsMeesevaUser)
+                return "redirect:/exemption/generate-meesevareceipt/"
+                        + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+                        + ((PropertyImpl) property).getApplicationNo();
+            else
+
+                target = TAX_EXEMPTION_SUCCESS;
+        }
+        return target;
     }
 
     @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)

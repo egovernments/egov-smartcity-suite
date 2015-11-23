@@ -53,7 +53,7 @@
 		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="property" id="propertyAckForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading" align="center">
-					<div class="panel-title text-center" align="center">
+					<div class="panel-title text-center" style="text-align:center;">
 						<strong>${successMessage}</strong>
 					</div>
 				</div> 
@@ -63,7 +63,7 @@
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>
 			</div>
-		</form:form>
+		 </form:form>
 		</div>
         </div>
     </div>

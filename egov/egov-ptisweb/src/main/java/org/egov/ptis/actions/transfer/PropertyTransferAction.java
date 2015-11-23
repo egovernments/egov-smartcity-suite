@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -117,13 +118,12 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
         @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
         @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
-        @Result(name =PropertyTransferAction.ERROR, location = "common/meeseva-errorPage.jsp"),
+        @Result(name = PropertyTransferAction.ERROR, location = "common/meeseva-errorPage.jsp"),
         @Result(name = PropertyTransferAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
         @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
-
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
@@ -138,7 +138,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-    
+
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -158,7 +158,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private PropertyService propertyService;
-    
+
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
@@ -193,7 +193,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
     private String applicationType;
-    
+
     private Map<String, String> guardianRelationMap;
 
     public PropertyTransferAction() {
@@ -217,18 +217,17 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
                 return REJECT_ON_TAXDUE;
-            } else{
-                
+            } else {
                 loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                 if (loggedUserIsMeesevaUser) {
-                     if (getMeesevaApplicationNumber() == null) {
+                    if (getMeesevaApplicationNumber() == null) {
                         addActionMessage(getText("MEESEVA.005"));
                         return ERROR;
                     } else {
-                       propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+                        propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
                     }
                 }
-                
+
                 return NEW;
             }
         }
@@ -238,30 +237,29 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/save")
     public String save() {
         transitionWorkFlow(propertyMutation);
-         
-        loggedUserIsMeesevaUser =propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
+
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser) {
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
-        }
-        else {
-            HashMap<String,String> meesevaParams=   new HashMap<String,String>();
+        } else {
+            HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
             basicproperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation,meesevaParams);
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, meesevaParams);
         }
-        
+
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
-         
-        if(!loggedUserIsMeesevaUser)
+
+        if (!loggedUserIsMeesevaUser)
             return ACK;
         else {
             return MEESEVA_RESULT_ACK;
-        }           
-        
+        }
+
     }
 
     @SkipValidation
@@ -269,7 +267,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public String view() {
         final String currState = propertyMutation.getState().getValue();
         final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesignation)) {
+        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesignation)
+                || currState.equals(WFLOW_ACTION_NEW)) {
             mode = EDIT;
             return EDIT;
         } else {
@@ -511,7 +510,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         if (getMutationId() != null
                 && !(userDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) || userDesignation
-                        .equalsIgnoreCase(SENIOR_ASSISTANT))) {
+                        .equalsIgnoreCase(SENIOR_ASSISTANT)) && null != propertyMutation
+                && !propertyMutation.getState().getValue().equals(WFLOW_ACTION_NEW)) {
             if (propertyMutation.getMutationFee() == null)
                 addActionError(getText("mandatory.mutationFee"));
             else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
@@ -520,6 +520,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError("Market Value is mandatory");
             else if (propertyMutation.getMarketValue().compareTo(BigDecimal.ZERO) < 1)
                 addActionError("Please enter a valid Market Value");
+        }
+
+        if (loggedUserIsMeesevaUser || !propertyByEmployee) {
+            if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty)) {
+                addActionError(getText("notexists.position"));
+            }
         }
 
         super.validate();

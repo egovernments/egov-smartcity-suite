@@ -585,7 +585,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) || !propertyByEmployee)
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -621,7 +622,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into forwardView");
         validateApproverDetails();
         if (hasErrors())
-            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -708,7 +710,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
-            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+            if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
+                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -1071,6 +1074,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
         validateApproverDetails();
+        if (!propertyByEmployee) {
+            if (null != basicProp && null == propService.getUserPositionByZone(basicProp)) {
+                addActionError(getText("notexists.position"));
+            }
+        }
         LOGGER.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
 

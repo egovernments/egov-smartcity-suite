@@ -238,9 +238,10 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
-					<s:if
+					<s:if 
 						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equals(userDesignation) &&
-						  !@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equals(userDesignation)}">
+						  !@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equals(userDesignation) &&
+						  !@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW.equals(state.value)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
 							<td class="bluebox"><s:text name="docValue" /><span

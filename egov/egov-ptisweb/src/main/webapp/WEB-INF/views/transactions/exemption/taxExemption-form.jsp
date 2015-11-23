@@ -49,9 +49,13 @@ body
   font-size:14px;
 }
 </style>
-<script type="text/javascript">
-alert("taxExemption"+taxExemption);
-</script>
+<c:if test="${errorMsg != ''}">
+ 	<div class="panel-heading">
+				<div class="add-margin error-msg" style="text-align:center;">
+					<strong><c:out value="${errorMsg}"/></strong>
+				</div>
+	</div>
+</c:if>
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
@@ -83,8 +87,6 @@ alert("taxExemption"+taxExemption);
 								<form:options items="${taxExemptionReasons}" itemValue="id" 
 									itemLabel="name" />
 							</form:select>
-							<form:errors path="taxExemptedReason"
-								cssClass="add-margin error-msg" />
 						</div>
 					</div>
 				</div>
