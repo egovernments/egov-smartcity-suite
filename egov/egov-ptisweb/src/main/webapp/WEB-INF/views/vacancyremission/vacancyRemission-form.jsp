@@ -51,7 +51,13 @@ body
 </style>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
-
+<c:if test="${errorMsg != ''}">
+ 	<div class="panel-heading">
+				<div class="add-margin error-msg" style="text-align:center;">
+					<strong><c:out value="${errorMsg}"/></strong>
+				</div>
+	</div>
+</c:if>
 <form:form id="vacancyRemissionForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
 	<div class="page-container" id="page-container">

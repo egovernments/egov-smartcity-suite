@@ -39,7 +39,6 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -143,7 +142,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         model.addAttribute("errorMsg", "This property is exempted from taxes");
                         return PROPERTY_VALIDATION;
                     } else if (basicProperty.isUnderWorkflow()) {
-                        model.addAttribute("errorMsg", "Could not do Vacancy Remission now, as this property is undergoing some work flow.");
+                        model.addAttribute("errorMsg",
+                                "Could not do Vacancy Remission now, as this property is undergoing some work flow.");
                         return PROPERTY_VALIDATION;
                     } else {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
@@ -193,7 +193,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         }
                         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService
                                 .getLoggedInUser());
-                        if (loggedUserIsMeesevaUser){
+                        if (loggedUserIsMeesevaUser) {
                             if (meesevaApplicationNumber == null)
                                 throw new ApplicationRuntimeException("MEESEVA.005");
                             else
@@ -233,6 +233,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request, @RequestParam String workFlowAction) {
 
+        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);
         if (resultBinder.hasErrors()) {
             if (basicProperty != null) {
@@ -240,6 +242,13 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
+            return VACANCYREMISSION_FORM;
+        } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && null != basicProperty
+                && null == propertyService.getUserPositionByZone(basicProperty)) {
+            prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
+            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+            model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
+            vacancyRemissionService.addModelAttributes(model, basicProperty);
             return VACANCYREMISSION_FORM;
         } else {
             Long approvalPosition = 0l;
@@ -252,8 +261,6 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
-            loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
             if (loggedUserIsMeesevaUser) {
                 final HashMap<String, String> meesevaParams = new HashMap<String, String>();
                 meesevaParams.put("APPLICATIONNUMBER", vacancyRemission.getMeesevaApplicationNumber());
