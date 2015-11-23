@@ -143,9 +143,14 @@ jQuery(document).ready(function($)
 			    content: "Enter your present residential address!"
 			  },
 			  {
-			    element: "#complaintTypeName",
+			    element: "#complaintTypeCategory",
+			    title: "Grievance Category",
+			    content: "Select your grievance category!"
+			  },
+			  {
+			    element: "#complaintType",
 			    title: "Grievance Type",
-			    content: "Enter your grievance type and select it from the suggestion or choose it from below frequently filed grievance type!"
+			    content: "Select your grievance type!"
 			  },
 			  {
 			    element: "#doc",
@@ -180,7 +185,7 @@ jQuery(document).ready(function($)
 			  storage: false,
 			  duration: 5000,
 			  onShown: function (tour) {
-				  console.log(tour.getCurrentStep());
+				  //console.log(tour.getCurrentStep());
 				  var step = tour.getCurrentStep();
 				  if(step == 0){
 					  typingfeel('James Jackson', '#f-name');
@@ -190,13 +195,16 @@ jQuery(document).ready(function($)
 					  typingfeel('james.jackson@gmail.com', '#email');
 				  }else if(step == 3){
 					  typingfeel('Colorado U.S', '#address');
-				  }else if(step == 4){ 
-				    typingfeelintypeahead('Dog','#complaintTypeName','Dog menace');
+				  }else if(step == 4){
+					  $('#complaintTypeCategory').val('1').attr("selected", "selected");
 				  }else if(step == 5){
+					  $('<option>').val('1').text('Absenteesim of sweepers').appendTo('#complaintType');
+					  $('#complaintType').val('1').attr("selected", "selected");
+				  }else if(step == 6){
 					  typingfeel('Dog menace in madiwala', '#doc');
-				  }else if(step == 7){ 
+				  }else if(step == 8){ 
 				    typingfeelintypeahead('Rev','#location','Revenue, Zone-4, Srikakulam  Municipality');
-				  }else if(step == 8){
+				  }else if(step == 9){
 					  typingfeel('Spencer Plaza', '#landmarkDetails');
 				  }
 			  },
