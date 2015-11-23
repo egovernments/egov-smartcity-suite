@@ -39,10 +39,21 @@
  */
 package org.egov.eis.utils.constants;
 
+import java.util.Date;
+
 public class EisConstants {
 
 	public static final String ROLE_EMPLOYEE = "Employee";
 	public static final String ANONYMOUS_EMPLOYEE = "anonymous";
 	public static final String DEFAULT_EMPLOYEE_PWD = "12345678";
+	public static final String STATUS_TYPE_EMPLOYED = "Employed";
+	public static final String EMPLOYEE_TYPE_PERMANENT = "Permanent";
+	public static final Boolean ISACTIVE_TRUE = true;
+	public static final String FROM_DATE = "01/04/2015";
+	public static final String TO_DATE = "31/12/2099";
+	public static final String BOUNDARY_TYPE_CITY = "City";
+	public static final String HIERARCHY_TYPE_ADMIN = "ADMINISTRATION";
+	public static final Boolean IS_PRIMARY_TRUE = true;
+	
 	
 }

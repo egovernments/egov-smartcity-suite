@@ -145,7 +145,7 @@
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.gender"/><span class="mandatory"></span></label>
 										
 										<div class="col-sm-2 col-xs-12 add-margin">
-											<form:radiobutton path="gender" id="gender" value="MALE" checked="true"/>
+											<form:radiobutton path="gender" id="gender" value="MALE" required="required" checked="true"/>
 											<label>Male</label>
 										</div>
 										<div class="col-sm-2 col-xs-12 add-margin">
@@ -163,15 +163,15 @@
 										<label for="field-1" class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
 										
 										<div class="col-sm-2 add-margin">
-											<select class="form-control" id="deptId">
+										<select class="form-control" name = "deptId" id="deptId" required="required"> 
 												<option value="">
 													<spring:message code="lbl.select" />
 												</option>
 												  <c:forEach items="${department}" var="dept">
 										            <option value="${dept.id}">${dept.name} </option>
 										         </c:forEach>
-											</select>
-											<input type="hidden" id="deparmentId" value=""/>
+										 </select> 
+											<input type="hidden" id="deparmentId" name="departmentId" value=""/>
 											<div class="error-msg departmenterror all-errors display-hide"></div>
 										</div>
 										
@@ -180,8 +180,8 @@
 										</div>
 										
 										<div class="col-sm-3 add-margin">
-										        <input id="designationName" type="text" class="form-control " autocomplete="off"
-													value="${assignment.designation.name}" placeholder="Designation">
+										        <input id="designationName"  name="designationName" type="text" class="form-control " autocomplete="off"
+													value="" placeholder="Designation" required="required">
 													<input type="hidden" id="designationId" value=""/>
 												<c:forEach items="${designations}" var="designation">
 													<a onclick="setDesignationId(<c:out value="${designation.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out

@@ -100,4 +100,7 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long> 
     @Query("select count(*)  from Position cr ")
     Integer getTotalSanctionedPosts();
 
+    @Query("select count(*)  from Position cr where cr.name like :name||'%' ")
+    Integer getPositionSerialNumberByName(@Param("name") final String name);
+
 }

@@ -1,31 +1,31 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
- * 
+ *
  * Copyright (C) <2015> eGovernments Foundation
- * 
+ *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
  * complied with:
- * 
+ *
  * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
- * 
+ *
  * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
  * material be marked in reasonable ways as different from the original version.
- * 
+ *
  * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
  * trade names or trademarks of eGovernments Foundation.
- * 
+ *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.infra.admin.master.service;
@@ -168,6 +168,11 @@ public class BoundaryService {
                 hierarchyTypeName);
     }
 
+    public Boundary getBoundaryByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
+            final String hierarchyTypeName) {
+        return boundaryRepository.findBoundaryByBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName);
+    }
+
     public List<Boundary> getBondariesByNameAndType(final String boundaryName, final Long boundaryTypeId) {
         return boundaryRepository.findByNameAndBoundaryType(boundaryName, boundaryTypeId);
     }
@@ -188,24 +193,27 @@ public class BoundaryService {
     }
 
     public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
-        crossHierarchyService
-                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", '%' + name + '%')
-                .stream().forEach(location -> {
-                    Map<String, Object> res = new HashMap<String, Object>();
+        crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration",
+                '%' + name + '%').stream().forEach(location -> {
+                    final Map<String, Object> res = new HashMap<String, Object>();
                     res.put("id", location.getId());
                     res.put("name", location.getChild().getName() + " - " + location.getParent().getName());
                     list.add(res);
                 });
 
         /*
-         * getBoundaryByNameLike(name).stream() .forEach( location -> { Map<String, Object> res = new HashMap<String, Object>();
-         * res.put("id", location.getId()); if (location.isRoot()) res.put("name", location.getName()); else { Boundary
-         * currentLocation = location; StringBuilder loc = new StringBuilder(); String delim = ""; while
-         * (!currentLocation.isRoot()) { loc.append(delim).append( currentLocation.getName()); delim = ","; currentLocation =
-         * currentLocation .getParent(); if (currentLocation.isRoot()) { loc.append(delim).append( currentLocation.getName());
-         * break; } } res.put("name", loc.toString()); list.add(res); } });
+         * getBoundaryByNameLike(name).stream() .forEach( location -> {
+         * Map<String, Object> res = new HashMap<String, Object>();
+         * res.put("id", location.getId()); if (location.isRoot())
+         * res.put("name", location.getName()); else { Boundary currentLocation
+         * = location; StringBuilder loc = new StringBuilder(); String delim =
+         * ""; while (!currentLocation.isRoot()) { loc.append(delim).append(
+         * currentLocation.getName()); delim = ","; currentLocation =
+         * currentLocation .getParent(); if (currentLocation.isRoot()) {
+         * loc.append(delim).append( currentLocation.getName()); break; } }
+         * res.put("name", loc.toString()); list.add(res); } });
          */
 
         return list;
@@ -216,7 +224,7 @@ public class BoundaryService {
         return boundaryRepository.findActiveChildrenWithParent(parentBoundaryId);
     }
 
-    public List<Boundary> findActiveBoundariesForMpath(Set<String> mpath) {
+    public List<Boundary> findActiveBoundariesForMpath(final Set<String> mpath) {
         return boundaryRepository.findActiveBoundariesForMpath(mpath);
     }
 
@@ -239,25 +247,21 @@ public class BoundaryService {
     public String getMaterializedPath(final Boundary child, final Boundary parent) {
         String mpath = "";
         int childSize = 0;
-        if (null == parent) {
+        if (null == parent)
             mpath = String.valueOf(boundaryRepository.findAllParents().size() + 1);
-        }
         else
             childSize = boundaryRepository.findActiveImmediateChildrenWithOutParent(parent.getId()).size();
-        if (mpath.isEmpty()) {
+        if (mpath.isEmpty())
             if (null != child) {
                 if (!child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath() + "." + childSize)) {
                     childSize += 1;
                     mpath = parent.getMaterializedPath() + "." + childSize;
-                }
-                else
+                } else
                     mpath = child.getMaterializedPath();
-            }
-            else {
+            } else {
                 childSize += 1;
                 mpath = parent.getMaterializedPath() + "." + childSize;
             }
-        }
 
         return mpath;
     }

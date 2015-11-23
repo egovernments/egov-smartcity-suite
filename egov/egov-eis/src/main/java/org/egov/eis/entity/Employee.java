@@ -85,7 +85,6 @@ import org.joda.time.DateTime;
 public class Employee extends User implements EntityType {
 
     private static final long serialVersionUID = -1105585841211211215L;
-
     @NotNull
     @SafeHtml
     @Column(name = "code", unique = true)
@@ -102,11 +101,10 @@ public class Employee extends User implements EntityType {
     private Date dateOfRetirement;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
     @NotAudited
     private EmployeeStatus employeeStatus;
 
-    @NotNull
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
     @NotAudited

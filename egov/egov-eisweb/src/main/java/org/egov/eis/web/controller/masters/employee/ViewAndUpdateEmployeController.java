@@ -41,6 +41,7 @@ package org.egov.eis.web.controller.masters.employee;
 
 import java.io.IOException;
 import java.util.Arrays;
+
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
@@ -93,11 +94,10 @@ public class ViewAndUpdateEmployeController {
 
         setDropDownValues(model);
         model.addAttribute("mode", "update");
-        Employee employee = employeeService.getEmployeeByCode(code);
+        final Employee employee = employeeService.getEmployeeByCode(code);
         String image = null;
-        if (null != employee.getSignature()) {
+        if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        }
         model.addAttribute("image", image);
         return "employee-form";
     }
@@ -112,15 +112,14 @@ public class ViewAndUpdateEmployeController {
             return "employee-form";
         }
         try {
-            if (null != file)
+            if (!file.isEmpty())
                 employee.setSignature(file.getBytes());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("Error in loading Employee Signature" + e.getMessage(), e);
         }
         String image = null;
-        if (null != employee.getSignature()) {
+        if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        }
         model.addAttribute("image", image);
         employee = jurisdictionService.removeDeletedJurisdictions(employee, removedJurisdictionIds);
         employeeService.update(employee);
@@ -131,11 +130,10 @@ public class ViewAndUpdateEmployeController {
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
     public String view(@PathVariable final String code, final Model model) {
-        Employee employee = employeeService.getEmployeeByCode(code);
+        final Employee employee = employeeService.getEmployeeByCode(code);
         String image = null;
-        if (null != employee.getSignature()) {
+        if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        }
         model.addAttribute("image", image);
         return "employee-success";
     }

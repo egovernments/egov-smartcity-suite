@@ -101,7 +101,6 @@ public class User extends AbstractAuditable {
     @DocumentId
     private Long id;
 
-    @NotNull
     @Column(name = "username", unique = true)
     @Length(min = 2, max = 64)
     private String username;

@@ -76,7 +76,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Set<User> findByActiveTrue();
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
-    
+
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
     Set<User> findUsersByRoleName(@Param("roleName") String roleName);
+
+    @Query(" select count(*) from User usr where usr.username like :name||'%' ")
+    public Integer getUserSerialNumberByName(@Param("name") final String name);
 }

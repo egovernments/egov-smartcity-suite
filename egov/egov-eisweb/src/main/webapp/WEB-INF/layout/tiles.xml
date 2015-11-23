@@ -87,7 +87,12 @@
          <put-attribute name="title" value="Search Position"/>
      </definition>
     
-    <definition name="employee-form" extends="base_layout">
+    <definition name="employee-form-simple" extends="base_layout">
+		<put-attribute name="page-title" value="title.createemployee" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form-simple.jsp"/>
+	</definition>
+	
+	<definition name="employee-form" extends="base_layout">
 		<put-attribute name="page-title" value="title.createemployee" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form.jsp"/>
 	</definition>

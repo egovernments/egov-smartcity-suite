@@ -116,6 +116,10 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = UPPER(:hierarchyTypeName) order by b.id")
     List<Boundary> findBoundariesByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
             @Param("hierarchyTypeName") String hierarchyTypeName);
+    
+    @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = UPPER(:hierarchyTypeName) order by b.id")
+    Boundary findBoundaryByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
+            @Param("hierarchyTypeName") String hierarchyTypeName);
 
     @Query("select b from Boundary b where b.isHistory=false and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.localName asc")
     List<Boundary> findByNameAndBoundaryType(@Param("boundaryName") String boundaryName,
