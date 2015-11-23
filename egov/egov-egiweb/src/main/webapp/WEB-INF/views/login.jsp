@@ -131,9 +131,9 @@
 							<div class="label-font" style="vertical-align: sub">
 								<spring:message code="lbl.check.comp.status"/>&nbsp;<br>
 								<input type="text" placeholder="Grievance number" id="compsearchtxt"
-									style="padding: 2px 5px; height: 30px; border: 1px solid #D0D2D7; font-size: 15px;">
+									style="padding: 2px 5px; height: 30px;font-size: 14px;border: 0;padding-left: 0;border-bottom: 1px solid #D0D2D7;outline: none;box-shadow: none;">
 								<button class="btn-custom" id="compsearch"
-									style="padding: 4px 5px; vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
+									style="padding: 4px 5px;border-radius: 4px;font-size: 14px;vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
 							</div>
 							<div class="error-msg search-error-msg display-hide" style="padding-left: 65px;">Grievance number is mandatory</div>
 						</div>
