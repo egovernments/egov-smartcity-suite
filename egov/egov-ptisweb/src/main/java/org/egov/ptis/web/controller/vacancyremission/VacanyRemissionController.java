@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -129,7 +130,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     public String newForm(final Model model, @PathVariable final String assessmentNo, @PathVariable final String mode,
             @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request) {
         if (basicProperty != null) {
-            final Property property = basicProperty.getProperty();
+            final Property property = basicProperty.getActiveProperty();
             if (property != null)
                 // When called from common search
                 if (mode.equalsIgnoreCase("commonSearch")) {
@@ -142,7 +143,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         model.addAttribute("errorMsg", "This property is exempted from taxes");
                         return PROPERTY_VALIDATION;
                     } else if (basicProperty.isUnderWorkflow()) {
-                        model.addAttribute("errorMsg", "This property is under workflow");
+                        model.addAttribute("errorMsg", "Could not do Vacancy Remission now, as this property is undergoing some work flow.");
                         return PROPERTY_VALIDATION;
                     } else {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
