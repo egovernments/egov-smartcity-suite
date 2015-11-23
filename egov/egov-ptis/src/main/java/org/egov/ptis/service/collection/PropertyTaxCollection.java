@@ -293,10 +293,10 @@ public class PropertyTaxCollection extends TaxCollection {
                             /*GLCODEMAP_FOR_CURRENTTAX.get(*/PropertyTaxConstants.GLCODE_FOR_PENALTY/*)*/)) {
 
                         if (demandDetail == null) {
-
+                        	throw new ApplicationRuntimeException(" Penalty Demand Details is null ");
+                        }else{
+                        	demandDetail.addCollected(rcptAccInfo.getCrAmount());
                         }
-
-                        demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
