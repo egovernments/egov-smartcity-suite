@@ -42,20 +42,30 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="lbl.workflow.error" />
+					<spring:message code="lbl.validation.error" />
 				</div>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body" style="text-align: center">
 				<div class="mandatory">
 					<c:out value="${errorMsg}" />
 				</div>
+			</div>
+			<div class="buttonbottom" align="center">
+			<input type="button" name="button2" id="button2" value="Close" 
+				class="btn btn-default" onclick="window.close();" />
 			</div>
 		</div>
 	</div>
