@@ -60,7 +60,7 @@ public class DashboardHomeController {
     
     @RequestMapping("/{moduleName}")
     public String kebanaDashboard(@PathVariable final String moduleName, final Model model) {
-        model.addAttribute("kibanaurl", dashboardProperties.getProperty("kibana.url."+moduleName).replaceFirst("$ulbcode", EgovThreadLocals.getCityCode()));
+        model.addAttribute("kibanaurl", dashboardProperties.getProperty("kibana.url."+moduleName).replaceAll("<city_name>", EgovThreadLocals.getCityName()));
         return "kibana-dashboard";
     }
 }
