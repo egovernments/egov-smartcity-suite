@@ -990,11 +990,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             else if (null != userDesgn && userDesgn.equals(REVENUE_INSPECTOR_DESGN))
                 addActionError(getText("mandatory.doorNo"));
 
-        if (null == property.getBasicProperty().getRegdDocDate()) {
-            addActionError(getText("mandatory.regdocdate"));
-        }
-        if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
-            addActionError(getText("mandatory.regdocno"));
+        if(!property.getPropertyDetail().isStructure()){
+        	if (null == property.getBasicProperty().getRegdDocDate()) {
+                addActionError(getText("mandatory.regdocdate"));
+            }
+            if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
+                addActionError(getText("mandatory.regdocno"));
+            }
         }
 
         if (electionWardId == null || electionWardId == -1) {
