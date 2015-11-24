@@ -309,10 +309,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (isBlank(propertyDetail.getBuildingPermissionNo()))
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
-                addActionError(getText("mandatory.buildingPlanDate"));
-            else if (null != regDocDate
-                    && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate))
-                addActionError(getText("regDate.greaterThan.buildingPermDate"));
+                addActionError(getText("mandatory.buildingPlanDate")); 
         }
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
