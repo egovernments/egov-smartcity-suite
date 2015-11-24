@@ -69,7 +69,7 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 <div class="container-fluid">
-<div class="row">
+ <div class="row">
 	<div class="col-md-12">
 		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" enctype="multipart/form-data" >
 				 <c:if test="${not empty message}">
@@ -160,7 +160,7 @@
 
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
+										<label for="field-1"  class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
 										
 										<div class="col-sm-6 add-margin">
 										<select class="form-control" name = "deptId" id="deptId" required="required"> 
@@ -250,6 +250,6 @@
                 
              </form:form>
     </div>
-</div>
+ </div>
 </div>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
