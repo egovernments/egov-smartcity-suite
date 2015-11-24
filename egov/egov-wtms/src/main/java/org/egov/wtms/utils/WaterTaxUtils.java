@@ -359,11 +359,15 @@ public class WaterTaxUtils {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
-        final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
+        /*final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
         final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
                 assessmentDetails.getBoundaryDetails().getWardBoundaryType(), hierarchy);
         final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
-                .getBoundaryDetails().getZoneNumber());
+                .getBoundaryDetails().getAdminWardNumber());
+        */
+        //TODO: check whether adminward always mandatory
+        final Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails
+                .getBoundaryDetails().getAdminWardId());
         assignmentObj = getUserPositionByZone(asessmentNumber, assessmentDetails, boundaryObj);
         
                  return assignmentObj != null ? assignmentObj.getPosition() : null;
