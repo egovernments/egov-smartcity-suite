@@ -1,5 +1,4 @@
-/*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -37,30 +36,28 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.dashboard.web.controller;
+package org.egov.dashboard.config;
 
-import org.egov.dashboard.config.DashboardProperties;
-import org.egov.infra.utils.EgovThreadLocals;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-@Controller
-public class DashboardHomeController {
+@Configuration
+@PropertySource(value = {
+        "classpath:config/dashboard-config.properties",
+        "classpath:config/egov-erp-override.properties",
+        "classpath:config/egov-erp-${user.name}.properties",
+        "classpath:config/application-config-${client.id}.properties" }, ignoreResourceNotFound = true)
+public class DashboardProperties {
 
     @Autowired
-    private DashboardProperties dashboardProperties;
-    
-    @RequestMapping("/home")
-    public String home() {
-        return "home";
+    private Environment environment;
+
+    public String getProperty(final String propCode) {
+        return environment.getProperty(propCode, EMPTY);
     }
-    
-    @RequestMapping("/{moduleName}")
-    public String kebanaDashboard(@PathVariable final String moduleName, final Model model) {
-        model.addAttribute("kibanaurl", dashboardProperties.getProperty("kibana.url."+moduleName).replaceFirst("$ulbcode", EgovThreadLocals.getCityCode()));
-        return "kibana-dashboard";
-    }
+
 }

@@ -64,4 +64,7 @@
 		<put-attribute name="page-title" value="title.dashboard" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/home.jsp"/>
     </definition>
+    
+    <definition name="kibana-dashboard" template="/WEB-INF/views/dashboard/kibana-dashboard.jsp"/>
+    
 </tiles-definitions>
