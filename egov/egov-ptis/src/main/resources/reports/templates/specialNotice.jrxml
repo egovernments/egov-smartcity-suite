@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-11T11:02:25 -->
+<!-- 2015-11-17T13:10:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
@@ -15,6 +15,7 @@
 	<parameter name="mode" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="unauthorizedProperty" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.Long"/>
 	<field name="noticeNo" class="java.lang.String"/>
 	<field name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<field name="floorDetailsForNotice" class="java.util.List"/>
@@ -88,7 +89,9 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="158" width="242" height="17" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<reportElement positionType="Float" x="37" y="158" width="242" height="17" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd">
+					<printWhenExpression><![CDATA[$F{noticeNo} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
@@ -146,16 +149,16 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="145" splitType="Stretch">
+		<band height="155" splitType="Stretch">
 			<staticText>
-				<reportElement x="37" y="107" width="90" height="28" uuid="514f35d1-e69b-4335-8993-558c454ef672"/>
+				<reportElement x="37" y="126" width="90" height="28" uuid="514f35d1-e69b-4335-8993-558c454ef672"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bill Collector]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="152" y="107" width="92" height="28" uuid="cc944e1e-2f9c-4413-bc85-ad25d4fda013"/>
+				<reportElement x="152" y="126" width="92" height="28" uuid="cc944e1e-2f9c-4413-bc85-ad25d4fda013"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
@@ -297,14 +300,14 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="287" y="107" width="92" height="28" uuid="71a87c26-010a-438c-a120-b8b615a3b122"/>
+				<reportElement x="287" y="126" width="92" height="28" uuid="71a87c26-010a-438c-a120-b8b615a3b122"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Revenue Officer]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="421" y="107" width="92" height="28" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>
+				<reportElement x="421" y="126" width="92" height="28" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
@@ -470,6 +473,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ownerInfo}.getGeneralTax()]]></textFieldExpression>
 			</textField>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="380" y="100" width="171" height="21" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
+				<imageExpression><![CDATA[ReportUtil.getUserSignature($P{userId})]]></imageExpression>
+			</image>
 		</band>
 	</summary>
 </jasperReport>

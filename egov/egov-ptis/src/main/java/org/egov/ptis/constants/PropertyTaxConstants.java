@@ -530,9 +530,13 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_STEP_SAVE = "Save";
     public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
     public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
+    public static final String WFLOW_ACTION_STEP_SIGN = "Sign";
+    public static final String WFLOW_ACTION_STEP_PREVIEW = "Preview";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
     public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel";
     public static final String WFLOW_ACTION_STEP_NOTICE_GENERATE = "Generate Notice";
+    public static final String WFLOW_ACTION_STEP_PRINT_NOTICE = "Print Special Notice";
+    public static final String WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE = "Generate Title Transfer Notice";
 
     // workflow action names
     public static final String WFLOW_ACTION_NAME_CREATE = "Create";
@@ -557,6 +561,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_NOTICE_GENERATION_PENDING = "Notice_Generation_Pending";
     public static final String WF_STATE_NOTICE_GENERATED = "Notice Generated";
     public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
+    public static final String WF_STATE_DIGITALLY_SIGNED = "Digitally Signed";
+    public static final String WF_STATE_DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
     public static final String WF_STATE_COMMISSIONER_REJECTED = "Commissioner Rejected";
     public static final String WF_STATE_REVENUE_OFFICER_APPROVED = "Revenue officer Approved";
     public static final String WF_STATE_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
@@ -666,6 +672,7 @@ public interface PropertyTaxConstants {
     public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
     public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
+    public static final String ADDTIONAL_RULE_PROPERTY_TRANSFER = "PROPERTY TRANSFER";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";
     public static final String DEMOLITION = "DEMOLITION";
@@ -1226,4 +1233,7 @@ public interface PropertyTaxConstants {
     public static final String STATUS_APPROVED = "Approved";
     public static final String STATUS_OPEN = "Open";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";   
+    
+    public static final String DIGITAL_SIGNATURE_PENDING ="Digital Signature Pending"; 
+    
 }

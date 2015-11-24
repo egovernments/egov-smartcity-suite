@@ -574,14 +574,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.update(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
-        if (propService.isEmployee(property.getCreatedBy()))
+        /*if (propService.isEmployee(property.getCreatedBy()))
             propertyInitiatedBy = property.getCreatedBy().getName();
         else
             propertyInitiatedBy = assignmentService
                     .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-                    .getEmployee().getUsername();
+                    .getEmployee().getUsername();*/
+        propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
-        setAssessmentNoMessage(" for Notice Genaration with assessment number : ");
+        setAssessmentNoMessage(" for Digital Signature with assessment number : ");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
             LOGGER.debug("approve: Property approval ended");

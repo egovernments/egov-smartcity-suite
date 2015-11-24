@@ -81,6 +81,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -156,6 +157,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private SecurityUtils securityUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PositionMasterService positionMasterService;
     private PropertyImpl propertyModel;
     protected WorkflowBean workflowBean;
 
@@ -476,6 +479,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (null != approverPositionId && approverPositionId != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
             else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+                pos = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
+            else
                 pos = wfInitiator.getPosition();
             if (null == property.getState()) {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,

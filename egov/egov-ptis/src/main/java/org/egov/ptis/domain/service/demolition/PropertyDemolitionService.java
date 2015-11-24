@@ -14,6 +14,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
@@ -153,6 +154,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approverPosition);
             else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+                pos = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
+            else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
                 pos = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId()).getPosition();
             WorkFlowMatrix wfmatrix = null;
             if (null == property.getState()) {
@@ -230,8 +233,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 propertyTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX);
             else
                 propertyTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
-            BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-                    			.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)).add(propertyTax);
+            BigDecimal totalTax = propertyTax
+                    			.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+                    			.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
             model.addAttribute("propertyTax", propertyTax);
             if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()) 
             		&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){

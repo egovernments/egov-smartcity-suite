@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
@@ -52,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
@@ -78,13 +80,17 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
@@ -100,8 +106,10 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.notice.PtNotice;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -123,7 +131,9 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
-        @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
+        @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
+        @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp")})
+
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
@@ -138,7 +148,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-
+    protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
+    
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -165,6 +176,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Autowired
     private MessagingService messagingService;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private NoticeService noticeService;
+    
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
@@ -193,8 +213,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
     private String applicationType;
-
+    private String fileStoreIds;
+    private String ulbCode;
+    
     private Map<String, String> guardianRelationMap;
+    private String actionType;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -360,17 +383,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
-        if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
+        /*if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
             mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
         else
             mutationInitiatedBy = assignmentService
                     .getPrimaryAssignmentForPositon(
                             propertyMutation.getStateHistory().get(0).getOwnerPosition().getId()).getEmployee()
-                    .getUsername();
+                    .getUsername();*/
+        mutationInitiatedBy = securityUtils.getCurrentUser().getUsername();
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
-        setAssessmentNoMessage(" for notice generation for the property : ");
+        setAssessmentNoMessage(" for Digital Signature for the property : ");
         return ACK;
     }
 
@@ -394,15 +418,22 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/printNotice")
     public String printNotice() {
+        setUlbCode(EgovThreadLocals.getCityCode());
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(
-                transferOwnerService.generateTransferNotice(basicproperty, propertyMutation, cityName, cityLogo),
-                getSession());
+        ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation, cityName, cityLogo, actionType);
+        if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
+            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        } else {
+            PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
+                    propertyMutation.getApplicationNo());
+            setFileStoreIds(notice.getFileStore().getFileStoreId());
+            return DIGITAL_SIGNATURE_REDIRECTION;
+        }
         return PRINTNOTICE;
     }
 
@@ -572,6 +603,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (null != approverPositionId && approverPositionId != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
             else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+                pos = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
+            else
                 pos = wfInitiator.getPosition();
             if (null == propertyMutation.getState()) {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
@@ -851,6 +884,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.userDesignation = userDesignation;
     }
 
+    public String getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(String actionType) {
+        this.actionType = actionType;
+    }
+    
     public String getMeesevaApplicationNumber() {
         return meesevaApplicationNumber;
     }
@@ -873,6 +914,22 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setApplicationType(String applicationType) {
         this.applicationType = applicationType;
+    }
+
+    public String getFileStoreIds() {
+        return fileStoreIds;
+    }
+
+    public void setFileStoreIds(String fileStoreIds) {
+        this.fileStoreIds = fileStoreIds;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
     }
 
 }

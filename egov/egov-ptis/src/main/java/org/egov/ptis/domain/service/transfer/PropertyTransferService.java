@@ -41,13 +41,18 @@ package org.egov.ptis.domain.service.transfer;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED; 
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,10 +61,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.http.impl.client.NoopUserTokenHandler;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -67,6 +75,7 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -80,6 +89,7 @@ import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
@@ -96,6 +106,7 @@ import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.hibernate.FlushMode;
 import org.joda.time.LocalDate;
@@ -314,28 +325,49 @@ public class PropertyTransferService {
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation, final String cityName, final String cityLogo) {
-        final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
+            final PropertyMutation propertyMutation, final String cityName, final String cityLogo, String actionType) {
+        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
+                propertyMutation.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
-        noticeBean.setUlbLogo(cityLogo);
-        noticeBean.setMunicipalityName(cityName);
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
-        noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
-        noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
-        noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
-        noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
-        noticeBean.setRegDocNo(propertyMutation.getDeedNo());
-        noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
-        final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
-        propertyMutation.transition().end();
-        basicProperty.setUnderWorkflow(false);
-        String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_MUTATION_CERTIFICATE);
-        reportOutput = reportService.createReport(reportInput);
-        noticeService.saveNotice(propertyMutation.getApplicationNo(),noticeNo, NOTICE_TYPE_MUTATION_CERTIFICATE, basicProperty, 
-                new ByteArrayInputStream(reportOutput.getReportOutputData()));
-        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        if (WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE.equalsIgnoreCase(actionType)) {
+            final FileStoreMapper fsm = notice.getFileStore();
+            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+            byte[] bFile;
+            try {
+                bFile = FileUtils.readFileToByteArray(file);
+            } catch (final IOException e) {
+                throw new ApplicationRuntimeException("Exception while generating Mutation Certificate : " + e);
+            }
+            reportOutput.setReportOutputData(bFile);
+            reportOutput.setReportFormat(FileFormat.PDF);
+            propertyMutation.transition().end();
+            basicProperty.setUnderWorkflow(false);
+        } else {
+            final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
+            noticeBean.setUlbLogo(cityLogo);
+            noticeBean.setMunicipalityName(cityName);
+            final Map<String, Object> reportParams = new HashMap<String, Object>();
+            noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
+            noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
+            noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
+            noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
+            noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
+            noticeBean.setRegDocNo(propertyMutation.getDeedNo());
+            noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
+            final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
+            reportInput.setReportFormat(FileFormat.PDF);
+            reportOutput = reportService.createReport(reportInput);
+            if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
+                if (notice == null) {
+                    String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_MUTATION_CERTIFICATE);
+                    noticeService.saveNotice(propertyMutation.getApplicationNo(), noticeNo, NOTICE_TYPE_MUTATION_CERTIFICATE,
+                            basicProperty, new ByteArrayInputStream(reportOutput.getReportOutputData()));
+                } else {
+                    noticeService.updateNotice(notice, new ByteArrayInputStream(reportOutput.getReportOutputData()));
+                }
+                noticeService.getSession().flush();
+            } 
+        }
         return reportOutput;
     }
 
