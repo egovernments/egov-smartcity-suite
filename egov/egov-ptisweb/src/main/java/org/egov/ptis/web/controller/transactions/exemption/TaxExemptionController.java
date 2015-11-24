@@ -184,12 +184,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String target = "";
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
-        if ((!propertyByEmployee || loggedUserIsMeesevaUser) && null == propertyService.getUserPositionByZone(property.getBasicProperty())) {
-                model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
-                model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
-                taxExemptionService.addModelAttributes(model, basicProperty);
-                prepareWorkflow(model, propertyImpl, new WorkflowContainer());
-                target = TAX_EXEMPTION_FORM;
+        if ((!propertyByEmployee || loggedUserIsMeesevaUser)
+                && null == propertyService.getUserPositionByZone(property.getBasicProperty())) {
+            model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
+            model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
+            taxExemptionService.addModelAttributes(model, basicProperty);
+            prepareWorkflow(model, propertyImpl, new WorkflowContainer());
+            target = TAX_EXEMPTION_FORM;
         } else {
 
             if (request.getParameter("taxExemptedReason") != null)
@@ -220,7 +221,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                                     .getOwnerPosition().getId()) + " with application number "
                             + property.getApplicationNo());
             if (loggedUserIsMeesevaUser)
-                return "redirect:/exemption/generate-meesevareceipt/"
+                target = "redirect:/exemption/generate-meesevareceipt/"
                         + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
                         + ((PropertyImpl) property).getApplicationNo();
             else
