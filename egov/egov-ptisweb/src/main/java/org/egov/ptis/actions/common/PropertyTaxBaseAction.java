@@ -617,9 +617,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-	                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                    .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+            totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
+            			.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS))
+	                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             //If unauthorized property, then add unauthorized penalty 
             if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
             	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
@@ -631,13 +631,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             
         } else {
             propertyTaxDetailsMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-            totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
-            if(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)!=null){
-            	totalTax = totalTax.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            }
-            if(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)!=null){
-            	totalTax = totalTax.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-            }
+            totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
+            		.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS))
+            		.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             propertyTaxDetailsMap.put("totalTax",totalTax);
         }
     }
