@@ -268,7 +268,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
         return smsMsg;
     }
 
@@ -314,10 +314,7 @@ public class WaterTaxUtils {
         return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
     }
 
-    /*
-     * public List<EgwStatus> getStatusByModuleType(final String moduleName) { return (List<EgwStatus> )
-     * persistenceService.findAllBy( "from EgwStatus where moduleType=? order by code", moduleName); }
-     */
+ 
 
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
 
@@ -362,48 +359,62 @@ public class WaterTaxUtils {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
-        final HierarchyType hierarchy = hierarchyTypeService
-                .getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
+        final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName(WaterTaxConstants.HIERARCHYNAME_ADMIN);
         final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
                 assessmentDetails.getBoundaryDetails().getWardBoundaryType(), hierarchy);
         final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
                 .getBoundaryDetails().getZoneNumber());
         assignmentObj = getUserPositionByZone(asessmentNumber, assessmentDetails, boundaryObj);
-
-        return assignmentObj != null ? assignmentObj.getPosition() : null;
+        
+                 return assignmentObj != null ? assignmentObj.getPosition() : null;
     }
 
     /**
-     * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
-     * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone
+     * boundary Reading Designation and Department from appconfig values and
+     * Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
-     *
-     * @param asessmentNumber ,
+     * 
+     * @param asessmentNumber,
      * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
      */
     public Assignment getUserPositionByZone(final String asessmentNumber, final AssessmentDetails assessmentDetails,
-            final Boundary boundaryObj) {
+           final Boundary boundaryObj) {
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
         List<Assignment> assignment = new ArrayList<Assignment>();
-        for (String dept : department) {
-            for (String desg : designation) {
+        if (department.length > 0 && designation.length > 0)
+            if (StringUtils.isNotBlank(department[0]) && StringUtils.isNotBlank(designation[0])) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
-                        boundaryObj.getId());
-                if (!assignment.isEmpty())
-                    break;
+                        .getDepartmentByName(department[0]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
+                   assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[0]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
+            } else if (StringUtils.isNotBlank(department[1]) && StringUtils.isNotBlank(designation[0])) {
+               assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[1]).getId(),
+                        designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
+                   assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[1]).getId(),
+                            designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
+            } else if (StringUtils.isNotBlank(department[2]) && StringUtils.isNotBlank(designation[0])) {
+               assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(department[2]).getId(),
+                       designationService.getDesignationByName(designation[0]).getId(), boundaryObj.getId());
+                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1]))
+                   assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                            .getDepartmentByName(department[2]).getId(),
+                          designationService.getDesignationByName(designation[1]).getId(), boundaryObj.getId());
             }
-            if (!assignment.isEmpty())
-                break;
-        }
         return !assignment.isEmpty() ? assignment.get(0) : null;
-    }
-
+  }
     @ModelAttribute(value = "checkOperator")
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
@@ -420,6 +431,7 @@ public class WaterTaxUtils {
         }
         return isCSCOperator;
     }
+
 
     public List<Installment> getInstallmentListByStartDate(final Date startDate) {
         return entityQueryService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
