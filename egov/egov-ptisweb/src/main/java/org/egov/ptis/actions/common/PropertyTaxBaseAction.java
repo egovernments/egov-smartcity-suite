@@ -609,8 +609,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         else
             propertyTaxDetailsMap.put("ARV", BigDecimal.ZERO);
         
-        propertyTaxDetailsMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-        propertyTaxDetailsMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+        propertyTaxDetailsMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+        propertyTaxDetailsMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
         BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
@@ -631,6 +631,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
             		.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS))
             		.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+            if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
+            	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+            	propertyTaxDetailsMap.put("totalTax",totalTax
+                                .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            }else{
+            	propertyTaxDetailsMap.put("totalTax",totalTax);
+            }
             propertyTaxDetailsMap.put("totalTax",totalTax);
         }
     }

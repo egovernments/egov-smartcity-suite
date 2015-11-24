@@ -169,8 +169,8 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
                 viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
 
-                viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+                viewMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+                viewMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
                 BigDecimal totalTax = BigDecimal.ZERO;
                 if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -192,7 +192,13 @@ public class ViewPropertyAction extends BaseFormAction {
                     totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
 	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
 	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                    viewMap.put("totalTax",totalTax);
+                    if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
+                    	viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                		viewMap.put("totalTax",totalTax
+                                        .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                    }else{
+                    	viewMap.put("totalTax",totalTax);
+                    }
                 }
 
             } else {
