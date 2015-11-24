@@ -65,7 +65,7 @@
 	<div class="add-margin">
 	<c:choose>
 	<c:when test="${waterConnectionDetails.legacy}">
-	<input type="button" class="btn btn-primary" id="viewWorkOrder" value="Edit" onclick="showEdit('<c:out value="${waterConnectionDetails.connection.consumerCode}" />')"/>
+	<%-- <input type="button" class="btn btn-primary" id="viewWorkOrder" value="Edit" onclick="showEdit('<c:out value="${waterConnectionDetails.connection.consumerCode}" />')"/> --%>
 	</c:when>
 	<c:otherwise>
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && (checkOperator ) }">
