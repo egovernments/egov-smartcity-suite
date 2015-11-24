@@ -70,6 +70,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Area;
 import org.egov.commons.Bank;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
@@ -97,6 +98,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
+import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -449,6 +451,13 @@ public class PropertyExternalService {
             propertyTaxDetails.setPropertyAddress(property.getBasicProperty().getAddress().toString());
             propertyTaxDetails.setAssessmentNo(property.getBasicProperty().getUpicNo());
             propertyTaxDetails.setLocalityName(property.getBasicProperty().getPropertyID().getLocality().getName());
+          
+            
+		 propertyTaxBillable.setBasicProperty(basicProperty);
+		 propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
+		  Map<Installment, PenaltyAndRebate> calculatedPenalty = propertyTaxBillable.getCalculatedPenalty();
+		 
+	  
 
             final List<Object> list = ptDemandDAO.getPropertyTaxDetails(assessmentNo);
             if (list.size() > 0)
@@ -491,6 +500,12 @@ public class PropertyExternalService {
                     arrearDetails = new RestPropertyTaxDetails();
                     arrearDetails.setInstallment(installment);
                     total = BigDecimal.ZERO;
+                    if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                        arrearDetails.setPenalty(demand.subtract(collection));
+                    else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
+                        arrearDetails.setChqBouncePenalty(demand.subtract(collection));
+                    else
+                        total = total.add(demand.subtract(collection));
 
                 }
 
@@ -506,7 +521,27 @@ public class PropertyExternalService {
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
             propertyTaxDetails.setErrorDetails(errorDetails);
+            
+            Set<Installment> keySet = calculatedPenalty.keySet();
+
+            //for all years data
+            Outer:      for (RestPropertyTaxDetails details :propertyTaxDetails.getTaxDetails())
+            {
+            	//loop trough the penalty
+            	Inner:    	for(Installment inst:keySet)
+            	{
+            		if(inst.getDescription().equalsIgnoreCase(details.getInstallment()))
+            		{
+            			details.setPenalty(calculatedPenalty.get(inst).getPenalty());
+            			details.setTotalAmount(details.getTotalAmount().add(calculatedPenalty.get(inst).getPenalty()));
+            			break Inner;
+            		}
+            	}
+
+
+            }
         }
+        
         return propertyTaxDetails;
     }
 

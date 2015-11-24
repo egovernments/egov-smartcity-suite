@@ -263,6 +263,12 @@ public class WaterTaxExternalService {
                 arrearDetails = new RestPropertyTaxDetails();
                 arrearDetails.setInstallment(installment);
                 total = BigDecimal.ZERO;
+                if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                    arrearDetails.setPenalty(demand.subtract(collection));
+                else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
+                    arrearDetails.setChqBouncePenalty(demand.subtract(collection));
+                else
+                    total = total.add(demand.subtract(collection));
 
             }
 
@@ -273,6 +279,8 @@ public class WaterTaxExternalService {
             arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
             waterTaxDetails.getTaxDetails().add(arrearDetails);
         }
+        
+        
         errorDetails = new ErrorDetails();
         errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
         errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);

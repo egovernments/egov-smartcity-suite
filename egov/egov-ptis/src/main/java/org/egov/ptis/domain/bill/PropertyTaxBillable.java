@@ -452,6 +452,15 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     public Map<Installment, PenaltyAndRebate> getCalculatedPenalty() {
 
+    	final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
+        /**
+         * Not calculating penalty if collection is happening within two months from the assessment date
+         */
+        if (noOfMonths <= 2) {
+        	return installmentPenaltyAndRebate;
+        }
+    	
         boolean thereIsBalance = false;
 
         Installment installment = null;
@@ -459,7 +468,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         BigDecimal collection = BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
         Property property = null;
-        final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
 
         if (getLevyPenalty()) {
 
