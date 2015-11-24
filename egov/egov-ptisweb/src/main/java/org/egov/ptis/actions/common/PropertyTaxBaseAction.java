@@ -620,9 +620,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
 	                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
 	                    .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            //If unauthorized property, then add unauthorized penalty
-            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()) 
-            		&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+            //If unauthorized property, then add unauthorized penalty 
+            if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
             	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
             	propertyTaxDetailsMap.put("totalTax",totalTax
                                 .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));

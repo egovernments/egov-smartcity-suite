@@ -179,8 +179,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 	totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
 	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
 	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                	if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())
-                			&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+                	if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
                 		viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
                 		viewMap.put("totalTax",totalTax
                                         .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
