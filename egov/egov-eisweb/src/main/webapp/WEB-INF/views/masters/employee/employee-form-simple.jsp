@@ -68,7 +68,7 @@
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
-		
+<div class="container-fluid">
 <div class="row">
 	<div class="col-md-12">
 		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" enctype="multipart/form-data" >
@@ -162,7 +162,7 @@
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
 										
-										<div class="col-sm-2 add-margin">
+										<div class="col-sm-6 add-margin">
 										<select class="form-control" name = "deptId" id="deptId" required="required"> 
 												<option value="">
 													<spring:message code="lbl.select" />
@@ -175,11 +175,11 @@
 											<div class="error-msg departmenterror all-errors display-hide"></div>
 										</div>
 										
-										<div class="col-sm-1">
-										   <label for="field-1" class="control-label">Designation<span class="mandatory"></span></label>
-										</div>
+								</div>
+								<div class="form-group">
+										   <label for="field-1" class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
 										
-										<div class="col-sm-3 add-margin">
+										<div class="col-sm-6 add-margin">
 										        <input id="designationName"  name="designationName" type="text" class="form-control " autocomplete="off"
 													value="" placeholder="Designation" required="required">
 													<input type="hidden" id="designationId" value=""/>
@@ -190,6 +190,7 @@
 												<div class="error-msg designationerror all-errors display-hide"></div>
 										</div>
 									</div>
+							</div>
 									
 								    <c:if test="${not empty image}">
 								    <div class="form-group">
@@ -249,5 +250,6 @@
                 
              </form:form>
     </div>
+</div>
 </div>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
