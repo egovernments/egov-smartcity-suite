@@ -161,7 +161,7 @@ public class ConnectionDemandService {
         final Map<String, Object> feeDetails = new HashMap<String, Object>();
         DonationDetails donationDetails = null;
         final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
-
+        EgDemand egDemand=null;
         if (null != fieldInspectionDetails)
             feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE,
                     fieldInspectionDetails.getEstimationCharges());
@@ -180,23 +180,27 @@ public class ConnectionDemandService {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
             waterConnectionDetails.setDonationCharges(donationDetails.getAmount());
         }
+        
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the
         // discussion.
         // double totalFee = 0.0;
-
+        if(installment !=null){
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         for (final String demandReason : feeDetails.keySet())
             dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
         // totalFee += (Double) feeDetails.get(demandReason);
 
-        final EgDemand egDemand = new EgDemand();
+        egDemand = new EgDemand();
         egDemand.setEgInstallmentMaster(installment);
         egDemand.getEgDemandDetails().addAll(dmdDetailSet);
         egDemand.setIsHistory("N");
         egDemand.setCreateDate(new Date());
         egDemand.setModifiedDate(new Date());
+        }
+        else
+            throw new ValidationException("err.water.installment.not.found");
         return egDemand;
     }
 
