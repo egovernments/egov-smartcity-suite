@@ -181,6 +181,7 @@ public class CloserConnectionController extends GenericConnectionController {
 
         final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
                 .getAllActiveDocumentNames(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
+        if (!documentListForClosed.isEmpty() ){
         final ApplicationDocuments applicationDocument = new ApplicationDocuments();
         applicationDocument.setDocumentNames(documentListForClosed.get(0));
 
@@ -190,6 +191,7 @@ public class CloserConnectionController extends GenericConnectionController {
         applicationDocument.setDocumentNumber("111");
         applicationDocument.setDocumentDate(new Date());
         waterConnectionDetails.getApplicationDocs().add(applicationDocument);
+        }
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         if (request.getParameter("closeConnectionType").equals(WaterTaxConstants.PERMENENTCLOSE))
