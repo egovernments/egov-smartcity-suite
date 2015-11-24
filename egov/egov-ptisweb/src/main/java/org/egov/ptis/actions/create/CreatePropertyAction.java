@@ -1017,7 +1017,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
 
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
-                northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
+                northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId,null);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));

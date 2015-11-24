@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHO
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
@@ -236,7 +237,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
             final String eastBoundary, final String westBoundary, final String southBoundary,
             final String northBoundary, final String propTypeId, final String propUsageId, final String propOccId,
-            final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId) {
+            final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId, final String modifyRsn) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateProperty");
@@ -258,9 +259,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
                 } else if (null != propertyDetail.isAppurtenantLandChecked()) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate,modifyRsn);
                 } else
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate,modifyRsn);
                 validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot);
             }
         }
@@ -301,7 +302,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     private void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
-            final Long roofTypeId, final String areaOfPlot, final Date regDocDate) {
+            final Long roofTypeId, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Eneterd into validateBuiltUpProperty");
@@ -310,6 +311,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
                 addActionError(getText("mandatory.buildingPlanDate")); 
+            else if (null != regDocDate
+                    && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate)) {
+                if(modifyRsn==null || (modifyRsn!=null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)))
+                    addActionError(getText("regDate.greaterThan.buildingPermDate")); 
+            }
         }
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))

@@ -1452,7 +1452,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty().getPropertyDetail().getWallType() != null ? objection.getProperty()
                         .getPropertyDetail().getWallType().getId() : null, objection.getProperty().getPropertyDetail()
                         .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
-                        : null);
+                        : null,null);
 
     }
 
