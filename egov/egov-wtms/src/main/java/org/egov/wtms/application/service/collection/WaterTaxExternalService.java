@@ -86,6 +86,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -196,8 +197,8 @@ public class WaterTaxExternalService {
         return waterReceiptDetails;
     }
 
-    public WaterTaxDetails getWaterTaxDemandDet(final PayWaterTaxDetails payWaterTaxDetails)
-    {
+    
+        public WaterTaxDetails getWaterTaxDemandDet(final PayWaterTaxDetails payWaterTaxDetails){
         final WaterTaxDetails waterTaxDetails = new WaterTaxDetails();
         WaterConnectionDetails waterConnectionDetails = null;
         ErrorDetails errorDetails = null;
@@ -207,6 +208,13 @@ public class WaterTaxExternalService {
         else if (payWaterTaxDetails.getConsumerNo() != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
+        if(waterConnectionDetails ==null){
+            errorDetails=new ErrorDetails();
+        errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
+        errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX + (payWaterTaxDetails.getConsumerNo()!=null ?payWaterTaxDetails.getConsumerNo():payWaterTaxDetails.getApplicaionNumber())
+                        + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+       waterTaxDetails.setErrorDetails(errorDetails);
+        }else{
         waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
         final String propertyIdentifier = waterConnectionDetails.getConnection().getPropertyIdentifier();
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyIdentifier);
@@ -286,8 +294,11 @@ public class WaterTaxExternalService {
         errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
 
         waterTaxDetails.setErrorDetails(errorDetails);
+        }
         return waterTaxDetails;
     }
+    
+
 
     @Transactional
     public BillReceiptInfo executeCollection(final Payment payment, final EgBill bill) {
