@@ -424,6 +424,7 @@ function onLoad(){
 <s:hidden label="totalAmountToBeCollected" id="totalAmountToBeCollected" value="%{totalAmountToBeCollected}" name="totalAmountToBeCollected"/>
 <s:hidden label="callbackForApportioning" id="callbackForApportioning" value="%{callbackForApportioning}" name="callbackForApportioning"/>
 <s:hidden id="paymentServiceId" value="%{paymentServiceId}" name="paymentServiceId"/>
+<s:hidden id="refNumber" value="%{refNumber}" name="refNumber"/>
 <%int i=1;%>
 <%int rcptDtlCnt=0; %>
 
@@ -455,7 +456,6 @@ function onLoad(){
 									<input name="receiptDetailList[<%=rcptDtlCnt%>].cramount" value="0.0" type="hidden" id="receiptDetailList[<%=rcptDtlCnt%>].cramount"  size="12" onblur='checkandcalculatecredittotal(<%=rcptDtlCnt%>,this);'/>
 									
 									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].ordernumber" id="receiptDetailList[<%=rcptDtlCnt%>].ordernumber" value='<s:property value="ordernumber"/>' />
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].receiptHeader.referencenumber" id="receiptDetailList[<%=rcptDtlCnt%>].receiptHeader.referencenumber" value='<s:property value="referencenumber"/>'/>
 									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].dramount" id="receiptDetailList[<%=rcptDtlCnt%>].dramount" />
 									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand" id="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand" value='<s:property value="isActualDemand"/>' />
 								

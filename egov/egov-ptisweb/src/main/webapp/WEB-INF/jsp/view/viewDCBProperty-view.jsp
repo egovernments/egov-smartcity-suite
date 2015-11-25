@@ -91,6 +91,11 @@
 				<s:text name="viewDCB" />
 			</div>
 			<s:form action="#" theme="simple">
+			<s:if test="%{viewMap.taxExempted == true}">
+            <div class="headermessage">
+	             This property tax is exempted with reason <span class="bold"><s:property default="N/A" value="%{basicProperty.property.taxExemptedReason.name}" /></span>
+            </div>
+             </s:if>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="greybox" width="20%"></td>
@@ -230,7 +235,7 @@
 									</th>
 								</tr>
 								<tr>
-
+                                  <s:if test="%{viewMap.taxExempted == false}">
 									<td class="blueborderfortd">
 										<div align="center">											
 											<a href="javascript:openHeadwiseDCBWindow();"><s:text name="viewHeadwiseDCB"/></a>
@@ -244,7 +249,7 @@
 											</s:else>										
 										</div>
 									</td>
-
+                                   </s:if>
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="Tax" /> </span>
@@ -408,7 +413,7 @@
 								<div align="right">
 							 		<span class="bold">
 							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalLpayPnlty()" />
+										<s:param value="dcbReport.getTotalLpayPnlty()" /> 
 									</s:text>
                                     </span> 
 								</div>
@@ -513,7 +518,7 @@
 											<td class="blueborderfortd">
 												<div align="right">
 													<span class="bold"> 
-														<s:text name="format.money">
+														<s:text name="format.money"> 
 															<s:param value="dcbReport.getFieldBalanceTotals()[#FieldNames]" />
 														</s:text>
 													</span>
@@ -767,7 +772,7 @@
 											<s:text name="msg.activeDemand" />
 										</div>			
 									</s:if>
-									<s:elseif test="%{isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+									<s:elseif test="%{viewMap.taxExempted == false && isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 										<div align="center">
 											<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 											<span style="font-size:15px; color:red ">										
@@ -776,7 +781,7 @@
 											</span>
 										</div><br>
 										<div align="center">
-											<s:if test="%{isCitizen}">
+											<s:if test="%{isCitizen && viewMap.taxExempted == false}">
 												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
 															onclick="window.location='../citizen/collection/collection-generateBill.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
 											</s:if>

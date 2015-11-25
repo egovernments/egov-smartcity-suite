@@ -198,6 +198,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 Property property = getBasicProperty().getProperty();
                 viewMap.put("propAddress", getBasicProperty().getAddress().toString());
                 viewMap.put("ownerName", basicProperty.getFullOwnerName());
+                viewMap.put("taxExempted", property.getIsExemptedFromTax());
                 if (!property.getIsExemptedFromTax()) {
                     Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
                     viewMap.put("currTaxAmount", demandCollMap.get(CURR_DMD_STR));
@@ -221,8 +222,16 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 } else {
                     viewMap.put("currTaxAmount", BigDecimal.ZERO);
                     viewMap.put("currTaxDue", BigDecimal.ZERO);
-                    viewMap.put("currTaxAmount", BigDecimal.ZERO);
-                }
+                    viewMap.put("totalArrDue", BigDecimal.ZERO);
+                    dcbReport.setTotalDmdTax(BigDecimal.ZERO); 
+                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);  
+                    dcbReport.setTotalDmdPnlty(BigDecimal.ZERO);
+                    dcbReport.setTotalColTax(BigDecimal.ZERO);
+                    dcbReport.setTotalColPnlty(BigDecimal.ZERO);
+                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);  
+                    dcbReport.setTotalRebate(BigDecimal.ZERO); 
+                    dcbReport.setTotalBalance(BigDecimal.ZERO); 
+                } 
 
             }
         } catch (PropertyNotFoundException e) {

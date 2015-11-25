@@ -140,6 +140,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private String consumerCode;
     private String receiptResponse = "";
     private ReceiptHeader receiptHeader;
+    private String refNumber;
     private List<ServiceDetails> serviceDetailsList = new ArrayList<ServiceDetails>(0);
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
@@ -635,12 +636,15 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 totalAmountToBeCollected = BigDecimal.valueOf(0);
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
-
+                setRefNumber(receiptHeader.getReferencenumber());
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
-                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
+                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
+                    rDetails.setReceiptHeader(receiptHeader);
+                }
                 setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
+                
 
                 if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
@@ -708,7 +712,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         // The cancelled receipt can be excluded from this processing.
         if (receiptHeader.getStatus() == null) {
             receiptHeader.setReceiptdate(new Date());
-
+            receiptHeader.setReferencenumber(getRefNumber());
             receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
             receiptHeader.setIsModifiable(Boolean.FALSE);
             // recon flag should be set as false when the receipt is
@@ -1141,5 +1145,13 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
     public void setServiceDetailsList(final List<ServiceDetails> serviceDetailsList) {
         this.serviceDetailsList = serviceDetailsList;
+    }
+
+    public String getRefNumber() {
+        return refNumber;
+    }
+
+    public void setRefNumber(String refNumber) {
+        this.refNumber = refNumber;
     }
 }
