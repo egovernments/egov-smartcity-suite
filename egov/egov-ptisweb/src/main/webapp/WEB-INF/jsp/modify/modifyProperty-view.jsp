@@ -67,7 +67,10 @@
 				var userDesg = '<s:property value="%{userDesgn}"/>';
 				var state = '<s:property value="%{model.state.value}"/>';
 				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
-					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT || @org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT}"/>' || state == 'Alter:Rejected') {
+					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT}"/>' 
+						|| userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT}"/>'
+						|| userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN}"/>'
+						|| state == 'Alter:Rejected') {
 						action = 'modifyProperty-forward.action';
 					} else {
 						action = 'modifyProperty-forwardView.action';
