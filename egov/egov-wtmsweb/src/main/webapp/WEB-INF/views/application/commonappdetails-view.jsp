@@ -130,7 +130,7 @@
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterTaxDueforParent}" /></div>
 				</c:when>	
 				<c:otherwise>
-					<div class="col-xs-3 add-margin view-content"><spring:message code="lb.NA.code"/></div>
+					<div class="col-xs-3 add-margin view-content"><spring:message code="lb.ZERO.code"/></div>
 				</c:otherwise>
 			</c:choose>
 			
