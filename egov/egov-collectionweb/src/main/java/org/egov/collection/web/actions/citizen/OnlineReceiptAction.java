@@ -641,7 +641,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
-                    rDetails.setReceiptHeader(receiptHeader);
                 }
                 setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
                 

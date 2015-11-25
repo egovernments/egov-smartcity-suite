@@ -1029,11 +1029,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 addActionError(getText("mandatory.corr.pincode.size"));
         }
 
-        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
-            final Area area = new Area();
-            area.setArea(new Float(areaOfPlot));
-            property.getPropertyDetail().setSitalArea(area);
-        }
         if (null != mutationId && mutationId != -1) {
             final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
                     .find("from PropertyMutationMaster pmm where pmm.id=?", mutationId);
@@ -1041,15 +1036,22 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService.find(
                             "From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                    if (null != basicProperty && null != basicProperty.getActiveProperty()) {
-                        property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
-                        final String errorKey = propService.validationForBifurcation(property, basicProperty,
-                                propertyMutationMaster.getCode());
-                        if (!isBlank(errorKey))
-                            addActionError(getText(errorKey));
-                    } else
-                        addActionError(getText("error.parent"));
-
+                    if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+                        final Area area = new Area();
+                        area.setArea(new Float(areaOfPlot));
+                        property.getPropertyDetail().setSitalArea(area);
+                        if (null != basicProperty && !basicProperty.isUnderWorkflow()) {
+                            if (null != basicProperty.getActiveProperty()) {
+                                property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
+                                final String errorKey = propService.validationForBifurcation(property, basicProperty,
+                                        propertyMutationMaster.getCode());
+                                if (!isBlank(errorKey))
+                                    addActionError(getText(errorKey));
+                            } else
+                                addActionError(getText("error.parent"));
+                        } else
+                            addActionError(getText("error.parent.underworkflow"));
+                    }
                 } else
                     addActionError(getText("error.parent.index"));
         } else
