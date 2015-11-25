@@ -132,7 +132,7 @@
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="fromDate"  
-								class="form-control datepicker" data-date-end-date="0d"
+								class="form-control datepicker" 
 								id="effectiveDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>

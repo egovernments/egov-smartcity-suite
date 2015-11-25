@@ -3,7 +3,6 @@ package org.egov.wtms.web.controller.masters;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.validation.Valid;
 
@@ -68,7 +67,6 @@ public class DonationMasterController {
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
         model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
         model.addAttribute("maxPipeSize", pipeSizeService.getAllActivePipeSize());
-
         model.addAttribute("minPipeSize", pipeSizeService.getAllActivePipeSize());
         return "donation-master";
     }
@@ -83,15 +81,18 @@ public class DonationMasterController {
                         .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
                         .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize(),
                         donationDetails.getDonationHeader().getMaxPipeSize());
+        final Calendar cal = Calendar.getInstance();
         if (donationDetailsTemp != null) {
-            donationDetailsTemp.setFromDate(new Date());
+            donationDetailsTemp.setFromDate(donationDetails.getFromDate());
+            cal.setTime(donationDetails.getFromDate());
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            donationDetailsTemp.setToDate(cal.getTime());
             donationDetailsTemp.setAmount(donationDetails.getAmount());
             donationDetailsService.updateDonationDetails(donationDetailsTemp);
             redirectAttrs.addFlashAttribute("donationDetails", donationDetailsTemp);
             model.addAttribute("message", "Donation Master Data updated successfully");
         } else {
             donationDetails.getDonationHeader().setActive(true);
-            final Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 365);
             donationDetails.setToDate(cal.getTime());
             donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());

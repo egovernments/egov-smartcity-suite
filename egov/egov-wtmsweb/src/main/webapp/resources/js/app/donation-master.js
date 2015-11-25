@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	
+	 $('#propertyType').change(function(){
 	  $.ajax({
 			url: "/wtms/ajax-PipeSizesByPropertyType",     
 			type: "GET",
@@ -58,7 +58,7 @@ $(document).ready(function(){
 				console.log("failed");
 			}
 		});
-	  
+	  });
 	  
 	  $('#propertyType').change(function(){
 		  $.ajax({
@@ -93,37 +93,46 @@ $(document).ready(function(){
 							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
 							return false;
 						}else{
-							$.ajax({
-					            url: '/wtms/ajax-donationheadercombination',
-					            type: "GET",
-					            data: {
-					            	propertyType: $('#propertyType').val(),
-					            	categoryType: $('#connectionCategorie').val(),
-					            	usageType: $('#usageType').val(),
-					            	maxPipeSize :$('#pipeSize').val(),
-					            	minPipeSize :$('#minpipeSize').val()
-					            },
-					            dataType : 'json',
-					            success: function (response) {
-					    			console.log("success"+response);
-					    			if(response > 0){
-					    				if(!overwritedonation(response))
-					    				return false;
-						    			}
-					    			else{
-					    				 document.forms[0].submit();
-					    				 return true;
-					    			}
-					    		},error: function (response) {
-					    			console.log("failed");
-					    		}
-					        });
+							donationheadercombination();
+
 						}
 					}
 			  }
 		  		});
      });
 
+function donationheadercombination()
+{
+	alert("here1234")
+	$.ajax({
+        url: '/wtms/ajax-donationheadercombination',
+        type: "GET",
+        data: {
+        	propertyType: $('#propertyType').val(),
+        	categoryType: $('#connectionCategorie').val(),
+        	usageType: $('#usageType').val(),
+        	maxPipeSize :$('#pipeSize').val(),
+        	minPipeSize :$('#minpipeSize').val()
+        },
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+			alert(response);
+			if(response > 0){
+				var res = overwritedonation(response)
+				if(res==false)
+				return false;
+    			}
+			else{
+				 document.forms[0].submit();
+				 return true;
+			}
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+	
+}
 
 function overwritedonation(res)
 {
