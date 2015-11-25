@@ -64,11 +64,11 @@
 			var rowIndex = document.getElementById("newInstallmentRow").rowIndex;
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
-			if (newInstallmentCount == 0) {
+		   		   
+			if (newInstallmentCount == 0) { 
 				for (var i = 0; i < noOfDemandRsns; i++) {
 					var row = instDetailsTable.rows[i+instDetailsRowIndex];
 					row.style.display = "table-row";
-					
 				}
 				newInstallmentCount++;
 				isFirstInstVisible = true;
@@ -111,6 +111,7 @@
 		}
 		
 		function rearrangeIndexes() {
+			
 			var instDetailsTable = document.getElementById("instDetails");
 			// New index for textfield name & value attribute	
 			var newInstallments = newInstallmentCount;
@@ -121,6 +122,7 @@
 			} else {
 				li = (parseInt(document.getElementById("lastIdx").value) + 1);
 			}
+			
 			for (var i = 0; i < noOfDemandRsns; i++) {
 				var row = instDetailsTable.rows[i+instDetailsRowIndex];				
 				var attrValueInstallment = "demandDetailBeanList["+li+"].installment.id";
@@ -168,7 +170,8 @@
 				}
 				li++;
 			}
-			lastIndex = parseInt(li) - 1;
+			lastIndex = parseInt(li) - 1; 
+			document.getElementById("lastIdx").value=lastIndex;
 		}
 		
 		function assignInstallmentId(obj, id) {
@@ -251,7 +254,7 @@
 										</th>
 										<th class="bluebgheadtd" width="2%">
 											<s:text name="revisedCollection" />
-										</th>								
+										</th>								 
 									</tr>
 									<tr>										
 										<td colspan="8" align="right">
@@ -374,6 +377,7 @@
 															value="%{demandDetailBeanList[#idx].isNew}" />
 													</td>
 												<script type="text/javascript">
+														var newInstCountOnError = 0;
 														newInstCountOnError++;
 														isFirstInstVisible = true;														
 													</script>
