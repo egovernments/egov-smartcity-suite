@@ -880,8 +880,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         final Address propAddr = basicProperty.getAddress();
         propAddr.setHouseNoBldgApt(getHouseNumber());
-        propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getBlockId()).getName());
-        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
+        propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
         for (final PropertyOwnerInfo owner : basicProperty.getPropertyOwnerInfo())
@@ -892,7 +891,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 .isCorrAddressDiff())) {
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
-            ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
             ownerAddress.setPinCode(propAddr.getPinCode());
         } else {
             final String[] corrAddr = getCorrAddress1().split(",");
@@ -901,7 +899,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             else
                 ownerAddress.setAreaLocalitySector(corrAddr[1]);
             ownerAddress.setHouseNoBldgApt(getHouseNumber());
-            ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setPinCode(getCorrPinCode());
         }
     }
@@ -916,7 +913,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final Address propAddr = new PropertyAddress();
         propAddr.setHouseNoBldgApt(getHouseNumber());
         propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
-        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getBlockId()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
         if (!(property.getPropertyDetail().isCorrAddressDiff() != null && property.getPropertyDetail()
@@ -924,13 +920,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
-            ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
             ownerAddress.setPinCode(propAddr.getPinCode());
         } else {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setAreaLocalitySector(getCorrAddress1());
-            ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setPinCode(getCorrPinCode());
         }
         if (LOGGER.isDebugEnabled())
