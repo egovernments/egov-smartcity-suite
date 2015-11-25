@@ -140,6 +140,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
             return "redirect:/application/addconnection/"
                     + addConnection.getConnection().getParentConnection().getConsumerCode();
 
+       
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
         if (!addConnection.getApplicationDocs().isEmpty())
@@ -155,7 +156,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection, resultBinder);
         if (addConnection.getState() == null)
             addConnection.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));

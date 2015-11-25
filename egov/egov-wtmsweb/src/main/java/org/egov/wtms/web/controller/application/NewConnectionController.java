@@ -172,7 +172,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult errors) {
 
         validatePropertyID(waterConnectionDetails, resultBinder);
-
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
         final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
@@ -403,7 +403,7 @@ public class NewConnectionController extends GenericConnectionController {
             }
         }
     }
-
+   
     private void validatePropertyIDForDataEntry(final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors) {
         if (waterConnectionDetails.getConnection() != null

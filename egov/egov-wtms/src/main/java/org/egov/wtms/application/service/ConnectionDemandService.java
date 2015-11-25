@@ -170,11 +170,7 @@ public class ConnectionDemandService {
             if (!(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) && (WaterTaxConstants.RESIDENTIAL
                     .equalsIgnoreCase(waterConnectionDetails.getPropertyType().getCode()) || ConnectionType.NON_METERED
                     .equals(waterConnectionDetails.getConnectionType()))))
-
-                donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                        .findByPropertyandCategoryandUsageandMinPipeSize(waterConnectionDetails.getPropertyType(),waterConnectionDetails.getCategory(),
-                                waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
-                                        .getSizeInInch()));
+                donationDetails = getDonationDetails(waterConnectionDetails);
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
@@ -202,6 +198,15 @@ public class ConnectionDemandService {
         else
             throw new ValidationException("err.water.installment.not.found");
         return egDemand;
+    }
+
+    public DonationDetails getDonationDetails(final WaterConnectionDetails waterConnectionDetails) {
+        DonationDetails donationDetails;
+        donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
+                .findByPropertyandCategoryandUsageandMinPipeSize(waterConnectionDetails.getPropertyType(),waterConnectionDetails.getCategory(),
+                        waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize()
+                                .getSizeInInch()));
+        return donationDetails;
     }
 
     private EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
@@ -614,11 +619,7 @@ public class ConnectionDemandService {
             }
         }
         double totalWaterRate = 0;
-        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
-                .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(waterConnectionDetails.getConnectionType(),
-                        waterConnectionDetails.getUsageType(), waterConnectionDetails.getWaterSource(),
-                        waterConnectionDetails.getPipeSize());
-        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeader(waterRatesHeader);
+        final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         final int noofmonths = DateUtils.noOfMonths(InstallemntStartDate, installment.getToDate());
         if (null != waterRatesDetails) {
             if (noofmonths > 0)
@@ -638,6 +639,15 @@ public class ConnectionDemandService {
         } else
             throw new ValidationException("err.water.rate.not.found");
         return waterConnectionDetails;
+    }
+
+    public WaterRatesDetails getWaterRatesDetailsForDemandUpdate(final WaterConnectionDetails waterConnectionDetails) {
+        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
+                .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(waterConnectionDetails.getConnectionType(),
+                        waterConnectionDetails.getUsageType(), waterConnectionDetails.getWaterSource(),
+                        waterConnectionDetails.getPipeSize());
+        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeader(waterRatesHeader);
+        return waterRatesDetails;
     }
 
     public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(

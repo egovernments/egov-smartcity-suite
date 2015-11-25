@@ -79,6 +79,8 @@ import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
+import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
@@ -100,6 +102,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -844,5 +847,17 @@ public class WaterConnectionDetailsService {
             final HashMap<String, String> meesevaParams) {
         return createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent, code, workFlowAction);
 
+    }
+    public void validateWaterRateAndDonationHeader(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors)
+    {
+    DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
+    if(donationDetails ==null)
+    {
+        errors.rejectValue("usageType", "donation.combination.required");
+    }
+    WaterRatesDetails waterRatesDetails =connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+    if(waterRatesDetails==null){
+        errors.rejectValue("usageType", "err.water.rate.not.found"); 
+    }
     }
 }
