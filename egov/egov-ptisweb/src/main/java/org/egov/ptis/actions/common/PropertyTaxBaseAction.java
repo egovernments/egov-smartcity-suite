@@ -65,7 +65,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -560,7 +560,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
         if (null != property && null != property.getState()) {
             final State propertyState = property.getState();
-            if (propertyState.getValue().endsWith(WF_STATE_REVENUE_CLERK_APPROVED)) {
+            if (propertyState.getValue().endsWith(WF_STATE_ASSISTANT_APPROVED)) {
                 args.add(property.getApplicationNo());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)

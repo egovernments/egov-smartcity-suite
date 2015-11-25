@@ -57,7 +57,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -642,7 +642,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         String smsMsgForTransferee = "";
         if (null != propertyMutation && null != propertyMutation.getState()) {
             final State mutationState = propertyMutation.getState();
-            if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
+            if (mutationState.getValue().equals(WF_STATE_ASSISTANT_APPROVED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
@@ -691,7 +691,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final List<String> argsForTransferee = new ArrayList<String>();
         if (null != propertyMutation && null != propertyMutation.getState()) {
             final State mutationState = propertyMutation.getState();
-            if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
+            if (mutationState.getValue().equals(WF_STATE_ASSISTANT_APPROVED)) {
                 subject = getText("subject.createtransferproperty", new String[] { propertyMutation.getBasicProperty()
                         .getUpicNo() });
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
