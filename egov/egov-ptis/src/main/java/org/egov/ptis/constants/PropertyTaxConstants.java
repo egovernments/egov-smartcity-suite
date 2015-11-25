@@ -362,6 +362,7 @@ public interface PropertyTaxConstants {
     // Named Queries
     public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";
     public static final String QUERY_BASERATE_BY_OCCUPANCY_ZONE = "BASERATE_BY_OCCUPANCY_ZONE";
+    public static final String QUERY_BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY = "BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY";
     public static final String QUERY_PROPERTY_BY_UPICNO = "getPropertyByUpicNo";
     public static final String QUERY_PROPERTY_BY_UPICNO_AND_STATUS = "getPropertyByUpicNoAndStatus";
     public static final String QUERY_BASICPROPERTY_BY_UPICNO = "getBasicPropertyByUpicNo";

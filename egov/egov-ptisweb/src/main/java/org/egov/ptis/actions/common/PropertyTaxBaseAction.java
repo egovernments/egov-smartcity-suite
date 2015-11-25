@@ -41,7 +41,8 @@ package org.egov.ptis.actions.common;
 
 import static java.lang.Boolean.FALSE;
 import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -49,12 +50,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
@@ -67,6 +69,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLER
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -83,6 +86,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -100,17 +104,18 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Category;
+import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
@@ -131,6 +136,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String ackMessage;
     protected String userDesgn;
     protected String wfErrorMsg;
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
     protected AssignmentService assignmentService;
@@ -239,7 +245,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
             final String eastBoundary, final String westBoundary, final String southBoundary,
-            final String northBoundary, final String propTypeId, final String propUsageId, final String propOccId,
+            final String northBoundary, final String propTypeId, final String zoneId, final String propOccId,
             final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId, final String modifyRsn) {
 
         if (LOGGER.isDebugEnabled())
@@ -265,7 +271,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate,modifyRsn);
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate,modifyRsn);
-                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot);
+                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,zoneId);
             }
         }
 
@@ -339,7 +345,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
-            final Property property, final String areaOfPlot) {
+            final Property property, final String areaOfPlot,final String zoneId) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
@@ -384,12 +390,28 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
                         if (null != floor.getStructureClassification()
                                 && null != floor.getStructureClassification().getId()
-                                && null != floor.getPropertyUsage() && null != floor.getPropertyUsage().getId()) {
-                            List<Category> category = getPersistenceService().findAllBy(
-                                    "From Category where propUsage.id = ? and structureClass.id = ? ",
-                                    floor.getPropertyUsage().getId(), floor.getStructureClassification().getId());
-                            if (category.isEmpty()) {
-                                addActionError(getText("unitrate.error"));
+                                && null != floor.getPropertyUsage() && null != floor.getPropertyUsage().getId()
+                                && floor.getOccupancyDate() != null && isNotBlank(zoneId)
+                                && (floor.getFloorNo() != null || !floor.getFloorNo().equals(-10))) {
+                            Boundary bndry = (Boundary) getPersistenceService().find("From Boundary where id=?",
+                                    Long.valueOf(zoneId));
+                            PropertyUsage usage = (PropertyUsage) getPersistenceService().find(
+                                    "From PropertyUsage where id=?", floor.getPropertyUsage().getId());
+                            StructureClassification structure = (StructureClassification) getPersistenceService().find(
+                                    "from StructureClassification where id=?",
+                                    floor.getStructureClassification().getId());
+                            List<BoundaryCategory> categories = getPersistenceService().findAllByNamedQuery(
+                                    QUERY_BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY, Long.valueOf(zoneId),
+                                    floor.getPropertyUsage().getId(), floor.getStructureClassification().getId(),
+                                    floor.getOccupancyDate());
+                            if (categories.isEmpty()) {
+                                final List<String> args = new ArrayList<String>();
+                                args.add(bndry.getName());
+                                args.add(usage.getUsageName());
+                                args.add(structure.getTypeName());
+                                args.add(dateFormatter.format(floor.getOccupancyDate()));
+                                args.add(FLOOR_MAP.get(floor.getFloorNo()));
+                                addActionError(getText("unitrate.error", args));
                             }
                         }
                     }

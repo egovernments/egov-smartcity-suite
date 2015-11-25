@@ -98,5 +98,8 @@
 	
     <query name="QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT">
         <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass is null and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
+        
+    <query name="BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY">
+        <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and (? between bc.fromDate and bc.toDate) order by bc.fromDate]]></query>
 
 </hibernate-mapping>

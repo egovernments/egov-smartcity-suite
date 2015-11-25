@@ -1072,7 +1072,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
-                northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId,modifyRsn);
+                northBoundary, propTypeId,
+                null != basicProp.getPropertyID() ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : "",
+                propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn);
         validateApproverDetails();
         if (!propertyByEmployee) {
             if (null != basicProp && null == propService.getUserPositionByZone(basicProp)) {

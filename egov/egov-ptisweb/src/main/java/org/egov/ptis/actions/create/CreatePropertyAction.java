@@ -574,12 +574,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.update(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
-        /*if (propService.isEmployee(property.getCreatedBy()))
-            propertyInitiatedBy = property.getCreatedBy().getName();
-        else
-            propertyInitiatedBy = assignmentService
-                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-                    .getEmployee().getUsername();*/
+        /*
+         * if (propService.isEmployee(property.getCreatedBy()))
+         * propertyInitiatedBy = property.getCreatedBy().getName(); else
+         * propertyInitiatedBy = assignmentService
+         * .getPrimaryAssignmentForPositon
+         * (property.getStateHistory().get(0).getOwnerPosition().getId())
+         * .getEmployee().getUsername();
+         */
         propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature with assessment number : ");
@@ -991,8 +993,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             else if (null != userDesgn && userDesgn.equals(REVENUE_INSPECTOR_DESGN))
                 addActionError(getText("mandatory.doorNo"));
 
-        if(!property.getPropertyDetail().isStructure()){
-        	if (null == property.getBasicProperty().getRegdDocDate()) {
+        if (!property.getPropertyDetail().isStructure()) {
+            if (null == property.getBasicProperty().getRegdDocDate()) {
                 addActionError(getText("mandatory.regdocdate"));
             }
             if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
@@ -1018,7 +1020,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
 
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
-                northBoundary, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId,null);
+                northBoundary, propTypeId, (null != zoneId && zoneId != -1) ? String.valueOf(zoneId) : "", propOccId,
+                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
