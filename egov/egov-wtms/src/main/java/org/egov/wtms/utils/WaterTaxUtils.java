@@ -326,7 +326,7 @@ public class WaterTaxUtils {
                             .getOwnerPosition().getId(), new Date());
                     for (final Assignment assgn : assignmentList)
                         for (final String str : desgnArray)
-                            if (assgn.getDesignation().getName().equals(str)) {
+                            if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
                                 approverPosition = stateHistory.getOwnerPosition().getId();
                                 break;
                             }
@@ -337,7 +337,7 @@ public class WaterTaxUtils {
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
                         .getOwnerPosition().getId(), new Date());
                 for (final Assignment assgn : assignmentList)
-                    if (assgn.getDesignation().getName().equals(designationName)) {
+                    if (assgn.getDesignation().getName().equalsIgnoreCase(designationName)) {
                         approverPosition = stateObj.getOwnerPosition().getId();
                         break;
                     }
