@@ -103,10 +103,8 @@
 		<property name="persistenceService" ref="persistenceService"/>
     </bean>
     
-	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype">
-	    <property name="persistenceService" ref="persistenceService"/>
-    </bean>
-        
+	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
+
     <bean id="receiptHeaderPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.collection.entity.ReceiptHeader" />
     </bean>
