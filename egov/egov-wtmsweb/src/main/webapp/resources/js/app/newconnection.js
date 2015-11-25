@@ -39,6 +39,8 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
+	loadPropertyDetails();
+	
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
@@ -56,7 +58,7 @@ $(document).ready(function(){
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
 	
-	
+	changecategory();
 	
 	$('#connectionType').change(function(){
 		if($('#legacy'))
@@ -73,26 +75,32 @@ $(document).ready(function(){
 	});
 		
 	$('#connectionCategorie').change(function(){
-		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
+		changecategory();
+	});
+	
+	$('#propertyIdentifier').blur(function(){
+		validatePrimaryConnection();		
+	});
+	
+	function changecategory(){
+		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0 ) {  
 			$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
 	    	$("#bplCardHolderName").val();
 			$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
 			$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);
+			$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(true);
 		}
-		else  {
+		else if($('#connectionCategorie :selected').text().localeCompare("BPL") != -1)  {
 			$("#cardHolderDiv").hide();
 	    	$("#bplCardHolderName").removeAttr('required');
 	    	$("#bplCardHolderName").val('');
 	    	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
 	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
 	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
+	     	$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(false);
 		}
-	});
-	
-	$('#propertyIdentifier').blur(function(){
-		validatePrimaryConnection();		
-	});
+	}
 	
 	function validatePrimaryConnection() {
 		propertyID=$('#propertyIdentifier').val()

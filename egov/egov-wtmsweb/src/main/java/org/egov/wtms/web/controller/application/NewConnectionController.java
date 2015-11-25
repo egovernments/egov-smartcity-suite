@@ -188,11 +188,13 @@ public class NewConnectionController extends GenericConnectionController {
         if (LOG.isDebugEnabled())
             LOG.debug("Model Level Validation occurs = " + resultBinder);
         if (resultBinder.hasErrors()) {
+        	waterConnectionDetails.setApplicationDate(new Date());
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+            model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
             return "newconnection-form";
         }
 
@@ -327,7 +329,18 @@ public class NewConnectionController extends GenericConnectionController {
             if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
                 final String fieldError = "applicationDocs[" + i + "].documentDate";
                 resultBinder.rejectValue(fieldError, "documentDate.required");
-            } else if (validApplicationDocument(applicationDocument))
+            } 
+            if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() != null){
+		        Iterator<MultipartFile> stream = null;
+		        if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
+		            stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
+		            .iterator();
+		        if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null
+		                && !stream.hasNext()) {
+		            final String fieldError = "applicationDocs[" + i + "].files";
+		            resultBinder.rejectValue(fieldError, "files.required");
+		        }
+            }  if (validApplicationDocument(applicationDocument))
                 applicationDocs.add(applicationDocument);
         }
     }
