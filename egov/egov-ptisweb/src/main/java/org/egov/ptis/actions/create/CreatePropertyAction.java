@@ -174,8 +174,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String RESULT_DATAENTRY = "dataEntry";
     public static final String PRINTACK = "printAck";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-    private String MEESEVASERVICECODEFORNEWPROPERTY = "PTIS01";
-    private String MEESEVASERVICECODEFORSUBDIVISION = "PTIS04";
+    private String MEESEVASERVICECODEFORNEWPROPERTY = "PT01";
+    private String MEESEVASERVICECODEFORSUBDIVISION = "PT04";
 
     private final Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
