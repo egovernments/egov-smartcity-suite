@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -157,12 +158,18 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
-            loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
-            prepareWorkflow(model,changeOfUse,new WorkflowContainer());
-            model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
-            model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
-            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-            return "changeOfUse-form";
+            if (parentConnectionDetails.getConnection().getMeterSerialNumber()!=null)
+                throw new ValidationException("err.validate.meterserialnumber");
+            else
+            {
+                loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
+                prepareWorkflow(model,changeOfUse,new WorkflowContainer());
+                model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
+                model.addAttribute("validationmessage",resultBinder.getFieldErrors().get(0).getField()+" = "+resultBinder.getFieldErrors().get(0).getDefaultMessage());
+                model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
+                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                return "changeOfUse-form";
+            }
         }
         if (changeOfUse.getState() == null)
             changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
