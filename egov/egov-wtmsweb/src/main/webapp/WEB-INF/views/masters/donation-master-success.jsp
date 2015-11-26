@@ -86,7 +86,7 @@
 											<spring:message code="lbl.hscpipesize.max.inches"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationDetails.donationHeader.maxPipeSize.sizeInInch}"/>
+											<c:out value="${donationDetails.donationHeader.maxPipeSize.code}"/>
 										</div>
 									</div>
 									<div class="row add-border">
@@ -94,7 +94,7 @@
 											<spring:message code="lbl.hscpipesize.min.inches"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${donationDetails.donationHeader.minPipeSize.sizeInInch}"/>
+											<c:out value="${donationDetails.donationHeader.minPipeSize.code}"/>
 										</div>
 										
 										<div class="col-md-3 col-xs-6 add-margin">

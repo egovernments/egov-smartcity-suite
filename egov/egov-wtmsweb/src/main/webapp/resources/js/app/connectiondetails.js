@@ -60,7 +60,7 @@ $(document).ready(function(){
 				$('#pipeSize').empty();
 				$('#pipeSize').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
-				$('#pipeSize').append($('<option>').text(value.sizeInInch).attr('value', value.id))
+				$('#pipeSize').append($('<option>').text(value.code).attr('value', value.id))
 				});
 			}, 
 			error: function (response) {

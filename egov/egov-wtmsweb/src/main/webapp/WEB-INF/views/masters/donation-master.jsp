@@ -116,7 +116,7 @@
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${minPipeSize}" itemValue="id" 
-				itemLabel="sizeInInch" />
+				itemLabel="code" />
 		</form:select>		
 		<form:errors path="donationHeader.minPipeSize" cssClass="add-margin error-msg" />					
 	</div>

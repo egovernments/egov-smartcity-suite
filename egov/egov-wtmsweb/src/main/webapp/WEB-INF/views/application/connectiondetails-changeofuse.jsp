@@ -111,7 +111,7 @@
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${pipeSizes}" itemValue="id"
-						itemLabel="sizeInInch" />
+						itemLabel="code" />
 				</form:select>		
 				<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 			</div>
