@@ -138,8 +138,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
             @PathVariable("assessmentNo") final String assessmentNo) {
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (null != basicProperty && basicProperty.isUnderWorkflow()) {
-            model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_TAX_EXEMTION
-                    + " now, property is undergoing some work flow.");
+            model.addAttribute("wfPendingMsg", "Could not do Tax Exemption now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         } else if (null != basicProperty && !oldProperty.getIsExemptedFromTax()) {
             final Map<String, BigDecimal> propertyTaxDetails = propertyService

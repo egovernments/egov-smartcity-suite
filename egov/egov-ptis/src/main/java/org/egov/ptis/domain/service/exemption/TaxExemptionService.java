@@ -120,12 +120,16 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             propertyPerService.applyAuditing(floor);
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
         }
-        if (StringUtils.isNotBlank(taxExemptedReason) && taxExemptedReason != "-1") {
+        if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
             final TaxExeptionReason taxExemptionReason = (TaxExeptionReason) propertyPerService.find(
                     "From TaxExeptionReason where id = ?", Long.valueOf(taxExemptedReason));
             propertyModel.setTaxExemptedReason(taxExemptionReason);
             propertyModel.setIsExemptedFromTax(Boolean.TRUE);
+        } else {
+            propertyModel.setTaxExemptedReason(null);
+            propertyModel.setIsExemptedFromTax(Boolean.FALSE);
         }
+
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         propertyModel.setEffectiveDate(propCompletionDate);
         propService.createDemand(propertyModel, new Date());
@@ -215,8 +219,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
         Property property = null;
-        if (null != basicProperty.getProperty())
-            property = basicProperty.getProperty();
+        if (null != basicProperty.getWFProperty())
+            property = basicProperty.getWFProperty();
         else
             property = basicProperty.getActiveProperty();
         final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
@@ -225,7 +229,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
         model.addAttribute("propertyByEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
-        if (!basicProperty.getActiveProperty().getIsExemptedFromTax()) {
+        if (!property.getIsExemptedFromTax()) {
             final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                     PropertyTaxUtil.getCurrentInstallment());
             model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));

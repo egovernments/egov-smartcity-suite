@@ -41,6 +41,7 @@ package org.egov.ptis.actions.notice;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
@@ -115,9 +116,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = PropertyTaxNoticeAction.NOTICE, location = "propertyTaxNotice-notice.jsp"),
-    @Result(name = PropertyTaxNoticeAction.DIGITAL_SIGNATURE_REDIRECTION, location = "propertyTaxNotice-digitalSignatureRedirection.jsp")
-})
+        @Result(name = PropertyTaxNoticeAction.NOTICE, location = "propertyTaxNotice-notice.jsp"),
+        @Result(name = PropertyTaxNoticeAction.DIGITAL_SIGNATURE_REDIRECTION, location = "propertyTaxNotice-digitalSignatureRedirection.jsp") })
 public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private static final String ALTER = "Alter";
     private static final String BIFURCATE = "Bifurcate";
@@ -207,12 +207,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                         (String) request.getSession().getAttribute("citylogo"));
                 final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
                 final PropertyMutation propertyMutation = (PropertyMutation) persistenceService.find(
-                        "From PropertyMutation where id = ? ",
-                        Long.valueOf(id[0]));
+                        "From PropertyMutation where id = ? ", Long.valueOf(id[0]));
                 final BasicProperty basicProperty = propertyMutation.getBasicProperty();
-                transferOwnerService.generateTransferNotice(basicProperty, propertyMutation, cityName, cityLogo, WFLOW_ACTION_STEP_SIGN);
-                final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
-                        propertyMutation.getApplicationNo());
+                transferOwnerService.generateTransferNotice(basicProperty, propertyMutation, cityName, cityLogo,
+                        WFLOW_ACTION_STEP_SIGN);
+                final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
+                        NOTICE_TYPE_MUTATION_CERTIFICATE, propertyMutation.getApplicationNo());
                 fileStoreId.append(notice.getFileStore().getFileStoreId());
             }
         }
@@ -251,13 +251,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         PtNotice savedNotice = null;
         if (notice == null) {
             if (REVISION_PETITION.equalsIgnoreCase(type))
-                savedNotice = noticeService.saveNotice(revisionPetition.getObjectionNumber(),
-                        revisionPetition.getObjectionNumber().concat(
-                                PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX),
-                                PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE, revisionPetition.getBasicProperty(), NoticePDF);
+                savedNotice = noticeService
+                        .saveNotice(revisionPetition.getObjectionNumber(), revisionPetition.getObjectionNumber()
+                                .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX),
+                                PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE, revisionPetition.getBasicProperty(),
+                                NoticePDF);
             else
-                savedNotice = noticeService.saveNotice(basicProperty.getPropertyForBasicProperty()
-                        .getApplicationNo(),
+                savedNotice = noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
                         noticeNo, noticeType, basicProperty, NoticePDF);
         } else
             savedNotice = noticeService.updateNotice(notice, NoticePDF);
@@ -274,7 +274,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         if (property == null)
             property = (PropertyImpl) basicProperty.getWFProperty();
 
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType, property.getApplicationNo());
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType,
+                property.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
         if (WFLOW_ACTION_STEP_NOTICE_GENERATE.equalsIgnoreCase(actionType)) {
             final FileStoreMapper fsm = notice.getFileStore();
@@ -303,8 +304,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
                 if (notice == null) {
                     final PtNotice savedNotice = noticeService.saveNotice(basicProperty.getPropertyForBasicProperty()
-                            .getApplicationNo(),
-                            noticeNo, noticeType, basicProperty, NoticePDF);
+                            .getApplicationNo(), noticeNo, noticeType, basicProperty, NoticePDF);
                     setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
                 } else {
                     final PtNotice savedNotice = noticeService.updateNotice(notice, NoticePDF);
@@ -323,7 +323,36 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         }
         return NOTICE;
     }
-    
+
+    @Action(value = "/notice/propertyTaxNotice-generateSpecialNotice")
+    public String generateSpecialNotice() {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService().findByNamedQuery(
+                QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
+        property = (PropertyImpl) basicProperty.getProperty();
+
+        if (property == null)
+            property = (PropertyImpl) basicProperty.getWFProperty();
+
+        ReportOutput reportOutput = new ReportOutput();
+        PropertyNoticeInfo propertyNotice = null;
+        final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
+        propertyNotice = new PropertyNoticeInfo(property, noticeNo);
+        reportInput = generateNoticeReportRequest(basicProperty, propertyNotice);
+        reportOutput = reportService.createReport(reportInput);
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        if (reportOutput != null && reportOutput.getReportOutputData() != null)
+            NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo, noticeType,
+                basicProperty, NoticePDF);
+        endWorkFlow(basicProperty);
+        propService.updateIndexes(property, APPLICATION_TYPE_TAX_EXEMTION);
+        basicPropertyService.update(basicProperty);
+        return NOTICE;
+    }
+
     @Action(value = "/notice/previewSignedNotice")
     public String previewSignedNotice() {
         File file = fileStoreService.fetch(signedFileStoreId, FILESTORE_MODULE_NAME);
@@ -345,8 +374,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             final PropertyNoticeInfo propertyNotice) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ReportRequest reportInput = null;
-        final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService.getDesignationByName(
-                COMMISSIONER_DESGN).getId());
+        final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
+                .getDesignationByName(COMMISSIONER_DESGN).getId());
         reportParams.put("userId", !users.isEmpty() ? users.get(0).getId() : 0);
         if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
@@ -415,7 +444,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
                     || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
+                            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                 ownerInfo.setGeneralTax(demandDetail.getAmount());
             if (StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()))
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
