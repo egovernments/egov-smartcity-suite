@@ -261,8 +261,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         
         if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getReConnectionReason() == null
                 && (waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)||(waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))))
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)))
             model.addAttribute("mode", "closereditForAE");
         if ((waterConnectionDetails.getStatus().getCode()
                 .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS) || waterConnectionDetails.getStatus().getCode()
@@ -277,7 +276,6 @@ public class UpdateConnectionController extends GenericConnectionController {
         if(waterConnectionDetails.getReConnectionReason() != null && waterConnectionDetails.getStatus().getCode()
                 .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED))
             model.addAttribute("mode", "reconEditForAE");
-
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)

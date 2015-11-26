@@ -102,13 +102,13 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 			<jsp:include page="tapexecutiondetails-form.jsp"></jsp:include>
 		</c:if>
 		
-		<c:if test="${(waterConnectionDetails.status.code =='CLOSERINITIATED'  ||  waterConnectionDetails.status.code =='CLOSERAPPROVED'  || waterConnectionDetails.status.code =='CLOSERINPROGRESS'||waterConnectionDetails.status.code =='CLOSERSANCTIONED') }">
+		<c:if test="${(waterConnectionDetails.status.code =='CLOSERINITIATED'  ||   waterConnectionDetails.status.code =='CLOSERINPROGRESS'||waterConnectionDetails.status.code =='CLOSERSANCTIONED') }">
 			<jsp:include page="closerForm-details.jsp"></jsp:include>
 			<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
 			</div>
 			</c:if>
 			
-		<c:if test="${(waterConnectionDetails.status.code =='RECONNECTIONINPROGRESS'  ||  waterConnectionDetails.status.code =='RECONNECTIONAPPROVED'  || waterConnectionDetails.status.code =='RECONNECTIONSANCTIONED'||waterConnectionDetails.status.code =='RECONNECTIONINITIATED') }">			
+		<c:if test="${(waterConnectionDetails.status.code =='RECONNECTIONINPROGRESS'    || waterConnectionDetails.status.code =='RECONNECTIONSANCTIONED'||waterConnectionDetails.status.code =='RECONNECTIONINITIATED') }">			
 	<jsp:include page="reconnection-details.jsp"></jsp:include> 
 	<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
 	
