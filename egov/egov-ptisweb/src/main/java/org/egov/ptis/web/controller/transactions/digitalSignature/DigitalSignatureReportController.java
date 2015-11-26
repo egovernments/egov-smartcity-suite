@@ -99,7 +99,7 @@ public class DigitalSignatureReportController {
             List<WorkflowTypes> workflowTypesList = new ArrayList<WorkflowTypes>();
             for (final StateAware record : stateAwareList)
                 if (record != null)
-                    if (record.getState() != null &&
+                    if (record.getState() != null && record.getState().getNextAction() != null && 
                     record.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
                         tempMap = new HashMap<String, Object>();
                         workflowTypesList = getCurrentSession().getNamedQuery(WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y)
