@@ -86,7 +86,7 @@
 											<spring:message code="lbl.hscpipesize.max.inches"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${waterRatesHeader.pipeSize.code}"/>
+											<c:out value="${waterRatesHeader.pipeSize.sizeInInch}"/>
 										</div>
 									</div>
 									

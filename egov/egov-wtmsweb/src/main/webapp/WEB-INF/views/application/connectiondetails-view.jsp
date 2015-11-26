@@ -62,7 +62,7 @@
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.hscpipesize.inches" /></div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.pipeSize.code}" />
+						<c:out value="${waterConnectionDetails.pipeSize.sizeInInch}" />
 					</div>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.sumpcapacity.litres" /></div>
 					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
