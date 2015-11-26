@@ -57,7 +57,7 @@ public class PropertyThirdPartyService {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
-    //For Exemption and vacancyremission is in progess
+    // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
         PtNotice ptNotice = null;
@@ -105,108 +105,104 @@ public class PropertyThirdPartyService {
                 property = (PropertyImpl) persistenceService.find("From PropertyImpl where applicationNo = ? ",
                         applicationNo);
             }
-            if (!property.getState().getHistory().isEmpty()) {
-                int size = property.getState().getHistory().size();
-                stateHistory = property.getState().getHistory().get(size - 1);
-            }
-            if (property.getState().getValue().equals(WF_STATE_CLOSED)
-                    && stateHistory.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", stateHistory.getComments());
-                statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-            } else if (property.getState().getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", property.getState().getComments());
-                statusCommentsMap.put("updatedBy", property.getState().getLastModifiedBy().getName());
-            } else if (property.getState().getValue().equals(WF_STATE_CLOSED)
-                    && stateHistory.getValue().endsWith(WF_STATE_REJECTED)) {
-                statusCommentsMap.put("status", STATUS_REJECTED);
-                statusCommentsMap.put("comments", property.getState().getComments());
-                statusCommentsMap.put("updatedBy", property.getState().getLastModifiedBy().getName());
-            } else {
-                statusCommentsMap.put("status", STATUS_OPEN);
-                statusCommentsMap.put("comments", property.getState().getComments());
-                statusCommentsMap.put("updatedBy", property.getState().getLastModifiedBy().getName());
+            if (null != property) {
+                if (!property.getState().getHistory().isEmpty()) {
+                    int size = property.getState().getHistory().size();
+                    stateHistory = property.getState().getHistory().get(size - 1);
+                }
+                if (property.getState().getValue().equals(WF_STATE_CLOSED)
+                        && stateHistory.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
+                    statusCommentsMap.put("status", STATUS_APPROVED);
+                    statusCommentsMap.put("comments", stateHistory.getComments());
+                    statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+                } else if (property.getState().getValue().equals(WF_STATE_CLOSED)
+                        && stateHistory.getValue().endsWith(WF_STATE_REJECTED)) {
+                    statusCommentsMap.put("status", STATUS_REJECTED);
+                    statusCommentsMap.put("comments", property.getState().getComments());
+                    statusCommentsMap.put("updatedBy", property.getState().getLastModifiedBy().getName());
+                } else {
+                    statusCommentsMap.put("status", STATUS_OPEN);
+                    statusCommentsMap.put("comments", property.getState().getComments());
+                    statusCommentsMap.put("updatedBy", property.getState().getLastModifiedBy().getName());
+                }
             }
 
         } else if (applicationType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 mutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
             }
-            if (!mutation.getState().getHistory().isEmpty()) {
-                int size = mutation.getState().getHistory().size();
-                stateHistory = mutation.getState().getHistory().get(size - 1);
-            }
-            if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
-                    && stateHistory.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", stateHistory.getComments());
-                statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-            } else if (mutation.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", mutation.getState().getComments());
-                statusCommentsMap.put("updatedBy", mutation.getState().getLastModifiedBy().getName());
-            } else if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
-                    && stateHistory.getValue().equals(WF_STATE_REJECTED)) {
-                statusCommentsMap.put("status", STATUS_REJECTED);
-                statusCommentsMap.put("comments", mutation.getState().getComments());
-                statusCommentsMap.put("updatedBy", mutation.getState().getLastModifiedBy().getName());
-            } else {
-                statusCommentsMap.put("status", STATUS_OPEN);
-                statusCommentsMap.put("comments", mutation.getState().getComments());
-                statusCommentsMap.put("updatedBy", mutation.getState().getLastModifiedBy().getName());
+            if (null != mutation) {
+                if (!mutation.getState().getHistory().isEmpty()) {
+                    int size = mutation.getState().getHistory().size();
+                    stateHistory = mutation.getState().getHistory().get(size - 1);
+                }
+                if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
+                        && stateHistory.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
+                    statusCommentsMap.put("status", STATUS_APPROVED);
+                    statusCommentsMap.put("comments", stateHistory.getComments());
+                    statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+                } else if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
+                        && stateHistory.getValue().equals(WF_STATE_REJECTED)) {
+                    statusCommentsMap.put("status", STATUS_REJECTED);
+                    statusCommentsMap.put("comments", mutation.getState().getComments());
+                    statusCommentsMap.put("updatedBy", mutation.getState().getLastModifiedBy().getName());
+                } else {
+                    statusCommentsMap.put("status", STATUS_OPEN);
+                    statusCommentsMap.put("comments", mutation.getState().getComments());
+                    statusCommentsMap.put("updatedBy", mutation.getState().getLastModifiedBy().getName());
+                }
             }
         } else if (applicationType.equals(APPLICATION_TYPE_VACANCY_REMISSION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 vacancyRemission = (VacancyRemission) persistenceService.find(
                         "From VacancyRemission where applicationNumber = ? ", applicationNo);
             }
-            if (!vacancyRemission.getState().getHistory().isEmpty()) {
-                int size = vacancyRemission.getState().getHistory().size();
-                stateHistory = vacancyRemission.getState().getHistory().get(size - 1);
-            }
-            if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
-                    && stateHistory.getValue().endsWith(WF_STATE_BILL_COLLECTOR_APPROVED)) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", vacancyRemission.getState().getComments());
-                statusCommentsMap.put("updatedBy", vacancyRemission.getState().getLastModifiedBy().getName());
-            } else if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
-                    && stateHistory.getValue().endsWith(WF_STATE_REJECTED)) {
-                statusCommentsMap.put("status", STATUS_REJECTED);
-                statusCommentsMap.put("comments", stateHistory.getComments());
-                statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-            } else {
-                statusCommentsMap.put("status", STATUS_OPEN);
-                statusCommentsMap.put("comments", vacancyRemission.getState().getComments());
-                statusCommentsMap.put("updatedBy", vacancyRemission.getState().getLastModifiedBy().getName());
+            if (null != vacancyRemission) {
+                if (!vacancyRemission.getState().getHistory().isEmpty()) {
+                    int size = vacancyRemission.getState().getHistory().size();
+                    stateHistory = vacancyRemission.getState().getHistory().get(size - 1);
+                }
+                if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
+                        && stateHistory.getValue().endsWith(WF_STATE_BILL_COLLECTOR_APPROVED)) {
+                    statusCommentsMap.put("status", STATUS_APPROVED);
+                    statusCommentsMap.put("comments", vacancyRemission.getState().getComments());
+                    statusCommentsMap.put("updatedBy", vacancyRemission.getState().getLastModifiedBy().getName());
+                } else if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
+                        && stateHistory.getValue().endsWith(WF_STATE_REJECTED)) {
+                    statusCommentsMap.put("status", STATUS_REJECTED);
+                    statusCommentsMap.put("comments", stateHistory.getComments());
+                    statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+                } else {
+                    statusCommentsMap.put("status", STATUS_OPEN);
+                    statusCommentsMap.put("comments", vacancyRemission.getState().getComments());
+                    statusCommentsMap.put("updatedBy", vacancyRemission.getState().getLastModifiedBy().getName());
+                }
             }
         } else if (applicationType.equals(APPLICATION_TYPE_REVISION_PETITION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 revisionPetition = (RevisionPetition) persistenceService.find(
                         "From RevisionPetition where objectionNumber = ? ", applicationNo);
             }
-            if (!revisionPetition.getState().getHistory().isEmpty()) {
-                int size = revisionPetition.getState().getHistory().size();
-                stateHistory = revisionPetition.getState().getHistory().get(size - 1);
-            }
-            if ((revisionPetition.getState().getValue().equals(WFLOW_ACTION_END) || revisionPetition.getState()
-                    .getValue().equals("Print Special Notice"))
-                    && stateHistory.getValue().endsWith("Approved")) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", stateHistory.getComments());
-                statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-            } else if (revisionPetition.getState().getValue().endsWith("Approved")) {
-                statusCommentsMap.put("status", STATUS_APPROVED);
-                statusCommentsMap.put("comments", revisionPetition.getState().getComments());
-                statusCommentsMap.put("updatedBy", revisionPetition.getState().getLastModifiedBy().getName());
-            } else if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)) {
-                statusCommentsMap.put("status", STATUS_REJECTED);
-                statusCommentsMap.put("comments", stateHistory.getComments());
-                statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-            } else {
-                statusCommentsMap.put("status", STATUS_OPEN);
-                statusCommentsMap.put("comments", revisionPetition.getState().getComments());
-                statusCommentsMap.put("updatedBy", revisionPetition.getState().getLastModifiedBy().getName());
+            if (null != revisionPetition) {
+                if (!revisionPetition.getState().getHistory().isEmpty()) {
+                    int size = revisionPetition.getState().getHistory().size();
+                    stateHistory = revisionPetition.getState().getHistory().get(size - 1);
+                }
+                if ((revisionPetition.getState().getValue().equals(WFLOW_ACTION_END) || revisionPetition.getState()
+                        .getValue().equals("Print Special Notice"))
+                        && stateHistory.getValue().endsWith("Approved")) {
+                    statusCommentsMap.put("status", STATUS_APPROVED);
+                    statusCommentsMap.put("comments", stateHistory.getComments());
+                    statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+                } else if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)) {
+                    statusCommentsMap.put("status", STATUS_REJECTED);
+                    statusCommentsMap.put("comments", stateHistory.getComments());
+                    statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+                } else {
+                    statusCommentsMap.put("status", STATUS_OPEN);
+                    statusCommentsMap.put("comments", revisionPetition.getState().getComments());
+                    statusCommentsMap.put("updatedBy", revisionPetition.getState().getLastModifiedBy().getName());
+                }
             }
         }
         return statusCommentsMap;
