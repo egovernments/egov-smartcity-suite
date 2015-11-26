@@ -146,6 +146,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private FundHibernateDAO fundDAO;
+    private List<OnlinePayment> lastThreeOnlinePayments = new ArrayList<OnlinePayment>(0);
+    private Boolean onlinePayPending = Boolean.FALSE;
     private final String brokenTransactionErrorMessage = "If the amount has been deducted from "
             + "your account, then no further action is required from you right now. Such transactions are normally "
             + "resolved within 24 hours so you can check and download the receipt then." + "\n \n"
@@ -661,6 +663,13 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
+     // Fetching Last three online transaction for the Consumer Code
+        if (null != consumerCode && !("".equals(consumerCode)))
+                lastThreeOnlinePayments = collectionsUtil.getOnlineTransactionHistory(consumerCode);
+        for (OnlinePayment onlinePay : lastThreeOnlinePayments) {
+                if (onlinePay.getStatus().getCode().equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING))
+                        onlinePayPending = Boolean.TRUE;
+        }
     }
 
     private String decodeBillXML() {
@@ -1152,5 +1161,21 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
     public void setRefNumber(String refNumber) {
         this.refNumber = refNumber;
+    }
+    
+    public List<OnlinePayment> getLastThreeOnlinePayments() {
+        return lastThreeOnlinePayments;
+    }
+    
+    public void setLastThreeOnlinePayments(List<OnlinePayment> lastThreeOnlinePayments) {
+            this.lastThreeOnlinePayments = lastThreeOnlinePayments;
+    }
+    
+    public Boolean getOnlinePayPending() {
+            return onlinePayPending;
+    }
+    
+    public void setOnlinePayPending(Boolean onlinePayPending) {
+            this.onlinePayPending = onlinePayPending;
     }
 }

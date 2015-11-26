@@ -380,7 +380,7 @@ function onLoad(){
 	</div>
 
     <div class="margin20 container-medium">
-	
+    <s:if test="%{!lastThreeOnlinePayments().isEmpty()}">
 	<div class="text-left margin-5"><s:text name="onlineReceipts.lastthreetransaction"/></div>
 	
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -392,16 +392,27 @@ function onLoad(){
 	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.amtrs"/></th>
 	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.status"/></th>
 	  </tr>
+	 
 	  
 	  <tr>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
+	     <%int onPayDtlCnt=0; %>
+         <s:iterator value="%{lastThreeOnlinePayments}" status="onPaystatus">
+         <%onPayDtlCnt=onPayDtlCnt+1;%>
+         <tr>
+            <td class="blueborderfortd text-center">  <%=onPayDtlCnt%></td>
+           <td class="blueborderfortd text-center" > <s:property  value="%{receiptHeader.id}" /></td>
+		    <td class="blueborderfortd text-center" > <s:date name='receiptHeader.createdDate' format='dd/MM/yyyy HH:mm' var="createddate"/> 
+		    <s:property  value="createddate" /></td>
+		     <td class="blueborderfortd text-center" > <fmt:formatNumber value="${receiptHeader.totalAmount}"pattern="#0.00"/>
+		    <td class="blueborderfortd text-center" ><s:property value="%{status.description}"/></td>
+           <tr>
+		             
+		    </tr>
+         </s:iterator>
 	  </tr>
 	
 	</table>
+	 </s:if>
 	
 	
 	<div class="rbroundbox3">

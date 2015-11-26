@@ -51,6 +51,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
@@ -90,6 +91,7 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
+import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -729,6 +731,20 @@ public class CollectionsUtil {
         BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
                 + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService;
+    }
+    
+    /**
+     * 
+     * @param consumerCode
+     * @return  last three online transaction for the consumerCode 
+     */
+    public List<OnlinePayment> getOnlineTransactionHistory(String consumerCode)
+    {
+            String hql = "select online from ReceiptHeader rh, OnlinePayment online where rh.id = online.receiptHeader.id and rh.consumerCode =:consumercode  order by online.id desc";
+            Query query = persistenceService.getSession().createQuery(hql);
+            query.setString("consumercode",consumerCode);
+            query.setMaxResults(3);
+            return  query.list() ;
     }
 
     /**
