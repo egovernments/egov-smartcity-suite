@@ -100,7 +100,7 @@
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${maxPipeSize}" itemValue="id" 
-				itemLabel="code" />
+				itemLabel="sizeInInch" />
 		</form:select>		
 		<form:errors path="donationHeader.maxPipeSize" cssClass="add-margin error-msg" />					
 	</div>
@@ -116,7 +116,7 @@
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${minPipeSize}" itemValue="id" 
-				itemLabel="code" />
+				itemLabel="sizeInInch" />
 		</form:select>		
 		<form:errors path="donationHeader.minPipeSize" cssClass="add-margin error-msg" />					
 	</div>

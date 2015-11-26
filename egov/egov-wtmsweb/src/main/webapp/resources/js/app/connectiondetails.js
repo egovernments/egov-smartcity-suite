@@ -47,7 +47,7 @@ $(document).ready(function(){
 		 loadPropertyPipeTypes();
  });
 	function loadPropertyPipeTypes(){
-	
+
         $.ajax({
 			url: "/wtms/ajax-PipeSizesByPropertyType",     
 			type: "GET",
@@ -60,7 +60,7 @@ $(document).ready(function(){
 				$('#pipeSize').empty();
 				$('#pipeSize').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
-				$('#pipeSize').append($('<option>').text(value.code).attr('value', value.id))
+				$('#pipeSize').append($('<option>').text(value.sizeInInch).attr('value', value.id))
 				});
 			}, 
 			error: function (response) {
@@ -70,6 +70,7 @@ $(document).ready(function(){
 		
 	}
 	function loadPropertyUsageTypes(){
+	
 		$.ajax({
 			url: "/wtms/ajax-UsageTypeByPropertyType",     
 			type: "GET",

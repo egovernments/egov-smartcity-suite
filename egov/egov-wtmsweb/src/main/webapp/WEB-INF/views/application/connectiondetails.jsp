@@ -50,7 +50,7 @@
     <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="waterSource" data-first-option="false"
+		<form:select path="waterSource" data-first-option="false" 
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -140,7 +140,7 @@
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${pipeSizes}" itemValue="id" 
-				itemLabel="code" />
+				itemLabel="sizeInInch" />
 		</form:select>		
 		<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 	</div>
