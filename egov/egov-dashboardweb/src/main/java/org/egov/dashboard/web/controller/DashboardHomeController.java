@@ -39,6 +39,7 @@
  */
 package org.egov.dashboard.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.dashboard.config.DashboardProperties;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,15 +53,19 @@ public class DashboardHomeController {
 
     @Autowired
     private DashboardProperties dashboardProperties;
-    
+
     @RequestMapping("/home")
     public String home() {
         return "home";
     }
-    
+
     @RequestMapping("/{moduleName}")
     public String kebanaDashboard(@PathVariable final String moduleName, final Model model) {
-        model.addAttribute("kibanaurl", dashboardProperties.getProperty("kibana.url."+moduleName).replaceAll("<city_name>", EgovThreadLocals.getCityName()));
-        return "kibana-dashboard";
+        final String kibanaURL = dashboardProperties.getProperty("kibana.url." + moduleName);
+        if (StringUtils.isNotBlank(kibanaURL)) {
+            model.addAttribute("kibanaurl",kibanaURL.replaceAll("<city_name>", EgovThreadLocals.getCityName()));
+            return "kibana-dashboard";
+        } else
+            return "redirect:error/404";
     }
 }
