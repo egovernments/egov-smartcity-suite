@@ -82,13 +82,19 @@ public class DonationMasterController {
                         .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize());
         final Calendar cal = Calendar.getInstance();
         if (donationDetailsTemp != null) {
-            donationDetailsTemp.setFromDate(donationDetails.getFromDate());
+         //   donationDetailsTemp.setFromDate(donationDetails.getFromDate());
             cal.setTime(donationDetails.getFromDate());
             cal.add(Calendar.DAY_OF_YEAR, -1);
             donationDetailsTemp.setToDate(cal.getTime());
-            donationDetailsTemp.setAmount(donationDetails.getAmount());
-            donationDetailsService.updateDonationDetails(donationDetailsTemp);
-            redirectAttrs.addFlashAttribute("donationDetails", donationDetailsTemp);
+            donationDetailsTemp.getDonationHeader().setActive(false);
+            donationHeaderService.updateDonationHeader(donationDetailsTemp.getDonationHeader());
+            donationDetails.getDonationHeader().setActive(true);
+            cal.setTime(donationDetails.getFromDate());
+            cal.add(Calendar.DAY_OF_YEAR, 365);
+            donationDetails.setToDate(cal.getTime());
+            donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
+            donationDetailsService.createDonationDetails(donationDetails);
+            redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
             model.addAttribute("message", "Donation Master Data updated successfully");
         } else {
             donationDetails.getDonationHeader().setActive(true);

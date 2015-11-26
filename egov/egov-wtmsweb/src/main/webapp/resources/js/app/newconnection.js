@@ -58,7 +58,7 @@ $(document).ready(function(){
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
 	
-	changecategory();
+	/*changecategory();*/
 	
 	$('#connectionType').change(function(){
 		if($('#legacy'))
@@ -75,7 +75,7 @@ $(document).ready(function(){
 	});
 		
 	$('#connectionCategorie').change(function(){
-		changecategory();
+		//changecategory();
 	});
 	
 	$('#propertyIdentifier').blur(function(){
