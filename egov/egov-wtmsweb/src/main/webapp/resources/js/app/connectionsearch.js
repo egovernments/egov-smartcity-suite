@@ -78,7 +78,6 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 			        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 			        			   if (full.resource.clauses.status == 'ACTIVE' ) {
-			        				   alert("inadd "+ full.resource.clauses.islegacy);
 			        				   if ( citizenRole== 'true'   && full.resource.clauses.waterTaxDue > 0) { 
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
 			        				   }
@@ -132,7 +131,6 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
 			        				   && full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 			        			   if (full.resource.clauses.status == 'ACTIVE') {
-			        				   alert("innew "+ full.resource.clauses.islegacy);
 			        				   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');   
 			        				   }
