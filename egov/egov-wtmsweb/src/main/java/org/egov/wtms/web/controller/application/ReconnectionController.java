@@ -160,12 +160,14 @@ public class ReconnectionController extends GenericConnectionController {
         final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
                 .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
         final ApplicationDocuments applicationDocument = new ApplicationDocuments();
+        if(!documentListForClosed .isEmpty()){
         applicationDocument.setDocumentNames(documentListForClosed.get(0));
         applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
         applicationDocument.setSupportDocs(addToFileStore(files));
         applicationDocument.setDocumentNumber("111");
         applicationDocument.setDocumentDate(new Date());
         waterConnectionDetails.getApplicationDocs().add(applicationDocument);
+        }
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));

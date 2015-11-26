@@ -855,9 +855,11 @@ public class WaterConnectionDetailsService {
     {
         errors.rejectValue("usageType", "donation.combination.required");
     }
+    if(waterConnectionDetails.getConnectionType().name().equals(ConnectionType.NON_METERED)){
     WaterRatesDetails waterRatesDetails =connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
     if(waterRatesDetails==null){
         errors.rejectValue("usageType", "err.water.rate.not.found"); 
+    }
     }
     }
 }

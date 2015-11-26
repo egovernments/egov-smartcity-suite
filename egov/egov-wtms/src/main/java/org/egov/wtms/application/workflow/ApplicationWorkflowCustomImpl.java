@@ -51,6 +51,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -68,6 +69,7 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
+import org.egov.infra.admin.master.entity.Role;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -104,6 +106,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
     @Autowired
     private ConsumerIndexService consumerIndexService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
@@ -127,6 +132,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
+        User currentUser=null;
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
@@ -138,8 +144,23 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             if (!waterConnectionDetails.getStateHistory().isEmpty())
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(waterConnectionDetails.getStateHistory()
                         .get(0).getOwnerPosition().getId());
-        } else if (null != waterConnectionDetails.getId())
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(waterConnectionDetails.getCreatedBy().getId());
+        } else if (null != waterConnectionDetails.getId()){
+             currentUser = userService.getUserById(waterConnectionDetails
+                    .getCreatedBy().getId());
+            if(currentUser !=null && waterConnectionDetails.getLegacy().equals(true)){
+            for (final Role userrole : currentUser.getRoles())
+                if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
+                  Position positionuser=waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                 if( positionuser!=null)
+                     wfInitiator = assignmentService.getPrimaryAssignmentForPositon(positionuser.getId());
+                 break;
+                }
+            }
+            else{
+                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(waterConnectionDetails.getCreatedBy().getId());  
+                    
+                }
+         }
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);

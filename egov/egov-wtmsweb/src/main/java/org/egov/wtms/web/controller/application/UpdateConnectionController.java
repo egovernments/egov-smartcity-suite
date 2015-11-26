@@ -343,7 +343,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                         waterConnectionDetails.getApplicationType().getCode(), mode, workFlowAction);
 
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
-
+        if((approvalPosition == null || approvalPosition.equals(Long.valueOf(0))) && (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty()))
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+       
         if (!resultBinder.hasErrors()) {
             if (null != workFlowAction && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {

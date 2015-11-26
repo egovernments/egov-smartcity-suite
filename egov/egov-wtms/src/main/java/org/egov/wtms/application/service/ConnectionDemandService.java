@@ -167,9 +167,7 @@ public class ConnectionDemandService {
                     fieldInspectionDetails.getEstimationCharges());
 
         //if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
-            if (!(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) && (WaterTaxConstants.RESIDENTIAL
-                    .equalsIgnoreCase(waterConnectionDetails.getPropertyType().getCode()) || ConnectionType.NON_METERED
-                    .equals(waterConnectionDetails.getConnectionType()))))
+            if (!(WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ))
                 donationDetails = getDonationDetails(waterConnectionDetails);
 
         if (donationDetails != null) {

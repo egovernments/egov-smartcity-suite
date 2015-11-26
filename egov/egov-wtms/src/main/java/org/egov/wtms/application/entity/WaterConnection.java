@@ -72,7 +72,6 @@ public class WaterConnection extends AbstractAuditable {
     private String propertyIdentifier;
 
     @SafeHtml
-    @Length(min = 3, max = 50)
     private String bpaIdentifier;
 
     @SafeHtml
