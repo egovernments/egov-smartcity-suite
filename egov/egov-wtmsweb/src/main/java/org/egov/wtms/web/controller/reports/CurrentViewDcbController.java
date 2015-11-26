@@ -149,6 +149,9 @@ public class CurrentViewDcbController {
             cancelRcpt = populateCancelledReceiptsOnly(dCBReport.getReceipts());
             model.addAttribute("totalRcptAmt", calculateReceiptTotal());
             model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal());
+            BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+            model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
+            model.addAttribute("mode", "viewdcb"); 
 
         }
         return "currentDcb-new";

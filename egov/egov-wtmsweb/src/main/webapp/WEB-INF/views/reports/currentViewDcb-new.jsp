@@ -127,7 +127,7 @@
 
 												<td class="blueborderfortd">
 													<div align="right">
-														<c:forEach items="${var1.value.rebates}" var="var4"
+														<c:forEach items="${var1.value.balances}" var="var4"
 															varStatus="counter">
 															<c:out value="${var4.value}" />
 														</c:forEach>

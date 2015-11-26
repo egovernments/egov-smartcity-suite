@@ -62,7 +62,7 @@ public class DCBReport {
 	private BigDecimal totalRebate;
 	private BigDecimal totalBalance;
 	private String TAX = "TAX";
-	private String WTTAX = "WT_CHARGES"; 
+	private String WTTAX = "Water Charges"; 
 	private String PENALTY = "PENALTY";
 	private String FINES = "FINES";
 	private BigDecimal totalRcptAmt;
