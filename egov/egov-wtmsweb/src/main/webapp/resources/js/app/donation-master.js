@@ -103,7 +103,6 @@ $(document).ready(function(){
 
 function donationheadercombination()
 {
-	alert("here1234")
 	$.ajax({
         url: '/wtms/ajax-donationheadercombination',
         type: "GET",
@@ -117,7 +116,6 @@ function donationheadercombination()
         dataType : 'json',
         success: function (response) {
 			console.log("success"+response);
-			alert(response);
 			if(response > 0){
 				var res = overwritedonation(response)
 				if(res==false)
