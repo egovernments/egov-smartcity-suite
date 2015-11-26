@@ -362,11 +362,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (receiptHeader.getState() == null) {
             Position position = null;
             if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy())) {
-                final Department dept = departmentService.getDepartmentByName(collectionsUtil
-                        .getDepartmentForWorkFlow());
-                final Designation desgn = designationService.getDesignationByName(collectionsUtil
-                        .getDesignationForThirdPartyUser());
-                position = collectionsUtil.getPositionByDeptDesgAndBoundary(dept, desgn, receiptHeader.getReceiptMisc()
+                position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc()
                         .getBoundary());
             } else
                 position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
@@ -1207,10 +1203,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         // End work-flow for the cancelled receipt
         Position position = null;
         if (!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy())) {
-            final Department dept = departmentService.getDepartmentByName(collectionsUtil.getDepartmentForWorkFlow());
-            final Designation desgn = designationService.getDesignationByName(collectionsUtil
-                    .getDesignationForThirdPartyUser());
-            position = collectionsUtil.getPositionByDeptDesgAndBoundary(dept, desgn, receiptHeaderToBeCancelled
+            position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeaderToBeCancelled
                     .getReceiptMisc().getBoundary());
         } else
             position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
@@ -1455,23 +1448,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void performWorkflow(final String actionName, final ReceiptHeader receiptHeader, final String remarks) {
         try {
             Position operatorPosition;
-            Department department;
             Employee employee = null;
             final Boolean isEmployee = collectionsUtil.isEmployee(receiptHeader.getCreatedBy());
             if (!isEmployee) {
-                department = departmentService.getDepartmentByName(collectionsUtil.getDepartmentForWorkFlow());
-                final Designation desgn = designationService.getDesignationByName(collectionsUtil
-                        .getDesignationForThirdPartyUser());
                 employee = employeeService.getEmployeeById(collectionsUtil.getLoggedInUser().getId());
-                operatorPosition = collectionsUtil.getPositionByDeptDesgAndBoundary(department, desgn, receiptHeader
+                operatorPosition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader
                         .getReceiptMisc().getBoundary());
             } else {
                 operatorPosition = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
-                department = collectionsUtil.getDepartmentOfUser(receiptHeader.getCreatedBy());
                 employee = employeeService.getEmployeeById(receiptHeader.getCreatedBy().getId());
             }
-            // TODO Get the Designation name from AppConfig
-            final Designation designation = designationService.getDesignationByName("Section manager");
+            final Department department = departmentService.getDepartmentByName(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER));
+            final Designation designation = designationService.getDesignationByName(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
             Boundary boundary = null;
             for (final Jurisdiction jur : employee.getJurisdictions())
                 boundary = jur.getBoundary();

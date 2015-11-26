@@ -346,22 +346,23 @@ public class CollectionsUtil {
         return department;
     }
 
-    public Position getPositionByDeptDesgAndBoundary(final Department dept, final Designation desg,
-            final Boundary boundary) {
-        Assignment assignmentObj = null;
-        final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
-        final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        final List<Employee> employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
-                desgnObj.getId(), boundary.getId());
-        if (!employeeList.isEmpty())
-            assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
-        else {
-            final List<Employee> empList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
-                    desgnObj.getId(), boundary.getParent().getId());
-            assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(empList.get(0).getId());
+    public Position getPositionByDeptDesgAndBoundary(final Boundary boundary) {
+        final String designationStr = getDesignationForThirdPartyUser();
+        final String departmentStr = getDepartmentForWorkFlow();
+        String[] department = departmentStr.split(",");
+        String[] designation = designationStr.split(",");
+        List<Assignment> assignment = new ArrayList<Assignment>();
+        for (String dept : department) {
+            for (String desg : designation) {
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),boundary.getId());
+                if (!assignment.isEmpty())
+                    break;
+            }
+            if (!assignment.isEmpty())
+                break;
         }
-
-        return assignmentObj != null ? assignmentObj.getPosition() : null;
+        return !assignment.isEmpty() ? assignment.get(0).getPosition() : null;
     }
 
     public String getDesignationForThirdPartyUser() {
