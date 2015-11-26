@@ -56,9 +56,9 @@ public interface DonationDetailsRepository extends JpaRepository<DonationDetails
     @Query(" from DonationDetails dd where dd.fromDate<=current_date and dd.toDate>=current_date and dd.donationHeader =:donationHeader")
     DonationDetails findByDonationHeader(@Param("donationHeader") DonationHeader donationHeader);
 
-    @Query(" from DonationDetails dd where dd.donationHeader.propertyType=:propertyType and dd.donationHeader.category=:categoryType and dd.donationHeader.usageType=:usageType and dd.donationHeader.minPipeSize=:minPipeSize and dd.donationHeader.maxPipeSize=:maxPipeSize ")
+    @Query(" from DonationDetails dd where dd.donationHeader.propertyType=:propertyType and dd.donationHeader.category=:categoryType and dd.donationHeader.usageType=:usageType and dd.donationHeader.minPipeSize=:minPipeSize ")
     DonationDetails findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
             @Param("propertyType") PropertyType propertyType, @Param("categoryType") ConnectionCategory categoryType,
-            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize,
-            @Param("maxPipeSize") PipeSize maxPipeSize);
+            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize
+            );
 }

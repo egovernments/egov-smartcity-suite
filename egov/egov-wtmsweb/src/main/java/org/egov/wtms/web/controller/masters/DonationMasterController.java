@@ -79,8 +79,7 @@ public class DonationMasterController {
         final DonationDetails donationDetailsTemp = donationDetailsService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(donationDetails.getDonationHeader()
                         .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
-                        .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize(),
-                        donationDetails.getDonationHeader().getMaxPipeSize());
+                        .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize());
         final Calendar cal = Calendar.getInstance();
         if (donationDetailsTemp != null) {
             donationDetailsTemp.setFromDate(donationDetails.getFromDate());

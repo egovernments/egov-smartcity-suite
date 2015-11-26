@@ -85,10 +85,9 @@ public class DonationDetailsService {
 
     // findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize
     public DonationDetails findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(final PropertyType propertyType,
-            final ConnectionCategory categoryType, final UsageType usageType, final PipeSize minPipeSize,
-            final PipeSize maxPipeSize) {
+            final ConnectionCategory categoryType, final UsageType usageType, final PipeSize minPipeSize) {
         return donationDetailsRepository.findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType,
-                categoryType, usageType, minPipeSize, maxPipeSize);
+                categoryType, usageType, minPipeSize);
     }
 
 }

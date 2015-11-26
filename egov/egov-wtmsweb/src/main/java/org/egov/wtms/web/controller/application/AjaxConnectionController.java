@@ -160,7 +160,7 @@ public class AjaxConnectionController {
             @RequestParam final PipeSize maxPipeSize, @RequestParam final PipeSize minPipeSize) {
         final DonationDetails donationDetailsTemp = donationDetailsService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
-                        minPipeSize ,maxPipeSize);
+                        minPipeSize);
         if (donationDetailsTemp == null)
             return 0;
         else
