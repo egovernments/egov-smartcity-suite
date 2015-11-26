@@ -56,7 +56,7 @@
 				<spring:message code="lbl.select" />
 			</form:option>
 			
-			<form:options items="${waterSourceTypes}" itemValue="id"
+			<form:options items="${waterSourceTypes}" itemValue="id" id="waterSourceDropdown"
 				itemLabel="waterSourceType" />
 		</form:select>
 		<form:errors path="waterSource" cssClass="add-margin error-msg" />

@@ -242,6 +242,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .getApplicationType().getCode(), "fieldInspection", ""));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
             model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
+            model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
         } else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() == null)
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService

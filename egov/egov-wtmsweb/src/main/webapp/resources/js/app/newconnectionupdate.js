@@ -40,6 +40,11 @@
 $(document).ready(function()
 {
 	
+	var typeOfConnection=$('#typeOfConnection').val();
+    if (typeOfConnection=="CHANGEOFUSE"){
+    	$("#waterSourceDropdown").prop("disabled", true);
+    	$("#connectionCategorie").prop("disabled", true);
+    }
 	var status=$('#statuscode').val();
 	var wfstate=$('#wfstate').val();
 	var currentUser=$('#currentUser').val();
