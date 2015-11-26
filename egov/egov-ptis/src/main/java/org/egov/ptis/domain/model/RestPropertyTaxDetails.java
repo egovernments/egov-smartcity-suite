@@ -8,7 +8,9 @@ public class RestPropertyTaxDetails {
 	private BigDecimal taxAmount =BigDecimal.ZERO;
 	private BigDecimal chqBouncePenalty=BigDecimal.ZERO;
 	private BigDecimal penalty=BigDecimal.ZERO;
+	private BigDecimal rebate=BigDecimal.ZERO;
 	private BigDecimal totalAmount=BigDecimal.ZERO;
+
 	public String getInstallment() {
 		return installment;
 	}
@@ -38,6 +40,12 @@ public class RestPropertyTaxDetails {
 	}
 	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount = totalAmount;
+	}
+	public BigDecimal getRebate() {
+		return rebate;
+	}
+	public void setRebate(BigDecimal rebate) {
+		this.rebate = rebate;
 	}
 
 }

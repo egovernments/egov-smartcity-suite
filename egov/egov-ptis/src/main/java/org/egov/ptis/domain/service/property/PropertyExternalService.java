@@ -371,7 +371,12 @@ public class PropertyExternalService {
 		PropertyTaxDetails propertyTaxDetails = null;
 		final ErrorDetails errorDetails = new ErrorDetails();
 		if (null != basicProperty)
+		{
 			propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+			propertyTaxDetails.setErrorDetails(errorDetails);
+		}
 		else {
 			propertyTaxDetails = new PropertyTaxDetails();
 			errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
@@ -462,6 +467,10 @@ public class PropertyExternalService {
 			final List<Object> list = ptDemandDAO.getPropertyTaxDetails(assessmentNo);
 			if (list.size() > 0)
 				propertyTaxDetails.setTaxDetails(new ArrayList<RestPropertyTaxDetails>(0));
+			else
+			{
+				return propertyTaxDetails;
+			}
 			String loopInstallment = "";
 			RestPropertyTaxDetails arrearDetails = null;
 			BigDecimal total = BigDecimal.ZERO;
@@ -518,9 +527,7 @@ public class PropertyExternalService {
 				arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
 				propertyTaxDetails.getTaxDetails().add(arrearDetails);
 			}
-			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
-			propertyTaxDetails.setErrorDetails(errorDetails);
+			
 
 			Set<Installment> keySet = calculatedPenalty.keySet();
 
@@ -533,7 +540,13 @@ public class PropertyExternalService {
 					if(inst.getDescription().equalsIgnoreCase(details.getInstallment()))
 					{
 						details.setPenalty(calculatedPenalty.get(inst).getPenalty());
+						details.setRebate(calculatedPenalty.get(inst).getRebate());
 						details.setTotalAmount(details.getTotalAmount().add(calculatedPenalty.get(inst).getPenalty()));
+						if(details.getRebate()!=null)
+						{
+							details.setTotalAmount(details.getTotalAmount().subtract(details.getRebate()));
+						}
+						
 						break Inner;
 					}
 				}
@@ -541,6 +554,8 @@ public class PropertyExternalService {
 
 			}
 		}
+		
+		
 
 		return propertyTaxDetails;
 	}
