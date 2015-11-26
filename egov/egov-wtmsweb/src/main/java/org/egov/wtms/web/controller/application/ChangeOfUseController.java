@@ -158,10 +158,6 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
-            if (parentConnectionDetails.getConnection().getMeterSerialNumber()!=null)
-                throw new ValidationException("err.validate.meterserialnumber");
-            else
-            {
                 loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
                 prepareWorkflow(model,changeOfUse,new WorkflowContainer());
                 model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
@@ -169,7 +165,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 return "changeOfUse-form";
-            }
+           
         }
         if (changeOfUse.getState() == null)
             changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
