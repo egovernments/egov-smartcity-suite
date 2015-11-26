@@ -58,7 +58,7 @@ $(document).ready(function(){
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
 	
-	/*changecategory();*/
+	changecategory();
 	
 	$('#connectionType').change(function(){
 		if($('#legacy'))
@@ -75,7 +75,7 @@ $(document).ready(function(){
 	});
 		
 	$('#connectionCategorie').change(function(){
-		//changecategory();
+		changecategory();
 	});
 	
 	$('#propertyIdentifier').blur(function(){
@@ -87,18 +87,18 @@ $(document).ready(function(){
 			$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
 	    	$("#bplCardHolderName").val();
-			$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
+			/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
 			$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);
-			$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(true);
+			$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(true);*/
 		}
 		else if($('#connectionCategorie :selected').text().localeCompare("BPL") != -1)  {
 			$("#cardHolderDiv").hide();
 	    	$("#bplCardHolderName").removeAttr('required');
 	    	$("#bplCardHolderName").val('');
-	    	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	    	/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
 	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
 	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
-	     	$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(false);
+	     	$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(false);*/
 		}
 	}
 	
