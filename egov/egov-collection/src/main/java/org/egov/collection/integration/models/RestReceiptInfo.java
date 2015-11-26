@@ -46,11 +46,11 @@ import org.egov.collection.utils.CollectionsUtil;
 
 
 public class RestReceiptInfo {
-    private String transactionId;
-    private String receiptNo;
-    private String referenceNo;
-    private BigDecimal amount;
-    private String txnDate; 
+    private String transactionId="";
+    private String receiptNo="";
+    private String referenceNo="";
+    private BigDecimal amount=BigDecimal.ZERO;
+    private String txnDate=""; 
     
     public RestReceiptInfo(final ReceiptHeader receiptHeader) {
         this.transactionId = receiptHeader.getManualreceiptnumber();
@@ -62,6 +62,10 @@ public class RestReceiptInfo {
 
     public String getTransactionId() {
         return transactionId;
+    }
+
+    public RestReceiptInfo() {
+        super();
     }
 
     public void setTransactionId(String transactionId) {

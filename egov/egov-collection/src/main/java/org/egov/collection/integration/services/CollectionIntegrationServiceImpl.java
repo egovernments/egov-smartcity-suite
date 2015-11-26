@@ -567,7 +567,10 @@ CollectionIntegrationService {
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, fromDate, toDate, serviceCode);
         if (receiptHeaders == null || receiptHeaders.isEmpty())
-            return null;
+        {
+             receipts.add(new RestReceiptInfo());
+             return receipts;
+        }
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
                 receipts.add(new RestReceiptInfo(receiptHeader));
