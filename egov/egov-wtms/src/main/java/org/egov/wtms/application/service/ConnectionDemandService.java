@@ -520,7 +520,7 @@ public class ConnectionDemandService {
                         demanddetailBean.getInstallment(), demanddetailBean, waterConnectionDetails));
             }
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-        final int listlength = waterConnectionDetails.getDemand().getEgDemandDetails().size() - 1;
+        final int listlength = demandObj.getEgDemandDetails().size() - 1;
         final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
                 WaterTaxConstants.PROPERTY_MODULE_NAME, waterConnectionDetails.getDemandDetailBeanList()
                         .get(listlength).getInstallment());

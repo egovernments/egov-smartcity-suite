@@ -78,6 +78,7 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 			        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 			        			   if (full.resource.clauses.status == 'ACTIVE' ) {
+			        				   alert("inadd "+ full.resource.clauses.islegacy);
 			        				   if ( citizenRole== 'true'   && full.resource.clauses.waterTaxDue > 0) { 
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
 			        				   }
@@ -120,6 +121,9 @@ jQuery(document).ready(function($) {
 			        			   else if(superUserRole!=null && full.resource.clauses.status == 'DISCONNECTED') {
 			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 			        			   }
+			        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy ==true) {
+			        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="13">Add/Edit DCB</option></select>');
+			        			   }
 			        			   else if (ulbUserRole!=null &&  ulbUserRole!="" && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T'  ) {
 		        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="10">ReConnection</option></select>');
 		        				   }
@@ -128,6 +132,7 @@ jQuery(document).ready(function($) {
 			        		   if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
 			        				   && full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 			        			   if (full.resource.clauses.status == 'ACTIVE') {
+			        				   alert("innew "+ full.resource.clauses.islegacy);
 			        				   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');   
 			        				   }
@@ -155,6 +160,9 @@ jQuery(document).ready(function($) {
 			        				  else if (ulbUserRole!=null && ulbUserRole!=""  && full.resource.searchable.closureType =='P') {
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 			        				   }
+			        				  else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+				        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="13">Add/Edit DCB</option></select>');
+				        			   }
 			        				   else if(superUserRole!=null && superUserRole!="" ){
 			        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 			        				   }
@@ -320,6 +328,12 @@ jQuery(document).ready(function($) {
 										} 
 										if (this.value == 11) {
 											var url = '/wtms/viewDcb/consumerCodeWis/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} 
+										if (this.value == 13) {
+											var url = '/wtms/application/editDemand/'+ consumerNumber;
 											$('#waterSearchRequestForm').attr('method', 'get');
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;

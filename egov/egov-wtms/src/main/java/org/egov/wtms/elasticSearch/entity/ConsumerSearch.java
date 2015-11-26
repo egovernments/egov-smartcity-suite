@@ -95,6 +95,9 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "connectiontype", group = Searchable.Group.CLAUSES)
     private String connectionType;
+    
+    @Searchable(name = "islegacy", group = Searchable.Group.CLAUSES)
+    private  Boolean islegacy;
 
     @Searchable(name = "closureType", group = Searchable.Group.SEARCHABLE)
     private String closureType;
@@ -104,6 +107,8 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
     private final String ulbName;
+    
+    
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType, final String ulbName,
             final Date createdDate) {
@@ -250,4 +255,15 @@ public class ConsumerSearch implements Indexable {
     public void setDoorno(String doorno) {
         this.doorno = doorno;
     }
+
+	public Boolean getIslegacy() {
+		return islegacy;
+	}
+
+	public void setIslegacy(Boolean islegacy) {
+		this.islegacy = islegacy;
+	}
+
+	
+    
 }
