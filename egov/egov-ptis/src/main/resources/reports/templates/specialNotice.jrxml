@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-17T13:10:06 -->
+<!-- 2015-11-27T13:39:53 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
@@ -473,8 +473,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ownerInfo}.getGeneralTax()]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="380" y="100" width="171" height="21" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
+			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+				<reportElement x="380" y="70" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
 				<imageExpression><![CDATA[ReportUtil.getUserSignature($P{userId})]]></imageExpression>
 			</image>
 		</band>
