@@ -17,7 +17,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_END;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
 import java.io.File;
@@ -61,6 +61,9 @@ public class PropertyThirdPartyService {
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
         PtNotice ptNotice = null;
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into getSpecialNotice application type:" + applicationType + ",application no:"
+                    + applicationNo);
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
@@ -82,15 +85,22 @@ public class PropertyThirdPartyService {
             }
 
         }
+
         if (ptNotice != null && ptNotice.getFileStore() != null) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Property notice : " + ptNotice.getNoticeNo());
             final FileStoreMapper fsm = ptNotice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
             return FileUtils.readFileToByteArray(file);
         } else
             return null;
+
     }
 
     public Map<String, String> validatePropertyStatus(String applicationNo, String applicationType) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into validatePropertyStatus method,applicationType:" + applicationType
+                    + ",application no:" + applicationNo);
         PropertyImpl property = null;
         PropertyMutation mutation = null;
         VacancyRemission vacancyRemission = null;
@@ -106,12 +116,14 @@ public class PropertyThirdPartyService {
                         applicationNo);
             }
             if (null != property) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Inside applicationType:" + applicationType + "for property" + property);
                 if (!property.getState().getHistory().isEmpty()) {
                     int size = property.getState().getHistory().size();
                     stateHistory = property.getState().getHistory().get(size - 1);
                 }
                 if (property.getState().getValue().equals(WF_STATE_CLOSED)
-                        && stateHistory.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
+                        && stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED)) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
@@ -132,12 +144,14 @@ public class PropertyThirdPartyService {
                 mutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
             }
             if (null != mutation) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Inside applicationType:" + applicationType + "for property mutation" + mutation);
                 if (!mutation.getState().getHistory().isEmpty()) {
                     int size = mutation.getState().getHistory().size();
                     stateHistory = mutation.getState().getHistory().get(size - 1);
                 }
                 if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
-                        && stateHistory.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
+                        && stateHistory.getValue().equals(WF_STATE_DIGITALLY_SIGNED)) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
@@ -158,6 +172,9 @@ public class PropertyThirdPartyService {
                         "From VacancyRemission where applicationNumber = ? ", applicationNo);
             }
             if (null != vacancyRemission) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Inside applicationType:" + applicationType + "for property vacancy remission"
+                            + vacancyRemission);
                 if (!vacancyRemission.getState().getHistory().isEmpty()) {
                     int size = vacancyRemission.getState().getHistory().size();
                     stateHistory = vacancyRemission.getState().getHistory().get(size - 1);
@@ -184,13 +201,15 @@ public class PropertyThirdPartyService {
                         "From RevisionPetition where objectionNumber = ? ", applicationNo);
             }
             if (null != revisionPetition) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Inside applicationType:" + applicationType + "for property revision petition"
+                            + revisionPetition);
                 if (!revisionPetition.getState().getHistory().isEmpty()) {
                     int size = revisionPetition.getState().getHistory().size();
                     stateHistory = revisionPetition.getState().getHistory().get(size - 1);
                 }
-                if ((revisionPetition.getState().getValue().equals(WFLOW_ACTION_END) || revisionPetition.getState()
-                        .getValue().equals("Print Special Notice"))
-                        && stateHistory.getValue().endsWith("Approved")) {
+                if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)
+                        && stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED)) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
@@ -205,6 +224,8 @@ public class PropertyThirdPartyService {
                 }
             }
         }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validatePropertyStatus method");
         return statusCommentsMap;
     }
 
