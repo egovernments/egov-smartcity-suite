@@ -853,6 +853,21 @@ public class WaterConnectionDetailsService {
     DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
     if(donationDetails ==null)
     {
+        throw new ValidationException("donation.combination.required");
+    }
+    if(waterConnectionDetails.getConnectionType().name().equals(ConnectionType.NON_METERED)){
+    WaterRatesDetails waterRatesDetails =connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+    if(waterRatesDetails==null){
+       throw new ValidationException("err.water.rate.not.found");
+    }
+    }
+    }
+   /* public void validateWaterRateAndDonationHeader(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors)
+    {
+    DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
+    if(donationDetails ==null)
+    {
+        
         errors.rejectValue("usageType", "donation.combination.required");
     }
     if(waterConnectionDetails.getConnectionType().name().equals(ConnectionType.NON_METERED)){
@@ -861,5 +876,5 @@ public class WaterConnectionDetailsService {
         errors.rejectValue("usageType", "err.water.rate.not.found"); 
     }
     }
-    }
+    }*/
 }
