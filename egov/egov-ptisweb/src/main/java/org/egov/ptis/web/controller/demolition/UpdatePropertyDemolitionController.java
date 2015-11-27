@@ -70,6 +70,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -194,8 +195,13 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     propertyDemolitionService.updateProperty(property, approvalComent, workFlowAction,
                             approvalPosition, DEMOLITION);
                 } else {
-                    propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
-                            workFlowAction, approvalPosition, DEMOLITION);
+                    try {
+                        propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
+                                workFlowAction, approvalPosition, DEMOLITION);
+                    } catch (TaxCalculatorExeption e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
 
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {

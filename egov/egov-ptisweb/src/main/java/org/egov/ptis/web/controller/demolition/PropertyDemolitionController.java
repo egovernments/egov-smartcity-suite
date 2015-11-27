@@ -63,6 +63,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,8 +163,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
-                    approvalPosition, DEMOLITION);
+            try {
+                propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
+                        approvalPosition, DEMOLITION);
+            } catch (TaxCalculatorExeption e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
             model.addAttribute(
                     "successMessage",
