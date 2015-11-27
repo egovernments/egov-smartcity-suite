@@ -107,7 +107,7 @@
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label><div class="col-sm-3 add-margin"> <input type="text"
 														name="waterRatesDetails[${counter.index}].fromDate"
 														id="waterRatesDetails[${counter.index}].fromDate"
-														class="form-control datepicker" data-date-end-date="0d"
+														class="form-control datepicker" 
 								data-inputmask="'mask': 'd/m/y'" required="required"></div></div>
 <%-- <div class="form-group">
 

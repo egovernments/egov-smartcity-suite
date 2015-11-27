@@ -123,13 +123,13 @@ public class WaterRatesMasterController {
             waterRatesHeader.setActive(true);
             waterRatesHeaderRepository.save(waterRatesHeader);
             redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeaderTemp);
-            model.addAttribute("message", "Donation Master Data updated successfully");
+            model.addAttribute("message", "Monthly Rent for Non-Meter Master Data Updated Successfully");
         } else {
             waterRatesHeader.setActive(true);
             waterRatesHeader = buildappConfigDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
             waterRatesHeaderRepository.save(waterRatesHeader);
             redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeader);
-            model.addAttribute("message", "WaterRates Deatils are Data created successfully");
+            model.addAttribute("message", "Monthly Rent for Non-Meter Master Data Created Successfully");
         }
 
         return "waterRates-master-success";
