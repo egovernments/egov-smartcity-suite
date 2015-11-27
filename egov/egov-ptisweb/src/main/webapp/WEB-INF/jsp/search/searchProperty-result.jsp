@@ -137,7 +137,7 @@
 								<display:column title="Action" headerClass="bluebgheadtd"
 									media="html" class="blueborderfortd" style="text-align:center">
 									<select id="actionValue" name="actionValue"
-										style="align: center"
+										style="align: center;width:100%"
 										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.assessmentNum}"/>')">
 										<s:property value="%{#attr.currentRowObject.isTaxExempte}"/>
 										<option value="">
