@@ -45,7 +45,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -60,7 +59,6 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -104,9 +102,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
     private final VacancyRemissionService vacancyRemissionService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
+   
     @Autowired
     private PropertyService propertyService;
 
@@ -266,8 +262,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 final HashMap<String, String> meesevaParams = new HashMap<String, String>();
                 meesevaParams.put("APPLICATIONNUMBER", vacancyRemission.getMeesevaApplicationNumber());
 
-                if (StringUtils.isBlank(vacancyRemission.getApplicationNumber()))
-                    vacancyRemission.setApplicationNumber(applicationNumberGenerator.generate());
+                if (StringUtils.isBlank(vacancyRemission.getApplicationNumber())){
+                    vacancyRemission.setApplicationNumber(vacancyRemission.getMeesevaApplicationNumber());
+                    vacancyRemission.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+                }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
                         workFlowAction, propertyByEmployee, meesevaParams);
             } else

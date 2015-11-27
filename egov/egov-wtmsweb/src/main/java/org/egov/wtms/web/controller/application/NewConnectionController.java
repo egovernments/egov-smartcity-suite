@@ -48,7 +48,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -93,9 +92,7 @@ public class NewConnectionController extends GenericConnectionController {
     @Autowired
     private SecurityUtils securityUtils;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
+   
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
             final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
@@ -236,7 +233,7 @@ public class NewConnectionController extends GenericConnectionController {
             final HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
             if (waterConnectionDetails.getApplicationNumber() == null) {
-                waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
+                waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
                 waterConnectionDetails.setSource(Source.MEESEVA);
                 waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,

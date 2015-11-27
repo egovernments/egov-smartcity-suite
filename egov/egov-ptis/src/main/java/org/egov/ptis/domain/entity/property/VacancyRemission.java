@@ -106,6 +106,9 @@ public class VacancyRemission extends StateAware {
     
     @Transient
     private String meesevaApplicationNumber;
+   
+    @Column(name = "source")
+    private Character source = 'A';
     
     @Override
     public String getStateDetails() {
@@ -192,6 +195,14 @@ public class VacancyRemission extends StateAware {
 
     public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+    public Character getSource() {
+        return source;
+    }
+
+    public void setSource(Character source) {
+        this.source = source;
     }
 
 }

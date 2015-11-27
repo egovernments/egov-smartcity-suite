@@ -282,7 +282,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public String newForm() {
 
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-        if (loggedUserIsMeesevaUser) {
+        if (loggedUserIsMeesevaUser) {  
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
                 addActionMessage(getText("MEESEVA.005"));
@@ -291,8 +291,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
                 if (request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORNEWPROPERTY)) {
                     getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-                }
-                if (request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)) {
+                }else if (request.getParameter("meesevaServicecode").equalsIgnoreCase(MEESEVASERVICECODEFORSUBDIVISION)) {
                     getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
                 }
                 property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
@@ -316,6 +315,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", dateOfCompletion: " + dateOfCompletion + ", propTypeId: " + propTypeId + ", propUsageId: "
                     + propUsageId + ", propOccId: " + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
+        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        
+        if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber()!=null){
+            property.setApplicationNo(property.getMeesevaApplicationNumber());
+            property.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+        }
+        
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
         addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
@@ -327,8 +333,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
 
-        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-        if (!loggedUserIsMeesevaUser)
+         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
             HashMap<String, String> meesevaParams = new HashMap<String, String>();

@@ -61,7 +61,6 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -109,8 +108,6 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
 
     BasicProperty basicProperty;
     PropertyImpl propertyImpl = new PropertyImpl();
@@ -205,8 +202,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 final HashMap<String, String> meesevaParams = new HashMap<String, String>();
                 meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
 
-                if (StringUtils.isBlank(property.getApplicationNo()))
-                    property.setApplicationNo(applicationNumberGenerator.generate());
+                if (StringUtils.isBlank(property.getApplicationNo())){
+                    property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
+                    property.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+                }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
             } else

@@ -55,9 +55,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -89,7 +89,6 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -169,9 +168,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private PropertyService propertyService;
-
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
     private MessagingService messagingService;
@@ -267,8 +263,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         } else {
             HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
-            basicproperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-            propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
+            propertyMutation.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+            propertyMutation.setApplicationNo(propertyMutation.getMeesevaApplicationNumber());
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, meesevaParams);
         }
 
