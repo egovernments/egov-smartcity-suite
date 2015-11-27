@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-11-18T18:31:53 -->
+<!-- 2015-11-27T15:24:30 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -57,6 +57,10 @@
 	<parameter name="Q_PAYMENTSTATUS_ID" class="java.lang.String">
 		<defaultValueExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "" : "AND EGW_STATUS.ID = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID}]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_TO_DATE_PLUS_ONE" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Actual to date used in the query - it is calculated by adding one to the to date passed]]></parameterDescription>
+		<defaultValueExpression><![CDATA[ReportUtil.add($P{EGOV_TO_DATE}, Calendar.DAY_OF_MONTH, 1)]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT EGCL_COLLECTIONHEADER.REFERENCENUMBER as referencenumber, EGCL_COLLECTIONHEADER.CONSUMERCODE as consumerCode, EGCL_COLLECTIONHEADER.RECEIPTNUMBER as receiptnumber, EGCL_COLLECTIONHEADER.CREATEDDATE as createdDate, EGCL_COLLECTIONHEADER.TOTALAMOUNT as totalAmount,
 		EGCL_SERVICEDETAILS.NAME as service, EGW_STATUS.description as status,EGCL_ONLINEPAYMENTS.transactionnumber as transactionNumber, EGCL_ONLINEPAYMENTS.transactiondate 
@@ -66,12 +70,9 @@
 		  INNER JOIN EGCL_ONLINEPAYMENTS EGCL_ONLINEPAYMENTS ON EGCL_ONLINEPAYMENTS.COLLECTIONHEADER =EGCL_COLLECTIONHEADER.ID
 		  INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_ONLINEPAYMENTS.STATUS = EGW_STATUS.ID 
 		  INNER JOIN EGCL_SERVICEDETAILS EGCL_SERVICEDETAILS ON EGCL_COLLECTIONHEADER.SERVICEDETAILS = EGCL_SERVICEDETAILS.ID
-
-
-	
 	WHERE EGCL_COLLECTIONHEADER.collectiontype = 'O'
-	AND EGCL_COLLECTIONHEADER.createdDate >= $P{EGOV_FROM_DATE}
-	and EGCL_COLLECTIONHEADER.createdDate <= $P{EGOV_TO_DATE}
+	AND EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
+ 	AND EGCL_COLLECTIONHEADER.RECEIPTDATE <= $P{EGOV_TO_DATE_PLUS_ONE}
 	$P!{Q_DEPT_ID}
 	$P!{Q_SERVICE_ID}
 	$P!{Q_PAYMENTSTATUS_ID}]]>
@@ -158,7 +159,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBHql("SELECT sd.name FROM org.egov.infstr.models.ServiceDetails sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT sd.name FROM EGCL_SERVICEDETAILS sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="595" y="101" width="140" height="20" uuid="14ccb1f8-e3a3-473a-82e1-2e376fe1c1ab"/>
@@ -228,7 +229,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.deptName FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT dept.name FROM EG_DEPARTMENT dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="15" y="140" width="100" height="20" uuid="36d7c922-6c52-4c71-b6b2-79294ac44e15"/>
@@ -256,7 +257,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBHql("SELECT stat.description FROM org.egov.commons.EgwStatus stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT stat.description FROM Egw_Status stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -571,7 +572,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.deptName FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT dept.name FROM EG_DEPARTMENT dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="140" width="100" height="20" uuid="58c070be-3a31-4054-9c6d-cd86722d400e"/>
@@ -599,7 +600,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBHql("SELECT stat.description FROM org.egov.commons.EgwStatus stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT stat.description FROM Egw_Status stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="480" y="101" width="100" height="20" uuid="82873146-5bd2-4cf1-8838-825af6a6bead"/>
@@ -655,7 +656,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBHql("SELECT sd.name FROM org.egov.infstr.models.ServiceDetails sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT sd.name FROM EGCL_SERVICEDETAILS sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 		</band>
 	</noData>
