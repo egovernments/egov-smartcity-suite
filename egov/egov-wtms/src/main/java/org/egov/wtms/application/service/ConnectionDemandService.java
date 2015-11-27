@@ -670,9 +670,9 @@ public class ConnectionDemandService {
             if (currInst.equals(installment))
                 curDue = new BigDecimal(listObj[6].toString());
             else {
-                arrDue = (BigDecimal) listObj[6];
+                arrDue = new BigDecimal(listObj[6].toString());
                 if (arrDue.signum() > 0)
-                    if (null == arrearInstallmentfrom)
+                    if (BigDecimal.ZERO == arrearInstallmentfrom || null == arrearInstallmentfrom)
                         arrearInstallmentfrom = BigDecimal.valueOf(instId);
 
             }

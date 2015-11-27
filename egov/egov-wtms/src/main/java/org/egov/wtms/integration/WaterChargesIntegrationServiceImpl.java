@@ -98,7 +98,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 if (null != resultmap && !resultmap.isEmpty()) {
                     final BigDecimal arrInstallment = resultmap.get(WaterTaxConstants.ARR_INSTALFROM_STR);
                     if (null != arrInstallment && arrInstallment != BigDecimal.ZERO)
-                        arrInstal = (Installment) installmentDao.findById(arrInstallment.longValue(), false);
+                        arrInstal = (Installment) installmentDao.findById(new Integer(arrInstallment.toString()), false);
                     consumerConsumption.setCurrentDue(resultmap.get(WaterTaxConstants.CURR_DUE));
                     consumerConsumption.setArrearDue(resultmap.get(WaterTaxConstants.ARR_DUE));
                     if (null != arrInstal) {
