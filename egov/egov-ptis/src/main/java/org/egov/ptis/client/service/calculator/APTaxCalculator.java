@@ -85,6 +85,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -120,10 +121,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
      * @param occupationDate
      *            Minimum Occupancy Date among all the units
      * @return
+     * @throws TaxCalculatorExeption 
      */
     @Override
     public HashMap<Installment, TaxCalculationInfo> calculatePropertyTax(final Property property,
-            final Date occupationDate) {
+            final Date occupationDate) throws TaxCalculatorExeption {
         Boundary propertyZone = null;
         BigDecimal totalNetArv = BigDecimal.ZERO;
         BoundaryCategory boundaryCategory = null;
@@ -351,14 +353,21 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
-            final Long usageId, final Date occupancyDate, final Long classification) {
+            final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
 
         categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
                 classification, occupancyDate, installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
-        return categories.get(0);
+        
+        if(categories.isEmpty()) {
+            throw new TaxCalculatorExeption("There are no Unit rates defined for chosen combinations, zone : "
+                    + zone.getName() + " usageId : " + usageId + " classification : " + classification
+                    + " occupancyDate : " + occupancyDate);
+        } else {
+            return categories.get(0);
+        }
     }
 
     private List<EgDemandReasonDetails> getDemandReasonDetails(final String demandReasonCode,

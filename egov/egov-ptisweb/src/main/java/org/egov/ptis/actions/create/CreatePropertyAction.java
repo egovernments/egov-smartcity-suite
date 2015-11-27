@@ -146,6 +146,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -323,7 +324,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
-        addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
+        try {
+            addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
+        } catch (TaxCalculatorExeption e) {
+            basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
+            addActionError(getText("unitrate.error"));
+            LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
+            return RESULT_NEW;
+        }
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("create: BasicProperty after creation: " + basicProperty);
@@ -480,6 +488,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (hasErrors())
                 return RESULT_NEW;
             updatePropertyDetails();
+            try {
+                propService.createDemand(property, basicProp.getPropOccupationDate());
+            } catch (TaxCalculatorExeption e) {
+                addActionError(getText("unitrate.error"));
+                LOGGER.error("forward : There are no Unit rates defined for chosen combinations", e);
+                return RESULT_NEW;
+            }
         } else {
             validateApproverDetails();
             if (hasErrors())
@@ -535,7 +550,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setPropertyDetail(propService.changePropertyDetail(property, property.getPropertyDetail(), 0)
                     .getPropertyDetail());
         property.setBasicProperty(basicProp);
-        propService.createDemand(property, basicProp.getPropOccupationDate());
 
     }
 
@@ -807,7 +821,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     private void addDemandAndCompleteDate(final Character status, final BasicProperty basicProperty,
-            final PropertyMutationMaster propertyMutationMaster) {
+            final PropertyMutationMaster propertyMutationMaster) throws TaxCalculatorExeption {
         taxExemptionId = (taxExemptionId == null || taxExemptionId.isEmpty()) ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
@@ -823,11 +837,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
             property.setPropertyDetail(changePropertyDetail());
         basicProperty.addProperty(property);
-        if (basicProperty.getSource() == PropertyTaxConstants.SOURCEOFDATA_APPLICATION) {
-            if (property != null && !property.getDocuments().isEmpty())
-                propService.processAndStoreDocument(property.getDocuments());
+        try {
+            if (basicProperty.getSource() == PropertyTaxConstants.SOURCEOFDATA_APPLICATION) {
+                if (property != null && !property.getDocuments().isEmpty())
+                    propService.processAndStoreDocument(property.getDocuments());
 
-            propService.createDemand(property, propCompletionDate);
+                propService.createDemand(property, propCompletionDate);
+            }
+        } catch (TaxCalculatorExeption e) {
+            throw new TaxCalculatorExeption();
         }
     }
 
@@ -1112,8 +1130,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProperty.setUnderWorkflow(false);
         basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
         basicProperty.setUpicNo(upicNo);
-        addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
-                basicProperty.getPropertyMutationMaster());
+        try {
+            addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
+                    basicProperty.getPropertyMutationMaster());
+        } catch (TaxCalculatorExeption e) {
+            basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
+            addActionError(getText("unitrate.error"));
+            LOGGER.error("save : There are no Unit rates defined for chosen combinations", e);
+            return RESULT_NEW;
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);

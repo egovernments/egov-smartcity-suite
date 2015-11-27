@@ -47,6 +47,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +133,12 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         propertyModel.setEffectiveDate(propCompletionDate);
-        propService.createDemand(propertyModel, new Date());
+        try {
+            propService.createDemand(propertyModel, new Date());
+        } catch (TaxCalculatorExeption e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,

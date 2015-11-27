@@ -164,6 +164,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -591,7 +592,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
                 return VIEW;
-        modifyBasicProp(getDocNumber());
+        try {
+            modifyBasicProp(getDocNumber());
+        } catch (TaxCalculatorExeption e) {
+            addActionError(getText("unitrate.error"));
+            LOGGER.error("forwardModify : There are no Unit rates defined for chosen combinations", e);
+            return NEW;
+        }
         transitionWorkFlow(propertyModel);
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
@@ -863,8 +870,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
      * Modifies basic property information
      * 
      * @param docNumber
+     * @throws TaxCalculatorExeption
      */
-    private void modifyBasicProp(final String docNumber) {
+    private void modifyBasicProp(final String docNumber) throws TaxCalculatorExeption {
         LOGGER.debug("Entered into modifyBasicProp, BasicProperty: " + basicProp);
         LOGGER.debug("modifyBasicProp: PropTypeId: " + propTypeId + ", PropUsageId: " + propUsageId + ", PropOccId: "
                 + propOccId + ", statusModifyRsn: " + modifyRsn + ", NoOfAmalgmatedProps: "
@@ -920,7 +928,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail()
                         .getNoofFloors());
 
-        final Property modProperty = propService.modifyDemand(propertyModel, oldProperty);
+        Property modProperty = null;
+        try {
+            modProperty = propService.modifyDemand(propertyModel, oldProperty);
+        } catch (TaxCalculatorExeption e) {
+            throw new TaxCalculatorExeption();
+        }
 
         if (modProperty != null && !modProperty.getDocuments().isEmpty())
             propService.processAndStoreDocument(modProperty.getDocuments());

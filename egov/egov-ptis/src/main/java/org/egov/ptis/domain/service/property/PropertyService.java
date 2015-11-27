@@ -181,6 +181,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -520,8 +521,9 @@ public class PropertyService {
      * @param property
      * @param dateOfCompletion
      * @return Property with installment wise demand set
+     * @throws TaxCalculatorExeption 
      */
-    public Property createDemand(final PropertyImpl property, final Date dateOfCompletion) {
+    public Property createDemand(final PropertyImpl property, final Date dateOfCompletion) throws TaxCalculatorExeption {
         LOGGER.debug("Entered into createDemand");
         LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: " + dateOfCompletion);
 
@@ -663,8 +665,9 @@ public class PropertyService {
      * @param propertyModel
      * @param oldProperty
      * @return
+     * @throws TaxCalculatorExeption 
      */
-    public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty) {
+    public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty) throws TaxCalculatorExeption {
         Date propCompletionDate = null;
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))

@@ -388,32 +388,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                             addActionError(getText("assbleArea.notgreaterthan.extentsite"));
 
-                        if (null != floor.getStructureClassification()
-                                && null != floor.getStructureClassification().getId()
-                                && null != floor.getPropertyUsage() && null != floor.getPropertyUsage().getId()
-                                && floor.getOccupancyDate() != null && isNotBlank(zoneId)
-                                && (floor.getFloorNo() != null || !floor.getFloorNo().equals(-10))) {
-                            Boundary bndry = (Boundary) getPersistenceService().find("From Boundary where id=?",
-                                    Long.valueOf(zoneId));
-                            PropertyUsage usage = (PropertyUsage) getPersistenceService().find(
-                                    "From PropertyUsage where id=?", floor.getPropertyUsage().getId());
-                            StructureClassification structure = (StructureClassification) getPersistenceService().find(
-                                    "from StructureClassification where id=?",
-                                    floor.getStructureClassification().getId());
-                            List<BoundaryCategory> categories = getPersistenceService().findAllByNamedQuery(
-                                    QUERY_BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY, Long.valueOf(zoneId),
-                                    floor.getPropertyUsage().getId(), floor.getStructureClassification().getId(),
-                                    floor.getOccupancyDate());
-                            if (categories.isEmpty()) {
-                                final List<String> args = new ArrayList<String>();
-                                args.add(bndry.getName());
-                                args.add(usage.getUsageName());
-                                args.add(structure.getTypeName());
-                                args.add(dateFormatter.format(floor.getOccupancyDate()));
-                                args.add(FLOOR_MAP.get(floor.getFloorNo()));
-                                addActionError(getText("unitrate.error", args));
-                            }
-                        }
                     }
                 }
         if (LOGGER.isDebugEnabled())

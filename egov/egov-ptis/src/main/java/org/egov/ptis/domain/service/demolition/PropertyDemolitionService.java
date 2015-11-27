@@ -46,6 +46,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,13 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
-        Property modProperty = propService.modifyDemand(propertyModel, (PropertyImpl) oldProperty);
+        Property modProperty = null;
+        try {
+            modProperty = propService.modifyDemand(propertyModel, (PropertyImpl) oldProperty);
+        } catch (TaxCalculatorExeption e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         if (modProperty == null)
             basicProperty.addProperty(propertyModel);
         else

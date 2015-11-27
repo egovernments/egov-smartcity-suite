@@ -9,6 +9,7 @@ import org.egov.commons.Installment;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 
 /*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency,
@@ -51,5 +52,5 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
  ******************************************************************************/
 //TODO class name should be PropertyTaxCalculator
 public interface PropertyTaxCalculator {
-	public HashMap<Installment, TaxCalculationInfo> calculatePropertyTax(Property property, Date occupationDate);
+	public HashMap<Installment, TaxCalculationInfo> calculatePropertyTax(Property property, Date occupationDate) throws TaxCalculatorExeption;
 }

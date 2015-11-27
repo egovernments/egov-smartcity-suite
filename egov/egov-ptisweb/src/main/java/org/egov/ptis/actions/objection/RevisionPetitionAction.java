@@ -158,6 +158,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.joda.time.DateTime;
@@ -1473,7 +1474,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(), objection
                         .getProperty().getPropertyDetail().getFloorDetails().size());
 
-        propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
+        try {
+            propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
+        } catch (TaxCalculatorExeption e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
 

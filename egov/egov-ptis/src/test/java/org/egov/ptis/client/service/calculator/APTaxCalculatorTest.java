@@ -12,6 +12,7 @@ import org.egov.ptis.builder.entity.property.BasicPropertyBuilder;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class APTaxCalculatorTest {
 	}
 
 	@Ignore
-	public void calculatePropertyTax() {
+	public void calculatePropertyTax() throws TaxCalculatorExeption {
 		taxInfo = taxCalculator.calculatePropertyTax(property, new Date());
 	}
 }
