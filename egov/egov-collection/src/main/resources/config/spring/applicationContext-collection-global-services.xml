@@ -161,6 +161,4 @@
 	   <property name="financialsUtil" ref="financialsUtil" />
 	</bean>
 	
-	<bean class="org.egov.collection.config.properties.CollectionApplicationProperties" id="collectionApplicationProperties" />
-	
 </beans>
