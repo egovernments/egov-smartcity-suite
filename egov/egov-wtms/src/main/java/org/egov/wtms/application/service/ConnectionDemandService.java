@@ -231,7 +231,7 @@ public class ConnectionDemandService {
         final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installObj);
         if (demandDetailsObj != null && demandTempObj.getId() != null) {
             demandDetailBean = demandDetailsObj;
-            if (demandDetailsObj.getAmount().compareTo(amount) != 0)
+            if (demandDetailsObj.getAmount().compareTo(amount) != 0 )
                 demandDetailBean.setAmount(amount);
             if (demandDetailsObj.getAmtCollected().compareTo(collectAmount) != 0)
                 demandDetailBean.setAmtCollected(collectAmount);
@@ -510,7 +510,7 @@ public class ConnectionDemandService {
             demandObj = waterConnectionDetails.getDemand();
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
-            if (!demanddetailBean.getActualAmount().equals(BigDecimal.ZERO)
+            if (!demanddetailBean.getActualAmount().equals(BigDecimal.ZERO) && !demanddetailBean.getActualCollection().equals(BigDecimal.ZERO)
                     && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) != 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
