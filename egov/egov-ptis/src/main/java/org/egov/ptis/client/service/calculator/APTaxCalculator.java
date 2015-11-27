@@ -68,8 +68,10 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
@@ -112,6 +114,12 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private InstallmentDao installmentDAO;
+    
+    @Autowired
+    private ModuleService moduleService;
 
     /**
      * @param property
@@ -347,9 +355,14 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return applicableTaxes;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Installment> getInstallmentListByStartDate(final Date startDate) {
-        return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
-                startDate, PTMODULENAME);
+        if (startDate.after(new Date())) {
+            return installmentDAO.getInsatllmentByModule(moduleService.getModuleByName(PTMODULENAME), startDate);
+        } else {
+            return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
+                    startDate, PTMODULENAME);
+        }
     }
 
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
