@@ -234,7 +234,7 @@
 									<tr>
 									<th class="bluebgheadtd" align="center">Receipt Number</th>
 									<th class="bluebgheadtd" align="center">Receipt Date</th>
-									<th class="bluebgheadtd" align="center">Receipt TotalAmount</th>
+									<th class="bluebgheadtd" align="center">Receipt Amount</th>
 									</tr>
 									<c:forEach items="${activeRcpts}" var="rcpt" varStatus="r">
 
@@ -296,7 +296,7 @@
 								<tr>
 									<th class="bluebgheadtd" align="center">Receipt Number</th>
 									<th class="bluebgheadtd" align="center">Receipt Date</th>
-									<th class="bluebgheadtd" align="center">Receipt TotalAmount</th>
+									<th class="bluebgheadtd" align="center">Receipt Amount</th>
 								</tr>
 								<c:forEach items="${cancelRcpt}" var="actr" varStatus="r22">
 									<input type="hidden" id="${actr.receiptNumber}"

@@ -41,7 +41,7 @@ $(document).ready(function(){
 						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
-						$("#propertytaxdue").html(response.propertyDetails.currentTax);
+						$("#propertytaxdue").html(response.propertyDetails.taxDue);
 										
 				}, 
 				error: function (response) {
