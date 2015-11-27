@@ -240,6 +240,8 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails createExisting(final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.getExistingConnection().setWaterConnectionDetails(waterConnectionDetails);
+        waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
+        waterConnectionDetails.setApplicationDate(waterConnectionDetails.getExecutionDate());
         waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                 WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
         if (waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.ADDNLCONNECTION)) {
@@ -661,7 +663,7 @@ public class WaterConnectionDetailsService {
         BigDecimal amountTodisplayInIndex = BigDecimal.ZERO;
         if (waterConnectionDetails.getConnection().getConsumerCode() != null)
             amountTodisplayInIndex = getTotalAmount(waterConnectionDetails);
-        if (waterConnectionDetails.getLegacy()) {
+        if (waterConnectionDetails.getLegacy() && null ==waterConnectionDetails.getId() ) {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
@@ -672,7 +674,9 @@ public class WaterConnectionDetailsService {
             while (ownerNameItr.hasNext())
                 consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
         }
-        if (waterConnectionDetails.getStatus() != null
+         ApplicationIndex applicationIndex = applicationIndexService
+                .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
+        if ((applicationIndex !=null  && null !=waterConnectionDetails.getId() ) && waterConnectionDetails.getStatus() != null
                 && !waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             if (waterConnectionDetails.getStatus() != null
                     && (waterConnectionDetails.getStatus().getCode()
@@ -704,9 +708,7 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED) || waterConnectionDetails
                             .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))) {
-                final ApplicationIndex applicationIndex = applicationIndexService
-                        .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
-                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
+            	applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
                 if (waterConnectionDetails.getConnection().getConsumerCode() != null)
                     applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
@@ -753,6 +755,13 @@ public class WaterConnectionDetailsService {
             final String strQuery = "select md from EgModules md where md.name=:name";
             final Query hql = getCurrentSession().createQuery(strQuery);
             hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
+            if(waterConnectionDetails.getApplicationDate() ==null){
+            	waterConnectionDetails.setApplicationDate(new Date());
+            }
+            if(waterConnectionDetails.getApplicationNumber() ==null)
+            {
+            	waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
+            }
             if (LOG.isDebugEnabled())
                 LOG.debug(" updating Application Index creation Started... ");
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
@@ -768,7 +777,7 @@ public class WaterConnectionDetailsService {
             if (ownerNameItr != null && ownerNameItr.hasNext())
                 applicationIndexBuilder.mobileNumber(ownerNameItr.next().getMobileNumber());
 
-            final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
+            applicationIndex = applicationIndexBuilder.build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
                 LOG.debug(" updating Application Index creation complted... ");
