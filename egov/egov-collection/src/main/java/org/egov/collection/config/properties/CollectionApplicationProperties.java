@@ -45,7 +45,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(value = { "classpath:config/payment-gateway.properties",
+@PropertySource(name="collectionApplicationProperties", value = { "classpath:config/payment-gateway.properties",
         "classpath:config/egov-erp-override.properties", "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
