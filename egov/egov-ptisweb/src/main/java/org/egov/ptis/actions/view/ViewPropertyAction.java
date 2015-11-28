@@ -155,6 +155,7 @@ public class ViewPropertyAction extends BaseFormAction {
                     final List<Address> addrSet = propOwner.getOwner().getAddress();
                     for (final Address address : addrSet) {
                         ownerAddress = address.toString();
+                        viewMap.put("doorNo", address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
                         break;
                     }
                 }

@@ -221,6 +221,14 @@
 		
 	</div>
 	<div class="panel-body">
+	<div class="row add-border">
+	        <div class="col-xs-3 add-margin">
+				<s:text name="doorNo" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A" value="%{viewMap.doorNo}" /> 
+			</div>
+	</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="PropertyAddress" />
