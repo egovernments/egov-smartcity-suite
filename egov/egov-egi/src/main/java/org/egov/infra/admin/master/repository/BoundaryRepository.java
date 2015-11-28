@@ -109,7 +109,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
             @Param("boundaryType") String boundaryType, @Param("hierarchyTypeCode") String hierarchyTypeCode,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) order by b.id")
+    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) order by b.name")
     List<Boundary> findActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
 
