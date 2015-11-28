@@ -246,7 +246,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
             final String eastBoundary, final String westBoundary, final String southBoundary,
             final String northBoundary, final String propTypeId, final String zoneId, final String propOccId,
-            final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId, final String modifyRsn) {
+            final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId,
+            final String modifyRsn) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateProperty");
@@ -268,10 +269,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
                 } else if (null != propertyDetail.isAppurtenantLandChecked()) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary);
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate,modifyRsn);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
                 } else
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate,modifyRsn);
-                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,zoneId);
+                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
+                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,
+                        regDocDate);
             }
         }
 
@@ -319,11 +321,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (isBlank(propertyDetail.getBuildingPermissionNo()))
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
-                addActionError(getText("mandatory.buildingPlanDate")); 
+                addActionError(getText("mandatory.buildingPlanDate"));
             else if (null != regDocDate
                     && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate)) {
-                if(modifyRsn==null || (modifyRsn!=null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)))
-                    addActionError(getText("regDate.greaterThan.buildingPermDate")); 
+                if (modifyRsn == null || (modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)))
+                    addActionError(getText("regDate.greaterThan.buildingPermDate"));
             }
         }
         if (propertyDetail.isStructure())
@@ -345,7 +347,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
-            final Property property, final String areaOfPlot,final String zoneId) {
+            final Property property, final String areaOfPlot, final Date regDocDate) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
@@ -387,6 +389,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         } else if (StringUtils.isNotBlank(areaOfPlot)
                                 && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                             addActionError(getText("assbleArea.notgreaterthan.extentsite"));
+
+                        if (null != regDocDate && null != floor.getOccupancyDate()
+                                && !floor.getOccupancyDate().equals("")) {
+                            if (DateUtils.compareDates(regDocDate,floor.getOccupancyDate()))
+                                addActionError(getText("regDate.notgreaterthan.occDate"));
+                        }
 
                     }
                 }
@@ -615,37 +623,52 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             propertyTaxDetailsMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
         else
             propertyTaxDetailsMap.put("ARV", BigDecimal.ZERO);
-        
-        propertyTaxDetailsMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
-        propertyTaxDetailsMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
+
+        propertyTaxDetailsMap.put(
+                "eduCess",
+                (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                        .get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+        propertyTaxDetailsMap.put(
+                "libraryCess",
+                (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                        .get(DEMANDRSN_STR_LIBRARY_CESS)));
         BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
-            			.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS))
-	                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-            //If unauthorized property, then add unauthorized penalty 
-            if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
-            	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-            	propertyTaxDetailsMap.put("totalTax",totalTax
-                                .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-            }else{
-            	propertyTaxDetailsMap.put("totalTax",totalTax);
+            totalTax = demandCollMap
+                    .get(DEMANDRSN_STR_GENERAL_TAX)
+                    .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS))
+                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_LIBRARY_CESS));
+            // If unauthorized property, then add unauthorized penalty
+            if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
+                propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                propertyTaxDetailsMap.put("totalTax",
+                        totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            } else {
+                propertyTaxDetailsMap.put("totalTax", totalTax);
             }
-            
+
         } else {
-            propertyTaxDetailsMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
-            		.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS))
-            		.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-            if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
-            	propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-            	propertyTaxDetailsMap.put("totalTax",totalTax
-                                .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-            }else{
-            	propertyTaxDetailsMap.put("totalTax",totalTax);
+            propertyTaxDetailsMap.put("vacantLandTax",
+                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
+                            : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
+            totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
+                    .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap
+                    .get(DEMANDRSN_STR_GENERAL_TAX)
+                    .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS))
+                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_LIBRARY_CESS));
+            if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
+                propertyTaxDetailsMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                propertyTaxDetailsMap.put("totalTax",
+                        totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            } else {
+                propertyTaxDetailsMap.put("totalTax", totalTax);
             }
-            propertyTaxDetailsMap.put("totalTax",totalTax);
+            propertyTaxDetailsMap.put("totalTax", totalTax);
         }
     }
 
