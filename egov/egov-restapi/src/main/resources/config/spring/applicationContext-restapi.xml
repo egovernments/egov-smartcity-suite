@@ -49,7 +49,7 @@
     <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
 	
 	<context:component-scan base-package="org.egov.restapi">
-        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
     </context:component-scan>
 	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
