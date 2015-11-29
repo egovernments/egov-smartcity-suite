@@ -161,8 +161,12 @@ public class ApplicationProperties {
         return environment.getProperty("redis.host.port", Integer.class);
     }
 
-    public String getProperty(final String propCode) {
-        return environment.getProperty(propCode, EMPTY);
+    public String getProperty(final String propKey) {
+        return environment.getProperty(propKey, EMPTY);
+    }
+
+    public <T> T getProperty(final String propKey, final Class<T> type) {
+        return environment.getProperty(propKey, type);
     }
 
     public String appVersion() {

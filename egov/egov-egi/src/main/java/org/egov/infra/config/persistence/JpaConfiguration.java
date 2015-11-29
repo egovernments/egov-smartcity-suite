@@ -60,6 +60,7 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.sql.DataSource;
 
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -80,11 +81,15 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Profile("production")
 public class JpaConfiguration {
+
     @Autowired
     private Environment env;
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Bean
     public PlatformTransactionManager transactionManager() {
@@ -113,7 +118,7 @@ public class JpaConfiguration {
     public JpaVendorAdapter jpaVendorAdaper() {
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setDatabase(env.getProperty("jpa.database", Database.class));
-        vendorAdapter.setShowSql(env.getProperty("jpa.showSql", Boolean.class));
+        vendorAdapter.setShowSql(applicationProperties.getProperty("jpa.showSql", Boolean.class));
         vendorAdapter.setGenerateDdl(env.getProperty("jpa.generateDdl", Boolean.class));
         return vendorAdapter;
     }
@@ -130,10 +135,10 @@ public class JpaConfiguration {
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
         properties.put(DIALECT, env.getProperty(DIALECT));
-        properties.put(GENERATE_STATISTICS, env.getProperty(GENERATE_STATISTICS));
+        properties.put(GENERATE_STATISTICS, applicationProperties.getProperty(GENERATE_STATISTICS));
         properties.put(CACHE_REGION_FACTORY, env.getProperty(CACHE_REGION_FACTORY));
-        properties.put(USE_SECOND_LEVEL_CACHE, env.getProperty(USE_SECOND_LEVEL_CACHE));
-        properties.put(USE_QUERY_CACHE, env.getProperty(USE_QUERY_CACHE));
+        properties.put(USE_SECOND_LEVEL_CACHE, applicationProperties.getProperty(USE_SECOND_LEVEL_CACHE));
+        properties.put(USE_QUERY_CACHE, applicationProperties.getProperty(USE_QUERY_CACHE));
         properties.put(USE_MINIMAL_PUTS, env.getProperty(USE_MINIMAL_PUTS));
         properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
         properties.put("hibernate.search.lucene_version", env.getProperty("hibernate.search.lucene_version"));
