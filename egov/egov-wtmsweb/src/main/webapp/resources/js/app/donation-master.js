@@ -154,7 +154,7 @@ function overwritedonation(res)
 	    return false;
 	}
 }
-function compareDate(dt1, dt2){			
+	function compareDate(dt1, dt2){			
 	/*******		Return Values [0 if dt1=dt2], [1 if dt1<dt2],  [-1 if dt1>dt2]     *******/
 		var d1, m1, y1, d2, m2, y2, ret;
 		dt1 = dt1.split('/');
@@ -162,8 +162,8 @@ function compareDate(dt1, dt2){
 		ret = (eval(dt2[2])>eval(dt1[2])) ? 1 : (eval(dt2[2])<eval(dt1[2])) ? -1 : (eval(dt2[1])>eval(dt1[1])) ? 1 : (eval(dt2[1])<eval(dt1[1])) ? -1 : (eval(dt2[0])>eval(dt1[0])) ? 1 : (eval(dt2[0])<eval(dt1[0])) ? -1 : 0 ;										
 		return ret;
 	}
-function getTodayDate()
-{
+	function getTodayDate()
+	{
 	var date;
 	    var d = new Date();
 	var curr_date = d.getDate();
@@ -172,13 +172,13 @@ function getTodayDate()
 	var curr_year = d.getFullYear();
 	    date=curr_date+"/"+curr_month+"/"+curr_year;
 	    return date;
-}
-function validateTapExecutionDate() {
+	}
+	function validateTapExecutionDate() {
 	var formdate= $('#effectiveDate').val();
 	var todaysDate=getTodayDate();
 	if(compareDate(formdate,todaysDate) == 1 || formdate==todaysDate || compareDate(formdate,todaysDate) ==0 )
 	{		
-		alert('Effective Date should not be less than todays date');
+		alert('Effective Date should be greater than todays date');
 		obj.value="";
 		return false;
 		}
