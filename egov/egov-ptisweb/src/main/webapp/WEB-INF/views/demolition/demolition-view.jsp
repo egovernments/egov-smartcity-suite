@@ -43,6 +43,13 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 
 <form:form id="demolition" method="post" class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
