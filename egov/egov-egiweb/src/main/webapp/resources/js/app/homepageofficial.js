@@ -84,6 +84,8 @@ $(document).ready(function()
 	                		$("#retype-pass").val("");
 	                		$('.change-password').modal('hide');
 	                		bootbox.alert("Your password has been updated.");
+	                		$('.pass-cancel').removeAttr('disabled');
+	                		$('#pass-alert').hide();
 	                	} else if (data == "NEWPWD_UNMATCH") {
 	                		msg = "New password you have entered does not match with retyped password.";
 	                		$("#new-pass").val("");

@@ -344,13 +344,13 @@
 				<div class="modal-content">
 					
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="close pass-cancel" data-dismiss="modal" aria-hidden="true">&times;</button>
 						<h4 class="modal-title">Change Password</h4>
 					</div>
 					
 					<div class="modal-body">
 						<c:if test="${dflt_pwd_reset_req}">
-							<div class="alert alert-warning" role="alert">
+							<div class="alert alert-warning" role="alert" id="pass-alert">
 							<i class="fa fa-exclamation-triangle"></i> Security alert...! You are using default password, please reset your password.
 							</div>
 						</c:if>
@@ -383,7 +383,7 @@
 							<div class="form-group text-right">
 								<div class="col-md-12 add-margin">
 									<button type="submit" class="btn btn-primary">Change Password</button>
-									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+									<button type="button" class="btn btn-default pass-cancel" data-dismiss="modal">Cancel</button>
 								</div>
 							</div>
 							</form>
@@ -396,6 +396,7 @@
 		<c:if test="${dflt_pwd_reset_req}">
 			<script>
 			$('.change-password').modal('show');
+			$('.pass-cancel').attr('disabled','disabled');
 			</script>
 		</c:if>
 		<div class="modal fade favourites" data-backdrop="static">
