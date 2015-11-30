@@ -182,14 +182,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                property.transition(true).end().withSenderName(user.getName()).withComments(approvarComments)
-                        .withDateInfo(currentDate.toDate());
+                property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition(true).withSenderName(user.getName()).withComments(approvarComments)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
@@ -202,21 +202,22 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         currentState, null);
-                property.transition().start().withSenderName(user.getName()).withComments(approvarComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), null);
 
                 if (wfmatrix != null)
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                        property.transition().end().withSenderName(user.getName()).withComments(approvarComments)
-                                .withDateInfo(currentDate.toDate());
+                        property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                                .withComments(approvarComments).withDateInfo(currentDate.toDate());
                     else
-                        property.transition(false).withSenderName(user.getName()).withComments(approvarComments)
-                                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                                .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                        property.transition(false).withSenderName(user.getUsername() + "::" + user.getName())
+                                .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
+                                .withDateInfo(currentDate.toDate()).withOwner(pos)
+                                .withNextAction(wfmatrix.getNextAction());
             }
         }
         if (LOGGER.isDebugEnabled())

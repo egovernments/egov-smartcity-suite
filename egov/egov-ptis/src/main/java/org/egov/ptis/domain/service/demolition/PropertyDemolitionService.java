@@ -120,7 +120,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         calendar.setTime(currInstall.getToDate());
         calendar.add(Calendar.DAY_OF_MONTH, 1);
         Property modProperty = propService.createDemand(propertyModel, calendar.getTime());
-        //Property modProperty = propService.modifyDemand(propertyModel, (PropertyImpl) oldProperty);
+        // Property modProperty = propService.modifyDemand(propertyModel,
+        // (PropertyImpl) oldProperty);
         Ptdemand currPtDmd = null;
         for (final Ptdemand demand : oldProperty.getPtDemandSet())
             if (demand.getIsHistory().equalsIgnoreCase("N"))
@@ -158,7 +159,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
             property.transition(true)
-                    .withSenderName(user.getName())
+                    .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvarComments)
                     .withStateValue(stateValue)
                     .withDateInfo(currentDate.toDate())
@@ -177,21 +178,22 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         null, null);
-                property.transition().start().withSenderName(user.getName()).withComments(approvarComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), null);
 
                 if (wfmatrix != null) {
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END")) {
-                        property.transition().end().withSenderName(user.getName()).withComments(approvarComments)
-                                .withDateInfo(currentDate.toDate());
+                        property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                                .withComments(approvarComments).withDateInfo(currentDate.toDate());
                     } else {
-                        property.transition(false).withSenderName(user.getName()).withComments(approvarComments)
-                                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                                .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                        property.transition(false).withSenderName(user.getUsername() + "::" + user.getName())
+                                .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
+                                .withDateInfo(currentDate.toDate()).withOwner(pos)
+                                .withNextAction(wfmatrix.getNextAction());
                     }
                 }
             }
@@ -249,18 +251,20 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 propertyTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX);
             else
                 propertyTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
-            BigDecimal totalTax = propertyTax
-                    			.add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                    			.add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+            BigDecimal totalTax = propertyTax.add(
+                    demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_LIBRARY_CESS)).add(
+                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS));
             model.addAttribute("propertyTax", propertyTax);
-            if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()) 
-            		&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
-            	model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-            	model.addAttribute("totalTax",totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-            	model.addAttribute("showUnauthorisedPenalty", "yes");
-            }else{
-            	model.addAttribute("totalTax",totalTax);
-            	model.addAttribute("showUnauthorisedPenalty", "no");
+            if (StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())
+                    && !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")) {
+                model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                model.addAttribute("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                model.addAttribute("showUnauthorisedPenalty", "yes");
+            } else {
+                model.addAttribute("totalTax", totalTax);
+                model.addAttribute("showUnauthorisedPenalty", "no");
             }
         }
     }

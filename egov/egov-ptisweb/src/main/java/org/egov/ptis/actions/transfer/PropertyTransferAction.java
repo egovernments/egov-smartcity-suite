@@ -131,8 +131,7 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
         @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
-        @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp")})
-
+        @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp") })
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
@@ -148,7 +147,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
-    
+
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -174,13 +173,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
     private NoticeService noticeService;
-    
+
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
@@ -211,7 +210,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String applicationType;
     private String fileStoreIds;
     private String ulbCode;
-    
+
     private Map<String, String> guardianRelationMap;
     private String actionType;
 
@@ -379,13 +378,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
-        /*if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
-            mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
-        else
-            mutationInitiatedBy = assignmentService
-                    .getPrimaryAssignmentForPositon(
-                            propertyMutation.getStateHistory().get(0).getOwnerPosition().getId()).getEmployee()
-                    .getUsername();*/
+        /*
+         * if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
+         * mutationInitiatedBy = propertyMutation.getCreatedBy().getName(); else
+         * mutationInitiatedBy = assignmentService
+         * .getPrimaryAssignmentForPositon(
+         * propertyMutation.getStateHistory().get
+         * (0).getOwnerPosition().getId()).getEmployee() .getUsername();
+         */
         mutationInitiatedBy = securityUtils.getCurrentUser().getUsername();
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
@@ -420,7 +420,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation, cityName, cityLogo, actionType);
+        ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation,
+                cityName, cityLogo, actionType);
         if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
             getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
             reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
@@ -585,13 +586,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withDateInfo(currentDate.toDate());
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             } else {
                 final String stateValue = WF_STATE_REJECTED;
-                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
@@ -605,18 +606,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (null == propertyMutation.getState()) {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
                         null, null, getAdditionalRule(), currentState, null);
-                propertyMutation.transition().start().withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
                         null, null, getAdditionalRule(), propertyMutation.getCurrentState().getValue(), null);
-                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
             }
         }
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
@@ -887,7 +888,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setActionType(String actionType) {
         this.actionType = actionType;
     }
-    
+
     public String getMeesevaApplicationNumber() {
         return meesevaApplicationNumber;
     }

@@ -172,7 +172,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) {
+            if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction) && property.getStatus().equals(STATUS_WORKFLOW)) {
                 if (oldProperty.getStatus().equals(STATUS_ISACTIVE)) {
                     oldProperty.setStatus(STATUS_ISHISTORY);
                     persistenceService.persist(oldProperty);
@@ -206,13 +206,13 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + property.getCreatedBy().getName() + " with assessment number "
+                            + securityUtils.getCurrentUser().getName() + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                     model.addAttribute(
                             "successMessage",
                             "Property Demolition rejected successfully and forwared to initiator "
-                                    + property.getCreatedBy().getName() + "with application number "
+                                    + property.getCreatedBy().getName() + " with application number "
                                     + property.getApplicationNo());
                 } else
                     model.addAttribute("successMessage",

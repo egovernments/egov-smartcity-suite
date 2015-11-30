@@ -65,7 +65,7 @@
 								<s:property value="#updatedDate" />
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
-								<s:property value="%{#state.lastModifiedBy.name}" />
+								<s:property value="%{#state.lastModifiedBy.username}" />::<s:property value="%{#state.lastModifiedBy.name}" />
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
 								<s:property value="%{#state.value}" />
@@ -81,7 +81,7 @@
 							<s:property value="#updatedDate" />
 						</td>
 						<td class="blueborderfortd" style="text-align: left">
-							<s:property value="%{state.lastModifiedBy.name}" />
+							<s:property value="%{state.lastModifiedBy.username}" />::<s:property value="%{state.lastModifiedBy.name}" />
 						</td>
 						<td class="blueborderfortd" style="text-align: left">
 							<s:property value="%{state.value}" />

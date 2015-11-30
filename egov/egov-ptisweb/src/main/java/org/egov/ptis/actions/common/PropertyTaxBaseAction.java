@@ -392,7 +392,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
                         if (null != regDocDate && null != floor.getOccupancyDate()
                                 && !floor.getOccupancyDate().equals("")) {
-                            if (DateUtils.compareDates(regDocDate,floor.getOccupancyDate()))
+                            if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
                                 addActionError(getText("regDate.notgreaterthan.occDate"));
                         }
 
@@ -468,14 +468,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
@@ -489,18 +489,18 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (null == property.getState()) {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
-                property.transition().start().withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                        .withDateInfo(currentDate.toDate());
+                property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), property.getCurrentState().getValue(), null);
-                property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
+                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approverComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
             }
         }
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
