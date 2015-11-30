@@ -106,9 +106,9 @@
 												<div class="form-group">	<label class="col-sm-4 control-label text-right"><spring:message
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label><div class="col-sm-3 add-margin"> <input type="text"
 														name="waterRatesDetails[${counter.index}].fromDate"
-														id="waterRatesDetails[${counter.index}].fromDate"
+														id="formDate"
 														class="form-control datepicker" 
-								data-inputmask="'mask': 'd/m/y'" required="required"></div></div>
+								data-inputmask="'mask': 'd/m/y'" required="required" ></div></div>
 <%-- <div class="form-group">
 
 	<label class="col-sm-4 control-label text-right">Monthly Rate
@@ -143,4 +143,5 @@
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
 	           <script src="<c:url value='/resources/js/app/connectiondetails.js'/>"></script>
+	           <script	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 	           <script src="<c:url value='/resources/js/app/waterRates.js'/>"></script>					
