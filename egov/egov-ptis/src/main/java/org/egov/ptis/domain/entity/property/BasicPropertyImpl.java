@@ -101,6 +101,8 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private boolean underWorkflow;
     private Date assessmentdate;
     private List<VacancyRemission> vacancyRemissions = new ArrayList<VacancyRemission>();
+    private Double longitude;
+    private Double latitude;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -759,4 +761,24 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         else
             return this.getActiveProperty();
     }
+    
+    @Override
+    public Double getLongitude() {
+		return longitude;
+	}
+
+    @Override
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+    @Override
+	public Double getLatitude() {
+		return latitude;
+	}
+
+    @Override
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
 }

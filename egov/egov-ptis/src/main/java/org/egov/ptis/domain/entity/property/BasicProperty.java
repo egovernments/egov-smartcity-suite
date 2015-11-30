@@ -280,4 +280,12 @@ public interface BasicProperty {
 	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissionSet);
 	
 	public Property getPropertyForBasicProperty();
+	
+	public Double getLongitude();
+
+    public void setLongitude(Double longitude);
+    
+    public Double getLatitude();
+
+    public void setLatitude(Double latitude);
 }
