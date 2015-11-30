@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -106,6 +107,9 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     private MeterCostService meterCostService;
 
+    @Autowired
+    protected AssignmentService assignmentService;
+    
     public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
         return meterCostService.findAll();
     }

@@ -136,11 +136,11 @@
 					
 				</div> -->
 				<div class="col-xs-6 view-content text-right"><spring:message code="msg.sign"/><br>
-					<spring:message code="msg.ack.assistant"/><br>${cityName}</div>
+					${currentUserDesgn}<br>${cityName}</div>
 			</c:when>	
 			<c:otherwise>
 				<div class="col-xs-12 view-content text-right"><spring:message code="msg.sign"/><br>
-					<spring:message code="msg.ack.assistant"/><br>${cityName}</div>
+					${currentUserDesgn}<br>${cityName}</div>
 			</c:otherwise>
 			</c:choose>
 			</div>

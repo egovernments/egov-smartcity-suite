@@ -55,6 +55,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -393,8 +394,10 @@ public class UpdateConnectionController extends GenericConnectionController {
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED))){
                 approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.ROLE_CLERKFORADONI, waterConnectionDetails);
             }
+            Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
+            String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                    + waterTaxUtils.getApproverUserName(approvalPosition);
+                    + waterTaxUtils.getApproverUserName(approvalPosition) +"," + currentUserDesgn;
              return "redirect:/application/application-success?pathVars=" + pathVars;
         } else {
             if (waterConnectionDetails.getStatus().getCode()

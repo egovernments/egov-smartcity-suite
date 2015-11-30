@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -244,9 +245,12 @@ public class NewConnectionController extends GenericConnectionController {
                     approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
         }
         if (LOG.isDebugEnabled())
-            LOG.debug("createNewWaterConnection is completed ");
+            LOG.debug("createNewWaterConnection is completed "); 
+        Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
+        String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
+        
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverUserName(approvalPosition);
+                + waterTaxUtils.getApproverUserName(approvalPosition) + "," +currentUserDesgn;
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + waterConnectionDetails.getApplicationNumber();
         else
@@ -361,16 +365,19 @@ public class NewConnectionController extends GenericConnectionController {
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
         String approverName = "";
+        String currentUserDesgn = "";
         if (keyNameArray.length != 0 && keyNameArray.length > 0)
             if (keyNameArray.length == 1)
                 applicationNumber = keyNameArray[0];
             else {
                 applicationNumber = keyNameArray[0];
                 approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
             }
         if (applicationNumber != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
         model.addAttribute("approverName", approverName);
+        model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
@@ -379,6 +386,8 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+       
+
         model.addAttribute("mode", "ack");
         return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
 
