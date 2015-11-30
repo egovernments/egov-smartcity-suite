@@ -58,19 +58,14 @@
 	</head>
 	<body>
 		<div class="formmainbox">
-			<%-- <s:if test="%{hasErrors()}">
-				<div align="left">
+		<s:if test="%{hasErrors()}">
+			<div class="errorstyle" id="property_error_area">
+				<div class="errortext">
 					<s:actionerror />
 					<s:fielderror/>
-				</div>			
-			</s:if> --%>
-			<s:if test="%{hasErrors()}">
-		<div class="errorstyle" id="property_error_area">
-			<div class="errortext">
-				<s:actionerror />
+				</div>
 			</div>
-		</div>
-	</s:if>
+		</s:if>
 			<s:if test="%{hasActionMessages()}">
 			    <div id="actionMessages" class="messagestyle">
 			    	<s:actionmessage theme="simple"/>

@@ -1237,4 +1237,6 @@ public interface PropertyTaxConstants {
     
     public static final String DIGITAL_SIGNATURE_PENDING ="Digital Signature Pending"; 
     
+    public static final String SEARCH_RESULT_COUNT = "500";
+    
 }

@@ -125,8 +125,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "namespace", "/collection", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
-        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}" ,params={"meesevaApplicationNumber","${meesevaApplicationNumber}"}),
-        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}",params={"meesevaApplicationNumber","${meesevaApplicationNumber}"}) })
+        @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
+        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}", params = {
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}" }) })
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -202,15 +204,14 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     /**
-     * Generalised method to give search property screen to perform different
-     * transactions like alter, bifurcate, transfer etc
+     * Generalised method to give search property screen to perform different transactions like alter, bifurcate, transfer etc
      * 
      * @return
      */
     @SkipValidation
     @Action(value = "/search/searchProperty-commonForm")
     public String commonForm() {
-        loggedUserIsMeesevaUser =propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
@@ -226,8 +227,7 @@ public class SearchPropertyAction extends BaseFormAction {
     }
 
     /**
-     * Generalised method to redirect the form page to different transactional
-     * form pages
+     * Generalised method to redirect the form page to different transactional form pages
      * 
      * @return
      */
@@ -253,7 +253,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
 
-            loggedUserIsMeesevaUser =propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+            loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
             if (loggedUserIsMeesevaUser) {
                 if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
                     return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
@@ -394,6 +394,10 @@ public class SearchPropertyAction extends BaseFormAction {
                 final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByBoundary(zoneId, wardId,
                         ownerNameBndry, houseNumBndry);
 
+                if (!propertyList.isEmpty() && propertyList.size() > Integer.parseInt(PropertyTaxConstants.SEARCH_RESULT_COUNT)) {
+                    throw new ValidationException(Arrays.asList(new ValidationError("resultCountValidation",
+                            getText("search.validate.resultcountexceed500"))));
+                }
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByBndry : Property : " + propMatview);
@@ -403,6 +407,8 @@ public class SearchPropertyAction extends BaseFormAction {
                 setSearchCriteria("Search By Zone, Ward, Plot No/House No, Owner Name");
                 setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Plot No/House No: "
                         + houseNumBndry + ", Owner Name: " + ownerNameBndry);
+            } catch (final ValidationException e) {
+                throw new ValidationException(e.getErrors());
             } catch (final Exception e) {
                 LOGGER.error("Exception in Search Property By Bndry ", e);
                 throw new ApplicationRuntimeException("Exception : " + e);
@@ -430,7 +436,11 @@ public class SearchPropertyAction extends BaseFormAction {
             try {
                 final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByLocation(locationId,
                         houseNumArea, ownerName);
-
+                if (!propertyList.isEmpty() && propertyList.size() > Integer.parseInt(PropertyTaxConstants.SEARCH_RESULT_COUNT)) {
+                    ValidationError vr = new ValidationError("search.validate.resultcountexceed500",
+                            "search.validate.resultcountexceed500");
+                    throw new ValidationException(Arrays.asList(vr));
+                }
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByLocation : Property : " + propMatview);
@@ -439,8 +449,10 @@ public class SearchPropertyAction extends BaseFormAction {
                 setSearchUri("../search/searchProperty-srchByLocation.action");
                 setSearchCriteria("Search By Location, Owner Name");
                 setSearchValue("Location : " + strLocationNum + ", Owner Name : " + ownerName);
+            } catch (final ValidationException e) {
+                throw new ValidationException(e.getErrors());
             } catch (final Exception e) {
-                LOGGER.error("Exception in Search Property By Location ", e);
+                LOGGER.error("Exception in Search Property By Bndry ", e);
                 throw new ApplicationRuntimeException("Exception : " + e);
             }
         if (LOGGER.isDebugEnabled())
@@ -463,7 +475,11 @@ public class SearchPropertyAction extends BaseFormAction {
             try {
                 final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByDemand(fromDemand,
                         toDemand);
-
+                if (!propertyList.isEmpty() && propertyList.size() > Integer.parseInt(PropertyTaxConstants.SEARCH_RESULT_COUNT)) {
+                    ValidationError vr = new ValidationError("search.validate.resultcountexceed500",
+                            "search.validate.resultcountexceed500");
+                    throw new ValidationException(Arrays.asList(vr));
+                }
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("searchByDemand : Property : " + propMatview);
@@ -472,8 +488,10 @@ public class SearchPropertyAction extends BaseFormAction {
                 setSearchUri("../search/searchProperty-searchByDemand.action");
                 setSearchCriteria("Search By FromDemand, ToDemand");
                 setSearchValue("From Demand: " + fromDemand + ", To Demand: " + toDemand);
+            } catch (final ValidationException e) {
+                throw new ValidationException(e.getErrors());
             } catch (final Exception e) {
-                LOGGER.error("Exception in Search Property By Demand ", e);
+                LOGGER.error("Exception in Search Property By Bndry ", e);
                 throw new ApplicationRuntimeException("Exception : " + e);
             }
         return TARGET;
