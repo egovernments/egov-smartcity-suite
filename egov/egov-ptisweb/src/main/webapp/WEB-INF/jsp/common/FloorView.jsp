@@ -50,6 +50,7 @@
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
+		<th class="bluebgheadtd"><s:text name="unit.rate.amount" /></th>
     </tr>
     <s:iterator value="floorDetails" status="floorsstatus">
         <tr id="Floorinfo">
@@ -101,6 +102,10 @@
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 			<span class="bold"><div align="center"><s:property default="N/A" value="%{noOfSeats}" /></div></span>
+	    </td>
+	    
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{floorDmdCalc.categoryAmt}" /></div></span>
 	    </td>
 	</tr>
    </s:iterator>
