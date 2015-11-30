@@ -116,7 +116,6 @@ function getTodayDate()
 function validateTapExecutionDate() {
 	var formdate= $('#formDate').val();
 	var todaysDate=getTodayDate();
-	alert('dfg dfg '+ compareDate(formdate,todaysDate) );
 	if(compareDate(formdate,todaysDate) == 1 || formdate==todaysDate || compareDate(formdate,todaysDate) ==0 )
 	{		
 		alert('Effective Date should not be less than todays date');
