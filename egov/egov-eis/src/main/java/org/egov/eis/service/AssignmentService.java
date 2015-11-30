@@ -226,6 +226,28 @@ public class AssignmentService {
         return new ArrayList<Assignment>();
 
     }
+    
+    /**
+     * Get employee primary/temporary assignment for given department and designation
+     *
+     * @param departmentId
+     * @param designationId
+     * @param givenDate
+     * @return List of assignment objects if present, else return empty list.
+     */
+    public List<Assignment> getAllPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
+            final Long designationId, final Date givenDate) {
+
+        if (departmentId != null && designationId != null)
+            return assignmentRepository.getAllAssignmentForDepartmentAndDesignation(departmentId, designationId,
+                    givenDate);
+        else if (designationId != null && departmentId == null)
+            return assignmentRepository.getAllAssignmentForDesignation(designationId, givenDate);
+        else if (designationId == null && departmentId != null)
+            return assignmentRepository.getAllAssignmentForDepartment(departmentId, givenDate);
+        return new ArrayList<Assignment>();
+
+    }
 
     /**
      * Get list of primary assignments for deparment,designation,fromdate and todate

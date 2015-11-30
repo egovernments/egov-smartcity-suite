@@ -96,15 +96,27 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query(" from Assignment A where A.designation.id=:designationId  and A.department.id=:departmentId and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
     public List<Assignment> getPrimaryAssignmentForDepartmentAndDesignation(@Param("departmentId") Long departmentId,
             @Param("designationId") Long designationId, @Param("givenDate") Date givenDate);
+    
+    @Query(" from Assignment A where A.designation.id=:designationId  and A.department.id=:departmentId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.primary desc")
+    public List<Assignment> getAllAssignmentForDepartmentAndDesignation(@Param("departmentId") Long departmentId,
+            @Param("designationId") Long designationId, @Param("givenDate") Date givenDate);
 
     @Query(" from Assignment A where A.department.id=:departmentId and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
     public List<Assignment> getPrimaryAssignmentForDepartment(@Param("departmentId") Long departmentId,
             @Param("givenDate") Date givenDate);
 
+    @Query(" from Assignment A where A.department.id=:departmentId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.primary desc")
+    public List<Assignment> getAllAssignmentForDepartment(@Param("departmentId") Long departmentId,
+            @Param("givenDate") Date givenDate);
+    
     @Query(" from Assignment A where A.designation.id=:designationId  and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
     public List<Assignment> getPrimaryAssignmentForDesignation(@Param("designationId") Long designationId,
             @Param("givenDate") Date givenDate);
-
+    
+    @Query(" from Assignment A where A.designation.id=:designationId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.primary desc")
+    public List<Assignment> getAllAssignmentForDesignation(@Param("designationId") Long designationId,
+            @Param("givenDate") Date givenDate);
+    
     @Query(" from Assignment A where A.department.id=:deptId and A.designation.id=:desigId and "
             + "((:fromDate between A.fromDate and A.toDate) or (:toDate between A.fromDate and A.toDate) or (A.fromDate<=:fromDate and A.toDate>=:toDate))"
             + " and A.primary=true")
@@ -127,24 +139,24 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDN.boundary.id in :boundaryIds")
+            + " and JRDN.boundary.id in :boundaryIds order by ASSIGN.primary desc")
     public List<Assignment> findByDesignationAndBoundary(@Param("desigId") final Long desigId,
             @Param("boundaryIds") final Set<Long> boundaryIds);
 
     @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDN.boundary.id in :boundaryIds")
+            + " and JRDN.boundary.id in :boundaryIds order by ASSIGN.primary desc")
     public List<Assignment> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
             @Param("desigId") final Long desigId, @Param("boundaryIds") final Set<Long> boundaryIds);
 
     @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDN.boundary.id in :boundaryIds")
+            + " and JRDN.boundary.id in :boundaryIds order by ASSIGN.primary desc")
     public List<Assignment> findByDepartmentAndBoundary(@Param("deptId") final Long deptId,
             @Param("boundaryIds") final Set<Long> boundaryIds);
 
     @Query(" select ASSIGN from Assignment ASSIGN where ASSIGN.designation.id=:designationId and "
-            + " ASSIGN.employee.active=true and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date ")
+            + " ASSIGN.employee.active=true and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date order by ASSIGN.primary desc")
     public List<Assignment> getAllActiveAssignments(@Param("designationId") final Long designationId);
 
 }
