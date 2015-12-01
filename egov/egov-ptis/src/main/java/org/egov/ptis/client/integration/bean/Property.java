@@ -151,7 +151,7 @@ public abstract class Property {
 		checkAuthorization();
 		EgBill egBill = createBill();
 		CollectionHelper collHelper = new CollectionHelper(egBill);
-		billReceiptInfo = collHelper.executeCollection(payment);
+		billReceiptInfo = collHelper.executeCollection(payment, null);
 		LOGGER.info("Property.collect() returned: " + billReceiptInfo);
 		return billReceiptInfo;
 	}

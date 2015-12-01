@@ -108,7 +108,8 @@ public class RestWaterConnectionCollection {
             if (null != errorDetails)
                 return JsonConvertor.convert(errorDetails);
             else {
-                payWaterTaxDetails.setSource(request.getAttribute("source").toString());
+                payWaterTaxDetails.setSource(request.getAttribute("source") != null ? request.getAttribute("source").toString()
+                        : "");
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
         } catch (final ValidationException e) {

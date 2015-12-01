@@ -44,58 +44,62 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 @SuppressWarnings("serial")
 public class PayPropertyTaxDetails implements Serializable {
 
-	private String assessmentNo;
-	private String ulbCode;
-	private String paymentMode;
-	private BigDecimal paymentAmount;
-	private String paidBy;
-	private String transactionId;
-	
-	private String chqddNo;
-	private Date chqddDate;
-	private String bankName;
-	private String branchName;
+    private String assessmentNo;
+    private String ulbCode;
+    private String paymentMode;
+    private BigDecimal paymentAmount;
+    private String paidBy;
+    private String transactionId;
 
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
+    private String chqddNo;
+    private Date chqddDate;
+    private String bankName;
+    private String branchName;
+    @JsonIgnore
+    private String source;
 
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
 
-	public String getPaymentMode() {
-		return paymentMode;
-	}
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
 
-	public void setPaymentMode(String paymentMode) {
-		this.paymentMode = paymentMode;
-	}
+    public String getPaymentMode() {
+        return paymentMode;
+    }
 
-	public BigDecimal getPaymentAmount() {
-		return paymentAmount;
-	}
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
 
-	public void setPaymentAmount(BigDecimal totalAmount) {
-		this.paymentAmount = totalAmount;
-	}
+    public BigDecimal getPaymentAmount() {
+        return paymentAmount;
+    }
 
-	public String getPaidBy() {
-		return paidBy;
-	}
+    public void setPaymentAmount(BigDecimal totalAmount) {
+        this.paymentAmount = totalAmount;
+    }
 
-	public void setPaidBy(String paidBy) {
-		this.paidBy = paidBy;
-	}
+    public String getPaidBy() {
+        return paidBy;
+    }
 
-	@Override
-	public String toString() {
-		return "PayPropertyTaxDetails [assessmentNo=" + assessmentNo + ", paymentMode=" + paymentMode + ", paymentAmount="
-				+ paymentAmount + ", paidBy=" + paidBy + "]";
-	}
+    public void setPaidBy(String paidBy) {
+        this.paidBy = paidBy;
+    }
+
+    @Override
+    public String toString() {
+        return "PayPropertyTaxDetails [assessmentNo=" + assessmentNo + ", paymentMode=" + paymentMode + ", paymentAmount="
+                + paymentAmount + ", paidBy=" + paidBy + "]";
+    }
 
     public String getTransactionId() {
         return transactionId;
@@ -105,44 +109,52 @@ public class PayPropertyTaxDetails implements Serializable {
         this.transactionId = transactionId;
     }
 
-	public String getChqddNo() {
-		return chqddNo;
-	}
+    public String getChqddNo() {
+        return chqddNo;
+    }
 
-	public void setChqddNo(String chqddNo) {
-		this.chqddNo = chqddNo;
-	}
+    public void setChqddNo(String chqddNo) {
+        this.chqddNo = chqddNo;
+    }
 
-	public Date getChqddDate() {
-		return chqddDate;
-	}
+    public Date getChqddDate() {
+        return chqddDate;
+    }
 
-	public void setChqddDate(Date chqddDate) {
-		this.chqddDate = chqddDate;
-	}
+    public void setChqddDate(Date chqddDate) {
+        this.chqddDate = chqddDate;
+    }
 
-	public String getBankName() {
-		return bankName;
-	}
+    public String getBankName() {
+        return bankName;
+    }
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
 
-	public String getBranchName() {
-		return branchName;
-	}
+    public String getBranchName() {
+        return branchName;
+    }
 
-	public void setBranchName(String branchName) {
-		this.branchName = branchName;
-	}
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
 
-	public String getUlbCode() {
-		return ulbCode;
-	}
+    public String getUlbCode() {
+        return ulbCode;
+    }
 
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+    
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
 }

@@ -108,7 +108,7 @@ public class CollectionHelper {
 	 * @param payment
 	 * @return
 	 */
-	public BillReceiptInfo executeCollection(Payment payment) {
+	public BillReceiptInfo executeCollection(Payment payment, String source) {
 		if (!isCollectionPermitted()) {
 			throw new ApplicationRuntimeException(
 					"Collection is not allowed - current balance is zero and advance coll exists.");
@@ -117,7 +117,7 @@ public class CollectionHelper {
 		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
 
 		LOG.debug("CollectionHelper.executeCollection(): collection is from the field...");
-		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F);
+		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F, source);
 
 		return collectionService.createReceipt(billInfo, paymentInfoList);
 	}
@@ -128,7 +128,7 @@ public class CollectionHelper {
 					"Collection is not allowed - current balance is zero and advance coll exists.");
 		}
 		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
-		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.C);
+		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.C, null);
 		return collectionService.createMiscellaneousReceipt(billInfo, paymentInfoList);
 	}
 	
@@ -180,7 +180,7 @@ public class CollectionHelper {
 	 * @param amountPaid
 	 * @return
 	 */
-	private BillInfoImpl prepareBillInfo(BigDecimal amountPaid, COLLECTIONTYPE collType) {
+	private BillInfoImpl prepareBillInfo(BigDecimal amountPaid, COLLECTIONTYPE collType, String source) {
 		BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType);
 
 		ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>();
@@ -208,6 +208,7 @@ public class CollectionHelper {
 			}
 		}
 		billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
+		billInfoImpl.setSource(source != null ? source : "");
 		return billInfoImpl;
 	}
 

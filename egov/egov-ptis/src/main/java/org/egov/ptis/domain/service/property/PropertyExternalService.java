@@ -577,7 +577,7 @@ public class PropertyExternalService {
             paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
         }
         final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
-        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment);
+        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment, payPropertyTaxDetails.getSource());
 
         if (null != billReceiptInfo) {
             receiptDetails = new ReceiptDetails();
