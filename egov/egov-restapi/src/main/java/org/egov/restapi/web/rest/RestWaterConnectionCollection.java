@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 
@@ -99,18 +100,20 @@ public class RestWaterConnectionCollection {
      * @throws IOException
      */
     @RequestMapping(value = "/watercharges/paywatertax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String payWaterTax(@Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails)
+    public String payWaterTax(@Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails, final HttpServletRequest request)
     {
         WaterReceiptDetails waterReceiptDetails = null;
         try {
             final ErrorDetails errorDetails = validatePaymentDetails(payWaterTaxDetails);
             if (null != errorDetails)
                 return JsonConvertor.convert(errorDetails);
-            else
+            else {
+                payWaterTaxDetails.setSource(request.getAttribute("source").toString());
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
+            }
         } catch (final ValidationException e) {
             e.printStackTrace();
-            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             final List<ValidationError> errors = e.getErrors();
             for (final ValidationError ve : errors)
@@ -123,7 +126,7 @@ public class RestWaterConnectionCollection {
             JsonConvertor.convert(errorList);
         } catch (final Exception e) {
             e.printStackTrace();
-            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
             er.setErrorMessage(e.getMessage());
@@ -142,7 +145,7 @@ public class RestWaterConnectionCollection {
             return JsonConvertor.convert(errorDetails);
         else {
             final WaterTaxDetails waterTaxDetails = waterTaxExternalService.getWaterTaxDemandDet(payWaterTaxDetails);
-            if(waterTaxDetails.getConsumerNo() ==null || "".equals( waterTaxDetails.getConsumerNo()) )
+            if (waterTaxDetails.getConsumerNo() == null || "".equals(waterTaxDetails.getConsumerNo()))
                 waterTaxDetails.setConsumerNo("");
             if (waterTaxDetails.getOwnerName() == null)
                 waterTaxDetails.setOwnerName("");
@@ -162,12 +165,10 @@ public class RestWaterConnectionCollection {
         }
     }
 
-    
-
     public ErrorDetails validatePaymentDetails(final PayWaterTaxDetails payWaterTaxDetails) {
         ErrorDetails errorDetails = null;
         WaterConnectionDetails waterConnDetailsObj = null;
-        errorDetails = validateConsumerAndApplicationNumber(payWaterTaxDetails );
+        errorDetails = validateConsumerAndApplicationNumber(payWaterTaxDetails);
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnDetailsObj = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
                     .getApplicaionNumber());
@@ -221,49 +222,49 @@ public class RestWaterConnectionCollection {
                 .getPaymentMode().trim())
                 && !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payWaterTaxDetails
                         .getPaymentMode().trim())
-                        
-        		&& !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payWaterTaxDetails
+
+                && !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payWaterTaxDetails
                         .getPaymentMode().trim())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID);
         }
 
-        if (payWaterTaxDetails.getPaymentMode() != null &&
-        		(                PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().trim())
-        				||PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payWaterTaxDetails
-                                .getPaymentMode().trim())))
-        {
+        if (payWaterTaxDetails.getPaymentMode() != null
+                &&
+                (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE
+                        .equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().trim())
+                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payWaterTaxDetails
+                        .getPaymentMode().trim())))
             if (payWaterTaxDetails.getChqddNo() == null || payWaterTaxDetails.getChqddNo().trim().length() == 0) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED);
                 errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED);
             } else
 
-                if (payWaterTaxDetails.getChqddDate() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED);
-                } else
+            if (payWaterTaxDetails.getChqddDate() == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED);
+            } else
 
-                    if (payWaterTaxDetails.getBankName() == null || payWaterTaxDetails.getBankName().trim().length() == 0) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED);
-                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED);
-                    } else
+            if (payWaterTaxDetails.getBankName() == null || payWaterTaxDetails.getBankName().trim().length() == 0) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED);
+            } else
 
-                        if (payWaterTaxDetails.getBranchName() == null) {
-                            errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
-                        }
-        }
+            if (payWaterTaxDetails.getBranchName() == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
+            }
 
         return errorDetails;
     }
 
-    private ErrorDetails validateConsumerAndApplicationNumber(final PayWaterTaxDetails payWaterTaxDetails     ) {
-        ErrorDetails errorDetails=null;
+    private ErrorDetails validateConsumerAndApplicationNumber(final PayWaterTaxDetails payWaterTaxDetails) {
+        ErrorDetails errorDetails = null;
         if (payWaterTaxDetails.getConsumerNo() == null || payWaterTaxDetails.getConsumerNo().trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMER_NO_REQUIRED);

@@ -183,5 +183,12 @@ public interface BillInfo {
      * @return Transaction Number as String
      */
     String getTransactionReferenceNumber();
+    
+    /**
+     * This method returns the source of Receipt
+     * Source value is null for the receipts created by ERP.
+     * @return
+     */
+    String getSource();
 
 }

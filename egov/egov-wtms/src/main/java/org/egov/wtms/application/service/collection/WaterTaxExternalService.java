@@ -301,7 +301,7 @@ public class WaterTaxExternalService {
 
 
     @Transactional
-    public BillReceiptInfo executeCollection(final Payment payment, final EgBill bill) {
+    public BillReceiptInfo executeCollection(final Payment payment, final EgBill bill, final String source) {
 
         if (!isCollectionPermitted(bill))
             throw new ApplicationRuntimeException(
@@ -309,7 +309,7 @@ public class WaterTaxExternalService {
 
         final List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
 
-        final BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F, bill);
+        final BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F, bill, source);
         return collectionService.createReceipt(billInfo, paymentInfoList);
     }
 
@@ -345,7 +345,7 @@ public class WaterTaxExternalService {
      * @param amountPaid
      * @return
      */
-    private BillInfoImpl prepareBillInfo(final BigDecimal amountPaid, final COLLECTIONTYPE collType, final EgBill bill) {
+    private BillInfoImpl prepareBillInfo(final BigDecimal amountPaid, final COLLECTIONTYPE collType, final EgBill bill, final String source) {
         final BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType, bill);
 
         final ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
@@ -368,6 +368,7 @@ public class WaterTaxExternalService {
                     break;
                 }
         billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
+        billInfoImpl.setSource(source);
         return billInfoImpl;
     }
 
@@ -457,7 +458,7 @@ public class WaterTaxExternalService {
         }
         final Payment payment = Payment.create(payWaterTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
 
-        final BillReceiptInfo billReceiptInfo = executeCollection(payment, egBill);
+        final BillReceiptInfo billReceiptInfo = executeCollection(payment, egBill, payWaterTaxDetails.getSource());
         return billReceiptInfo;
     }
 

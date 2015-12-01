@@ -50,8 +50,6 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.utils.DemandUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

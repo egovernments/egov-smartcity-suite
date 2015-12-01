@@ -62,6 +62,8 @@ public class PayWaterTaxDetails implements Serializable {
     private String chqddDate;
     private String bankName;
     private String branchName;
+    @JsonIgnore
+    private String source;
 
     public String getConsumerNo() {
         return consumerNo;
@@ -164,6 +166,14 @@ public class PayWaterTaxDetails implements Serializable {
 
     public void setUlbCode(final String ulbCode) {
         this.ulbCode = ulbCode;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }
