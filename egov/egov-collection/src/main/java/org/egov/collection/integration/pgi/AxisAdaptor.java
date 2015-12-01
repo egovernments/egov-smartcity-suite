@@ -109,7 +109,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
                 .append(paymentServiceDetails.getId());
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
-        fields.put(CollectionConstants.AXIS_AMOUNT, receiptHeader.getTotalAmount().toString());
+        fields.put(CollectionConstants.AXIS_AMOUNT, receiptHeader.getTotalAmount().multiply(BigDecimal.valueOf(100)).toString());
         final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
         if (axisSecureSecret != null) {
             final String secureHash = hashAllFields(fields);

@@ -72,7 +72,7 @@ function onBodyLoad(){
 			<td>Transaction Number : <s:property value="%{onlinePaymentReceiptHeader.onlinePayment.transactionNumber}" /></td>
 	</tr> -->
 	
-	<tr>Your payment of Amount Rs.  <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> for Property tax has been received. The Reference Number is <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>'> <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" /></a>. Please click  to generate and print the receipt</tr>
+	<tr>Your payment of Amount Rs.  <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> for Property tax has been received. The Reference Number is <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>'><font size="4px"><s:property value="%{onlinePaymentReceiptHeader.referencenumber}" /></font></a>. Please click  to generate and print the receipt</tr>
 	
 	</table>
 	
