@@ -135,6 +135,7 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
@@ -217,6 +218,9 @@ public class PropertyService {
     private InstallmentDao installmentDao;
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
@@ -2278,7 +2282,7 @@ public class PropertyService {
      */
     public void updateIndexes(final StateAware stateAwareObject, final String applictionType) {
         // PropertyImpl property= (PropertyImpl) propertyObj;
-
+    	final User user = securityUtils.getCurrentUser();
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
@@ -2292,7 +2296,7 @@ public class PropertyService {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), new Date(), applictionType, property.getBasicProperty()
                                 .getFullOwnerName(), property.getState().getValue(), url, property.getBasicProperty()
-                                .getAddress().toString());
+                                .getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2309,7 +2313,7 @@ public class PropertyService {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, property.getBasicProperty().getFullOwnerName(), property
-                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString());
+                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2326,7 +2330,7 @@ public class PropertyService {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, property.getBasicProperty().getFullOwnerName(), property
-                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString());
+                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());

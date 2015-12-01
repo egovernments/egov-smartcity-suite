@@ -52,7 +52,7 @@ public class ApplicationIndexBuilder {
     private final ApplicationIndex applicationIndex;
 
     public ApplicationIndexBuilder(final String moduleName, final String applicationNumber, final Date applicationDate,
-            final String applicationType, final String applicantName, final String status, final String url,final String applicantAddress) {
+            final String applicationType, final String applicantName, final String status, final String url,final String applicantAddress,final String ownername) {
 
         applicationIndex = new ApplicationIndex();
         applicationIndex.setModuleName(moduleName);
@@ -63,6 +63,7 @@ public class ApplicationIndexBuilder {
         applicationIndex.setStatus(status);
         applicationIndex.setUrl(url);
         applicationIndex.setApplicantAddress(applicantAddress);
+        applicationIndex.setOwnername(ownername);
     }
 
     public ApplicationIndexBuilder applicationAddress(final String applicantAddress) {

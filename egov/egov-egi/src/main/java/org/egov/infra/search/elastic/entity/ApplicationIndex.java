@@ -129,6 +129,9 @@ public class ApplicationIndex extends AbstractAuditable {
     @Length(min = 10, max = 12)
     @Searchable(name = "mobilenumber")
     private String mobileNumber;
+    
+    @Searchable(name="ownername", group = Searchable.Group.CLAUSES)
+    private String ownername;
 
     @Override
     public Long getId() {
@@ -243,5 +246,14 @@ public class ApplicationIndex extends AbstractAuditable {
     public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
+
+	public String getOwnername() {
+		return ownername;
+	}
+
+	public void setOwnername(String ownername) {
+		this.ownername = ownername;
+	}
+    
 
 }

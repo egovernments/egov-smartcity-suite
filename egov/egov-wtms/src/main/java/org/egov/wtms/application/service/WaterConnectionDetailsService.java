@@ -674,6 +674,7 @@ public class WaterConnectionDetailsService {
             while (ownerNameItr.hasNext())
                 consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
         }
+        final User user = securityUtils.getCurrentUser();
          ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
         if ((applicationIndex !=null  && null !=waterConnectionDetails.getId() ) && waterConnectionDetails.getStatus() != null
@@ -710,6 +711,7 @@ public class WaterConnectionDetailsService {
                             .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))) {
             	applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
+                applicationIndex.setOwnername(user.getUsername() + "::"+ user.getName());
                 if (waterConnectionDetails.getConnection().getConsumerCode() != null)
                     applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
@@ -762,14 +764,14 @@ public class WaterConnectionDetailsService {
             {
             	waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
             }
-            if (LOG.isDebugEnabled())
+           if (LOG.isDebugEnabled())
                 LOG.debug(" updating Application Index creation Started... ");
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                     ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
                     waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
                     consumerName.toString(), waterConnectionDetails.getStatus().getDescription().toString(),
                     "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber(),
-                    assessmentDetails.getPropertyAddress());
+                    assessmentDetails.getPropertyAddress(),(user.getUsername() + "::"+ user.getName()));
 
             if (waterConnectionDetails.getDisposalDate() != null)
                 applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
