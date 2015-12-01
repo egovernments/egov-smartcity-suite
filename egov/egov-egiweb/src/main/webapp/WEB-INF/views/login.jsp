@@ -116,7 +116,7 @@
 						</div>
 						<div class="col-md-12 community-card">
 							<a href="/pgr/complaint/citizen/anonymous/show-reg-form" target="_blank">
-								<div class="rounded-circle"><i class="fa fa-plus b"></i></div>&nbsp;
+								<div class="rounded-circle"><i class="fa fa-pencil b"></i></div>&nbsp;
 								<div class="label-font">
 									<spring:message code="lbl.reg.comp"/><br> 
 									<span class="label-subfont"><spring:message code="lbl.reg.comp.desc"/></span>

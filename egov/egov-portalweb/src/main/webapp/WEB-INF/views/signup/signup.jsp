@@ -167,7 +167,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<div class="input-group">
+								<div class="input-group" style="margin:0 auto;">
 									<div class="g-recaptcha" data-sitekey="${sessionScope.cityRecaptchaPub}"></div>
 									<form:errors path="active" cssClass="add-margin error-msg font-12"/>
 								</div>
