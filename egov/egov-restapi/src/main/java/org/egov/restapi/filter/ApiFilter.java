@@ -39,6 +39,7 @@
 package org.egov.restapi.filter;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -51,12 +52,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.restapi.config.properties.RestAPIApplicationProperties;
 import org.egov.restapi.constants.RestRedirectConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 
 import net.sf.json.JSONObject;
 
@@ -65,9 +69,13 @@ import net.sf.json.JSONObject;
 public class ApiFilter implements Filter {
 
     private final static Logger LOG = Logger.getLogger(ApiFilter.class);
+    private static final String SOURCE = "source";
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private RestAPIApplicationProperties restAPIApplicationProperties;
 
     @Override
     public void destroy() {
@@ -75,9 +83,12 @@ public class ApiFilter implements Filter {
     }
 
     @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
-            throws IOException, ServletException {
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
+            final FilterChain filterChain)
+                    throws IOException, ServletException {
         final MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest((HttpServletRequest) servletRequest);
+        if (!validateRequest(multiReadRequest))
+            throw new ApplicationRuntimeException("RESTAPI.001");
         String ulbCode = null;
         final byte[] b = new byte[5000];
         ulbCode = servletRequest.getParameter("ulbCode");
@@ -113,18 +124,38 @@ public class ApiFilter implements Filter {
                 final City city = cityService.getCityByCode(ulbCode);
                 EgovThreadLocals.setDomainName(city.getDomainURL());
                 EgovThreadLocals.setCityCode(ulbCode);
-            } else 
-                LOG.info("ULB code resolved to be same, continueing normal request flow"); 
+            } else
+                LOG.info("ULB code resolved to be same, continueing normal request flow");
         } else {
             LOG.error("ULB Code missing in request");
             throw new ApplicationRuntimeException("ULB Code missing in request");
         }
         filterChain.doFilter(multiReadRequest, servletResponse);
+
     }
 
     @Override
     public void init(final FilterConfig arg0) throws ServletException {
 
+    }
+
+    private boolean validateRequest(final MultiReadHttpServletRequest httpServletRequest) {
+        final String referer = httpServletRequest.getHeader(HttpHeaders.REFERER);
+        final List<String> apOnlineIpAddress = restAPIApplicationProperties.aponlineIPAddress();
+        final List<String> esevaIpAddress = restAPIApplicationProperties.esevaIPAddress();
+        if (apOnlineIpAddress != null && referer != null)
+            for (final String aponlineIp : apOnlineIpAddress)
+                if (referer.contains(aponlineIp)) {
+                    httpServletRequest.getSession().setAttribute(SOURCE, Source.APONLINE);
+                    return true;
+                }
+        if (esevaIpAddress != null && referer != null)
+            for (final String esevaIp : esevaIpAddress)
+                if (referer.contains(esevaIp)) {
+                    httpServletRequest.getSession().setAttribute(SOURCE, Source.ESEVA);
+                    return true;
+                }
+        return false;
     }
 
 }
