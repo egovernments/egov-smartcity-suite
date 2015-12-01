@@ -103,7 +103,7 @@ public class ComplaintTypeService {
     }
 
     public List<ComplaintType> findActiveComplaintTypesByCategory(final Long categoryId) {
-        return complaintTypeRepository.findByIsActiveTrueAndCategoryId(categoryId);
+        return complaintTypeRepository.findByIsActiveTrueAndCategoryIdOrderByNameAsc(categoryId);
     }
 
     public List<ComplaintType> findAllByNameLike(final String name) {
