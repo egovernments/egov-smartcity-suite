@@ -262,6 +262,7 @@ CollectionIntegrationService {
         receiptHeader.setIsModifiable(Boolean.TRUE);
         receiptHeader.setIsReconciled(Boolean.FALSE);
         receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION);
+        receiptHeader.setSource(bill.getSource() != null ? bill.getSource() : "");
 
         receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));

@@ -181,6 +181,9 @@
 		<property name="payeeAddress" type="string">
 			<column name="payeeaddress" length="1024" />
 		</property>
+			<property name="source" type="string">
+			<column name="source" length="20" />
+		</property>
 			
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">

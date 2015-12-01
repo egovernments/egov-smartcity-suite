@@ -120,6 +120,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     private String instrumentsAsString;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    private String source;
 
     public ReceiptHeader() {
     }
@@ -726,4 +727,11 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.id = id;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 }
