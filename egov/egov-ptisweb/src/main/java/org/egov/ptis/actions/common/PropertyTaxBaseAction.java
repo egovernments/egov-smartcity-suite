@@ -393,7 +393,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (null != regDocDate && null != floor.getOccupancyDate()
                                 && !floor.getOccupancyDate().equals("")) {
                             if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
-                                addActionError(getText("regDate.notgreaterthan.occDate"));
+                                addActionError(getText("regDate.notgreaterthan.occDate",msgParams));
                         }
 
                     }
