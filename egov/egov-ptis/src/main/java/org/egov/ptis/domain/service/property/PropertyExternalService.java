@@ -100,7 +100,6 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -220,6 +219,10 @@ public class PropertyExternalService {
         initiateBasicProperty();
         if (basicProperty != null) {
             property = (PropertyImpl) basicProperty.getProperty();
+            if (basicProperty.getLatitude() != null && basicProperty.getLongitude() != null) {
+                assessmentDetail.setLatitude(basicProperty.getLatitude());
+                assessmentDetail.setLongitude(basicProperty.getLongitude());
+            }
             if (flag.equals(FLAG_MOBILE_EMAIL))
                 loadPrimaryMobileAndEmail();
             if (property != null) {
@@ -1306,14 +1309,10 @@ public class PropertyExternalService {
     /**
      * This method is used to validate the payment details to do the payments.
      *
-     * @param assessmentNo
-     *            - assessment number or property number
-     * @param paymentMode
-     *            - mode of payment
-     * @param totalAmount
-     *            - total amount
-     * @param paidBy
-     *            - name of the payer
+     * @param assessmentNo - assessment number or property number
+     * @param paymentMode - mode of payment
+     * @param totalAmount - total amount
+     * @param paidBy - name of the payer
      * @return
      */
     public ErrorDetails validatePaymentDetails(final String assessmentNo, final String paymentMode,
@@ -1449,60 +1448,36 @@ public class PropertyExternalService {
     // TODO: Need to uncomment when it is required to check whether aadhaar
     // number or mobile number is exists or not
     /*
-     * public ErrorDetails isAadhaarNumberExist(List<OwnerDetails>
-     * ownerDetailsList) { ErrorDetails errorDetails = null; for (OwnerDetails
-     * ownerDetails : ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.aadhaarNumber =:aadhaarNumber"
-     * ); qry.setParameter("aadhaarNumber", ownerDetails.getAadhaarNo()); List
-     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
-     * errorDetails = new ErrorDetails();
-     * errorDetails.setErrorCode(PropertyTaxConstants
-     * .THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format(
-     * PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS,
-     * ownerDetails.getAadhaarNo())); } } return errorDetails; } public
-     * ErrorDetails isMobileNumberExist(List<OwnerDetails> ownerDetailsList) {
-     * ErrorDetails errorDetails = null; for (OwnerDetails ownerDetails :
-     * ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.mobileNumber =:mobileNumber"
-     * ); qry.setParameter("mobileNumber", ownerDetails.getMobileNumber()); List
-     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
-     * errorDetails = new ErrorDetails();
-     * errorDetails.setErrorCode(PropertyTaxConstants
-     * .THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format(
-     * PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS,
+     * public ErrorDetails isAadhaarNumberExist(List<OwnerDetails> ownerDetailsList) { ErrorDetails errorDetails = null; for
+     * (OwnerDetails ownerDetails : ownerDetailsList) { Query qry =
+     * entityManager.createQuery("from User u where u.aadhaarNumber =:aadhaarNumber" ); qry.setParameter("aadhaarNumber",
+     * ownerDetails.getAadhaarNo()); List list = qry.getResultList(); if (null != list && !list.isEmpty()) { errorDetails = new
+     * ErrorDetails(); errorDetails.setErrorCode(PropertyTaxConstants .THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS);
+     * errorDetails.setErrorMessage(MessageFormat.format( PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS,
+     * ownerDetails.getAadhaarNo())); } } return errorDetails; } public ErrorDetails isMobileNumberExist(List<OwnerDetails>
+     * ownerDetailsList) { ErrorDetails errorDetails = null; for (OwnerDetails ownerDetails : ownerDetailsList) { Query qry =
+     * entityManager.createQuery("from User u where u.mobileNumber =:mobileNumber" ); qry.setParameter("mobileNumber",
+     * ownerDetails.getMobileNumber()); List list = qry.getResultList(); if (null != list && !list.isEmpty()) { errorDetails = new
+     * ErrorDetails(); errorDetails.setErrorCode(PropertyTaxConstants .THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS);
+     * errorDetails.setErrorMessage(MessageFormat.format( PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS,
      * ownerDetails.getMobileNumber())); } } return errorDetails; }
      */
 
     /**
      * This method is used to get document's list to upload the documents.
      *
-     * @param photoAsmntStream
-     *            - photo of assessment input stream object
-     * @param photoAsmntDisp
-     *            - photo of assessment content disposition object
-     * @param bldgPermCopyStream
-     *            - building permission copy input stream object
-     * @param bldgPermCopyDisp
-     *            - building permission copy content disposition object
-     * @param atstdCopyPropDocStream
-     *            - attested copy of property document input stream object
-     * @param atstdCopyPropDocDisp
-     *            - attested copy of property document content disposition
-     *            object
-     * @param nonJudcStampStream
-     *            - non judicial stamp input stream object
-     * @param nonJudcStampDisp
-     *            - non judicial stamp content disposition object
-     * @param afdvtBondStream
-     *            - affidavit bond paper input stream object
-     * @param afdvtBondDisp
-     *            - affidavit bond paper content disposition object
-     * @param deathCertCopyStream
-     *            - death certificate copy input stream object
-     * @param deathCertCopyDisp
-     *            - death certificate copy content disposition object
+     * @param photoAsmntStream - photo of assessment input stream object
+     * @param photoAsmntDisp - photo of assessment content disposition object
+     * @param bldgPermCopyStream - building permission copy input stream object
+     * @param bldgPermCopyDisp - building permission copy content disposition object
+     * @param atstdCopyPropDocStream - attested copy of property document input stream object
+     * @param atstdCopyPropDocDisp - attested copy of property document content disposition object
+     * @param nonJudcStampStream - non judicial stamp input stream object
+     * @param nonJudcStampDisp - non judicial stamp content disposition object
+     * @param afdvtBondStream - affidavit bond paper input stream object
+     * @param afdvtBondDisp - affidavit bond paper content disposition object
+     * @param deathCertCopyStream - death certificate copy input stream object
+     * @param deathCertCopyDisp - death certificate copy content disposition object
      * @return document - list of document
      */
     public List<Document> getDocuments(final InputStream photoAsmntStream,
@@ -1613,10 +1588,8 @@ public class PropertyExternalService {
     /**
      * This method is used to create Document object to upload the files.
      *
-     * @param inputStream
-     *            - InputStream object coming as request
-     * @param formDataContentDisposition
-     *            - FormDataContentDisposition object coming as request
+     * @param inputStream - InputStream object coming as request
+     * @param formDataContentDisposition - FormDataContentDisposition object coming as request
      * @return document - Document object
      */
     private Document createDocument(final InputStream inputStream,
@@ -1665,10 +1638,8 @@ public class PropertyExternalService {
     /**
      * This method is used to convert incoming InputStream object to File object
      *
-     * @param uploadedInputStream
-     *            - InputStream object
-     * @param fileName
-     *            - name od the file
+     * @param uploadedInputStream - InputStream object
+     * @param fileName - name od the file
      * @return file - File object
      */
     private File writeToFile(final InputStream uploadedInputStream, final String fileName) {

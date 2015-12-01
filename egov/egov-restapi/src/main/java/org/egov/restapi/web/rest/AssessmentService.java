@@ -156,7 +156,7 @@ public class AssessmentService {
             }
             if (propertyTaxDetails.getOwnerDetails() == null)
             {
-                propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>());
+                propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
             }
             if (propertyTaxDetails.getLocalityName() == null)
                 propertyTaxDetails.setLocalityName("");
@@ -165,12 +165,12 @@ public class AssessmentService {
             if (propertyTaxDetails.getTaxDetails() == null)
             {
                 RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
-                List taxDetails = new ArrayList<RestPropertyTaxDetails>();
+                List taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
                 taxDetails.add(ar);
                 propertyTaxDetails.setTaxDetails(taxDetails);
             }
         } catch (Exception e) {
-            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
             er.setErrorMessage(e.getMessage());
@@ -232,14 +232,15 @@ public class AssessmentService {
             if (null != errorDetails) {
                 responseJson = JsonConvertor.convert(errorDetails);
             } else {
-                payPropTaxDetails.setSource(request.getAttribute("source") != null ? request.getAttribute("source").toString()
+                payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                        .getAttribute("source").toString()
                         : "");
                 ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails);
                 responseJson = JsonConvertor.convert(receiptDetails);
             }
         } catch (ValidationException e) {
 
-            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
             for (ValidationError ve : errors)
@@ -252,7 +253,7 @@ public class AssessmentService {
             responseJson = JsonConvertor.convert(errorList);
         } catch (Exception e) {
 
-            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
             er.setErrorMessage(e.getMessage());

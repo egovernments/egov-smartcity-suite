@@ -45,6 +45,7 @@ import java.util.Date;
 import org.egov.infra.search.elastic.Indexable;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
+import org.elasticsearch.common.geo.GeoPoint;
 
 public class ConsumerSearch implements Indexable {
 
@@ -53,10 +54,10 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "ward", group = Searchable.Group.CLAUSES)
     private String ward;
-    
+
     @Searchable(name = "adminward", group = Searchable.Group.CLAUSES)
     private String adminWard;
-    
+
     @Searchable(name = "doorno", group = Searchable.Group.SEARCHABLE)
     private String doorno;
 
@@ -95,9 +96,9 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "connectiontype", group = Searchable.Group.CLAUSES)
     private String connectionType;
-    
+
     @Searchable(name = "islegacy", group = Searchable.Group.CLAUSES)
-    private  Boolean islegacy;
+    private Boolean islegacy;
 
     @Searchable(name = "closureType", group = Searchable.Group.SEARCHABLE)
     private String closureType;
@@ -107,16 +108,53 @@ public class ConsumerSearch implements Indexable {
 
     @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
     private final String ulbName;
+
+    @Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
+    private final String districtName;
+
+    @Searchable(name = "regionname", group = Searchable.Group.CLAUSES)
+    private final String regionName;
+
+    @Searchable(name = "grade", group = Searchable.Group.CLAUSES)
+    private final String grade;
+
+    @Searchable(name = "watersource", group = Searchable.Group.CLAUSES)
+    private String waterSourceType;
+
+    @Searchable(name = "propertytype", group = Searchable.Group.CLAUSES)
+    private String propertyType;
+
+    @Searchable(name = "category", group = Searchable.Group.CLAUSES)
+    private String category;
+
+    @Searchable(name = "sumpcapacity", group = Searchable.Group.CLAUSES)
+    private Long sumpCapacity;
+
+    @Searchable(name = "aadhaarnumber", group = Searchable.Group.SEARCHABLE)
+    private String aadhaarNumber;
+
+    @Searchable(name = "pipesize", group = Searchable.Group.CLAUSES)
+    private String pipeSize;
+
+    @Searchable(name = "numberofperson", group = Searchable.Group.CLAUSES)
+    private Integer numberOfPerson;
     
+    @Searchable(name = "propertylocation", group = Searchable.Group.COMMON)
+    private GeoPoint propertyLocation;
     
+    @Searchable(name = "wardlocation", group = Searchable.Group.COMMON)
+    private GeoPoint wardLocation;
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType, final String ulbName,
-            final Date createdDate) {
+            final Date createdDate, final String districtName, final String regionName, final String grade) {
         this.consumerCode = consumerCode;
         this.mobileNumber = mobileNumber;
         this.usageType = usageType;
         this.ulbName = ulbName;
         this.createdDate = createdDate;
+        this.districtName = districtName;
+        this.regionName = regionName;
+        this.grade = grade;
     }
 
     public String getStatus() {
@@ -129,9 +167,9 @@ public class ConsumerSearch implements Indexable {
 
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode()+"-"+consumerCode;
+        return EgovThreadLocals.getCityCode() + "-" + consumerCode;
     }
-    
+
     public String getZone() {
         return zone;
     }
@@ -232,7 +270,7 @@ public class ConsumerSearch implements Indexable {
         return closureType;
     }
 
-    public void setClosureType(String closureType) {
+    public void setClosureType(final String closureType) {
         this.closureType = closureType;
     }
 
@@ -244,7 +282,7 @@ public class ConsumerSearch implements Indexable {
         return adminWard;
     }
 
-    public void setAdminWard(String adminWard) {
+    public void setAdminWard(final String adminWard) {
         this.adminWard = adminWard;
     }
 
@@ -252,18 +290,100 @@ public class ConsumerSearch implements Indexable {
         return doorno;
     }
 
-    public void setDoorno(String doorno) {
+    public void setDoorno(final String doorno) {
         this.doorno = doorno;
     }
 
-	public Boolean getIslegacy() {
-		return islegacy;
-	}
+    public Boolean getIslegacy() {
+        return islegacy;
+    }
 
-	public void setIslegacy(Boolean islegacy) {
-		this.islegacy = islegacy;
-	}
+    public void setIslegacy(final Boolean islegacy) {
+        this.islegacy = islegacy;
+    }
 
-	
-    
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public String getWaterSourceType() {
+        return waterSourceType;
+    }
+
+    public void setWaterSourceType(final String waterSourceType) {
+        this.waterSourceType = waterSourceType;
+    }
+
+    public String getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(final String propertyType) {
+        this.propertyType = propertyType;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(final String category) {
+        this.category = category;
+    }
+
+    public Long getSumpCapacity() {
+        return sumpCapacity;
+    }
+
+    public void setSumpCapacity(final Long sumpCapacity) {
+        this.sumpCapacity = sumpCapacity;
+    }
+
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
+    }
+
+    public void setAadhaarNumber(final String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
+    }
+
+    public String getPipeSize() {
+        return pipeSize;
+    }
+
+    public void setPipeSize(final String pipeSize) {
+        this.pipeSize = pipeSize;
+    }
+
+    public Integer getNumberOfPerson() {
+        return numberOfPerson;
+    }
+
+    public void setNumberOfPerson(final Integer numberOfPerson) {
+        this.numberOfPerson = numberOfPerson;
+    }
+
+    public GeoPoint getPropertyLocation() {
+        return propertyLocation;
+    }
+
+    public void setPropertyLocation(GeoPoint propertyLocation) {
+        this.propertyLocation = propertyLocation;
+    }
+
+    public GeoPoint getWardLocation() {
+        return wardLocation;
+    }
+
+    public void setWardLocation(GeoPoint wardLocation) {
+        this.wardLocation = wardLocation;
+    }
+
 }
