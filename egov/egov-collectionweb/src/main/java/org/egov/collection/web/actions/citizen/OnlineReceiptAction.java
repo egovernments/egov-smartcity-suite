@@ -99,6 +99,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
     @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
     @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+    @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
     @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
@@ -472,8 +473,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     @ValidationErrorPage(value = "reconresult")
+    @Action(value = "/citizen/onlineReceipt-reconcileOnlinePayment")  
     public String reconcileOnlinePayment() {
-
+   
         final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
 
         final ReceiptHeader[] receipts = new ReceiptHeader[selectedReceipts.length];
@@ -495,14 +497,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 }
             }
 
-            if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {
+            if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {   
                 createSuccessPayment(receipts[i], transDate, getTransactionId()[i], receipts[i].getTotalAmount(), null,
                         getRemarks()[i]);
 
                 LOGGER.debug("Manually reconciled a success online payment");
 
                 try {
-                    receiptHeaderService.createVoucherForReceipt(receipts[i], Boolean.FALSE);
+                   // receiptHeaderService.createVoucherForReceipt(receipts[i], Boolean.FALSE);
                     LOGGER.debug("Updated financial systems and created voucher.");
                 } catch (final ApplicationRuntimeException ex) {
                     errors.add(new ValidationError(

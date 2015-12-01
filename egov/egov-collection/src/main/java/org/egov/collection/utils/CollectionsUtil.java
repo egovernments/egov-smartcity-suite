@@ -496,8 +496,12 @@ public class CollectionsUtil {
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
-        return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key).get(0).getValue();
-    }
+        List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
+        if(appConfValues!=null && appConfValues.size()>0){
+            return appConfValues.get(0).getValue();  
+        }else
+            return "";
+    } 
 
     /**
      * This method returns the list of config values for the given module name and key

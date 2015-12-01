@@ -274,7 +274,6 @@ function transitionStates(){
 </span>
 <logic:notEmpty name="results">
 <div style="overflow:auto; margin-left: 8px;margin-right: 8px;">
-<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 <div align="center">		
 
 <display:table name="results" uid="currentRow" pagesize = "30" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
@@ -320,7 +319,6 @@ function transitionStates(){
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Submit" onclick="return transitionStates()" />&nbsp;
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>
-</table>
 </div>	
 				
 </logic:notEmpty>
