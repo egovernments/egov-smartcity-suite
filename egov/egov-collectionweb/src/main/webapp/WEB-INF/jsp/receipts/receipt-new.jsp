@@ -1303,13 +1303,13 @@ function onBodyLoad()
 		document.getElementById('asteriskId').style.display="";
 	}
 	if(null != document.getElementById('manualreceiptinfo')){
-		document.getElementById('manualreceiptinfo').checked=true;
+		document.getElementById('manualreceiptinfo').checked=false;
 	}
 	if(null != document.getElementById('manualReceiptNumber')){
-		document.getElementById('manualReceiptNumber').disabled=false;
+		document.getElementById('manualReceiptNumber').disabled=true;
 	}
 	if(null != document.getElementById('manualReceiptDate')){
-		document.getElementById('manualReceiptDate').disabled=false;
+		document.getElementById('manualReceiptDate').disabled=true;
 	}
 
 	<s:if test="%{isBillSourcemisc()}"> 
@@ -2153,7 +2153,7 @@ function showHideMandataryMark(obj){
 					<tr>
 					<td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
-					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" checked="true" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
+					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
 					</tr>
 		 </s:if>
 		 
