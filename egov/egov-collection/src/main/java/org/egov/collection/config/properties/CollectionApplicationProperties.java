@@ -1,5 +1,4 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -45,9 +44,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(name="collectionApplicationProperties", value = { "classpath:config/payment-gateway.properties",
-        "classpath:config/egov-erp-override.properties", "classpath:config/egov-erp-${user.name}.properties",
-        "classpath:config/application-config-${client.id}.properties" }, ignoreResourceNotFound = true)
+@PropertySource(name = "collectionApplicationProperties", 
+value = { "classpath:config/payment-gateway.properties",
+        "classpath:config/egov-erp-${user.name}.properties",
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
     @Autowired

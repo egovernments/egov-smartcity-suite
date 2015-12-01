@@ -48,9 +48,9 @@ import org.springframework.core.env.Environment;
 @Configuration
 @PropertySource(value = {
         "classpath:config/dashboard-config.properties",
-        "classpath:config/egov-erp-override.properties",
         "classpath:config/egov-erp-${user.name}.properties",
-        "classpath:config/application-config-${client.id}.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 public class DashboardProperties {
 
     @Autowired
