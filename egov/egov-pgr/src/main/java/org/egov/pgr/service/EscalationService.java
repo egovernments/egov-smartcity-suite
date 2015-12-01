@@ -200,7 +200,7 @@ public class EscalationService {
                             final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
                                     .append(", ").append(complaint.getCrn() + " by ")
                                     .append(complaint.getComplainant().getName() != null ? complaint.getComplainant().getName()
-                                            : "Anonymous User")
+                                            : "Anonymous User").append(", "+complaint.getComplainant().getMobile())
                                     .append(" for " + complaint.getComplaintType().getName() + " from ")
                                     .append(complaint.getLocation().getName()).append(" handled by ")
                                     .append(previoususer.getName() + " has been escalated to you. ");
