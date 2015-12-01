@@ -72,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -210,6 +211,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String areaOfPlot;
 
     private List<DocumentType> documentTypes = new ArrayList<>();
+    private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
     private String northBoundary;
     private String southBoundary;
     private String eastBoundary;
@@ -295,6 +297,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             user = securityUtils.getCurrentUser();
             if (user != null)
                 objection.setRecievedBy(user.getUsername());
+        }
+        if (null != objection && null != objection.getState()) {
+            historyMap = propService.populateHistory(objection.getState());
         }
 
         loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
@@ -1139,8 +1144,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 .getBasicProperty().getUpicNo(), objection.getObjectionNumber());
 
         // setupWorkflowDetails();
-        if (objection != null && objection.getState() != null)
+        if (objection != null && objection.getState() != null) {
             setUpWorkFlowHistory(objection.getState().getId());
+            historyMap = propService.populateHistory(objection.getState());
+        }
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         if (LOGGER.isDebugEnabled())
@@ -1850,4 +1857,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.ulbCode = ulbCode;
     }
 
+    public List<Hashtable<String, Object>> getHistoryMap() {
+        return historyMap;
+    }
+
+    public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
+        this.historyMap = historyMap;
+    }
 }

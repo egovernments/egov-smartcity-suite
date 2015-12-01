@@ -66,6 +66,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -212,6 +213,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String ulbCode;
 
     private Map<String, String> guardianRelationMap;
+    private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
     private String actionType;
 
     public PropertyTransferAction() {
@@ -480,6 +482,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
                         mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
+                historyMap = propertyService.populateHistory(propertyMutation.getState());
             }
 
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
@@ -927,6 +930,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
+    }
+
+    public List<Hashtable<String, Object>> getHistoryMap() {
+        return historyMap;
+    }
+
+    public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
+        this.historyMap = historyMap;
     }
 
 }

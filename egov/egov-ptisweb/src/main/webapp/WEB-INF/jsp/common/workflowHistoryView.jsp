@@ -49,47 +49,34 @@
 
 	<tr>
 		<td colspan="5">
-			<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="tablebottom" id="nameTable" width="100%" border="0"
+				cellpadding="0" cellspacing="0">
 				<tbody>
 					<tr>
-						<th class="bluebgheadtd"><s:text name="lbl.date"/></th>
+						<th class="bluebgheadtd"><s:text name="lbl.date" /></th>
 						<th class="bluebgheadtd"><s:text name="lbl.updatedby" /></th>
+						<th class="bluebgheadtd"><s:text name="lbl.owner" /></th>
 						<th class="bluebgheadtd"><s:text name="lbl.status" /></th>
 						<th class="bluebgheadtd"><s:text name="lbl.comments" /></th>
 					</tr>
-					<s:iterator value="%{getStateHistory()}" var="state">
-						<tr>
-							<td class="blueborderfortd" style="text-align: left">
-								<s:date name="#state.lastModifiedDate" var="updatedDate"
-									format="dd/MM/yyyy hh:mm:ss" />
-								<s:property value="#updatedDate" />
-							</td>
-							<td class="blueborderfortd" style="text-align: left">
-								<s:property value="%{#state.lastModifiedBy.username}" />::<s:property value="%{#state.lastModifiedBy.name}" />
-							</td>
-							<td class="blueborderfortd" style="text-align: left">
-								<s:property value="%{#state.value}" />
-							</td>
-							<td class="blueborderfortd" style="text-align: left">
-								<s:property value="%{#state.comments}" />
-							</td>
-						</tr>
-					</s:iterator>
-					<tr>
-						<td class="blueborderfortd" style="text-align: left">
-							<s:date name="state.lastModifiedDate" var="updatedDate" format="dd/MM/yyyy hh:mm:ss" />
-							<s:property value="#updatedDate" />
-						</td>
-						<td class="blueborderfortd" style="text-align: left">
-							<s:property value="%{state.lastModifiedBy.username}" />::<s:property value="%{state.lastModifiedBy.name}" />
-						</td>
-						<td class="blueborderfortd" style="text-align: left">
-							<s:property value="%{state.value}" />
-						</td>
-						<td class="blueborderfortd" style="text-align: left">
-							<s:property value="%{state.comments}" />
-						</td>
-					</tr>
+					<s:if test="%{!historyMap.isEmpty()}">
+						<s:iterator value="%{historyMap}" var="history">
+							<tr>
+								<td class="blueborderfortd" style="text-align: left"><s:date
+										name="#history.date" var="updatedDate"
+										format="dd/MM/yyyy hh:mm:ss" /> <s:property
+										value="#updatedDate" /></td>
+								<td class="blueborderfortd" style="text-align: left"><s:property
+										value="%{#history.updatedBy}" /></td>
+								<td class="blueborderfortd" style="text-align: left"><s:property
+										value="%{#history.user}" /></td>
+								<td class="blueborderfortd" style="text-align: left"><s:property
+										value="%{#history.status}" /></td>
+								<td class="blueborderfortd" style="text-align: left"><s:property
+										value="%{#history.comments}" /></td>
+							</tr>
+						</s:iterator>
+					</s:if>
 				</tbody>
 			</table>
 		</td>

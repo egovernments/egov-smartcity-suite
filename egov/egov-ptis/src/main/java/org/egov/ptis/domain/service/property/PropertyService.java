@@ -62,7 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
@@ -79,14 +79,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -98,6 +96,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -121,7 +120,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -139,7 +137,9 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -525,7 +525,7 @@ public class PropertyService {
      * @param property
      * @param dateOfCompletion
      * @return Property with installment wise demand set
-     * @throws TaxCalculatorExeption 
+     * @throws TaxCalculatorExeption
      */
     public Property createDemand(final PropertyImpl property, final Date dateOfCompletion) throws TaxCalculatorExeption {
         LOGGER.debug("Entered into createDemand");
@@ -669,9 +669,10 @@ public class PropertyService {
      * @param propertyModel
      * @param oldProperty
      * @return
-     * @throws TaxCalculatorExeption 
+     * @throws TaxCalculatorExeption
      */
-    public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty) throws TaxCalculatorExeption {
+    public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty)
+            throws TaxCalculatorExeption {
         Date propCompletionDate = null;
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -2751,6 +2752,54 @@ public class PropertyService {
             wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
                     .getId());
         return wfInitiator;
+    }
+
+    public List<Hashtable<String, Object>> populateHistory(State state) {
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        Hashtable<String, Object> map = new Hashtable<String, Object>();
+        Assignment assignment = null;
+        User user = null;
+        Position ownerPosition = null;
+        if (null != state) {
+            map.put("date", state.getLastModifiedDate());
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            map.put("comments", null != state.getComments() ? state.getComments() : "");
+            user = state.getOwnerUser();
+            ownerPosition = state.getOwnerPosition();
+            if (null != ownerPosition) {
+                assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
+                map.put("user", null != assignment && null != assignment.getEmployee() ? assignment.getEmployee()
+                        .getUsername() + "::" + assignment.getEmployee().getName() : "");
+            } else if (null != user) {
+                map.put("user", user.getUsername() + "::" + user.getName());
+
+            }
+            historyTable.add(map);
+            if (null != state.getHistory() && !state.getHistory().isEmpty()) {
+                Collections.reverse(state.getHistory());
+                for (StateHistory stateHistory : state.getHistory()) {
+                    final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                    HistoryMap.put("date", stateHistory.getLastModifiedDate());
+                    HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                            + stateHistory.getLastModifiedBy().getName());
+                    HistoryMap.put("status", stateHistory.getValue());
+                    HistoryMap.put("comments", null != stateHistory.getComments() ? stateHistory.getComments() : "");
+                    ownerPosition = stateHistory.getOwnerPosition();
+                    user = stateHistory.getOwnerUser();
+                    if (null != ownerPosition) {
+                        assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
+                        HistoryMap.put("user", null != assignment && null != assignment.getEmployee() ? assignment
+                                .getEmployee().getUsername() + "::" + assignment.getEmployee().getName() : "");
+                    } else if (null != user) {
+                        HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+
+                    }
+                    historyTable.add(HistoryMap);
+                }
+            }
+        }
+        return historyTable;
     }
 
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {

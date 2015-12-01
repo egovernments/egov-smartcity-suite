@@ -784,8 +784,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propWF != null) {
                 setProperty(propWF);
                 preparePropertyTaxDetails(propWF);
+                historyMap = propService.populateHistory(propWF.getState());
             } else {
                 preparePropertyTaxDetails(basicProp.getActiveProperty());
+                historyMap = propService.populateHistory(basicProp.getActiveProperty().getState());
             }
         } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,

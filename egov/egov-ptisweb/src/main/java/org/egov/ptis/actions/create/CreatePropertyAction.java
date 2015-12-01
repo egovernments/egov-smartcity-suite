@@ -677,8 +677,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
-        if (null != property && null != property.getId())
+        if (null != property && null != property.getId() && null != property.getState()) {
             preparePropertyTaxDetails(property);
+            historyMap = propService.populateHistory(property.getState());
+        }
+        
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypeList = getPersistenceService().findAllBy("from RoofType order by name");
