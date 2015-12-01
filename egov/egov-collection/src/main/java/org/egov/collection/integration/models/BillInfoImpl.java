@@ -71,7 +71,7 @@ public class BillInfoImpl implements BillInfo {
     private List<String> collectionModesNotAllowed;
 
     @XStreamAlias("payees")
-    private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>();
+    private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>(0);
     
     private String transactionReferenceNumber;
 
