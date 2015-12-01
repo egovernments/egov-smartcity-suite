@@ -392,11 +392,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             else
                 reportParams.put("mode", APPLICATION_TYPE_DEMOLITION);
             reportParams.put("actionType", actionType);
-            setNoticeInfo(propertyNotice, basicProperty);
-            if (StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()))
-                reportParams.put("unauthorizedProperty", "yes");
-            else
-                reportParams.put("unauthorizedProperty", "no");
+            setNoticeInfo(propertyNotice, basicProperty,reportParams);
             final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(propertyNotice.getOwnerInfo()
                     .getTotalTax());
             propertyNotice.setFloorDetailsForNotice(floorDetails);
@@ -408,7 +404,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return reportInput;
     }
 
-    private void setNoticeInfo(final PropertyNoticeInfo propertyNotice, final BasicPropertyImpl basicProperty) {
+    private void setNoticeInfo(final PropertyNoticeInfo propertyNotice, final BasicPropertyImpl basicProperty, Map<String, Object> reportParams) {
         final PropertyAckNoticeInfo ownerInfo = new PropertyAckNoticeInfo();
         final Address ownerAddress = basicProperty.getAddress();
 
@@ -431,10 +427,15 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ownerInfo.setAssessmentDate(sdf.format(basicProperty.getAssessmentdate()).toString());
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         BigDecimal totalTax = BigDecimal.ZERO;
+        String unauthorizedProperty = "no";
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(PropertyTaxUtil.getCurrentInstallment()))
-                totalTax = totalTax.add(demandDetail.getAmount());
+                    .equals(PropertyTaxUtil.getCurrentInstallment())){
+            	totalTax = totalTax.add(demandDetail.getAmount());
+            	if(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
+            		unauthorizedProperty = "yes";
+            }
             if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
                 ownerInfo.setEducationTax(demandDetail.getAmount());
@@ -450,8 +451,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
                     ownerInfo.setUnauthorizedPenalty(demandDetail.getAmount());
+            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)){
+            		ownerInfo.setUnauthorizedPenalty(demandDetail.getAmount());
+            }
         }
         ownerInfo.setTotalTax(totalTax);
+        reportParams.put("unauthorizedProperty", unauthorizedProperty);
         final PropertyID propertyId = basicProperty.getPropertyID();
         ownerInfo.setZoneName(propertyId.getZone().getName());
         ownerInfo.setWardName(propertyId.getWard().getName());

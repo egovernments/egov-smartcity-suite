@@ -242,9 +242,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                     PropertyTaxUtil.getCurrentInstallment());
             model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-            model.addAttribute("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+            model.addAttribute("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
             model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-            model.addAttribute("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+            model.addAttribute("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
             model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
             BigDecimal propertyTax = BigDecimal.ZERO;
             if (null != demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
@@ -257,8 +257,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_EDUCATIONAL_CESS));
             model.addAttribute("propertyTax", propertyTax);
-            if (StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())
-                    && !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")) {
+            if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null) {
                 model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
                 model.addAttribute("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
                 model.addAttribute("showUnauthorisedPenalty", "yes");
