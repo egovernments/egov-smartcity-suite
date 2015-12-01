@@ -140,6 +140,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -605,6 +606,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(propertyModel,
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        // added to set createdDate for DemandCalculation object
+        if(basicProp.getWFProperty()!=null && basicProp.getWFProperty().getPtDemandSet()!=null 
+                && !basicProp.getWFProperty().getPtDemandSet().isEmpty()){
+            for (Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet()) {
+                basicPropertyService.applyAuditing(ptDemand.getDmdCalculations()); 
+            }
+        }
         basicPropertyService.update(basicProp);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
