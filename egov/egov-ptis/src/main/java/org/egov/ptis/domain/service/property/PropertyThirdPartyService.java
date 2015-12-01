@@ -1,6 +1,7 @@
 package org.egov.ptis.domain.service.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
@@ -19,6 +20,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECT
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +125,8 @@ public class PropertyThirdPartyService {
                     stateHistory = property.getState().getHistory().get(size - 1);
                 }
                 if (property.getState().getValue().equals(WF_STATE_CLOSED)
-                        && stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED)) {
+                        && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
+                                .endsWith(WF_STATE_COMMISSIONER_APPROVED))) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
@@ -151,7 +154,8 @@ public class PropertyThirdPartyService {
                     stateHistory = mutation.getState().getHistory().get(size - 1);
                 }
                 if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
-                        && stateHistory.getValue().equals(WF_STATE_DIGITALLY_SIGNED)) {
+                        && (stateHistory.getValue().equals(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
+                                .equals(WF_STATE_COMMISSIONER_APPROVED))) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
@@ -209,7 +213,8 @@ public class PropertyThirdPartyService {
                     stateHistory = revisionPetition.getState().getHistory().get(size - 1);
                 }
                 if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)
-                        && stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED)) {
+                        && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
+                                .endsWith(WF_STATE_COMMISSIONER_APPROVED))) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
