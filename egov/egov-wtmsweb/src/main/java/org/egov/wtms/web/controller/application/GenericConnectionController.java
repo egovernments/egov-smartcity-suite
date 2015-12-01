@@ -110,9 +110,9 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     protected AssignmentService assignmentService;
     
-    public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
+    /*public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
         return meterCostService.findAll();
-    }
+    }*/
 
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
