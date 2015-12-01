@@ -279,7 +279,7 @@ public class WaterTaxCollection extends TaxCollection {
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
-                            .getReasonMaster())) {
+                            .getReasonMaster()) && installment.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
                         if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
                             throw new ApplicationRuntimeException(
                                     "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "

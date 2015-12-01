@@ -414,25 +414,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 
     public BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri,
             final List<EgBillDetails> billDetList) throws InvalidAccountHeadException {
-        BigDecimal totalCollAmt = BigDecimal.ZERO;
-        try {
-            if (bri != null && billDetList != null)
-                for (final EgBillDetails billDet : billDetList) {
-                    Boolean glCodeExist = false;
-                    for (final ReceiptAccountInfo acctDet : bri.getAccountDetails())
-                        if (billDet.getGlcode().equals(acctDet.getGlCode())) {
-                            glCodeExist = true;
-                            totalCollAmt = totalCollAmt.add(acctDet.getCrAmount());
-                        }
-                    if (!glCodeExist)
-                        throw new InvalidAccountHeadException("GlCode does not exist for "
-                                + billDet.getGlcode());
-                }
-        } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
-        }
-
-        return totalCollAmt;
+    	return bri.getTotalAmount();
     }
 
     /**

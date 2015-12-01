@@ -296,7 +296,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      */
     @Override
     public BigDecimal getTotalAmount() {
-        return receiptHeader.getAmount();
+        return receiptHeader.getTotalAmount();
     }
 
     /*
