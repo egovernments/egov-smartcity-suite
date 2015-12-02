@@ -209,6 +209,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         else
             floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
         unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floor.getFloorNo()));
+        unitTaxCalculationInfo.setFloorArea(builtUpArea);
         unitTaxCalculationInfo.setBaseRateEffectiveDate(boundaryCategory.getFromDate());
         unitTaxCalculationInfo.setBaseRate(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
         unitTaxCalculationInfo.setMrv(floorMrv);
