@@ -43,11 +43,11 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.security.terminal.model.Location;
-import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -55,15 +55,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ParentPackage("egov")
 @Results({
-    @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
-    @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
-    @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
-    @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
-            "namespace", "/reports" }),
-            @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
-                    "namespace", "/reports" }),
-                    @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
-                            "method", "cancel" }) })
+        @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
+        @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
+        @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
+        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
+                "namespace", "/reports" }),
+        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
+                "namespace", "/reports" }),
+        @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
+                "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -148,6 +148,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private SecurityUtils securityUtils;
 
     /**
+     * The date for which the receipt list was created.
+     */
+    private String createdDate;
+
+    /**
      * This method is called when user clicks on a collections work flow item in the inbox. The inbox item details contains the
      * next work flow action to be performed, service code, user id and counter id in the following form:
      * <next-workflow-action>-servicecode-username-counterid
@@ -156,11 +161,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 4) {
+        if (params.length == 5) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
-            setCounterId(Integer.valueOf(params[3]));
+            setCreatedDate(params[3]);
+            setCounterId(Integer.valueOf(params[4]));
         }
     }
 
@@ -365,13 +371,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param statusCode Status code for which receipts are to be fetched
      * @param workflowAction Work flow action code
      */
-    private void fetchReceipts(final String statusCode, final String workflowAction) {// Get all receipts that are created by
-                                                                                      // currently logged in user from
+    private void fetchReceipts(final String statusCode, final String workflowAction, final User loggedInUser) {// Get all receipts
+                                                                                                               // that
+        // are created by
+        // currently logged in user from
         // his/her current counter and are in SUBMITTED status
-        final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
-        receiptHeaders = receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, position.getId(),
-                        counterId, serviceCode);
+        // final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
+        receiptHeaders = receiptHeaderService.findAllByStatusUserCounterService(statusCode, userName, serviceCode, createdDate,
+                loggedInUser);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
@@ -388,17 +395,17 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return Next page to be displayed (index)
      */
-    public String listSubmit() {
+    public String listSubmit(final User loggedInUser) {
         userName = collectionsUtil.getLoggedInUserName();
         final Location counter = collectionsUtil.getLocationOfUser(getSession());
         if (counter != null)
             counterId = counter.getId();
 
         // In SUBMIT mode fetch receipts for ALL billing services
-        serviceCode = CollectionConstants.ALL;
+        // serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT, loggedInUser);
         return INDEX;
     }
 
@@ -408,7 +415,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return Next page to be displayed (index)
      */
-    public String listApprove() {
+    public String listApprove(final User loggedInUser) {
         if (counterId == null)
             // By default show receipts from all counters
             counterId = -1;
@@ -420,7 +427,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be approved
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, loggedInUser);
 
         // Add counter list and user list to drop down data
         addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
@@ -438,10 +445,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
+        final User loggedInUser = securityUtils.getCurrentUser();
         if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
-            return listApprove();
+            return listApprove(loggedInUser);
         else
-            return listSubmit();
+            return listSubmit(loggedInUser);
     }
 
     /**
@@ -517,5 +525,13 @@ public class CollectionsWorkflowAction extends BaseFormAction {
                 instrumentAmount = instrumentAmount.add(receiptAmount);
             instrumentWiseAmounts.put(instrumentType, instrumentAmount);
         }
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(final String createdDate) {
+        this.createdDate = createdDate;
     }
 }

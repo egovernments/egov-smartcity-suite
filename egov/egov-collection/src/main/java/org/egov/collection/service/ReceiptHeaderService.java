@@ -117,21 +117,27 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * are fetched
      * @return List of all receipts created by given user from given counter id and having given status
      */
-    public List<ReceiptHeader> findAllByStatusUserCounterService(final String statusCode, final Long positionId,
-            final Integer counterId, final String serviceCode) {
+    public List<ReceiptHeader> findAllByStatusUserCounterService(final String statusCode, final String userName,
+            final String serviceCode,
+            final String createdDate, final User loggedInUser) {
         final StringBuilder query = new StringBuilder(
-                "select receipt from org.egov.collection.entity.ReceiptHeader receipt where 1=1");
+                "select receipt from org.egov.erpcollection.models.ReceiptHeader receipt where 1=1");
+        final Position loggedInUserPosition = collectionsUtil.getPositionOfUser(loggedInUser);
 
         final boolean allStatuses = statusCode == null || statusCode.equals(CollectionConstants.ALL);
-        final boolean allCounters = counterId == null || counterId < 0;
-        final boolean allPositions = positionId == null || positionId.equals(CollectionConstants.ALL);
+        final boolean allUsers = userName == null || userName.equals(CollectionConstants.ALL);
         final boolean allServices = serviceCode == null || serviceCode.equals(CollectionConstants.ALL);
+        final boolean allDate = createdDate == null || createdDate.equals(CollectionConstants.ALL);
 
         int argCount = 0;
         argCount += allStatuses ? 0 : 1;
-        argCount += allCounters ? 0 : 1;
-        argCount += allPositions ? 0 : 1;
+        argCount += allUsers ? 0 : 1;
         argCount += allServices ? 0 : 1;
+        argCount += allDate ? 0 : 1;
+
+        if (statusCode.equals(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED))
+            argCount++;
+
         final Object arguments[] = new Object[argCount];
 
         argCount = 0;
@@ -140,19 +146,29 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             arguments[argCount++] = statusCode;
         }
 
-        if (!allPositions) {
-            query.append(" and receipt.state.ownerPosition.id = ?");
-            arguments[argCount++] = positionId;
-        }
-
-        if (!allCounters) {
-            query.append(" and receipt.location.id = ?");
-            arguments[argCount++] = counterId;
+        if (!allUsers) {
+            query.append(" and receipt.createdBy.userName = ?");
+            arguments[argCount++] = userName;
         }
 
         if (!allServices) {
             query.append(" and receipt.service.code = ?");
             arguments[argCount++] = serviceCode;
+        }
+        if (statusCode.equals(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED)) {
+            query.append(" and receipt.state.owner.name = ?");
+            arguments[argCount++] = loggedInUserPosition.getName();
+        }
+
+        if (!allDate) {
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            query.append(" and trunc(receipt.createdDate) = ?");
+            try {
+                arguments[argCount++] = sdf.parse(createdDate);
+            } catch (final ParseException e) {
+                LOGGER.error("Exception occured while parsing receipt created date", e);
+                e.printStackTrace();
+            }
         }
 
         query.append(" order by receipt.createdDate desc");
@@ -361,12 +377,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (receiptHeader.getState() == null) {
             Position position = null;
-            if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy())) {
+            if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))
                 position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc()
                         .getBoundary());
-            } else
+            else
                 position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
-            receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getUsername()+"::"+receiptHeader.getCreatedBy().getName())
+            receiptHeader.transition().start()
+            .withSenderName(receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
             .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
             .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
             .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -375,13 +392,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         LOGGER.debug("Workflow state transition complete");
         if (receiptBulkUpload) {
             // transition the receipt header workflow to Approved state
-            receiptHeader.transition().withSenderName(receiptHeader.getCreatedBy().getUsername()+"::"+receiptHeader.getCreatedBy().getName())
+            receiptHeader.transition()
+            .withSenderName(receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
             .withComments("Approval of Data Migration Receipt Complete")
             .withStateValue(CollectionConstants.WF_ACTION_APPROVE)
             .withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy()))
             .withDateInfo(new Date());
             // End the Receipt header workflow
-            receiptHeader.transition().end().withSenderName(receiptHeader.getCreatedBy().getUsername()+"::"+receiptHeader.getCreatedBy().getName())
+            receiptHeader.transition().end()
+            .withSenderName(receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
             .withComments("Data Migration Receipt Approved - Workflow ends")
             .withStateValue(CollectionConstants.WF_STATE_END)
             .withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy()))
@@ -1093,13 +1112,21 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
                             .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                     voucherHeaderCheque.getId(), instrumentHeader.getId());
-                    contraJournalVoucher.transition(true).start()
-                    .withSenderName(contraJournalVoucher.getCreatedBy().getUsername()+"::"+contraJournalVoucher.getCreatedBy().getName())
-                    .withComments(CollectionConstants.WF_STATE_NEW)
-                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                    contraJournalVoucher.transition(true).withSenderName(contraJournalVoucher.getCreatedBy().getUsername()+"::"+contraJournalVoucher.getCreatedBy().getName())
-                    .withComments(voucherWorkflowMsg)
-                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                    contraJournalVoucher
+                    .transition(true)
+                    .start()
+                    .withSenderName(
+                            contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                    + contraJournalVoucher.getCreatedBy().getName())
+                                    .withComments(CollectionConstants.WF_STATE_NEW)
+                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                    contraJournalVoucher
+                    .transition(true)
+                    .withSenderName(
+                            contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                    + contraJournalVoucher.getCreatedBy().getName())
+                                    .withComments(voucherWorkflowMsg)
+                                    .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
                 }
             }
 
@@ -1117,12 +1144,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 final ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService
                         .findByNamedQuery(CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID,
                                 voucherHeaderCash.getId(), instrumentHeader.getId());
-                contraJournalVoucher.transition(true).start()
-                .withSenderName(contraJournalVoucher.getCreatedBy().getUsername()+"::"+contraJournalVoucher.getCreatedBy().getName()).withComments("Voucher Created")
-                .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-                contraJournalVoucher.transition(true).transition()
-                .withSenderName(contraJournalVoucher.getCreatedBy().getUsername()+"::"+contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg)
-                .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                contraJournalVoucher
+                .transition(true)
+                .start()
+                .withSenderName(
+                        contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                + contraJournalVoucher.getCreatedBy().getName()).withComments("Voucher Created")
+                                .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+                contraJournalVoucher
+                .transition(true)
+                .transition()
+                .withSenderName(
+                        contraJournalVoucher.getCreatedBy().getUsername() + "::"
+                                + contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg)
+                                .withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
             }
     }
 
@@ -1202,17 +1237,21 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void endReceiptWorkFlowOnCancellation(final ReceiptHeader receiptHeaderToBeCancelled) {
         // End work-flow for the cancelled receipt
         Position position = null;
-        if (!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy())) {
+        if (!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy()))
             position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeaderToBeCancelled
                     .getReceiptMisc().getBoundary());
-        } else
+        else
             position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
 
         if (position != null)
-            receiptHeaderToBeCancelled.transition(true).end()
-            .withSenderName(receiptHeaderToBeCancelled.getCreatedBy().getUsername()+"::"+receiptHeaderToBeCancelled.getCreatedBy().getName())
-            .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-            .withOwner(position).withDateInfo(new Date());
+            receiptHeaderToBeCancelled
+            .transition(true)
+            .end()
+            .withSenderName(
+                    receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
+                            + receiptHeaderToBeCancelled.getCreatedBy().getName())
+                            .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                            .withOwner(position).withDateInfo(new Date());
     }
 
     /**
@@ -1459,8 +1498,11 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 operatorPosition = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
                 employee = employeeService.getEmployeeById(receiptHeader.getCreatedBy().getId());
             }
-            final Department department = departmentService.getDepartmentByName(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER));
-            final Designation designation = designationService.getDesignationByName(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+            final Department department = departmentService.getDepartmentByName(collectionsUtil.getAppConfigValue(
+                    CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                    CollectionConstants.COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER));
+            final Designation designation = designationService.getDesignationByName(collectionsUtil.getAppConfigValue(
+                    CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
             Boundary boundary = null;
             for (final Jurisdiction jur : employee.getJurisdictions())
                 boundary = jur.getBoundary();
@@ -1489,11 +1531,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
-            receiptHeader.transition().end().withSenderName(receiptHeader.getCreatedBy().getUsername()+"::"+receiptHeader.getCreatedBy().getName())
+            receiptHeader.transition().end()
+            .withSenderName(receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
             .withComments("Receipt Approved - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
             .withOwner(ownerPosition).withDateInfo(new Date());
         else
-            receiptHeader.transition().withSenderName(receiptHeader.getCreatedBy().getUsername()+"::"+receiptHeader.getCreatedBy().getName()).withComments(remarks)
+            receiptHeader.transition()
+            .withSenderName(receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .withComments(remarks)
             .withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
             .withNextAction(nextAction);
         getSession().flush();

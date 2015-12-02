@@ -459,9 +459,15 @@ public class ReceiptHeader extends StateAware implements Auditable {
      */
     @Override
     public String myLinkId() {
-        return getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        final StringBuilder linkId = new StringBuilder();
+
+        linkId.append(getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
                 + CollectionConstants.SEPARATOR_HYPHEN + getCreatedBy().getUsername()
-                + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId());
+                + CollectionConstants.SEPARATOR_HYPHEN + sdf.format(getCreatedDate())
+                + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId()));
+
+        return linkId.toString();
     }
 
     /**
@@ -731,7 +737,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 }
