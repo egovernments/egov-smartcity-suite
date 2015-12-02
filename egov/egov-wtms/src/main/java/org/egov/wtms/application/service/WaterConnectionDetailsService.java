@@ -32,6 +32,8 @@ package org.egov.wtms.application.service;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +62,9 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
@@ -98,6 +103,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -174,6 +180,10 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
+    
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -366,7 +376,7 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails updateWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, String additionalRule,
-            final String workFlowAction, final String mode) throws ValidationException {
+            final String workFlowAction, final String mode, final ReportOutput reportOutput) throws ValidationException {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
         if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
@@ -416,6 +426,15 @@ public class WaterConnectionDetailsService {
             updateIndexes(waterConnectionDetails);
         }
 
+        //Setting FileStoreMap object object while Commissioner Sign's the document   
+        if(workFlowAction != null && workFlowAction.equalsIgnoreCase(WaterTaxConstants.SIGNWORKFLOWACTION) && reportOutput != null) {
+            final String fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
+            InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+                    WaterTaxConstants.FILESTORE_MODULECODE);
+            waterConnectionDetails.setFileStore(fileStore);
+        }
+        
         WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
@@ -520,6 +539,13 @@ public class WaterConnectionDetailsService {
             } else if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                        WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNUPDATED, WaterTaxConstants.MODULETYPE));
+
+                updateIndexes(waterConnectionDetails);
+            }
+            else if (waterConnectionDetails.getStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNUPDATED)) {
+                waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_WOGENERATED, WaterTaxConstants.MODULETYPE));
 
                 updateIndexes(waterConnectionDetails);
@@ -547,7 +573,14 @@ public class WaterConnectionDetailsService {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED, WaterTaxConstants.MODULETYPE));
                     updateIndexes(waterConnectionDetails);
-                } else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED.equalsIgnoreCase(waterConnectionDetails
+                } 
+                else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED.equalsIgnoreCase(waterConnectionDetails
+                        .getStatus().getCode()) && waterConnectionDetails.getCloseConnectionType() != null) {
+                    waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                            WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNUPDATED, WaterTaxConstants.MODULETYPE));
+
+                    updateIndexes(waterConnectionDetails);
+                }else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNUPDATED.equalsIgnoreCase(waterConnectionDetails
                         .getStatus().getCode()) && waterConnectionDetails.getCloseConnectionType() != null) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED, WaterTaxConstants.MODULETYPE));
@@ -582,6 +615,15 @@ public class WaterConnectionDetailsService {
                         }
 
                         else if (WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED
+                                .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                                && waterConnectionDetails.getCloseConnectionType().equals(
+                                        WaterTaxConstants.TEMPERARYCLOSECODE)) {
+                            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                                    WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNUPDATED,
+                                    WaterTaxConstants.MODULETYPE));
+                            updateIndexes(waterConnectionDetails);
+                        }
+                        else if (WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNUPDATED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                                 && waterConnectionDetails.getCloseConnectionType().equals(
                                         WaterTaxConstants.TEMPERARYCLOSECODE)) {
@@ -623,8 +665,17 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
                             || waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNUPDATED)
+                            || waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNUPDATED)
+                            || waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNUPDATED)
+                            || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED)
                             || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                            && waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED) || workFlowAction
+                                     .equals(WFLOW_ACTION_STEP_REJECT)
                             && waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED) || workFlowAction
                             .equals(WFLOW_ACTION_STEP_REJECT)
@@ -695,6 +746,8 @@ public class WaterConnectionDetailsService {
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+                                                         || waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNUPDATED)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)
                             || waterConnectionDetails.getStatus().getCode()
@@ -703,6 +756,8 @@ public class WaterConnectionDetailsService {
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
+                            ||waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNUPDATED)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                             || waterConnectionDetails.getStatus().getCode()
@@ -711,6 +766,8 @@ public class WaterConnectionDetailsService {
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)
+                            || waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNUPDATED)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
                             || waterConnectionDetails.getStatus().getCode()
@@ -910,4 +967,10 @@ public class WaterConnectionDetailsService {
         }
         return "[]";
 	}
+
+	@Transactional
+    public WaterConnectionDetails updateWaterConnectionDetailsWithFileStore(final WaterConnectionDetails waterConnectionDetails) {
+        WaterConnectionDetails upadtedWaterConnectionDetails = entityManager.merge(waterConnectionDetails);
+        return upadtedWaterConnectionDetails;
+    }
 }

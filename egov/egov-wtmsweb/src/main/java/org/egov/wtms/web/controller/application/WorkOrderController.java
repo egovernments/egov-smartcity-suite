@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -58,6 +59,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -86,15 +88,21 @@ public class WorkOrderController {
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
     String errorMessage = "";
-
+    private String workFlowAction = "";
     @Autowired
     private WaterConnectionDetailsService wcdService;
-
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+    
     @RequestMapping(value = "/workorder", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
             final HttpSession session) {
         final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(request.getParameter("pathVar"));
-        validateWorkOrder(connectionDetails, true);
+        workFlowAction = (String)session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
+        if (null != workFlowAction && !workFlowAction.isEmpty() && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
+            validateWorkOrder(connectionDetails, true);
+        }
         if (!errorMessage.isEmpty())
             return redirect();
         return generateReport(connectionDetails, session);
@@ -126,8 +134,21 @@ public class WorkOrderController {
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
-            reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
-            reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+            if(null != workFlowAction) {
+                if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
+                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
+                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                }
+                if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
+                    reportParams.put("workorderdate", "");
+                    reportParams.put("workorderno", "");
+                }
+                if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
+                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
+                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                }
+            }
+            
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
