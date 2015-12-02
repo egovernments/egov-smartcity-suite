@@ -54,70 +54,73 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ConsumerIndexService {
 
-    @Autowired
-    private CityService cityService;
+	@Autowired
+	private CityService cityService;
 
-    @Autowired
-    private BoundaryService boundaryService;
+	@Autowired
+	private BoundaryService boundaryService;
 
-    @Indexing(name = Index.WATERCHARGES, type = IndexType.CONNECTIONSEARCH)
-    public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
-            final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
+	@Indexing(name = Index.WATERCHARGES, type = IndexType.CONNECTIONSEARCH)
+	public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
+			final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
 
-        String mobileNumber = null;
-        Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
-        if (ownerNameItr != null && ownerNameItr.hasNext())
-            mobileNumber = ownerNameItr.next().getMobileNumber();
+		String mobileNumber = null;
+		Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+		if (ownerNameItr != null && ownerNameItr.hasNext())
+			mobileNumber = ownerNameItr.next().getMobileNumber();
 
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
 
-        final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
-                .getConsumerCode(), mobileNumber, waterConnectionDetails.getUsageType().getName(), cityWebsite.getName(),
-                waterConnectionDetails.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
-                cityWebsite.getGrade());
+		final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
+				.getConsumerCode(), mobileNumber, waterConnectionDetails.getUsageType().getName(), cityWebsite.getName(),
+				waterConnectionDetails.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
+				cityWebsite.getGrade());
 
-        consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
-        consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
-        consumerSearch.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
-        consumerSearch.setDoorno(assessmentDetails.getHouseNo());
-        consumerSearch.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue());
-        consumerSearch.setIslegacy(waterConnectionDetails.getLegacy());
-        consumerSearch.setClosureType(waterConnectionDetails.getCloseConnectionType());
-        consumerSearch.setLocality(assessmentDetails.getBoundaryDetails().getLocalityName() != null ? assessmentDetails
-                .getBoundaryDetails().getLocalityName() : "");
-        consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
-        consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
-        consumerSearch.setStatus(waterConnectionDetails.getConnectionStatus().name());
-        consumerSearch.setConnectionType(waterConnectionDetails.getConnectionType().name());
-        consumerSearch.setWaterTaxDue(amountTodisplayInIndex);
-        consumerSearch.setWaterSourceType(waterConnectionDetails.getWaterSource().getWaterSourceType());
-        consumerSearch.setPropertyType(waterConnectionDetails.getPropertyType().getName());
-        consumerSearch.setCategory(waterConnectionDetails.getCategory().getName());
-        consumerSearch.setSumpCapacity(waterConnectionDetails.getSumpCapacity());
-        consumerSearch.setPipeSize(waterConnectionDetails.getPipeSize().getCode());
-        consumerSearch.setNumberOfPerson(waterConnectionDetails.getNumberOfPerson());
-        consumerSearch.setPropertyLocation(new GeoPoint(assessmentDetails.getLatitude(), assessmentDetails.getLongitude()));
+		consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
+		consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
+		consumerSearch.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
+		consumerSearch.setDoorno(assessmentDetails.getHouseNo());
+		consumerSearch.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue());
+		consumerSearch.setIslegacy(waterConnectionDetails.getLegacy());
+		consumerSearch.setClosureType(waterConnectionDetails.getCloseConnectionType());
+		consumerSearch.setLocality(assessmentDetails.getBoundaryDetails().getLocalityName() != null ? assessmentDetails
+				.getBoundaryDetails().getLocalityName() : "");
+		consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
+		consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
+		consumerSearch.setStatus(waterConnectionDetails.getConnectionStatus().name());
+		consumerSearch.setConnectionType(waterConnectionDetails.getConnectionType().name());
+		consumerSearch.setWaterTaxDue(amountTodisplayInIndex);
+		consumerSearch.setWaterSourceType(waterConnectionDetails.getWaterSource().getWaterSourceType());
+		consumerSearch.setPropertyType(waterConnectionDetails.getPropertyType().getName());
+		consumerSearch.setCategory(waterConnectionDetails.getCategory().getName());
+		consumerSearch.setSumpCapacity(waterConnectionDetails.getSumpCapacity());
+		consumerSearch.setPipeSize(waterConnectionDetails.getPipeSize().getCode());
+		consumerSearch.setNumberOfPerson(waterConnectionDetails.getNumberOfPerson()); 
+		if(assessmentDetails.getLatitude() != 0.0 && assessmentDetails.getLongitude() != 0.0)
+			consumerSearch.setPropertyLocation(new GeoPoint(assessmentDetails.getLatitude(), assessmentDetails.getLongitude()));
 
-        Boundary adminBoundary = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
+		if (assessmentDetails.getBoundaryDetails().getAdminWardId() != null) {
+			Boundary adminBoundary = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
 
-        if (adminBoundary.getLatitude() != null && adminBoundary.getLongitude() != null) {
-            consumerSearch.setWardLocation(new GeoPoint(adminBoundary.getLatitude(), adminBoundary.getLongitude()));
-        }
+			if (adminBoundary.getLatitude() != null && adminBoundary.getLongitude() != null) {
+				consumerSearch.setWardLocation(new GeoPoint(adminBoundary.getLatitude(), adminBoundary.getLongitude()));
+			}
+		}
 
-        ownerNameItr = assessmentDetails.getOwnerNames().iterator();
-        if (ownerNameItr.hasNext()) {
-            final OwnerName ownerName = ownerNameItr.next();
-            consumerSearch.setConsumerName(ownerName.getOwnerName());
-            consumerSearch.setAadhaarNumber(ownerName.getAadhaarNumber() != null ? ownerName.getAadhaarNumber() : "");
-            while (ownerNameItr.hasNext()) {
-                final OwnerName multipleOwner = ownerNameItr.next();
-                consumerSearch.setConsumerName(consumerSearch.getConsumerName().concat(
-                        ",".concat(multipleOwner.getOwnerName())));
-                consumerSearch.setAadhaarNumber(consumerSearch.getAadhaarNumber().concat(
-                        ",".concat(multipleOwner.getAadhaarNumber() != null ? multipleOwner.getAadhaarNumber() : "")));
-            }
+		ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+		if (ownerNameItr.hasNext()) {
+			final OwnerName ownerName = ownerNameItr.next();
+			consumerSearch.setConsumerName(ownerName.getOwnerName());
+			consumerSearch.setAadhaarNumber(ownerName.getAadhaarNumber() != null ? ownerName.getAadhaarNumber() : "");
+			while (ownerNameItr.hasNext()) {
+				final OwnerName multipleOwner = ownerNameItr.next();
+				consumerSearch.setConsumerName(consumerSearch.getConsumerName().concat(
+						",".concat(multipleOwner.getOwnerName())));
+				consumerSearch.setAadhaarNumber(consumerSearch.getAadhaarNumber().concat(
+						",".concat(multipleOwner.getAadhaarNumber() != null ? multipleOwner.getAadhaarNumber() : "")));
+			}
 
-        }
-        return consumerSearch;
-    }
+		}
+		return consumerSearch;
+	}
 }
