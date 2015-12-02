@@ -47,6 +47,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
@@ -215,8 +216,10 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent,
                 addConnection.getApplicationType().getCode(), workFlowAction);
+        Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
+        String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
         final String pathVars = addConnection.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverUserName(approvalPosition);
+                + waterTaxUtils.getApproverUserName(approvalPosition)+ "," +currentUserDesgn;
         return "redirect:/application/application-success?pathVars=" + pathVars;
     }
 

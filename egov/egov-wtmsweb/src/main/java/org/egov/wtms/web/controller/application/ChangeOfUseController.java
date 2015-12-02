@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
@@ -209,8 +210,10 @@ public class ChangeOfUseController extends GenericConnectionController {
         changeOfUse.setApplicationDate(new Date());
         changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
                 changeOfUse.getApplicationType().getCode(), workFlowAction);
+        Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
+        String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
         final String pathVars = changeOfUse.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverUserName(approvalPosition);
+                + waterTaxUtils.getApproverUserName(approvalPosition)+ "," +currentUserDesgn;
         return "redirect:/application/application-success?pathVars=" + pathVars;
     }
 

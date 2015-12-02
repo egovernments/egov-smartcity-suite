@@ -47,6 +47,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -203,8 +204,10 @@ public class CloserConnectionController extends GenericConnectionController {
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
                 waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
+        Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
+        String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverUserName(approvalPosition);
+                + waterTaxUtils.getApproverUserName(approvalPosition)+ "," +currentUserDesgn;
         return "redirect:/application/application-success?pathVars=" + pathVars;
 
     }
