@@ -64,7 +64,6 @@ function onSubmit(obj){
 				</tr>  
 				<s:iterator var="p" value="serviceCategoryList">  
 	            <tr>  
-					<s:hidden name="id" value="%{id}"/> 
 					<s:if test="name != null">								
 					<td class="blueborderfortd">
 					<div align="center">  

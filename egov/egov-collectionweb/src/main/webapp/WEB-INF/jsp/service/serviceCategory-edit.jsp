@@ -67,7 +67,7 @@ function onSubmit(obj){
 	 		
 	 		<div class="buttonbottom">
 	 			<s:submit name="button1" cssClass="buttonsubmit" id="button32" onclick="return onSubmit('serviceCategory-save.action');" value="Save"/>
-				<input name="button2" type="button" class="buttonsubmit" id="button" onclick="return onSubmit('serviceCategory-list.action');" value="List"/>
+				<input name="button2" type="submit" class="buttonsubmit" id="button" onclick="return onSubmit('serviceCategory-list.action');" value="List"/>
 				<s:reset name="button3" cssClass="button" id="button" value="Reset"/>
 				<input name="button4" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 			</div>
