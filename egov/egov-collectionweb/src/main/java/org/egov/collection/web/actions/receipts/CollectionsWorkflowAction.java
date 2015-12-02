@@ -48,6 +48,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.security.terminal.model.Location;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -146,6 +147,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     @Autowired
     private SecurityUtils securityUtils;
+    private String inboxItemDetails;
+    
+    public String getInboxItemDetails() {
+        return inboxItemDetails;
+    }
 
     /**
      * The date for which the receipt list was created.
@@ -168,6 +174,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             setCreatedDate(params[3]);
             setCounterId(Integer.valueOf(params[4]));
         }
+        this.inboxItemDetails = inboxItemDetails;
     }
 
     /**
@@ -371,14 +378,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param statusCode Status code for which receipts are to be fetched
      * @param workflowAction Work flow action code
      */
-    private void fetchReceipts(final String statusCode, final String workflowAction, final User loggedInUser) {// Get all receipts
+    private void fetchReceipts(final String statusCode, final String workflowAction) {// Get all receipts
                                                                                                                // that
         // are created by
         // currently logged in user from
         // his/her current counter and are in SUBMITTED status
-        // final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
-        receiptHeaders = receiptHeaderService.findAllByStatusUserCounterService(statusCode, userName, serviceCode, createdDate,
-                loggedInUser);
+        final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
+        receiptHeaders = receiptHeaderService
+                .findAllByStatusUserCounterService(statusCode, position.getId(),inboxItemDetails);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
@@ -395,8 +402,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return Next page to be displayed (index)
      */
-    public String listSubmit(final User loggedInUser) {
-        userName = collectionsUtil.getLoggedInUserName();
+    public String listSubmit() {
         final Location counter = collectionsUtil.getLocationOfUser(getSession());
         if (counter != null)
             counterId = counter.getId();
@@ -405,7 +411,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT, loggedInUser);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
         return INDEX;
     }
 
@@ -415,7 +421,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return Next page to be displayed (index)
      */
-    public String listApprove(final User loggedInUser) {
+    public String listApprove() {
         if (counterId == null)
             // By default show receipts from all counters
             counterId = -1;
@@ -427,7 +433,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be approved
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, loggedInUser);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE);
 
         // Add counter list and user list to drop down data
         addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getCollectionServiceList());
@@ -445,11 +451,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
-        final User loggedInUser = securityUtils.getCurrentUser();
         if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
-            return listApprove(loggedInUser);
+            return listApprove();
         else
-            return listSubmit(loggedInUser);
+            return listSubmit();
     }
 
     /**

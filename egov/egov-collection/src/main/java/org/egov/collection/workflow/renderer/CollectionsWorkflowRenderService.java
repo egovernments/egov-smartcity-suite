@@ -75,28 +75,21 @@ public class CollectionsWorkflowRenderService extends
      * @return Workflow items (receipt headers) grouped by service + counter + user
      */
     private List<ReceiptHeader> getGroupedWorkflowItems(List<ReceiptHeader> allItems) {
-        HashMap<String, ReceiptHeader> assignedItems = new HashMap<String, ReceiptHeader>();
+        List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<ReceiptHeader>();
+        HashMap<String, Integer> assignedItems = new HashMap<String, Integer>();
         for (StateAware nextItem : allItems) {
             if (nextItem instanceof ReceiptHeader) {
                 ReceiptHeader nextReceipt = (ReceiptHeader) nextItem;
-                String nextReceiptStatus = nextReceipt.getStatus().getCode();
                 String groupingCriteria = nextReceipt.myLinkId();
-                ReceiptHeader assignedItem = assignedItems.get(groupingCriteria);
-                if (assignedItem == null
-                        && (nextReceiptStatus.equals(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED) || nextReceiptStatus
-                                .equals(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED)
-                                || nextReceipt.getStatus().getCode()
-                                        .equals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLATION_CHECKED)
-                                || nextReceipt.getStatus().getCode()
-                                        .equals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLATION_CREATED)
-                                || nextReceipt.getStatus().getCode()
-                                        .equals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLATION_REJECTED))) {
+                if (assignedItems.get(groupingCriteria) == null) {
                     // Group not created yet. Create it.
-                    assignedItems.put(groupingCriteria, nextReceipt);
+                    receiptHeaderPerGroup.add(nextReceipt);
+                    assignedItems.put(groupingCriteria, 1);
+
                 }
             }
         }
-        return new ArrayList<ReceiptHeader>(assignedItems.values());
+        return receiptHeaderPerGroup;
     }
 
     @Override

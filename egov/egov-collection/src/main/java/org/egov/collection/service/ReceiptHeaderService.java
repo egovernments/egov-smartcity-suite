@@ -117,63 +117,96 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * are fetched
      * @return List of all receipts created by given user from given counter id and having given status
      */
-    public List<ReceiptHeader> findAllByStatusUserCounterService(final String statusCode, final String userName,
-            final String serviceCode,
-            final String createdDate, final User loggedInUser) {
+    public List<ReceiptHeader> findAllByStatusUserCounterService(final String statusCode , final Long positionId,final String groupingCriteria) {
         final StringBuilder query = new StringBuilder(
-                "select receipt from org.egov.erpcollection.models.ReceiptHeader receipt where 1=1");
-        final Position loggedInUserPosition = collectionsUtil.getPositionOfUser(loggedInUser);
-
+                "from org.egov.collection.entity.ReceiptHeader where 1=1");
+        String wfAction = null,serviceCode = null,receiptDate = null,userName = null;
+        Integer counterId = null;
+        final String params[] = groupingCriteria.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
+        if (params.length == 5) {
+             wfAction = params[0];
+             serviceCode = params[1];
+             userName = params[2];
+             receiptDate = params[3];
+             counterId = Integer.valueOf(params[4]);
+        }
         final boolean allStatuses = statusCode == null || statusCode.equals(CollectionConstants.ALL);
-        final boolean allUsers = userName == null || userName.equals(CollectionConstants.ALL);
+        final boolean allCounters = counterId == null || counterId < 0;
+        final boolean allPositions = positionId == null || positionId.equals(CollectionConstants.ALL);
         final boolean allServices = serviceCode == null || serviceCode.equals(CollectionConstants.ALL);
-        final boolean allDate = createdDate == null || createdDate.equals(CollectionConstants.ALL);
+   //     final boolean allDate = receiptDate == null || receiptDate.equals(CollectionConstants.ALL);
+        final boolean allWfAction = wfAction == null || wfAction.equals(CollectionConstants.ALL);
+        final boolean allUserName = userName == null || userName.equals(CollectionConstants.ALL);
 
         int argCount = 0;
         argCount += allStatuses ? 0 : 1;
-        argCount += allUsers ? 0 : 1;
+        argCount += allCounters ? 0 : 1;
+        argCount += allPositions ? 0 : 1;
         argCount += allServices ? 0 : 1;
-        argCount += allDate ? 0 : 1;
-
-        if (statusCode.equals(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED))
-            argCount++;
-
-        final Object arguments[] = new Object[argCount];
+        //argCount += allDate ? 0 : 1;
+        argCount += allWfAction ? 0 : 1;
+        argCount += allUserName ? 0 : 1;
 
         argCount = 0;
         if (!allStatuses) {
-            query.append(" and receipt.status.code = ?");
-            arguments[argCount++] = statusCode;
+            query.append(" and status.code = :statusCode");
         }
 
-        if (!allUsers) {
-            query.append(" and receipt.createdBy.userName = ?");
-            arguments[argCount++] = userName;
+        if (!allPositions) {
+            query.append(" and state.ownerPosition.id = :positionId");
+        }
+
+        if (!allCounters) {
+            query.append(" and location.id = :counterId");
         }
 
         if (!allServices) {
-            query.append(" and receipt.service.code = ?");
-            arguments[argCount++] = serviceCode;
+            query.append(" and service.code = :serviceCode");
         }
-        if (statusCode.equals(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED)) {
-            query.append(" and receipt.state.owner.name = ?");
-            arguments[argCount++] = loggedInUserPosition.getName();
+        if (!allWfAction) {
+            query.append(" and state.nextAction = :wfAction");
+        }
+        if (!allUserName) {
+            query.append(" and createdBy.username = :userName");
+        }
+       /* if (!allDate) {
+            query.append(" and receiptdate = :receiptDate");
+        }*/
+        query.append(" order by createdDate desc");
+        Query listQuery = getSession().createQuery(query.toString());
+        if (!allStatuses) {
+            listQuery.setString("statusCode",statusCode);
         }
 
-        if (!allDate) {
-            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            query.append(" and trunc(receipt.createdDate) = ?");
+        if (!allPositions) {
+            listQuery.setLong("positionId",positionId);
+        }
+
+        if (!allCounters) {
+            listQuery.setInteger("counterId",counterId);
+        }
+
+        if (!allServices) {
+            listQuery.setString("serviceCode",serviceCode);
+        }
+        if (!allWfAction) {
+            listQuery.setString("wfAction",wfAction);
+        }
+        if (!allUserName) {
+            listQuery.setString("userName",userName);
+        }
+      /*  if (!allDate) {
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             try {
-                arguments[argCount++] = sdf.parse(createdDate);
+                listQuery.setDate("receiptDate",sdf.parse(receiptDate));
             } catch (final ParseException e) {
                 LOGGER.error("Exception occured while parsing receipt created date", e);
                 e.printStackTrace();
             }
-        }
+        }*/
 
-        query.append(" order by receipt.createdDate desc");
-
-        return findAllBy(query.toString(), arguments);
+        
+        return listQuery.list();
     }
 
     /**
