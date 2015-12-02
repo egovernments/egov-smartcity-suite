@@ -116,9 +116,9 @@ function overwritedonation(res)
 	function validateTapExecutionDate() {
 	var formdate= $('#formDate').val();
 	var todaysDate=getTodayDate();
-	if(compareDate(formdate,todaysDate) == 1 || formdate==todaysDate || compareDate(formdate,todaysDate) ==0 )
+	if(compareDate(formdate,todaysDate) == 1  )
 	{		
-		alert('Effective Date should be greater than todays date');
+		alert('Effective Date should not be less than todays date');
 		obj.value="";
 		return false;
 		}
