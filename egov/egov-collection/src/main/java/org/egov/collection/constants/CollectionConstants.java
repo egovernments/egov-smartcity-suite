@@ -114,6 +114,9 @@ public final class CollectionConstants {
     public static final String RECEIPT_STATUS_CODE_FAILED = "FAILED";
     public static final String RECEIPT_STATUS_CODE_PENDING = "PENDING";
     public static final String RECEIPT_STATUS_CODE_REMITTED = "REMITTED";
+    public static final String RECEIPT_STATUS_CODE_CANCELLATION_CREATED = "CANCELLATION_CREATED";
+    public static final String RECEIPT_STATUS_CODE_CANCELLATION_CHECKED = "CANCELLATION_CHECKED";
+    public static final String RECEIPT_STATUS_CODE_CANCELLATION_REJECTED = "CANCELLATION_REJECTED";
 
     // Status descriptions - ideally we should not be using these - to be
     // discussed

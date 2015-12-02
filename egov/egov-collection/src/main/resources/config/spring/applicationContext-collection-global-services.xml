@@ -113,11 +113,10 @@
         <property name="type" value="org.egov.collection.entity.ReceiptHeader" />
     </bean>
     
-    <bean id="ReceiptHeaderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+    <bean id="ReceiptHeaderInboxRenderService" class="org.egov.collection.workflow.renderer.CollectionsWorkflowRenderService">
          <constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
    </bean>
-   
-   	<bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
+   <bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.Challan" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<!-- <property name="challanWorkflowService" ref="challanWorkflowService" /> -->
@@ -157,7 +156,7 @@
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="reconciliationService" ref="reconciliationService" />
 	</bean>
-	
+
 	<bean class="org.egov.collection.integration.services.DishonorChequeService" id="dishonorChequeService" scope="prototype">
 	   <property name="persistenceService" ref="persistenceService" />
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />
