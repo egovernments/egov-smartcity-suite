@@ -335,6 +335,9 @@ function transitionStates(){
 	</s:if>
 </logic:empty>
 </s:form>
+<script type="text/javascript">
+onBodyLoad();
+</script>
 </body>
 
 	

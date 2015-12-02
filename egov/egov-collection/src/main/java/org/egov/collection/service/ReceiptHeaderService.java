@@ -1235,6 +1235,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             receiptHeader.setChallan(challan);
             LOGGER.info("Persisted challan with challan number " + challan.getChallanNumber());
         }
+        getSession().flush();
         return super.persist(receiptHeader);
     }
 
