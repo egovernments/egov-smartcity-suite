@@ -67,22 +67,29 @@ jQuery(document).ready(function() {
 
      jQuery( "#instrumentDate" ).datepicker({ 
          dateFormat: 'dd/mm/yy',
+         maxDate: new Date(),
          beforeShow: function(input) {
              jQuery(this).unbind('blur');
              isDatepickerOpened=true;
 		 },
-         onSelect: function(dateText) {
-        	 //checkForCurrentDate(this);
-     	 },
-     	 onClose: function(dateText, inst){ 
-         	console.log('called!'); 
+       	 onClose: function(dateText, inst){ 
          	isDatepickerOpened=false; 
          	checkForCurrentDate(this);
-         	
         }
-     	
 	  });
 
+     jQuery( "#manualReceiptDate" ).datepicker({ 
+         dateFormat: 'dd/mm/yy',
+         maxDate: new Date(),
+         beforeShow: function(input) {
+             jQuery(this).unbind('blur');
+             isDatepickerOpened=true;
+		 },
+        	 onClose: function(dateText, inst){ 
+         	isDatepickerOpened=false; 
+         	checkForCurrentDate(this);
+        }
+	  });
  });
 
 jQuery(window).load(function () {
@@ -1522,6 +1529,7 @@ function validateManualReceiptDate(obj)
 				  document.getElementById("receipt_dateerror_area").style.display="block";
 			      document.getElementById("receipt_dateerror_area").innerHTML+=
 							'<s:text name="billreceipt.manualreceipt.futuredate.errormessage" />'+'<br/>';
+				  jQuery(obj).val('');
 				  scrolltop();
 				  return false;
 			  }
