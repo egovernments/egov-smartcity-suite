@@ -141,6 +141,7 @@ public class ApiFilter implements Filter {
 
     private boolean validateRequest(final MultiReadHttpServletRequest httpServletRequest) {
         final String referer = httpServletRequest.getHeader(HttpHeaders.REFERER);
+        LOG.info("The calling request URL:referer= "+referer);
         final List<String> apOnlineIpAddress = restAPIApplicationProperties.aponlineIPAddress();
         final List<String> esevaIpAddress = restAPIApplicationProperties.esevaIPAddress();
         if (apOnlineIpAddress != null && referer != null)
