@@ -139,9 +139,10 @@ public class SearchReceiptAction extends SearchFormAction {
         setPage(1);
         serviceTypeId = -1;
         counterId = -1;
+        userId = (long) -1;
         receiptNumber = "";
         fromDate = null;
-        toDate = null;
+        toDate = null; 
         instrumentType = "";
         searchStatus = -1;
         return SUCCESS;
