@@ -79,6 +79,7 @@ import org.egov.portal.entity.CitizenInboxBuilder;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
 import org.egov.portal.service.CitizenInboxService;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -171,6 +172,10 @@ public class ComplaintService {
             } catch (final Exception e) {
                 throw new ValidationException("gis.location.info.not.found");
             }
+            
+        if (complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
+            complaint.setComplaintLocation(new GeoPoint(complaint.getLat(), complaint.getLng()));
+        }
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
@@ -186,8 +191,7 @@ public class ComplaintService {
             complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        complaint.setUlb(cityWebsite.getName());
-        complaint.setDistrict(cityWebsite.getDistrictName());
+        complaint.setCitydetails(cityWebsite);
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
         sendEmailandSms(complaint);
@@ -250,8 +254,7 @@ public class ComplaintService {
                         .withOwner(complaint.getState().getOwnerPosition());
         }
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        complaint.setUlb(cityWebsite.getName());
-        complaint.setDistrict(cityWebsite.getDistrictName());
+        complaint.setCitydetails(cityWebsite);
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())

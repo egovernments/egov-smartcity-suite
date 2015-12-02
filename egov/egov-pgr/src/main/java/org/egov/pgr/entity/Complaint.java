@@ -62,6 +62,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -70,6 +71,7 @@ import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -172,12 +174,8 @@ public class Complaint extends StateAware {
      */
     @Searchable(group = Searchable.Group.CLAUSES)
     @Transient
-    private String ulb;
-
-    @Searchable(group = Searchable.Group.CLAUSES)
-    @Transient
-    private String district;
-
+    private City citydetails;
+    
     @Searchable
     @Transient
     private String zone;
@@ -199,11 +197,11 @@ public class Complaint extends StateAware {
     @Searchable
     @Transient
     private String durationRange;
-
+    
+    
     @Transient
-    public String getUlb() {
-        return ulb;
-    }
+    @Searchable(name = "complaintLocation", group = Searchable.Group.COMMON)
+    private transient GeoPoint complaintLocation;
 
     @Transient
     private Long crossHierarchyId;
@@ -347,18 +345,6 @@ public class Complaint extends StateAware {
         this.department = department;
     }
 
-    public void setUlb(final String ulb) {
-        this.ulb = ulb;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public void setDistrict(final String district) {
-        this.district = district;
-    }
-
     public String getZone() {
         return zone;
     }
@@ -406,6 +392,22 @@ public class Complaint extends StateAware {
     public void setDurationRange(final String durationRange) {
         this.durationRange = durationRange;
     }
+
+    public City getCitydetails() {
+        return citydetails;
+    }
+
+    public void setCitydetails(City citydetails) {
+        this.citydetails = citydetails;
+    }
+    public GeoPoint getComplaintLocation() {
+        return complaintLocation;
+    }
+
+    public void setComplaintLocation(GeoPoint complaintLocation) {
+        this.complaintLocation = complaintLocation;
+    }
+
 
     @Override
     public String getStateDetails() {
