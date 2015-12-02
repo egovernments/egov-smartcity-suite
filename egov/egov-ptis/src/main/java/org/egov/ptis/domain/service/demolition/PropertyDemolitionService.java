@@ -1,5 +1,6 @@
 package org.egov.ptis.domain.service.demolition;
 
+import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -11,6 +12,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHO
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_FULL_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
@@ -154,19 +157,27 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-            property.transition(true)
-                    .withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvarComments)
-                    .withStateValue(stateValue)
-                    .withDateInfo(currentDate.toDate())
-                    .withOwner(
-                            assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId())
-                                    .getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
-
+        	Assignment wfInitiator = propService.getWorkflowInitiator(property);
+        	if (wfInitiator.equals(userAssignment)) {
+        		property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                .withComments(approvarComments).withDateInfo(currentDate.toDate());
+        		property.setStatus(STATUS_CANCELLED);
+        		property.getBasicProperty().setUnderWorkflow(FALSE);
+        	}else{
+        		final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
+                property.transition(true)
+                        .withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments)
+                        .withStateValue(stateValue)
+                        .withDateInfo(currentDate.toDate())
+                        .withOwner(
+                                assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId())
+                                        .getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+        	}
         } else {
             if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approverPosition);
