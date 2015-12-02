@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -95,6 +97,12 @@ public class AjaxConnectionController {
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
+    }
+    
+    @RequestMapping(value = "/ajaxconnection/assignmentByPositionId", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalPositionId, 
+    		final HttpServletResponse response) {
+        return   waterConnectionDetailsService.getApprovalPositionOnValidate(approvalPositionId);
     }
 
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -128,6 +128,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
     }
 
+    
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
@@ -162,10 +163,11 @@ public class AdditionalConnectionController extends GenericConnectionController 
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
 
         if (resultBinder.hasErrors()) {
-            final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
-                    .getActiveConnectionDetailsByConnection(addConnection.getConnection());
+        	 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+                     .getActiveConnectionDetailsByConnection(addConnection.getConnection());
             loadBasicDetails(addConnection, model, parentConnectionDetails);
             prepareWorkflow(model,addConnection,new WorkflowContainer());
+            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
             model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
             model.addAttribute("stateType", addConnection.getClass().getSimpleName());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));

@@ -36,6 +36,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +53,8 @@ import javax.validation.ValidationException;
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
@@ -103,6 +106,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Service
 @Transactional(readOnly = true)
@@ -888,4 +895,19 @@ public class WaterConnectionDetailsService {
     }
     }
     }*/
+    public String getApprovalPositionOnValidate(final Long approvalPositionId) {
+		Assignment assignmentObj= null;
+        List<Assignment> assignmentList=new ArrayList<Assignment>();
+        if (approvalPositionId != null && approvalPositionId != 0 && approvalPositionId != -1
+                ) {
+        	assignmentObj = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPositionId, new Date());
+        	assignmentList.add(assignmentObj);
+        	
+            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
+                    .create();
+            return jsonCreator.toJson(assignmentList, new TypeToken<Collection<Assignment>>() {
+            }.getType());
+        }
+        return "[]";
+	}
 }

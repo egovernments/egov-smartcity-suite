@@ -247,6 +247,13 @@ public class WaterConnectionDetails extends StateAware {
 
     @Enumerated(EnumType.STRING)
     private Source source;
+    @Transient
+    private Long approvalDepartment;
+    
+    @Transient
+    private String approvalComent;
+    
+  
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -622,5 +629,24 @@ public class WaterConnectionDetails extends StateAware {
     public void setSource(final Source source) {
         this.source = source;
     }
+
+	public Long getApprovalDepartment() {
+		return approvalDepartment;
+	}
+
+	public void setApprovalDepartment(Long approvalDepartment) {
+		this.approvalDepartment = approvalDepartment;
+	}
+
+	
+
+	public String getApprovalComent() {
+		return approvalComent;
+	}
+
+	public void setApprovalComent(String approvalComent) {
+		this.approvalComent = approvalComent;
+	}
+    
 
 }

@@ -162,8 +162,7 @@ public class NewConnectionController extends GenericConnectionController {
                         waterConnectionDetails.getConnectionType().name()));
         return "newconnection-dataEntryMessage";
     }
-
-    @RequestMapping(value = "/newConnection-create", method = POST)
+   @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
@@ -191,6 +190,7 @@ public class NewConnectionController extends GenericConnectionController {
             prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
             model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
             model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
             return "newconnection-form";
@@ -219,6 +219,7 @@ public class NewConnectionController extends GenericConnectionController {
                 model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
                 prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
                 model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+                model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",

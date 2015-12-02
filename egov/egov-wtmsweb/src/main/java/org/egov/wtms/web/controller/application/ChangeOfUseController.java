@@ -160,6 +160,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
                 loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
                 prepareWorkflow(model,changeOfUse,new WorkflowContainer());
+                model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
                 model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
                 model.addAttribute("validationmessage",resultBinder.getFieldErrors().get(0).getField()+" = "+resultBinder.getFieldErrors().get(0).getDefaultMessage());
                 model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
