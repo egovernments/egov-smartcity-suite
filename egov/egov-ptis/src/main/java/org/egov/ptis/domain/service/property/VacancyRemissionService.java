@@ -202,6 +202,7 @@ public class VacancyRemissionService {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
                 vacancyRemission.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate());
+                vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             final String stateValue = WF_STATE_REJECTED;
@@ -224,15 +225,18 @@ public class VacancyRemissionService {
                 vacancyRemission.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                vacancyRemission.getBasicProperty().setUnderWorkflow(true);
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemission.getStateType(), null, null,
                         additionalRule, vacancyRemission.getCurrentState().getValue(), null);
 
                 if (wfmatrix != null)
-                    if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                    if (wfmatrix.getNextAction().equalsIgnoreCase("END")){
                         vacancyRemission.transition(true).end()
                                 .withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withDateInfo(currentDate.toDate());
+                        vacancyRemission.getBasicProperty().setUnderWorkflow(false);
+                    }
                     else
                         vacancyRemission.transition(false).withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
