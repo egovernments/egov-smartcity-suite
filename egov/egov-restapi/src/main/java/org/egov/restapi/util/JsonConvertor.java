@@ -1,16 +1,10 @@
 package org.egov.restapi.util;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.restapi.constants.RestApiConstants;
-
-import ch.qos.logback.classic.Logger;
 
 public class JsonConvertor {
 	

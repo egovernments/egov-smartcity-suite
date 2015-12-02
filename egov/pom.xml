@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.egov</groupId>
@@ -23,8 +24,8 @@
 		<connection>scm:git:git://github.com/egovernments/eGov.git</connection>
 		<developerConnection>scm:git:git@github.com:egovernments/eGov.git</developerConnection>
 		<url>https://github.com/egovernments/eGov</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<organization>
 		<name>eGovernments Foundation</name>
@@ -70,6 +71,10 @@
 				<enabled>true</enabled>
 			</releases>
 		</repository>
+		<repository>
+			<id>JBoss Repository</id>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -78,23 +83,96 @@
 			<name>eGov Public Repository Group</name>
 			<url>http://repo.egovernments.org/nexus/content/groups/public/</url>
 			<releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	
+
 	<properties>
 		<timestamp>${maven.build.timestamp}</timestamp>
-   		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-		<hibernate-version>4.3.7.Final</hibernate-version>
-		<struts2-version>2.3.24</struts2-version>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.number>${timestamp}</build.number>
 		<app.version>${project.version}</app.version>
+
+		<!-- Application core dependency versions -->
 		<egov-search-version>1.0.2-SNAPSHOT</egov-search-version>
+
+		<!-- Application server provided dependency versions -->
+		<lucene-version>4.10.4</lucene-version>
+		<hibernate-version>4.3.10.Final</hibernate-version>
+		<hibernate-search-version>5.2.0.Final</hibernate-search-version>
+		<hibernate-validator-version>5.1.3.Final</hibernate-validator-version>
+		<javax-validation-version>1.1.0.Final</javax-validation-version>
+		<javax-servlet-api-version>1.0.0.Final</javax-servlet-api-version>
+		<javax-servlet-jstl-version>1.1.2.Final</javax-servlet-jstl-version>
+		<javax-servlet-jsp-version>1.0.1.Final</javax-servlet-jsp-version>
+		<javax-jms-version>1.0.0.Final</javax-jms-version>
+		<javax-mail-version>1.5.3</javax-mail-version>
+		<javax-el-version>3.0.1-b05</javax-el-version>
+		<xerces-version>2.11.0.SP3</xerces-version>
+		<postgres-version>9.3-1102-jdbc41</postgres-version>
+
+		<!-- Other application dependency versions -->
+		<struts2-version>2.3.24</struts2-version>
+		<struts2-jquery-version>3.7.1</struts2-jquery-version>
+		<struts-spring-version>3.2.3.RELEASE</struts-spring-version>
+		<xstream-version>1.4.2</xstream-version>
+		<xpp3-version>1.1.4c</xpp3-version>
+		<struts1-version>1.2.9</struts1-version>
+		<spring-version>4.2.3.RELEASE</spring-version>
+		<spring-data-jpa-version>1.9.1.RELEASE</spring-data-jpa-version>
+		<spring-data-jpa-envers-version>0.3.0.RELEASE</spring-data-jpa-envers-version>
+		<spring-security-version>4.0.3.RELEASE</spring-security-version>
+		<spring-security-oauth2-version>2.0.7.RELEASE</spring-security-oauth2-version>
+		<apache-tiles-version>3.0.5</apache-tiles-version>
+		<quartz-version>2.2.1</quartz-version>
+		<jasper-report-version>6.1.0</jasper-report-version>
+		<json-simple-version>1.1.1</json-simple-version>
+		<jackson-version>2.2.3</jackson-version>
+		<jackson-datatype-joda-version>2.3.1</jackson-datatype-joda-version>
+		<jackson-datatype-hib-version>2.5.1</jackson-datatype-hib-version>
+		<gson-version>2.2.4</gson-version>
+		<antisamy-version>1.5.3</antisamy-version>
+		<jasypt-version>1.9.2</jasypt-version>
+		<display-tag-version>1.2</display-tag-version>
+		<jfreechart-version>1.0.19</jfreechart-version>
+		<groovy-all-version>2.1.7</groovy-all-version>
+		<itext-version>2.1.7</itext-version>
+		<commons-javaflow-version>20060411</commons-javaflow-version>
+		<jexcelapi-version>2.6.10</jexcelapi-version>
+		<commons-beanutils-version>1.8.0</commons-beanutils-version>
+		<commons-config-version>1.10</commons-config-version>
+		<commons-lang-version>2.5</commons-lang-version>
+		<commons-email-version>1.4</commons-email-version>
+		<commons-collections-version>3.2.1</commons-collections-version>
+		<commons-codec-version>1.10</commons-codec-version>
+		<commons-dbcp-version>1.4</commons-dbcp-version>
+		<commons-io-version>2.4</commons-io-version>
+		<httpclient-version>4.5</httpclient-version>
+		<sitemesh-version>2.4.2</sitemesh-version>
+		<ehcache-web-version>2.0.4</ehcache-web-version>
+		<cglib-version>3.1</cglib-version>
+		<asm-all-version>3.3.1</asm-all-version>
+		<joda-time-version>2.7</joda-time-version>
+		<joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
+		<jsoup-version>1.7.3</jsoup-version>
+		<jython-version>2.5.2</jython-version>
+		<flyway-core-version>3.2.1</flyway-core-version>
+		<junit-version>4.11</junit-version>
+		<mockito-all-version>1.10.19</mockito-all-version>
+		<springockito-version>1.0.8</springockito-version>
+		<easymock-version>3.3.1</easymock-version>
+		<easymockclassextension-version>3.2</easymockclassextension-version>
+		<strutstestcase-version>2.1.4-1.2-2.4</strutstestcase-version>
+		<dbunit-version>2.2.3</dbunit-version>
+		<hamcrest-all-version>1.3</hamcrest-all-version>
+		<slf4j-api-version>1.7.7</slf4j-api-version>
+		<jcl-over-slf4j-version>1.7.7</jcl-over-slf4j-version>
+		<log4j-version>1.2.17</log4j-version>
 	</properties>
 
 	<modules>
@@ -179,30 +257,30 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-search-engine</artifactId>
-				<version>5.0.0.Final</version>
+				<version>${hibernate-search-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-search-orm</artifactId>
-				<version>5.0.0.Final</version>
+				<version>${hibernate-search-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
 				<artifactId>lucene-queryparser</artifactId>
-				<version>4.10.2</version>
+				<version>${lucene-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
-				<version>5.1.3.Final</version>
+				<version>${hibernate-validator-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
-				<version>1.1.0.Final</version>
+				<version>${javax-validation-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId> 
@@ -214,37 +292,37 @@
 			<dependency>
 				<groupId>org.jboss.spec.javax.servlet</groupId>
 				<artifactId>jboss-servlet-api_3.1_spec</artifactId>
-				<version>1.0.0.Final</version>
+				<version>${javax-servlet-api-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.spec.javax.servlet.jstl</groupId>
 				<artifactId>jboss-jstl-api_1.2_spec</artifactId>
-				<version>1.1.2.Final</version>
+				<version>${javax-servlet-jstl-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
 				<artifactId>jboss-jsp-api_2.3_spec</artifactId>
-				<version>1.0.1.Final</version>
+				<version>${javax-servlet-jsp-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.spec.javax.jms</groupId>
 				<artifactId>jboss-jms-api_2.0_spec</artifactId>
-				<version>1.0.0.Final</version>
+				<version>${javax-jms-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish</groupId>
 				<artifactId>javax.el</artifactId>
-				<version>3.0.1-b05</version>
+				<version>${javax-el-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>javax.mail</groupId>
 				<artifactId>javax.mail-api</artifactId>
-				<version>1.5.1</version>
+				<version>${javax-mail-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<!-- SERVLET SPEC JBOSS DEPENDENCIES END -->
@@ -304,7 +382,7 @@
 			<dependency>
 				<groupId>com.jgeppert.struts2.jquery</groupId>
 				<artifactId>struts2-jquery-plugin</artifactId>
-				<version>3.7.1</version>
+				<version>${struts2-jquery-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.struts</groupId>
@@ -315,12 +393,12 @@
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
-				<version>1.4.2</version>
+				<version>${xstream-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>xpp3</groupId>
 				<artifactId>xpp3_min</artifactId>
-				<version>1.1.4c</version>
+				<version>${xpp3-version}</version>
 			</dependency>
 			<!-- STRUTS2 DEPENDENCIES END -->
 
@@ -328,7 +406,7 @@
 			<dependency>
 				<groupId>struts</groupId>
 				<artifactId>struts</artifactId>
-				<version>1.2.9</version>
+				<version>${struts1-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>antlr</groupId>
@@ -359,7 +437,7 @@
 			<dependency>
 				<groupId>struts</groupId>
 				<artifactId>struts-el</artifactId>
-				<version>1.2.9</version>
+				<version>${struts1-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>javax.servlet</groupId>
@@ -370,7 +448,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-struts</artifactId>
-				<version>3.2.3.RELEASE</version>
+				<version>${struts-spring-version}</version>
 			</dependency>
 			<!-- STRUTS1 DEPENDENCIES END -->
 
@@ -378,125 +456,52 @@
 			<dependency>
 				<groupId>com.googlecode.json-simple</groupId>
 				<artifactId>json-simple</artifactId>
-				<version>1.1.1</version>
+				<version>${json-simple-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.2.3</version>
+				<version>${jackson-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
-				<version>2.2.3</version>
+				<version>${jackson-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>
 				<artifactId>jackson-datatype-joda</artifactId>
-				<version>2.3.1</version>
+				<version>${jackson-datatype-joda-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>
 				<artifactId>jackson-datatype-hibernate4</artifactId>
-				<version>2.5.1</version>
+				<version>${jackson-datatype-hib-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
-				<version>2.2.4</version>
+				<version>${gson-version}</version>
 			</dependency>
 			<!-- JSON END -->
-
-			<!-- JACKRABBIT START -->
-			<dependency>
-				<groupId>javax.jcr</groupId>
-				<artifactId>jcr</artifactId>
-				<version>2.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.jackrabbit</groupId>
-				<artifactId>jackrabbit-core</artifactId>
-				<version>2.6.2</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-collections</groupId>
-						<artifactId>commons-collections</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>commons-dbcp</groupId>
-						<artifactId>commons-dbcp</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.lucene</groupId>
-						<artifactId>lucene-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.tika</groupId>
-						<artifactId>tika-core</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache</groupId>
-				<artifactId>jackrabbit-ocm</artifactId>
-				<version>2.0.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>cglib</groupId>
-						<artifactId>cglib</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>commons-digester</groupId>
-						<artifactId>commons-digester</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.jackrabbit</groupId>
-				<artifactId>jackrabbit-jca</artifactId>
-				<version>2.6.2</version>
-				<exclusions>
-					<exclusion>
-						<groupId>dom4j</groupId>
-						<artifactId>dom4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.tika</groupId>
-						<artifactId>tika-parsers</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<!-- JACKRABBIT END -->
 
 			<!-- SPRING START -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-framework-bom</artifactId>
-				<version>4.2.0.RELEASE</version>
+				<version>${spring-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.springmodules</groupId>
-				<artifactId>spring-modules-cache</artifactId>
-				<version>0.8a</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springmodules</groupId>
-				<artifactId>spring-modules-jcr</artifactId>
-				<version>0.8a</version>
-			</dependency>
-
-			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-jpa</artifactId>
-				<version>1.8.2.RELEASE</version>
+				<version>${spring-data-jpa-version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-envers</artifactId>
-				<version>0.2.0.RELEASE</version>
+				<version>${spring-data-jpa-envers-version}</version>
 			</dependency>
 			<!-- SPRING END -->
 
@@ -504,32 +509,32 @@
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
-				<version>4.0.2.RELEASE</version>
+				<version>${spring-security-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-acl</artifactId>
-				<version>4.0.2.RELEASE</version>
+				<version>${spring-security-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-web</artifactId>
-				<version>4.0.2.RELEASE</version>
+				<version>${spring-security-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>
-				<version>4.0.2.RELEASE</version>
+				<version>${spring-security-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security.oauth</groupId>
 				<artifactId>spring-security-oauth2</artifactId>
-				<version>2.0.7.RELEASE</version>
+				<version>${spring-security-oauth2-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.owasp.antisamy</groupId>
 				<artifactId>antisamy</artifactId>
-				<version>1.4.3</version>
+				<version>${antisamy-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>xerces</groupId>
@@ -540,13 +545,13 @@
 			<dependency>
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
-				<version>2.8.1</version>
+				<version>${xerces-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.jasypt</groupId>
 				<artifactId>jasypt</artifactId>
-				<version>1.9.2</version>
+				<version>${jasypt-version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<!-- SECURITY END -->
@@ -555,12 +560,12 @@
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
-				<version>2.2.1</version>
+				<version>${quartz-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz-jobs</artifactId>
-				<version>2.2.1</version>
+				<version>${quartz-version}</version>
 			</dependency>
 			<!-- QUARTZ END -->
 
@@ -568,7 +573,7 @@
 			<dependency>
 				<groupId>displaytag</groupId>
 				<artifactId>displaytag</artifactId>
-				<version>1.2</version>
+				<version>${display-tag-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -583,7 +588,7 @@
 			<dependency>
 				<groupId>displaytag</groupId>
 				<artifactId>displaytag-export-poi</artifactId>
-				<version>1.2</version>
+				<version>${display-tag-version}</version>
 			</dependency>
 			<!-- DISPLAYTAG END -->
 
@@ -591,7 +596,7 @@
 			<dependency>
 				<groupId>org.apache.tiles</groupId>
 				<artifactId>tiles-core</artifactId>
-				<version>3.0.5</version>
+				<version>${apache-tiles-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-beanutils</groupId>
@@ -599,17 +604,10 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.tiles</groupId>
 				<artifactId>tiles-jsp</artifactId>
-				<version>3.0.5</version>
-			</dependency>
-
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.8.0</version>
+				<version>${apache-tiles-version}</version>
 			</dependency>
 			<!-- VIEWS RELATED END -->
 
@@ -617,60 +615,65 @@
 			<dependency>
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports-fonts</artifactId>
-				<version>6.1.0</version>
+				<version>${jasper-report-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports-functions</artifactId>
-				<version>6.1.0</version>
+				<version>${jasper-report-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports-javaflow</artifactId>
-				<version>6.1.0</version>
+				<version>${jasper-report-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>
 				<artifactId>jfreechart</artifactId>
-				<version>1.0.19</version>
+				<version>${jfreechart-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.groovy</groupId>
 				<artifactId>groovy-all</artifactId>
-				<version>2.1.7</version>
+				<version>${groovy-all-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.lowagie</groupId>
 				<artifactId>itext</artifactId>
-				<version>2.1.7</version>
+				<version>${itext-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-javaflow</groupId>
 				<artifactId>commons-javaflow</artifactId>
-				<version>20060411</version>
+				<version>${commons-javaflow-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sourceforge.jexcelapi</groupId>
 				<artifactId>jxl</artifactId>
-				<version>2.6.10</version>
+				<version>${jexcelapi-version}</version>
 			</dependency>
 			<!-- REPORTS END -->
 
 			<!-- COMMONS START -->
 			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>${commons-beanutils-version}</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-configuration</groupId>
 				<artifactId>commons-configuration</artifactId>
-				<version>1.10</version>
+				<version>${commons-config-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
-				<version>2.5</version>
+				<version>${commons-lang-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-email</artifactId>
-				<version>1.4</version>
+				<version>${commons-email-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>javax.activation</groupId>
@@ -681,22 +684,22 @@
 			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
-				<version>3.2.1</version>
+				<version>${commons-collections-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.10</version>
+				<version>${commons-codec-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-dbcp</groupId>
 				<artifactId>commons-dbcp</artifactId>
-				<version>1.4</version>
+				<version>${commons-dbcp-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.4</version>
+				<version>${commons-io-version}</version>
 			</dependency>
 			<!-- COMMONS END -->
 
@@ -704,22 +707,22 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.5</version>
+				<version>${httpclient-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>opensymphony</groupId>
 				<artifactId>sitemesh</artifactId>
-				<version>2.4.2</version>
+				<version>${sitemesh-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-web</artifactId>
-				<version>2.0.4</version>
+				<version>${ehcache-web-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>
 				<artifactId>cglib</artifactId>
-				<version>3.1</version>
+				<version>${cglib-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.ow2.asm</groupId>
@@ -730,25 +733,32 @@
 			<dependency>
 				<groupId>asm</groupId>
 				<artifactId>asm-all</artifactId>
-				<version>3.3.1</version>
+				<version>${asm-all-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.7</version>
+				<version>${joda-time-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time-jsptags</artifactId>
-				<version>1.1.1</version>
+				<version>${joda-time-jsptag-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jsoup</groupId>
 				<artifactId>jsoup</artifactId>
-				<version>1.7.3</version>
+				<version>${jsoup-version}</version>
 			</dependency>
 			<!-- MISC END -->
 
+			<!-- SCRIPTING ENGINE STARTS -->
+			<dependency>
+				<groupId>org.python</groupId>
+				<artifactId>jython-standalone</artifactId>
+				<version>${jython-version}</version>
+			</dependency>
+			<!-- SCRIPTING ENGINE ENDS -->
 
 			<!-- IMAGE PROCESSING API START -->
 			<dependency>
@@ -762,49 +772,49 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.11</version>
+				<version>${junit-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
-				<version>1.10.19</version>
+				<version>${mockito-all-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.kubek2k</groupId>
 				<artifactId>springockito</artifactId>
-				<version>1.0.8</version>
+				<version>${springockito-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.kubek2k</groupId>
 				<artifactId>springockito-annotations</artifactId>
-				<version>1.0.8</version>
+				<version>${springockito-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymock</artifactId>
-				<version>3.3.1</version>
+				<version>${easymock-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymockclassextension</artifactId>
-				<version>3.2</version>
+				<version>${easymockclassextension-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>strutstestcase</groupId>
 				<artifactId>strutstestcase</artifactId>
-				<version>2.1.4-1.2-2.4</version>
+				<version>${strutstestcase-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.dbunit</groupId>
 				<artifactId>dbunit</artifactId>
-				<version>2.2.3</version>
+				<version>${dbunit-version}</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>
@@ -820,7 +830,7 @@
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-all</artifactId>
-				<version>1.3</version>
+				<version>${hamcrest-all-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- TESTING END -->
@@ -829,17 +839,17 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.7</version>
+				<version>${slf4j-api-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>1.7.7</version>
+				<version>${jcl-over-slf4j-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
-				<version>1.2.17</version>
+				<version>${log4j-version}</version>
 			</dependency>
 			<!-- LOGGING END -->
 
@@ -847,13 +857,13 @@
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>9.3-1102-jdbc41</version>
+				<version>${postgres-version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-core</artifactId>
-				<version>3.2.1</version>
+				<version>${flyway-core-version}</version>
 			</dependency>
 
 			<!-- DATABASE END -->
@@ -922,12 +932,9 @@
 				<version>1.3.1</version>
 			</dependency>
 
-
-
 			<!-- GIS END -->
 
 		</dependencies>
-
 
 	</dependencyManagement>
 
@@ -1265,23 +1272,23 @@
 					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-javadoc-plugin</artifactId>
-			    <version>2.10.2</version>
-			    <executions>
-			        <execution>
-			            <id>attach-javadocs</id>
-			            <goals>
-			                <goal>jar</goal>
-			            </goals>
-			            <configuration> 
-			                <additionalparam>-Xdoclint:none</additionalparam>
-			                <failOnError>false</failOnError>
-			            </configuration>
-			        </execution>
-			    </executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.2</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+							<failOnError>false</failOnError>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

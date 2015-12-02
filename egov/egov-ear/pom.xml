@@ -210,14 +210,6 @@
 		</dependency>
 		<!-- VIEWS RELATED END -->
 
-		<!-- Scrpting enjine for python starts -->
-		<dependency>
-			<groupId>org.python</groupId>
-			<artifactId>jython-standalone</artifactId>
-			<version>2.5.2</version>
-		</dependency>
-		<!-- Scrpting enjine for python ends -->
-
 	</dependencies>
 
 	<build>
