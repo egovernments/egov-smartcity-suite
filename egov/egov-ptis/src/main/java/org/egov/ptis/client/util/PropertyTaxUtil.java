@@ -2404,4 +2404,18 @@ public class PropertyTaxUtil {
         }
         return vrApprovalFlag;
     }
+    
+    /**
+     * @Description : checks if the parent property has any child which is in workflow
+     * @param upicNo of the parent property
+     * @return boolean
+     */
+    public boolean checkForParentUsedInBifurcation(String upicNo){
+    	boolean isChildUnderWorkflow = false;
+    	PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService.find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' ", upicNo);
+    	if(statusValues!=null){
+    		isChildUnderWorkflow = true;
+    	}
+    	return isChildUnderWorkflow;
+    }
 }

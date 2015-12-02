@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -154,6 +155,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute("taxDuesErrorMsg", "Above tax dues must be payed before initiating "
                         + APPLICATION_TYPE_TAX_EXEMTION);
                 return TARGET_TAX_DUES;
+            }
+            boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
+            if(hasChildPropertyUnderWorkflow){
+            	model.addAttribute("errorMsg", "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+                return PROPERTY_VALIDATION;
             }
         }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());

@@ -240,6 +240,12 @@ public class SearchPropertyAction extends BaseFormAction {
             return COMMON_FORM;
         }
         checkIsDemandActive(basicProperty.getProperty());
+        boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
+        if(hasChildPropertyUnderWorkflow){
+        	addActionError(getText("error.msg.child.underworkflow"));
+            return COMMON_FORM;
+        }
+        
         if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
             if (isDemandActive) {
                 addActionError(getText("revPetition.demandActive"));

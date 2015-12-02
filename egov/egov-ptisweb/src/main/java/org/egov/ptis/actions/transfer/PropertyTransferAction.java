@@ -100,6 +100,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -233,6 +234,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
         } else {
+        	PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
+        	propertyTaxUtil.setPersistenceService(persistenceService);
+        	boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicproperty.getUpicNo());
+            if(hasChildPropertyUnderWorkflow){
+            	wfErrorMsg = getText("error.msg.child.underworkflow");
+                return TARGET_WORKFLOW_ERROR;
+            }
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));

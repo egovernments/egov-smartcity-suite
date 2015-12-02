@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -116,7 +117,11 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
-
+        boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
+        if(hasChildPropertyUnderWorkflow){
+        	model.addAttribute("errorMsg", "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+            return PROPERTY_VALIDATION;
+        }
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
         final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);

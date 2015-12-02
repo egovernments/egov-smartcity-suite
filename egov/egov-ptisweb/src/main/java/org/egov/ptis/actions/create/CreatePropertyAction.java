@@ -618,7 +618,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("reject: Property rejection started");
         basicPropertyService.applyAuditing(property.getState());
-        basicProp.setUnderWorkflow(true);
+        if(property.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED)){
+        	basicProp.setUnderWorkflow(false);
+        }else{
+        	basicProp.setUnderWorkflow(true);
+        }
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
         approverName = "";

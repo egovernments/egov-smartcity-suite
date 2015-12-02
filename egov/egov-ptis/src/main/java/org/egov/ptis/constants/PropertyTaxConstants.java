@@ -1193,6 +1193,7 @@ public interface PropertyTaxConstants {
     // Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
     public static final String TARGET_TAX_DUES = "taxdues";
+    public static final String PROPERTY_VALIDATION = "propertyValidation";
 
     public static final String THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE = "1";
     public static final String THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE = "2";

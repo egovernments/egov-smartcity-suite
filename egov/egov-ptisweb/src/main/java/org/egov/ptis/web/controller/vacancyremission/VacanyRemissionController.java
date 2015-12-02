@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -87,7 +88,6 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "/vacancyremission")
 public class VacanyRemissionController extends GenericWorkFlowController {
 
-    private static final String PROPERTY_VALIDATION = "propertyValidation";
     private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
 
@@ -198,6 +198,11 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         }
                     }
                 } else {
+                	boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
+                    if(hasChildPropertyUnderWorkflow){
+                    	model.addAttribute("errorMsg", "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+                        return PROPERTY_VALIDATION;
+                    }
                     final Map<String, BigDecimal> propertyTaxDetails = propertyService
                             .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
                     final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
