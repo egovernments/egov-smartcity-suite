@@ -1064,6 +1064,13 @@
 		</dependency>
 		<!-- MISC ENDS -->
 
+		<!-- SCRIPTING ENGINE STARTS -->
+		<dependency>
+			<groupId>org.python</groupId>
+			<artifactId>jython-standalone</artifactId>
+		</dependency>
+		<!-- SCRIPTING ENGINE ENDS -->
+
 		<!-- TESTING START -->
 		<dependency>
 			<groupId>junit</groupId>
