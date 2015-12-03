@@ -383,7 +383,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // his/her current counter and are in SUBMITTED status
         final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
         receiptHeaders = receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, position.getId(), inboxItemDetails);
+                .findAllByStatusUserCounterService(position.getId(), inboxItemDetails);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
