@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-09-07T15:39:54 -->
+<!-- 2015-12-03T10:59:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -163,7 +163,7 @@ WHERE
 				<reportElement x="89" y="104" width="131" height="20" uuid="201daeef-f7c6-4937-8aa6-c5b0d4888d73"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
@@ -171,7 +171,7 @@ WHERE
 				<reportElement x="660" y="104" width="131" height="20" uuid="b1b138df-c376-493c-a2bd-1ca2d140c17c"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
 			</textField>
@@ -179,7 +179,7 @@ WHERE
 				<reportElement x="540" y="104" width="120" height="20" uuid="f7bef181-8d61-408d-b7d1-370f48397aa1"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Counter:]]></text>
 			</staticText>
@@ -187,7 +187,7 @@ WHERE
 				<reportElement x="660" y="124" width="131" height="20" uuid="597cccad-77f5-4a76-826d-7210765ea59d"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
 			</textField>
@@ -195,7 +195,7 @@ WHERE
 				<reportElement x="540" y="124" width="120" height="20" uuid="253aaa20-dbe7-4ea7-b8f5-d9e884ebb26b"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Name of Assistant/Shroff:]]></text>
 			</staticText>
@@ -203,7 +203,7 @@ WHERE
 				<reportElement x="89" y="124" width="131" height="20" uuid="b491307f-54f3-47d6-a09a-8d9ae7984fae"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
 			</textField>
@@ -211,7 +211,7 @@ WHERE
 				<reportElement x="10" y="124" width="80" height="20" uuid="65a015b0-1f64-48b7-874e-c2c622809e31"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
@@ -219,7 +219,7 @@ WHERE
 				<reportElement x="10" y="104" width="80" height="20" uuid="8979072f-7dc9-40f0-a58e-074553856cda"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
@@ -227,7 +227,7 @@ WHERE
 				<reportElement x="10" y="144" width="80" height="20" uuid="a3d355ab-b51f-4234-9f1b-000a9f12719d"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Zone:]]></text>
 			</staticText>
@@ -235,7 +235,7 @@ WHERE
 				<reportElement x="90" y="144" width="130" height="20" uuid="fe5f2459-31e6-4812-aa29-ba838a7a1d74"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "All Zones" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT LOCALNAME FROM EG_BOUNDARY WHERE ID = " + $P{EGOV_BOUNDARY_ID})]]></textFieldExpression>
 			</textField>
