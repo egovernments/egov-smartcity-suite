@@ -128,6 +128,7 @@ public class City extends AbstractAuditable {
     private String regionName;
 
     @SafeHtml
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String grade;
 
     private Float longitude;
