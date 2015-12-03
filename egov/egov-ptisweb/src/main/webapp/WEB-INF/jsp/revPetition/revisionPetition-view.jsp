@@ -73,14 +73,16 @@
 		});
 	});
 
+	var propType ;
+	var appurtenantLandChecked;
 	function loadOnStartUp() {
-		var propType = '<s:property value="%{objection.basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
-		var appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
+		propType = '<s:property value="%{objection.basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
+		appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
 		enableFieldsForPropTypeView(propType, appurtenantLandChecked);
 		enableAppartnaumtLandDetailsView();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
 		enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
-		toggleFloorDetailsView();
+		//toggleFloorDetailsView();
 		loadDesignationFromMatrix();
 	}
 	function enableAppartnaumtLandDetailsView() {
@@ -90,7 +92,8 @@
 			jQuery('tr.floordetails').show();
 			jQuery('tr.extentSite').hide();
 		} else {
-			enableFieldsForPropTypeView();
+			appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
+			enableFieldsForPropTypeView(propType, appurtenantLandChecked);
 		}
 	}
 	function toggleFloorDetailsView() {
@@ -246,8 +249,7 @@
 				<tr>
 					<td>
 						<div id="property_header">
-
-							<s:if test="property!=null">
+     						<s:if test="property!=null">
 								<s:if
 									test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||

@@ -86,7 +86,7 @@
 				<s:text name="ownership.type"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property value="%{propertyDetail.propertyTypeMaster.type}"
+				<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"
 					default="N/A" />
 				</span>
 			</div>

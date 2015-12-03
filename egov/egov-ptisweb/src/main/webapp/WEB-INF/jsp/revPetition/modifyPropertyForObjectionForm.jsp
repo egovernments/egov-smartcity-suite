@@ -285,6 +285,14 @@
 			</div>
 		</td>
 	</tr>
+	<tr class="floordetails">
+		<td colspan="5" width="5%">
+			<div class="headingsmallbg"
+				style="font-size: 19px; font-family: regular;">
+				<span><s:text name="FloorDetailsHeader" /> </span>
+			</div>
+		</td>
+	</tr>
 
 	<tr class="floordetails">
 		<td colspan="5">
