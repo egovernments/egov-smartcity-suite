@@ -56,6 +56,9 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
+					<c:if test='${fileStoreId != null && fileStoreId != ""}'>
+						<button type="button" id="previewButn" onclick="previewSignedNotice('${fileStoreId}')" class="btn btn-primary">Preview</button>
+					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>
 			</div>
@@ -64,3 +67,4 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="<c:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>

@@ -39,18 +39,38 @@
  ******************************************************************************/
 package org.egov.wtms.web.controller.application;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
+import org.egov.infra.cache.impl.LRUCache;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -67,6 +87,10 @@ public class DigitalSignatureConnectionController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+    
     @RequestMapping(value = "/waterTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
         final String fileStoreIds = request.getParameter("fileStoreId");
@@ -84,5 +108,25 @@ public class DigitalSignatureConnectionController {
         model.addAttribute("successMessage", "Digitally Signed Successfully");
         model.addAttribute("fileStoreId", fileStoreId.length == 1 ? fileStoreId[0] : "");
         return "digitalSignature-success";
+    }
+    
+    @RequestMapping(value = "/waterTax/previewSignedWorkOrderConnection")
+    public @ResponseBody ResponseEntity<byte[]> previewSignedWorkOrderConnection(final HttpServletRequest request, final Model model) {
+        String signedFileStoreId = request.getParameter("signedFileStoreId");
+        File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
+        byte[] bFile;
+        try {
+            bFile = FileUtils.readFileToByteArray(file);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException("Exception while generating work order for New Connection : " + e);
+        }
+        ReportOutput reportOutput = new ReportOutput();
+        reportOutput.setReportOutputData(bFile);
+        reportOutput.setReportFormat(FileFormat.PDF);
+        
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=WorkOrderConnection.pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }
