@@ -64,7 +64,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 			paramMap.put("designationId", this.designationId.toString());
 			this.approverList = new ArrayList<Object>();
 			List<Assignment> assignmentList = assignmentService
-					.getPositionsByDepartmentAndDesignationForGivenRange(this.approverDepartmentId,
+					.findAllAssignmentsByDeptDesigAndDates(this.approverDepartmentId,
 							this.designationId, new Date());
 			for (final Assignment assignment : assignmentList) {
 				this.approverList.add(assignment);
