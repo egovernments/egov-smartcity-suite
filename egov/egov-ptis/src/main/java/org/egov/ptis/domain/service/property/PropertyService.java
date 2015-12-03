@@ -2716,9 +2716,9 @@ public class PropertyService {
         if (null != wardId && wardId != -1)
             queryStr.append(" and pmv.ward.id=:WardID");
         if (houseNum != null && !houseNum.trim().isEmpty())
-            queryStr.append("and pmv.houseNo like :HouseNo ");
+            queryStr.append(" and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append(" and trim(pmv.ownerName) like :OwnerName");
 
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
 
