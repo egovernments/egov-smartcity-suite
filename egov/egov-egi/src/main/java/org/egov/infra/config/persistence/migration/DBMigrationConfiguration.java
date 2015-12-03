@@ -65,9 +65,8 @@ public class DBMigrationConfiguration {
     @Bean
     @DependsOn("dataSource")
     public Flyway flyway(final DataSource dataSource) {
-        Flyway flyway = null;
-        for (final String schema : tenants()) {
-            flyway = new Flyway();
+        tenants().parallelStream().forEach(schema -> {
+            final Flyway flyway = new Flyway();
             flyway.setBaselineOnMigrate(true);
             flyway.setOutOfOrder(true);
             if (applicationProperties.devMode())
@@ -77,9 +76,9 @@ public class DBMigrationConfiguration {
             flyway.setDataSource(dataSource);
             flyway.setSchemas(schema);
             flyway.migrate();
-        }
+        });
         runStatewideMigration(dataSource);
-        return flyway;
+        return new Flyway();
     }
 
     private void runStatewideMigration(final DataSource dataSource) {
