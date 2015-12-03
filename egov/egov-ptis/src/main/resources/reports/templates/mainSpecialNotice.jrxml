@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2015-12-03T19:30:11 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainSpecialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="120" bottomMargin="80" isSummaryNewPage="true" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/manasa/CHECKOUTS/Phoenix/GitHub/eGov/egov/egov-ptis/src/main/java/reports/templates/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<field name="noticeNo" class="java.lang.String"/>
+	<field name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
+	<field name="floorDetailsForNotice" class="java.util.List"/>
+	<title>
+		<band height="35" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="30" uuid="f72beaa3-2064-4eed-b11e-39605297e6ea"/>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$F{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="floorDetailsForNotice">
+					<subreportParameterExpression><![CDATA[$F{floorDetailsForNotice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userId">
+					<subreportParameterExpression><![CDATA[$P{userId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="copyType">
+					<subreportParameterExpression><![CDATA["citizen"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerInfo">
+					<subreportParameterExpression><![CDATA[$F{ownerInfo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{floorDetailsForNotice}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("specialNotice.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<summary>
+		<band height="35">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="30" uuid="9c2666cf-fb19-4d0a-af96-de27efdc34f1"/>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$F{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="floorDetailsForNotice">
+					<subreportParameterExpression><![CDATA[$F{floorDetailsForNotice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userId">
+					<subreportParameterExpression><![CDATA[$P{userId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="copyType">
+					<subreportParameterExpression><![CDATA["official"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerInfo">
+					<subreportParameterExpression><![CDATA[$F{ownerInfo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{floorDetailsForNotice}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("specialNotice.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

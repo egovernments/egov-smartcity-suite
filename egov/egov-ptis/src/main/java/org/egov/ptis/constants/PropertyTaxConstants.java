@@ -1018,7 +1018,7 @@ public interface PropertyTaxConstants {
     public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
     public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
 
-    public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "specialNotice";
+    public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "mainSpecialNotice";
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
     public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";

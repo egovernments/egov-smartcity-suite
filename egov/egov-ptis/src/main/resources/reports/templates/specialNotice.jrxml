@@ -1,69 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-03T11:47:16 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+<!-- 2015-12-03T19:47:11 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="168"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
-	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/manasa/CHECKOUTS/Phoenix/GitHub/eGov/egov/egov-ptis/src/main/java/reports/templates/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="logoPath" class="java.lang.String"/>
-	<parameter name="mode" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
-	<parameter name="unauthorizedProperty" class="java.lang.String"/>
 	<parameter name="userId" class="java.lang.Long"/>
-	<field name="noticeNo" class="java.lang.String"/>
-	<field name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
-	<field name="floorDetailsForNotice" class="java.util.List"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
+	<parameter name="floorDetailsForNotice" class="java.util.List"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<field name="buildingClassification" class="java.lang.String"/>
+	<field name="natureOfUsage" class="java.lang.String"/>
+	<field name="plinthArea" class="java.math.BigDecimal"/>
+	<field name="monthlyRentalValue" class="java.math.BigDecimal"/>
+	<field name="bldngFloorNo" class="java.lang.String"/>
 	<title>
-		<band height="567" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="7" y="181" width="468" height="17" uuid="31aae552-c07a-4611-bf4f-db729f28a9e9"/>
-				<textElement markup="styled">
-					<font isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["To\nSri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getOwnerName()+"</style>"]]></textFieldExpression>
-			</textField>
+		<band height="472" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="7" y="223" width="539" height="125" uuid="1208afdb-6715-475c-b36f-bd0cb45c6a77"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="36" y="123" width="478" height="137" uuid="1208afdb-6715-475c-b36f-bd0cb45c6a77"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
-				<textElement textAlignment="Justified" markup="styled"/>
-				<textFieldExpression><![CDATA["	Take Notice that by virtue of the power vested with Commissioner, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getLocalityName()+"</style> in this Corporation, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st April,"+$F{ownerInfo}.getInstallmentYear()+"/ 1st October "+$F{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n	In case you are dissatisfied with the assessment now fixed, you can present Complaint to the Commissioner or to any Officer authorized by the Commissioner within 15 days from the date of service of this notice. If no complaint against the assessment is presented within the avove mentioned period of 15 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="7" y="198" width="468" height="20" uuid="16a55afb-d60d-4d0b-bb76-55819143504e"/>
-				<textElement markup="styled"/>
-				<textFieldExpression><![CDATA["Address: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getOwnerAddress()+"</style>"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="7" y="144" width="536" height="17" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd">
-					<printWhenExpression><![CDATA[$F{noticeNo} != null]]></printWhenExpression>
-				</reportElement>
-				<textElement markup="styled">
-					<font isPdfEmbedded="true"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{noticeNo}+"</style>\t\tAssessment No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getAssessmentNo()+"</style>\t\tDated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["To\nSri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Corporation, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st April,"+$P{ownerInfo}.getInstallmentYear()+"/ 1st October "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present Complaint to the Commissioner or to any Officer authorized by the Commissioner within 15 days from the date of service of this notice. If no complaint against the assessment is presented within the above mentioned period of 15 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="123" y="78" width="373" height="25" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<reportElement positionType="Float" x="36" y="94" width="478" height="10" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<textElement markup="styled">
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>\t\tAssessment No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style>\t\tDated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="83" y="38" width="373" height="25" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="16" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="123" y="103" width="373" height="17" uuid="bd68cf62-0bd1-47f0-a494-0021472b448f"/>
+				<reportElement isPrintRepeatedValues="false" x="83" y="63" width="373" height="17" uuid="bd68cf62-0bd1-47f0-a494-0021472b448f"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="13" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["(Special Notice of Property Tax Assessment/ Revision)"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="282" y="360" width="231" height="25" uuid="5538b6f9-3bc6-428d-b383-f6233a5bb0a1"/>
+				<reportElement x="282" y="270" width="231" height="15" uuid="5538b6f9-3bc6-428d-b383-f6233a5bb0a1"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -72,12 +62,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Revision or New Assessment ARV (Rs.)]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="36" y="385" width="246" height="20" uuid="b3996d16-4ec7-4481-8faf-4970dfea8afe"/>
+				<reportElement x="282" y="285" width="231" height="15" uuid="b1257569-dded-45d1-a429-d0f5ef2b2df3"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -86,26 +76,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getExistingARV()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="282" y="385" width="231" height="20" uuid="b1257569-dded-45d1-a429-d0f5ef2b2df3"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getNew_rev_ARV()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNew_rev_ARV()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="36" y="360" width="246" height="25" uuid="a9b0f6cf-7728-40ea-86d3-d9daf74f22db"/>
+				<reportElement x="282" y="310" width="231" height="12" uuid="704f2578-066f-48fd-a8e8-713e01cb8264"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -114,12 +90,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Existing Assessment ARV (Rs.)]]></text>
+				<text><![CDATA[Amount of H/Y Tax Due to]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="36" y="420" width="246" height="36" uuid="d0fa4f74-863b-48f6-8938-c128fe9d967b"/>
+				<reportElement x="282" y="322" width="115" height="13" uuid="87406954-1e45-4b30-b5e5-5de13abe9e54"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -128,40 +104,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Existing H/Y Tax if any (Rs.)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="282" y="420" width="231" height="21" uuid="704f2578-066f-48fd-a8e8-713e01cb8264"/>
-				<box leftPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Amount of H/y Tax Due to]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="282" y="441" width="115" height="15" uuid="87406954-1e45-4b30-b5e5-5de13abe9e54"/>
-				<box leftPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Revision  (Rs.)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="397" y="441" width="116" height="15" uuid="f4e75552-f306-4bdf-bde4-c6e18a7c9fef"/>
+				<reportElement x="397" y="322" width="116" height="13" uuid="f4e75552-f306-4bdf-bde4-c6e18a7c9fef"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -170,12 +118,152 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[New Assessment  (Rs.)]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="282" y="335" width="115" height="12" uuid="4025a0ee-c069-4962-a31f-936749557eaa"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevPropertyTax()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="397" y="335" width="116" height="12" uuid="95dc0297-5c2c-46d5-9e23-cd516ffa74af"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewPropertyTax()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="282" y="347" width="115" height="12" uuid="686ced6a-ac6d-40c4-a44c-00cf4aaccfbc"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevLibraryCess()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="397" y="347" width="116" height="12" uuid="82c31a7f-60ee-4f02-982a-f0816410cde4"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewLibraryCess()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="282" y="359" width="115" height="12" uuid="c5fb0710-715d-4372-b145-c786f8c07b37"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevUCPenalty()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="397" y="359" width="116" height="12" uuid="93856ee2-88da-4042-aead-1d8b9bccbb78"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewUCPenalty()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="282" y="371" width="115" height="12" uuid="2ea52558-f522-4de6-8f8e-850462a2cccd"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevTotalTax()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="397" y="371" width="116" height="12" uuid="e1d987ae-1ba3-4523-8707-4b9dddbe8784"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewTotalTax()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="272" y="4" width="242" height="17" isPrintWhenDetailOverflows="true" uuid="7ce698fd-018d-45d9-8f84-4a2b508f2eeb"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Application No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getApplicationNo()+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="4" width="88" height="17" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">PARTY COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICIAL COPY</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="37" y="285" width="245" height="15" uuid="79a902fe-2e91-42fa-a896-bb9df4cb3b23"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNew_rev_ARV()]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="36" y="456" width="105" height="15" uuid="dfca8202-41a0-4499-8f0d-66422bddd72b"/>
+				<reportElement x="37" y="270" width="245" height="15" uuid="2f6fbf3d-e0bc-41b8-a183-b2dd1b8e7c64"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -184,12 +272,96 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Revision or New Assessment ARV (Rs.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="310" width="245" height="25" uuid="35763ea7-8cbe-41c9-86fc-42a93a8da1ad"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Existing H/Y Tax if any (Rs.)]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="160" y="347" width="122" height="12" uuid="fad818b9-7feb-45cb-91cc-037bd9ff2820"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingLibraryCess()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="160" y="335" width="122" height="12" uuid="90facf79-c2d6-4653-afeb-79cb0b46d395"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingPropertyTax()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="160" y="359" width="122" height="12" uuid="3a6e7ec7-fcf0-404d-8ea1-70f8b86fec60"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingUCPenalty()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="160" y="371" width="122" height="12" uuid="1c588542-50d2-40d1-a5af-9c69e437eeee"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingTotalTax()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="37" y="335" width="123" height="12" uuid="b3431ef3-b86e-4f3b-b657-7266d7662294"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Property Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="36" y="471" width="105" height="15" uuid="3be8bc6c-fb0b-462e-b1e7-df582e542d1b"/>
+				<reportElement x="37" y="347" width="123" height="12" uuid="3244d24a-da03-48f5-b4e6-c848ca41ae96"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -198,12 +370,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Library Cess]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="36" y="486" width="105" height="15" uuid="1f91c77f-8fc4-4521-9db7-55236aad0046"/>
+				<reportElement x="37" y="359" width="123" height="12" uuid="7748a968-57ba-4a3f-98e3-678d9dfac460"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -212,12 +384,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[UC Penalty]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="36" y="501" width="105" height="15" uuid="aea5b12a-4ec0-4516-90c6-8fe978aae941"/>
+				<reportElement x="37" y="371" width="123" height="12" uuid="c62872df-21e5-465b-be5a-c05191f17430"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -226,229 +398,190 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="141" y="456" width="141" height="15" uuid="b174ce37-1dd9-4f51-b6ec-22435e2ec180"/>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement x="36" y="387" width="477" height="50" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getExistingPropertyTax()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="141" y="471" width="141" height="15" uuid="6f6e8b3f-61ad-4499-93a8-7b2933549052"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getExistingLibraryCess()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="141" y="486" width="141" height="15" uuid="185e37db-bd3b-48a4-bed2-e2f357a165b7"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getExistingUCPenalty()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="141" y="501" width="141" height="15" uuid="769bbe61-edae-4f53-b35a-0362518f3dcd"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getExistingTotalTax()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="282" y="456" width="115" height="15" uuid="4025a0ee-c069-4962-a31f-936749557eaa"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getRevPropertyTax()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="397" y="456" width="116" height="15" uuid="95dc0297-5c2c-46d5-9e23-cd516ffa74af"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getNewPropertyTax()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="282" y="471" width="115" height="15" uuid="686ced6a-ac6d-40c4-a44c-00cf4aaccfbc"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getRevLibraryCess()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="397" y="471" width="116" height="15" uuid="82c31a7f-60ee-4f02-982a-f0816410cde4"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getNewLibraryCess()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="282" y="486" width="115" height="15" uuid="c5fb0710-715d-4372-b145-c786f8c07b37"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getRevUCPenalty()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="397" y="486" width="116" height="15" uuid="93856ee2-88da-4042-aead-1d8b9bccbb78"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getNewUCPenalty()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="282" y="501" width="115" height="15" uuid="2ea52558-f522-4de6-8f8e-850462a2cccd"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getRevTotalTax()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement x="397" y="501" width="116" height="15" uuid="e1d987ae-1ba3-4523-8707-4b9dddbe8784"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" markup="styled">
-					<font isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerInfo}.getNewTotalTax()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="8" y="555" width="145" height="12" isPrintWhenDetailOverflows="true" uuid="64d35275-c9da-4102-bdd6-d751aefd83f3">
-					<printWhenExpression><![CDATA[$F{noticeNo} != null]]></printWhenExpression>
-				</reportElement>
-				<textElement markup="styled">
-					<font isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Zone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="8" y="522" width="539" height="18" uuid="ad9fea51-60bf-4a50-ab18-ecc8adb123fd"/>
-				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
-				<textElement textAlignment="Left" markup="styled"/>
-				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,\n\t\t\t\tIII) Plinth Area, IV) Age V) Nature of usage of the Building."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="44" width="183" height="17" isPrintWhenDetailOverflows="true" uuid="7ce698fd-018d-45d9-8f84-4a2b508f2eeb">
-					<printWhenExpression><![CDATA[$F{ownerInfo}.getMeesevaNo()!=null]]></printWhenExpression>
-				</reportElement>
-				<textElement markup="styled">
-					<font isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Meeseva Application No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getMeesevaNo()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement x="194" y="0" width="89" height="20" uuid="a48fb1e2-f09d-4aa8-86d9-680e259a447a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Plinth Area (in sq.mt)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="109" y="0" width="85" height="20" uuid="a6ebdcd7-7c0b-46e3-b9f8-761cb798670a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Nature of Construction]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="0" width="66" height="20" uuid="b5f01b8f-58ea-4b55-b34e-c2372fd450c3"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Building Floor No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="0" width="85" height="20" uuid="d3a4a10e-5dea-49ee-b4a4-6e688e5209ff"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Usage of Building]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="0" width="133" height="20" uuid="91d9aec6-6bdd-43e4-99a7-7e761a71fbe5"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Monthly Rental Value]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
 	<detail>
-		<band height="32" splitType="Stretch">
-			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="26" y="2" width="474" height="30" uuid="f72beaa3-2064-4eed-b11e-39605297e6ea"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{floorDetailsForNotice}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("specialNotice_floorDetails-new.jasper")]]></subreportExpression>
-			</subreport>
+		<band height="25" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="43" y="0" width="66" height="25" isPrintWhenDetailOverflows="true" uuid="680d677e-4198-463f-821e-4920a1703ea7"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bldngFloorNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="194" y="0" width="89" height="25" isPrintWhenDetailOverflows="true" uuid="265e58af-2e2c-4d53-a716-2ed267444c74"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="368" y="0" width="133" height="25" isPrintWhenDetailOverflows="true" uuid="f604eb4c-72d2-4a98-877e-0efcbf66bc90"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monthlyRentalValue}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="283" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="0adcc6c8-9f97-4504-8757-705d97464e4d"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{natureOfUsage}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="109" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="5b3c5df5-de78-4367-98f7-ee48e9fc90ca"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{buildingClassification}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="178" splitType="Prevent">
-			<printWhenExpression><![CDATA[IF($V{PAGE_NUMBER}.intValue()==1,TRUE( ),FALSE( ))]]></printWhenExpression>
+		<band height="100" splitType="Prevent">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
 			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
-				<reportElement x="380" y="0" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
+				<reportElement x="343" y="0" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
 				<imageExpression><![CDATA[ReportUtil.getUserSignature($P{userId})]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="421" y="52" width="92" height="28" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>
+				<reportElement x="381" y="52" width="92" height="18" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Commissioner]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="80" width="174" height="21" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
+				<reportElement x="340" y="70" width="174" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="12" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
