@@ -80,7 +80,6 @@
 	<script type="text/javascript" src="<c:url value='/resources/js/helper.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/collections.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/calender.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="/egi/javascript/jquery/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js"></script>
@@ -103,5 +102,72 @@
 			    Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
 			</footer>
 	</div>
+	
+	
+	 <!-- loading indicator --> 
+	 <div class="modal fade loader-class" data-backdrop="static">
+			<div class="modal-dialog">
+					<div class="modal-body">
+						<div class="row spinner-margin text-center">
+							<div class="col-md-12 ">
+								<div class="spinner">
+									<div class="rect1"></div>
+									<div class="rect2"></div>
+									<div class="rect3"></div>
+									<div class="rect4"></div>
+									<div class="rect5"></div>
+								</div>
+							</div>
+							
+							<div class="col-md-12 spinner-text">
+								Processing your request. Please wait..
+							</div>
+						</div>
+					</div>
+			</div>
+	 </div>
+	 
+	  
+	  <script>
+
+	    // jQuery plugin to prevent double submission of forms
+		jQuery.fn.preventDoubleSubmission = function() {
+		jQuery(this).on('submit',function(e){
+		    var $form = jQuery(this);
+		    if ($form.data('submitted') === true) {
+		      // Previously submitted - don't submit again
+		      e.preventDefault();
+		    } else {
+		      // Mark it so that the next submit can be ignored
+		      $form.data('submitted', true);
+		    }
+		  });
+		  // Keep chainability
+		  return this;
+		};
+
+		jQuery("form").submit(function( event ) {
+			jQuery('.loader-class').modal('show', {backdrop: 'static'});
+		});
+		
+		jQuery('form').preventDoubleSubmission();
+
+		function disableRefresh(e) {
+            if ((e.which || e.keyCode) == 116)
+                    e.preventDefault();
+            if (e.ctrlKey)
+                    if ((e.which || e.keyCode) == 82)
+                            e.preventDefault();
+    	};
+    	jQuery(document).on("keydown", disableRefresh);
+
+    	window.location.hash = "no-back-button";
+        window.location.hash = "Again-No-back-button";//again because google chrome does not insert first hash into history
+        window.onhashchange = function() {
+            window.location.hash = "no-back-button";
+        }
+	  </script>
+	
+	
     </body>
 </html>
