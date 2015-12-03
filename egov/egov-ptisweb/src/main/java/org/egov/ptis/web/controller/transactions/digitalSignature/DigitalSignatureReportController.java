@@ -116,7 +116,7 @@ public class DigitalSignatureReportController {
                                 tempMap.put("objectId", ((PropertyImpl) record).getBasicProperty().getId());
                             else
                                 tempMap.put("objectId", record.getId());
-                            tempMap.put("type", workflowTypes != null ? workflowTypes.getDisplayName() : null);
+                            tempMap.put("type", record.getState().getNatureOfTask());
                             tempMap.put("module", workflowTypes != null ? workflowTypes.getModule().getDisplayName() : null);
                             tempMap.put("details", record.getStateDetails());
                             tempMap.put("status", record.getCurrentState().getValue());
