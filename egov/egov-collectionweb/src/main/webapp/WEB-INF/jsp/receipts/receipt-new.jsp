@@ -51,6 +51,10 @@
 	#bankcodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
 	#bankcodescontainer li.yui-ac-highlight {background:#ff0;}
 	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+	.ui-datepicker .ui-datepicker-title select {
+	    font-size: 0.8em;
+	    font-weight: normal;
+    }
 </style>
 <script type="text/javascript">
 
@@ -64,10 +68,11 @@ jQuery(document).ready(function() {
     });
      doLoadingMask();
      onBodyLoad();
-
      jQuery( "#instrumentDate" ).datepicker({ 
          dateFormat: 'dd/mm/yy',
          maxDate: new Date(),
+         changeMonth: true,
+		 changeYear: true,
          beforeShow: function(input) {
              jQuery(this).unbind('blur');
              isDatepickerOpened=true;
@@ -81,6 +86,8 @@ jQuery(document).ready(function() {
      jQuery( "#manualReceiptDate" ).datepicker({ 
          dateFormat: 'dd/mm/yy',
          maxDate: new Date(),
+         changeMonth: true,
+		 changeYear: true,
          beforeShow: function(input) {
              jQuery(this).unbind('blur');
              isDatepickerOpened=true;
