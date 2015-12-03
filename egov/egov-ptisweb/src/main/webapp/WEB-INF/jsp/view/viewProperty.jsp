@@ -467,7 +467,7 @@
 	<tr class="vacantlanddetaills">
 		<td colspan="5">
 			<div align="center">
-				<%@ include file="../common/vacantLandView.jsp"%>
+				<%@ include file="../common/vacantLandView.jsp"%> 
 			</div>
 		</td>
 	</tr>
@@ -530,7 +530,7 @@
 			</div>
 			<div class="col-xs-3 add-margin">Property Tax</div>
 			<s:if
-				test="%{viewMap.propertyType != @org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND}">
+				test="%{!viewMap.propertyType.equals(@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND)}">
 				<div class="col-xs-3 add-margin view-content">
 					Rs.
 					<s:text name="format.money">
