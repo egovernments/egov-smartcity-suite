@@ -474,6 +474,7 @@ public class ConnectionDemandService {
             final BigDecimal billAmount, final Date currentDate) {
         final Installment installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);
+        if(installment !=null){
         final EgDemand demandObj = waterConnectionDetails.getDemand();
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
@@ -490,8 +491,10 @@ public class ConnectionDemandService {
             billObj.setModifiedDate(new Date());
             egBillDAO.create(billObj);
         }
-
         generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
+        }
+        else
+        	throw new ValidationException("err.water.meteredinstallment.not.found");
         return waterConnectionDetails;
     }
 
