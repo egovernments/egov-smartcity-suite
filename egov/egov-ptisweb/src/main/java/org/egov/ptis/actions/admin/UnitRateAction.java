@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.actions.admin;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +58,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -92,9 +94,9 @@ public class UnitRateAction extends BaseFormAction{
 	@SuppressWarnings("unchecked")
 	@SkipValidation
 	public void prepare(){
-		List<Boundary> zoneList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.ZONE, PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
+		List<Boundary> zoneList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
 		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
-		List<StructureClassification> structureClassificationList = getPersistenceService().findAllBy("from StructureClassification ");
+		List<StructureClassification> structureClassificationList = getPersistenceService().findAllBy("from StructureClassification order by typeName");
 		addDropdownData("ZoneList", zoneList);
 		addDropdownData("UsageList", usageList);
 		addDropdownData("StructureClassificationList", structureClassificationList);

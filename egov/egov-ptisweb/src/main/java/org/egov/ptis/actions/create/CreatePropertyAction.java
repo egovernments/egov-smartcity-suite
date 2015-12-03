@@ -628,7 +628,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (propService.isEmployee(property.getCreatedBy()))
-            propertyInitiatedBy = property.getCreatedBy().getName();
+            propertyInitiatedBy = property.getCreatedBy().getUsername();
         else
             propertyInitiatedBy = assignmentService
                     .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
