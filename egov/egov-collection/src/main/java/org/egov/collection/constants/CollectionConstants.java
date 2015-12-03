@@ -168,6 +168,8 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_SERVICES_BY_TYPE = "getActiveServiceByType";
     public static final String QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE";
     public static final String QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE = "RECEIPTS_BY_DATE_AND_SERVICECODE";
+    public static final String QUERY_SERVICE_CATEGORY_FOR_TYPE = "getServiceCategoryForType";
+    public static final String QUERY_SERVICE_DETAIL_BY_CATEGORY = "getServiceDetailsByCategory";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";

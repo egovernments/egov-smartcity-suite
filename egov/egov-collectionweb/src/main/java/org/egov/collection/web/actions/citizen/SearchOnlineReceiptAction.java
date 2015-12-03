@@ -94,6 +94,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         setupDropdownDataExcluding();
+        addDropdownData("serviceTypeList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_FOR_TYPE, CollectionConstants.SERVICE_TYPE_BILLING, Boolean.TRUE));
     }
 
     @Override
@@ -146,8 +147,9 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
             params.add(newTodate.getTime());
         }
         if (getServiceTypeId() != -1) {
+            ServiceDetails servDet = (ServiceDetails) persistenceService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY, getServiceTypeId(), Boolean.TRUE);
             criteria.append(getJoinOperand(criteria)).append(" onlinePayment.receiptHeader.service.id = ? ");
-            params.add(Long.valueOf(getServiceTypeId()));
+            params.add(servDet.getId());
         }
 
         queryString.append(StringUtils.isBlank(joinString.toString()) ? "" : joinString);
