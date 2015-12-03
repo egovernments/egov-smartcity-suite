@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-03T19:47:11 -->
+<!-- 2015-12-04T02:27:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="83"/>
+	<property name="ireport.y" value="613"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -581,7 +581,7 @@
 				<text><![CDATA[Commissioner]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="340" y="70" width="174" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
+				<reportElement x="194" y="70" width="320" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="12" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
