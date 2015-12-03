@@ -687,7 +687,40 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     public String getMobileNumber() {
         return getPropertyOwnerInfo().get(0).getOwner().getMobileNumber();
     }
+    
+    @Override
+    public String getAadharNumber() {
+        return getPropertyOwnerInfo().get(0).getOwner().getAadhaarNumber();
+    }
 
+    @Override
+    public Map<String, String> getOwnerMap() {
+        Map<String, String> ownerMap = new HashMap<String, String>();
+        final StringBuilder ownerName = new StringBuilder();
+        final StringBuilder mobileNo = new StringBuilder();
+        final StringBuilder aadharNo = new StringBuilder();
+        User owner = null;
+        for (final PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo()) {
+            owner = ownerInfo.getOwner();
+            ownerName.append(owner.getName()).append(", ");
+            if (owner.getMobileNumber() != null && owner.getMobileNumber().trim().length() > 0)
+                mobileNo.append(owner.getMobileNumber()).append(", ");
+            if (owner.getAadhaarNumber() != null && owner.getAadhaarNumber().trim().length() > 0)
+                aadharNo.append(owner.getAadhaarNumber()).append(", ");
+        }
+        if (ownerName.length() > 2)
+            ownerName.deleteCharAt(ownerName.length() - 2);
+        if (mobileNo.length() > 2)
+            mobileNo.deleteCharAt(mobileNo.length() - 2);
+        if (aadharNo.length() > 2)
+            aadharNo.deleteCharAt(aadharNo.length() - 2);
+        
+        ownerMap.put("OWNERNAME", ownerName.toString());
+        ownerMap.put("MOBILENO", mobileNo.toString());
+        ownerMap.put("AADHARNO", aadharNo.toString());
+        return ownerMap;
+    }
+    
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy() {
         return propertyOwnerInfoProxy;

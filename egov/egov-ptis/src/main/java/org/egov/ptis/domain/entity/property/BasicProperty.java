@@ -259,6 +259,10 @@ public interface BasicProperty {
 	
 	String getMobileNumber();
 	
+	String getAadharNumber();
+	
+	public Map<String, String> getOwnerMap();
+	
 	public Boolean getActive();
 	
 	public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy();
