@@ -380,7 +380,7 @@ public class WaterConnectionDetailsService {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
         if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
-                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
+                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
             waterConnectionDetails.setCloseApprovalDate(new Date());
@@ -389,7 +389,7 @@ public class WaterConnectionDetailsService {
                 .getCode())
                 && waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE)
                 && waterConnectionDetails.getReConnectionReason() != null
-                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
+                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)
                 && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));

@@ -482,8 +482,8 @@ public class WaterConnectionDetails extends StateAware {
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return String.format("Application Number %s for %s with application date %s.", applicationNumber,
-                applicationType.getName(), formatter.format(applicationDate));
+        return String.format("Application Number %s with application date %s.", applicationNumber,
+                formatter.format(applicationDate));
     }
 
     public String getBplCardHolderName() {
