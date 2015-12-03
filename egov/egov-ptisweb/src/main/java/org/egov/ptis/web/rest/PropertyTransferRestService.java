@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.web.rest;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -474,7 +476,7 @@ public class PropertyTransferRestService {
             propertyMutation.transition().start().withSenderName(user.getName()).withComments("")
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                     .withSenderName((user != null && user.getName() != null) ? user.getName() : "").withOwner(user)
-                    .withNextAction(wfmatrix.getNextAction());
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_TITLE_TRANSFER);
         }
 
     }

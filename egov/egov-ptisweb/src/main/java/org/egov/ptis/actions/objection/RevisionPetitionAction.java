@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -1277,7 +1278,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.start().withNextAction(wfmatrix.getPendingActions()).withStateValue(wfmatrix.getCurrentState())
                     .withDateInfo(new DateTime().toDate()).withOwner(position)
                     .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName()).withOwner(user)
-                    .withComments(approverComments);
+                    .withComments(approverComments).withNextAction(NATURE_REVISION_PETITION);
 
             if (loggedUserIsEmployee && user != null)
                 addActionMessage(getText("objection.forward", new String[] { user.getUsername() }));

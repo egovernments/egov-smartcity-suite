@@ -205,7 +205,7 @@ public interface PropertyTaxConstants {
     public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    
+
     // boundary Types
     public static final String CITY_BNDRY_TYPE = "Revenue City";
     public static final String ZONE_BNDRY_TYPE = "Revenue Zone";
@@ -326,7 +326,7 @@ public interface PropertyTaxConstants {
             putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
         }
     };
-    
+
     public static final TreeMap<String, String> DEVIATION_PERCENTAGE = new TreeMap<String, String>() {
         /**
          *
@@ -575,9 +575,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_ASSISTANT_APPROVAL_PENDING = "Assistant Approval Pending";
     public static final String WF_STATE_REVENUE_INSPECTOR_REJECTED = "Revenue Inspector Rejected";
     public static final String WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING = "Revenue Inspector Approval Pending";
-    public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved"; 
+    public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Approved";
-    
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -606,7 +605,7 @@ public interface PropertyTaxConstants {
     public static final Character PROPERTY_IS_NOT_DEFAULT = 'N';
     public static final String PROP_CREATE_RSN_NEWPROPERTY_CODE = "NEW";
     public static final String PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE = "BIFUR";
-     
+
     // Property Modification Reasons
     public static final String PROPERTY_MODIFY_REASON_AMALG = "AMALG";
     public static final String PROPERTY_MODIFY_REASON_BIFURCATE = "BIFURCATE";
@@ -759,7 +758,7 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_STR_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
         }
     };
-    
+
     public static final LinkedHashMap<String, String> VACANT_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {
             put(DEMANDRSN_STR_VACANT_TAX, DEMANDRSN_CODE_VACANT_TAX);
@@ -1075,7 +1074,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND = "Assessment number not found";
     public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED = "PTIS-REST-12";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED = "Assessment number is required";
-     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "PTIS-REST-13";
+    public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "PTIS-REST-13";
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED = "Payment mode is required";
     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID = "PTIS-REST-14";
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID = "Payment mode is invalid";
@@ -1122,16 +1121,16 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING = "Please attach relevant documents for property transfer. Type: ";
     public static final String THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY = "PTIS-REST-33";
     public static final String THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY = "Please mention gender of transferee ";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_CHQDD_NO_REQUIRED = "PTIS-REST-34";
     public static final String THIRD_PARTY_ERR_MSG_CHQDD_NO_REQUIRED = "Cheque/DD number is required";
     public static final String THIRD_PARTY_ERR_CODE_CHQDD_DATE_REQUIRED = "PTIS-REST-35";
     public static final String THIRD_PARTY_ERR_MSG_CHQDD_DATE_REQUIRED = "Cheque/DD Date is required";
-    
-    public static final String THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED =  "PTIS-REST-36";
+
+    public static final String THIRD_PARTY_ERR_CODE_BANKNAME_REQUIRED = "PTIS-REST-36";
     public static final String THIRD_PARTY_ERR_MSG_BANKNAME_REQUIRED = "Bank Name is required";
-   
-    public static final String THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED =  "PTIS-REST-37";
+
+    public static final String THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED = "PTIS-REST-37";
     public static final String THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED = "Branch Name  is required";
 
     public static final String TOTAL_AMOUNT = "amount";
@@ -1182,7 +1181,6 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_DEMOLITION = "Demolition";
     public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy_Remission";
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
-   
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1212,32 +1210,41 @@ public interface PropertyTaxConstants {
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
     public static final String AMALGAMATION_OF_ASSESSMENT = "Amalgamation of Assessment";
-    
+
     public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAl";
     public static final String CATEGORY_NON_RESIDENTIAL = "NON_RESIDENTIAL";
     public static final String CATEGORY_MIXED = "MIXED";
- 
+
     public static final String PROP_MUTATION_RSN = "TRANSFER";
     public static final String FILESTORE_MODULE_NAME = "PTIS";
-    
-    //Vacancy Remission
+
+    // Vacancy Remission
     public static final String VR_STATUS_REJECTION_ACK_GENERATED = "Rejection Acknowledgement Generated";
     public static final String VR_STATUS_WORKFLOW = "IN_WORKFLOW";
     public static final String VR_STATUS_APPROVED = "APPROVED";
     public static final String VR_STATUS_REJECTED = "REJECTED";
-    
-    
+
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
-    public static final String MEESEVA_OPERATOR_ROLE	="MeeSeva Operator";
-    
-    //Status for Meseva
+    public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
+
+    // Status for Meseva
     public static final String STATUS_REJECTED = "Rejected";
     public static final String STATUS_APPROVED = "Approved";
     public static final String STATUS_OPEN = "Open";
-    public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";   
-    
-    public static final String DIGITAL_SIGNATURE_PENDING ="Digital Signature Pending"; 
-    
+    public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
+
+    public static final String DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
+
     public static final String SEARCH_RESULT_COUNT = "500";
-    
+
+    // Nature of task
+    public static final String NATURE_NEW_ASSESSMENT = "New Assessment";
+    public static final String NATURE_ALTERATION = "Addition/Alteration";
+    public static final String NATURE_BIFURCATION = "Bifurcation";
+    public static final String NATURE_TITLE_TRANSFER = "Title Transfer";
+    public static final String NATURE_REVISION_PETITION = "Revision Petition";
+    public static final String NATURE_DEMOLITION = "Demolition";
+    public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
+    public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
+
 }

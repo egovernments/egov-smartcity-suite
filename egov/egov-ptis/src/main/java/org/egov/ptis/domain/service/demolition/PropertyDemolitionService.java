@@ -10,6 +10,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_FULL_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
@@ -191,7 +192,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                         null, null);
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_DEMOLITION);
             } else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), null);

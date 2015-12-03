@@ -42,7 +42,8 @@ package org.egov.ptis.actions.common;
 import static java.lang.Boolean.FALSE;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -52,20 +53,27 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -87,7 +95,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -108,15 +115,12 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
@@ -455,6 +459,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
+        String nature = getNatureOfTask();
 
         if (!propertyByEmployee) {
             currentState = "Created";
@@ -493,7 +498,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         null, getAdditionalRule(), currentState, null);
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(nature);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
@@ -514,6 +520,18 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
 
         LOGGER.debug("Exiting method : transitionWorkFlow");
+    }
+
+    private String getNatureOfTask() {
+        String nature = NEW_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_NEW_ASSESSMENT
+                : ADDTIONAL_RULE_ALTER_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_ALTERATION
+                        :
+                        ADDTIONAL_RULE_BIFURCATE_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_BIFURCATION
+                                :
+                                DEMOLITION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_DEMOLITION :
+                                        EXEMPTION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_TAX_EXEMPTION :
+                                                "PropertyImpl";
+        return nature;
     }
 
     public void validateApproverDetails() {
