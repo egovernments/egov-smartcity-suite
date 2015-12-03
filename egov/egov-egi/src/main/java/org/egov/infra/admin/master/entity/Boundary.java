@@ -300,7 +300,7 @@ public class Boundary extends AbstractAuditable {
     }
     
     public GeoPoint getBoundaryLocation() {
-        if (this.getLatitude() != 0.0 && this.getLongitude() != 0.0) {
+        if (this.getLatitude() != null && this.getLongitude() != null) {
             this.boundaryLocation =(new GeoPoint(this.getLatitude(), this.getLongitude()));
         }
         return boundaryLocation;
