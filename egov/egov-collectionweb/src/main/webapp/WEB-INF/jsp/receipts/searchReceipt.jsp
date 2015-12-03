@@ -417,7 +417,8 @@ function checkviewforselectedrecord()
 </div>
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Status" style="width:8%;text-align:center" property="status.description"></display:column>
-</display:table>	
+<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Owner" style="width:8%;text-align:center" property="state.senderName"></display:column>
+</display:table>	 
 </div>
 <br/>
 <div class="buttonbottom">
