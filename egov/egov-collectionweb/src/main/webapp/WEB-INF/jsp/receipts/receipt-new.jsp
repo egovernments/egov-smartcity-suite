@@ -41,8 +41,13 @@
 <%@ include file="/includes/taglibs.jsp" %>
 
 <head>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	rel="stylesheet" type="text/css" />
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -51,10 +56,6 @@
 	#bankcodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
 	#bankcodescontainer li.yui-ac-highlight {background:#ff0;}
 	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	.ui-datepicker .ui-datepicker-title select {
-	    font-size: 0.8em;
-	    font-weight: normal;
-    }
 </style>
 <script type="text/javascript">
 
@@ -68,35 +69,33 @@ jQuery(document).ready(function() {
     });
      doLoadingMask();
      onBodyLoad();
+
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+     
      jQuery( "#instrumentDate" ).datepicker({ 
-         dateFormat: 'dd/mm/yy',
-         maxDate: new Date(),
-         changeMonth: true,
-		 changeYear: true,
-         beforeShow: function(input) {
-             jQuery(this).unbind('blur');
-             isDatepickerOpened=true;
-		 },
-       	 onClose: function(dateText, inst){ 
-         	isDatepickerOpened=false; 
-         	checkForCurrentDate(this);
-        }
-	  });
+    	 format: 'dd/mm/yyyy',
+         onRender: function(date) {
+             console.log(date);
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+	  }).on('changeDate', function(ev) {
+		  jQuery(this).datepicker('hide');
+		  isDatepickerOpened=false; 
+       	  checkForCurrentDate(this);
+	  }).data('datepicker');
 
      jQuery( "#manualReceiptDate" ).datepicker({ 
-         dateFormat: 'dd/mm/yy',
-         maxDate: new Date(),
-         changeMonth: true,
-		 changeYear: true,
-         beforeShow: function(input) {
-             jQuery(this).unbind('blur');
-             isDatepickerOpened=true;
-		 },
-        	 onClose: function(dateText, inst){ 
-         	isDatepickerOpened=false; 
-         	checkForCurrentDate(this);
-        }
-	  });
+    	 format: 'dd/mm/yyyy',
+    	 onRender: function(date) {
+       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+       	  }
+	  }).on('changeDate', function(ev) {
+		  jQuery(this).datepicker('hide');
+		  isDatepickerOpened=false; 
+       	  checkForCurrentDate(this);
+		  validateManualReceiptDate(this);
+	  }).data('datepicker');
  });
 
 jQuery(window).load(function () {
@@ -1626,18 +1625,11 @@ function checkForCurrentDate(obj)
 			  document.getElementById("receipt_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
 		   </s:else>
-		   //obj.value = "";
-	       // obj.focus(); 
-	       obj.tabIndex="-1";
-	       var keyCode = document.all? window.event.keyCode:event.which;
-		   if(keyCode==9) {
-	       window.scroll(0,0);
-	       }
-	       window.scroll(0,0);
+		   jQuery(obj).val('');
+		   scrolltop();
 	       return false;
 		   }
 	   }
-	      
 	   }
 }
 
@@ -2178,7 +2170,7 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
 					<td class="bluebox"><s:textfield label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
-					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
 		
