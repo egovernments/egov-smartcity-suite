@@ -117,7 +117,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * are fetched
      * @return List of all receipts created by given user from given counter id and having given status
      */
-    public List<ReceiptHeader> findAllByStatusUserCounterService(final String statusCode, final Long positionId,
+    public List<ReceiptHeader> findAllByStatusUserCounterService( final Long positionId,
             final String groupingCriteria) {
         final StringBuilder query = new StringBuilder(
                 "from org.egov.collection.entity.ReceiptHeader where 1=1");
@@ -130,15 +130,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             userName = params[2];
             counterId = Integer.valueOf(params[3]);
         }
-        final boolean allStatuses = statusCode == null || statusCode.equals(CollectionConstants.ALL);
         final boolean allCounters = counterId == null || counterId < 0;
         final boolean allPositions = positionId == null || positionId.equals(CollectionConstants.ALL);
         final boolean allServices = serviceCode == null || serviceCode.equals(CollectionConstants.ALL);
         final boolean allWfAction = wfAction == null || wfAction.equals(CollectionConstants.ALL);
         final boolean allUserName = userName == null || userName.equals(CollectionConstants.ALL);
 
-        if (!allStatuses)
-            query.append(" and status.code = :statusCode");
 
         if (!allPositions)
             query.append(" and state.ownerPosition.id = :positionId");
@@ -154,8 +151,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             query.append(" and createdBy.username = :userName");
         query.append(" order by receiptdate");
         final Query listQuery = getSession().createQuery(query.toString());
-        if (!allStatuses)
-            listQuery.setString("statusCode", statusCode);
 
         if (!allPositions)
             listQuery.setLong("positionId", positionId);
