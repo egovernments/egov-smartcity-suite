@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMO
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID;
@@ -392,9 +393,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             else
                 reportParams.put("mode", APPLICATION_TYPE_DEMOLITION);
             reportParams.put("actionType", actionType);
-            setNoticeInfo(propertyNotice, basicProperty,reportParams);
-            final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(propertyNotice.getOwnerInfo()
-                    .getTotalTax());
+            setNoticeInfo(propertyNotice, basicProperty,noticeMode);
+            final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();
             propertyNotice.setFloorDetailsForNotice(floorDetails);
             reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_SPECIAL_NOTICE, propertyNotice,
                     reportParams);
@@ -404,71 +404,148 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return reportInput;
     }
 
-    private void setNoticeInfo(final PropertyNoticeInfo propertyNotice, final BasicPropertyImpl basicProperty, Map<String, Object> reportParams) {
-        final PropertyAckNoticeInfo ownerInfo = new PropertyAckNoticeInfo();
+    private void setNoticeInfo(final PropertyNoticeInfo propertyNotice, final BasicPropertyImpl basicProperty, String noticeMode) {
+        final PropertyAckNoticeInfo infoBean = new PropertyAckNoticeInfo();
         final Address ownerAddress = basicProperty.getAddress();
-
+        BigDecimal totalTax = BigDecimal.ZERO;
+        BigDecimal propertyTax = BigDecimal.ZERO;
+        
         if (basicProperty.getPropertyOwnerInfo().size() > 1)
-            ownerInfo.setOwnerName(basicProperty.getFullOwnerName().concat(" and others"));
+        	infoBean.setOwnerName(basicProperty.getFullOwnerName().concat(" and others"));
         else
-            ownerInfo.setOwnerName(basicProperty.getFullOwnerName());
+        	infoBean.setOwnerName(basicProperty.getFullOwnerName());
 
-        ownerInfo.setOwnerAddress(basicProperty.getAddress().toString());
-        ownerInfo.setApplicationNo(property.getApplicationNo());
-        ownerInfo.setDoorNo(ownerAddress.getHouseNoBldgApt());
+        infoBean.setOwnerAddress(basicProperty.getAddress().toString());
+        infoBean.setApplicationNo(property.getApplicationNo());
+        infoBean.setDoorNo(ownerAddress.getHouseNoBldgApt());
         if (org.apache.commons.lang.StringUtils.isNotBlank(ownerAddress.getLandmark()))
-            ownerInfo.setStreetName(ownerAddress.getLandmark());
+        	infoBean.setStreetName(ownerAddress.getLandmark());
         else
-            ownerInfo.setStreetName("N/A");
+        	infoBean.setStreetName("N/A");
         final SimpleDateFormat formatNowYear = new SimpleDateFormat("yyyy");
         final String occupancyYear = formatNowYear.format(basicProperty.getPropOccupationDate());
-        ownerInfo.setInstallmentYear(occupancyYear);
-        ownerInfo.setAssessmentNo(basicProperty.getUpicNo());
-        ownerInfo.setAssessmentDate(sdf.format(basicProperty.getAssessmentdate()).toString());
-        final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-        BigDecimal totalTax = BigDecimal.ZERO;
-        String unauthorizedProperty = "no";
-        for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
-            if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(PropertyTaxUtil.getCurrentInstallment())){
-            	totalTax = totalTax.add(demandDetail.getAmount());
-            	if(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
-            		unauthorizedProperty = "yes";
-            }
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
-                ownerInfo.setEducationTax(demandDetail.getAmount());
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
-                ownerInfo.setLibraryTax(demandDetail.getAmount());
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
-                    || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
-                ownerInfo.setGeneralTax(demandDetail.getAmount());
-            if (StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage()))
-                if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
-                    ownerInfo.setUnauthorizedPenalty(demandDetail.getAmount());
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)){
-            		ownerInfo.setUnauthorizedPenalty(demandDetail.getAmount());
-            }
+        infoBean.setInstallmentYear(occupancyYear);
+        infoBean.setAssessmentNo(basicProperty.getUpicNo());
+        infoBean.setAssessmentDate(sdf.format(basicProperty.getAssessmentdate()).toString());
+        Ptdemand currDemand = null;
+        if(noticeMode.equalsIgnoreCase(CREATE)){
+        	//Sets data for the current property
+        	currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+        	prepareTaxInfoForActiveProperty(infoBean, totalTax, propertyTax, currDemand, noticeMode);
+        	if(currDemand.getDmdCalculations()!=null && currDemand.getDmdCalculations().getAlv()!=null)
+        		infoBean.setNew_rev_ARV(currDemand.getDmdCalculations().getAlv());
         }
-        ownerInfo.setTotalTax(totalTax);
-        reportParams.put("unauthorizedProperty", unauthorizedProperty);
+        if(noticeMode.equalsIgnoreCase(MODIFY)){
+        	//Sets data for the current property
+        	currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+        	prepareTaxInfoForActiveProperty(infoBean, totalTax, propertyTax, currDemand, noticeMode);
+        	if(currDemand.getDmdCalculations()!=null && currDemand.getDmdCalculations().getAlv()!=null)
+        		infoBean.setNew_rev_ARV(currDemand.getDmdCalculations().getAlv());
+        
+        	//Sets data for the latest history property
+        	PropertyImpl historyProperty = propService.getLatestHistoryProperty(basicProperty.getUpicNo());
+        	Ptdemand historyDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(historyProperty);
+        	if(historyProperty!=null && historyDemand!=null){
+        		totalTax = BigDecimal.ZERO;
+        		propertyTax = BigDecimal.ZERO;
+        		prepareTaxInfoForHistoryProperty(infoBean, totalTax, propertyTax, historyDemand);
+        		if(historyDemand.getDmdCalculations()!=null && historyDemand.getDmdCalculations().getAlv()!=null)
+            		infoBean.setExistingARV(historyDemand.getDmdCalculations().getAlv());
+        	}
+        }
+        
         final PropertyID propertyId = basicProperty.getPropertyID();
-        ownerInfo.setZoneName(propertyId.getZone().getName());
-        ownerInfo.setWardName(propertyId.getWard().getName());
-        ownerInfo.setAreaName(propertyId.getArea().getName());
-        ownerInfo.setLocalityName(propertyId.getLocality().getName());
-        ownerInfo.setNoticeDate(new Date());
+        infoBean.setZoneName(propertyId.getZone().getName());
+        infoBean.setWardName(propertyId.getWard().getName());
+        infoBean.setAreaName(propertyId.getArea().getName());
+        infoBean.setLocalityName(propertyId.getLocality().getName());
+        if(property.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA)){
+        	infoBean.setMeesevaNo(property.getApplicationNo());
+        }
+        infoBean.setNoticeDate(new Date());
 
-        propertyNotice.setOwnerInfo(ownerInfo);
+        propertyNotice.setOwnerInfo(infoBean);
     }
 
-    private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(final BigDecimal totalTax) {
+    /**
+     * Sets data for the current property(new/modify)
+     */
+	private void prepareTaxInfoForActiveProperty(final PropertyAckNoticeInfo infoBean,
+			BigDecimal totalTax, BigDecimal propertyTax, Ptdemand currDemand,String noticeMode) {
+		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
+		    if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
+		            .equals(PropertyTaxUtil.getCurrentInstallment())){
+		    	totalTax = totalTax.add(demandDetail.getAmount());
+		    
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS)){
+			    	propertyTax = propertyTax.add(demandDetail.getAmount());
+			    }
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS)){
+			    	if(noticeMode.equalsIgnoreCase(CREATE))
+			    		infoBean.setNewLibraryCess(demandDetail.getAmount());
+			    	if(noticeMode.equalsIgnoreCase(MODIFY))
+			    		infoBean.setRevLibraryCess(demandDetail.getAmount());
+			    }
+			        
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+			            || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX)){
+			    	propertyTax = propertyTax.add(demandDetail.getAmount());
+			    }
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)){
+			    	if(noticeMode.equalsIgnoreCase(CREATE))
+			    		infoBean.setNewUCPenalty(demandDetail.getAmount());
+			    	if(noticeMode.equalsIgnoreCase(MODIFY))
+			    		infoBean.setRevUCPenalty(demandDetail.getAmount());
+			    }
+		    }
+		}
+		if(noticeMode.equalsIgnoreCase(CREATE)){
+			infoBean.setNewTotalTax(totalTax);
+			infoBean.setNewPropertyTax(propertyTax);
+		}
+		if(noticeMode.equalsIgnoreCase(MODIFY)){
+			infoBean.setRevTotalTax(totalTax);
+			infoBean.setRevPropertyTax(propertyTax);
+		}
+	}
+	
+	/**
+     * Sets data for the latest history property
+     */
+	private void prepareTaxInfoForHistoryProperty(final PropertyAckNoticeInfo infoBean,
+			BigDecimal totalTax, BigDecimal propertyTax, Ptdemand currDemand) {
+		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
+		    if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
+		            .equals(PropertyTaxUtil.getCurrentInstallment())){
+		    	totalTax = totalTax.add(demandDetail.getAmount());
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS)){
+			    	propertyTax = propertyTax.add(demandDetail.getAmount());
+			    }
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
+			    	infoBean.setExistingLibraryCess(demandDetail.getAmount());
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+			            || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			                    .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX)){
+			    	propertyTax = propertyTax.add(demandDetail.getAmount());
+			    }
+			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+			            .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
+			    	infoBean.setExistingUCPenalty(demandDetail.getAmount());
+		    }
+		}
+		infoBean.setExistingTotalTax(totalTax);
+		infoBean.setExistingPropertyTax(propertyTax);
+	}
+
+    private List<PropertyAckNoticeInfo> getFloorDetailsForNotice() {
         final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
         final PropertyDetail detail = property.getPropertyDetail();
         PropertyAckNoticeInfo floorInfo = null;
@@ -484,7 +561,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                     : BigDecimal.ZERO);
             floorInfo.setTaxPayableForCurrYear(floor.getFloorDmdCalc().getTotalTaxPayble());
             floorInfo.setRate(floor.getFloorDmdCalc().getCategoryAmt());
-
+            floorInfo.setBldngFloorNo(FLOOR_MAP.get(floor.getFloorNo()));
             floorDetailsList.add(floorInfo);
         }
         return floorDetailsList;
