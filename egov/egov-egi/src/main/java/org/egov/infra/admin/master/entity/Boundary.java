@@ -38,6 +38,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.DocumentId;
@@ -101,9 +102,9 @@ public class Boundary extends AbstractAuditable {
 
     @SafeHtml
     private String localName;
-    @Searchable(name = "boundaryLongitude")
+   
     private Float longitude;
-    @Searchable(name = "boundaryLatitude")
+ 
     private Float latitude;
 
     @Length(max = 32)
@@ -120,6 +121,10 @@ public class Boundary extends AbstractAuditable {
 
     @Transient
     private City city = new City();
+    
+    @Transient
+    @Searchable(name = "boundaryLocation", group = Searchable.Group.COMMON)
+    private transient GeoPoint boundaryLocation;
 
     public Long getId() {
         return id;
@@ -292,6 +297,17 @@ public class Boundary extends AbstractAuditable {
 
     public void setCity(final City city) {
         this.city = city;
+    }
+    
+    public GeoPoint getBoundaryLocation() {
+        if (this.getLatitude() != 0.0 && this.getLongitude() != 0.0) {
+            this.boundaryLocation =(new GeoPoint(this.getLatitude(), this.getLongitude()));
+        }
+        return boundaryLocation;
+    }
+
+    public void setBoundaryLocation(GeoPoint boundaryLocation) {
+        this.boundaryLocation = boundaryLocation;
     }
 
     @Override

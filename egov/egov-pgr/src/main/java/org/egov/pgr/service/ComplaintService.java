@@ -172,10 +172,7 @@ public class ComplaintService {
             } catch (final Exception e) {
                 throw new ValidationException("gis.location.info.not.found");
             }
-            
-        if (complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
-            complaint.setComplaintLocation(new GeoPoint(complaint.getLat(), complaint.getLng()));
-        }
+  
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())

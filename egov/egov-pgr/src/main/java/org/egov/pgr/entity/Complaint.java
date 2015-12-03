@@ -148,10 +148,9 @@ public class Complaint extends StateAware {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
-
-    @Searchable(name = "longitude")
+  
     private double lng;
-    @Searchable(name = "latitude")
+    
     private double lat;
 
     @Column(name = "escalation_date", nullable = false)
@@ -167,6 +166,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "childLocation", nullable = true)
+    @Searchable(name = "locationBoundary", group = Searchable.Group.COMMON)
     private Boundary childLocation;
 
     /*
@@ -400,7 +400,11 @@ public class Complaint extends StateAware {
     public void setCitydetails(City citydetails) {
         this.citydetails = citydetails;
     }
+    
     public GeoPoint getComplaintLocation() {
+        if (this.getLat() != 0.0 && this.getLng() != 0.0) {
+            this.complaintLocation=(new GeoPoint(this.getLat(), this.getLng()));
+        }
         return complaintLocation;
     }
 
