@@ -233,7 +233,7 @@ function validate()
 	
 }
 
-var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
+/* var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
       		warn('improperreceiptNumberSelection');
 }
 var receiptNumberSearchSelectionHandler = function(sType, arguments) { 
@@ -248,7 +248,7 @@ var manualReceiptNumberSearchSelectionHandler = function(sType, arguments) {
 }
 var manualReceiptNumberSelectionEnforceHandler = function(sType, arguments) {
 		warn('impropermanualReceiptNumberSelectionWarning');
-}
+} */
 function checkviewforselectedrecord()
 {
 	dom.get("norecordselectederror").style.display="none";
@@ -349,7 +349,8 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.receiptno"/></td>
-	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="receiptNumberSearch_autocomplete"><div><s:textfield id="receiptNumberSearch" type="text" name="receiptNumber"/></div><span id="receiptNumberSearchResults"></span></div></div><egov:autocomplete name="receiptNumberSearch" width="15" field="receiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchAjax.action" queryQuestionMark="true" results="receiptNumberSearchResults" handler="receiptNumberSearchSelectionHandler" forceSelectionHandler="receiptNumberSelectionEnforceHandler"/><span class='warning' id="improperreceiptNumberSelectionWarning"></span></td>
+	      <td width="24%" class="bluebox">
+	      <div class="yui-skin-sam"><s:textfield id="receiptNumber" type="text" name="receiptNumber"/></td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	   
@@ -364,7 +365,7 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.manual.receiptno"/></td>
-	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="manualReceiptNumberSearch_autocomplete"><div><s:textfield id="manualReceiptNumberSearch" type="text" name="manualReceiptNumber"/></div><span id="manualReceiptNumberSearchResults"></span></div></div><egov:autocomplete name="manualReceiptNumberSearch" width="15" field="manualReceiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchManualReceiptNumberAjax.action" queryQuestionMark="true"  queryLength="3" results="manualReceiptNumberSearchResults" handler="manualReceiptNumberSearchSelectionHandler" forceSelectionHandler="manualReceiptNumberSelectionEnforceHandler"/><span class='warning' id="impropermanualReceiptNumberSelectionWarning"></span></td>
+	      <td width="24%" class="bluebox"><s:textfield id="manualReceiptNumber" type="text" name="manualReceiptNumber"/></td>
 	      <td width="21%" class="bluebox">&nbsp;</td>
 	      <td width="30%" class="bluebox"> &nbsp; </td>   
 	   
