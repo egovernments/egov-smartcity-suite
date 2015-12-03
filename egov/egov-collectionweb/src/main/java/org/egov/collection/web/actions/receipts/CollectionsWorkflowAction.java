@@ -43,7 +43,6 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -56,15 +55,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ParentPackage("egov")
 @Results({
-        @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
-        @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
-        @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
-        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
-                "namespace", "/reports" }),
-        @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
-                "namespace", "/reports" }),
-        @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
-                "method", "cancel" }) })
+    @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
+    @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
+    @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
+    @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
+            "namespace", "/reports" }),
+            @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
+                    "namespace", "/reports" }),
+                    @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
+                            "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -148,7 +147,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     @Autowired
     private SecurityUtils securityUtils;
     private String inboxItemDetails;
-    
+
     public String getInboxItemDetails() {
         return inboxItemDetails;
     }
@@ -167,12 +166,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 5) {
+        if (params.length == 4) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
-            setCreatedDate(params[3]);
-            setCounterId(Integer.valueOf(params[4]));
+            setCounterId(Integer.valueOf(params[3]));
         }
         this.inboxItemDetails = inboxItemDetails;
     }
@@ -379,13 +377,13 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param workflowAction Work flow action code
      */
     private void fetchReceipts(final String statusCode, final String workflowAction) {// Get all receipts
-                                                                                                               // that
+        // that
         // are created by
         // currently logged in user from
         // his/her current counter and are in SUBMITTED status
         final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
         receiptHeaders = receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, position.getId(),inboxItemDetails);
+                .findAllByStatusUserCounterService(statusCode, position.getId(), inboxItemDetails);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
