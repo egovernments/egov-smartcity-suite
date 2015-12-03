@@ -34,6 +34,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -471,15 +472,12 @@ public class WaterTaxUtils {
     }
 
     public Double waterConnectionDue(final long parentId) {
-        Double finalDueAmount = (double) 0;
+        BigDecimal waterTaxDueforParent = BigDecimal.ZERO;
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
                 .getAllConnectionDetailsByParentConnection(parentId);
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-            if (waterconnectiondetails.getDemand() != null)
-                finalDueAmount = finalDueAmount
-                        + (waterconnectiondetails.getDemand().getBaseDemand().doubleValue() - waterconnectiondetails
-                                .getDemand().getAmtCollected().doubleValue());
-        return finalDueAmount;
+             waterTaxDueforParent = waterTaxDueforParent.add(waterConnectionDetailsService.getTotalAmount(waterconnectiondetails));
+        return waterTaxDueforParent.doubleValue();
     }
 
     public Boolean getCitizenUserRole() {
