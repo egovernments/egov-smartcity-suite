@@ -122,7 +122,7 @@ public class InboxController {
             inboxHistoryItem.setId(stateHistory.getState().getId().toString());
             inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
             inboxHistoryItem.setSender(stateHistory.getSenderName());
-            inboxHistoryItem.setTask(workflowTypes.getDisplayName());
+            inboxHistoryItem.setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName() : stateHistory.getNatureOfTask());
             inboxHistoryItem
                     .setStatus(stateHistory.getValue() + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
             inboxHistoryItem.setDetails(isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
