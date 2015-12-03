@@ -59,7 +59,7 @@ public interface DonationHeaderRepository extends JpaRepository<DonationHeader, 
 
     List<DonationHeader> findByCategoryAndUsageType(ConnectionCategory category, UsageType usageType);
 
-    @Query("select dh from DonationHeader dh where dh.propertyType=:propertyType and dh.category=:category and usageType=:usageType and dh.minPipeSize.sizeInInch =:pipeSize and dh.active=true")
+    @Query("select dh from DonationHeader dh where dh.propertyType=:propertyType and dh.category=:category and usageType=:usageType and dh.minPipeSize.sizeInInch <=:pipeSize and dh.maxPipeSize.sizeInInch >=:pipeSize and dh.active=true")
     DonationHeader findByPropertyandCategoryAndUsageTypeAndPipeSize(@Param("propertyType") PropertyType propertyType ,@Param("category") ConnectionCategory category,
             @Param("usageType") UsageType usageType,
             @Param("pipeSize") double pipeSize);
