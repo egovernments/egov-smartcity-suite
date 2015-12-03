@@ -478,12 +478,12 @@ public class WaterConnectionDetailsService {
             updateIndexes(waterConnectionDetails);
             updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
-        if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
+        if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
-        if(!waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)){
-        updateIndexes(waterConnectionDetails);
         }
-        
+
+        updateIndexes(waterConnectionDetails);
+
         return updatedWaterConnectionDetails;
     }
 
@@ -520,17 +520,17 @@ public class WaterConnectionDetailsService {
                     && waterConnectionDetails.getState() != null && workFlowAction.equals("Submit")) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_VERIFIED, WaterTaxConstants.MODULETYPE));
-                
+
             } else if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
-                
+
             } else if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
-               
+
             } else if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
@@ -541,25 +541,23 @@ public class WaterConnectionDetailsService {
 
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING, WaterTaxConstants.MODULETYPE));
-                
+
             } else if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_APPROVED, WaterTaxConstants.MODULETYPE));
 
-               
             }
             else if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_WOGENERATED, WaterTaxConstants.MODULETYPE));
 
-               
             } else if (WaterTaxConstants.APPLICATION_STATUS_WOGENERATED.equalsIgnoreCase(waterConnectionDetails
                     .getStatus().getCode())) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
-                
+
             } else if (WaterTaxConstants.APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails
                     .getStatus().getCode()) && waterConnectionDetails.getCloseConnectionType() != null) {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
@@ -571,14 +569,14 @@ public class WaterConnectionDetailsService {
                                 .getStatus().getCode()) && waterConnectionDetails.getCloseConnectionType() != null) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS, WaterTaxConstants.MODULETYPE));
-                    
+
                 } else if (workFlowAction.equals("Approve")
                         && WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                         && waterConnectionDetails.getCloseConnectionType() != null) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING, WaterTaxConstants.MODULETYPE));
-                    
+
                 }
                 else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equalsIgnoreCase(waterConnectionDetails
                         .getStatus().getCode()) && waterConnectionDetails.getCloseConnectionType() != null) {
@@ -606,7 +604,7 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                                     WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS,
                                     WaterTaxConstants.MODULETYPE));
-                           
+
                         }
 
                         else if (workFlowAction.equals("Approve")
@@ -617,7 +615,7 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                                     WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING,
                                     WaterTaxConstants.MODULETYPE));
-                            
+
                         }
 
                         else if (WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING
@@ -627,7 +625,7 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                                     WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED,
                                     WaterTaxConstants.MODULETYPE));
-                            
+
                         }
                         else if (WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
@@ -636,7 +634,7 @@ public class WaterConnectionDetailsService {
                             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                                     WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED,
                                     WaterTaxConstants.MODULETYPE));
-                           
+
                         }
 
     }
@@ -681,7 +679,7 @@ public class WaterConnectionDetailsService {
                             || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                             && waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED) || workFlowAction
-                            .equals(WFLOW_ACTION_STEP_REJECT)
+                                    .equals(WFLOW_ACTION_STEP_REJECT)
                             && waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED) || workFlowAction
                             .equals(WFLOW_ACTION_STEP_REJECT)
@@ -731,11 +729,11 @@ public class WaterConnectionDetailsService {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
-       final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         final StringBuilder consumerName = new StringBuilder();
         final StringBuilder mobileNumber = new StringBuilder();
-        Assignment assignment=null;
-        User user =null;
+        Assignment assignment = null;
+        User user = null;
         final StringBuilder aadharNumber = new StringBuilder();
         if (ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
@@ -751,13 +749,14 @@ public class WaterConnectionDetailsService {
             }
 
         }
-       if(waterConnectionDetails.getState()!=null && waterConnectionDetails.getState().getOwnerPosition()!=null){
-          assignment=assignmentService.getPrimaryAssignmentForPositon(waterConnectionDetails.getState().getOwnerPosition().getId());
-          if(assignment!=null && assignment.getEmployee()!=null)
-          user = userService.getUserById(assignment.getEmployee().getId());
+        if (waterConnectionDetails.getState() != null && waterConnectionDetails.getState().getOwnerPosition() != null) {
+            assignment = assignmentService.getPrimaryAssignmentForPositon(waterConnectionDetails.getState().getOwnerPosition()
+                    .getId());
+            if (assignment != null && assignment.getEmployee() != null)
+                user = userService.getUserById(assignment.getEmployee().getId());
         }
-        else{
-        	user = securityUtils.getCurrentUser();
+        else {
+            user = securityUtils.getCurrentUser();
         }
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
@@ -783,7 +782,7 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
                             || waterConnectionDetails.getStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                             || waterConnectionDetails.getStatus().getCode()
