@@ -258,11 +258,11 @@ public class ComplaintService {
 
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
-        /*
-         * if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
-         * complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
-         * sendEmailandSmsOnCompletion(savedComplaint);
-         */
+        
+          if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
+          complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
+          sendEmailandSmsOnCompletion(savedComplaint);
+         
         Complaint savedComplaintIndex = new ComplaintIndex();
         BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
         ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
