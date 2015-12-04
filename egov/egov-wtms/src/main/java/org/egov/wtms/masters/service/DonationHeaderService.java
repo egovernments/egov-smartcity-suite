@@ -42,7 +42,9 @@ package org.egov.wtms.masters.service;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.DonationHeaderRepository;
@@ -99,6 +101,13 @@ public class DonationHeaderService {
             final UsageType usageType, final double pipeSize) {
         return donationHeaderRepository.findByPropertyandCategoryAndUsageTypeAndPipeSize(propertyType , category, usageType,
                 pipeSize);
+    }
+    
+ // findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize
+    public  List<DonationHeader> findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(final PropertyType propertyType,
+            final ConnectionCategory categoryType, final UsageType usageType, final double minPipeSize,final double maxPipeSize) {
+        return donationHeaderRepository.findDonationByPropertyAndCategoryAndUsageandMinPipeSizeAndMaxPipesize(propertyType,
+                categoryType, usageType, minPipeSize,maxPipeSize);
     }
 
 }

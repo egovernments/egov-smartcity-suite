@@ -41,8 +41,10 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
+import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -63,5 +65,14 @@ public interface DonationHeaderRepository extends JpaRepository<DonationHeader, 
     DonationHeader findByPropertyandCategoryAndUsageTypeAndPipeSize(@Param("propertyType") PropertyType propertyType ,@Param("category") ConnectionCategory category,
             @Param("usageType") UsageType usageType,
             @Param("pipeSize") double pipeSize);
+    
+    @Query("select dh from DonationHeader dh where dh.propertyType=:propertyType and dh.category=:category and dh.usageType=:usageType and "
+    		+ "((dh.minPipeSize.sizeInInch <=:minPipeSize and dh.maxPipeSize.sizeInInch >=:minPipeSize) or (dh.minPipeSize.sizeInInch <=:maxPipeSize and dh.maxPipeSize.sizeInInch >=:maxPipeSize) or"
+    		+ "(dh.minPipeSize.sizeInInch >=:minPipeSize and dh.maxPipeSize.sizeInInch <=:maxPipeSize)) "
+    		+ "and dh.active=true")
+ 
+    List<DonationHeader> findDonationByPropertyAndCategoryAndUsageandMinPipeSizeAndMaxPipesize(@Param("propertyType") PropertyType propertyType ,@Param("category") ConnectionCategory category,
+            @Param("usageType") UsageType usageType,
+            @Param("minPipeSize") double minPipeSize,@Param("maxPipeSize") double maxPipeSize);
 
 }

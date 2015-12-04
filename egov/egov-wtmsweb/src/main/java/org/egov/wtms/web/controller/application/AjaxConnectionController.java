@@ -42,6 +42,7 @@ import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
@@ -51,6 +52,7 @@ import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DonationDetailsService;
+import org.egov.wtms.masters.service.DonationHeaderService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterRatesDetailsService;
@@ -70,6 +72,9 @@ public class AjaxConnectionController {
     @Autowired
     private NewConnectionService newConnectionService;
 
+    @Autowired
+    private DonationHeaderService donationHeaderService;
+    
     @Autowired
     private DonationDetailsService donationDetailsService;
 
@@ -165,14 +170,17 @@ public class AjaxConnectionController {
     @RequestMapping(value = "/ajax-donationheadercombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
-            @RequestParam final PipeSize maxPipeSize, @RequestParam final PipeSize minPipeSize) {
-        final DonationDetails donationDetailsTemp = donationDetailsService
+            @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize) {
+        PipeSize minPipesizeObj=pipeSizeService.findBy(minPipeSize);
+        PipeSize maxPipesizeObj=pipeSizeService.findBy(maxPipeSize);
+        final  List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
-                        minPipeSize);
-        if (donationDetailsTemp == null)
+                		minPipesizeObj.getSizeInInch() , maxPipesizeObj.getSizeInInch());
+        if (donationHeaderTempList == null)
             return 0;
-        else
-            return donationDetailsTemp.getAmount();
+        else{
+               return 1;
+            }
     }
     
     @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
