@@ -111,7 +111,7 @@ public class Employee extends User implements EntityType {
     private EmployeeType employeeType;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy(" primary,id DESC ")
+    @OrderBy(" primary desc,toDate DESC ")
     @NotAudited
     private final List<Assignment> assignments = new ArrayList<Assignment>(0);
 
