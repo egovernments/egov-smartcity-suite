@@ -1,4 +1,4 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+/*eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  *
  * Copyright (C) <2015> eGovernments Foundation
@@ -27,6 +27,7 @@
  *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.service;
 
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
@@ -47,8 +48,6 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.service.CommonsService;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
@@ -62,12 +61,13 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -79,7 +79,6 @@ import org.egov.portal.entity.CitizenInboxBuilder;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
 import org.egov.portal.service.CitizenInboxService;
-import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -88,6 +87,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -145,12 +145,15 @@ public class ComplaintService {
     @Autowired
     private AssignmentService assignmentService;
 
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Transactional
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
+
         if (StringUtils.isBlank(complaint.getCrn()))
             complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
@@ -172,7 +175,7 @@ public class ComplaintService {
             } catch (final Exception e) {
                 throw new ValidationException("gis.location.info.not.found");
             }
-  
+
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
@@ -188,10 +191,18 @@ public class ComplaintService {
             complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        complaint.setCitydetails(cityWebsite);
-        final Complaint savedComplaint = complaintRepository.save(complaint);
+
+        Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
+
+        Complaint savedComplaintTemp = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintTemp);
+        
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintTemp);
         sendEmailandSms(complaint);
+        complaintIndex.setCitydetails(cityWebsite);
+        //Indexing complaint here
+        complaintIndexService.createComplaintIndex(complaintIndex);
         return savedComplaint;
     }
 
@@ -205,7 +216,6 @@ public class ComplaintService {
      */
 
     @Transactional
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
         final Role goRole = roleService.getRoleByName(PGRConstants.GO_ROLE_NAME);
         String userName = null;
@@ -251,12 +261,19 @@ public class ComplaintService {
                         .withOwner(complaint.getState().getOwnerPosition());
         }
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        complaint.setCitydetails(cityWebsite);
+
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
-        if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
-                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
-            sendEmailandSmsOnCompletion(savedComplaint);
+        /*
+         * if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
+         * complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
+         * sendEmailandSmsOnCompletion(savedComplaint);
+         */
+        Complaint savedComplaintTemp = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintTemp);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintTemp);
+        complaintIndex.setCitydetails(cityWebsite);
+        complaintIndexService.createComplaintIndex(complaintIndex);
         return savedComplaint;
     }
 
@@ -385,6 +402,10 @@ public class ComplaintService {
     }
 
     public void sendEmailandSms(final Complaint complaint) {
+        Complaint savedComplaintTemp = new ComplaintIndex();
+        BeanUtils.copyProperties(complaint, savedComplaintTemp);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintTemp);
+        
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());
 
@@ -417,8 +438,8 @@ public class ComplaintService {
                         .append(", ")
                         .append(complaint.getComplainant().getMobile() == null ? "" : complaint.getComplainant().getMobile())
                         .append(" at ").append(complaint.getLocation().getName());
-                if (complaint.getLatlngAddress() != null)
-                    smsBodyOfficial.append(", " + complaint.getLatlngAddress());
+                if (complaintIndex.getLatlngAddress() != null)
+                    smsBodyOfficial.append(", " + complaintIndex.getLatlngAddress());
                 else
                     smsBodyOfficial
                             .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName() : "");

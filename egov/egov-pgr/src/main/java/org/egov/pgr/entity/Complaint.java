@@ -1,41 +1,33 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ *
+ * Copyright (C) <2015> eGovernments Foundation
+ *
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ *
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ *
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ *
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.entity;
 
 import java.util.Collections;
@@ -62,7 +54,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -71,7 +62,6 @@ import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
-import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -146,11 +136,11 @@ public class Complaint extends StateAware {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
+    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
-  
+
     private double lng;
-    
+
     private double lat;
 
     @Column(name = "escalation_date", nullable = false)
@@ -169,45 +159,14 @@ public class Complaint extends StateAware {
     @Searchable(name = "locationBoundary", group = Searchable.Group.COMMON)
     private Boundary childLocation;
 
+    @Transient
+    private String latlngAddress;
+
     /*
      * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
      */
-    @Searchable(group = Searchable.Group.CLAUSES)
-    @Transient
-    private City citydetails;
-    
-    @Searchable
-    @Transient
-    private String zone;
-
-    @Searchable
-    @Transient
-    private String ward;
-    @Searchable
-    @Transient
-    private Date completionDate;
-
-    @Searchable
-    @Transient
-    private double complaintDuration;
-    @Searchable
-    @Transient
-    private boolean isClosed;
-
-    @Searchable
-    @Transient
-    private String durationRange;
-    
-    
-    @Transient
-    @Searchable(name = "complaintLocation", group = Searchable.Group.COMMON)
-    private transient GeoPoint complaintLocation;
-
     @Transient
     private Long crossHierarchyId;
-
-    @Transient
-    private String latlngAddress;
 
     @Override
     public Long getId() {
@@ -344,74 +303,6 @@ public class Complaint extends StateAware {
     public void setDepartment(final Department department) {
         this.department = department;
     }
-
-    public String getZone() {
-        return zone;
-    }
-
-    public void setZone(final String zone) {
-        this.zone = zone;
-    }
-
-    public String getWard() {
-        return ward;
-    }
-
-    public void setWard(final String ward) {
-        this.ward = ward;
-    }
-
-    public Date getCompletionDate() {
-        return completionDate;
-    }
-
-    public void setCompletionDate(final Date completionDate) {
-        this.completionDate = completionDate;
-    }
-
-    public double getComplaintDuration() {
-        return complaintDuration;
-    }
-
-    public void setComplaintDuration(final double complaintDuration) {
-        this.complaintDuration = complaintDuration;
-    }
-
-    public boolean getIsClosed() {
-        return isClosed;
-    }
-
-    public void setIsClosed(final boolean isClosed) {
-        this.isClosed = isClosed;
-    }
-
-    public String getDurationRange() {
-        return durationRange;
-    }
-
-    public void setDurationRange(final String durationRange) {
-        this.durationRange = durationRange;
-    }
-
-    public City getCitydetails() {
-        return citydetails;
-    }
-
-    public void setCitydetails(City citydetails) {
-        this.citydetails = citydetails;
-    }
-    
-    public GeoPoint getComplaintLocation() {
-        if (this.getLat() != 0.0 && this.getLng() != 0.0) {
-            this.complaintLocation=(new GeoPoint(this.getLat(), this.getLng()));
-        }
-        return complaintLocation;
-    }
-
-    public void setComplaintLocation(GeoPoint complaintLocation) {
-        this.complaintLocation = complaintLocation;
-    }
-
 
     @Override
     public String getStateDetails() {
