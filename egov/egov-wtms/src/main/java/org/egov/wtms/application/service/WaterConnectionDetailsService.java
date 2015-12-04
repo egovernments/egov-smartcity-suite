@@ -750,8 +750,8 @@ public class WaterConnectionDetailsService {
 
         }
         if (waterConnectionDetails.getState() != null && waterConnectionDetails.getState().getOwnerPosition() != null) {
-            assignment = assignmentService.getPrimaryAssignmentForPositon(waterConnectionDetails.getState().getOwnerPosition()
-                    .getId());
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(waterConnectionDetails.getState().getOwnerPosition()
+                    .getId(),new Date());
             if (assignment != null && assignment.getEmployee() != null)
                 user = userService.getUserById(assignment.getEmployee().getId());
         }
