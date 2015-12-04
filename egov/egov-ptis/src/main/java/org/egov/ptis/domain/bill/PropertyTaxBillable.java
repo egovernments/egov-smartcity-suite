@@ -550,7 +550,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Override
     public BigDecimal calculateEarlyPayRebate(final BigDecimal tax) {
         if (isEarlyPayRebateActive())
-            return tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100);
+            return (tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100)).setScale(0,
+                    BigDecimal.ROUND_HALF_UP);
         else
             return BigDecimal.ZERO;
     }
