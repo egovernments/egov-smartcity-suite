@@ -126,7 +126,7 @@
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					
-										<s:text name="search.assessment.num" />									
+										<s:text name="search.citizenassessment.num" />									
 									</div>									
 								</td>
 							</tr>					

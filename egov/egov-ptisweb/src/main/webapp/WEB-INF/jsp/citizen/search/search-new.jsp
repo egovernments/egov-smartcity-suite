@@ -50,7 +50,8 @@
 			}
 
 			function gotoSearch(){
-				document.assessmentform.action='${pageContext.request.contextPath}/citizen/search/search-srchByAssessment.action';
+				var assessmentNum = jQuery("#assessmentNum").val();
+				document.assessmentform.action='../../view/viewDCBProperty-displayPropInfo.action?propertyId='+assessmentNum;
 				document.assessmentform.submit(); 
 			}
 			
@@ -65,11 +66,11 @@
 				</div>
 			</s:if>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
-						<s:form action="search" name="assessmentform" theme="simple">
+						<s:form name="assessmentform" theme="simple">
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
-									<div class="headingbg">					
-										<s:text name="search.assessment.num" />									
+									<div class="headingbg" style="text-align:left">					
+										<s:text name="citizen.search.welcome" />									
 									</div>									
 								</td>
 							</tr>					
@@ -77,7 +78,7 @@
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="prop.Id" />
+									<s:text name="citizen.prop.id" />
 									<span class="mandatory"></span> :
 								</td>
 								
@@ -98,7 +99,7 @@
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:center">
 										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
-										<input type="submit" value="Search" class="button"
+										<input type="submit" value="Submit" class="button"
 											onClick="gotoSearch();" />
 									</div>
 								</td>								
@@ -109,7 +110,7 @@
 
 					
 			<div align="left" class="mandatory" style="font-size: 11px">
-			* <s:text name="mandtryFlds"></s:text>
+			 <s:text name="mandtryFlds"></s:text>
 			</div>
 					
 			</center>
