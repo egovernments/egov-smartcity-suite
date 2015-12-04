@@ -791,8 +791,6 @@
 											</s:else>
 										</div>
 									</s:elseif><br> 
-									<input type="button" name="button2" id="button2" value="Back"
-										class="button" onclick="history.back(-1)" />
 									<input type="button" name="button2" id="button2" value="Close"
 										class="button" onclick="return confirmClose();" />
 							</div>
