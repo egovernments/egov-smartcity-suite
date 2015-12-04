@@ -151,6 +151,7 @@ public class SearchReceiptAction extends SearchFormAction {
         toDate = null; 
         instrumentType = "";
         searchStatus = -1;
+        manualReceiptNumber="";
         return SUCCESS;
     }
 
