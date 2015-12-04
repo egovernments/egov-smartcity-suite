@@ -129,7 +129,7 @@
 		<spring-security-version>4.0.3.RELEASE</spring-security-version>
 		<spring-security-oauth2-version>2.0.7.RELEASE</spring-security-oauth2-version>
 		<apache-tiles-version>3.0.5</apache-tiles-version>
-		<quartz-version>2.2.1</quartz-version>
+		<quartz-version>2.2.2</quartz-version>
 		<jasper-report-version>6.1.0</jasper-report-version>
 		<json-simple-version>1.1.1</json-simple-version>
 		<jackson-version>2.2.3</jackson-version>
