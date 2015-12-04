@@ -367,7 +367,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         buildEmail(propertyMutation);
         approverName = "";
         if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
-            mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
+            mutationInitiatedBy = propertyMutation.getCreatedBy().getUsername();
         else
             mutationInitiatedBy = assignmentService
                     .getPrimaryAssignmentForPositon(
