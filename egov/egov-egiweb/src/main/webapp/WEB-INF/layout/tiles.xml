@@ -228,4 +228,8 @@
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/city/city-setup.jsp"/>
     </definition>
     
+    <definition name="reset-password" extends="base_layout">
+        <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/user/reset-password.jsp"/>
+    </definition>
 </tiles-definitions>

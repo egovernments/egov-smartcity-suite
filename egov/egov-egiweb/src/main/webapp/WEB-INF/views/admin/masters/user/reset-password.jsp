@@ -42,31 +42,36 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <div class="row">
 	<div class="col-md-12">
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert"><spring:message code="${message}" arguments="${name}"/></div>
+		</c:if>
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				&nbsp;
 			</div>
 			<div class="panel-body custom-form">
 				<form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
-					<c:if test="${not empty param.error}">
-                    	<div id="error-msg" class="error-msg text-center add-margin"><spring:message code="${param.error}"/></div>
-                	</c:if>
-					<div class="form-group">
-						<label class="col-sm-4 control-label">
-							<spring:message code="lbl.new.pwd"/> <span class="mandatory"></span> 
+                	<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.user.name" /> <span class="mandatory"></span> 
 						</label>
-						<div class="col-sm-4" >
-							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" minlength="8" maxlength="32"/>
+						<div class="col-sm-6 add-margin">
+						<select name="username" class="form-control" required="required">
+							<option value="">
+								<spring:message code="lbl.select" />
+							</option>
+							<c:forEach items="${users}" var="user">
+								<option value="${user.username}">${user.name}</option>
+							</c:forEach>
+							</select>
 						</div>
 					</div>
-					
 					<div class="form-group">
-						<label class="col-sm-4 control-label">
-							<spring:message code="lbl.pwd.confirm"/> <span class="mandatory"></span> 
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.new.pwd"/><span class="mandatory"></span> 
 						</label>
-						<div class="col-sm-4" >
-							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required" minlength="8" maxlength="32"/>
-							<div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/> </div>
+						<div class="col-sm-6 add-margin" >
+							<input type="password" name="password" class="form-control" id="password" value="demo" required="required" maxlength="32"/>
 						</div>
 					</div>
 					<div class="form-group text-center">
@@ -76,22 +81,8 @@
 						</div>
 					</div>
 					</form:form>
+					<span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info"/>
 			</div>
 		</div>
 	</div>
 </div>
-<script>
-$('.check-password').blur(function(){
-	if(($('#new-pass').val()!="") && ($('#retype-pass').val()!=""))
-	{
-		if ($('#new-pass').val() === $('#retype-pass').val()) {
-			return true;
-			
-		}else{
-			$('.password-error').show();
-			$('#retype-pass').addClass('error');
-			return false;
-		}
-	}
-});
-</script>

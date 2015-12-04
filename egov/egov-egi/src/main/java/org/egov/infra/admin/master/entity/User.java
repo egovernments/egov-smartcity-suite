@@ -360,6 +360,7 @@ public class User extends AbstractAuditable {
         this.guardianRelation = guardianRelation;
     }
 
+    @JsonIgnore
     public byte[] getSignature() {
         return signature;
     }
