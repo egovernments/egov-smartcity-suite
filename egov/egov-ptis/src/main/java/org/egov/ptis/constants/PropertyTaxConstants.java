@@ -1144,7 +1144,7 @@ public interface PropertyTaxConstants {
             put(COLLECTION_TYPE_ONLINECOLLECTION, "Online");
         }
     };
-    public static final TreeMap<String, String> HEARING_TIMINGS = new TreeMap<String, String>() {
+    public static final LinkedHashMap<String, String> HEARING_TIMINGS = new LinkedHashMap<String, String>() {
         {
             put("9.00 AM", "9.00 AM");
             put("9.30 AM", "9.30 AM");
@@ -1160,7 +1160,7 @@ public interface PropertyTaxConstants {
             put("02.30 PM", "02.30 PM");
             put("03.00 PM", "03.00 PM");
             put("03.30 PM", "03.30 PM");
-            put("04.00 PM", "04.00 PM");
+            put("04.00 PM", "04.00 PM"); 
             put("04.30 PM", "04.30 PM");
             put("05.00 PM", "05.00 PM");
             put("05.30 PM", "05.30 PM");

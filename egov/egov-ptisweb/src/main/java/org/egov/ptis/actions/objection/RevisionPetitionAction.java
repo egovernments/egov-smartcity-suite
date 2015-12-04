@@ -74,6 +74,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -81,7 +82,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -208,7 +208,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String reasonForModify;
     private TreeMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
-    private TreeMap<String, String> hearingTimingMap;
+    private LinkedHashMap<String, String> hearingTimingMap;
     private String areaOfPlot;
 
     private List<DocumentType> documentTypes = new ArrayList<>();
@@ -1798,11 +1798,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.documentTypes = documentTypes;
     }
 
-    public TreeMap<String, String> getHearingTimingMap() {
+    public LinkedHashMap<String, String> getHearingTimingMap() {
         return hearingTimingMap;
     }
 
-    public void setHearingTimingMap(final TreeMap<String, String> hearingTimingMap) {
+    public void setHearingTimingMap(final LinkedHashMap<String, String> hearingTimingMap) {
         this.hearingTimingMap = hearingTimingMap;
     }
 
