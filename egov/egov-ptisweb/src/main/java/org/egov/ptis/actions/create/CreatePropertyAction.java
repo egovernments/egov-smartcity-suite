@@ -1062,10 +1062,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 && property.getPropertyDetail().isCorrAddressDiff()) {
             if (isBlank(corrAddress1))
                 addActionError(getText("mandatory.corr.addr1"));
-            if (isBlank(corrAddress2))
-                addActionError(getText("mandatory.corr.addr2"));
             if (isBlank(corrPinCode) && corrPinCode.length() < 6)
-                addActionError(getText("mandatory.corr.pincode.size"));
+                addActionError(getText("mandatory.corr.pincode.size")); 
         }
 
         if (null != mutationId && mutationId != -1) {
