@@ -32,16 +32,26 @@ package org.egov.pgr.elasticSearch.service;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.search.elastic.annotation.Indexing;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class ComplaintIndexService {
+    
+    @Autowired
+    private CityService cityService;
+    
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex createComplaintIndex(ComplaintIndex complaintIndex){
+        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        complaintIndex.setCitydetails(cityWebsite);
         return complaintIndex;
     }
     

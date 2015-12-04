@@ -52,7 +52,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -63,7 +62,6 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
@@ -190,17 +188,14 @@ public class ComplaintService {
         else if (null != assignee)
             complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-
         Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
 
-        Complaint savedComplaintTemp = new ComplaintIndex();
-        BeanUtils.copyProperties(savedComplaint, savedComplaintTemp);
-        
-        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintTemp);
+        Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
         sendEmailandSms(complaint);
-        complaintIndex.setCitydetails(cityWebsite);
+ 
         //Indexing complaint here
         complaintIndexService.createComplaintIndex(complaintIndex);
         return savedComplaint;
@@ -260,7 +255,6 @@ public class ComplaintService {
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                         .withOwner(complaint.getState().getOwnerPosition());
         }
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
 
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
@@ -269,10 +263,10 @@ public class ComplaintService {
          * complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
          * sendEmailandSmsOnCompletion(savedComplaint);
          */
-        Complaint savedComplaintTemp = new ComplaintIndex();
-        BeanUtils.copyProperties(savedComplaint, savedComplaintTemp);
-        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintTemp);
-        complaintIndex.setCitydetails(cityWebsite);
+        Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
+
         complaintIndexService.createComplaintIndex(complaintIndex);
         return savedComplaint;
     }
@@ -402,9 +396,9 @@ public class ComplaintService {
     }
 
     public void sendEmailandSms(final Complaint complaint) {
-        Complaint savedComplaintTemp = new ComplaintIndex();
-        BeanUtils.copyProperties(complaint, savedComplaintTemp);
-        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintTemp);
+        Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(complaint, savedComplaintIndex);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
         
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());

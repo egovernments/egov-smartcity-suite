@@ -48,7 +48,6 @@ public class ComplaintIndex extends Complaint {
     private City citydetails;
 
     @Searchable
-    @Transient
     private String zone;
 
     @Searchable
@@ -67,7 +66,7 @@ public class ComplaintIndex extends Complaint {
     private String durationRange;
 
     @Searchable(name = "complaintLocation", group = Searchable.Group.COMMON)
-    private transient GeoPoint complaintLocation;
+    private GeoPoint complaintLocation;
 
     public City getCitydetails() {
         return citydetails;
@@ -142,12 +141,12 @@ public class ComplaintIndex extends Complaint {
     }
 
     public static ComplaintIndex method(Complaint complaint) {
-        ComplaintIndex test = null;
+        ComplaintIndex complaintIndex = null;
         if (complaint instanceof ComplaintIndex) {
-            test = (ComplaintIndex) complaint;// downcasting
+            complaintIndex = (ComplaintIndex) complaint;// downcasting
 
         }
-        return test;
+        return complaintIndex;
     }
 
 }
