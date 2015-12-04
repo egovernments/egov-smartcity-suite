@@ -143,12 +143,7 @@
 										<option value="">
 											----Choose----
 										</option>
-										
-										<%-- <s:if test="${!currentRowObject.isTaxExempted}">
-										<option value="TaxExemption">
-													<s:text name="TaxExemption"></s:text>
-										</option>
-										</s:if> --%>
+								
 										<c:if test="${currentRowObject.isTaxExempted == true}">
 										<option value="TaxExemption">
 													<s:text name="TaxExemption"></s:text>
