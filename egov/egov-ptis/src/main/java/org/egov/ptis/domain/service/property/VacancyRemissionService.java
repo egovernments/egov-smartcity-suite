@@ -59,8 +59,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_REJECTED;
 
@@ -371,7 +371,7 @@ public class VacancyRemissionService {
                 nextAction = WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
             } else {
                 stateValue = WF_STATE_REVENUE_INSPECTOR_REJECTED;
-                nextAction = WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
+                nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
             }
             vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
             vacancyRemissionApproval.transition().withSenderName(user.getName()).withComments(approvalComent)
