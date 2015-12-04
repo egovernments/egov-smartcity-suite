@@ -153,7 +153,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
                   Position positionuser=waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
                  if( positionuser!=null)
-                     wfInitiator = assignmentService.getPrimaryAssignmentForPositon(positionuser.getId());
+                     wfInitiator = assignmentService.getPrimaryAssignmentForPositionAndDate(positionuser.getId(),new Date());
                  break;
                 }
             }

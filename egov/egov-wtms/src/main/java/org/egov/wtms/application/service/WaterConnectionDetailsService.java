@@ -843,32 +843,34 @@ public class WaterConnectionDetailsService {
                         amountTodisplayInIndex);
             }
         } else {
-            final String strQuery = "select md from EgModules md where md.name=:name";
-            final Query hql = getCurrentSession().createQuery(strQuery);
-            hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
-            if (waterConnectionDetails.getApplicationDate() == null)
-                waterConnectionDetails.setApplicationDate(new Date());
-            if (waterConnectionDetails.getApplicationNumber() == null)
-                waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
-            if (LOG.isDebugEnabled())
-                LOG.debug(" updating Application Index creation Started... ");
-            final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                    ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
-                    waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
-                    consumerName.toString(), waterConnectionDetails.getStatus().getDescription().toString(),
-                    "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber(),
-                    assessmentDetails.getPropertyAddress(), user.getUsername() + "::" + user.getName());
+        final String strQuery = "select md from EgModules md where md.name=:name";
+        final Query hql = getCurrentSession().createQuery(strQuery);
+        hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
+        if (waterConnectionDetails.getApplicationDate() == null)
+            waterConnectionDetails.setApplicationDate(new Date());
+        if (waterConnectionDetails.getApplicationNumber() == null)
+            waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
+        if(applicationIndex == null){
+        if (LOG.isDebugEnabled())
+            LOG.debug(" updating Application Index creation Started... ");
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
+                ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
+                waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
+                consumerName.toString(), waterConnectionDetails.getStatus().getDescription().toString(),
+                "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber(),
+                assessmentDetails.getPropertyAddress(), user.getUsername() + "::" + user.getName());
 
-            if (waterConnectionDetails.getDisposalDate() != null)
-                applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
-            applicationIndexBuilder.mobileNumber(mobileNumber.toString());
-            applicationIndexBuilder.aadharNumber(aadharNumber.toString());
+        if (waterConnectionDetails.getDisposalDate() != null)
+            applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
+        applicationIndexBuilder.mobileNumber(mobileNumber.toString());
+        applicationIndexBuilder.aadharNumber(aadharNumber.toString());
 
-            applicationIndex = applicationIndexBuilder.build();
-            applicationIndexService.createApplicationIndex(applicationIndex);
-            if (LOG.isDebugEnabled())
-                LOG.debug(" updating Application Index creation complted... ");
+        applicationIndex = applicationIndexBuilder.build();
+        applicationIndexService.createApplicationIndex(applicationIndex);
         }
+        if (LOG.isDebugEnabled())
+            LOG.debug(" updating Application Index creation complted... ");
+    }
     }
 
     public Date getDisposalDate(final WaterConnectionDetails waterConnectionDetails, final Integer appProcessTime) {
