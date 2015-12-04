@@ -50,7 +50,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "egwtr_connection")
 @Unique(id = "id", tableName = "egwtr_connection", columnName = { "meterSerialNumber" }, fields = {
-        "meterSerialNumber" }, enableDfltMsg = true)
+"meterSerialNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = WaterConnection.SEQ_CONNECTION, sequenceName = WaterConnection.SEQ_CONNECTION, allocationSize = 1)
 public class WaterConnection extends AbstractAuditable {
 

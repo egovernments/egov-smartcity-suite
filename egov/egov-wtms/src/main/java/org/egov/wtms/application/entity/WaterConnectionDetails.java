@@ -69,6 +69,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
@@ -80,7 +81,6 @@ import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
-import org.egov.wtms.masters.entity.enums.Source;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -247,13 +247,12 @@ public class WaterConnectionDetails extends StateAware {
 
     @Enumerated(EnumType.STRING)
     private Source source;
+
     @Transient
     private Long approvalDepartment;
-    
+
     @Transient
     private String approvalComent;
-    
-  
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -630,23 +629,20 @@ public class WaterConnectionDetails extends StateAware {
         this.source = source;
     }
 
-	public Long getApprovalDepartment() {
-		return approvalDepartment;
-	}
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
 
-	public void setApprovalDepartment(Long approvalDepartment) {
-		this.approvalDepartment = approvalDepartment;
-	}
+    public void setApprovalDepartment(final Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
 
-	
+    public String getApprovalComent() {
+        return approvalComent;
+    }
 
-	public String getApprovalComent() {
-		return approvalComent;
-	}
-
-	public void setApprovalComent(String approvalComent) {
-		this.approvalComent = approvalComent;
-	}
-    
+    public void setApprovalComent(final String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
 
 }
