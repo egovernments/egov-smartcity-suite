@@ -42,6 +42,7 @@ package org.egov.ptis.actions.common;
 import static java.lang.Boolean.FALSE;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
@@ -177,7 +178,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private List<String> uploadFileNames = new ArrayList<String>();
     private List<String> uploadContentTypes = new ArrayList<String>();
     protected Map<String, BigDecimal> propertyTaxDetailsMap = new HashMap<String, BigDecimal>(0);
-    protected List<Hashtable<String, Object>> historyMap = new ArrayList <Hashtable<String, Object>>();
+    protected List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
 
@@ -279,7 +280,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
                 validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,
-                        regDocDate);
+                        regDocDate, modifyRsn);
             }
         }
 
@@ -353,7 +354,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
-            final Property property, final String areaOfPlot, final Date regDocDate) {
+            final Property property, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
@@ -396,10 +397,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                             addActionError(getText("assbleArea.notgreaterthan.extentsite"));
 
-                        if (null != regDocDate && null != floor.getOccupancyDate()
-                                && !floor.getOccupancyDate().equals("")) {
-                            if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
-                                addActionError(getText("regDate.notgreaterthan.occDate",msgParams));
+                        if (modifyRsn == null || (modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER))) {
+                            if (null != regDocDate && null != floor.getOccupancyDate()
+                                    && !floor.getOccupancyDate().equals("")) {
+                                if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
+                                    addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
+                            }
                         }
 
                     }
@@ -525,12 +528,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private String getNatureOfTask() {
         String nature = NEW_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_NEW_ASSESSMENT
                 : ADDTIONAL_RULE_ALTER_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_ALTERATION
-                        :
-                        ADDTIONAL_RULE_BIFURCATE_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_BIFURCATION
-                                :
-                                DEMOLITION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_DEMOLITION :
-                                        EXEMPTION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_TAX_EXEMPTION :
-                                                "PropertyImpl";
+                        : ADDTIONAL_RULE_BIFURCATE_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_BIFURCATION
+                                : DEMOLITION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_DEMOLITION : EXEMPTION
+                                        .equalsIgnoreCase(getAdditionalRule()) ? NATURE_TAX_EXEMPTION : "PropertyImpl";
         return nature;
     }
 
