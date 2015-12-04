@@ -292,6 +292,7 @@ public class City extends AbstractAuditable {
         cityPrefs.put("cityCode", code);
         cityPrefs.put("districtName", districtName);
         cityPrefs.put("districtCode", districtCode);
+        cityPrefs.put("cityGrade", grade);
         return cityPrefs;
     }
 

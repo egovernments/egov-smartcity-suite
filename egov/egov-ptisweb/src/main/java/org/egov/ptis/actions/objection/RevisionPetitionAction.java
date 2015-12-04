@@ -745,6 +745,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                     (String) request.getSession().getAttribute("citylogo"));
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            final String cityGrade=(request.getSession().getAttribute("cityGrade")!=null?
+                    request.getSession().getAttribute("cityGrade").toString():null);
+            Boolean isCorporation;
+            if(cityGrade!=null && cityGrade!="" && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)){
+                isCorporation=true;
+            } else
+                isCorporation=false;
+            reportParams.put("isCorporation", isCorporation);
             reportParams.put("cityName", cityName);
             reportParams.put("logoPath", imagePath);
             reportParams.put("mode", "create");

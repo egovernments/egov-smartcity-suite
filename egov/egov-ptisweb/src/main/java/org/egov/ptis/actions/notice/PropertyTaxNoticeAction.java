@@ -384,8 +384,16 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                     (String) request.getSession().getAttribute("citylogo"));
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            final String cityGrade=(request.getSession().getAttribute("cityGrade")!=null?
+                    request.getSession().getAttribute("cityGrade").toString():null);
+            Boolean isCorporation;
             reportParams.put("logoPath", imagePath);
             reportParams.put("cityName", cityName);
+            if(cityGrade!=null && cityGrade!="" && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)){
+                isCorporation=true;
+            } else
+                isCorporation=false;
+            reportParams.put("isCorporation", isCorporation);
             if (CREATE.equalsIgnoreCase(noticeMode))
                 reportParams.put("mode", CREATE);
             else if (MODIFY.equalsIgnoreCase(noticeMode))
