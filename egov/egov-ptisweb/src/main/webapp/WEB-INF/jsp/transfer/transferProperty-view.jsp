@@ -379,7 +379,8 @@
 				</s:if>
 				<s:elseif
 					test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-					model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING)}">
+					model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING) || 
+					(model.receiptNum != '' && model.receiptDate != null)}">  
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>
