@@ -151,8 +151,27 @@ jQuery(document).ready(function($) {
 					});
 
 				});
+/*function redirecttoOnline()
+{
+	$("#aplicationSearchResults").on('click','tbody tr',function(event) {
+	var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);
+	var applicationTypeCode = tableContainer.fnGetData($(this).parent().parent(), 3);
+	alert('consumerNumber'+ consumerNumber);
+	var url = '/wtms/application/generatebill/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
+	$('#waterSearchRequestForm').attr('method', 'get');
+	$('#waterSearchRequestForm').attr('action', url);
+	window.location = url;		
+	});
+}*/
 function submitButton()
 {
+	tableContainer = $("#aplicationSearchResults");
+	var cscUserRole = $('#cscUserRole').val();
+	var ulbUserRole = $('#ulbUserRole').val();
+	var superUserRole = $('#superUserRole').val();
+	var approverUserRole = $('#approverUserRole').val();
+	var operatorRole = $('#operatorRole').val();
+	var citizenRole = $('#citizenRole').val();
 	$('#searchResultDiv').show();
 	$.post("/wtms/search/waterSearch/",$('#waterSearchRequestForm').serialize())
 	.done(function(searchResult) {
@@ -170,14 +189,21 @@ function submitButton()
 	           {title : 'Address',data : 'resource.searchable.locality'},
 	           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
 	           {title : 'Usage Type',data : 'resource.clauses.usage'},
-	           {title : 'Property Tax Due',data : 'resource.clauses.totaldue'},
-	           {title : 'Status',data : 'resource.clauses.status'},
+	           {title : 'Property Tax Due',
+	        	   render: function (data, type, full) {
+	        		   if(citizenRole != 'true') {
+							return full.resource.clauses.totaldue;
+						}
+						else return "";
+	        	   }
+	        	},
+			   {title : 'Status',data : 'resource.clauses.status'},
 	           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 	           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
 	           {title : 'Water Charge Due',data : 'resource.clauses.waterTaxDue'},
 		       {title : 'Actions',
 	        	   render : function(data,type,full) {
-	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
+	        			   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 	        			   if (full.resource.clauses.status == 'ACTIVE' ) {
 	        				   if ( citizenRole== 'true'   && full.resource.clauses.waterTaxDue > 0) { 
@@ -370,6 +396,7 @@ function submitButton()
 	        			   }
 	        		   }
 
+	        	   
 	        	   }
 
 				} ],

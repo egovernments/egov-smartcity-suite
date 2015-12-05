@@ -50,8 +50,12 @@
 
 			<div class="panel-heading">
 				<div class="panel-title">
+				<c:if test="${!citizenRole}" >
 					<strong><spring:message code='title.watertaxSearch' />
-					</strong>
+					</c:if>
+					<c:if test="${citizenRole}" >
+					<strong><spring:message code='lbl.headerforsearch.connection'/></strong></c:if>
+					
 				</div>
 
 			</div>
@@ -75,14 +79,21 @@
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
-					</div></c:if>
+					</div>
 						<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 										  <div class="col-md-4 add-margin">
 							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo"/>
 						</div>
 						</div>
-						
+						</c:if>
+						<c:if test="${citizenRole}" >
+						<div class="form-group">
+				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.citizeconsumer.number'/></label>
+										  <div class="col-md-4 add-margin">
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo"/>
+						</div>
+						</div></c:if>
 						<c:if test="${!citizenRole}" >
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
@@ -117,6 +128,7 @@
 							<form:input path="" type="text" name="doorNumber" class="form-control "   id="app-appcodo" />
 						</div>
 					</div></c:if>
+					<c:if test="${!citizenRole}" >
 					<div class="form-group">
 						<div class="text-center">
 							<a href="javascript:void(0);" id="searchapprvedapplication"
@@ -126,7 +138,13 @@
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
-				</div>
+				</div></c:if>
+				<c:if test="${citizenRole}" >
+				<div class="form-group">
+						<div class="text-center">
+							<a href="javascript:void(0);" id="searchapprvedapplication"
+								class="btn btn-primary"><spring:message code='lbl.Submit.button' /></a></div></div>
+				</c:if>
 
 
 				</form:form>
