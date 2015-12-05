@@ -1247,5 +1247,6 @@ public interface PropertyTaxConstants {
     public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
     public static final String CITY_GRADE_CORPORATION = "Corp";
+    public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500"; 
 
 }
