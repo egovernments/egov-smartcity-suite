@@ -260,7 +260,7 @@ function submitButton()
 	        		   if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
 	        				   && full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 	        			   if (full.resource.clauses.status == 'ACTIVE') {
-	        				   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue == 0) { 
+	        				   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
 	        				   }
 	        				   else if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.waterTaxDue > 0) {
@@ -307,7 +307,7 @@ function submitButton()
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   full.resource.clauses.applicationcode == 'CHANGEOFUSE') {
 	        			   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
-        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
+        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
         				   }
 	        			   else if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
@@ -341,7 +341,7 @@ function submitButton()
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   full.resource.clauses.applicationcode == 'RECONNECTION') {
 	        			   if (citizenRole== 'true'     && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) { 
-        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Pay Charge</option></select>');   
+        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
         				   }
 	        			   else if (cscUserRole!=null && cscUserRole!="" && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
