@@ -91,9 +91,15 @@
 						<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.citizeconsumer.number'/></label>
 										  <div class="col-md-4 add-margin">
-							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo"/>
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" required="required" maxlength="15" id="app-appcodo"/>
 						</div>
-						</div></c:if>
+						</div>
+<%-- <div align="left" class="mandatory" style="font-size: 15px">
+			 
+			 <spring:message code='lbl.mandtryFlds'/>
+			 <span class="mandatory"></span>
+			</div> --%>
+</c:if>
 						<c:if test="${!citizenRole}" >
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
@@ -156,8 +162,8 @@
 		</div>
 
 	</div>
-</div>
 
+</div>
 
 <div class="row">
 					<div class="col-md-6 col-xs-6 table-header"><spring:message code='lbl.searchresult'/></div>

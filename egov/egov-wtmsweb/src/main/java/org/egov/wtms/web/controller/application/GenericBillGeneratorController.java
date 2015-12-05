@@ -126,5 +126,19 @@ public class GenericBillGeneratorController {
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";
     }
+    
+    @RequestMapping(value = "/generatebillOnline/{applicationCode}", method = GET)
+    public String payTaxOnline(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
+             final Model model) {
+        
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        if (EgovThreadLocals.getUserId() == null)
+            if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
+                EgovThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
+        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, null));
+        model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
+        return "collecttax-redirection";
+    }
 
 }
