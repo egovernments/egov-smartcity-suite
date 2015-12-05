@@ -113,6 +113,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -305,6 +306,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.capitalValue"));
         if (null == propertyDetail.getMarketValue())
             addActionError(getText("mandatory.marketValue"));
+        if (propertyDetail.getCurrentCapitalValue()!=null && 
+                propertyDetail.getCurrentCapitalValue()<Double.parseDouble(PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE))
+            addActionError(getText("minvalue.capitalValue"));
         if (isBlank(eastBoundary))
             addActionError(getText("mandatory.eastBoundary"));
         if (isBlank(westBoundary))
