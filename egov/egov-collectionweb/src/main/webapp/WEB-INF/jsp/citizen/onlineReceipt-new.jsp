@@ -587,7 +587,7 @@ function onLoad(){
 																name="paymentAmount" size="12" placeholder="0.0"
 																cssStyle="color:DarkGray; text-align:right"
 																onkeyup="populateapportioningamountnew()"
-																onload="waterMarkInitialize('paymentAmount','0.0');" /></td>
+																onload="waterMarkInitialize('paymentAmount','0.0');" value="%{totalAmountToBeCollected}" readonly="true" /></td>
 													</tr>
 
 													<td colspan="2"><span class="mandatory1 padding-5"><s:text
