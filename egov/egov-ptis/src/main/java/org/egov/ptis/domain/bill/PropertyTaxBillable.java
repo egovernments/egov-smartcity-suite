@@ -562,7 +562,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
         final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
         if (rebatePeriod != null)
-            if (rebatePeriod.getRebateDate().compareTo(new Date()) != 1)
+            if (rebatePeriod.getRebateDate().compareTo(new Date()) > 0)
                 value = true;
         return value;
     }
