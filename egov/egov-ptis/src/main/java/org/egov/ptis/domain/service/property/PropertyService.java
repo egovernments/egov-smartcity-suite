@@ -2282,8 +2282,14 @@ public class PropertyService {
      * @param applictionType
      */
     public void updateIndexes(final StateAware stateAwareObject, final String applictionType) {
-        final User user = assignmentService.getPrimaryAssignmentForPositionAndDate(
-                stateAwareObject.getState().getOwnerPosition().getId(), new Date()).getEmployee();
+        Position position = stateAwareObject.getState().getOwnerPosition();
+        User user = null;
+        if (position == null) {
+            user = stateAwareObject.getState().getCreatedBy();
+        } else {
+            user = assignmentService.getPrimaryAssignmentForPositionAndDate(
+                    position.getId(), new Date()).getEmployee();
+        }
     	Map<String, String> ownerMap = new HashMap<String, String>();
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
