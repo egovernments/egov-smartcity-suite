@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-04T18:38:30 -->
+<!-- 2015-12-06T16:54:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_municipality" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="97"/>
+	<property name="ireport.x" value="10"/>
+	<property name="ireport.y" value="48"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -14,7 +14,6 @@
 	<parameter name="userId" class="java.lang.Long"/>
 	<parameter name="noticeNo" class="java.lang.String"/>
 	<parameter name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
-	<parameter name="floorDetailsForNotice" class="java.util.List"/>
 	<parameter name="copyType" class="java.lang.String"/>
 	<field name="buildingClassification" class="java.lang.String"/>
 	<field name="natureOfUsage" class="java.lang.String"/>
@@ -24,12 +23,12 @@
 	<title>
 		<band height="458" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="36" y="135" width="478" height="149" uuid="1208afdb-6715-475c-b36f-bd0cb45c6a77"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="36" y="120" width="478" height="159" uuid="1208afdb-6715-475c-b36f-bd0cb45c6a77"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["To\nSri/Smt: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner as per Rule10/11 of Schedule-II, Taxation and Finance Rules of A.P.Municipalites Act, 1965, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Municipality, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st April,"+$P{ownerInfo}.getInstallmentYear()+"/ 1st October "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present a Revision to the Commissioner or to any Officer authorized by the Commissioner within 30 days from the date of service of this notice. If no revision against the assessment is presented within the above mentioned period of 30 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["To\nSri/Smt: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner as per Rule10/11 of Schedule-II, Taxation and Finance Rules of A.P.Municipalites Act, 1965, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Municipality, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st October "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present a Revision to the Commissioner or to any Officer authorized by the Commissioner within 30 days from the date of service of this notice. If no revision against the assessment is presented within the above mentioned period of 30 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="36" y="104" width="478" height="10" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
@@ -39,14 +38,14 @@
 				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>\t\tAssessment No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style>\t\tDated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="83" y="50" width="373" height="20" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<reportElement x="83" y="60" width="373" height="20" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="14" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="36" y="70" width="478" height="17" uuid="bd68cf62-0bd1-47f0-a494-0021472b448f"/>
+				<reportElement isPrintRepeatedValues="false" x="36" y="80" width="478" height="17" uuid="bd68cf62-0bd1-47f0-a494-0021472b448f"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
@@ -235,14 +234,14 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewTotalTax()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="272" y="4" width="242" height="17" isPrintWhenDetailOverflows="true" uuid="7ce698fd-018d-45d9-8f84-4a2b508f2eeb"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="272" y="22" width="242" height="14" isPrintWhenDetailOverflows="true" uuid="7ce698fd-018d-45d9-8f84-4a2b508f2eeb"/>
 				<textElement textAlignment="Right" markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Application No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getApplicationNo()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="4" width="88" height="17" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="22" width="88" height="12" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
@@ -417,7 +416,7 @@
 				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="83" y="35" width="373" height="15" uuid="2a902623-599d-467f-81c1-7a8427b308a9"/>
+				<reportElement x="83" y="45" width="373" height="15" uuid="2a902623-599d-467f-81c1-7a8427b308a9"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
