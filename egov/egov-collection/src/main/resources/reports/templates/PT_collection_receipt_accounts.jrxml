@@ -51,7 +51,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentInst" class="java.lang.String">
-		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && ($V{currentInst} == null || $V{currentInst} == "")) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()) : $V{currentInst}]]></variableExpression>
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode}) && ($V{currentInst} == null || $V{currentInst} == "")) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()) : $V{currentInst}]]></variableExpression>
 	</variable>
 	<variable name="penaltyTotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA["1402002".equals($F{glCode}) ? ($F{crAmount}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
