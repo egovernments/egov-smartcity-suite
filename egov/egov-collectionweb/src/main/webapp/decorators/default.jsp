@@ -62,6 +62,7 @@
 		
 	<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js?${app_release_no}"></script>
 	
 	<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 	<SCRIPT type="text/javascript" src="/collection/resources/js/jsCommonMethods.js"></SCRIPT>
@@ -82,7 +83,6 @@
 	<script type="text/javascript" src="<c:url value='/resources/js/calender.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js"></script>
     
     <decorator:head/>
     </head>
@@ -102,7 +102,6 @@
 			    Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
 			</footer>
 	</div>
-	
 	
 	 <!-- loading indicator --> 
 	 <div class="modal fade loader-class" data-backdrop="static">
@@ -126,7 +125,7 @@
 					</div>
 			</div>
 	 </div>
-	 
+
 	  
 	  <script>
 
