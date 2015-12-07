@@ -339,7 +339,7 @@
 			</div>
 		</div>
 		<!-- change password -->
-		<div class="modal fade change-password" data-backdrop="static">
+		<div class="modal fade change-password" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					
