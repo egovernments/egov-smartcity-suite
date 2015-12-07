@@ -63,7 +63,7 @@
 	<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
-	
+	<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 	<SCRIPT type="text/javascript" src="/collection/resources/js/jsCommonMethods.js"></SCRIPT>
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>

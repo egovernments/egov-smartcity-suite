@@ -196,7 +196,7 @@ function dishonorSelectedChq() {
 						<td class="greybox"></td>
 						<td class="greybox"><s:text	name="dishonorcheque.cheque.dd.number" />:<span class="mandatory1">*</span></td>
 						<td class="greybox"><s:textfield name="chequeNumber" style="width: 200px;"
-							id="chequeNumber" value="%{chequeNumber}" maxlength="6"/></td>
+							id="chequeNumber" value="%{chequeNumber}" maxlength="6" cssClass="patternvalidation" data-pattern="number"/></td>
 							
 						<td class="greybox"><s:text	name="dishonorcheque.cheque.dd.date" />:<span class="mandatory1">*</span></td>
 						<td class="greybox">
