@@ -113,32 +113,35 @@ public class GenericBillGeneratorController {
     public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
             @RequestParam final String applicationTypeCode, final Model model) {
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)
-                || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    applicationCode, ConnectionStatus.ACTIVE);
-        else
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
-        if (EgovThreadLocals.getUserId() == null)
-            if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
-                EgovThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
-        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, applicationTypeCode));
-        model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
-        return "collecttax-redirection";
+        return generateBillAndRedirectToCollection( waterConnectionDetails,applicationCode,
+				applicationTypeCode, model);
     }
     
     @RequestMapping(value = "/generatebillOnline/{applicationCode}", method = GET)
     public String payTaxOnline(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
+            @RequestParam final String applicationTypeCode,
              final Model model) {
-        
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
-        if (EgovThreadLocals.getUserId() == null)
+    	return generateBillAndRedirectToCollection( waterConnectionDetails,applicationCode,
+				applicationTypeCode, model);
+    }
+
+	private String generateBillAndRedirectToCollection(WaterConnectionDetails waterConnectionDetails,
+			final String applicationCode, final String applicationTypeCode,
+			final Model model) {
+		
+		if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)
+                || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
+			waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+                    applicationCode, ConnectionStatus.ACTIVE);
+        else
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
+               if (EgovThreadLocals.getUserId() == null)
             if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 EgovThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
-        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, null));
+        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, applicationTypeCode));
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";
-    }
+	}
 
 }

@@ -355,11 +355,14 @@
 								onclick="self.close()"> <spring:message code='lbl.close' />
 							</a>
 							<c:if test="${citizenRole && waterTaxDueforParent > 0}" >
-							<a href="/../wtms/application/generatebillOnline/<c:out value="${consumerCode}" />" class="btn btn-primary"
+							<a href="javascript:void(0);" class="btn btn-primary" onclick="onsubmitpay()"
 													target="_blank"> Pay Online
 												</a>
 							
 							</c:if>
+							<c:if test="${citizenRole}">
+							<input id="Searchconnection" class="btn btn-primary" type="button" onclick="window.location='/wtms/search/waterSearch/';" 
+									value="Search Connection" name="Searchconnection"></c:if>
 						</div>
 					</div>
 				</div>
@@ -367,6 +370,15 @@
 		</div>
 	</div>
 </div>
-
-
+<script type="text/javascript">
+function onsubmitpay()
+{
+	var consumerNumber=$('#consumerCode').val();
+	var applicationTypeCode=$('#applicationTypeCode').val();
+	var url = '/wtms/application/generatebillOnline/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
+											$('#editmeterWate11rConnectionform').attr('method', 'get');
+											$('#editmeterWate11rConnectionform').attr('action', url);
+											window.location = url;
+}
+</script>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
