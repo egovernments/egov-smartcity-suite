@@ -42,7 +42,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
@@ -71,8 +70,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     }
 
     @RequestMapping(value = "anonymous/show-reg-form", method = GET)
-    public String showAnonymousComplaintRegistrationForm(@ModelAttribute final Complaint complaint, final Model model, final HttpSession session) {
-        model.addAttribute("encSiteToken", RecaptchaUtils.createSToken(session));
+    public String showAnonymousComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
         return "complaint/citizen/anonymous-registration-form";
     }
 
