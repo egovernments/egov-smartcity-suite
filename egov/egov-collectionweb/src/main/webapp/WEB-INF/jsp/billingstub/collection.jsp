@@ -74,7 +74,7 @@
 			<bill-collect> <serviceCode>PT</serviceCode> <fundCode>01</fundCode>
 			<functionaryCode>999</functionaryCode> <fundSourceCode>01</fundSourceCode>
 			<departmentCode>REV</departmentCode> <displayMessage>HELLO
-			USER</displayMessage> <partPaymentAllowed>0</partPaymentAllowed> <overrideAccountHeadsAllowed>0</overrideAccountHeadsAllowed>
+			USER</displayMessage> <partPaymentAllowed>1</partPaymentAllowed> <overrideAccountHeadsAllowed>0</overrideAccountHeadsAllowed>
 			<collectionModeNotAllowed>card</collectionModeNotAllowed> <collectionModeNotAllowed>cheque</collectionModeNotAllowed>
 			<callbackForApportioning>0</callbackForApportioning> <payees>
 			<payee> <payeeName>Mrs. ABC</payeeName> <payeeAddress>221/16
