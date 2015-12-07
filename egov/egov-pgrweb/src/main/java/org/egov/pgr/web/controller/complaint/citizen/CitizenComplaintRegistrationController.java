@@ -42,12 +42,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
-import org.egov.infra.validation.ValidatorUtils;
+import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
@@ -70,7 +71,8 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     }
 
     @RequestMapping(value = "anonymous/show-reg-form", method = GET)
-    public String showAnonymousComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
+    public String showAnonymousComplaintRegistrationForm(@ModelAttribute final Complaint complaint, final Model model, final HttpSession session) {
+        model.addAttribute("encSiteToken", RecaptchaUtils.createSToken(session));
         return "complaint/citizen/anonymous-registration-form";
     }
 
@@ -109,7 +111,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             @RequestParam("files") final MultipartFile[] files, final Model model) {
 
-        if (!ValidatorUtils.isCaptchaValid(request))
+        if (!RecaptchaUtils.captchaIsValid(request))
             resultBinder.reject("captcha.not.valid");
 
         if (StringUtils.isBlank(complaint.getComplainant().getEmail())

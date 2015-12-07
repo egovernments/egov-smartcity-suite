@@ -285,8 +285,8 @@ public class City extends AbstractAuditable {
 
         cityPrefs.put("citynamelocal", localName);
         cityPrefs.put("cityCode", code);
-        cityPrefs.put("cityRecaptchaPK", recaptchaPK);
-        cityPrefs.put("cityRecaptchaPub", recaptchaPub);
+        cityPrefs.put("siteSecret", recaptchaPK);
+        cityPrefs.put("siteKey", recaptchaPub);
         cityPrefs.put("citylat", latitude);
         cityPrefs.put("citylng", longitude);
         cityPrefs.put("cityCode", code);

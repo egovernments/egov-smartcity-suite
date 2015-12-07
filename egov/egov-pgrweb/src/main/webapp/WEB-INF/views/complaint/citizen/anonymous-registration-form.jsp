@@ -187,7 +187,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 				</div>
 				<div class="row">
 					<div class="col-sm-offset-3 col-md-6 text-center" id="captcha-section">
-						<div class="g-recaptcha" data-sitekey="6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs"></div>
+						<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}" data-stoken="${encSiteToken}"></div>
 						<form:errors cssClass="add-margin error-msg"/>
 					</div>
 				</div>

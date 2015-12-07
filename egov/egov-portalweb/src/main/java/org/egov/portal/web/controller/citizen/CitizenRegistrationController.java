@@ -1,4 +1,4 @@
-/** eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -39,14 +39,17 @@
 package org.egov.portal.web.controller.citizen;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,7 +69,8 @@ public class CitizenRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String registerCitizen(@ModelAttribute final Citizen citizen) {
+    public String registerCitizen(@ModelAttribute final Citizen citizen, final Model model, final HttpSession session) {
+        model.addAttribute("encSiteToken", RecaptchaUtils.createSToken(session));
         return "signup";
     }
 
@@ -78,7 +82,7 @@ public class CitizenRegistrationController {
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");
-        if (!ValidatorUtils.isCaptchaValid(request))
+        if (!RecaptchaUtils.captchaIsValid(request))
             errors.rejectValue("active", "error.recaptcha.verification");
         if (errors.hasErrors())
             return "signup";
