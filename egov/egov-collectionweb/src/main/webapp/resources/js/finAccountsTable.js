@@ -164,6 +164,11 @@ function loadDropDownCodesFunction()
 var yuiflagFunc = new Array();
 function autocompletecodeFunction(obj,myEvent)
 {
+	//Fix-Me
+	var accCodeObj = document.getElementById('accountDetails[0].glCodeId.glcode');
+	jQuery(accCodeObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
 	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
@@ -254,6 +259,12 @@ function loadDropDownCodes()
 var yuiflag = new Array();
 function autocompletecode(obj,myEvent)
 {
+	//Fix-Me
+	var funObj = document.getElementById('accountDetails[0].function.name');
+	jQuery(funObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
+	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
