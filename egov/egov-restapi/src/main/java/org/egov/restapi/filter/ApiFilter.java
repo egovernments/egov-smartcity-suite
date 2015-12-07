@@ -141,25 +141,24 @@ public class ApiFilter implements Filter {
 
     private boolean validateRequest(final MultiReadHttpServletRequest httpServletRequest) {
         final String referer = httpServletRequest.getHeader(HttpHeaders.REFERER);
-        LOG.info("The calling request URL:referer= "+referer);
-        LOG.info("Host = "+httpServletRequest.getHeader("Host"));
-        LOG.info("X-Forwarded-For = "+httpServletRequest.getHeader("X-Forwarded-For"));
-        LOG.info("RequestURL = "+httpServletRequest.getRequestURL());
-        LOG.info("RequestURI = "+httpServletRequest.getRequestURI());
-        LOG.info("X-RemoteHost = "+httpServletRequest.getRequest().getRemoteHost());
-        LOG.info("ServerName = "+httpServletRequest.getRequest().getServerName());
-        LOG.info("ServerInfo = "+httpServletRequest.getRequest().getServletContext().getServerInfo());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("The calling request URL:referer= " + referer);
+            LOG.info("Host = " + httpServletRequest.getHeader("Host"));
+            LOG.info("X-Forwarded-For = " + httpServletRequest.getHeader("X-Forwarded-For"));
+            LOG.info("RequestURL = " + httpServletRequest.getRequestURL());
+            LOG.info("X-RemoteHost = " + httpServletRequest.getRequest().getRemoteHost());
+        }
         final List<String> apOnlineIpAddress = restAPIApplicationProperties.aponlineIPAddress();
         final List<String> esevaIpAddress = restAPIApplicationProperties.esevaIPAddress();
         if (apOnlineIpAddress != null && referer != null)
             for (final String aponlineIp : apOnlineIpAddress)
-                if (referer.contains(aponlineIp)) {
+                if (!aponlineIp.equals("") && referer.contains(aponlineIp)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.APONLINE);
                     return true;
                 }
         if (esevaIpAddress != null && referer != null)
             for (final String esevaIp : esevaIpAddress)
-                if (referer.contains(esevaIp)) {
+                if (!esevaIp.equals("") && referer.contains(esevaIp)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.ESEVA);
                     return true;
                 }
