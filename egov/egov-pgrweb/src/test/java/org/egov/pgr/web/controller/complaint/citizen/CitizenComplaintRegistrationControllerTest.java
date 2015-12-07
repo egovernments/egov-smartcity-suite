@@ -55,6 +55,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 public class CitizenComplaintRegistrationControllerTest extends AbstractContextControllerTest<CitizenComplaintRegistrationController> {
@@ -75,6 +76,8 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
     @Mock
     User user;
 
+    MockHttpSession mockHttpSession = new MockHttpSession();
+    
     MockMvc mockMvc;
 
     @Before
@@ -92,7 +95,8 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
 
     @Test
     public void assertAnonymousRegistrationPageViewReturns() throws Exception {
-        mockMvc.perform(get("/complaint/citizen/anonymous/show-reg-form"))
+        mockHttpSession.setAttribute("siteSecret", "XYJASJSAS");
+        mockMvc.perform(get("/complaint/citizen/anonymous/show-reg-form").session(mockHttpSession))
                 .andExpect(view().name("complaint/citizen/anonymous-registration-form"))
                 .andExpect(status().isOk());
     }
