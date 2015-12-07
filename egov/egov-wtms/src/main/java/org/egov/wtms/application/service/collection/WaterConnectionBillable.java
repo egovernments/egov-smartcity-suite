@@ -201,7 +201,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        return false;
+        return true;
     }
 
     @Override
