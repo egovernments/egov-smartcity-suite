@@ -952,7 +952,7 @@ public class WaterConnectionDetailsService {
         final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
             throw new ValidationException("donation.combination.required");
-        if (waterConnectionDetails.getConnectionType().name().equals(ConnectionType.NON_METERED)) {
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)) {
             final WaterRatesDetails waterRatesDetails = connectionDemandService
                     .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
             if (waterRatesDetails == null)

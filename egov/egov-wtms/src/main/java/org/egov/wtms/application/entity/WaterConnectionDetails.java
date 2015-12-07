@@ -282,7 +282,7 @@ public class WaterConnectionDetails extends StateAware {
 
     @Override
     public String myLinkId() {
-        return applicationNumber;
+        return (applicationNumber !=null? applicationNumber :connection.getConsumerCode());
 
     }
 
@@ -481,8 +481,8 @@ public class WaterConnectionDetails extends StateAware {
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return String.format("Application Number %s with application date %s.", applicationNumber,
-                formatter.format(applicationDate));
+        return String.format("Application Number %s with application date %s.", (applicationNumber !=null?applicationNumber:connection.getConsumerCode()),
+                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date()))));
     }
 
     public String getBplCardHolderName() {

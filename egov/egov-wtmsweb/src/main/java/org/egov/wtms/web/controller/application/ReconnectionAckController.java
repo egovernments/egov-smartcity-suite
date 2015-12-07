@@ -48,15 +48,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -77,8 +83,19 @@ public class ReconnectionAckController {
     private ReportService reportService;
 
     public static final String ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
+    
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+     
+    @Autowired
+    private UserService userService;
+    
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
@@ -98,6 +115,8 @@ public class ReconnectionAckController {
             final HttpSession session) {
         if (waterConnectionDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Assignment assignment=null;
+            User user=null;
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
@@ -107,15 +126,21 @@ public class ReconnectionAckController {
                 ownerName = names.getOwnerName();
                 break;
             }
-
+            Position approverPos=waterTaxUtils.getCityLevelCommissionerPosition("Commissioner");
+            if (approverPos!=null) {
+                assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approverPos.getId(),new Date());
+                if (assignment != null && assignment.getEmployee() != null)
+              user = userService.getUserById(assignment.getEmployee().getId());
+            }
             reportParams.put("applicationType",
-                    WordUtils.capitalize(WaterTaxConstants.RECONNECTIONCONNECTION));
+                    WordUtils.capitalize(WaterTaxConstants.RECONNECTIONWITHSLASH));
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
-           reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
-           reportParams.put("reconnApprovalDate", formatter.format(waterConnectionDetails.getReconnectionApprovalDate()!=null ?waterConnectionDetails.getReconnectionApprovalDate():new Date()));
+            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
+            reportParams.put("reconnApprovalDate", formatter.format(waterConnectionDetails.getReconnectionApprovalDate()!=null ?waterConnectionDetails.getReconnectionApprovalDate():new Date()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
+            reportParams.put("commissionerName",(user.getUsername()!=null ? user.getName():ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
             reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails.getEstimationDetails(), reportParams);
