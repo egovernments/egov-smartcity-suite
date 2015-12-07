@@ -48,7 +48,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -98,9 +97,6 @@ public class ComplaintUpdationController {
     private MessageSource messageSource;
 
     @Autowired
-    private CrossHierarchyService crossHierarchyService;
-
-    @Autowired
     public ComplaintUpdationController(final ComplaintService complaintService,
             final ComplaintTypeService complaintTypeService,
             final ComplaintStatusMappingService complaintStatusMappingService, final SmartValidator validator) {
@@ -121,22 +117,13 @@ public class ComplaintUpdationController {
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
         model.addAttribute("ward", Collections.EMPTY_LIST);
-        
-        if (complaint.getLocation() != null ) {
+
+        if (complaint.getLocation() != null) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
                             "Locality", "Location"));
             model.addAttribute("location",
                     boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
-        } else if (complaint.getLat() != 0 && complaint.getLng() != 0) {
-            model.addAttribute("ward",
-                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                            complaint.getLocation().getBoundaryType().getName(), "Location"));
-            model.addAttribute("location",
-                    crossHierarchyService.findChildBoundariesByParentBoundary(
-                            complaint.getLocation().getBoundaryType().getName(),
-                            complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
-                            complaint.getLocation().getName()));
         }
         if (null != complaint.getComplaintType()) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
@@ -196,8 +183,8 @@ public class ComplaintUpdationController {
         if (complaint.getLocation() == null && complaint.getLat() != 0 && complaint.getLng() != 0)
             errors.rejectValue("location", "location.info.not.found");
 
-        if (complaint.getLocation() == null && (complaint.getLat() == 0
-                && complaint.getLng() == 0))
+        if (complaint.getLocation() == null && complaint.getLat() == 0
+                && complaint.getLng() == 0)
             errors.rejectValue("location", "location.info.not.found");
     }
 

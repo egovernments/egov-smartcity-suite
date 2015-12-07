@@ -79,7 +79,6 @@ import org.egov.portal.entity.CitizenInboxBuilder;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
 import org.egov.portal.service.CitizenInboxService;
-import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -161,18 +160,16 @@ public class ComplaintService {
             complaint.getComplainant().setMobile(user.getMobileNumber());
         }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
-        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0)
-            try {
-                final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-                if (bndryId != null && bndryId != 0) {
-                    final Boundary location = boundaryService.getBoundaryById(bndryId);
-                    complaint.setLocation(location);
-                } else
-                    throw new ValidationException("gis.location.info.not.found");
-            } catch (final Exception e) {
-                throw new ValidationException("gis.location.info.not.found");
-            }
-  
+        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
+            Boundary location = null;
+            final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
+            if (bndryId != null && bndryId != 0) {
+                location = boundaryService.getBoundaryById(bndryId);
+                complaint.setLocation(location);
+            } else
+                location = boundaryService.getBoundaryByBndryTypeNameAndHierarchyTypeName("City", "LOCATION");
+
+        }
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
