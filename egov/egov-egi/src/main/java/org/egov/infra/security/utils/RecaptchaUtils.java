@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -95,7 +96,7 @@ public class RecaptchaUtils {
     }
     
     public static final String createSToken(final HttpSession session) {
-        return encryptAes(createJsonToken(session.getId()), (String) session.getAttribute("siteSecret"));
+        return encryptAes(createJsonToken(UUID.randomUUID().toString()), (String) session.getAttribute("siteSecret"));
     }
     
     private static final String createJsonToken(final String sessionId) {
