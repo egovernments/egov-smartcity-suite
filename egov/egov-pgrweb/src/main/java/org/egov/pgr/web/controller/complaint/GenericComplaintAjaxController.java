@@ -107,23 +107,30 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
     }
 
-    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations",
-            "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations", "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
+        // TODO Improve this code
         final String locationNameLike = "%" + locationName + "%";
-        crossHierarchyService
-                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location","Administration", locationNameLike)
-                .stream().forEach(location -> {
-                    locationJSONData.append("{\"name\":\"");
-
-                    locationJSONData.append(location.getChild().getName() + " - " + location.getParent().getName());
-                    locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
-                });
-
+        boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType("Street", "LOCATION", locationNameLike).stream().forEach(location -> {
+            locationJSONData.append("{\"name\":\"");
+            if (location.isRoot())
+                locationJSONData.append(location.getName());
+            else {
+                Boundary currentLocation = location;
+                while (!currentLocation.isRoot()) {
+                    locationJSONData.append(currentLocation.getName()).append(", ");
+                    currentLocation = currentLocation.getParent();
+                    if (currentLocation.isRoot()) {
+                        locationJSONData.append(currentLocation.getName());
+                        break;
+                    }
+                }
+            }
+            locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
+        });
         if (locationJSONData.lastIndexOf(",") != -1)
             locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
-
         locationJSONData.append("]");
         return locationJSONData.toString();
     }

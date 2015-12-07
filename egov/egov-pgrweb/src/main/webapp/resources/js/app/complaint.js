@@ -95,8 +95,8 @@ jQuery(document).ready(function($)
 		displayKey: 'name',
 		source: complaintlocation.ttAdapter()
 	}).on('typeahead:selected', function(event, data){            
-		//$("#locationid").val(data.locId);    
-		$("#crosshierarchyId").val(data.value);    
+		$("#locationid").val(data.value);    
+		//$("#crosshierarchyId").val(data.value);    
 		$('#lat, #lng').val(0.0);
     });
 	

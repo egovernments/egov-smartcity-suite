@@ -85,7 +85,7 @@
 					<spring:message code="lbl.change.jurisdiction" />
 				</div>
 				<div class="col-md-3 col-xs-12 add-margin">
-					<form:select path="location" data-first-option="false" id="ct-sel-jurisd"
+					<form:select path="" data-first-option="false" id="ct-sel-jurisd"
 						cssClass="form-control" cssErrorClass="form-control error">
 						<form:option value="">
 							<spring:message code="lbl.select" />
@@ -97,7 +97,7 @@
 				</div>
 
 				<div class="col-md-3 col-xs-12 add-margin">
-					<form:select path="childLocation" data-first-option="false"
+					<form:select path="location" data-first-option="false"
 						id="location" cssClass="form-control"
 						cssErrorClass="form-control error">
 						<form:option value="">
@@ -190,5 +190,11 @@
 		</form:form>
 	</div>
 </div>
+<script>
+var zoneId= '${complaint.location.parent.id}';
+if(zoneId !== ''){
+	$("#ct-sel-jurisd").val(zoneId);    
+}else $("#ct-sel-jurisd").val('');     
+</script>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

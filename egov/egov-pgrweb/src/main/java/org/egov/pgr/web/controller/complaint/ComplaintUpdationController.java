@@ -121,16 +121,17 @@ public class ComplaintUpdationController {
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
         model.addAttribute("ward", Collections.EMPTY_LIST);
-        if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
+        
+        if (complaint.getLocation() != null ) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                            complaint.getLocation().getBoundaryType().getName(), "Administration"));
+                            "Locality", "Location"));
             model.addAttribute("location",
-                    crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
+                    boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
         } else if (complaint.getLat() != 0 && complaint.getLng() != 0) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                            complaint.getLocation().getBoundaryType().getName(), "Administration"));
+                            complaint.getLocation().getBoundaryType().getName(), "Location"));
             model.addAttribute("location",
                     crossHierarchyService.findChildBoundariesByParentBoundary(
                             complaint.getLocation().getBoundaryType().getName(),
@@ -195,8 +196,8 @@ public class ComplaintUpdationController {
         if (complaint.getLocation() == null && complaint.getLat() != 0 && complaint.getLng() != 0)
             errors.rejectValue("location", "location.info.not.found");
 
-        if ((complaint.getLocation() == null || complaint.getChildLocation() == null) && complaint.getLat() == 0
-                && complaint.getLng() == 0)
+        if (complaint.getLocation() == null && (complaint.getLat() == 0
+                && complaint.getLng() == 0))
             errors.rejectValue("location", "location.info.not.found");
     }
 

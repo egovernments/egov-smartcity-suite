@@ -25,7 +25,7 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egfweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -36,10 +36,10 @@
 			<artifactId>egov-assetsweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> -->
 		<!-- <dependency> <groupId>org.egov</groupId> <artifactId>egov-worksweb</artifactId> 
 			<version>${project.parent.version}</version> <type>war</type> </dependency> -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-collectionweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -56,7 +56,7 @@
 			<artifactId>egov-wtmsweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-pgrweb</artifactId>
@@ -69,13 +69,13 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
+		 <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-dashboardweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-adtaxweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -86,13 +86,13 @@
 			<artifactId>egov-tlweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-api</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.egov</groupId>
@@ -120,7 +120,7 @@
 			<artifactId>egov-eis</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+		 <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egf</artifactId>
 			<version>${project.parent.version}</version>
@@ -156,13 +156,13 @@
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portal</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-pgr</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+		 <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-adtax</artifactId>
 			<version>${project.parent.version}</version>
@@ -171,7 +171,7 @@
 			<groupId>org.egov</groupId>
 			<artifactId>egov-tl</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-restapi</artifactId>
@@ -226,17 +226,17 @@
 							<artifactId>egov-egiweb</artifactId>
 							<contextRoot>/egi</contextRoot>
 						</webModule>
-						<webModule>
+						 <webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-dashboardweb</artifactId>
 							<contextRoot>/dashboard</contextRoot>
-						</webModule>
+						</webModule> 
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-eisweb</artifactId>
 							<contextRoot>/eis</contextRoot>
 						</webModule>
-						<webModule>
+						<!-- <webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-egfweb</artifactId>
 							<contextRoot>/EGF</contextRoot>
@@ -246,8 +246,8 @@
 							<artifactId>egov-assetsweb</artifactId>
 							<contextRoot>/egassets</contextRoot>
 						</webModule>
-						<!-- <webModule> <groupId>org.egov</groupId> <artifactId>egov-worksweb</artifactId> 
-							<contextRoot>/egworks</contextRoot> </webModule> -->
+						<webModule> <groupId>org.egov</groupId> <artifactId>egov-worksweb</artifactId> 
+							<contextRoot>/egworks</contextRoot> </webModule>
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-collectionweb</artifactId>
@@ -262,23 +262,23 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-wtmsweb</artifactId>
 							<contextRoot>/wtms</contextRoot>
-						</webModule>
+						</webModule> -->
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-pgrweb</artifactId>
 							<contextRoot>/pgr</contextRoot>
 						</webModule>
-						<webModule>
+						<!--<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-api</artifactId>
 							<contextRoot>/api</contextRoot>
-						</webModule>
+						</webModule> -->
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-portalweb</artifactId>
 							<contextRoot>/portal</contextRoot>
 						</webModule>
-						<webModule>
+						<!-- <webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-adtaxweb</artifactId>
 							<contextRoot>/adtax</contextRoot>
@@ -287,12 +287,12 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-tlweb</artifactId>
 							<contextRoot>/tl</contextRoot>
-						</webModule>
+						</webModule> 
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-restapi</artifactId>
 							<contextRoot>/restapi</contextRoot>
-						</webModule>
+						</webModule>-->
 					</modules>
 
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
