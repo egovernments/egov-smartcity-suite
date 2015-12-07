@@ -751,7 +751,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             if(cityGrade!=null && cityGrade!="" && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)){
                 isCorporation=true;
             } else
-                isCorporation=true;
+                isCorporation=false; 
             reportParams.put("isCorporation", isCorporation);
             reportParams.put("cityName", cityName);
             reportParams.put("logoPath", imagePath);

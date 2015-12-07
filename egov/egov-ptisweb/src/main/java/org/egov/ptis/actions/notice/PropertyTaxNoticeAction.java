@@ -392,7 +392,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             if(cityGrade!=null && cityGrade!="" && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)){
                 isCorporation=true;
             } else
-                isCorporation=true;
+                isCorporation=false;
             reportParams.put("isCorporation", isCorporation);
             if (CREATE.equalsIgnoreCase(noticeMode))
                 reportParams.put("mode", CREATE);
