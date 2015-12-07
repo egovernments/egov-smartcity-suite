@@ -191,8 +191,7 @@
 											</s:else>
 											</c:if>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) || 
-											roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
 											<c:if test="${currentRowObject.isTaxExempted == false }">
 										<option value="CollectTax">
 											<s:text name="collectTax"></s:text>
