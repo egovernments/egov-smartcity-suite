@@ -285,6 +285,10 @@ $(document).ready(function(){
 			$("#primary_yes").prop("checked",true);
 			$("#primary_no").prop("checked",false);
 		}
+		if(primary=="false"){
+			$("#primary_yes").prop("checked",false);
+			$("#primary_no").prop("checked",true);
+		}		
 		$("#fromDate").val(fromDate);
 		$("#toDate").val(toDate);
 		$("#deptId").val(dept);
