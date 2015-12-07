@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-11-18T18:31:01 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2015-12-07T20:37:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -33,9 +33,13 @@
 		<parameterDescription><![CDATA[Status ID]]></parameterDescription>
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_SOURCE" class="java.lang.String">
+		<parameterDescription><![CDATA[The Source]]></parameterDescription>
+		<defaultValueExpression><![CDATA["ALL"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="Q_DEPT_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for department id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND EGEIS_ASSIGNMENT.DEPARTMENT = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND EGCL_COLLECTIONMIS.DEPARTMENT = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_STATUS_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for status id]]></parameterDescription>
@@ -48,6 +52,13 @@ $P{EGOV_PAYMENT_MODE} == "bank" ? "AND EGF_INSTRUMENTTYPE.TYPE = 'bank'" :
 $P{EGOV_PAYMENT_MODE} == "online" ? "AND EGF_INSTRUMENTTYPE.TYPE = 'online'" :  
 $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? "AND EGF_INSTRUMENTTYPE.TYPE IN ('cheque', 'dd')" :
 "AND EGF_INSTRUMENTTYPE.TYPE IN ('cash', 'card', 'bank', 'cheque', 'dd' , 'online')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_SOURCES" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{EGOV_SOURCE} == "SYSTEM" ? "AND EGCL_COLLECTIONHEADER.SOURCE  is null " :
+$P{EGOV_SOURCE} == "APONLINE" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'APONLINE'" : 
+$P{EGOV_SOURCE} == "ESEVA" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'ESEVA'" :
+$P{EGOV_SOURCE} == "MEESEVA" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'MEESEVA'":
+""]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
@@ -66,16 +77,15 @@ FROM
      INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID
      INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID
      INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID
-     INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID
-     INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID
-     INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID 
-     INNER JOIN EG_DEPARTMENT EG_DEPARTMENT ON EG_DEPARTMENT.ID = EGEIS_ASSIGNMENT.DEPARTMENT
+     INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER 
+     INNER JOIN EG_DEPARTMENT EG_DEPARTMENT ON EG_DEPARTMENT.ID = EGCL_COLLECTIONMIS.DEPARTMENT
 WHERE
      EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
      AND EGCL_COLLECTIONHEADER.RECEIPTDATE < $P{EGOV_TO_DATE_PLUS_ONE}
      $P!{Q_STATUS_ID}
      $P!{Q_PAYMENT_MODES}
      $P!{Q_DEPT_ID}
+     $P!{Q_SOURCES}
 ORDER BY
      EGCL_COLLECTIONHEADER.RECEIPTDATE,
      EGCL_COLLECTIONHEADER.RECEIPTNUMBER,	

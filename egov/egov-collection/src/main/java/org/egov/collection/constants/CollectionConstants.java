@@ -520,5 +520,8 @@ public final class CollectionConstants {
     public static final String RECEIPT_DEPOSITED_CANCELLED = "Receipt cannot be cancelled since Instrument is already deposited";
     public static final String RECEIPT_CANCELLED_SUCCESS = "Receipt Cancelled Successfully";
     public static final String RECEIPT_CANCELLED_REASON = "Receipt Cancelled by meSeva";
+    
+    
+    public static final String SOURCE_SYSTEM = "SYSTEM";
 
 }
