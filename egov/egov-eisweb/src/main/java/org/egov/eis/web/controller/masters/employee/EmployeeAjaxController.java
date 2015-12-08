@@ -83,7 +83,7 @@ public class EmployeeAjaxController {
             posList = positionMasterService.getPositionsForDeptDesigAndName(deptId, desigId, fromDate, toDate,
                     positionName);
         else
-            posList = positionMasterService.getPositionsForDeptDesigAndPosName(deptId, desigId, positionName);
+            posList = positionMasterService.getPositionsForDeptDesigAndNameLike(deptId, desigId, positionName);
         return posList;
     }
 

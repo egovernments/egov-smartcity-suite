@@ -123,7 +123,7 @@ public class PositionMasterService {
         return posList;
     }
 
-    public List<Position> getPositionsForDeptDesigAndPosName(final Long departmentId, final Long designationId,
+    public List<Position> getPositionsForDeptDesigAndNameLike(final Long departmentId, final Long designationId,
             final String posName) {
         List<Position> posList = new ArrayList<Position>();
         posList = positionMasterRepository
