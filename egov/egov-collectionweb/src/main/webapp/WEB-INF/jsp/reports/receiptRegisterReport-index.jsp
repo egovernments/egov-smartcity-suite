@@ -183,8 +183,8 @@ function validate()
 					onclick="return clearErrors();" />
 			</label>&nbsp;
 			<label>
-				<input type="button" class="button" id="buttonClose"
-					value="<s:text name='common.buttons.close'/>"
+				<s:submit type="submit" cssClass="button"
+					value="Close"
 					onclick="window.close()" />
 			</label>
 		</div>
