@@ -2986,3 +2986,16 @@ function checkNumberRange(object, value, minValue, maxValue) {
 	
 	return true;
 }
+
+function validateRegDocNumber(obj,msg)
+{
+  orderNum = obj.value;
+  orderNumRegExp = /^([a-zA-Z0-9-\/\+]+)$/i;
+  if(orderNum!="")
+  if(!orderNumRegExp.test(orderNum))
+  {
+    alert("Please Enter Valid "+msg+"\n"+"The valid Characters for "+msg+" are : alphanumeric and -,/");
+    obj.value="";
+    obj.focus();
+  }
+}

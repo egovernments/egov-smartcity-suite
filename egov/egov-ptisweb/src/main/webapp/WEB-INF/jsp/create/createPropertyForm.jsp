@@ -219,7 +219,7 @@
 		<td class="greybox"><s:text name="reg.docno"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:textfield name="basicProperty.regdDocNo" id="regdDocNo"
 				value="%{basicProperty.regdDocNo}" size="16" maxlength="16"
-				onchange="trim(this,this.value);" onblur="checkZero(this);"></s:textfield>
+				onchange="trim(this,this.value);" onblur="checkZero(this);validateRegDocNumber(this,'Registration Doc No')"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="reg.docdate"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:date name="basicProperty.regdDocDate" var="docDate" format="dd/MM/yyyy" />
