@@ -94,19 +94,19 @@ public class CollectionsWorkflowRenderService extends
 
     @Override
     public List<ReceiptHeader> getDraftWorkflowItems(Long userId, List<Long> owner) {
-        return Collections.emptyList();
+        return getGroupedWorkflowItems(super.getDraftWorkflowItems(userId, owner));
     }
 
     /**
      * TODO: Implement collections specific grouping logic
      */
-
+/*
     @Override
     public List<ReceiptHeader> getFilteredWorkflowItems(final Long owner, final Long userId, final Long sender,
             final Date fromDate,
             final Date toDate) {
         return Collections.emptyList();
-    }
+    }*/
 
     /**
      * Returns the assigned work flow items for given user. For collections, one item is returned for every unique combination of
