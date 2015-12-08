@@ -156,7 +156,13 @@
 												<option value="EDIT_DATAENTRY">
 													<s:text name="editdataentry.title"></s:text>
 												</option>
+												
 												<option value="ADD_EDIT_DEMAND">
+													<s:text name="addeditDemand"></s:text> 
+												</option>
+											</c:if>
+											<c:if test="${currentRowObject.source == 'M'}">
+											<option value="ADD_EDIT_DEMAND">
 													<s:text name="addeditDemand"></s:text> 
 												</option>
 											</c:if>

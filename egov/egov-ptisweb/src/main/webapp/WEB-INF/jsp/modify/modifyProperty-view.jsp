@@ -60,6 +60,24 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
+			jQuery(function($) {
+				try {
+					$(".datepicker").datepicker({
+						format : "dd/mm/yyyy"
+					});
+					reInitializeDateOnChangeEvent();
+				} catch (e) {
+					console.warn("No Date Picker " + e);
+				}
+			});
+
+			function reInitializeDateOnChangeEvent() {
+
+				jQuery(".datepicker").on('changeDate', function(ev) {
+					jQuery(this).datepicker('hide');
+				});
+
+			}
 
 			function onSubmit() {
 				var actionName = document.getElementById('workFlowAction').value;

@@ -80,6 +80,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPER
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -429,9 +431,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     return BALANCE;
                 }
             }
-            boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProp.getUpicNo());
-            if(hasChildPropertyUnderWorkflow){
-            	setWfErrorMsg(getText("error.msg.child.underworkflow"));
+            boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProp
+                    .getUpicNo());
+            if (hasChildPropertyUnderWorkflow) {
+                setWfErrorMsg(getText("error.msg.child.underworkflow"));
                 return TARGET_WORKFLOW_ERROR;
             }
 
@@ -612,10 +615,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                         : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         // added to set createdDate for DemandCalculation object
-        if(basicProp.getWFProperty()!=null && basicProp.getWFProperty().getPtDemandSet()!=null 
-                && !basicProp.getWFProperty().getPtDemandSet().isEmpty()){
+        if (basicProp.getWFProperty() != null && basicProp.getWFProperty().getPtDemandSet() != null
+                && !basicProp.getWFProperty().getPtDemandSet().isEmpty()) {
             for (Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet()) {
-                basicPropertyService.applyAuditing(ptDemand.getDmdCalculations()); 
+                basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
             }
         }
         basicPropertyService.update(basicProp);
@@ -779,6 +782,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into preapre, ModelId: " + getModelId());
         super.prepare();
         setUserInfo();
+
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().find(
@@ -799,6 +803,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     indexNumber));
             preparePropertyTaxDetails(basicProp.getActiveProperty());
         }
+
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
         final List<FloorType> floorTypes = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
@@ -1099,10 +1104,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     public void validate() {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
         propertyModel.setBasicProperty(basicProp);
+        Date propCompletionDate = null;
+        if (basicProp.getSource() == SOURCEOFDATA_MIGRATION || basicProp.getSource() == SOURCEOFDATA_DATAENTRY) {
+            setOldProperty((PropertyImpl) getBasicProp().getProperty());
+            propCompletionDate = propertyTaxUtil.getLowestInstallmentForProperty(oldProperty);
+        }
         validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId,
                 null != basicProp.getPropertyID() ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : "",
-                propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn);
+                propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate);
         validateApproverDetails();
         if (!propertyByEmployee) {
             if (null != basicProp && null == propService.getUserPositionByZone(basicProp)) {

@@ -1747,14 +1747,14 @@ public class PropertyTaxUtil {
                 && propertyWiseConsumptions.getConsumerConsumptions().size() > 0) {
             for (final ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions())
                 if (cc != null) {
-                    if (cc.getArrearDue() != null && cc.getArrearDue().compareTo(BigDecimal.ZERO)>0) {
+                    if (cc.getArrearDue() != null && cc.getArrearDue().compareTo(BigDecimal.ZERO) > 0) {
                         if (arrearFromDate == "")
                             arrearFromDate = sdf.format(cc.getArrearFromDate().toDate());
                         arrearToDate = sdf.format(cc.getArrearToDate().toDate());
                         arrearAmount = arrearAmount.add(cc.getArrearDue());
 
                     }
-                    if (cc.getCurrentDue() != null && cc.getCurrentDue().compareTo(BigDecimal.ZERO)>0) {
+                    if (cc.getCurrentDue() != null && cc.getCurrentDue().compareTo(BigDecimal.ZERO) > 0) {
                         if (currentFromDate == "")
                             currentFromDate = sdf.format(cc.getCurrentFromDate().toDate());
                         currentToDate = sdf.format(cc.getCurentToDate().toDate());
@@ -2404,18 +2404,38 @@ public class PropertyTaxUtil {
         }
         return vrApprovalFlag;
     }
-    
+
     /**
-     * @Description : checks if the parent property has any child which is in workflow
-     * @param upicNo of the parent property
+     * @Description : checks if the parent property has any child which is in
+     *              workflow
+     * @param upicNo
+     *            of the parent property
      * @return boolean
      */
-    public boolean checkForParentUsedInBifurcation(String upicNo){
-    	boolean isChildUnderWorkflow = false;
-    	PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService.find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' ", upicNo);
-    	if(statusValues!=null){
-    		isChildUnderWorkflow = true;
-    	}
-    	return isChildUnderWorkflow;
+    public boolean checkForParentUsedInBifurcation(String upicNo) {
+        boolean isChildUnderWorkflow = false;
+        PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService
+                .find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' ",
+                        upicNo);
+        if (statusValues != null) {
+            isChildUnderWorkflow = true;
+        }
+        return isChildUnderWorkflow;
+    }
+
+    /**
+     * Method to get lowest installment for property
+     *
+     * @param property
+     * @return Lowest installment from date
+     */
+    public Date getLowestInstallmentForProperty(Property property) {
+        final String query = "select demandDetails.egDemandReason from Ptdemand ptd,EgDemandDetails demandDetails where ptd.egptProperty = :property "
+                + " and ptd.id = demandDetails.egDemand.id ";
+        List<EgDemandReason> egDemandReason = persistenceService.getSession().createQuery(query.toString())
+                .setEntity("property", property).list();
+        return (null != egDemandReason && !egDemandReason.isEmpty()) ? egDemandReason.get(0)
+                .getEgInstallmentMaster().getFromDate() : null;
+
     }
 }
