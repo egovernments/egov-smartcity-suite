@@ -72,7 +72,7 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     private static final Logger LOGGER = Logger.getLogger(AgencyWiseBillable.class);
     public static final String collectionTypeHoarding = "hoarding";
     public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Agency Name-";
-    private static final String STRING_DEPARTMENT_CODE = "R";
+    private static final String STRING_DEPARTMENT_CODE = "REV";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
