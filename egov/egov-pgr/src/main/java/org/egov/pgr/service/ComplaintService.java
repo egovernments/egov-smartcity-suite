@@ -150,6 +150,7 @@ public class ComplaintService {
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
+        Boundary location = null;
         if (StringUtils.isBlank(complaint.getCrn()))
             complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
@@ -161,13 +162,15 @@ public class ComplaintService {
         }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
-            Boundary location = null;
+            
             final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-            if (bndryId != null && bndryId != 0) {
+            if (bndryId != null && bndryId != 0 ) {
                 location = boundaryService.getBoundaryById(bndryId);
                 complaint.setLocation(location);
-            } else
+            } else{
                 location = boundaryService.getBoundaryByBndryTypeNameAndHierarchyTypeName("City", "LOCATION");
+                complaint.setLocation(location);
+                }
 
         }
         final Position assignee = complaintRouterService.getAssignee(complaint);
