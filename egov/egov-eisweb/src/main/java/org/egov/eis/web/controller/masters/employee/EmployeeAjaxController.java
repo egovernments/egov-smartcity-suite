@@ -58,33 +58,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value= "/employee")
+@RequestMapping(value = "/employee")
 public class EmployeeAjaxController {
-    
+
     @Autowired
     private DesignationService designationService;
-    
+
     @Autowired
     private PositionMasterService positionMasterService;
-    
-    @RequestMapping(value= "/ajax/designations",method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @RequestMapping(value = "/ajax/designations", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getAllDesignationsByNameLike(
             @ModelAttribute("employeeBean") @RequestParam final String designationName) {
         return designationService.getAllDesignationsByNameLike(designationName);
     }
-    
-    @RequestMapping(value= "/ajax/positions",method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @RequestMapping(value = "/ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Position> getPositionForDeptAndDesig(
-            @ModelAttribute("employeeBean") @RequestParam final Long deptId,@RequestParam final Long desigId,
-            @RequestParam final Date fromDate,@RequestParam final Date toDate,@RequestParam final String positionName,
+            @ModelAttribute("employeeBean") @RequestParam final Long deptId, @RequestParam final Long desigId,
+            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final String positionName,
             @RequestParam final boolean primary) {
         List<Position> posList = new ArrayList<Position>();
-        if(primary)
-            posList = positionMasterService.getPositionsForDeptDesigAndName(deptId, desigId, fromDate,toDate,positionName);
+        if (primary)
+            posList = positionMasterService.getPositionsForDeptDesigAndName(deptId, desigId, fromDate, toDate,
+                    positionName);
         else
-            posList = positionMasterService.getAllPositionsByNameLike(positionName);
+            posList = positionMasterService.getPositionsForDeptDesigAndPosName(deptId, desigId, positionName);
         return posList;
     }
-    
 
 }
