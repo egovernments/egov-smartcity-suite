@@ -224,7 +224,7 @@
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1"> *</span> :</td>
-		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"
+		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="buildingPermissionNo" size="16" maxlength="16"
 				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{property.propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1"> *</span> :</td>
