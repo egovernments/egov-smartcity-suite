@@ -47,6 +47,9 @@
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
+                </c:if>
 		<form:form action="search" method ="get" class="form-horizontal form-groups-bordered"  id="userrolesearchform" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
