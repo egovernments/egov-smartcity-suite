@@ -265,15 +265,17 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             if (applicableTax.equals(DEMANDRSN_CODE_GENERAL_TAX) || applicableTax.equals(DEMANDRSN_CODE_VACANT_TAX)) {
                 if (applicableTax.equals(DEMANDRSN_CODE_VACANT_TAX)) {
                     taxRatePerc = getTaxRate(DEMANDRSN_CODE_VACANT_TAX);
+                    halfYearHeadTax = getHalfYearTax(alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(0,
+                            BigDecimal.ROUND_HALF_UP));
                 } else {
                     if (floor != null && floor.getPropertyUsage().getIsResidential()) {
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_RESD");
                     } else {
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_NR");
                     }
+                    halfYearHeadTax = alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(0,
+                            BigDecimal.ROUND_HALF_UP);
                 }
-                halfYearHeadTax = alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(0,
-                        BigDecimal.ROUND_HALF_UP);
                 halfYearHeadTax = taxIfGovtProperty(propTypeCode, halfYearHeadTax);
                 generalTax = halfYearHeadTax;
             }
@@ -535,6 +537,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             taxRate = new BigDecimal(taxRateProps.getProperty(taxHead));
         }
         return taxRate;
+    }
+    
+    private BigDecimal getHalfYearTax(BigDecimal annualTax) {
+        return annualTax.divide(new BigDecimal(2)).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
 }
