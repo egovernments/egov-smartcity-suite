@@ -186,10 +186,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
         try {
             if (getBasicProperty() == null) {
+                addActionError("Property not found with given Assessment Number " + propertyId); 
                 throw new PropertyNotFoundException();
             } else {
                 LOGGER.debug("BasicProperty : " + basicProperty);
-                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId); 
                 viewMap = new HashMap<String, Object>();
                 viewMap.put("propID", basicProperty.getPropertyID());
                 PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()

@@ -92,6 +92,14 @@
 
 	<body onload="loadOnStartup();">
 		<div class="formmainbox">
+			<s:if test="%{hasErrors()}">
+			<div class="errorstyle" id="property_error_area">
+				<div class="errortext">
+					<s:actionerror />
+					<s:fielderror/>
+				</div>
+			</div>
+			</s:if>
 			<div class="headingbg">
 			<s:if test="%{isCitizen}">
 				<s:text name="taxdetailsheader" />
