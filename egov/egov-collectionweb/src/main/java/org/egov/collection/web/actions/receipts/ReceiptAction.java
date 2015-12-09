@@ -112,6 +112,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.ValidationException;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
@@ -625,7 +626,11 @@ public class ReceiptAction extends BaseFormAction {
 
             // initialise receipt info,persist receipts,create vouchers & update
             // billing system
+            try{
             populateAndPersistReceipts();
+            }catch(ApplicationRuntimeException e){
+                return NEW;
+            }
 
             // ReceiptHeader rh = null
             // ;//modelPayeeList.get(0).getReceiptHeaders().iterator().next();
@@ -980,7 +985,11 @@ public class ReceiptAction extends BaseFormAction {
             else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
-            if (instrumentHeader.getBankId() != null)
+            if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null){
+                addActionError("Bank is not exist");
+                throw new ApplicationRuntimeException("Bank is not exist");
+
+            }else if(instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
                 instrumentHeader.setBankId((Bank) bankDAO.findById(
                         Integer.valueOf(instrumentHeader.getBankId().getId()), false));
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
