@@ -2287,8 +2287,8 @@ public class PropertyService {
         if (position == null) {
             user = stateAwareObject.getState().getCreatedBy();
         } else {
-            user = assignmentService.getPrimaryAssignmentForPositionAndDate(
-                    position.getId(), new Date()).getEmployee();
+            user = assignmentService.getAssignmentsForPosition(
+                    position.getId(), new Date()).get(0).getEmployee();
         }
     	Map<String, String> ownerMap = new HashMap<String, String>();
         if (applictionType != null
