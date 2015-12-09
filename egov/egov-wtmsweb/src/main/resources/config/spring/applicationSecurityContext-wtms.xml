@@ -56,7 +56,8 @@
 				<security:filter-chain pattern="/application/collecttax-view**" filters="none"/> 
 				<security:filter-chain pattern="/application/estimationNotice/view/*" filters="none"/>
 				<security:filter-chain pattern="/search/waterSearch/" filters="none" /> 
-				<security:filter-chain pattern="/elastic/appSearch/" filters="none" />
+				<security:filter-chain pattern="/elastic/appSearch/" filters="anonymousAuthenticationFilter" />
+				<security:filter-chain pattern="/elastic/appSearch/ajax-moduleTypepopulate" filters="anonymousAuthenticationFilter" />
 				<security:filter-chain pattern="/application/generatebill/**" filters="none" />
 				<security:filter-chain pattern="/application/generatebillOnline/**" filters="none" />
 				
