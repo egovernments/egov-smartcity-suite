@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_notice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="100" bottomMargin="0" uuid="3a3a1848-4830-4533-aae0-f7eb43a1fbb7">
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-12-09T00:09:38 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_notice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="70" bottomMargin="0" isSummaryNewPage="true" uuid="3a3a1848-4830-4533-aae0-f7eb43a1fbb7">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="userId" class="java.lang.Long"/>
 	<field name="newOwnerName" class="java.lang.String"/>
 	<field name="newOwnerParentName" class="java.lang.String"/>
 	<field name="oldOwnerName" class="java.lang.String"/>
@@ -13,12 +16,12 @@
 	<field name="regDocDate" class="java.lang.String"/>
 	<field name="currentInstallment" class="java.lang.String"/>
 	<field name="municipalityName" class="java.lang.String"/>
-	<field name="ulbLogo" class="java.lang.Object"/>
+	<field name="ulbLogo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="65" splitType="Stretch">
+		<band height="284" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="137" y="1" width="355" height="16" uuid="ff8776b7-ecd2-4ed6-b784-7ec61b21fcba"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -27,18 +30,40 @@
 				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="137" y="17" width="355" height="16" uuid="ffe15803-b863-4d80-a988-5616a7d52a81"/>
+				<reportElement x="137" y="21" width="355" height="16" uuid="ffe15803-b863-4d80-a988-5616a7d52a81"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Endorsement of Transfer of Title of Property]]></text>
 			</staticText>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="45" y="0" width="55" height="50" uuid="f8cbc2c2-ae88-4ad3-832a-1f0d790ef3c6"/>
+				<reportElement x="45" y="0" width="65" height="60" uuid="f8cbc2c2-ae88-4ad3-832a-1f0d790ef3c6"/>
 				<imageExpression><![CDATA[$F{ulbLogo}]]></imageExpression>
 			</image>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="46" y="111" width="464" height="89" uuid="aa068ef8-8028-4b62-91e0-efb37162f512"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="9" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["	Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{newOwnerParentName}+"</style> has submitted an application along with a copy of registered sale deed document bearing No.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{regDocNo}+"</style> dated <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{regDocDate}+"</style> enclosed in the file, where in it was stated that he/she purchased the house from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerParentName}+"</style>. The applicant has submitted the no objection from the vender. \n\n    As per the records of this office the above house stands in the name of Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerParentName}+"</style>. The property tax on the said has been paid up to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{currentInstallment}+"</style>."]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="137" y="33" width="355" height="16" uuid="5ea4bef4-89b4-4ac3-b866-7d33659e9b80"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="217" width="195" height="12" uuid="07d9de70-c7b1-47dd-a77a-1e5ecf1ef3fd"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Hence the Mutation may be effected.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="46" y="81" width="360" height="24" uuid="71381cb3-c3d8-440e-9d71-8da159a0ac99"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SUBMITTED: "+$F{newOwnerName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="137" y="41" width="355" height="16" uuid="7d877a15-1dd1-4710-a0ef-4b0b2102505b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
@@ -46,90 +71,63 @@
 			</staticText>
 		</band>
 	</title>
-	<pageHeader>
-		<band height="500" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
-				<reportElement x="45" y="27" width="478" height="63" uuid="01cc0589-0523-48b3-b077-fe5ff1151a97"/>
-				<textElement textAlignment="Justified" markup="styled">
-					<font size="8" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["	Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{newOwnerParentName}+"</style> has submitted an application along with a copy of registered sale deed document bearing No.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{regDocNo}+"</style> dated <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{regDocDate}+"</style> enclosed in the file, where in it was stated that he/she purchased the house from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerParentName}+"</style>. The applicant has submitted the no objection from the vender. \n\n    As per the records of this office the above house stands in the name of Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerParentName}+"</style>. The property tax on the said has been paid up to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{currentInstallment}+"</style>."]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="199" y="105" width="195" height="12" uuid="b3b19631-2ad1-4373-9cd9-48039ab9c9b9"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Hence the Mutation may be effected.]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="45" y="2" width="360" height="13" uuid="dab302e0-1483-49dc-95ec-dc68e980de99"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["SUBMITTED: "+$F{newOwnerName}]]></textFieldExpression>
-			</textField>
+	<pageFooter>
+		<band height="72">
+			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+				<reportElement x="343" y="0" width="171" height="51" uuid="fb0a1d7a-21de-45f1-91c5-a3dfa4c8ebf2"/>
+				<imageExpression><![CDATA[ReportUtil.getUserSignature($P{userId})]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="406">
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="45" y="302" width="55" height="50" uuid="675bd0f8-a817-4b59-b4f5-352f1168a107"/>
+				<reportElement x="44" y="59" width="65" height="60" uuid="045ebef8-bc00-453a-81d2-64b9efe45b32"/>
 				<imageExpression><![CDATA[$F{ulbLogo}]]></imageExpression>
 			</image>
-			<textField isBlankWhenNull="true">
-				<reportElement x="45" y="380" width="360" height="13" uuid="99023751-d9d7-42e4-a827-3e03f7f748c0"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["SUBMITTED: "+$F{newOwnerName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="208" y="478" width="195" height="12" uuid="74d00c51-96fc-4b8f-8dc1-c3b870f9bfe0"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Hence the Mutation may be effected.]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="137" y="301" width="355" height="16" uuid="c2b00760-03ab-4351-81ce-6a8ae6a2dad7"/>
+				<reportElement x="136" y="60" width="355" height="16" uuid="0f139a05-d78b-4a19-bfd4-f61d9e66d46d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="137" y="317" width="355" height="16" uuid="28f64e4d-7cf2-4923-b048-37af51e93524"/>
+				<reportElement x="136" y="80" width="355" height="16" uuid="4537df26-f158-46ea-9927-5d47ec7b62b7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Endorsement of Transfer of Title of Property]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="137" y="333" width="355" height="16" uuid="b4a26687-ea2b-472c-bfc1-53ed8163336c"/>
+				<reportElement x="136" y="100" width="355" height="16" uuid="10e9f8a1-6a5e-4b34-92a6-3ac82b53b969"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Department's Use]]></text>
 			</staticText>
-			<line>
-				<reportElement x="0" y="229" width="555" height="1" uuid="c20753ee-3775-4bb2-9def-49e8cb5dab09"/>
-				<graphicElement>
-					<pen lineWidth="1.25" lineStyle="Dashed"/>
-				</graphicElement>
-			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="45" y="140" width="360" height="24" uuid="9d1077d9-9405-4cf4-b9fe-4bbda4d69b80"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SUBMITTED: "+$F{newOwnerName}]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="45" y="402" width="478" height="44" uuid="ec2b8960-4927-4451-a47c-5c6115e98f5d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="45" y="170" width="464" height="89" uuid="ad6e7a62-d24b-4eac-a1f1-d625b0a95ae9"/>
 				<textElement textAlignment="Justified" markup="styled">
-					<font size="8" isPdfEmbedded="true"/>
+					<font size="9" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<textFieldExpression><![CDATA["	Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{newOwnerParentName}+"</style> has submitted an application along with a copy of registered sale deed document bearing No.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{regDocNo}+"</style> dated <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{regDocDate}+"</style> enclosed in the file, where in it was stated that he/she purchased the house from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{oldOwnerParentName}+"</style>. The applicant has submitted the no objection from the vender. \n\n    As per the records of this office the above house stands in the name of Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerName}+"</style> S/O <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{newOwnerParentName}+"</style>. The property tax on the said has been paid up to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{currentInstallment}+"</style>."]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="181" y="280" width="195" height="12" uuid="aac4d0f3-2358-4519-ae2e-cc29f92c2eb1"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Hence the Mutation may be effected.]]></text>
+			</staticText>
 		</band>
-	</pageHeader>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>
