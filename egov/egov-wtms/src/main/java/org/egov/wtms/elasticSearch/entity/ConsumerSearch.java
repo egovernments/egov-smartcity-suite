@@ -58,7 +58,7 @@ public class ConsumerSearch implements Indexable {
     @Searchable(name = "adminward", group = Searchable.Group.CLAUSES)
     private String adminWard;
 
-    @Searchable(name = "doorno", group = Searchable.Group.SEARCHABLE)
+    @Searchable(name = "doorno", group = Searchable.Group.CLAUSES)
     private String doorno;
 
     @Searchable(name = "consumercode", group = Searchable.Group.CLAUSES)
