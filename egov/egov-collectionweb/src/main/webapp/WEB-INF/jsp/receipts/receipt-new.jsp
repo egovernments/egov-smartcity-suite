@@ -1720,6 +1720,10 @@ function loadDropDownCodesBank()
 var yuiflagBank = new Array();
 function autocompletecodeBank(obj,myEvent)
 {
+	//Fix-Me
+	var branchObj = document.getElementById('instrumentBranchName');
+	jQuery(branchObj).trigger('focus');
+	jQuery(obj).focus();
 	var src = obj;	
 	var target = document.getElementById('bankcodescontainer');	
 	var posSrc=findPos(src); 
@@ -1763,11 +1767,11 @@ function fillAfterSplitBank(obj)
 		getControlInBranch(currRow,'bankName').value=temp[0];
 		
 	}
-	else
+	/* else
 	{
 		getControlInBranch(currRow,'bankID').value="";
 		getControlInBranch(currRow,'bankName').value="";
-	}
+	} */
 	
 }
 
