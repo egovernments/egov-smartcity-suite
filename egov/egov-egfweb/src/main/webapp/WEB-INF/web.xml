@@ -219,11 +219,11 @@
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
-			<taglib-location>WEB-INF/tags/c.tld</taglib-location>
+			<taglib-location>/WEB-INF/tags/c.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://displaytag.sf.net</taglib-uri>
-			<taglib-location>WEB-INF/tags/displaytag.tld</taglib-location>
+			<taglib-location>/WEB-INF/tags/displaytag.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>

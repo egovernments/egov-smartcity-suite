@@ -161,10 +161,6 @@
             <taglib-uri>http://www.joda.org/joda/time/tags</taglib-uri>
             <taglib-location>/WEB-INF/taglib/joda.tld</taglib-location>
         </taglib>
-        <taglib>
-            <taglib-uri>http://displaytag.sf.net</taglib-uri>
-            <taglib-location>/WEB-INF/taglib/displaytag.tld</taglib-location>
-        </taglib>
         <jsp-property-group>
     		<url-pattern>*.jsp</url-pattern>
     		<page-encoding>UTF-8</page-encoding>
