@@ -66,9 +66,9 @@
 					      <tr class="">
 							<td class="text-center"><span id="slNo1">1</span></td>
 							<td class="text-center"><textarea class="form-control table-input" name="estimationDetails[0].itemDescription" id="estimationDetails0itemDescription" required="required" maxlength="256" ></textarea></td>
-							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" name="estimationDetails[0].quantity" id="estimationDetails0quantity" maxlength="8" onblur="calculateTotalAmount();"></td>
+							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" name="estimationDetails[0].quantity" id="estimationDetails0quantity" maxlength="8" onblur="calculateTotalAmount();" value="0" ></td>
 							<td class="text-right"><input type="text" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" name="estimationDetails[0].unitOfMeasurement" id="estimationDetails0unitOfMeasurement" maxlength="50"></td>
-							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();"></td>
+							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0.00"></td>
 							<td class="text-right"><input type="text" class="form-control table-input text-right" id="estimationDetails0amount" disabled></td>
 							<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
 					      </tr>
