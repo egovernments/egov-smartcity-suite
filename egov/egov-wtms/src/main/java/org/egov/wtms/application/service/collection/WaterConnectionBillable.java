@@ -302,8 +302,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     }
 
     public String buildAddressDetails(final AssessmentDetails assessmentDetails) {
+    	
         final BoundaryDetails boundaryDetails = assessmentDetails.getBoundaryDetails();
         final StringBuilder address = new StringBuilder();
+        if(assessmentDetails.getPropertyAddress() !=null && !"".equals(assessmentDetails.getPropertyAddress())){
+        address.append( assessmentDetails.getPropertyAddress() );
+        }
+        else{
         if (boundaryDetails.getZoneName() != null)
             address.append(boundaryDetails.getZoneName());
         if (boundaryDetails.getWardName() != null)
@@ -314,6 +319,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
             address.append(", ").append(boundaryDetails.getBlockName());
         if (boundaryDetails.getStreetName() != null)
             address.append(", ").append(boundaryDetails.getStreetName());
+        }
         return address.toString();
     }
 
