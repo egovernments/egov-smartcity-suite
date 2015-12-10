@@ -210,6 +210,9 @@
     <query name="CREATEDBYUSERS_OF_RECEIPTS">
     <![CDATA[select distinct createdBy from org.egov.collection.entity.ReceiptHeader]]></query>
     
+     <query name="CREATEDBYUSERS_OF_RECEIPT_NOT_CITIZEN">
+    <![CDATA[select distinct createdBy from org.egov.collection.entity.ReceiptHeader rh where rh.createdBy.type!='CITIZEN']]></query>
+    
     <query name="RECEIPT_BY_CHALLANID">
     <![CDATA[select receipt from org.egov.collection.entity.ReceiptHeader receipt, org.egov.collection.entity.Challan cl WHERE cl.receiptHeader.id = receipt.id and cl.id = ?]]></query>
     

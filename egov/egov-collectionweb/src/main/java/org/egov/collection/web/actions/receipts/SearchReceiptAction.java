@@ -164,7 +164,7 @@ public class SearchReceiptAction extends SearchFormAction {
         addDropdownData("instrumentTypeList",
                 getPersistenceService().findAllBy("from InstrumentType i where i.isActive = '1' order by type"));
         addDropdownData("userList",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
+                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPT_NOT_CITIZEN));
     }
 
     @Override
