@@ -377,7 +377,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     public Boolean getLegacy() {
         Boolean legacy = Boolean.FALSE;
         for (ReceiptAccountInfo receiptAccountInfo : getAccountDetails()) {
-            if (!receiptAccountInfo.getDescription().contains("/")) {
+            if (receiptAccountInfo.getDescription() !=null && !"".equals(receiptAccountInfo.getDescription()) && !receiptAccountInfo.getDescription().contains("/")) {
                 legacy = Boolean.TRUE;
                 break;
             }
