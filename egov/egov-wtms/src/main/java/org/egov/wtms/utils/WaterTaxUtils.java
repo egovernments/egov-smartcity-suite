@@ -325,6 +325,13 @@ public class WaterTaxUtils {
         Assignment assignment = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        return assignment != null ? assignment.getEmployee().getUsername() : "";
+    }
+    
+    public String getApproverName(final Long approvalPosition) {
+        Assignment assignment = null;
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         return assignment != null ? assignment.getEmployee().getName() : "";
     }
 

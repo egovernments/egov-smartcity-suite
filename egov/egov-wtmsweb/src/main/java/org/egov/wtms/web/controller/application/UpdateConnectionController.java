@@ -497,6 +497,10 @@ public class UpdateConnectionController extends GenericConnectionController {
                     .getCurrentUser().getId(), new Date(), new Date());
             final String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation()
                     .getName() : "";
+            final String nextUser = waterTaxUtils.getApproverUserName(approvalPosition);
+            final String nextDesign = assignmentService
+                    .getPrimaryAssignmentForEmployee(userService.getUserByUsername(nextUser).getId()).getDesignation()
+                    .getName();
 
                     if ((workFlowAction.equals(WaterTaxConstants.WFLOW_ACTION_STEP_REJECT) || workFlowAction
                     .equalsIgnoreCase(WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON))
@@ -510,7 +514,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                         approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.ROLE_CLERKFORADONI,
                         waterConnectionDetails);
                     final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                            + waterTaxUtils.getApproverUserName(approvalPosition) + "," + currentUserDesgn;
+                            + waterTaxUtils.getApproverName(approvalPosition) + "," +currentUserDesgn + "," + nextDesign ;
                     return "redirect:/application/application-success?pathVars=" + pathVars;
         } else {
             if (waterConnectionDetails.getStatus().getCode()

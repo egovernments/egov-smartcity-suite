@@ -50,6 +50,7 @@ import javax.validation.Valid;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -93,6 +94,9 @@ public class ReconnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private UserService userService;
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
@@ -179,8 +183,12 @@ public class ReconnectionController extends GenericConnectionController {
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
         Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
         String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
+        final String nextUser = waterTaxUtils.getApproverUserName(approvalPosition);
+        final String nextDesign = assignmentService
+                .getPrimaryAssignmentForEmployee(userService.getUserByUsername(nextUser).getId()).getDesignation()
+                .getName();
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverUserName(approvalPosition)+ "," +currentUserDesgn;
+                + waterTaxUtils.getApproverName(approvalPosition)+ "," +currentUserDesgn+"," + nextDesign;
         return "redirect:/application/application-success?pathVars=" + pathVars;
 
     }
