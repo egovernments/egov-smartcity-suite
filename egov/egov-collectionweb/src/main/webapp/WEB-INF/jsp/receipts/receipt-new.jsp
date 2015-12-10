@@ -75,23 +75,23 @@ jQuery(document).ready(function() {
      
      jQuery( "#instrumentDate" ).datepicker({ 
     	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
          onRender: function(date) {
              console.log(date);
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
       	  }
 	  }).on('changeDate', function(ev) {
-		  jQuery(this).datepicker('hide');
 		  isDatepickerOpened=false; 
        	  checkForCurrentDate(this);
 	  }).data('datepicker');
 
      jQuery( "#manualReceiptDate" ).datepicker({ 
     	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
     	 onRender: function(date) {
        	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
        	  }
 	  }).on('changeDate', function(ev) {
-		  jQuery(this).datepicker('hide');
 		  isDatepickerOpened=false; 
        	  checkForCurrentDate(this);
 		  validateManualReceiptDate(this);

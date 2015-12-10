@@ -142,21 +142,13 @@
 		jQuery(function($) {
 			try {
 				$(".datepicker").datepicker({
-					format : "dd/mm/yyyy"
+					format : "dd/mm/yyyy",
+					autoclose:true
 				});
-				reInitializeDateOnChangeEvent();
 			} catch (e) {
 				console.warn("No Date Picker " + e);
 			}
 		});
-
-		function reInitializeDateOnChangeEvent() {
-
-			jQuery(".datepicker").on('changeDate', function(ev) {
-				jQuery(this).datepicker('hide');
-			});
-
-		}
 
 		function loadOnStartUp() {
 			document.getElementById('assessmentRow').style.display = "none";

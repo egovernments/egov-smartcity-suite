@@ -63,7 +63,8 @@
 			jQuery(function($) {
 				try {
 					$(".datepicker").datepicker({
-						format : "dd/mm/yyyy"
+						format : "dd/mm/yyyy",
+						autoclose:true
 					});
 					reInitializeDateOnChangeEvent();
 				} catch (e) {
@@ -71,13 +72,6 @@
 				}
 			});
 
-			function reInitializeDateOnChangeEvent() {
-
-				jQuery(".datepicker").on('changeDate', function(ev) {
-					jQuery(this).datepicker('hide');
-				});
-
-			}
 
 			function onSubmit() {
 				var actionName = document.getElementById('workFlowAction').value;

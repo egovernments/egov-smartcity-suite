@@ -63,15 +63,12 @@
 	jQuery(function($) {
 		try {
 			jQuery(".datepicker").datepicker({
-				format : "dd/mm/yyyy"
+				format : "dd/mm/yyyy",
+				autoclose:true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
 		}
-
-		jQuery('.datepicker').on('changeDate', function(ev) {
-			jQuery(this).datepicker('hide');
-		});
 	});
 
 	function onSubmit() {
