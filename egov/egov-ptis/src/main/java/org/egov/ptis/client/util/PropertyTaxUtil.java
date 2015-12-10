@@ -2342,7 +2342,7 @@ public class PropertyTaxUtil {
         Assignment assignment = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        return assignment != null ? assignment.getEmployee().getUsername() : "";
+        return assignment != null ? assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) : "";
     }
 
     public boolean enableVacancyRemission(String upicNo) {

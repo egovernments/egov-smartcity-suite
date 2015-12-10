@@ -101,6 +101,7 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -594,6 +595,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.update(basicProp);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
+        if (null != userAssignment) {
+            propertyInitiatedBy = (userAssignment.getEmployee().getName()).concat("~").concat(userAssignment.getPosition().getName()); 
+        }
         /*
          * if (propService.isEmployee(property.getCreatedBy()))
          * propertyInitiatedBy = property.getCreatedBy().getName(); else
@@ -602,7 +607,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
          * (property.getStateHistory().get(0).getOwnerPosition().getId())
          * .getEmployee().getUsername();
          */
-        propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature with assessment number : ");
         if (LOGGER.isDebugEnabled()) {
@@ -627,14 +631,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.persist(basicProp);
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        if (propService.isEmployee(property.getCreatedBy()))
-            propertyInitiatedBy = property.getCreatedBy().getUsername();
-        else
-            propertyInitiatedBy = assignmentService
-                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-                    .getEmployee().getUsername();
+        Assignment assignment;
+        if (propService.isEmployee(property.getCreatedBy())){
+            assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+            propertyInitiatedBy = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+        }
+        else{
+             assignment = assignmentService
+                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId());
+            propertyInitiatedBy =  assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+        }
         if (property.getState().getValue().equals("Closed")) {
-            propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
+            assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
+            propertyInitiatedBy = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
             setAckMessage(MSG_REJECT_SUCCESS + " By ");
         } else
             setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");

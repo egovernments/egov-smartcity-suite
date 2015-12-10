@@ -21,6 +21,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -69,6 +71,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    protected AssignmentService assignmentService;
 
     @ModelAttribute
     public Property propertyModel(@PathVariable String id) {
@@ -150,10 +155,14 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }
             String successMessage = "";
+            Assignment assignment = new Assignment();
+            if(property!=null && property.getCreatedBy()!=null){
+                assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+            }
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                 if (taxExemptionService.isPropertyByEmployee(property)) {
                     successMessage = "Property Exemption approved successfully and forwarded to  "
-                            + property.getCreatedBy().getName() + " with assessment number "
+                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo();
                 } else {
                     successMessage = "Property Exemption approved successfully and forwarded to  "
@@ -164,7 +173,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                 if (taxExemptionService.isPropertyByEmployee(property)) {
                     successMessage = "Property Exemption rejected successfully and forwared to initiator "
-                            + property.getCreatedBy().getName() + " with application number "
+                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with application number "
                             + property.getApplicationNo();
                 } else {
                     successMessage = "Property Exemption rejected successfully and forwared to initiator "

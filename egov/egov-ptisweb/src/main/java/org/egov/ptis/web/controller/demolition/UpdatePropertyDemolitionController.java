@@ -60,6 +60,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -96,6 +98,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     
     @Autowired
     private PersistenceService<Property, Long> persistenceService;
+    
+    @Autowired
+    protected AssignmentService assignmentService;
 
     @Autowired
     public UpdatePropertyDemolitionController(PropertyDemolitionService propertyDemolitionService) {
@@ -203,16 +208,18 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                         e.printStackTrace();
                     }
                 }
-
+                Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + securityUtils.getCurrentUser().getName() + " with assessment number "
+                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
                     model.addAttribute(
                             "successMessage",
                             "Property Demolition rejected successfully and forwared to initiator "
-                                    + property.getCreatedBy().getName() + " with application number "
+                                    + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())+ " with application number "
                                     + property.getApplicationNo());
                 } else
                     model.addAttribute("successMessage",

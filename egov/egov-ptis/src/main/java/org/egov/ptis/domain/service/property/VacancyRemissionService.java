@@ -291,13 +291,14 @@ public class VacancyRemissionService {
 
     public String getInitiatorName(final VacancyRemission vacancyRemission) {
         String initiatorName = "";
+        Assignment assignment = new Assignment();
         if (checkIfEmployee(vacancyRemission.getCreatedBy()))
-            initiatorName = vacancyRemission.getCreatedBy().getName();
+            assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
         else
-            initiatorName = assignmentService
+            assignment = assignmentService
                     .getPrimaryAssignmentForPositon(
-                            vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId()).getEmployee()
-                    .getUsername();
+                            vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+        initiatorName=assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         return initiatorName;
     }
 

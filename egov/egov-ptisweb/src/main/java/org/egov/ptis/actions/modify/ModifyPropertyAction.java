@@ -759,10 +759,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         String username = "";
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel
                 .getStateHistory().get(0).getOwnerPosition().getId());
-        if (propService.isEmployee(propertyModel.getCreatedBy()))
-            username = propertyModel.getCreatedBy().getUsername();
+        if (propService.isEmployee(propertyModel.getCreatedBy())){
+            Assignment assignment = assignmentService.getPrimaryAssignmentForUser(propertyModel.getCreatedBy().getId());
+            username = propertyModel.getCreatedBy().getName().concat("~").concat(assignment.getPosition().getName());
+        }
         else
-            username = userAssignment.getEmployee().getUsername();
+            username = userAssignment.getEmployee().getName().concat("~").concat(userAssignment.getPosition().getName());
         final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
         if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
             wfInitiatorRejected = Boolean.TRUE;
@@ -1150,9 +1152,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
      */
     private void prepareAckMsg() {
         LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
+        Assignment assignment = assignmentService
+                .getPrimaryAssignmentForPositon(approverPositionId);
         final User approverUser = eisCommonService.getUserForPosition(approverPositionId, new Date());
         final String action = getModifyReasonString();
-        setAckMessage(getText("property.modify.forward.success", new String[] { action, approverUser.getUsername(),
+        setAckMessage(getText("property.modify.forward.success", new String[] { action, approverUser.getName().concat("~").concat(assignment.getPosition().getName()),
                 propertyModel.getApplicationNo() }));
 
         LOGGER.debug("AckMessage: " + getAckMessage() + "\nExiting from prepareAckMsg");

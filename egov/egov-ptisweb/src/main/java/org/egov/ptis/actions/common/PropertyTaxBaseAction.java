@@ -499,10 +499,16 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
-                approverName = assignment.getEmployee().getUsername();
+                approverName = (assignment.getEmployee().getName()).concat("~").concat(assignment.getPosition().getName()); 
             }
-        } else
+        } else{
             currentState = null;
+            if (null != approverPositionId && approverPositionId != -1){
+                Assignment assignment = assignmentService
+                        .getPrimaryAssignmentForPositon(approverPositionId);
+                approverName =  assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+            }
+        }
         if (null != property.getId())
             wfInitiator = propertyService.getWorkflowInitiator(property);
 

@@ -366,15 +366,20 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         approverName = "";
-        if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
-            mutationInitiatedBy = propertyMutation.getCreatedBy().getUsername();
-        else
-            mutationInitiatedBy = assignmentService
+        Assignment assignment ;
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy())){
+            assignment = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
+            mutationInitiatedBy = propertyMutation.getCreatedBy().getName().concat("~").concat(assignment.getPosition().getName());
+        }
+        else{
+            assignment = assignmentService
                     .getPrimaryAssignmentForPositon(
-                            propertyMutation.getStateHistory().get(0).getOwnerPosition().getId()).getEmployee()
-                    .getUsername();
+                            propertyMutation.getStateHistory().get(0).getOwnerPosition().getId());
+            mutationInitiatedBy= assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+        }
         if (propertyMutation.getState().getValue().equals("Closed")) {
-            mutationInitiatedBy = transferOwnerService.getLoggedInUser().getUsername();
+            assignment = assignmentService.getPrimaryAssignmentForUser(transferOwnerService.getLoggedInUser().getId());
+            mutationInitiatedBy = transferOwnerService.getLoggedInUser().getName().concat("~").concat(assignment.getPosition().getName());
             setAckMessage("Transfer of ownership data rejected successfuly By ");
         } else
             setAckMessage("Transfer of ownership data rejected successfuly and forwarded to initiator : ");
@@ -397,7 +402,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
          * propertyMutation.getStateHistory().get
          * (0).getOwnerPosition().getId()).getEmployee() .getUsername();
          */
-        mutationInitiatedBy = securityUtils.getCurrentUser().getUsername();
+        Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
+        mutationInitiatedBy = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
@@ -582,7 +588,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentState = "Created";
             final Assignment assignment = propertyService.getUserPositionByZone(basicproperty);
             approverPositionId = assignment.getPosition().getId();
-            approverName = assignment.getEmployee().getUsername();
+            approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         } else
             currentState = null;
 
