@@ -273,10 +273,10 @@ public abstract class Address extends AbstractPersistable<Long> {
         StringBuilder builder = new StringBuilder();
         if (StringUtils.isNotBlank(houseNoBldgApt))
             builder.append(StringUtils.trim(houseNoBldgApt)).append(", ");
-        if (StringUtils.isNotBlank(streetRoadLine))
-            builder.append(StringUtils.trim(streetRoadLine)).append(", ");
         if (StringUtils.isNotBlank(areaLocalitySector))
             builder.append(StringUtils.trim(areaLocalitySector)).append(", ");
+        if (StringUtils.isNotBlank(streetRoadLine))
+            builder.append(StringUtils.trim(streetRoadLine)).append(", ");
         if (StringUtils.isNotBlank(landmark))
             builder.append(StringUtils.trim(landmark)).append(", ");
         if (StringUtils.isNotBlank(cityTownVillage))

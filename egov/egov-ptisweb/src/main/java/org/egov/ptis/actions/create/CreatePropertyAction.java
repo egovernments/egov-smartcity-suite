@@ -922,7 +922,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propAddr.setHouseNoBldgApt(getHouseNumber());
         propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
         String cityName = EgovThreadLocals.getCityName();
-        ownerAddress.setCityTownVillage(cityName);
+        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getWardId()).getName());
         propAddr.setCityTownVillage(cityName);
         
         if (getPinCode() != null && !getPinCode().isEmpty())
@@ -935,6 +935,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 .isCorrAddressDiff())) {
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
+            ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
+            ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(propAddr.getPinCode());
         } else {
             final String[] corrAddr = getCorrAddress1().split(",");
@@ -943,6 +945,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             else
                 ownerAddress.setAreaLocalitySector(corrAddr[1]);
             ownerAddress.setHouseNoBldgApt(getHouseNumber());
+            ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
         }
     }
@@ -958,7 +961,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propAddr.setHouseNoBldgApt(getHouseNumber());
         propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
         String cityName = EgovThreadLocals.getCityName();
-        ownerAddress.setCityTownVillage(cityName);
+        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getWardId()).getName());
         propAddr.setCityTownVillage(cityName);
         
         if (getPinCode() != null && !getPinCode().isEmpty())
@@ -968,11 +971,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
             ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
+            ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
+            ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(propAddr.getPinCode());
         } else {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setAreaLocalitySector(getCorrAddress1());
+            ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
         }
         if (LOGGER.isDebugEnabled())
