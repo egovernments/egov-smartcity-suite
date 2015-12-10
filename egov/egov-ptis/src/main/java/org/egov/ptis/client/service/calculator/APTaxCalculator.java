@@ -236,12 +236,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         taxCalculationInfo.setBlock(propertyId.getArea() != null ? propertyId.getArea().getName() : "");
         taxCalculationInfo.setLocality(property.getBasicProperty().getPropertyID().getLocality().getName());
         if (property.getPropertyDetail().getSitalArea().getArea() != null)
-            if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-                taxCalculationInfo.setPropertyArea(convertYardToSquareMeters(property.getPropertyDetail()
-                        .getSitalArea().getArea()));
-            else
-                taxCalculationInfo.setPropertyArea(new BigDecimal(property.getPropertyDetail().getSitalArea().getArea()
-                        .toString()));
+            taxCalculationInfo.setPropertyArea(new BigDecimal(property.getPropertyDetail().getSitalArea().getArea()
+                    .toString()));
         taxCalculationInfo.setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
         taxCalculationInfo.setPropertyId(property.getBasicProperty().getUpicNo());
         return taxCalculationInfo;

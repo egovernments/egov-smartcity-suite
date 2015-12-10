@@ -2546,8 +2546,6 @@ public class PropertyService {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (propertyDetail.isAppurtenantLandChecked() != null && propertyDetail.isAppurtenantLandChecked())
             area = area.add(BigDecimal.valueOf(propertyDetail.getExtentAppartenauntLand()));
-        else if (propertyDetail.getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-            area = convertYardToSquareMeters(propertyDetail.getSitalArea().getArea());
         else
             area = area.add(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
         return area;
