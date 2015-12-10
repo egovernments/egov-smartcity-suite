@@ -2692,13 +2692,13 @@ public class PropertyService {
         if (houseNo != null && !houseNo.trim().isEmpty())
             queryStr.append("and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append("and upper(trim(pmv.ownerName)) like :OwnerName");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setLong("locationId", locationId);
         if (houseNo != null && !houseNo.trim().isEmpty())
             query.setString("HouseNo", houseNo + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString("OwnerName", ownerName + "%");
+            query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
@@ -2724,7 +2724,7 @@ public class PropertyService {
         if (houseNum != null && !houseNum.trim().isEmpty())
             queryStr.append(" and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append(" and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append(" and upper(trim(pmv.ownerName)) like :OwnerName");
 
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
 
@@ -2735,7 +2735,7 @@ public class PropertyService {
         if (houseNum != null && !houseNum.trim().isEmpty())
             query.setString("HouseNo", houseNum + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString("OwnerName", ownerName + "%");
+            query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
