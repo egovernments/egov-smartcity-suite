@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.egov.commons.EgwStatus;
@@ -505,11 +506,18 @@ public class WaterTaxUtils {
                     connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
+            final String propAddress = assessmentDetails.getPropertyAddress();
+            String doorno[] = null;
+            if(null != propAddress && !propAddress.isEmpty()) {
+                doorno = propAddress.split(",");
+            }
             String ownerName = "";
-            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                ownerName = names.getOwnerName();
-                break;
+            final Set<OwnerName> ownerNames = assessmentDetails.getOwnerNames();
+            if(null != ownerNames && !ownerNames.isEmpty()) {
+                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                    ownerName = names.getOwnerName();
+                    break;
+                }
             }
             if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
                 reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
@@ -522,7 +530,7 @@ public class WaterTaxUtils {
                 reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
             }
             reportParams.put("municipality", cityMunicipalityName);
-           // reportParams.put("district", districtName);
+            reportParams.put("district", districtName);
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             if(null != workFlowAction) {
                 if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
@@ -540,8 +548,8 @@ public class WaterTaxUtils {
             }
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
-            reportParams.put("doorno", doorno[0]);
+            reportParams.put("address", propAddress);
+            reportParams.put("doorno", doorno != null ? doorno[0] : "");
             reportParams.put("applicationDate",formatter.format(connectionDetails.getApplicationDate()));
             reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }

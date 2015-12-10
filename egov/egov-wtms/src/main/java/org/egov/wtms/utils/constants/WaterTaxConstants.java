@@ -258,4 +258,8 @@ public class WaterTaxConstants {
     public static final String APPROVAL_POSITION = "approvalPosition";
     public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String WORKFLOW_ACTION = "workFlowAction";
+    public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
+    public static final String DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
+    public static final String WATER_TAP_CONNECTION = "Water Tap Connection";
+    public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
 }

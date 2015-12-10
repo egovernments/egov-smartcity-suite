@@ -45,8 +45,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -435,6 +437,10 @@ public class UpdateConnectionController extends GenericConnectionController {
                         session.setAttribute(WaterTaxConstants.APPROVAL_COMMENT, approvalComent);
                         session.setAttribute(WaterTaxConstants.APPLICATION_NUMBER,
                                 upadtedWaterConnectionDetails.getApplicationNumber());
+                        Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<String, String>();
+                        fileStoreIdsApplicationNoMap.put(upadtedWaterConnectionDetails.getFileStore()
+                                .getFileStoreId(), upadtedWaterConnectionDetails.getApplicationNumber());
+                        session.setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
                         return "newConnection-digitalSignatureRedirection";
                     } else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,

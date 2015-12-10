@@ -194,4 +194,8 @@
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/newConnection-digitalSignatureRedirection.jsp"/>
      </definition>
+     <definition name="digitalSignaturePending-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.pendingForm.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignaturePending-form.jsp"/>
+     </definition>
 </tiles-definitions>

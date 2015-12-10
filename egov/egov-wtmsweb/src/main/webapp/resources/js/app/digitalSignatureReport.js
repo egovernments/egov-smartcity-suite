@@ -38,11 +38,12 @@
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-jQuery('#selectAll').click(function(e){
-    var table= jQuery(e.target).closest('table');
-    jQuery('td input:checkbox',table).prop('checked',e.target.checked);  
-});
+function selectAllCheckbox(e){
+    var table= $(e.target).closest('table');
+    $('td input:checkbox',table).prop('checked',e.target.checked);  
+}
 
+//This function is used to show the report which is digitally signed.
 function previewSignedNotice(signedFileStoreId) {
 	var params = [
 		'height='+screen.height, 
@@ -50,4 +51,51 @@ function previewSignedNotice(signedFileStoreId) {
 	    'fullscreen=yes' 
 	].join(',');
 	window.open('/wtms/digitalSignature/waterTax/previewSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+}
+//Generate notice for the pending water connection document
+function generateNotice(obj, actionName, currentState){
+	var rowobj=getRow(obj);
+	var tbl = document.getElementById('digSignDetailsTab');
+	var applicationNumber=getControlInBranch(tbl.rows[rowobj.rowIndex],'objectId').value;
+	var noticeType = 'Special Notice';
+	var params = [
+		   			'height='+screen.height, 
+		   		    'width='+screen.width,
+		   		    'fullscreen=yes' 
+		   		].join(',');
+	var noticeType='Special Notice';  
+	var type = currentState.split(":");
+	var url = "";
+	if (actionName == 'Preview') {
+		url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&digSign=Y";
+		window.open(url, "NoticeWindow", params);
+		return false; 
+	} 
+	else {
+		window.location = "/wtms/digitalSignature/waterTax/signWorkOrder?pathVar="+applicationNumber+"&workFlowAction="+actionName;
+	}
+}
+
+function signAllPendingDigitalSignature() {
+	if (jQuery('#digSignDetailsTab').find('input[type=checkbox]:checked').length == 0) {
+		alert('Please select atleast one document to sign');
+		return false;
+	} else {
+		var tbl = document.getElementById("digSignDetailsTab");
+		var lastRow = (tbl.rows.length) - 1;
+		var idArray = new Array();
+		var j = 0;
+		for (var i = 1; i <= lastRow; i++) {
+			if (getControlInBranch(tbl.rows[i], 'rowCheckBox').checked) {
+				idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value;
+			}
+		}
+		//window.location = "/wtms/digitalSignature/waterTax/signWorkOrder?pathVar=" + idArray.toString()+"&actionName=sign_all";
+		$('<form>.').attr({
+			method: 'post',
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
+			target: '_self'
+		})
+		.appendTo(document.body).submit();
+	}
 }
