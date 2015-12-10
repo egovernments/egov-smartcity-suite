@@ -130,12 +130,13 @@ public class CreateEmployeeDataEntryController {
         }
         final Department department = departmentService.getDepartmentById(deptId);
         final Designation designation = designationService.getDesignationByName(designationName);
-        final String userName = employeeService.generateUserNameByDeptDesig(department, designation);
         final EmployeeType empType = employeeTypeRepository.findByName(EisConstants.EMPLOYEE_TYPE_PERMANENT);
         final EmployeeStatus empStatus = EmployeeStatus.EMPLOYED;
 
         try {
-            employee.setUsername(userName);
+            if (null != employee.getCode() && !employee.getCode().isEmpty())
+                employee.setUsername(employee.getCode());
+
             employee.setEmployeeStatus(empStatus);
             employee.setEmployeeType(empType);
             employee.setActive(EisConstants.ISACTIVE_TRUE);
