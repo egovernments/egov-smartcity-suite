@@ -1964,7 +1964,7 @@ public class PropertyTaxUtil {
      */
     public Query prepareQueryforCollectionSummaryReport(final String fromDate, final String toDate,
             final String collMode, final String transMode, final String mode, final String boundaryId,
-            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long areaId) {
+            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
         String srchQryStr = "";
         String baseQry = "", orderbyQry = "";
         final String ZONEWISE = "zoneWise";
@@ -2002,8 +2002,8 @@ public class PropertyTaxUtil {
                     srchQryStr = srchQryStr + " and cs.zoneId.id =" + zoneId;
                 if (wardId != null && !wardId.equals("") && wardId != -1)
                     srchQryStr = srchQryStr + " and cs.wardId.id =" + wardId;
-                if (areaId != null && !areaId.equals("") && areaId != -1)
-                    srchQryStr = srchQryStr + " and cs.areaId.id =" + areaId;
+                if (blockId != null && !blockId.equals("") && blockId != -1)
+                    srchQryStr = srchQryStr + " and cs.areaId.id =" + blockId;
                 orderbyQry = "order by cs.property.propertyDetail.categoryType";
             }
             if (mode.equals(ZONEWISE)) {

@@ -4,9 +4,7 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -88,7 +86,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     
     private Long zoneId;
     private Long wardId;
-    private Long areaId;
+    private Long blockId;
     
     private String propTypeCategoryId;
     private String finYearStartDate;
@@ -142,35 +140,13 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         addDropdownData("zoneList", zoneList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
             addDropdownData("blockList", Collections.EMPTY_LIST);
-        prepareBlockDropDownData(wardId != null, areaId != null);
+        prepareBlockDropDownData(wardId != null, blockId != null);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepare method");
         propUsageList = propertyUsageDAO.getPropUsageAscOrder();
         addDropdownData("propUsageList", propUsageList);
-    }
-
-    /**
-     * Loads ward for a selected Zone
-     * @param zoneExists
-     * @param wardExists
-     */
-    @SuppressWarnings("unchecked")
-    private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into prepareWardDropDownData method");
-            LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
-        }
-        if (zoneExists && wardExists) {
-            List<Boundary> wardList = new ArrayList<Boundary>();
-            wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
-            addDropdownData("wardList", wardList);
-        } else
-            addDropdownData("wardList", Collections.EMPTY_LIST);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
     /**
@@ -302,7 +278,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
                 dateSelected = CURR_DATE;
             return propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode, mode,
                     boundaryId,
-                    propTypeCategoryId, zoneId, wardId, areaId);
+                    propTypeCategoryId, zoneId, wardId, blockId);
         } catch (final Exception e) {
             e.printStackTrace();
             LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
@@ -592,14 +568,6 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         this.wardId = wardId;
     }
 
-    public Long getAreaId() {
-        return areaId;
-    }
-
-    public void setAreaId(final Long areaId) {
-        this.areaId = areaId;
-    }
-
     public String getPropTypeCategoryId() {
         return propTypeCategoryId;
     }
@@ -614,6 +582,14 @@ public class CollectionSummaryReportAction extends BaseFormAction {
 
     public void setFinYearStartDate(final String finYearStartDate) {
         this.finYearStartDate = finYearStartDate;
+    }
+
+    public Long getBlockId() {
+        return blockId;
+    }
+
+    public void setBlockId(Long blockId) {
+        this.blockId = blockId;
     }
 
 }
