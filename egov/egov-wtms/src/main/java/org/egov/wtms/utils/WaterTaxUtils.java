@@ -324,7 +324,7 @@ public class WaterTaxUtils {
         Assignment assignment = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        return assignment != null ? assignment.getEmployee().getUsername() : "";
+        return assignment != null ? assignment.getEmployee().getName() : "";
     }
 
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
