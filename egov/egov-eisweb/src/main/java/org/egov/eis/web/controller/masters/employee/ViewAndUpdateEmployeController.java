@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -79,6 +80,9 @@ public class ViewAndUpdateEmployeController {
     private EmployeeService employeeService;
 
     @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
     private BoundaryTypeService boundaryTypeService;
 
     @Autowired
@@ -105,7 +109,7 @@ public class ViewAndUpdateEmployeController {
     @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, @RequestParam final MultipartFile file,
-            @RequestParam final String removedJurisdictionIds) {
+            @RequestParam final String removedJurisdictionIds, @RequestParam final String removedassignIds) {
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "update");
@@ -122,6 +126,7 @@ public class ViewAndUpdateEmployeController {
             image = Base64.encodeBytes(employee.getSignature());
         model.addAttribute("image", image);
         employee = jurisdictionService.removeDeletedJurisdictions(employee, removedJurisdictionIds);
+        employee = assignmentService.removeDeletedAssignments(employee, removedassignIds);
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee updated successfully");

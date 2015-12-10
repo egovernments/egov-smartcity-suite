@@ -1,31 +1,31 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
- * 
+ *
  * Copyright (C) <2015> eGovernments Foundation
- * 
+ *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
  * complied with:
- * 
+ *
  * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
- * 
+ *
  * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
  * material be marked in reasonable ways as different from the original version.
- * 
+ *
  * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
  * trade names or trademarks of eGovernments Foundation.
- * 
+ *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.eis.service;
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
@@ -99,8 +100,8 @@ public class AssignmentService {
     }
 
     /**
-     * Get all assignments for position and given date as given date which is passed as parameter. Includes both primary and
-     * secondary assignments.
+     * Get all assignments for position and given date as given date which is
+     * passed as parameter. Includes both primary and secondary assignments.
      *
      * @param posId
      * @param givenDate
@@ -226,9 +227,10 @@ public class AssignmentService {
         return new ArrayList<Assignment>();
 
     }
-    
+
     /**
-     * Get employee primary/temporary assignment for given department and designation
+     * Get employee primary/temporary assignment for given department and
+     * designation
      *
      * @param departmentId
      * @param designationId
@@ -250,7 +252,8 @@ public class AssignmentService {
     }
 
     /**
-     * Get list of primary assignments for deparment,designation,fromdate and todate
+     * Get list of primary assignments for deparment,designation,fromdate and
+     * todate
      *
      * @param deptId
      * @param desigId
@@ -289,8 +292,8 @@ public class AssignmentService {
     }
 
     /**
-     * Gets all assignments for a particular department,designation and given boundary or all the employees who can operate under
-     * this boundary
+     * Gets all assignments for a particular department,designation and given
+     * boundary or all the employees who can operate under this boundary
      *
      * @param deptId
      * @param desigId
@@ -320,12 +323,11 @@ public class AssignmentService {
 
     public Set<Long> getRequiredBoundaries(final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<Long>();
-        Boundary childBndry = boundaryService.getBoundaryById(boundaryId);
+        final Boundary childBndry = boundaryService.getBoundaryById(boundaryId);
         String childmpath = childBndry.getMaterializedPath();
-        Set<String> mpathStr = new HashSet<String>();
+        final Set<String> mpathStr = new HashSet<String>();
         mpathStr.add(childBndry.getMaterializedPath());
-        for (int i = 0; i < childmpath.length(); i++)
-        {
+        for (int i = 0; i < childmpath.length(); i++) {
             childmpath = childmpath.substring(0, childmpath.lastIndexOf("."));
             mpathStr.add(childmpath);
         }
@@ -337,5 +339,13 @@ public class AssignmentService {
 
     public List<Assignment> getAllActiveAssignments(final Long designationId) {
         return assignmentRepository.getAllActiveAssignments(designationId);
+    }
+
+    @Transactional
+    public Employee removeDeletedAssignments(final Employee employee, final String removedAssignIds) {
+        if (null != removedAssignIds)
+            for (final String id : removedAssignIds.split(","))
+                employee.getAssignments().remove(assignmentRepository.findOne(Long.valueOf(id)));
+        return employee;
     }
 }

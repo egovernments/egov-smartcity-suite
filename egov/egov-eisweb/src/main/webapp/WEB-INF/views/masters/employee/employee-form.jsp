@@ -98,6 +98,7 @@
                             </c:if>
 								<form:hidden path="locale" value="en_IN"/>
 								<input type="hidden" value="" id="removedJurisdictionIds" name ="removedJurisdictionIds"/>
+								<input type="hidden" value="" id="removedassignIds" name ="removedassignIds"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
@@ -498,6 +499,9 @@
 											<c:forEach var="assign" items="${employee.assignments}" varStatus="status">
 												<tr>
 													<td>
+													    <input type="hidden" id="table_assignid${status.index}"
+													    name="assignments[${status.index}].id"
+													    value="${assign.id}"/>
 														<fmt:formatDate value="${assign.fromDate}" var="fromDate"
 															pattern="dd/MM/yyyy" />
 														<fmt:formatDate value="${assign.toDate}" var="toDate"
@@ -515,7 +519,7 @@
 													<td>
 														<input type="hidden" id="assignments[${status.index}].primary"
 															name="assignments[${status.index}].primary"
-															value="${assign.primary}"/>	
+															value="${assign.primary}"/>
 																
 																<c:if test="${assign.primary==true}" >
 																<input type="text" id="table_department${status.index}" class="form-control" 
@@ -570,7 +574,9 @@
 														</c:if>
 													</td>
 													<td>
-														<span class="parallel-actions"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+														<span class="parallel-actions" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+													   <span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														id="delete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 													</td>
 												</tr>
 											</c:forEach>
@@ -655,10 +661,10 @@
 													id="table_boundary${status.index}" class="form-control"
 													readonly="readonly" style="text-align: center"
 													value="${jurdctn.boundary.name}" /></td>
-													<td><span class="parallel-actions"><i
-														id="jurdctnedit_row" class="fa fa-edit" value="${status.index}"></i></span>
-														<span class="parallel-actions"><i
-														id="jurdctndelete_row" class="fa fa-remove" value="${status.index}"></i></span>
+													<td><span class="parallel-actions" data-toggle="tooltip" title="Edit"><i
+														id="jurdctnedit_row" class="fa fa-edit"  value="${status.index}"></i></span>
+														<span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														id="jurdctndelete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 												</td>
 												
 											</tr>
