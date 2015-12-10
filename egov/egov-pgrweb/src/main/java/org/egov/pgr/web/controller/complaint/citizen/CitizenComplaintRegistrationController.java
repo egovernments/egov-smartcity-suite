@@ -41,6 +41,7 @@ package org.egov.pgr.web.controller.complaint.citizen;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -49,7 +50,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,9 +60,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 @Controller
 @RequestMapping(value = "/complaint/citizen")
 public class CitizenComplaintRegistrationController extends GenericComplaintController {
+
+    private final String USER_AGENT = "Mozilla/5.0";
 
     @RequestMapping(value = "show-reg-form", method = GET)
     public String showComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
@@ -94,13 +101,19 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
+            complaint.setSupportDocs(addToFileStore(files));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());
             return "complaint/citizen/registration-form";
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
+        try {
+            this.sendPost(complaint);
+        }catch (Exception e){
+            System.out.println("Error While Processing Post Request");
+            System.out.println(e.getMessage());
+        }
         return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
     }
 
@@ -136,14 +149,65 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
+            complaint.setSupportDocs(addToFileStore(files));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());
             return "complaint/citizen/anonymous-registration-form";
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
+        try {
+            this.sendPost(complaint);
+        }catch (Exception e){
+            System.out.println("Error While Processing Post Request");
+            System.out.println(e.getMessage());
+        }
+
         return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
 
+    }
+
+    // HTTP POST request
+    private void sendPost(Complaint complaint) throws Exception {
+
+        String url = "http://rainhelp.pyrumas.com/processwhatsapp.php";
+        URL url1 = new URL(url);
+        HttpsURLConnection connection = (HttpsURLConnection) url1.openConnection();
+
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+        connection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+        StringBuilder urlParameters = new StringBuilder();
+
+        urlParameters.append("phoneno="+complaint.getComplainant().getMobile());
+        urlParameters.append("&type="+complaint.getComplaintType().getName());
+        urlParameters.append("&location="+complaint.getLocation());
+        urlParameters.append("&source=egov");
+
+        // Send post request
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes(urlParameters.toString());
+        wr.flush();
+        wr.close();
+
+        int responseCode = connection.getResponseCode();
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Post parameters : " + urlParameters);
+        System.out.println("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //print result
+        System.out.println(response.toString());
     }
 }
