@@ -60,7 +60,6 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -135,7 +134,8 @@ public class CollectionsUtil {
     /**
      * Returns the Status object for given status code for a receipt
      *
-     * @param statusCode Status code for which status object is to be returned
+     * @param statusCode
+     *            Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
@@ -144,7 +144,7 @@ public class CollectionsUtil {
         synchronized (this) {
             if (status == null) {
                 // Status not yet cached. Get it from DB and cache it
-                status = (EgwStatus) this.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
+                status = getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
 
                 if (status != null)
                     statusMap.put(statusCode, status);
@@ -155,20 +155,24 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the <code>EgwStatus</code> for the given module type and status code
+     * This method returns the <code>EgwStatus</code> for the given module type
+     * and status code
      *
-     * @param moduleName Module name of the required status
-     * @param statusCode Status code of the required status
+     * @param moduleName
+     *            Module name of the required status
+     * @param statusCode
+     *            Status code of the required status
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
 
-        final EgwStatus status = (EgwStatus) egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
+        final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return user name of currently logged in user
      */
     public String getLoggedInUserName() {
@@ -178,7 +182,8 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser() {
@@ -186,7 +191,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose department is to be returned
+     * @param user
+     *            the user whose department is to be returned
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
@@ -194,7 +200,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap map of session variables
+     * @param sessionMap
+     *            map of session variables
      * @return department of currently logged in user
      */
     public Department getDepartmentOfLoggedInUser() {
@@ -203,7 +210,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the User instance for the userName passed as parameter
+     * This method returns the User instance for the userName passed as
+     * parameter
      *
      * @param userName
      * @return User
@@ -213,7 +221,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return Location object for given user
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
@@ -253,7 +262,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @return List of all collection services (service type = B (Billing) or C (Challan)
+     * @return List of all collection services (service type = B (Billing) or C
+     *         (Challan)
      */
     public List getCollectionServiceList() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS);
@@ -290,32 +300,33 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the collection modes that are not allowed based on rules configured in the script
+     * This method returns the collection modes that are not allowed based on
+     * rules configured in the script
      *
-     * @param loggedInUser a <code>User</code> entity representing the logged in user.
-     * @return a <code>List</code> of <code>String</code> values representing the mode of payments supported.
+     * @param loggedInUser
+     *            a <code>User</code> entity representing the logged in user.
+     * @return a <code>List</code> of <code>String</code> values representing
+     *         the mode of payments supported.
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
-        final List<AppConfigValues> deptCodesApp =appConfigValuesService.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<AppConfigValues> deptCodesApp = appConfigValuesService
+                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
         final List<String> deptCodes = new ArrayList<String>();
-        for(AppConfigValues deptCode :deptCodesApp ){
+        for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
-        }
         Department dept = null;
-        if (!isEmployee(loggedInUser))
-            dept = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        else
+        final Boolean isEmp = isEmployee(loggedInUser);
+        if (isEmp)
             dept = getDepartmentOfUser(loggedInUser);
-        if (dept == null) {
-
+        if (isEmp && dept == null) {
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!deptCodes.isEmpty() && deptCodes.contains(dept.getCode())) {
+        } else if (!isEmp || (dept != null && !deptCodes.isEmpty() && deptCodes.contains(dept.getCode()))) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        }
-        else {
+        } else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
@@ -351,13 +362,14 @@ public class CollectionsUtil {
     public Position getPositionByDeptDesgAndBoundary(final Boundary boundary) {
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
-        String[] department = departmentStr.split(",");
-        String[] designation = designationStr.split(",");
+        final String[] department = departmentStr.split(",");
+        final String[] designation = designationStr.split(",");
         List<Assignment> assignment = new ArrayList<Assignment>();
-        for (String dept : department) {
-            for (String desg : designation) {
+        for (final String dept : department) {
+            for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),boundary.getId());
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        boundary.getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -376,18 +388,10 @@ public class CollectionsUtil {
             designation = appConfigValue.get(0).getValue();
         return designation;
     }
-    
-    public String getDepartmentForCollectionModes() {
-        String department = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_WORKFLOWDEPARTMENT);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            department = appConfigValue.get(0).getValue();
-        return department;
-    }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return Position of logged in user
      */
     public Position getPositionOfUser(final User user) {
@@ -397,7 +401,8 @@ public class CollectionsUtil {
     /**
      * Gets position by given position name
      *
-     * @param positionName Position name
+     * @param positionName
+     *            Position name
      * @return Position object for given position name
      */
     public Position getPositionByName(final String positionName) {
@@ -407,8 +412,11 @@ public class CollectionsUtil {
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
-     * @param date an instance of <code>Date</code> for which the financial year is to be retrieved.
-     * @return an instance of <code></code> representing the financial year for the given date
+     * @param date
+     *            an instance of <code>Date</code> for which the financial year
+     *            is to be retrieved.
+     * @return an instance of <code></code> representing the financial year for
+     *         the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
         return (CFinancialYear) persistenceService
@@ -416,14 +424,17 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+                                .get(0);
     }
 
     /**
      * This method checks if the given challan is valid.
      *
-     * @param challan the <code>Challan</code> instance whose validity has to be checked
-     * @return a boolean value - true indicating that the challan is valid and false indicating that teh challan is not valid
+     * @param challan
+     *            the <code>Challan</code> instance whose validity has to be
+     *            checked
+     * @return a boolean value - true indicating that the challan is valid and
+     *         false indicating that teh challan is not valid
      */
     public boolean checkChallanValidity(final Challan challan) {
         final Calendar current = Calendar.getInstance();
@@ -458,7 +469,8 @@ public class CollectionsUtil {
     /**
      * Fetches given bean from application context
      *
-     * @param beanName name of bean to be fetched
+     * @param beanName
+     *            name of bean to be fetched
      * @return given bean from application context
      */
     public Object getBean(final String beanName) {
@@ -476,11 +488,15 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the currently active config value for the given module name and key
+     * This method returns the currently active config value for the given
+     * module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
-     * @param defaultValue Default value to be returned in case the key is not defined
+     * @param moduleName
+     *            a <code>String<code> representing the module name
+     * @param key
+     *            a <code>String</code> representing the key
+     * @param defaultValue
+     *            Default value to be returned in case the key is not defined
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
@@ -491,24 +507,31 @@ public class CollectionsUtil {
     /**
      * This method returns the config value for the given module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
+     * @param moduleName
+     *            a <code>String<code> representing the module name
+     * @param key
+     *            a <code>String</code> representing the key
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
-        List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
-        if(appConfValues!=null && appConfValues.size()>0){
-            return appConfValues.get(0).getValue();  
-        }else
+        final List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
+                key);
+        if (appConfValues != null && appConfValues.size() > 0)
+            return appConfValues.get(0).getValue();
+        else
             return "";
-    } 
+    }
 
     /**
-     * This method returns the list of config values for the given module name and key
+     * This method returns the list of config values for the given module name
+     * and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
-     * @return <code>List<AppConfigValues></code> representing the list of configuration values
+     * @param moduleName
+     *            a <code>String<code> representing the module name
+     * @param key
+     *            a <code>String</code> representing the key
+     * @return <code>List<AppConfigValues></code> representing the list of
+     *         configuration values
      */
     public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
@@ -517,7 +540,8 @@ public class CollectionsUtil {
     /**
      * Gets position by given position id
      *
-     * @param positionId Position Id
+     * @param positionId
+     *            Position Id
      * @return Position object for given position id
      */
     public Position getPositionById(final Long positionId) {
@@ -525,10 +549,11 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns the position for the employee id passed as
-     * parameter
+     * This method is invoked from the ReceiptHeader.workFlow script and returns
+     * the position for the employee id passed as parameter
      *
-     * @param employeeId PersonalInformation Id
+     * @param employeeId
+     *            PersonalInformation Id
      * @return Position object for Employee Id passed as parameter
      */
 
@@ -537,13 +562,18 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns Employee object for the given Department Id,
-     * Designation Id ,Boundary Id and FunctionaryId
+     * This method is invoked from the ReceiptHeader.workFlow script and returns
+     * Employee object for the given Department Id, Designation Id ,Boundary Id
+     * and FunctionaryId
      *
-     * @param deptId Department Id
-     * @param designationId Designation Id
-     * @param boundaryId Boundary Id
-     * @param functionaryId Functionary Id
+     * @param deptId
+     *            Department Id
+     * @param designationId
+     *            Designation Id
+     * @param boundaryId
+     *            Boundary Id
+     * @param functionaryId
+     *            Functionary Id
      * @return PersonalInformation
      */
 
@@ -571,7 +601,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose non-primary department list is to be returned
+     * @param user
+     *            the user whose non-primary department list is to be returned
      * @return list of non-primary department of the given user
      */
     public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
@@ -592,9 +623,10 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose non-primary department is to be returned
-     * @return non-primary department of the given user. In case user has multiple non-primary departments, the first one will be
-     * returned.
+     * @param user
+     *            the user whose non-primary department is to be returned
+     * @return non-primary department of the given user. In case user has
+     *         multiple non-primary departments, the first one will be returned.
      */
     public Department getNonPrimaryDeptOfUser(final User user) {
         final List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
@@ -605,25 +637,32 @@ public class CollectionsUtil {
             final ReceiptHeader receiptHeaderObj) {
         scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDESIGNATIONS);
         return null;/*
-                     * (List<Designation>) scripts.get(0).eval( Script.createContext("departmentId", departmentId, "collUtil",
-                     * this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
-                     */
+         * (List<Designation>) scripts.get(0).eval(
+         * Script.createContext("departmentId", departmentId,
+         * "collUtil", this, "receiptHeaderObj", receiptHeaderObj,
+         * "persistanceService", persistenceService));
+         */
     }
 
     public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
             final ReceiptHeader receiptHeaderObj) {
         scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDEPARTMENTS);
         return null; /*
-                      * (List<Department>) scripts.get(0).eval( Script.createContext("loggedInUser", loggedInUser, "collUtil",
-                      * this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
-                      */
+         * (List<Department>) scripts.get(0).eval(
+         * Script.createContext("loggedInUser", loggedInUser,
+         * "collUtil", this, "receiptHeaderObj", receiptHeaderObj,
+         * "persistanceService", persistenceService));
+         */
     }
 
     public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
         /*
-         * scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS); return
-         * (List<Department>) scripts.get(0).eval( Script.createContext("loggedInUser", loggedInUser, "collUtil", this,
-         * "persistanceService", persistenceService, "contraJournalVoucherObj", new ContraJournalVoucher()));
+         * scriptService.findAllByNamedQuery("SCRIPT",
+         * CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDEPARTMENTS); return
+         * (List<Department>) scripts.get(0).eval(
+         * Script.createContext("loggedInUser", loggedInUser, "collUtil", this,
+         * "persistanceService", persistenceService, "contraJournalVoucherObj",
+         * new ContraJournalVoucher()));
          */
         List<Department> departments;
         Department department;
@@ -640,7 +679,8 @@ public class CollectionsUtil {
         } else
             /*
              * departments = persistenceService.findAllBy(
-             * "select dept from Department dept where dept.billingLocation= ? order by dept.name " , '0');
+             * "select dept from Department dept where dept.billingLocation= ? order by dept.name "
+             * , '0');
              */
             departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
 
@@ -656,34 +696,38 @@ public class CollectionsUtil {
         if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
             if (department.getCode().equals('R'))
                 designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                                departmentId, "REVENUE INSPECTOR");
+                .findAllBy(
+                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
+                        departmentId, "REVENUE INSPECTOR");
             else
                 designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                                departmentId);
+                .findAllBy(
+                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                        departmentId);
         } else if (department.getCode().equals("CAF"))
             designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                            "CAF", "SENIOR GRADE CLERK");
+            .findAllBy(
+                    "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
+                    "CAF", "SENIOR GRADE CLERK");
         else
             designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                            departmentId);
+            .findAllBy(
+                    "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
+                    departmentId);
         return designations;
     }
 
     /**
-     * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
-     * The glcodes for such accounts are retrieved from App Config.
+     * This method checks if the given glcode belongs to an account head
+     * representing an arrear account head (for Property Tax). The glcodes for
+     * such accounts are retrieved from App Config.
      *
-     * @param glcode The Chart of Accounts Code
-     * @param description Description of the glcode
-     * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
+     * @param glcode
+     *            The Chart of Accounts Code
+     * @param description
+     *            Description of the glcode
+     * @returna a <code>Boolean</code> indicating if the glcode is arrear
+     *          account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -722,8 +766,8 @@ public class CollectionsUtil {
 
     }
 
-    public BillingIntegrationService getBillingService(String code) {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
+    public BillingIntegrationService getBillingService(final String code) {
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
                 "classpath*:org/egov/infstr/beanfactory/globalApplicationContext.xml",
                 "classpath*:org/egov/infstr/beanfactory/egiApplicationContext.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-pims.xml",
@@ -731,24 +775,22 @@ public class CollectionsUtil {
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-eportal.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-ptis.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-erpcollections.xml",
-                "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
-        BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
+        "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
+        final BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
                 + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService;
     }
-    
+
     /**
-     * 
      * @param consumerCode
-     * @return  last three online transaction for the consumerCode 
+     * @return last three online transaction for the consumerCode
      */
-    public List<OnlinePayment> getOnlineTransactionHistory(String consumerCode)
-    {
-            String hql = "select online from ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.consumerCode =:consumercode  order by online.id desc";
-            Query query = persistenceService.getSession().createQuery(hql);
-            query.setString("consumercode",consumerCode);
-            query.setMaxResults(3);
-            return  query.list() ;
+    public List<OnlinePayment> getOnlineTransactionHistory(final String consumerCode) {
+        final String hql = "select online from ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.consumerCode =:consumercode  order by online.id desc";
+        final Query query = persistenceService.getSession().createQuery(hql);
+        query.setString("consumercode", consumerCode);
+        query.setMaxResults(3);
+        return query.list();
     }
 
     /**
