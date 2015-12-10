@@ -128,6 +128,7 @@ public class CreateEmployeeDataEntryController {
             model.addAttribute("mode", "create");
             return "employee-form-simple";
         }
+        
         final Department department = departmentService.getDepartmentById(deptId);
         final Designation designation = designationService.getDesignationByName(designationName);
         final EmployeeType empType = employeeTypeRepository.findByName(EisConstants.EMPLOYEE_TYPE_PERMANENT);
