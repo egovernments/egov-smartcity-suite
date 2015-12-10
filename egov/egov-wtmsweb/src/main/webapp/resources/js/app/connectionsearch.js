@@ -91,9 +91,10 @@ jQuery(document).ready(function($) {
 										} else if (this.value == 5) {
 										} else if (this.value == 6) {
 											var url = '/wtms/application/generatebill/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
-											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('method', 'post');
 											$('#waterSearchRequestForm').attr('action', url);
-											window.location = url;
+											$('#waterSearchRequestForm').attr('name', 'myform');
+											document.forms["myform"].submit();
 										} else if (this.value == 7) {
 										}
 										else if (this.value == 8) {
