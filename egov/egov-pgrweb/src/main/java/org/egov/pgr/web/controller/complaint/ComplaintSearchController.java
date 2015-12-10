@@ -45,6 +45,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.ComplaintStatus;
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -85,7 +86,9 @@ public class ComplaintSearchController {
 
     @Autowired
     private final CityService cityService;
-
+    
+    private ComplaintTypeService complaintTypeService;
+    
     @Autowired
     public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService,
             final ComplaintStatusService complaintStatusService, final ComplaintTypeService complaintTypeService,
@@ -98,6 +101,7 @@ public class ComplaintSearchController {
         this.securityUtils = securityUtils;
         this.cityService = cityService;
         this.departmentService = departmentService;
+        this.complaintTypeService = complaintTypeService;
     }
 
     @ModelAttribute("complaintTypeDepartments")
@@ -115,6 +119,10 @@ public class ComplaintSearchController {
         return complaintService.getAllReceivingModes();
     }
 
+    public @ModelAttribute("complaintTypedropdown") List<ComplaintType> complaintTypes() {
+        return complaintTypeService.findActiveComplaintTypes();
+    }
+    
     @ModelAttribute("currentLoggedUser")
     public String currentLoggedUser() {
         final User user = securityUtils.getCurrentUser();

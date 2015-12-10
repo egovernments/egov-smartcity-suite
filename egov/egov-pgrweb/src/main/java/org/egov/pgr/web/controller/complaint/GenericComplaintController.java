@@ -85,11 +85,22 @@ public abstract class GenericComplaintController {
         return complaintTypeService.getFrequentlyFiledComplaints();
     }
 
+    public @ModelAttribute("complaintTypedropdown") List<ComplaintType> complaintTypes() {
+        return complaintTypeService.findActiveComplaintTypes();
+    }
     @RequestMapping(value = "/complaint/reg-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
         if (request.getParameter("crn") != null && complaint.isNew())
             complaint = complaintService.getComplaintByCRN(request.getParameter("crn"));
         return new ModelAndView("complaint/reg-success", "complaint", complaint);
+
+    }
+    
+    @RequestMapping(value = "/complaint/update-success", method = RequestMethod.GET)
+    public ModelAndView successViewUpdate(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
+        if (request.getParameter("crn") != null && complaint.isNew())
+            complaint = complaintService.getComplaintByCRN(request.getParameter("crn"));
+        return new ModelAndView("complaint/update-success", "complaint", complaint);
 
     }
 

@@ -151,7 +151,7 @@
 		else if (currentOwner == CurrentPosition || isgorole == 'true')
 			window.open("/pgr/complaint/update/"+crn);
 		else
-			window.open("/pgr/complaint/update/"+crn);
+			window.open("/pgr/complaint/citizenUpdate/"+crn);
 	});
 	
     $("#when_date").change(function () {

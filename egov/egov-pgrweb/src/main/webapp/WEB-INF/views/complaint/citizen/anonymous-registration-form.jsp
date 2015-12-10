@@ -89,7 +89,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 					</div>
 				</div> 
 				<div class="panel-body custom-form">
-					<div class="form-group">
+					<%-- <div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.category" /><span class="mandatory"></span>
 						</label>
@@ -103,7 +103,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 							</form:select>
 							<form:errors path="complaintType.category" cssClass="error-msg" />
 						</div>
-					</div> 
+					</div>  --%>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.complaintType"/><span class="mandatory"></span>
@@ -114,7 +114,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${complaint.complaintType.category.complaintTypes}" itemLabel="name" itemValue="id"/>
+								<form:options items="${complaintTypedropdown}" itemLabel="name" itemValue="id"/>
 							</form:select>
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
 							<c:forEach items="${complaintTypes}" var="complaintType">

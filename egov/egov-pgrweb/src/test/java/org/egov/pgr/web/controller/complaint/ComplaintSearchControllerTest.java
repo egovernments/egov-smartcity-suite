@@ -66,6 +66,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
@@ -125,7 +126,8 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
 
         final List<ComplaintStatus> complaintStatusList = new ArrayList<ComplaintStatus>();
         when(complaintStatusService.getAllComplaintStatus()).thenReturn(complaintStatusList);
-
+        final List<ComplaintType> complaintTypeList = new ArrayList<ComplaintType>();
+        when(complaintTypeService.findActiveComplaintTypes()).thenReturn(complaintTypeList);
         final List receivingModes = Arrays.asList(ReceivingMode.values());
         when(complaintService.getAllReceivingModes()).thenReturn(receivingModes);
     }

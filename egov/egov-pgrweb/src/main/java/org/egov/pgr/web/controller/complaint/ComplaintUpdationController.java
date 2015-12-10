@@ -78,7 +78,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/complaint/update/{crnNo}")
+@RequestMapping(value = "/complaint")
 public class ComplaintUpdationController {
 
     private static final String COMPLAINT_UPDATE_SUCCESS = "/update-success";
@@ -144,12 +144,17 @@ public class ComplaintUpdationController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="/update/{crnNo}",method = RequestMethod.GET)
     public String edit(final Model model, @PathVariable final String crnNo) {
         return UserType.EMPLOYEE.equals(securityUtils.getCurrentUser().getType()) ? COMPLAINT_EDIT : COMPLAINT_CITIZEN_EDIT;
     }
-
-    @RequestMapping(method = RequestMethod.POST)
+    
+    @RequestMapping(value="/citizenUpdate/{crnNo}",method = RequestMethod.GET)
+    public String citizenUpdate(final Model model, @PathVariable final String crnNo) {
+        return COMPLAINT_CITIZEN_EDIT;
+    }
+    
+    @RequestMapping(value={"/update/{crnNo}","/citizenUpdate/{crnNo}"},method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute Complaint complaint, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
             @RequestParam("files") final MultipartFile[] files) {
@@ -174,16 +179,13 @@ public class ComplaintUpdationController {
                     complaint.getSupportDocs().addAll(addToFileStore(files));
             complaint = complaintService.update(complaint, approvalPosition, approvalComent);
             redirectAttrs.addFlashAttribute("complaint", complaint);
-            result = "redirect:" + complaint.getCrn() + COMPLAINT_UPDATE_SUCCESS;
+            result =  "redirect:/complaint/update-success?crn=" + complaint.getCrn();
+            
         } else
             result = securityUtils.currentUserType().equals(UserType.EMPLOYEE) ? COMPLAINT_EDIT : COMPLAINT_CITIZEN_EDIT;
         return result;
     }
-
-    @RequestMapping(COMPLAINT_UPDATE_SUCCESS)
-    public ModelAndView successView(@ModelAttribute final Complaint complaint) {
-        return new ModelAndView("complaint/reg-success", "complaint", complaint);
-    }
+    
 
     private void validateUpdate(final Complaint complaint, final BindingResult errors,
             final HttpServletRequest request) {
