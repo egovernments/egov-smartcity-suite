@@ -122,8 +122,8 @@
 				</s:if>
 				
 				<br>	
-				<s:if test="%{property.getIsExemptedFromTax()}">
-				<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
+				<s:if test="%{property.getIsExemptedFromTax() && isDemandActive}">
+					<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
 				<s:elseif test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">

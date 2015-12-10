@@ -144,11 +144,13 @@
 											----Choose----
 										</option>
 								
-										<c:if test="${currentRowObject.isTaxExempted == true}">
-										<option value="TaxExemption">
-													<s:text name="TaxExemption"></s:text>
-										</option>
-										</c:if>
+										<s:if test="%{#attr.currentRowObject.isDemandActive}">
+											<c:if test="${currentRowObject.isTaxExempted == true}">
+												<option value="TaxExemption">
+															<s:text name="TaxExemption"></s:text>
+												</option>
+											</c:if>
+										</s:if>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 										<c:if test="${currentRowObject.isTaxExempted == false }">
@@ -199,9 +201,9 @@
 										</s:if>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
 											<c:if test="${currentRowObject.isTaxExempted == false }">
-										<option value="CollectTax">
-											<s:text name="collectTax"></s:text>
-										</option>
+												<option value="CollectTax">
+													<s:text name="collectTax"></s:text>
+												</option>
 									   </c:if>
 									   
 									</s:if>
