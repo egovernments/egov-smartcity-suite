@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -83,7 +82,7 @@ public class IdentityRecoveryService {
         identityRecovery.setExpiry(timeToExpire);
         return identityRecoveryRepository.save(identityRecovery);
     }
-    
+
     @Transactional
     public boolean generateAndSendUserPasswordRecovery(final String identity, final String urlToSent) {
         final Optional<User> user = userService.checkUserWithIdentity(identity);
@@ -92,7 +91,7 @@ public class IdentityRecoveryService {
             messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
                     identityRecovery.getToken(), System.getProperty("line.separator"));
         }
-        return true;
+        return user.isPresent();
     }
 
     @Transactional
