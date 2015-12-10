@@ -53,7 +53,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.infstr.services.EISServeable;
 import org.egov.pims.commons.Designation;
@@ -84,11 +84,11 @@ public class AjaxController {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private CrossHierarchyService crossHierarchyService;
+    private BoundaryService boundaryService;
 
     @RequestMapping(value = "/ajax-getChildLocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
-        return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
+        return boundaryService.getActiveChildBoundariesByBoundaryId(id);
     }
 
     @RequestMapping(value = "/ajax-approvalDesignations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

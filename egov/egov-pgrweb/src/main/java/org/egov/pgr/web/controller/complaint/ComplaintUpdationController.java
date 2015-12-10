@@ -40,6 +40,7 @@ package org.egov.pgr.web.controller.complaint;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -111,6 +113,13 @@ public class ComplaintUpdationController {
         final Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         model.addAttribute("complaint", complaint);
         model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
+        if((UserType.SYSTEM).equals(securityUtils.getCurrentUser().getType())){
+            Set<Role> roles = new HashSet<>();
+            complaintService.getAnonymousRole(roles);
+            model.addAttribute("status",
+                    complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roles,
+                            complaint.getStatus()));
+        }else
         model.addAttribute("status",
                 complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
                         complaint.getStatus()));
@@ -118,12 +127,16 @@ public class ComplaintUpdationController {
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
         model.addAttribute("ward", Collections.EMPTY_LIST);
 
-        if (complaint.getLocation() != null) {
+        if (null != complaint.getLocation() && null != complaint.getLocation().getParent()) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
                             "Locality", "Location"));
             model.addAttribute("location",
                     boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+        }else if (null != complaint.getLocation()) {
+            model.addAttribute("ward",
+                    boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getId()));
+            model.addAttribute("location", Collections.EMPTY_LIST);
         }
         if (null != complaint.getComplaintType()) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
@@ -133,7 +146,7 @@ public class ComplaintUpdationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String edit(final Model model, @PathVariable final String crnNo) {
-        return securityUtils.currentUserType().equals(UserType.CITIZEN) ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
+        return UserType.EMPLOYEE.equals(securityUtils.getCurrentUser().getType()) ? COMPLAINT_EDIT : COMPLAINT_CITIZEN_EDIT;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -156,14 +169,14 @@ public class ComplaintUpdationController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         if (!errors.hasErrors()) {
-            if (!securityUtils.currentUserType().equals(UserType.CITIZEN))
+            if (!UserType.CITIZEN.equals(securityUtils.getCurrentUser().getType()) && !UserType.SYSTEM.equals(securityUtils.getCurrentUser().getType()))
                 if (files != null)
                     complaint.getSupportDocs().addAll(addToFileStore(files));
             complaint = complaintService.update(complaint, approvalPosition, approvalComent);
             redirectAttrs.addFlashAttribute("complaint", complaint);
             result = "redirect:" + complaint.getCrn() + COMPLAINT_UPDATE_SUCCESS;
         } else
-            result = securityUtils.currentUserType().equals(UserType.CITIZEN) ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
+            result = securityUtils.currentUserType().equals(UserType.EMPLOYEE) ? COMPLAINT_EDIT : COMPLAINT_CITIZEN_EDIT;
         return result;
     }
 

@@ -38,8 +38,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -490,5 +492,10 @@ public class ComplaintService {
         criteria.add(Restrictions.in("status.name", pendingStatus));
         criteria.add(Restrictions.eq("complaint.assignee", positionMasterService.getCurrentPositionForUser(user.getId())));
         return criteria.list();
+    }
+    
+    public void getAnonymousRole(Set<Role> roles ){
+        roles.add(roleService.getRoleByName("Citizen"));
+        
     }
 }
