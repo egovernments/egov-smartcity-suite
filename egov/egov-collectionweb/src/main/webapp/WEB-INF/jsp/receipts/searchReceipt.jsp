@@ -425,7 +425,7 @@ function checkviewforselectedrecord()
 <div class="buttonbottom">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="View" onclick="return checkviewforselectedrecord()"/>&nbsp;
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Print" onclick="return checkprintforselectedrecord()"/>&nbsp;
-   <egov-authz:authorize actionName="CancelReceipts">
+   <egov-authz:authorize actionName="CancelReceipt">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Cancel Receipt" onclick="return checkcancelforselectedrecord()"/>&nbsp;
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
