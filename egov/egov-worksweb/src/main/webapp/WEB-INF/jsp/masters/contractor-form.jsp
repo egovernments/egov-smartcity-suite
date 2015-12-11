@@ -199,11 +199,11 @@ var makeContractorDataTable = function() {
 		{key:"grade", hidden:true, formatter:gradeIdHiddenFormatter, sortable:false, resizeable:false},
 		{key:"status", hidden:true, formatter:statusIdHiddenFormatter, sortable:false, resizeable:false},
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false},
-		{key:"departmentName", label:'<span class="mandatory">*</span><s:text name="contractor.department"/>', formatter:"dropdown",dropdownOptions:departmentDropdownOptions, sortable:false, resizeable:false},	
+		{key:"departmentName", label:'<span class="mandatory1">*</span><s:text name="contractor.department"/>', formatter:"dropdown",dropdownOptions:departmentDropdownOptions, sortable:false, resizeable:false},	
 		{key:"registrationNumber", label:'<s:text name="contractor.registrationNo"/>', formatter:regNoTextboxFormatter, sortable:false, resizeable:false},		
 		{key:"gradeName", label:'<s:text name="contractor.grade" />',formatter:createDropdownFormatter('contractorGradedetails','id'), dropdownOptions:gradeDropdownOptions, sortable:false, resizeable:false},			
-		{key:"statusDesc", label:'<span class="mandatory">*</span><s:text name="contractor.status" />',formatter:createDropdownFormatter('contractorStatusdetails','id'),dropdownOptions:statusDropdownOptions, sortable:false, resizeable:false},		
-		{key:"startDate", label:'<span class="mandatory">*</span><s:text name="contractor.fromDate" />', formatter:dateFormatter,sortable:false, resizeable:false},
+		{key:"statusDesc", label:'<span class="mandatory1">*</span><s:text name="contractor.status" />',formatter:createDropdownFormatter('contractorStatusdetails','id'),dropdownOptions:statusDropdownOptions, sortable:false, resizeable:false},		
+		{key:"startDate", label:'<span class="mandatory1">*</span><s:text name="contractor.fromDate" />', formatter:dateFormatter,sortable:false, resizeable:false},
 		{key:"endDate",label:'<s:text name="contractor.toDate"/>', formatter:dateFormatter,sortable:false, resizeable:false},
 		{key:'deleteRow',label:'<s:text name="contractorDetails.row.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
@@ -251,94 +251,153 @@ var makeContractorDataTable = function() {
 
 </script>
 <div class="errorstyle" id="contractor_error" style="display: none;"></div>
+<div class="new-page-header">
+	New Contractor Form<!-- <s:text name="contractor.header" /> -->
+</div>
 
-<div class="navibarshadowwk"></div>
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	  <div class="rbcontent2">
-	  <table width="100%" border="0" cellspacing="0" cellpadding="0">          
-       <tr>
-         <td>&nbsp;</td>
-       </tr>
-       <tr>
-         <td>
-         	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-        	<tr>
-          		<td colspan="4" class="headingwk">
-          			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-            		<div class="headplacer"><s:text name="contractor.header" /></div>
-            	</td>
-        	</tr>
-        
-			<tr>
-				<td class="whiteboxwk"><span class="mandatory">*</span><s:text name="contractor.code" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="code" disabled="%{sDisabled}" id="code" maxlength="50" cssClass="selectwk" value = "%{code}" /></td>
-            	<td class="whiteboxwk"><span class="mandatory">*</span><s:text name="contractor.name" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="name" id="name" size="40" maxlength="100" cssClass="selectwk" value = "%{name}" /></td>
-            </tr>
-            <tr>
-                <td class="greyboxwk"><s:text name="contractor.correspondenceAddress" />:</td>
-                <td class="greybox2wk"><s:textarea name="correspondenceAddress" cols="35" cssClass="selectwk" id="correspondenceAddress" value="%{correspondenceAddress}"/></td>
-                <td class="greyboxwk"><s:text name="contractor.paymentAddress" />:</td>
-                <td class="greybox2wk"><s:textarea name="paymentAddress" cols="35" cssClass="selectwk" id="paymentAddress" value="%{paymentAddress}"/></td>
-           </tr>
-		   <tr>
-				<td class="whiteboxwk"><s:text name="contractor.contactPerson" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="contactPerson" id="contactPerson" size="40" maxlength="100" cssClass="selectwk" value = "%{contactPerson}" /></td>
-            	<td class="whiteboxwk"><s:text name="contractor.email" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="email" id="email" maxlength="100" cssClass="selectwk" value = "%{email}" /></td>
-           </tr>
-		   <tr>
-                <td class="greyboxwk"><s:text name="contractor.narration" />:</td>
-                <td class="greybox2wk" colspan="3"><s:textarea name="narration" cols="35" cssClass="selectwk" id="narration" value="%{narration}"/></td>
-           </tr>
-		   <tr>
-				<td class="whiteboxwk"><s:text name="contractor.panNo" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="panNumber" id="panNumber" maxlength="14" cssClass="selectwk" value = "%{panNumber}" /></td>
-            	<td class="whiteboxwk"><s:text name="contractor.tinNo" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="tinNumber" id="tinNumber" maxlength="14" cssClass="selectwk" value = "%{tinNumber}" /></td>
-           </tr>		
-           <tr>
-                <td class="greyboxwk"><s:text name="contractor.bank" />:</td>
-          		<td class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="bank" id="bank" cssClass="selectwk" list="dropdownData.bankList" listKey="id" listValue="name" value="%{bank.id}" /></td>
-          		<td class="greyboxwk"><s:text name="contractor.ifscCode" />:</td>
-            	<td class="greybox2wk"><s:textfield name="ifscCode" id="ifscCode" maxlength="15" cssClass="selectwk" value = "%{ifscCode}" /></td>
-           </tr>
-           <tr>
-				<td class="whiteboxwk"><s:text name="contractor.bankAccount" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="bankAccount" id="bankAccount" maxlength="22" size="24" cssClass="selectwk" value = "%{bankAccount}" /></td>
-            	<td class="whiteboxwk"><s:text name="contractor.pwdApprovalCode" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="pwdApprovalCode" id="pwdApprovalCode" maxlength="50" cssClass="selectwk" value = "%{pwdApprovalCode}" /></td>
-           </tr>
-           <tr>
-				<td class="greyboxwk"/>
-				<td class="greyboxwk"/>
-	   			<td class="greyboxwk"/>
-	   			<td class="greyboxwk"/>
-	   		</tr>
-	        <tr>
-	          	<td colspan="4" class="shadowwk"></td>
-	        </tr>
- 			</table>
- 		</td>
-     </tr>
-      <tr>
-        <td>&nbsp;</td>
-      </tr>
-          <tr>
-            <td>
-            <table id="detailsTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-				<div class="headplacer"><s:text name="contractor.contDetails" /></div>
-				</td>
-				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;"><img border="0" alt="Add Row" src="/egi/resources/erp2/images/add.png" /></a>
-				</td>
-			</tr>
-		<tr>
-			<td colspan="4">
-			<div class="yui-skin-sam">
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		</div>
+		
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="contractor.code" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" disabled="%{sDisabled}" id="code" maxlength="50" cssClass="form-control" value = "%{code}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="contractor.name" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="name" id="name" size="40" maxlength="100" cssClass="form-control" value = "%{name}" />
+			</div>
+		</div>
+		
+		
+		 <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="contractor.correspondenceAddress" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="correspondenceAddress" cols="35" cssClass="form-control" id="correspondenceAddress" value="%{correspondenceAddress}"/>
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="contractor.paymentAddress" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="paymentAddress" cols="35" cssClass="form-control" id="paymentAddress" value="%{paymentAddress}"/>
+			</div>
+		</div>
+		
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			   <s:text name="contractor.contactPerson" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="contactPerson" id="contactPerson" size="40" maxlength="100" cssClass="form-control" value = "%{contactPerson}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			   <s:text name="contractor.email" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="email" id="email" maxlength="100" cssClass="form-control" value = "%{email}" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			   <s:text name="contractor.narration" />
+			</label>
+			<div class="col-sm-3 add-margin">
+			   <s:textarea name="narration" cols="35" cssClass="form-control" id="narration" value="%{narration}"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			   <s:text name="contractor.panNo" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="panNumber" id="panNumber" maxlength="14" cssClass="form-control" value = "%{panNumber}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			  <s:text name="contractor.tinNo" />
+			</label>
+			<div class="col-sm-3 add-margin">
+			  <s:textfield name="tinNumber" id="tinNumber" maxlength="14" cssClass="form-control" value = "%{tinNumber}" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			   <s:text name="contractor.bank" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="bankAccount" id="bankAccount" maxlength="22" size="24" cssClass="form-control" value = "%{bankAccount}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			  <s:text name="contractor.ifscCode" />
+			</label>
+			<div class="col-sm-3 add-margin">
+			  <s:textfield name="ifscCode" id="ifscCode" maxlength="15" cssClass="form-control" value = "%{ifscCode}" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			   <s:text name="contractor.bankAccount" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="bankAccount" id="bankAccount" maxlength="22" size="24" cssClass="form-control" value = "%{bankAccount}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			  <s:text name="contractor.pwdApprovalCode" />
+			</label>
+			<div class="col-sm-3 add-margin">
+			  <s:textfield name="pwdApprovalCode" id="pwdApprovalCode" maxlength="50" cssClass="form-control" value = "%{pwdApprovalCode}" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			   Exempted From
+			</label>
+			<div class="col-sm-3 add-margin">
+			  <s:select 
+			  		cssClass="form-control"
+					headerKey="-1" headerValue="select"
+					list="#{}" 
+					name="yourSearchEngine" />
+			</div>
+		</div>
+		
+</div>
+</div>
+
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="contractor.contDetails" />
+		</div>
+	</div>
+	<div class="panel-body">
+	
+	   <div class="form-group">
+	   
+	   	   <div class="text-right add-margin">
+	   	       <button class="btn btn-primary" onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">Add Department</button>
+	   	   </div>
+	   
+	   
+	       <div class="yui-skin-sam">
 			<div id="contractorTable"></div>
 	<script>
             makeContractorDataTable();
@@ -406,26 +465,12 @@ var makeContractorDataTable = function() {
 			       </s:iterator>         
        </script>
   		</div>
-		</td>
-	</tr>
-    </table>
-    </td>
-   </tr>
-  <tr>
-  	<td colspan="4" class="shadowwk"></td>
-  </tr>
-
-  <tr>
-    <td><div align="right" class="mandatory">* <s:text name="message.mandatory" /></div></td>
-  </tr>
- </table>	    
+	   
+	   </div>
+	
+	</div>
 </div>
 
-<div class="rbbot2"><div></div></div>
-
-</div>
-</div>
-</div>
 <script>
 <s:if test="%{mode=='view'}">
 	for(i=0;i<document.contractor.elements.length;i++){

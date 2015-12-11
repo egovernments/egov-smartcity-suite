@@ -337,10 +337,15 @@ input.buttonsubmit:hover, input.buttonsubmit:active, input.buttonsubmit:focus, i
 	font-weight: normal;
 	color: #cc0000;
 	}
+	
+.mandatory1
+{
+	color:red;
+}
+	
 .bold {
-	font-weight: bold;	
 	font-family:semibold;
-	}
+}
 	
 div.buttonbottom {
 	margin-bottom: 10px;
@@ -608,3 +613,11 @@ a.fileclear
 	margin-left:5px;
 }
 
+.new-page-header
+{
+	font-family: semibold;
+    font-size: 20px;
+    color: #6b4f2c;
+    text-align: center;
+    padding: 0 15px 15px;	
+}

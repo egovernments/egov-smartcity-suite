@@ -50,6 +50,12 @@
   width:5%;
 }
 
+body
+{
+  font-size: 14px;
+  font-family:regular;
+}
+
 </style>
 
 
@@ -69,21 +75,21 @@
         	<s:actionmessage theme="simple"/>
         </div>
     </s:if>
-		<s:form action="contractor-save" theme="simple" name="contractor"> 
+		<s:form action="contractor-save" theme="simple" name="contractor" cssClass="form-horizontal form-groups-bordered"> 
 		<s:token/> 
 			<s:hidden  name="model.id" />
 			<s:hidden  name="id" />
 			<s:hidden  name="mode" id="mode" /> 
 			<s:hidden  name="hasRoleMapped" id="hasRoleMapped" />
 			<%@ include file='contractor-form.jsp'%>
-		<p>
+		<p class="text-center">
 		<s:if test="%{mode!='view'}">
-			<s:submit type="submit" cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="save" onclick="return validateAllFields();"/>&nbsp;
+			<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save" onclick="return validateAllFields();"/>&nbsp;
 		</s:if>
 		<s:if test="%{model.id==null}" >
-			<input type="button" class="buttonfinal" value="CLEAR" id="button" name="clear" onclick="this.form.reset();">&nbsp;
+			<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();">&nbsp;
 		</s:if>
-		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" /></p>
+		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" /></p>
 	</s:form>    
 	</body>  
 </html>
