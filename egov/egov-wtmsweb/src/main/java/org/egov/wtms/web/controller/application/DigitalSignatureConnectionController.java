@@ -216,12 +216,12 @@ public class DigitalSignatureConnectionController {
                     waterConnectionDetails = waterConnectionDetailsService.updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
                     fileStoreIdsApplicationNoMap.put(waterConnectionDetails.getFileStore().getFileStoreId(), applicationNumbers[i]);
                     fileStoreIds.append(waterConnectionDetails.getFileStore().getFileStoreId());
-                    if(i < applicationNumbers.length) {
+                    if(i < applicationNumbers.length - 1) {
                         fileStoreIds.append(",");
                     }
                 }
             }
-            request.getSession().setAttribute("APPLICATION_NUMBER_FILE_STORE_ID", fileStoreIdsApplicationNoMap);
+            request.getSession().setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
             model.addAttribute("fileStoreIds", fileStoreIds.toString());
             model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
         }

@@ -72,7 +72,13 @@ function generateNotice(obj, actionName, currentState){
 		return false; 
 	} 
 	else {
-		window.location = "/wtms/digitalSignature/waterTax/signWorkOrder?pathVar="+applicationNumber+"&workFlowAction="+actionName;
+		//window.location = "/wtms/digitalSignature/waterTax/signWorkOrder?pathVar="+applicationNumber+"&workFlowAction="+actionName;
+		$('<form>.').attr({
+			method: 'post',
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
+			target: '_self'
+		})
+		.appendTo(document.body).submit();
 	}
 }
 
