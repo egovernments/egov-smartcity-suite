@@ -125,7 +125,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(
-                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " _" + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription() ); 
+                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " * " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription() ); 
                 billDetails.add(billdetail);
             }
         }
