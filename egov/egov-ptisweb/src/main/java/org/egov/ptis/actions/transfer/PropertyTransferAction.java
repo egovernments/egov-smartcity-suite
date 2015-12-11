@@ -59,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -316,25 +317,41 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/collect-fee")
     public String collectFee() {
+    	String target = "";
         if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
         else if (StringUtils.isNotBlank(applicationNo))
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
         else {
             addActionError(getText("mandatory.assessmentno.applicationno"));
-            return SEARCH;
+            target = SEARCH;
         }
         if (null == propertyMutation || null == propertyMutation.getId()) {
             addActionError(getText("mutation.notexists"));
-            return SEARCH;
+            target = SEARCH;
         } else if (null != propertyMutation && null != propertyMutation.getReceiptDate()) {
             final SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             addActionError(getText("mutationpayment.done",
                     new String[] { df.format(propertyMutation.getReceiptDate()) }));
-            return SEARCH;
-        } else
-            collectXML = transferOwnerService.generateReceipt(propertyMutation);
-        return COLLECT_FEE;
+            target = SEARCH;
+        } else if (propertyMutation !=null) {
+        	if(propertyMutation.getState() != null && propertyMutation.getState().getOwnerPosition() != null && propertyMutation.getReceiptDate() == null){
+        		Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getState().getOwnerPosition().getId());
+        		if(assignment!=null){
+        			Designation designation = assignment.getDesignation();
+        			if(designation!=null){
+        				if(!designation.getName().equalsIgnoreCase(PropertyTaxConstants.COMMISSIONER_DESGN)){
+        					addActionError(getText("mutation.feeCollection.nonCommissioner"));
+            				target = SEARCH;
+        				}else{
+        					collectXML = transferOwnerService.generateReceipt(propertyMutation);
+            				target = COLLECT_FEE;
+        				}
+        			}
+        		}
+        	}
+        }
+        return target;
     }
 
     @SkipValidation
