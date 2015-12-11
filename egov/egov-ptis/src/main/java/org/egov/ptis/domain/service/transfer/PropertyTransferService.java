@@ -347,6 +347,7 @@ public class PropertyTransferService {
             noticeBean.setUlbLogo(cityLogo);
             noticeBean.setMunicipalityName(cityName);
             final Map<String, Object> reportParams = new HashMap<String, Object>();
+            reportParams.put("userId", EgovThreadLocals.getUserId());
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
@@ -354,7 +355,7 @@ public class PropertyTransferService {
             noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
             noticeBean.setRegDocNo(propertyMutation.getDeedNo());
             noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
-            final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
+            final ReportRequest reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_NOTICE, noticeBean, reportParams);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {

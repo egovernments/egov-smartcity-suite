@@ -39,7 +39,6 @@
 package org.egov.portal.web.controller.citizen;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +48,6 @@ import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,8 +67,7 @@ public class CitizenRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String registerCitizen(@ModelAttribute final Citizen citizen, final Model model, final HttpSession session) {
-        model.addAttribute("encSiteToken", RecaptchaUtils.createSToken(session));
+    public String registerCitizen(@ModelAttribute final Citizen citizen) {
         return "signup";
     }
 

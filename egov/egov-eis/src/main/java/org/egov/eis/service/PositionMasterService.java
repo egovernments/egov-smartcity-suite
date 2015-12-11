@@ -123,6 +123,15 @@ public class PositionMasterService {
         return posList;
     }
 
+    public List<Position> getPositionsForDeptDesigAndNameLike(final Long departmentId, final Long designationId,
+            final String posName) {
+        List<Position> posList = new ArrayList<Position>();
+        posList = positionMasterRepository
+                .findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId,
+                        designationId, posName);
+        return posList;
+    }
+
     public boolean validatePosition(final Position position) {
         if (position != null && position.getName() != null) {
             final List<Position> positionList = positionMasterRepository

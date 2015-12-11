@@ -157,8 +157,12 @@ function validate()
 				name="statusId" id="status" cssClass="selectwk"
 				list="%{receiptStatuses}" listKey="id" listValue="description"
 				value="%{id}" /></td>
-			<td class="bluebox">&nbsp;</td>
-	        	<td class="bluebox">&nbsp;</td>
+			<td class="bluebox">
+				<s:text name="collectionReport.criteria.source"/></td>
+	        <td class="bluebox"><s:select headerKey="ALL"
+				headerValue="%{getText('collectionReport.sources.all')}" 
+				name="source" id="source" cssClass="selectwk" 
+				list="sources" value="%{source}" /> </td>
 		</tr>
 	</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
@@ -179,8 +183,8 @@ function validate()
 					onclick="return clearErrors();" />
 			</label>&nbsp;
 			<label>
-				<input type="button" class="button" id="buttonClose"
-					value="<s:text name='common.buttons.close'/>"
+				<s:submit type="submit" cssClass="button"
+					value="Close"
 					onclick="window.close()" />
 			</label>
 		</div>

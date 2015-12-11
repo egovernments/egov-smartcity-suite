@@ -392,7 +392,7 @@ function checkviewforselectedrecord()
 <logic:notEmpty name="resultList">
 
 <div align="center">		
-<display:table name="resultList" uid="currentRow" pagesize = "20" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
+<display:table name="searchResult" uid="currentRow" pagesize = "20" style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 <display:caption media="pdf">&nbsp;</display:caption>
 <display:column headerClass="bluebgheadtd"  class="blueborderfortd" style="width:3%">
 <input name="selectedReceipts" type="checkbox" id="selectedReceipts"

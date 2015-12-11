@@ -187,7 +187,7 @@
 			class="mandatory1"> *</span> :</td>
 		<td class="greybox"><s:textfield
 				name="propertyDetail.buildingPermissionNo" id="buildingPermissionNo"
-				size="12" maxlength="12" onchange="trim(this,this.value);"
+				size="16" maxlength="16" onchange="trim(this,this.value);"
 				onblur="checkZero(this);"
 				value="%{propertyDetail.buildingPermissionNo}"></s:textfield></td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text><span

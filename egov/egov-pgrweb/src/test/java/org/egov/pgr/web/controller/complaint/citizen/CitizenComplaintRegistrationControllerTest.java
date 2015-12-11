@@ -76,8 +76,6 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
     @Mock
     User user;
 
-    MockHttpSession mockHttpSession = new MockHttpSession();
-    
     MockMvc mockMvc;
 
     @Before
@@ -95,8 +93,7 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
 
     @Test
     public void assertAnonymousRegistrationPageViewReturns() throws Exception {
-        mockHttpSession.setAttribute("siteSecret", "XYJASJSAS");
-        mockMvc.perform(get("/complaint/citizen/anonymous/show-reg-form").session(mockHttpSession))
+        mockMvc.perform(get("/complaint/citizen/anonymous/show-reg-form"))
                 .andExpect(view().name("complaint/citizen/anonymous-registration-form"))
                 .andExpect(status().isOk());
     }

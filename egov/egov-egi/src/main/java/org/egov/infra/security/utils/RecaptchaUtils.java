@@ -39,23 +39,11 @@
 package org.egov.infra.security.utils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
@@ -66,16 +54,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.BaseEncoding;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 public class RecaptchaUtils {
     
     private static final Logger LOG = LoggerFactory.getLogger(RecaptchaUtils.class);
     
-    private static final String CIPHER_INSTANCE_NAME = "AES/ECB/PKCS5Padding";
     private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
     
 
@@ -94,40 +78,4 @@ public class RecaptchaUtils {
             return false;
         }
     }
-    
-    public static final String createSToken(final HttpSession session) {
-        return encryptAes(createJsonToken(UUID.randomUUID().toString()), (String) session.getAttribute("siteSecret"));
-    }
-    
-    private static final String createJsonToken(final String sessionId) {
-        final JsonObject obj = new JsonObject();
-        obj.addProperty("session_id", sessionId);
-        obj.addProperty("ts_ms", System.currentTimeMillis());
-        return new Gson().toJson(obj);
-    }
-
-    private static String encryptAes(final String input, final String siteSecret) {
-            try {
-                final SecretKeySpec secretKey = getKey(siteSecret);
-                final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-                return BaseEncoding.base64Url().omitPadding().encode(cipher.doFinal(input.getBytes(StandardCharsets.UTF_8)));
-            } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException
-                    | BadPaddingException e) {
-                LOG.error("Error occurred while encrypting recaptcha key", e);
-            }
-        return null;
-    }
-
-    private static SecretKeySpec getKey(final String siteSecret) {
-        try {
-            byte[] key = siteSecret.getBytes(StandardCharsets.UTF_8);
-            key = Arrays.copyOf(MessageDigest.getInstance("SHA").digest(key), 16);
-            return new SecretKeySpec(key, "AES");
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("Error occurred while encrypting recaptcha key", e);
-        }
-        return null;
-    }
-
 }

@@ -271,7 +271,7 @@ public class SearchReceiptAction extends SearchFormAction {
         }
 
         final String searchQuery = searchQueryString.append(fromString).append(criteriaString).append(orderByString).toString();
-        final String countQuery = countQueryString.append(fromString).append(criteriaString).append(orderByString).toString();
+        final String countQuery = countQueryString.append(fromString).append(criteriaString).toString();
 
         return new SearchQueryHQL(searchQuery, countQuery, params);
     }

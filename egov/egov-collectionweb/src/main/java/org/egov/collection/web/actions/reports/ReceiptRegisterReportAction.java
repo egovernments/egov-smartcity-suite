@@ -52,6 +52,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
@@ -73,8 +74,10 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private static final String EGOV_DEPT_ID = "EGOV_DEPT_ID";
     private static final String EGOV_PAYMENT_MODE = "EGOV_PAYMENT_MODE";
     private static final String EGOV_STATUS_ID = "EGOV_STATUS_ID";
+    private static final String EGOV_SOURCE = "EGOV_SOURCE";
 
     private final Map<String, String> paymentModes = createPaymentModeList();
+    private final Map<String, String> sources = createSourceList();
     private CollectionsUtil collectionsUtil;
 
     /**
@@ -88,6 +91,15 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
         return paymentModesMap;
+    }
+    
+    private Map<String, String> createSourceList() {
+        final Map<String, String> sourcesMap = new HashMap<String, String>(0);
+        sourcesMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
+        sourcesMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
+        sourcesMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
+        sourcesMap.put(CollectionConstants.SOURCE_SYSTEM, CollectionConstants.SOURCE_SYSTEM);
+        return sourcesMap;
     }
 
     /*
@@ -121,6 +133,20 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         setReportParam(EGOV_FROM_DATE, fromDate);
     }
 
+    /**
+     * @return the do date
+     */
+    public String getSource() {
+        return (String) getReportParam(EGOV_SOURCE);
+    }
+
+    /**
+     * @param toDate the to date to set
+     */
+    public void setSource(final String source) {
+        setReportParam(EGOV_SOURCE, source);
+    }
+    
     /**
      * @return the do date
      */
@@ -224,4 +250,9 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
                 "from EgwStatus s where moduletype=? order by description",
                 ReceiptHeader.class.getSimpleName());
     }
+
+    public Map<String, String> getSources() {
+        return sources;
+    }
+    
 }

@@ -172,7 +172,7 @@
 					<td class="bluebox"><s:text
 							name="dishonorchequeReport.criteria.chequenumber" /></td>
 					<td class="bluebox"><s:textfield id="instrumentNumber"
-							type="text" name="instrumentNumber" /></td>
+							type="text" name="instrumentNumber" maxlength="6" cssClass="patternvalidation" data-pattern="number" /></td>
 					<td class="bluebox"></td>
 					<td class="bluebox"></td>
 				</tr>

@@ -56,6 +56,46 @@ $(document).ready(function(){
 		$("#propertytaxdue").addClass("error-msg");
 	}
 	
+	$('#addConnection').click(function() {
+		var url = '/wtms/application/addconnection/'+ $('#consumerCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+	
+	$('#changeConnection').click(function() {
+		var url = '/wtms/application/changeOfUse/'+$('#consumerCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+	
+	$('#closureConnection').click(function() {
+		var url = '/wtms/application/close/'+$('#consumerCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+	
+	$('#dcbscreen-view').click(function() {
+		var url = '/wtms/viewDcb/consumerCodeWis/'+$('#consumerCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+	
+	$('#meter-entry').click(function() {
+		var url = '/wtms/application/meterentry/'+$('#consumerCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+		
 	$('#viewEstimationNotice').click(function() {
 		var url = '/wtms/application/estimationNotice/view/'+ $('#applicationCode').val();
 		$('#waterConnectionSuccess').attr('method', 'get');
@@ -70,6 +110,14 @@ $(document).ready(function(){
 		$('#waterConnectionSuccess').attr('action', url);
 		$('#waterConnectionSuccess').attr('mode', 'search');
 		window.location(url);
+	});
+	
+	$('#re-connection').click(function() {
+		var url = '/wtms/application/reconnection/'+$('#consumerCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
 	});
 });
 

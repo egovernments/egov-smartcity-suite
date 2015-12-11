@@ -43,14 +43,21 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,18 +72,21 @@ public class ViewConnectionController {
     private ConnectionDemandService connectionDemandService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         WaterConnectionDetails details = null;
-        details = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationNumber, ConnectionStatus.ACTIVE);
+        details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
+                ConnectionStatus.ACTIVE);
         if (details == null)
-            details = waterConnectionDetailsService
-            .findByConsumerCodeAndConnectionStatus(applicationNumber, ConnectionStatus.CLOSED);
+            details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
+                    ConnectionStatus.CLOSED);
         if (details == null)
-            details = waterConnectionDetailsService
-            .findByApplicationNumberOrConsumerCode(applicationNumber);
+            details = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationNumber);
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(details));
         model.addAttribute("waterConnectionDetails", details);
@@ -91,4 +101,37 @@ public class ViewConnectionController {
         return "application-view";
     }
 
+    @ModelAttribute("cscUserRole")
+    public String getCurrentUserRole() {
+        String cscUserRole = "";
+        User currentUser = null;
+
+        if (EgovThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_CSCOPERTAOR)) {
+                cscUserRole = userrole.getName();
+                break;
+            }
+        return cscUserRole;
+    }
+
+    @ModelAttribute("ulbUserRole")
+    public String getUlbOperatorUserRole() {
+        String userRole = "";
+        User currentUser = null;
+        if (EgovThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_ULBOPERATOR)) {
+                userRole = userrole.getName();
+                break;
+            }
+        return userRole;
+    }
 }
