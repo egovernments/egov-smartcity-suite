@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-12-03T10:59:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="184"/>
+	<property name="ireport.y" value="144"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="java.util.*"/>
+	<import value="java.lang.*"/>
 	<import value="java.math.*"/>
+	<import value="java.util.*"/>
 	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
@@ -251,7 +249,7 @@ WHERE
 	<columnHeader>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement x="350" y="0" width="80" height="30" uuid="f1acaf2e-bcb0-4285-9b96-cc256f7bb62e"/>
+				<reportElement x="350" y="25" width="80" height="30" uuid="f1acaf2e-bcb0-4285-9b96-cc256f7bb62e"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -265,7 +263,7 @@ WHERE
 				<text><![CDATA[Cheque/DD No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="430" y="0" width="111" height="30" uuid="4464a2ae-d4b5-44a5-8289-9dbbfc86689e"/>
+				<reportElement x="430" y="25" width="111" height="30" uuid="4464a2ae-d4b5-44a5-8289-9dbbfc86689e"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -279,7 +277,7 @@ WHERE
 				<text><![CDATA[Bank]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="0" width="100" height="30" uuid="2c308388-561b-4e71-875a-36eeca0c4a39"/>
+				<reportElement x="541" y="25" width="100" height="30" uuid="2c308388-561b-4e71-875a-36eeca0c4a39"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -293,7 +291,7 @@ WHERE
 				<text><![CDATA[Branch]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="641" y="0" width="80" height="30" uuid="03b4ff07-1a0e-4390-892f-1a3b05285c2c"/>
+				<reportElement x="641" y="25" width="80" height="30" uuid="03b4ff07-1a0e-4390-892f-1a3b05285c2c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -307,7 +305,7 @@ WHERE
 				<text><![CDATA[Cheque/DD Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="40" height="30" uuid="0a6b50de-d057-4907-82f5-d72e20a153b7"/>
+				<reportElement x="0" y="25" width="40" height="30" uuid="0a6b50de-d057-4907-82f5-d72e20a153b7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -321,7 +319,7 @@ WHERE
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="721" y="0" width="101" height="30" uuid="78cf1470-a2ad-4555-8d98-eb6f991d1cfd"/>
+				<reportElement x="721" y="25" width="101" height="30" uuid="78cf1470-a2ad-4555-8d98-eb6f991d1cfd"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -335,7 +333,7 @@ WHERE
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="0" width="100" height="30" uuid="e64736dc-c635-4075-be16-f66170048e0a"/>
+				<reportElement x="140" y="25" width="100" height="30" uuid="e64736dc-c635-4075-be16-f66170048e0a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -349,7 +347,7 @@ WHERE
 				<text><![CDATA[Receipt No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="240" y="0" width="110" height="30" uuid="80ce7a32-35ec-4201-8c21-171d63926aac"/>
+				<reportElement x="240" y="25" width="110" height="30" uuid="80ce7a32-35ec-4201-8c21-171d63926aac"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -363,7 +361,7 @@ WHERE
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="40" y="0" width="100" height="30" uuid="87e9f957-d336-45b6-b25c-8ceee24d2243"/>
+				<reportElement x="40" y="25" width="100" height="30" uuid="87e9f957-d336-45b6-b25c-8ceee24d2243"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
