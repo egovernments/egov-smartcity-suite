@@ -181,4 +181,9 @@
     	<put-attribute name="body" value="/WEB-INF/views/common/propertyValidation.jsp"/>
     </definition>
     
+    <definition name="dailyCollection-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.dailyCollection.report" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/dailyCollection-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>
