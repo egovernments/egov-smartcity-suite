@@ -45,6 +45,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
@@ -93,22 +95,23 @@ public class RestPaymentReportConroller {
 
 
 	@RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
+	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
 			throws JsonGenerationException, JsonMappingException, IOException {
+		
+		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString(): "");
 
 		List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(paymentInfoSearchRequest);
 		return getJSONResponse(listAggregatePaymentInfo);
 	}
 
 	@RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,BindingResult errors)
+	public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
 			throws JsonGenerationException, JsonMappingException, IOException {
 
-
-		validatePaymentDetails(paymentInfoSearchRequest,errors);
-		List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(
-				paymentInfoSearchRequest.getFromdate(),
-				paymentInfoSearchRequest.getTodate(), paymentInfoSearchRequest.getServicecode());
+		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString(): "");
+		List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(paymentInfoSearchRequest);
 		return getJSONResponse(receiptInfoList);
 	}
 

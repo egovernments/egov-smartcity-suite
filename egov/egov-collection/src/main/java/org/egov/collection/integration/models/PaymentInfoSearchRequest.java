@@ -55,6 +55,10 @@ public class PaymentInfoSearchRequest {
     private String transactionId;
     @JsonIgnore
     private String referenceNo;
+    
+
+    @JsonIgnore
+    private String source;
 
     public Date getFromdate() {
         return fromdate;
@@ -113,6 +117,14 @@ public class PaymentInfoSearchRequest {
 
     public void setReferenceNo(String referenceNo) {
         this.referenceNo = referenceNo;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }

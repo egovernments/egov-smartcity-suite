@@ -241,7 +241,7 @@
 	</query>
 	
 	<query name="RECEIPTS_BY_DATE_AND_SERVICECODE">
-	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where date(rh.receiptdate) between ? and ? and rh.service.code = ? and rh.status.code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED') ]]>
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where date(rh.receiptdate) between ? and ? and rh.service.code = ? and  rh.source=? and rh.status.code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED') ]]>
 	</query>
 
 	<query name="RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE">

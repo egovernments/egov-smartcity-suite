@@ -533,13 +533,14 @@ CollectionIntegrationService {
         // SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
                 "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
-                        + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode"
-                        + " group by ulb,service  ");
+                        + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
+                        +  " and source=:source  group by ulb,service  ");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
         query.setDate("fromDate", aggrReq.getFromdate());
         query.setDate("toDate", aggrReq.getTodate());
         query.setString("serviceCode", aggrReq.getServicecode());
+        query.setString("source", aggrReq.getSource());
 
         final List<Object[]> queryResults = query.list();
 
@@ -551,6 +552,10 @@ CollectionIntegrationService {
             aggregatePaymentInfo.setServiceCode(objectArray[3].toString());
             listAggregatePaymentInfo.add(aggregatePaymentInfo);
         }
+        if(listAggregatePaymentInfo.size()==0)
+        {
+            listAggregatePaymentInfo.add(new RestAggregatePaymentInfo());
+        }
         return listAggregatePaymentInfo;
     }
 
@@ -561,11 +566,10 @@ CollectionIntegrationService {
      * final String serviceCode)
      */
     @Override
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
-            final String serviceCode) {
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest aggrReq) {
         final ArrayList<RestReceiptInfo> receipts = new ArrayList<RestReceiptInfo>(0);
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
-                CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, fromDate, toDate, serviceCode);
+                CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, aggrReq.getFromdate(), aggrReq.getTodate(), aggrReq.getServicecode(),aggrReq.getSource());
         if (receiptHeaders == null || receiptHeaders.isEmpty())
         {
              receipts.add(new RestReceiptInfo());

@@ -163,7 +163,7 @@ public interface CollectionIntegrationService {
      * @param serviceCode The service code of the billing system
      * @return List of <code>RestReceiptInfo</code> containing details of Receipt Information
      */
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String serviceCode);
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     
     public List<ServiceCategory>  getActiveServiceCategories();
