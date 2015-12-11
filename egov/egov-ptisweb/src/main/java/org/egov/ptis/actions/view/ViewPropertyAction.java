@@ -133,8 +133,10 @@ public class ViewPropertyAction extends BaseFormAction {
             viewMap = new HashMap<String, Object>();
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-            else if (applicationNo != null && !applicationNo.isEmpty())
-                getBasicPropForAppNo(applicationNo, applicationType);
+            else if (applicationNo != null && !applicationNo.isEmpty()){
+                getBasicPropForAppNo(applicationNo, applicationType); 
+                setPropertyId(basicProperty.getUpicNo());
+            }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
 
@@ -228,7 +230,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
                 LOGGER.debug("Exit from method viewForm");
             }
-            return "view";
+            return "view"; 
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             throw new ApplicationRuntimeException("Exception in View Property : " + e);
