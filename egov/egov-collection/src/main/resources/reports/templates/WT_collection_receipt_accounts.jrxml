@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-11T11:29:28 -->
+<!-- 2015-12-11T11:50:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="097af81c-f4bf-4e72-9596-ed5b89f2e492">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -40,20 +40,20 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="arrearFrom" class="java.lang.String" calculation="Lowest">
-		<variableExpression><![CDATA[($F{crAmount}.compareTo(java.math.BigDecimal.ZERO) > 0 && !$F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('*')).trim().equals($F{description}.substring($F{description}.indexOf('*')+1,$F{description}.length()).trim())) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.indexOf('*')) : $V{arrearFrom}]]></variableExpression>
+		<variableExpression><![CDATA[($F{crAmount}.compareTo(java.math.BigDecimal.ZERO) > 0 && !$F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')).trim().equals($F{description}.substring($F{description}.indexOf('#')+1,$F{description}.length()).trim())) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.indexOf('#')) : $V{arrearFrom}]]></variableExpression>
 	</variable>
 	<variable name="arrearTo" class="java.lang.String" calculation="Highest">
-		<variableExpression><![CDATA[($F{crAmount}.compareTo(java.math.BigDecimal.ZERO) > 0 &&  !$F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('*')).trim().equals($F{description}.substring($F{description}.indexOf('*')+1,$F{description}.length()).trim()))  ? $F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('*')) : $V{arrearTo}]]></variableExpression>
+		<variableExpression><![CDATA[($F{crAmount}.compareTo(java.math.BigDecimal.ZERO) > 0 &&  !$F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')).trim().equals($F{description}.substring($F{description}.indexOf('#')+1,$F{description}.length()).trim()))  ? $F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')) : $V{arrearTo}]]></variableExpression>
 	</variable>
 	<variable name="arrearTotal" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[(!$F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('*')).trim().equals($F{description}.substring($F{description}.indexOf('*')+1,$F{description}.length()).trim())) ? ($F{crAmount}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[(!$F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')).trim().equals($F{description}.substring($F{description}.indexOf('#')+1,$F{description}.length()).trim())) ? ($F{crAmount}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentTotal" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[($F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('*')).trim().equals($F{description}.substring($F{description}.indexOf('*')+1,$F{description}.length()).trim()))  ? ($F{crAmount}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[($F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')).trim().equals($F{description}.substring($F{description}.indexOf('#')+1,$F{description}.length()).trim()))  ? ($F{crAmount}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="currentInst" class="java.lang.String">
-		<variableExpression><![CDATA[($F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('*')).trim().equals($F{description}.substring($F{description}.indexOf('*')+1,$F{description}.length()).trim())) ? ($F{description}.substring($F{description}.indexOf('-')+1, $F{description}.indexOf('*'))) : $V{currentInst}]]></variableExpression>
+		<variableExpression><![CDATA[($F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')).trim().equals($F{description}.substring($F{description}.indexOf('#')+1,$F{description}.length()).trim())) ? ($F{description}.substring($F{description}.indexOf('-')+1, $F{description}.indexOf('#'))) : $V{currentInst}]]></variableExpression>
 	</variable>
 	<filterExpression><![CDATA[$F{isRevenueAccount} == false && ($F{crAmount} > 0 || $F{drAmount} > 0)]]></filterExpression>
 	<group name="REPORT_GROUP">

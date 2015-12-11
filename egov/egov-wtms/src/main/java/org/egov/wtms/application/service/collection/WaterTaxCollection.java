@@ -216,7 +216,7 @@ public class WaterTaxCollection extends TaxCollection {
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
                 if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                 	final String[] desc = rcptAccInfo.getDescription().split("-", 2);
-                    String[] installsplit=desc[1].split("*") ;
+                    String[] installsplit=desc[1].split("#") ;
                     final String reason = desc[0].trim();
                     final String instDesc = installsplit[0].trim();
 
