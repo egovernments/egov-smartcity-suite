@@ -377,7 +377,9 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     public Boolean getLegacy() {
         Boolean legacy = Boolean.FALSE;
         for (ReceiptAccountInfo receiptAccountInfo : getAccountDetails()) {
-            if (receiptAccountInfo.getDescription() !=null && !"".equals(receiptAccountInfo.getDescription()) && !receiptAccountInfo.getDescription().contains("/")) {
+            if (receiptAccountInfo.getDescription() !=null && !"".equals(receiptAccountInfo.getDescription())
+            		&& (!receiptAccountInfo.getDescription().contains("/") ||
+            				receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE) )) {
                 legacy = Boolean.TRUE;
                 break;
             }
