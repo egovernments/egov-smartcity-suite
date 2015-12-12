@@ -365,7 +365,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into getMigratedData");
         LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
         // List of property receipts
-        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=?",
+        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=? order by receiptDate desc",
                 getBasicProperty().getId());
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {

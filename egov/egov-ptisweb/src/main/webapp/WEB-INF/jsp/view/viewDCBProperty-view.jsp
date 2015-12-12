@@ -62,7 +62,7 @@
 			function openNewWindow() {
 				window.open('../view/viewDCBProperty-showMigData.action?' + 
 							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
-							'_blank', 'width=650, height=500', false);
+							'_blank', 'width=650, height=500, scrollbars=yes', false);
 			}
 
 			function openHeadwiseDCBWindow() {
