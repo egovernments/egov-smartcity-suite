@@ -307,7 +307,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         }
         // calculating Un Authorized Penalty
         if (installment.equals(currInstallment)
-                && (unAuthDeviationPerc != null && !unAuthDeviationPerc.isEmpty() && !"-1".equals(unAuthDeviationPerc))) {
+                && (unAuthDeviationPerc != null && !unAuthDeviationPerc.isEmpty() && !"0".equals(unAuthDeviationPerc))) {
             halfYearHeadTax = BigDecimal.ZERO;
             halfYearHeadTax = roundOffToNearestEven(calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable));
             totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
@@ -494,14 +494,19 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private String getUnAuthDeviationPerc(Property property) {
-        return property.getPropertyDetail().getDeviationPercentage() != null
-                && !property.getPropertyDetail().getDeviationPercentage().isEmpty() ? property.getPropertyDetail()
-                .getDeviationPercentage() : "100";
+        if (property.getPropertyDetail().getBuildingPermissionNo() == null
+                || property.getPropertyDetail().getBuildingPermissionNo().isEmpty()) {
+            return "100";
+        } else {
+            return property.getPropertyDetail().getDeviationPercentage() != null
+                    && !property.getPropertyDetail().getDeviationPercentage().isEmpty() ? property.getPropertyDetail()
+                    .getDeviationPercentage() : "0";
+        }
     }
 
     private BigDecimal calculateUnAuthPenalty(String deviationPerc, BigDecimal totalPropertyTax) {
         BigDecimal unAuthPenalty = BigDecimal.ZERO;
-        if (deviationPerc != null && !deviationPerc.isEmpty()) {
+        if (deviationPerc != null && !deviationPerc.trim().equals("0")) {
             if (deviationPerc.equals("1-10%")) {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
             } else if (deviationPerc.equals("11-25%")) {
@@ -509,8 +514,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             } else {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
             }
-        } else {
-            unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
         }
         return unAuthPenalty;
     }
