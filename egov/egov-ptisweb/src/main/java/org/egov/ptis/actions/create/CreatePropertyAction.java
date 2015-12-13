@@ -1180,7 +1180,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // TODO update index by assesment no
         // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
-        setAckMessage("Property data entry saved in the system successfully and created with Assessment No " + upicNo);
+        setAckMessage("Property data entry saved in the system successfully and created with Assessment No " + assessmentNo);
         // setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (LOGGER.isDebugEnabled()) {
