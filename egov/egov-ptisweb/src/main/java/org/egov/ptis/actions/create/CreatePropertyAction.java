@@ -945,6 +945,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             else
                 ownerAddress.setAreaLocalitySector(corrAddr[1]);
             ownerAddress.setHouseNoBldgApt(getHouseNumber());
+            ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
         }
@@ -978,6 +979,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             ownerAddress = new CorrespondenceAddress();
             ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setAreaLocalitySector(getCorrAddress1());
+            ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
         }
