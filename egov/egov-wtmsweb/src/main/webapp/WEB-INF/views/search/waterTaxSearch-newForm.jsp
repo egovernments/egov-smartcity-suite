@@ -126,14 +126,14 @@
 				
 						</div>
 						</div>
-						<div class="form-group">
+						<%--  <div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.doornumber" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="doorNumber" class="form-control "   id="app-appcodo" />
 						</div>
-					</div></c:if>
+					</div>  --%></c:if>
 					<c:if test="${!citizenRole}" >
 					<div class="form-group">
 						<div class="text-center">
