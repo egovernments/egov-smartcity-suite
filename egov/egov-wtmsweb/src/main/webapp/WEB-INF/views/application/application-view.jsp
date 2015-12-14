@@ -74,9 +74,6 @@
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.status.code != 'VERIFIED'  && (checkOperator ) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if>
-	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.status.code != 'VERIFIED' && waterTaxDueforParent > 0 && (checkOperator) }">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-	</c:if>
 	
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && ( citizenRole && !checkOperator) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
