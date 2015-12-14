@@ -86,7 +86,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -254,7 +253,7 @@ public class WaterTaxExternalService {
             if (loopInstallment.equals(installment))
             {
 
-                if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                     arrearDetails.setPenalty(demand.subtract(collection));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                     arrearDetails.setChqBouncePenalty(demand.subtract(collection));
@@ -271,7 +270,7 @@ public class WaterTaxExternalService {
                 arrearDetails = new RestPropertyTaxDetails();
                 arrearDetails.setInstallment(installment);
                 total = BigDecimal.ZERO;
-                if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                     arrearDetails.setPenalty(demand.subtract(collection));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                     arrearDetails.setChqBouncePenalty(demand.subtract(collection));
