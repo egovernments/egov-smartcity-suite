@@ -222,6 +222,7 @@ CollectionIntegrationService {
     
     public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest)
     {
+        LOGGER.info(paymentInfoSearchRequest.getSource());
         ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",paymentInfoSearchRequest.getTransactionId(),paymentInfoSearchRequest.getSource());
         if(header==null)
         {
@@ -553,6 +554,8 @@ CollectionIntegrationService {
         query.setDate("toDate", aggrReq.getTodate());
         query.setString("serviceCode", aggrReq.getServicecode());
         query.setString("source", aggrReq.getSource());
+        
+        LOGGER.debug(aggrReq.getSource());
 
         final List<Object[]> queryResults = query.list();
 

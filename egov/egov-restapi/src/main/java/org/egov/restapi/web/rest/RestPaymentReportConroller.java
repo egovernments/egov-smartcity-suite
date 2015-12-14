@@ -47,6 +47,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
@@ -81,6 +82,8 @@ import com.google.gson.reflect.TypeToken;
 
 @RestController
 public class RestPaymentReportConroller {
+	
+	  private static final Logger LOGGER = Logger.getLogger(RestPaymentReportConroller.class);
 
 	@Autowired
 	private  CollectionIntegrationService collectionService;
@@ -100,7 +103,7 @@ public class RestPaymentReportConroller {
 		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
                 .getAttribute("source").toString(): "");
 	
-		
+		LOGGER.info(request.getSession().getAttribute("source"));
 		RestResponse detailsByTransactionId=new RestResponse();
 		try {
 			 RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest); 
@@ -125,6 +128,8 @@ public class RestPaymentReportConroller {
 	@RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
 			throws JsonGenerationException, JsonMappingException, IOException {
+		
+		LOGGER.info(request.getSession().getAttribute("source"));
 		
 		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
                 .getAttribute("source").toString(): "");
