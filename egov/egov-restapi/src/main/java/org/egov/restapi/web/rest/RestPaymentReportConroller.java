@@ -111,7 +111,7 @@ public class RestPaymentReportConroller {
 			detailsByTransactionId.setAmount(detailsByTransactionId2.getAmount());
 			detailsByTransactionId.setReceiptNo(detailsByTransactionId2.getReceiptNo());
 			detailsByTransactionId.setReferenceNo(detailsByTransactionId2.getReferenceNo());
-			detailsByTransactionId.setTransactionId(detailsByTransactionId.getTransactionId());
+			detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
 			
 		} catch (Exception e) {
 			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
