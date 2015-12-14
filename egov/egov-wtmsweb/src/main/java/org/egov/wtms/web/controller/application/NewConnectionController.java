@@ -381,6 +381,11 @@ public class NewConnectionController extends GenericConnectionController {
         if (keyNameArray.length != 0 && keyNameArray.length > 0)
             if (keyNameArray.length == 1)
                 applicationNumber = keyNameArray[0];
+            else if (keyNameArray.length == 3) {
+                applicationNumber = keyNameArray[0];
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+           }
             else {
                 applicationNumber = keyNameArray[0];
                 approverName = keyNameArray[1];

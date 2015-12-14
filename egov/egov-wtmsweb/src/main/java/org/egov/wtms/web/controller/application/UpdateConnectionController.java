@@ -498,9 +498,12 @@ public class UpdateConnectionController extends GenericConnectionController {
             final String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation()
                     .getName() : "";
             final String nextUser = waterTaxUtils.getApproverUserName(approvalPosition);
-            final String nextDesign = assignmentService
+            String nextDesign ="";
+            if (userService.getUserByUsername(nextUser)!= null){
+             nextDesign = assignmentService
                     .getPrimaryAssignmentForEmployee(userService.getUserByUsername(nextUser).getId()).getDesignation()
                     .getName();
+            }
 
                     if ((workFlowAction.equals(WaterTaxConstants.WFLOW_ACTION_STEP_REJECT) || workFlowAction
                     .equalsIgnoreCase(WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON))
