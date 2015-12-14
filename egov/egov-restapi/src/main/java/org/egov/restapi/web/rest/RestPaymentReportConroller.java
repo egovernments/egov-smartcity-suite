@@ -62,6 +62,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.RestErrors;
+import org.egov.restapi.model.RestResponse;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.search.domain.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +94,32 @@ public class RestPaymentReportConroller {
 	@Autowired
 	ApplicationContext applicationContext;
 
+	@RequestMapping(value = "/reconciliation/paymentdetails/transaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String searchPaymentByTransactionId(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
+	{
+		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString(): "");
+	
+		
+		RestResponse detailsByTransactionId=new RestResponse();
+		try {
+			 RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest); 
+			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+			detailsByTransactionId.setAmount(detailsByTransactionId2.getAmount());
+			detailsByTransactionId.setReceiptNo(detailsByTransactionId2.getReceiptNo());
+			detailsByTransactionId.setReferenceNo(detailsByTransactionId2.getReferenceNo());
+			detailsByTransactionId.setTransactionId(detailsByTransactionId.getTransactionId());
+			
+		} catch (Exception e) {
+			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
+			RestErrors err=new  RestErrors();
+			err.setErrorMessage(e.getMessage());
+			err.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
+			detailsByTransactionId.getErrorDetails().add(err);   
+		}
+		return JsonConvertor.convert(detailsByTransactionId);
+		  
+	}  
 
 
 	@RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

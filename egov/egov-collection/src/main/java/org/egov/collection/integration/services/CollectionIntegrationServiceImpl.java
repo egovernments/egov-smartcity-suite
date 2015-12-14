@@ -219,6 +219,18 @@ CollectionIntegrationService {
             return receiptInfo;
         }
     }
+    
+    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest)
+    {
+        ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",paymentInfoSearchRequest.getTransactionId(),paymentInfoSearchRequest.getSource());
+        if(header==null)
+        {
+            throw new RuntimeException("No data found");
+        }
+        return   new RestReceiptInfo(header);
+        
+    }
+    
 
     /*
      * (non-Javadoc)
@@ -581,6 +593,10 @@ CollectionIntegrationService {
             return receipts;
         }
     }
+    
+    
+    
+    
 
     @Override
     public List<ServiceCategory> getActiveServiceCategories() {
