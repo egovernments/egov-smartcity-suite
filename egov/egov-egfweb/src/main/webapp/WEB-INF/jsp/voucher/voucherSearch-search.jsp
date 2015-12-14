@@ -274,10 +274,48 @@
 		
 		function validate()
 		{
+			var fromDate=document.getElementById('fromDate').value;
+			var toDate=document.getElementById('toDate').value;
+
+			var fundId=document.getElementById('fundId').value;
+			
+			if(toDate == ""){
+				alert("Please select to date");
+				return false;
+				}
+
+			if(fundId == "-1"){
+				alert("Please select fund");
+				return false;
+				}
+			if(!validateDate(fromDate)){
+				alert("Invalid Date! from date is greater than current date");
+				return false;
+			}
+			else if(!validateDate(toDate)){
+				alert("Invalid Date! to date is greater than current date");
+				return false;
+			}
+			else if (Date.parse(fromDate) > Date.parse(toDate)) {
+				alert("Invalid Date Range! From Date cannot be after To Date!")
+				return false;
+				} 
+		
 		document.getElementById('type').disabled=false;
 		return true;
 		}
-		
+		function validateDate(date)
+		{
+			var todayDate = new Date();
+			 var todayMonth = todayDate.getMonth() + 1;
+			 var todayDay = todayDate.getDate();
+			 var todayYear = todayDate.getFullYear();
+			 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
+			if (Date.parse(date) > Date.parse(todayDateText)) {
+				return false;
+				}
+			return true; 
+			}
 			
 		var showMode = document.getElementById('showMode').value ;
 		if(showMode=='nonbillPayment')
