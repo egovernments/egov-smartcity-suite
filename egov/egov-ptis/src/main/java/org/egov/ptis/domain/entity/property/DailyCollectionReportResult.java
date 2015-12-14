@@ -52,8 +52,8 @@ public class DailyCollectionReportResult {
     private String paidAt;
     private String paymentMode;
     private String status;
-    private Date fromDate;
-    private Date toDate;
+    private String fromInstallment;
+    private String toInstallment;
     private BigDecimal arrearAmount;
     private BigDecimal currentAmount;
     private BigDecimal totalPenalty;
@@ -118,20 +118,20 @@ public class DailyCollectionReportResult {
         this.paymentMode = paymentMode;
     }
 
-    public Date getFromDate() {
-        return fromDate;
+    public String getFromInstallment() {
+        return fromInstallment;
     }
 
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
+    public void setFromInstallment(String fromInstallment) {
+        this.fromInstallment = fromInstallment;
     }
 
-    public Date getToDate() {
-        return toDate;
+    public String getToInstallment() {
+        return toInstallment;
     }
 
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
+    public void setToInstallment(String toInstallment) {
+        this.toInstallment = toInstallment;
     }
 
     public BigDecimal getArrearAmount() {

@@ -76,8 +76,8 @@ body
 							<form:input path="" name="fromDate" id="fromDate"
 								cssClass="form-control datepicker" value="${fromDate}"
 								cssErrorClass="form-control error" />
+								<c:set value="${fromDate}" var="fromhidden"/>
 						</div>
-
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.toDate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
@@ -144,13 +144,14 @@ body
 							code="lbl.close" /></a>
 				</div>
 			</div>
-		</form:form>
+		
 		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
 			<spring:message code="lbl.dailyCollection.report.details" />:
-			<c:out value="${currDate}"></c:out>
+			<label  id="resultDateLabel"></label>
 		   </div>
+		   </form:form>
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="dailyCollReport-table" width="200%">
 			<tbody>

@@ -49,7 +49,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 		var status = $("#status").val();
 		oTable= $('#dailyCollReport-table');
 		$('#dailyCollectionReport-header').show();
-		
+        $("#resultDateLabel").html(fromDate+" - "+toDate);	
 		oTable.dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",

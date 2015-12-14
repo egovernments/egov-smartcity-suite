@@ -195,7 +195,7 @@ public class ReportService {
             String collectionOperator, String status) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
 
-        queryStr.append("select receiptheader from ReceiptHeader receiptheader inner join fetch receiptheader.receiptInstrument instHeader"
+        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader inner join fetch receiptheader.receiptInstrument instHeader"
                 + " inner join fetch instHeader.instrumentType instType where receiptheader.service.name =:service and (receiptdate between :fromDate and :toDate) ");
         if (StringUtils.isNotBlank(collectionMode)) {
             queryStr.append(" and instType.id =:mode ");
@@ -223,13 +223,18 @@ public class ReportService {
         List<ReceiptHeader> receiptHeaderList = query.list();
         List<DailyCollectionReportResult> dailyCollectionReportList = new ArrayList<DailyCollectionReportResult>();
         DailyCollectionReportResult result = null;
-        BigDecimal currCollection = BigDecimal.ZERO;
-        BigDecimal arrCollection = BigDecimal.ZERO;
-        BigDecimal totalPenalty = BigDecimal.ZERO;
-        BigDecimal arrLibCess = BigDecimal.ZERO;
-        BigDecimal currLibCess = BigDecimal.ZERO;
+        BigDecimal currCollection = null;
+        BigDecimal arrCollection = null;
+        BigDecimal totalPenalty = null;
+        BigDecimal arrLibCess = null;
+        BigDecimal currLibCess = null;
 
         for (ReceiptHeader receiptHeader : receiptHeaderList) {
+            currCollection = BigDecimal.ZERO;
+            arrCollection = BigDecimal.ZERO;
+            totalPenalty = BigDecimal.ZERO;
+            arrLibCess = BigDecimal.ZERO;
+            currLibCess = BigDecimal.ZERO;
             result = new DailyCollectionReportResult();
             result.setReceiptNumber(receiptHeader.getReceiptnumber());
             result.setReceiptDate(receiptHeader.getReceiptdate());
@@ -239,15 +244,21 @@ public class ReportService {
 
             String[] address = receiptHeader.getPayeeAddress().split(",");
             result.setTotalCollection(receiptHeader.getTotalAmount());
-            if (address.length >= 5)
+            if (address.length >= 4)
                 result.setDoorNumber(address[0]);
             else
                 result.setDoorNumber("N/A");
             result.setStatus(receiptHeader.getStatus().getDescription());
 
             StringBuilder paymentMode = new StringBuilder(30);
+            int count = 0;
             for (InstrumentHeader instrument : receiptHeader.getReceiptInstrument()) {
+                int instrumentSize = receiptHeader.getReceiptInstrument().size();
                 paymentMode.append(instrument.getInstrumentType().getType());
+                if(instrumentSize > 1 && count < instrumentSize-1) {
+                    paymentMode.append(",");
+                    count++;
+                }
             }
             result.setPaidAt(receiptHeader.getSource());
             result.setPaymentMode(paymentMode.toString());
@@ -256,16 +267,12 @@ public class ReportService {
             if (null != receiptDetailsList.get(0).getDescription()) {
                 int index = receiptDetailsList.get(0).getDescription().indexOf("-");
                 String instDesc = receiptDetailsList.get(0).getDescription().substring(index + 1);
-                Installment installment = (Installment) getPropPerServ().find("From Installment where description = ?",
-                        instDesc);
-                result.setFromDate(null != installment ? installment.getFromDate() : null);
+                result.setFromInstallment(instDesc);
             }
             if (null != receiptDetailsList.get(lastindex).getDescription()) {
                 int index = receiptDetailsList.get(lastindex).getDescription().indexOf("-");
                 String instDesc = receiptDetailsList.get(lastindex).getDescription().substring(index + 1);
-                Installment installment = (Installment) getPropPerServ().find("From Installment where description = ?",
-                        instDesc);
-                result.setToDate(null != installment ? installment.getFromDate() : null);
+                result.setToInstallment(instDesc);
             }
             for (ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
                 if (GLCODES_FOR_CURRENTTAX.contains(receiptDetail.getAccounthead().getGlcode())) {
@@ -296,6 +303,7 @@ public class ReportService {
             result.setCurrentLibCess(currLibCess);
             result.setTotalLibCess(arrLibCess.add(currLibCess));
             result.setTotalPenalty(totalPenalty);
+            result.setTotalCollection(currCollection.add(arrCollection).add(totalPenalty));
             dailyCollectionReportList.add(result);
         }
 

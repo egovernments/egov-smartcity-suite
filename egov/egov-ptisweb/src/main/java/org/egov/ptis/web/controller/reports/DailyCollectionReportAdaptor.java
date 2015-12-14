@@ -56,7 +56,6 @@ public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollect
     public JsonElement serialize(DailyCollectionReportResult dailyCollectionReportResult, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         final SimpleDateFormat receiptDateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        final SimpleDateFormat instDateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         jsonObject.addProperty("receiptNo", dailyCollectionReportResult.getReceiptNumber());
         jsonObject.addProperty("receiptDate", receiptDateFormatter.format(dailyCollectionReportResult.getReceiptDate()));
         jsonObject.addProperty("assessmentNumber", dailyCollectionReportResult.getAssessmentNumber());
@@ -65,8 +64,8 @@ public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollect
         jsonObject.addProperty("paidAt", dailyCollectionReportResult.getPaidAt());
         jsonObject.addProperty("paymentMode", dailyCollectionReportResult.getPaymentMode());
         jsonObject.addProperty("status", dailyCollectionReportResult.getStatus());
-        jsonObject.addProperty("fromDate", null != dailyCollectionReportResult.getFromDate() ? instDateFormatter.format(dailyCollectionReportResult.getFromDate()) : "N/A");
-        jsonObject.addProperty("toDate", null != dailyCollectionReportResult.getToDate() ? instDateFormatter.format(dailyCollectionReportResult.getToDate()) : "N/A");
+        jsonObject.addProperty("fromDate", dailyCollectionReportResult.getFromInstallment());
+        jsonObject.addProperty("toDate", dailyCollectionReportResult.getToInstallment());
         jsonObject.addProperty("arrearAmt", dailyCollectionReportResult.getArrearAmount());
         jsonObject.addProperty("currAmt", dailyCollectionReportResult.getCurrentAmount());
         jsonObject.addProperty("totalPenalty", dailyCollectionReportResult.getTotalPenalty());
