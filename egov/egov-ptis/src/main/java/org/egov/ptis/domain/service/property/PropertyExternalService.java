@@ -498,8 +498,10 @@ public class PropertyExternalService {
 
                 } else {
                     arrearDetails.setTaxAmount(total);
-                    arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
-                            arrearDetails.getChqBouncePenalty()));
+                    //penalty calculation is entirely moved to next loop . So no need to add it here 
+                  //  arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
+                    //        arrearDetails.getChqBouncePenalty()));
+                    arrearDetails.setTotalAmount(total.add(arrearDetails.getChqBouncePenalty()));
                     propertyTaxDetails.getTaxDetails().add(arrearDetails);
                     loopInstallment = installment;
                     arrearDetails = new RestPropertyTaxDetails();
@@ -519,8 +521,7 @@ public class PropertyExternalService {
             }
             if (arrearDetails != null) {
                 arrearDetails.setTaxAmount(total);
-                arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
-                        arrearDetails.getChqBouncePenalty()));
+                arrearDetails.setTotalAmount(total.add(arrearDetails.getChqBouncePenalty()));
                 propertyTaxDetails.getTaxDetails().add(arrearDetails);
             }
 
