@@ -1146,7 +1146,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @ValidationErrorPage("dataEntry")
     @Action(value = "/createProperty-createDataEntry")
-    public String save() {
+    public String save() { 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId
                     + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot
@@ -1154,6 +1154,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: " + propOccId);
         if (upicNo == null || upicNo.equals("")) {
             addActionError(getText("mandatory.indexNumber"));
+            return "dataEntry";
+        }
+        if (StringUtils.isBlank(houseNumber)){
+            addActionError(getText("mandatory.doorNo"));
             return "dataEntry";
         }
         final long startTimeMillis = System.currentTimeMillis();
