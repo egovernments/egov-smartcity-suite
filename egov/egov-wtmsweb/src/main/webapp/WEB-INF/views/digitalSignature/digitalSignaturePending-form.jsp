@@ -61,12 +61,12 @@
 								<table class="table table-bordered"  id="digSignDetailsTab" name="digSignDetailsTab">
 						    		<thead>
 							      		<tr>
-											<%-- <th><spring:message code="lbl.digitalSignature.slno"/></th> --%>
 											<th><input type="checkbox" id="selectAll" onchange="selectAllCheckbox(event)"/><spring:message code="lbl.digitalSignature.select"/></th>
-											<th><spring:message code="lbl.digitalSignature.module"/></th>
-											<th><spring:message code="lbl.digitalSignature.type"/></th>
-											<th><spring:message code="lbl.digitalSignature.details"/></th>
-											<th><spring:message code="lbl.digitalSignature.sign"/></th> 
+											<th><spring:message code="lbl.digitalSignature.transaction"/></th>
+											<th><spring:message code="lbl.digitalSignature.hscNumber"/></th>
+											<th><spring:message code="lbl.digitalSignature.ownerName"/></th>
+											<th><spring:message code="lbl.digitalSignature.address"/></th>
+											<th><spring:message code="lbl.digitalSignature.action"/></th>
 										</tr>
 									</thead>
 									<c:choose>
@@ -77,15 +77,18 @@
 														<input type="checkbox" id="rowCheckBox" name="rowCheckBox"/>
 													</td>
 													<td class="blueborderfortd" >	
-														<c:out value="${record.module}"/>
+														<c:out value="${record.type}"/>
 										 				<input type="hidden" id="objectId" name="objectId" value="${record.objectId}" />
 										 				<input type="hidden" id="currentState" name="currentState" value="${record.status}" />
 										 			</td>
 										 			<td class="blueborderfortd" >	
-										 				<c:out value="${record.type}"/>	
+										 				<c:out value="${record.hscNumber}"/>	
 										 			</td> 
 										 			<td class="blueborderfortd" >	
-										 				<c:out value="${record.details}"/>
+										 				<c:out value="${record.ownerName}"/>
+										 			</td>
+										 			<td class="blueborderfortd" >	
+										 				<c:out value="${record.propertyAddress}"/>
 										 			</td>
 										 			<td class="blueborderfortd" >	
 														 <span class="add-padding"><button type="button" id="previewButn" onclick="generateNotice(this, 'Preview', '<c:out value="${record.status}"/>');" class="btn btn-default">Preview</button></span>
@@ -97,7 +100,7 @@
 									</c:choose>		
 								</table>
 								<div class="text-center">
-									<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature()">Sign All</button>
+									<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature()">Approve</button>
 									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a> 
 								</div> 
 							</div>

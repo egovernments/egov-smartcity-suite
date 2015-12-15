@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -66,10 +66,13 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -118,13 +121,10 @@ public class DigitalSignatureConnectionController {
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
     
     @Autowired
-    private UserService userService;
-    
-    @Autowired
     protected UsageTypeService usageTypeService;
     
     @Autowired
-    private RoadCategoryService roadCategoryService;
+    private PropertyExtnUtils propertyExtnUtils;
     
     @RequestMapping(value = "/waterTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -196,10 +196,6 @@ public class DigitalSignatureConnectionController {
             applicationNumbers = request.getParameter("pathVar").split(",");
             for(int i = 0; i < applicationNumbers.length; i++) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumbers[i]);
-                //appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
-                /*waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
-                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode,
-                        null);*/
                 String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
                 String districtName = (String) request.getSession().getAttribute("districtName");
                 waterConnectionDetails.setWorkOrderDate(new Date());
@@ -232,7 +228,7 @@ public class DigitalSignatureConnectionController {
     public List<HashMap<String, Object>> getRecordsForDigitalSignature() {
         final List<HashMap<String, Object>> resultList = new ArrayList<HashMap<String, Object>>();
         final List<StateAware> stateAwareList = fetchItems();
-
+        WaterConnectionDetails waterConnectionDetails = null;
         if (null != stateAwareList && !stateAwareList.isEmpty()) {
             HashMap<String, Object> tempMap = new HashMap<String, Object>();
             WorkflowTypes workflowTypes = null;
@@ -250,20 +246,17 @@ public class DigitalSignatureConnectionController {
                         else
                             workflowTypes = null;
                         if (WaterTaxConstants.MODULE_NAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
-                            /*if (record.getState().getValue().startsWith("Create")
-                                    || record.getState().getValue().startsWith("Alter")
-                                    || record.getState().getValue().startsWith("Bifurcate")
-                                    || record.getState().getValue().startsWith("Demolition"))
-                                tempMap.put("objectId", ((PropertyImpl) record).getBasicProperty().getId());
-                            else
-                                tempMap.put("objectId", record.getId());*/
+                            waterConnectionDetails = (WaterConnectionDetails)record;
                             tempMap.put("objectId", ((WaterConnectionDetails)record).getApplicationNumber());
                             tempMap.put("type", record.getState().getNatureOfTask());
                             tempMap.put("module", workflowTypes != null ? workflowTypes.getModule().getDisplayName() : null);
                             tempMap.put("details", record.getStateDetails());
+                            tempMap.put("hscNumber", waterConnectionDetails.getConnection().getConsumerCode());
                             tempMap.put("status", record.getCurrentState().getValue());
-                            tempMap.put("applicationNumber", ((WaterConnectionDetails)record).getApplicationNumber());
-                            tempMap.put("waterConnectionDetails", (WaterConnectionDetails)record);
+                            tempMap.put("applicationNumber", waterConnectionDetails.getApplicationNumber());
+                            tempMap.put("waterConnectionDetails", waterConnectionDetails);
+                            tempMap.put("ownerName", getOwnerName(waterConnectionDetails));
+                            tempMap.put("propertyAddress", getPropertyAddress(waterConnectionDetails));
                             resultList.add(tempMap);
                         }
                     }
@@ -279,5 +272,31 @@ public class DigitalSignatureConnectionController {
     
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
+    }
+    
+    private String getOwnerName(final WaterConnectionDetails waterConnectionDetails) {
+        String ownerName =  "";
+        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS);
+        if(null != assessmentDetails && null != assessmentDetails.getOwnerNames()) {
+            Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+            if (ownerNameItr.hasNext()) {
+                final OwnerName owner = ownerNameItr.next();
+                ownerName = owner.getOwnerName() != null ? owner.getOwnerName() : ownerName;
+            }
+        }
+        return ownerName;
+    }
+    
+    private String getPropertyAddress(final WaterConnectionDetails waterConnectionDetails) {
+        String propAddress =  "";
+        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS);
+        if(null != assessmentDetails) {
+            propAddress = assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : propAddress;
+        }
+        return propAddress;
     }
 }
