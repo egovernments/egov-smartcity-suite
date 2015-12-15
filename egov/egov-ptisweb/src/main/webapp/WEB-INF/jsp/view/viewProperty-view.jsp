@@ -101,7 +101,7 @@
 				<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 				<s:if test="%{basicProperty.upicNo!=null}">
 				<s:if test="%{!property.getIsExemptedFromTax() && (isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) ||
-					roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()))}">
+					roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase()))}">
 					<div align="center">
 						<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 						<span style="font-size:15px; color:red ">										

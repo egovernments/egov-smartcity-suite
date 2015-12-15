@@ -145,7 +145,7 @@
 							</tr>
 							
 							<tr>
-							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase())}">
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:right">
 										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
