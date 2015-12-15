@@ -142,6 +142,9 @@ public class DigitalSignatureConnectionController {
             String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
             if(null != applicationNumber && !applicationNumber.isEmpty()) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+                if(null == approvalPosition) {
+                    approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
+                }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode,
                         null);
