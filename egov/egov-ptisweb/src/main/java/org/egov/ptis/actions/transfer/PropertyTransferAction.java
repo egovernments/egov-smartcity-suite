@@ -45,9 +45,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
@@ -59,7 +59,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -296,8 +295,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/view")
     public String view() {
         final String currState = propertyMutation.getState().getValue();
+        final String nextAction = propertyMutation.getState().getNextAction();
         final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesignation)
+        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(MUTATION_WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.equals(WFLOW_ACTION_NEW)) {
             mode = EDIT;
             return EDIT;
@@ -360,7 +360,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (mode.equals(EDIT)) {
             validate();
             if (hasErrors()) {
-                mode = EDIT;
+                mode = EDIT;  
                 return EDIT;
             }
             transitionWorkFlow(propertyMutation);
@@ -590,7 +590,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("notexists.position"));
             }
         }
-
         super.validate();
     }
 
