@@ -45,7 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
@@ -297,7 +297,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String currState = propertyMutation.getState().getValue();
         final String nextAction = propertyMutation.getState().getNextAction();
         final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
-        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(MUTATION_WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING)
+        if (currState.endsWith(WF_STATE_REJECTED) || (nextAction!=null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 || currState.equals(WFLOW_ACTION_NEW)) {
             mode = EDIT;
             return EDIT;

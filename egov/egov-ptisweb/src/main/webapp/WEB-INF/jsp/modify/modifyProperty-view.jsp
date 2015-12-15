@@ -75,13 +75,14 @@
 
 			function onSubmit() {
 				var actionName = document.getElementById('workFlowAction').value;
+				var nextAction = '<s:property value="%{model.state.nextAction}"/>'; 
 				var action = null;
 				var userDesg = '<s:property value="%{userDesgn}"/>';
 				var state = '<s:property value="%{model.state.value}"/>';
 				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT}"/>' 
 						|| userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT}"/>'
-						|| userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN}"/>'
+						|| (nextAction != null && nextAction == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING}"/>')
 						|| state == 'Alter:Rejected') {
 						action = 'modifyProperty-forward.action';
 					} else {
@@ -105,7 +106,7 @@
 					window.open("../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=modify&actionType="+actionName, 'NoticeWindow', params);
 					return false;
 				}
-				document.forms[0].action = action;
+				document.forms[0].action = action; 
 				document.forms[0].submit;
 				return true;
 			}
@@ -233,13 +234,14 @@
 						</s:elseif>
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
+					<s:if test="%{(model.state.nextAction!=null && 
+						@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(model.state.nextAction)) ||
 						((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) ||
 						@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
 							&& !model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
 						<tr>
 							<%@ include file="../modify/modifyPropertyForm.jsp"%>
-						</tr>
+						</tr> 
 					</s:if>
 					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||

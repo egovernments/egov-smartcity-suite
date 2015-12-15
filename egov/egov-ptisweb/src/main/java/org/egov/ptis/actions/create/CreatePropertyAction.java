@@ -64,7 +64,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -77,6 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.math.BigDecimal;
@@ -460,7 +460,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + userDesgn);
         final String currState = property.getState().getValue();
         populateFormData();
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)
+        if (currState.endsWith(WF_STATE_REJECTED) 
+                || (property.getState().getNextAction()!=null && property.getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             mode = EDIT;
             return RESULT_NEW;
@@ -1042,7 +1043,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             if (!StringUtils.isBlank(houseNumber))
                 validateHouseNumber(wardId, houseNumber, basicProp);
-            else if (null != userDesgn && userDesgn.equals(REVENUE_INSPECTOR_DESGN))
+            else if (property.getState().getNextAction()!=null && property.getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 addActionError(getText("mandatory.doorNo"));
 
         if (!property.getPropertyDetail().isStructure()) {
