@@ -97,10 +97,21 @@
 												</tr>
 											</c:forEach>
 										</c:when>
+										<c:otherwise>
+											<tr>
+												<td colspan="6" align="center">
+													<spring:message code="lbl.digitalSignature.norecord"/>
+												</td>
+											</tr>
+										</c:otherwise>
 									</c:choose>		
 								</table>
 								<div class="text-center">
-									<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature()">Approve</button>
+									<c:choose>
+										<c:when test="${!digitalSignatureReportList.isEmpty()}">
+											<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature()">Approve</button>
+										</c:when>
+									</c:choose>
 									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a> 
 								</div> 
 							</div>
