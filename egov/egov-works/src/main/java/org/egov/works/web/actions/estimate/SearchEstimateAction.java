@@ -917,7 +917,8 @@ public class SearchEstimateAction extends SearchFormAction {
         final Assignment assignment = assignmentService.getPrimaryAssignmentForEmployeeByToDate(
                 worksService.getCurrentLoggedInUserId(),
                 new Date());
-        setLoginUserDeptName(assignment.getDepartment().getName());
+        if (assignment != null)
+            setLoginUserDeptName(assignment.getDepartment().getName());
     }
 
     // Get the roles for the logged in user
