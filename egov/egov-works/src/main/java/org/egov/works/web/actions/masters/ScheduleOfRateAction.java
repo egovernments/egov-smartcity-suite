@@ -167,7 +167,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         populateRates();
         populateMarketRates();
         getPersistedRateDetails(scheduleOfRate);
-        if(mode.equals(WorksConstants.EDIT)) {
+        if(mode != null && mode.equals(WorksConstants.EDIT)) {
             getRateDetailsForSORId(true);
             getRateDetailsForSORIdForREValidation(true);
         }
