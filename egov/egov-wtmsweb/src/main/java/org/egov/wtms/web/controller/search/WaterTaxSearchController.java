@@ -224,6 +224,21 @@ public class WaterTaxSearchController {
             }
         return userRole;
     }
+    @ModelAttribute("billcollectionRole")
+    public String getBillOperatorUserRole() {
+        String userRole = "";
+        User currentUser = null;
+        if (EgovThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_BILLCOLLECTOR)) {
+                userRole = userrole.getName();
+                break;
+            }
+        return userRole;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String newSearchForm(final Model model) {

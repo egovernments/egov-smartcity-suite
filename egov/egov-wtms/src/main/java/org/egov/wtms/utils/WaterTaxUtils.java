@@ -456,7 +456,7 @@ public class WaterTaxUtils {
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
-
+//allowing only for CollectionOperator to collect Fees
     @ModelAttribute(value = "checkOperator")
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
@@ -465,8 +465,7 @@ public class WaterTaxUtils {
             final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
-                    if (role != null && role.getName().contains(WaterTaxConstants.ROLE_CSCOPERTAOR) || role != null
-                            && role.getName().contains(WaterTaxConstants.ROLE_ULBOPERATOR)) {
+                    if (role != null && (role.getName().contains(WaterTaxConstants.ROLE_BILLCOLLECTOR) )) {
                         isCSCOperator = true;
                         break;
                     }

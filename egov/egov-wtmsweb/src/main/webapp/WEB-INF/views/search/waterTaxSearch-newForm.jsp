@@ -70,6 +70,8 @@
 					<input type="hidden"  id="approverUserRole" value="${approverUserRole}" />
 					<input type="hidden"  id="operatorRole" value="${operatorRole}" />
 					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
+					<input type="hidden"  id="billcollectionRole" value="${billcollectionRole}" />
+					
 					
 			<c:if test="${!citizenRole }" >
 					<div class="form-group">
