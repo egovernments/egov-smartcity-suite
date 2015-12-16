@@ -56,6 +56,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRE
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -132,6 +133,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         String userDesgn = "";
         final String currState = property.getState().getValue();
+        final String nextAction = property.getState().getNextAction();
         final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
         if (null != designation)
             userDesgn = designation.getName();
@@ -143,7 +145,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         model.addAttribute("userDesgn", userDesgn);
         model.addAttribute("designation", COMMISSIONER_DESGN);
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)
+        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("mode", EDIT);
             return DEMOLITION_FORM;

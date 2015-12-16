@@ -6,7 +6,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -15,6 +14,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import java.util.List;
 
@@ -95,6 +95,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
         String userDesgn = "";
         final String currState = property.getState().getValue();
+        final String nextAction = property.getState().getNextAction();
         final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
         if (null != designation)
             userDesgn = designation.getName();
@@ -105,8 +106,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         model.addAttribute("userDesgn", userDesgn);
         model.addAttribute("designation", COMMISSIONER_DESGN);
         taxExemptionService.addModelAttributes(model, property.getBasicProperty());
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)
-                || currState.endsWith(WFLOW_ACTION_NEW)) {
+        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
+                || currState.endsWith(WFLOW_ACTION_NEW)) { 
             model.addAttribute("mode", EDIT);
             return TAX_EXEMPTION_FORM;
         } else {
