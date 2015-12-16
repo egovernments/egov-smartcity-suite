@@ -170,8 +170,7 @@
 		<strutstestcase-version>2.1.4-1.2-2.4</strutstestcase-version>
 		<dbunit-version>2.2.3</dbunit-version>
 		<hamcrest-all-version>1.3</hamcrest-all-version>
-		<slf4j-api-version>1.7.7</slf4j-api-version>
-		<jcl-over-slf4j-version>1.7.7</jcl-over-slf4j-version>
+		<slf4j-version>1.7.7</slf4j-version>
 		<log4j-version>1.2.17</log4j-version>
 		<google-guava-version>19.0-rc3</google-guava-version>
 	</properties>
@@ -845,12 +844,18 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j-api-version}</version>
+				<version>${slf4j-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-nop</artifactId>
+				<version>${slf4j-version}</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>${jcl-over-slf4j-version}</version>
+				<version>${slf4j-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>log4j</groupId>
@@ -1128,6 +1133,10 @@
 
 		<!-- LOGGING END -->
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
@@ -1225,10 +1234,6 @@
 				<version>2.5</version>
 				<configuration>
 					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-					<manifest>
-						<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						<addClasspath>true</addClasspath>
-					</manifest>
 					<archive>
 						<manifestEntries>
 							<Specification-Title>${project.name}</Specification-Title>
