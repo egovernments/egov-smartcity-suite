@@ -72,10 +72,9 @@ function generateNotice(obj, actionName, currentState){
 		return false; 
 	} 
 	else {
-		//window.location = "/wtms/digitalSignature/waterTax/signWorkOrder?pathVar="+applicationNumber+"&workFlowAction="+actionName;
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber,
 			target: '_self'
 		})
 		.appendTo(document.body).submit();
@@ -96,7 +95,6 @@ function signAllPendingDigitalSignature() {
 				idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value;
 			}
 		}
-		//window.location = "/wtms/digitalSignature/waterTax/signWorkOrder?pathVar=" + idArray.toString()+"&actionName=sign_all";
 		$('<form>.').attr({
 			method: 'post',
 			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
