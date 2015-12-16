@@ -143,7 +143,11 @@ public class DigitalSignatureConnectionController {
             if(null != applicationNumber && !applicationNumber.isEmpty()) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
                 if(null == approvalPosition) {
-                    approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
+                    approvalPosition = Long.parseLong(request.getParameter("approvalPosition"));
+                }
+                Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
+                if(null != isDigSignPending && isDigSignPending) {
+                    workFlowAction = request.getParameter("workFlowAction");
                 }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode,
@@ -223,6 +227,9 @@ public class DigitalSignatureConnectionController {
             request.getSession().setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
             model.addAttribute("fileStoreIds", fileStoreIds.toString());
             model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute("workFlowAction", request.getParameter("workFlowAction"));
+            model.addAttribute("isDigSignPending", request.getParameter("isDigSignPending"));
         }
         return "newConnection-digitalSignatureRedirection";
     }
@@ -260,6 +267,10 @@ public class DigitalSignatureConnectionController {
                             tempMap.put("waterConnectionDetails", waterConnectionDetails);
                             tempMap.put("ownerName", getOwnerName(waterConnectionDetails));
                             tempMap.put("propertyAddress", getPropertyAddress(waterConnectionDetails));
+                            Long approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
+                                    waterConnectionDetails, null,
+                                    waterConnectionDetails.getApplicationType().getCode(), "", "");
+                            tempMap.put("approvalPosition", approvalPosition);
                             resultList.add(tempMap);
                         }
                     }

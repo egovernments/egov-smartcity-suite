@@ -46,12 +46,28 @@
 	 	jQuery(document).ready( function() {
 	 		var fileStoreIds = '${fileStoreIds}';
 	 		var ulbCode = '${ulbCode}';
+	 		var approvalPosition = '${approvalPosition}';
+	 		var workFlowAction = '${workFlowAction}';
+	 		var isDigSignPending = '${isDigSignPending}';
 	 		var callBackUrl = '/wtms/digitalSignature/waterTax/transitionWorkflow';
 			jQuery('<form>.').attr({
 				method: 'post',
 				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=WTMS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
+				//action: callBackUrl+'?fileStoreId='+fileStoreIds+'&moduleName=WTMS&ulbCode='+ulbCode,
 				target: '_self'
-			})
+			}).append($('<input>', {
+				'name' : 'approvalPosition',
+				'value' : approvalPosition,
+				'type' : 'hidden'
+			})).append($('<input>', {
+				'name' : 'workFlowAction',
+				'value' : workFlowAction,
+				'type' : 'hidden'
+			})).append($('<input>', {
+				'name' : 'isDigSignPending',
+				'value' : isDigSignPending,
+				'type' : 'hidden'
+			}))
 			.appendTo(document.body).submit();
 		});
 		

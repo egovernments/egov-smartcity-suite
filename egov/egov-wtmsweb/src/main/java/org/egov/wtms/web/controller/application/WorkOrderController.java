@@ -100,6 +100,10 @@ public class WorkOrderController {
             final HttpSession session) {
         final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(request.getParameter("pathVar"));
         workFlowAction = (String)session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
+        Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
+        if(isDigSignPending) {
+            workFlowAction = request.getParameter("workFlowAction");
+        }
         if (null != workFlowAction && !workFlowAction.isEmpty() && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
             validateWorkOrder(connectionDetails, true);
         }

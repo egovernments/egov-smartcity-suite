@@ -80,6 +80,7 @@
 														<c:out value="${record.type}"/>
 										 				<input type="hidden" id="objectId" name="objectId" value="${record.objectId}" />
 										 				<input type="hidden" id="currentState" name="currentState" value="${record.status}" />
+										 				<input type="hidden" id="approvalPosition" name="approvalPosition" value="${record.approvalPosition}" />
 										 			</td>
 										 			<td class="blueborderfortd" >	
 										 				<c:out value="${record.hscNumber}"/>	
@@ -109,7 +110,7 @@
 								<div class="text-center">
 									<c:choose>
 										<c:when test="${!digitalSignatureReportList.isEmpty()}">
-											<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature()">Approve</button>
+											<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature('Sign')">Approve</button>
 										</c:when>
 									</c:choose>
 									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a> 

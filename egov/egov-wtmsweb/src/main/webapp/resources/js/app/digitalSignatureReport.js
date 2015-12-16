@@ -67,21 +67,23 @@ function generateNotice(obj, actionName, currentState){
 	var type = currentState.split(":");
 	var url = "";
 	if (actionName == 'Preview') {
-		url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&digSign=Y";
+		url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
 		window.open(url, "NoticeWindow", params);
 		return false; 
 	} 
 	else {
+		var approvalPosition = $("#approvalPosition").val();
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber,
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber+'&approvalPosition='+approvalPosition+'&workFlowAction='+actionName+"&isDigSignPending=true",
 			target: '_self'
 		})
 		.appendTo(document.body).submit();
+		return false; 
 	}
 }
 
-function signAllPendingDigitalSignature() {
+function signAllPendingDigitalSignature(actionName) {
 	if (jQuery('#digSignDetailsTab').find('input[type=checkbox]:checked').length == 0) {
 		alert('Please select atleast one document to sign');
 		return false;
@@ -95,9 +97,10 @@ function signAllPendingDigitalSignature() {
 				idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value;
 			}
 		}
+		var approvalPosition = $("#approvalPosition").val();
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString()+'&approvalPosition='+approvalPosition+'&workFlowAction='+actionName+"&isDigSignPending=true",
 			target: '_self'
 		})
 		.appendTo(document.body).submit();
