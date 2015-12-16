@@ -39,8 +39,11 @@
  */
 package org.egov.wtms.utils.constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
@@ -240,6 +243,18 @@ public class WaterTaxConstants {
             put(WATERTAX_FIELDINSPECTION_CHARGE, "1100201");
             put(WATERTAXREASONCODE, "1405016");
 
+        }
+    };
+    // List for GLCodes for Current Taxes
+    public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -6532281844201057959L;
+
+        {
+            for (final Map.Entry<String, String> glCode : GLCODEMAP_FOR_CURRENTTAX.entrySet())
+                add(glCode.getValue());
         }
     };
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";

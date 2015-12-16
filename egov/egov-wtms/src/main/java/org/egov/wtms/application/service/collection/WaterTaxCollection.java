@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service.collection;
 
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,6 +70,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.application.rest.CollectionApportioner;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
@@ -200,7 +202,6 @@ public class WaterTaxCollection extends TaxCollection {
                 dmdRsn = dmdDtls.getEgDemandReason();
                 installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
                 demandDetailByReason = new HashMap<String, EgDemandDetails>();
-
                 if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
                     demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
                     installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
@@ -219,7 +220,6 @@ public class WaterTaxCollection extends TaxCollection {
                     String[] installsplit=desc[1].split("#") ;
                     final String reason = desc[0].trim();
                     final String instDesc = installsplit[0].trim();
-
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
                     demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                     if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
@@ -327,6 +327,63 @@ public class WaterTaxCollection extends TaxCollection {
         waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
     }
 
+    @Override
+    @Transactional
+    public void apportionCollection(String billRefNo, BigDecimal amtPaid, List<ReceiptDetail> receiptDetails) {
+        boolean isEligibleForCurrentRebate = false;
+        boolean isEligibleForAdvanceRebate = false;
+
+        /*if (isRebatePeriodActive()) {
+            isEligibleForCurrentRebate = true;
+        }
+         */
+        CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
+                isEligibleForAdvanceRebate, BigDecimal.ZERO);
+        Map<String, BigDecimal> instDemand = getInstDemand(receiptDetails);
+        apportioner.apportion(amtPaid, receiptDetails, instDemand);
+    }
+    public Map<String, BigDecimal> getInstDemand(List<ReceiptDetail> receiptDetails) {
+        Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        String installment = "";
+        String[] desc;
+
+        for (ReceiptDetail rd : receiptDetails) {
+            String glCode = rd.getAccounthead().getGlcode();
+            installment = "";
+            desc = rd.getDescription().split("-", 2);
+            String[] installsplit=desc[1].split("#") ;
+            installment = installsplit[0].trim();
+            
+            if ( WaterTaxConstants.GLCODEMAP_FOR_CURRENTTAX.containsValue(glCode)) {
+
+                if (retMap.get(installment) == null) {
+                    retMap.put(installment, rd.getCramountToBePaid());
+                } else {
+                    retMap.put(installment, retMap.get(installment).add(rd.getCramountToBePaid()));
+                }
+            }
+            if (WaterTaxConstants.GLCODES_FOR_CURRENTTAX.contains(glCode) ) {
+                prepareTaxMap(retMap, installment, rd, "FULLTAX");
+            } /*else if (PropertyTaxConstants.GLCODE_FOR_ADVANCE.equalsIgnoreCase(glCode)) {
+                prepareTaxMap(retMap, installment, rd, "ADVANCE");
+            }*/
+        }
+                 return retMap;
+    }
+    
+    /**
+     * @param retMap
+     * @param installment
+     * @param rd
+     */
+    private void prepareTaxMap(Map<String, BigDecimal> retMap, String installment, ReceiptDetail rd, String type) {
+        if (retMap.get(installment + type) == null) {
+            retMap.put(installment + type, rd.getCramountToBePaid());
+        } else {
+            retMap.put(installment + type, retMap.get(installment + type).add(rd.getCramountToBePaid()));
+        }
+    }
+    
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
         // TODO Auto-generated method stub

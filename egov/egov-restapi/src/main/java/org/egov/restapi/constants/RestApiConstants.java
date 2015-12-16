@@ -197,7 +197,7 @@ public class RestApiConstants {
         public static final String THIRD_PARTY_ERR_MSG_CONSUMER__NO_REQUIRED = "Cosumer Code is required";
         
         public static final String THIRD_PARTY_ERR_CODE_DEMAND_AMOUNT_VALID = "WTMS-REST-11";
-        public static final String THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID= "Entered TotalAmount is not Valid";
+        public static final String THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID= "Paid Amount is greater than Total Amount to be paid";
         
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "WTMS-REST-13";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION__NO_REQUIRED = "Either Cosumer Code or Application number is required";

@@ -355,13 +355,15 @@ public class WaterTaxExternalService {
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
 
+        new WaterTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
+        
         for (final EgBillDetails billDet : bill.getEgBillDetails())
             for (final ReceiptDetail rd : receiptDetails)
                 // FIX ME
                 if (billDet.getGlcode().equals(rd.getAccounthead().getGlcode())
                         && billDet.getDescription().equals(rd.getDescription())) {
                     final BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
-                            billDet.getOrderNo(), rd.getCramountToBePaid(), rd.getDramount(),
+                            billDet.getOrderNo(),rd.getCramount(), rd.getDramount(),
                             billDet.getFunctionCode(), billDet.getDescription(), null);
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
@@ -500,7 +502,7 @@ public class WaterTaxExternalService {
         bill.setLastDate(billObj.getBillLastDueDate());
         bill.setModule(billObj.getModule());
         bill.setOverrideAccountHeadsAllowed(billObj.getOverrideAccountHeadsAllowed());
-        bill.setPartPaymentAllowed(billObj.getPartPaymentAllowed());
+        bill.setPartPaymentAllowed(Boolean.TRUE);
         bill.setServiceCode(billObj.getServiceCode());
         bill.setIs_Cancelled("N");
         bill.setIs_History("N");
@@ -526,7 +528,7 @@ public class WaterTaxExternalService {
         }
 
         bill.setConsumerId(billObj.getConsumerId());
-        bill.setCallBackForApportion(billObj.isCallbackForApportion());
+        bill.setCallBackForApportion(Boolean.TRUE);
         egBillDAO.create(bill);
         return bill;
     };
