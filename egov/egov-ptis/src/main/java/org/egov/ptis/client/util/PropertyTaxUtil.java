@@ -2341,7 +2341,7 @@ public class PropertyTaxUtil {
     public String getApproverUserName(final Long approvalPosition) {
         Assignment assignment = null;
         if (approvalPosition != null)
-            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+            assignment = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
         return assignment != null ? assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) : "";
     }
 
