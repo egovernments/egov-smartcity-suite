@@ -67,10 +67,6 @@
 			alert("Invalid Date! Start date is greater than current date");
 			return false;
 		}
-		if(!validateDate(toDate)){
-			alert("Invalid Date! End date is greater than current date");
-			return false;
-		}
 		if (Date.parse(fromDate) > Date.parse(toDate)) {
 			alert("Invalid Date Range! Start Date should be less than End Date!")
 			return false;

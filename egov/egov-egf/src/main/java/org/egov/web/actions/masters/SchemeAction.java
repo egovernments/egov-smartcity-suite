@@ -185,6 +185,7 @@ public class SchemeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(".................................Scheme Modified Successfully......................");
         addActionMessage(getText("Scheme Modified Successfully"));
+        mode = "";
         return NEW;
     }
 
@@ -210,6 +211,7 @@ public class SchemeAction extends BaseFormAction {
         addActionMessage(getText("Scheme Created Successfully"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("SchemeAction  | Scheme Created successfully");
+        mode = "";
         return NEW;
     }
 
