@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -158,5 +159,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query(" select ASSIGN from Assignment ASSIGN where ASSIGN.designation.id=:designationId and "
             + " ASSIGN.employee.active=true and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date order by ASSIGN.primary desc")
     public List<Assignment> getAllActiveAssignments(@Param("designationId") final Long designationId);
-
+    
+    @Query("select assignment.employee from Assignment assignment where  assignment.employee.active=true and assignment.designation.name in (:designation)")
+    public Set<User> getUsersByDesignations(@Param("designation") final String[] designation);
 }
