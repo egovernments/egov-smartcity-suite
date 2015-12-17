@@ -78,7 +78,7 @@
 		<![endif]-->
 	</head>
 	<body class="page-body index">
-		<div class="page-container" id="page-container">
+		<div class="page-container">
 			<header class="navbar navbar-fixed-top">
 				<!-- set fixed position by adding class "navbar-fixed-top" -->
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">

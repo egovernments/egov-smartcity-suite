@@ -38,6 +38,9 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <style>
+html,body{
+	background:#fff;
+}
 .page-container .main-content{
     position: absolute;
     height: calc(100%);
