@@ -116,16 +116,16 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
     public String getReceiptHeaderforDishonor(String mode, Long bankAccId,  Long bankId, String chequeDDNo,String chqueDDDate) {
         final StringBuilder sb = new StringBuilder(300);
         final List<Object> paramList = new ArrayList<Object>();
-        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
+        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egf_instrumenttype it,egw_status status,bank b,"
         		+ "bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
-        		+ "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '"+mode+"' AND ((ih.ispaycheque ='0' AND status.moduletype ='Instrument' "
+        		+ "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = it.id and it.type  = '"+mode+"' AND ((ih.ispaycheque ='0' AND status.moduletype ='Instrument' "
         		+ "AND status.description = 'Deposited') OR (ih.ispaycheque = '1' AND status.moduletype = 'Instrument' AND status.description = 'New'))") ;
        /* sb.append("from org.egov.collection.entity.ReceiptHeader rpt join "
             + "rpt.receiptInstrument ih where ih.instrumentType.type=? "
             + "and ((ih.isPayCheque=0 and ih.statusId.moduletype='Instrument' and ih.statusId.description='Deposited') or "
             + "(ih.isPayCheque=1 and ih.statusId.moduletype='Instrument' and ih.statusId.description='New'))");*/
         
-        if (bankAccId != null && bankAccId != 0) {
+        if (bankAccId != null && bankAccId != 0 && bankAccId != -1) {
             sb.append(" AND ih.bankaccountid="+ bankAccId+"");
         }
         if ((bankAccId == null || bankAccId == 0) && bankId != null
