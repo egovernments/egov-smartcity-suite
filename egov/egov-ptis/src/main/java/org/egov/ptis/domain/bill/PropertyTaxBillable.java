@@ -89,13 +89,16 @@ import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 /**
  * @author satyam
  */
 @Service("propertyTaxBillable")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
         RebateCalculator {
 
