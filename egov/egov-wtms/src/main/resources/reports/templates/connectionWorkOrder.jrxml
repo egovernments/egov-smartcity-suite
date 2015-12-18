@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2015-12-18T19:22:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1343"/>
+	<property name="ireport.y" value="528"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="municipality" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="conntitle" class="java.lang.String"/>
@@ -15,19 +19,21 @@
 	<parameter name="workorderdate" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="consumerNumber" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="workFlowAction" class="java.lang.String"/>
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
 				<reportElement x="7" y="5" width="540" height="349" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="7" y="379" width="540" height="372" uuid="2781f9f9-9612-497c-85d7-5e83a8d360fa"/>
+				<reportElement x="7" y="379" width="540" height="400" uuid="2781f9f9-9612-497c-85d7-5e83a8d360fa"/>
 			</rectangle>
 			<rectangle>
 				<reportElement x="19" y="75" width="517" height="267" uuid="27a98bab-d01e-4a95-adf7-8e0ef5518dd2"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="19" y="443" width="517" height="296" uuid="8ebea2f7-0232-41c1-be72-1826d5ac648b"/>
+				<reportElement x="19" y="443" width="517" height="324" uuid="8ebea2f7-0232-41c1-be72-1826d5ac648b"/>
 			</rectangle>
 		</band>
 	</background>
@@ -148,7 +154,7 @@
 				<text><![CDATA[** With Orders of ChairPerson / Mayor **]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="381" y="669" width="100" height="15" uuid="8904d45b-df45-4f19-b7ba-604475d26b2c"/>
+				<reportElement x="381" y="700" width="100" height="15" uuid="8904d45b-df45-4f19-b7ba-604475d26b2c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -162,7 +168,7 @@
 				<text><![CDATA[Note : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="34" y="725" width="237" height="15" uuid="88964dfb-0561-435d-a276-8d2e878cde6a"/>
+				<reportElement x="34" y="749" width="237" height="15" uuid="88964dfb-0561-435d-a276-8d2e878cde6a"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
@@ -248,7 +254,7 @@
 				<textFieldExpression><![CDATA["2. Municipal Assistant Engineer / Municipal Engineer Recommendation Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{workorderdate}+"</style>."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="337" y="687" width="164" height="15" uuid="118495f4-42f7-4cec-82b3-057977c90130"/>
+				<reportElement x="337" y="720" width="164" height="15" uuid="118495f4-42f7-4cec-82b3-057977c90130"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -303,6 +309,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA["HSC Number : <style isBold=\"true\">"+$P{consumerNumber}+"</style>"]]></textFieldExpression>
 			</textField>
+			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+				<reportElement x="334" y="641" width="171" height="51" uuid="d476b9bb-dda4-4360-acd5-0ee1f65f4f15"/>
+				<imageExpression><![CDATA[($P{workFlowAction} == "Sign") ? ReportUtil.getUserSignature($P{userId}) : null]]></imageExpression>
+			</image>
 		</band>
 	</detail>
 </jasperReport>

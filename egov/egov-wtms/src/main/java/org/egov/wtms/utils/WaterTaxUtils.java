@@ -50,7 +50,6 @@ import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -59,10 +58,8 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
@@ -108,15 +105,8 @@ public class WaterTaxUtils {
     private AssignmentService assignmentService;
 
     @Autowired
-    private EmployeeService employeeService;
-    @Autowired
     private DesignationService designationService;
 
-    @Autowired
-    private BoundaryTypeService boundaryTypeService;
-
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
     @Autowired
     private DepartmentService departmentService;
 
@@ -565,8 +555,11 @@ public class WaterTaxUtils {
                 if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
                     reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
                     reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                    User user = securityUtils.getCurrentUser();
+                    reportParams.put("userId", user.getId());
                 }
             }
+            reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", propAddress);

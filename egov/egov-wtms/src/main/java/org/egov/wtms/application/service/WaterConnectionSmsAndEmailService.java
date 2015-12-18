@@ -72,9 +72,13 @@ public class WaterConnectionSmsAndEmailService {
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
 
-        final Iterator<OwnerName> ownerNameItr = assessmentDetailsfullFlag.getOwnerNames().iterator();
+        Iterator<OwnerName> ownerNameItr = null;
+        
+        if(null != assessmentDetailsfullFlag.getOwnerNames()) {
+            ownerNameItr = assessmentDetailsfullFlag.getOwnerNames().iterator();
+        }
         final StringBuilder consumerName = new StringBuilder();
-        if (ownerNameItr.hasNext()) {
+        if (null != ownerNameItr && ownerNameItr.hasNext()) {
             consumerName.append(ownerNameItr.next().getOwnerName());
             while (ownerNameItr.hasNext())
                 consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));

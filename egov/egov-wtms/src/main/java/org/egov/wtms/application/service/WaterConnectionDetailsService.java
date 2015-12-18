@@ -59,7 +59,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -162,9 +161,6 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private AssignmentService assignmentService;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
 
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
@@ -729,13 +725,16 @@ public class WaterConnectionDetailsService {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
-        final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        Iterator<OwnerName> ownerNameItr = null;
+        if(null != assessmentDetails.getOwnerNames()) {
+            ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        }
         final StringBuilder consumerName = new StringBuilder();
         final StringBuilder mobileNumber = new StringBuilder();
         Assignment assignment = null;
         User user = null;
         final StringBuilder aadharNumber = new StringBuilder();
-        if (ownerNameItr.hasNext()) {
+        if (null != ownerNameItr && ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
             consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : "");
             mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : "");
