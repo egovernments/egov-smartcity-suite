@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-12-18T18:27:57 -->
+<!-- 2015-12-18T18:59:48 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="125"/>
@@ -41,7 +41,7 @@
 		<parameterDescription><![CDATA[The Source]]></parameterDescription>
 		<defaultValueExpression><![CDATA["ALL"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="EGOV_SERVICE_ID" class="java.lang.String">
+	<parameter name="EGOV_SERVICE_ID" class="java.lang.Long">
 		<parameterDescription><![CDATA[The Service]]></parameterDescription>
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
 	</parameter>
@@ -51,7 +51,7 @@
 	</parameter>
 	<parameter name="Q_SERVICE_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for service id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "" : "AND SER.ID = " + $P{EGOV_SERVICE_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "" : "AND EGCL_COLLECTIONHEADER.SERVICEDETAILS = " + $P{EGOV_SERVICE_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_STATUS_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for status id]]></parameterDescription>
@@ -117,6 +117,9 @@ ORDER BY
 	<field name="DEPARTMENT_NAME" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="SERVICE_NAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="INSTRUMENT_TYPE" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -139,9 +142,6 @@ ORDER BY
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="SOURCE" class="java.lang.String"/>
-	<field name="SERVICE_NAME" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
 	<variable name="TOTAL_CASH_AMOUNT" class="java.math.BigDecimal" resetType="Group" resetGroup="DEPT_PAYMENT_MODE" calculation="Sum">
 		<variableExpression><![CDATA[$F{CASH_AMOUNT}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -199,7 +199,7 @@ ORDER BY
 					<text><![CDATA[Cash]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="122" y="30" width="78" height="30" uuid="53c76467-a0cc-48d0-9403-794ad78f183f"/>
+					<reportElement x="122" y="30" width="98" height="30" uuid="53c76467-a0cc-48d0-9403-794ad78f183f"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -227,7 +227,7 @@ ORDER BY
 					<text><![CDATA[Receipt Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="200" y="30" width="100" height="30" uuid="fb4e967a-50a0-4689-a162-030fbfb31ee6"/>
+					<reportElement x="220" y="30" width="80" height="30" uuid="fb4e967a-50a0-4689-a162-030fbfb31ee6"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -564,7 +564,7 @@ ORDER BY
 	<detail>
 		<band height="22" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="122" y="0" width="78" height="20" isPrintWhenDetailOverflows="true" uuid="9cc6cac4-7d24-4e1c-b798-101d85e19a99"/>
+				<reportElement stretchType="RelativeToTallestObject" x="122" y="0" width="98" height="20" isPrintWhenDetailOverflows="true" uuid="9cc6cac4-7d24-4e1c-b798-101d85e19a99"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -690,7 +690,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{SERVICE_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0">
-				<reportElement stretchType="RelativeToTallestObject" x="200" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="9a6c8f3b-4651-4467-b105-c1a73a38e7a2"/>
+				<reportElement stretchType="RelativeToTallestObject" x="220" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="9a6c8f3b-4651-4467-b105-c1a73a38e7a2"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
