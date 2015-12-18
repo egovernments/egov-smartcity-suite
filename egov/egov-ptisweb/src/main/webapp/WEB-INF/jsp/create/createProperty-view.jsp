@@ -187,15 +187,16 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if>
-					
-					<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+					<s:if test="%{!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-						</tr>
+						</tr> 
 					</s:if>
 				</table>
 				<br/>
-				<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+				<s:if test="%{(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+				     model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>
