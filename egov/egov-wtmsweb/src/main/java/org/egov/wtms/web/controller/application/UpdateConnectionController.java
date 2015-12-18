@@ -503,7 +503,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             // final String nextUser =
             // waterTaxUtils.getApproverUserName(approvalPosition);
             String nextDesign = "";
-            if (approvalPosition != null)
+            if (approvalPosition != null && employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition)!=null)
                 nextDesign = assignmentService
                 .getPrimaryAssignmentForEmployee(
                                 employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId())
