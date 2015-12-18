@@ -500,16 +500,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                         waterConnectionDetails);
             final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                     .getCurrentUser().getId(), new Date(), new Date());
-            // final String nextUser =
-            // waterTaxUtils.getApproverUserName(approvalPosition);
             String nextDesign = "";
-
         	Assignment assignObj=null;
             List<Assignment> asignList=null;
-            //TODO: sushant:not able to understand this code : to get Employee object primary getPrimaryAssignmentEmployeeForPos() API again getPrimaryAssignmentForEmployee() API..check this properly  
-            if (approvalPosition != null && assignmentService.getPrimaryAssignmentForPositon(approvalPosition)!=null)
-            	 assignObj=assignmentService.getPrimaryAssignmentForEmployee(
-                                employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId());
+            if (approvalPosition != null )
+            	 assignObj=assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
             if(assignObj!=null )
             {
             	asignList=new ArrayList<Assignment>();
@@ -519,12 +514,8 @@ public class UpdateConnectionController extends GenericConnectionController {
             {
             	asignList= assignmentService.getAssignmentsForPosition(approvalPosition,new Date());
             }
-             nextDesign = asignList.get(0).getDesignation().getName();
-             if (approvalPosition != null && assignmentService.getPrimaryAssignmentForPositon(approvalPosition)!=null)
-                nextDesign = assignmentService
-                .getPrimaryAssignmentForEmployee(
-                                employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId())
-                        .getDesignation().getName();
+             nextDesign = (!asignList.isEmpty()?asignList.get(0).getDesignation().getName():"");
+             
 		final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
