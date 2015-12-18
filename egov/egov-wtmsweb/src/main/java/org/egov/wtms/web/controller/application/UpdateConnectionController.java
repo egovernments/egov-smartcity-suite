@@ -503,11 +503,22 @@ public class UpdateConnectionController extends GenericConnectionController {
             // final String nextUser =
             // waterTaxUtils.getApproverUserName(approvalPosition);
             String nextDesign = "";
-            if (approvalPosition != null && employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition)!=null)
-                nextDesign = assignmentService
-                .getPrimaryAssignmentForEmployee(
-                                employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId())
-                        .getDesignation().getName();
+        	Assignment assignObj=null;
+            List<Assignment> asignList=null;
+            //TODO: sushant:not able to understand this code : to get Employee object primary getPrimaryAssignmentEmployeeForPos() API again getPrimaryAssignmentForEmployee() API..check this properly  
+            if (approvalPosition != null)
+            	 assignObj=assignmentService.getPrimaryAssignmentForEmployee(
+                                employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId());
+            if(assignObj!=null )
+            {
+            	asignList=new ArrayList<Assignment>();
+            	asignList.add(assignObj);
+            }
+            else if(assignObj==null)
+            {
+            	asignList= assignmentService.getAssignmentsForPosition(approvalPosition,new Date());
+            }
+             nextDesign = asignList.get(0).getDesignation().getName();
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","

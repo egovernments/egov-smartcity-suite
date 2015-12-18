@@ -749,11 +749,22 @@ public class WaterConnectionDetailsService {
             }
 
         }
+        List<Assignment> asignList=null;
         if (waterConnectionDetails.getState() != null && waterConnectionDetails.getState().getOwnerPosition() != null) {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(waterConnectionDetails.getState().getOwnerPosition()
                     .getId(),new Date());
-            if (assignment != null && assignment.getEmployee() != null)
-                user = userService.getUserById(assignment.getEmployee().getId());
+            if(assignment!=null )
+            {
+            	asignList=new ArrayList<Assignment>();
+            	asignList.add(assignment);
+            }
+            else if(assignment==null)
+            {
+            	asignList= assignmentService.getAssignmentsForPosition(waterConnectionDetails.getState().getOwnerPosition()
+                        .getId(),new Date());
+            }
+            if (!asignList.isEmpty())
+            	user = userService.getUserById(asignList.get(0).getEmployee().getId());
         }
         else {
             user = securityUtils.getCurrentUser();

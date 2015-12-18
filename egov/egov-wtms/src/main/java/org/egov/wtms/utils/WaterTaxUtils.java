@@ -312,9 +312,14 @@ public class WaterTaxUtils {
         if (commissionerDesgn.equals("Commissioner")) {
             final Department deptObj = departmentService
                     .getDepartmentByName(WaterTaxConstants.ROLE_COMMISSIONERDEPARTEMNT);
-            return assignmentService
-                    .getPositionsByDepartmentAndDesignationForGivenRange(deptObj.getId(), desgnObj.getId(), new Date())
-                    .get(0).getPosition();
+            List<Assignment> assignlist=null;
+            assignlist=	assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),new Date());
+            if(assignlist.isEmpty())
+            	 assignlist=	assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(), new Date());
+            if(assignlist.isEmpty())
+            	assignlist=assignmentService.getAllActiveAssignments(desgnObj.getId());
+           
+            return assignlist.get(0).getPosition();
         } else
             return !assignmentService.findPrimaryAssignmentForDesignationName(commdesgnname).isEmpty() ? assignmentService
                     .findPrimaryAssignmentForDesignationName(commdesgnname).get(0).getPosition()
@@ -330,9 +335,19 @@ public class WaterTaxUtils {
     
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
+        List<Assignment>asignList=null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        return assignment != null ? assignment.getEmployee().getName() : "";
+        if(assignment!=null )
+        {
+        	asignList=new ArrayList<Assignment>();
+        	asignList.add(assignment);
+        }
+        else if(assignment==null)
+        {
+        	asignList= assignmentService.getAssignmentsForPosition(approvalPosition,new Date());
+        }
+        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
