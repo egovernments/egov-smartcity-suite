@@ -67,6 +67,7 @@ function refreshInbox() {
 		<s:text name="collectionsWorkflow.rejectSuccess" />
 	</s:else></div>
 	<br />
+	<s:hidden name="receiptDate" value="%{receiptDate}"/>
 
 	<div class="buttonbottom">
 	<input name="buttonClose" type="button" class="buttonsubmit"
@@ -77,7 +78,7 @@ function refreshInbox() {
 	<s:submit type="submit" cssClass="buttonsubmit" id="buttonCashReport"
 			value="%{getText('collectionsWorkflow.submit.report.cash')}"
 			disabled="false"
-			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow-submissionReportCash.action'" /> &nbsp;
+			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow-submissionReportCash.action'"/> &nbsp;
 
 	<s:submit type="submit" cssClass="buttonsubmit" id="buttonChequeReport"
 			value="%{getText('collectionsWorkflow.submit.report.cheque')}"

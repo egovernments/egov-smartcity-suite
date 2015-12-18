@@ -459,11 +459,12 @@ public class ReceiptHeader extends StateAware implements Auditable {
      */
     @Override
     public String myLinkId() {
-        new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         final StringBuilder linkId = new StringBuilder();
 
         linkId.append(getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
                 + CollectionConstants.SEPARATOR_HYPHEN + getCreatedBy().getUsername()
+                + CollectionConstants.SEPARATOR_HYPHEN + sdf.format(getReceiptdate())
                 + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId()));
 
         return linkId.toString();

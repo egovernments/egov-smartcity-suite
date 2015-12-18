@@ -59,9 +59,9 @@ import org.springframework.beans.factory.annotation.Autowired;
     @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
     @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
     @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
-            "namespace", "/reports" }),
+            "namespace", "/reports", "receiptDate",  "${receiptDate}"}),
             @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
-                    "namespace", "/reports" }),
+                    "namespace", "/reports", "receiptDate",  "${receiptDate}" }),
                     @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
                             "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
@@ -133,6 +133,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     public void setWfAction(final String wfAction) {
         this.wfAction = wfAction;
     }
+    private String receiptDate;
 
     /**
      * Result for cash submission report (redirects to the cash collection report)
@@ -153,11 +154,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * The date for which the receipt list was created.
-     */
-    private String createdDate;
-
-    /**
      * This method is called when user clicks on a collections work flow item in the inbox. The inbox item details contains the
      * next work flow action to be performed, service code, user id and counter id in the following form:
      * <next-workflow-action>-servicecode-username-counterid
@@ -166,11 +162,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 4) {
+        if (params.length == 5) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
-            setCounterId(Integer.valueOf(params[3]));
+            setCounterId(Integer.valueOf(params[4]));
+            setReceiptDate(params[3]);
         }
         this.inboxItemDetails = inboxItemDetails;
     }
@@ -449,7 +446,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
-        if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
+        if (wfAction!=null && wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
             return listApprove();
         else
             return listSubmit();
@@ -527,14 +524,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             else
                 instrumentAmount = instrumentAmount.add(receiptAmount);
             instrumentWiseAmounts.put(instrumentType, instrumentAmount);
+            receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
         }
     }
 
-    public String getCreatedDate() {
-        return createdDate;
+    public String getReceiptDate() {
+        return receiptDate;
     }
 
-    public void setCreatedDate(final String createdDate) {
-        this.createdDate = createdDate;
+    public void setReceiptDate(String receiptDate) {
+        this.receiptDate = receiptDate;
     }
 }
