@@ -503,10 +503,11 @@ public class UpdateConnectionController extends GenericConnectionController {
             // final String nextUser =
             // waterTaxUtils.getApproverUserName(approvalPosition);
             String nextDesign = "";
+
         	Assignment assignObj=null;
             List<Assignment> asignList=null;
             //TODO: sushant:not able to understand this code : to get Employee object primary getPrimaryAssignmentEmployeeForPos() API again getPrimaryAssignmentForEmployee() API..check this properly  
-            if (approvalPosition != null)
+            if (approvalPosition != null && assignmentService.getPrimaryAssignmentForPositon(approvalPosition)!=null)
             	 assignObj=assignmentService.getPrimaryAssignmentForEmployee(
                                 employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId());
             if(assignObj!=null )
@@ -514,12 +515,17 @@ public class UpdateConnectionController extends GenericConnectionController {
             	asignList=new ArrayList<Assignment>();
             	asignList.add(assignObj);
             }
-            else if(assignObj==null)
+            else if(assignObj==null && approvalPosition!=null)
             {
             	asignList= assignmentService.getAssignmentsForPosition(approvalPosition,new Date());
             }
              nextDesign = asignList.get(0).getDesignation().getName();
-            final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
+             if (approvalPosition != null && assignmentService.getPrimaryAssignmentForPositon(approvalPosition)!=null)
+                nextDesign = assignmentService
+                .getPrimaryAssignmentForEmployee(
+                                employeeService.getPrimaryAssignmentEmployeeForPos(approvalPosition).getId())
+                        .getDesignation().getName();
+		final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? nextDesign : "");
