@@ -61,7 +61,6 @@ import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.workflow.WorkFlow;
@@ -93,8 +92,6 @@ public class WorksPackage extends WorkFlow {
     private String description;
     @NotNull(message = "wp.userDepartment.is.null")
     private Department department;
-    @NotNull(message = "wp.preparedBy.is.null")
-    private PersonalInformation preparedBy;
     @NotNull(message = "wp.packageDate.is.null")
     @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.packagedate")
     private Date packageDate;
@@ -151,14 +148,6 @@ public class WorksPackage extends WorkFlow {
 
     public void setDepartment(final Department department) {
         this.department = department;
-    }
-
-    public PersonalInformation getPreparedBy() {
-        return preparedBy;
-    }
-
-    public void setPreparedBy(final PersonalInformation preparedBy) {
-        this.preparedBy = preparedBy;
     }
 
     public Date getPackageDate() {

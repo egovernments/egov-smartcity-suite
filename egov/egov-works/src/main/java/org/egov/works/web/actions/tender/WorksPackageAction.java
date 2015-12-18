@@ -43,7 +43,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,10 +69,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.models.Money;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.tender.WorksPackageDetails;
@@ -96,8 +92,6 @@ public class WorksPackageAction extends BaseFormAction {
     private WorksService worksService;
     @Autowired
     private AssignmentService assignmentService;
-    @Autowired
-    private EmployeeServiceOld employeeServiceOld;
     private DepartmentService departmentService;
     private WorksPackage worksPackage = new WorksPackage();
     private String designation;
@@ -117,21 +111,14 @@ public class WorksPackageAction extends BaseFormAction {
     private String nextEmployeeName;
     private String nextDesignation;
     private String packageNumber;
-    private static final String PREPARED_BY_LIST = "preparedByList";
     private static final String DEPARTMENT_LIST = "departmentList";
     private static final String SOURCE_INBOX = "inbox";
     private static final String SAVE_ACTION = "save";
     private EisUtilService eisService;
-    private String loggedInUserEmployeeCode;
-
-    /**
-     * pdf variable declaration
-     */
 
     public static final String PRINT = "print";
     private InputStream WorkspackagePDF;
     private ReportService reportService;
-    private PersonalInformationService personalInformationService;
 
     public WorksPackageAction() {
         addRelatedEntity("department", Department.class);
@@ -157,32 +144,21 @@ public class WorksPackageAction extends BaseFormAction {
         if (latestAssignment != null) {
             worksPackage.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
                     .getDepartment().getId());
-            if (worksPackage.getPreparedBy() == null)
-                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
-            else
-                loggedInUserEmployeeCode = worksPackage.getPreparedBy().getEmployeeCode();
-            if (worksPackage.getDepartment() == null) {
+            if (worksPackage.getDepartment() == null)
                 worksPackage.setDepartment(latestAssignment.getDepartment());
-                setDesignation(latestAssignment.getDesignation().getName());
-            }
         }
 
         if (StringUtils.isNotBlank(getCreatedBy()) && "yes".equalsIgnoreCase(getCreatedBy())) {
             setCreatedBySelection(getCreatedBy());
             addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
-            populatePreparedByList(ajaxEstimateAction, worksPackage.getDepartment() != null);
-        } else {
-            if (id == null
-                    || worksPackage.getEgwStatus() != null
-                            && (worksPackage.getEgwStatus().getCode()
-                                    .equals(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage.getEgwStatus()
-                                            .getCode().equals("NEW")))
-                addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
-            else
-                addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
-            populatePreparedByList(ajaxEstimateAction, worksPackage.getDepartment() != null);
-            empId = getEmployee().getId();
-        }
+        } else if (id == null
+                || worksPackage.getEgwStatus() != null
+                        && (worksPackage.getEgwStatus().getCode()
+                                .equals(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage.getEgwStatus()
+                                        .getCode().equals("NEW")))
+            addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
+        else
+            addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
         if (StringUtils.isNotBlank(getPastDate()))
             setEditableDate(getPastDate());
 
@@ -208,8 +184,6 @@ public class WorksPackageAction extends BaseFormAction {
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
-        setDesignation(getAssignment(worksPackage.getPreparedBy()).getDesignation().getName());
-        setEmpId(worksPackage.getPreparedBy().getIdPersonalInformation());
         abstractEstimateList = workspackageService.getAbStractEstimateListByWorksPackage(worksPackage);
         setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
         return EDIT;
@@ -235,7 +209,6 @@ public class WorksPackageAction extends BaseFormAction {
             validateEstimateForUniqueness();
 
         }
-        worksPackage.setPreparedBy(employeeServiceOld.getEmloyeeById(empId));
         try {
             workspackageService.setWorksPackageNumber(worksPackage,
                     abstractEstimateService.getCurrentFinancialYear(worksPackage.getPackageDate()));
@@ -323,19 +296,6 @@ public class WorksPackageAction extends BaseFormAction {
 
     public void setModel(final WorksPackage worksPackage) {
         this.worksPackage = worksPackage;
-    }
-
-    protected void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction,
-            final boolean executingDeptPopulated) {
-        if (executingDeptPopulated) {
-            ajaxEstimateAction.setExecutingDepartment(worksPackage.getDepartment().getId());
-
-            if (StringUtils.isNotBlank(loggedInUserEmployeeCode))
-                ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
-            ajaxEstimateAction.usersInExecutingDepartment();
-            addDropdownData(PREPARED_BY_LIST, ajaxEstimateAction.getUsersInExecutingDepartment());
-        } else
-            addDropdownData(PREPARED_BY_LIST, Collections.EMPTY_LIST);
     }
 
     protected void populateEstimatesList(final Long[] estimateID) {
@@ -475,21 +435,6 @@ public class WorksPackageAction extends BaseFormAction {
         this.workspackageService = workspackageService;
     }
 
-    private PersonalInformation getEmployee() {
-        if (worksPackage.getPreparedBy() == null)
-            return employeeServiceOld.getEmpForUserId(worksService.getCurrentLoggedInUserId());
-        else
-            return worksPackage.getPreparedBy();
-    }
-
-    private Assignment getAssignment(final PersonalInformation pi) {
-        if (worksPackage.getPreparedBy() == null)
-            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
-        else
-            return employeeServiceOld.getAssignmentByEmpAndDate(new Date(), worksPackage.getPreparedBy()
-                    .getIdPersonalInformation());
-    }
-
     public String getPastDate() {
         return worksService.getWorksConfigValue("WORKS_PACKAGE_PASTDATE");
     }
@@ -598,10 +543,6 @@ public class WorksPackageAction extends BaseFormAction {
         this.nextDesignation = nextDesignation;
     }
 
-    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
-    }
-
     public void setUserService(final UserService userService) {
         this.userService = userService;
     }
@@ -616,14 +557,6 @@ public class WorksPackageAction extends BaseFormAction {
 
     public void setEisService(final EisUtilService eisService) {
         this.eisService = eisService;
-    }
-
-    public String getLoggedInUserEmployeeCode() {
-        return loggedInUserEmployeeCode;
-    }
-
-    public void setLoggedInUserEmployeeCode(final String loggedInUserEmployeeCode) {
-        this.loggedInUserEmployeeCode = loggedInUserEmployeeCode;
     }
 
 }

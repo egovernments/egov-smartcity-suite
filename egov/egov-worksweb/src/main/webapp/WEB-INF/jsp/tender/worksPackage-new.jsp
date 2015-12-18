@@ -98,10 +98,9 @@ function populateDetails()
 		 </s:if>
 	}
 	document.forms[0].hiddenDate.value=document.workspackageForm.packageDate.value;
-	/*<s:if test="%{createdBySelection.toLowerCase().equals('no')}">
+	<s:if test="%{createdBySelection.toLowerCase().equals('no')}">
 		dom.get('department').disabled=true;
-		dom.get('preparedBy').disabled=true;
-	</s:if>*/
+	</s:if>
 	<s:else>
 		dom.get("ajaxCall").style.display='';
 	</s:else>
@@ -164,50 +163,6 @@ function enableButtons() {
 
 }
 
-function setupPreparedByList(elem){
-	deptId=elem.options[elem.selectedIndex].value;
-    populatepreparedBy({executingDepartment:deptId,employeeCode:dom.get("loggedInUserEmployeeCode").value});
-    if(dom.get("estimateListTable")!=null && dom.get("estimateListTable").rows.length>0){
-        dom.get("popUpDiv").innerHTML="";
-     	dom.get("popUpDiv").innerHTML='<s:text name="reset.on.dept"/>'+dom.get("msgDiv").innerHTML ;
-		popup('popUpDiv')
-	}
-	
-}
-
-function populatepreparedBy(params){
-	makeJSONCall(['Text','Value','Designation'],'/egworks/estimate/ajaxEstimate!usersInExecutingDepartment.action',params,preparedBySuccessHandler,preparedByFailureHandler) ;
-}
-
-preparedBySuccessHandler=function(req,res){ 
-	enablePreparedBy(); 
-	preparedByDropdown=dom.get("preparedBy");
-	var resLength =res.results.length+1;
-	var dropDownLength = preparedByDropdown.length;
-	for(i=0;i<res.results.length;i++){
-	preparedByDropdown.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
-	if(res.results[i].Value=='null') preparedBy.Dropdown.selectedIndex = i;
-		preparedByDropdown.options[i+1].Designation=res.results[i].Designation;
-	}
-	while(dropDownLength>resLength)
-	{
-		preparedByDropdown.options[res.results.length+1] = null;
-		dropDownLength=dropDownLength-1;
-	}
-	document.getElementById('preparedBy').value='<s:property value="%{empId}" />';
-	if(res.results.length == 1) {
-		disablePreparedBy();
-		document.getElementById('designation').value='<s:property value="%{designation}" />';
-	}
-}
-preparedByFailureHandler=function(){
-	alert('Unable to load preparedBy');
-}
-
-function clearDesignation(elem) {
-    dom.get("designation").value='';
-}
-
 function deleteAllrows(tableID) {
     var table = dom.get(tableID);
     var rowCount = table.rows.length;
@@ -251,11 +206,6 @@ function validateBeforeSubmit()
 	  }
 	  if(dom.get("name").value==""){
 	  	 dom.get("wp_error").innerHTML='<s:text name="wp.name.is.null"/>'; 
-         dom.get("wp_error").style.display='';
-		 return false;
-	  }
-	  if(dom.get("preparedBy").value==-1){
-	  	 dom.get("wp_error").innerHTML='<s:text name="wp.preparedBy.is.null"/>'; 
          dom.get("wp_error").style.display='';
 		 return false;
 	  }
@@ -384,9 +334,7 @@ function enablePreparedBy(){
 		    <tr>
 		         <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.dept"/>:</td>
 		         <td width="21%" class="greybox2wk"><s:select id="department" name="department" headerKey="-1" headerValue="---select---" 
-		         cssClass="selectwk" list="%{dropdownData.departmentList}"  listKey="id" listValue="deptName" value="%{department.id}"
-		         onChange="setupPreparedByList(this);clearDesignation(this);"/>
-		         <s:hidden name="loggedInUserEmployeeCode" id="loggedInUserEmployeeCode"/>   
+		         cssClass="selectwk" list="%{dropdownData.departmentList}"  listKey="id" listValue="name" value="%{department.id}" />		          
 		          <s:if test="%{dropdownData.departmentList.size==1}" >
 	                <script>
 	                	disableDepartment(); 
@@ -416,21 +364,7 @@ function enablePreparedBy(){
 		         <td width="11%" class="whiteboxwk">&nbsp;</td>
 		         <td width="21%" class=whitebox2wk>&nbsp;</td>
 		   </tr>
-		   <tr>
-				 <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.emp"/>:</td>
-		         <td width="21%" class="greybox2wk">
-		         <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="empId" 
-		         id="preparedBy" value="%{empId}" cssClass="selectwk" 
-		         list="dropdownData.preparedByList" listKey="id" listValue="employeeName" onchange='showDesignation(this);'/></td>
-		         <s:if test="%{dropdownData.preparedByList.size==1}" >
-	                <script>
-	               	 disablePreparedBy(); 
-	                </script>
-                  </s:if>
-		         <td width="15%" class="greyboxwk"><s:text name="wp.desg"/>:</td>
-		         <td width="53%" class="greybox2wk"><s:textfield name="designation" type="text"  readonly="true"
-		          cssClass="selectboldwk" id="designation" size="45" tabIndex="-1" value="%{designation}"/></td>
-			</tr>
+		   
 			<tr>
 		         <td width="11%" class="whiteboxwk">&nbsp;</td>
 		         <td width="21%" class=whitebox2wk>&nbsp;</td>
@@ -454,7 +388,7 @@ function enablePreparedBy(){
 	 <tr> 
 		    <td>
 		    <div id="manual_workflow">
-		   		<%@ include file="../workflow/workflow.jsp"%> 
+		   		<%-- <%@ include file="../workflow/workflow.jsp"%>  --%>
 		    </div>
 		    </td>
     </tr>	
@@ -471,7 +405,7 @@ function enablePreparedBy(){
    <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || 
 	model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED' || model.egwStatus.code=='CREATED') 
 	&& (sourcepage=='inbox' || model.egwStatus==null)}">
-  
+   <input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.forms[0].actionName.value='save';return validate('save');" />	
    <s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.wpNumber!=null}">
@@ -485,7 +419,7 @@ function enablePreparedBy(){
 </s:if>
 	<s:if test="%{model.id==null}"> 
 	  <input type="button" class="buttonfinal" value="CLEAR" id="clearButton" name="button"
-	   onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage!newform.action','_self');"/>
+	   onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage-newform.action','_self');"/>
 	 </s:if>
 	 <s:if test="%{model.id!=null}">
 	   <input type="button" onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage!viewWorksPackagePdf.action?id=<s:property value='%{model.id}'/>');" 
@@ -498,13 +432,13 @@ function enablePreparedBy(){
 		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
 	</s:else>
 	
-  <s:if test="%{sourcepage=='search' 
+  <%-- <s:if test="%{sourcepage=='search' 
   	|| (sourcepage=='inbox' && (model.egwStatus!=null && (model.egwStatus.code=='APPROVED' || model.egwStatus.code=='CANCELLED')))}">
   	<input type="submit" class="buttonadd" value="View Document" id="docViewButton" onclick="viewDocumentManager(dom.get('docNumber').value);return false;" />
   </s:if>
   <s:else>
 	<input type="submit" class="buttonadd" value="Upload Document" id="worksDocUploadButton" onclick="showDocumentManager();return false;" />
-  </s:else>
+  </s:else> --%>
 	
 </div>
 </s:form>

@@ -120,7 +120,7 @@ function deleterow(obj)
 </script>
 <table id="wpDetailsTable" width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-          	<td colspan="5" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" />
+          	<td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" />
           	</div><div class="headplacer"><s:text name="wp.detils"/></div></td>
           	<td align="right" class="headingwk" style="border-left-width: 0px">
        		<a id="addHref" href="#" onclick="goToPath();return false;">
