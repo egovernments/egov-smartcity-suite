@@ -92,8 +92,8 @@ var makeScheduleOfRateDataTableForMR = function() {
 	var scheduleOfRateColumnDefsMR = [ 
 		{key:"id", hidden:true,formatter:hiddenIdFormatter,sortable:false, resizeable:false} ,		
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false, width:50},
-		{key:"marketRate", label:'<span class="mandatory">*</span>Market Rate', formatter:rateTextboxFormatterMR, sortable:false, resizeable:false, width:180},		
-		{key:"startDate", label:'<span class="mandatory">*</span>Start Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
+		{key:"marketRate", label:'<span class="mandatory"></span>Market Rate', formatter:rateTextboxFormatterMR, sortable:false, resizeable:false, width:180},		
+		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
 		{key:"endDate",label:'End Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
 		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatterMR("${pageContext.request.contextPath}")}  
 	];
@@ -127,27 +127,21 @@ var makeScheduleOfRateDataTableForMR = function() {
 }
 </script>
 <!-- -------------------- ends  on oct309 for market rate details  --------------------- -->
-
-	  <tr>
-      <td>&nbsp;</td>
-      </tr>
-          <tr>
-            <td>
-            <table id="marketRatesTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td colspan="3" class="headingwk" style="border-right-width: 0px">
-				<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-				<div class="headplacer"><s:text name="sor.marketrateDetails" /></div>
-				</td>
-				<td align="right" class="headingwk" style="border-left-width: 0px">
-				<a href="#" onclick="scheduleOfRateDataTableMR.addRow({SlNo:scheduleOfRateDataTableMR.getRecordSet().getLength()+1});return false;">
-				<img border="0" alt="Add SOR Market Rate" src="/egi/resources/erp2/images/add.png" />
-				</a>
-				</td>
-			</tr>
-		<tr>
-			<td colspan="4">
-			<div class="yui-skin-sam">
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name="sor.marketrateDetails" />
+		</div>
+		
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+	   	   <div class="text-right add-margin">
+	   	       <button class="btn btn-primary" onclick="scheduleOfRateDataTableMR.addRow({SlNo:scheduleOfRateDataTableMR.getRecordSet().getLength()+1});return false;">Add SOR Market Rate</button>
+	   	   </div>
+	   	   
+	   	   <div class="yui-skin-sam">
 			<div id="scheduleOfRateTableMR"></div>
 	<script>
 	var imgURL="/egi/resources/erp2/images/cancel.png";	
@@ -177,11 +171,14 @@ var makeScheduleOfRateDataTableForMR = function() {
 		</s:iterator>	
        </script>
   		</div>
-		</td>
-	</tr>
-    </table>
-    </td>
-   </tr> 
-   <script>
-	scheduleOfRateDataTableMR.removeListener('cellClickEvent');
-   </script>
+	   	   
+	  </div>
+	  
+	  
+	  
+	</div>
+</div>
+
+<script>
+  //scheduleOfRateDataTableMR.removeListener('cellClickEvent');
+</script>

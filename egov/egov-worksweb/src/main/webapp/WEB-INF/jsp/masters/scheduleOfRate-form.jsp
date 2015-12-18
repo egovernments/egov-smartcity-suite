@@ -214,8 +214,8 @@ var makeScheduleOfRateDataTable = function() {
 	var scheduleOfRateColumnDefs = [ 
 		{key:"id", hidden:true,formatter:hiddenFormatter,sortable:false, resizeable:false} ,
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false, width:50},
-		{key:"rate", label:'<span class="mandatory">*</span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
-		{key:"startDate", label:'<span class="mandatory">*</span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
+		{key:"rate", label:'<span class="mandatory"></span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
+		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
 		{key:"endDate",label:'End Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
 		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
@@ -255,66 +255,68 @@ var makeScheduleOfRateDataTable = function() {
   </div>
 </span>
 
-<div class="navibarshadowwk"></div>
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	  <div class="rbcontent2">
-	  <table width="100%" border="0" cellspacing="0" cellpadding="0">          
-       <tr>
-         <td>&nbsp;</td>
-       </tr>
-       <tr>
-         <td>
-         	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-        	<tr>
-          		<td colspan="4" class="headingwk">
-          			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-            		<div class="headplacer"><s:text name="sor.header" /></div>
-            	</td>
-        	</tr>
-        	<tr>
-        		<td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.category" />:</td>
-          		<td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" onchange="UniqueCheckOnCodenumber();"/> </td>
-                <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.code" />:</td>
-          		<td width="53%" class="whitebox2wk"><s:textfield name="code" cssClass="selectwk" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" /></td>
-			</tr>
-			<tr>
-				<td width="11%" class="whiteboxwk"></td>
-            	<td width="21%" class="whiteboxwk"></td>
-            	<td width="15%" class="whiteboxwk"></td>
-            	<td width="53%" class="whitebox2wk"></td>
-			</tr>
-			<tr>
-				<td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.sor.description" />:</td>
-            	<td width="21%" class="greybox2wk"><span class="greybox2wk">
-            	<s:textarea name="description" cols="45"  rows="4" cssClass="selectwk" id="description" value = "%{description}"  maxlength = "4000" onblur="validateLineBreaksInDescription();" /></span>
-            	</td>
-                <td width="15%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.sor.uom" />:</td>
-          		<td width="53%" class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="uom" id="uom" cssClass="selectwk" list="dropdownData.uomlist" listKey="id" listValue="uom" value="%{uom.id}" /></td>
-            </tr>
-	        <tr>
-	          	<td colspan="4" class="shadowwk"></td>
-	        </tr>
- 			</table>
- 		</td>
-     </tr>
-      <tr>
-        <td>&nbsp;</td>
-      </tr>
-          <tr>
-            <td>
-            <table id="ratesTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-				<div class="headplacer"><s:text name="sor.rateDetails" /></div>
-				</td>
-				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="scheduleOfRateDataTable.addRow({SlNo:scheduleOfRateDataTable.getRecordSet().getLength()+1});return false;"><img border="0" alt="Add SOR Rate" src="/egi/resources/erp2/images/add.png" /></a>
-				</td>
-			</tr>
-		<tr>
-			<td colspan="4">
-			<div class="yui-skin-sam">
+<div class="new-page-header">
+	<s:text name="sor.header" />
+</div>
+
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		</div>
+		
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.category" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" onchange="UniqueCheckOnCodenumber();"/> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.code" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" cssClass="form-control" id="code" value = "%{code}" maxlength = "50" autocomplete="off" onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.description" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="description" cols="45"  rows="3" cssClass="form-control" id="description" value = "%{description}"  maxlength = "4000" onblur="validateLineBreaksInDescription();" /> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.uom" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" cssClass="form-control" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" />
+			</div>
+		</div>
+		
+     </div>
+</div>
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name="sor.rateDetails" />
+		</div>
+		
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+	   
+	   	   <div class="text-right add-margin">
+	   	       <button class="btn btn-primary" onclick="scheduleOfRateDataTable.addRow({SlNo:scheduleOfRateDataTable.getRecordSet().getLength()+1});return false;">Add SOR Rate</button>
+	   	   </div>
+	   	   
+	   	   <div class="yui-skin-sam">
 			<div id="scheduleOfRateTable"></div>
 	<script>
             makeScheduleOfRateDataTable();
@@ -421,25 +423,14 @@ var makeScheduleOfRateDataTable = function() {
 		</s:iterator>
        </script>
   		</div>
-		</td>
-	</tr>
-    </table>
-    </td>
-   </tr>
-   <%@ include file='scheduleOfRate-marketRate.jsp'%>
-  <tr>
-  	<td colspan="4" class="shadowwk"></td>
-  </tr>
-  <tr>
-    <td><div align="right" class="mandatory">* <s:text name="message.mandatory" /></div></td>
-  </tr>
- </table>	    
+	   	   
+	   </div>
+		
+     </div>
 </div>
 
-<div class="rbbot2"><div></div></div>
-</div>
-</div>
-</div>
+<%@ include file='scheduleOfRate-marketRate.jsp'%>
+
 <script>
 
 <s:if test="%{mode=='view'}">
