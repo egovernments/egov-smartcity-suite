@@ -203,6 +203,7 @@ function loadOnStartUp() {
 	   		  getAadharDetails(this);
 	   	}
 	 });
+     populateBoundaries();
 }
 
 function onSubmit() { 
