@@ -177,7 +177,7 @@
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					
-										<s:text name="search.mobile" />									
+										<s:text name="search.mobile" />
 									</div>									
 								</td>
 							</tr>
@@ -185,7 +185,8 @@
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="MobileNumber" />:
+									<s:text name="MobileNumber" />
+									<span class="mandatory1">*</span> :		
 								</td>
 								
 								<td class="bluebox">
@@ -219,7 +220,8 @@
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="doorNo" />:
+									<s:text name="doorNo" />  
+									<span class="mandatory1">*</span> :		
 								</td>
 								
 								<td class="bluebox">
@@ -254,8 +256,9 @@
 						<tr><td colspan="4"><br/></td></tr>		
 						<tr>
 							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox">
-								<s:text name="Zone" /> :
+							<td class="bluebox"> 
+								<s:text name="Zone" /> 
+								<span class="mandatory1">*</span> :
 							</td>
 							<td class="bluebox">
 								<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
@@ -267,7 +270,8 @@
 						<tr>
 							<td class="greybox">&nbsp;</td>
 							<td class="greybox">
-								<s:text name="Ward" />:
+								<s:text name="Ward" />
+								<span class="mandatory1">*</span> :
 							</td>
 							<td class="greybox">
 								<s:select name="wardId" id="wardId" list="WardndryMap"
