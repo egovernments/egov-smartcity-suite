@@ -165,6 +165,18 @@ jQuery(document).ready(function($) {
 	window.location = url;		
 	});
 }*/
+$("#aplicationSearchResults").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {
+	var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);
+	var applicationTypeCode = tableContainer.fnGetData($(this).parent().parent(), 3);
+	var url = '/wtms/application/generatebill/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
+	$('#waterSearchRequestForm').attr('method', 'post');
+	$('#waterSearchRequestForm').attr('action', url);
+	$('#waterSearchRequestForm').attr('name', 'myform');
+	document.forms["myform"].submit();
+	//window.open("generatebill/hoarding/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+
+});
+
 function submitButton()
 {
 	tableContainer = $("#aplicationSearchResults");
@@ -211,8 +223,12 @@ function submitButton()
 	        			   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 	        			   if (full.resource.clauses.status == 'ACTIVE' ) {
-	        				   if ( citizenRole== 'true'   && full.resource.clauses.waterTaxDue > 0) { 
-	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
+	        				   if ( citizenRole== 'true'   ) { 
+	        					   if(full.resource.clauses.waterTaxDue > 0)
+	        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+	        					   else{
+	        						   return ('');   
+	        					   }
 	        				   }
 	        				   else if ( (billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="" ) && (cscUserRole==null || cscUserRole=="") )  && full.resource.clauses.waterTaxDue > 0  ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
@@ -277,8 +293,12 @@ function submitButton()
 	        		   if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
 	        				   && full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 	        			   if (full.resource.clauses.status == 'ACTIVE') {
-	        				   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
-	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
+	        				   if ( citizenRole== 'true'   ) { 
+	        					   if(full.resource.clauses.waterTaxDue > 0)
+	        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+	        					   else{
+	        						   return ('');   
+	        					   }
 	        				   }
 	        				   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole==""))    && full.resource.clauses.waterTaxDue > 0  ) {
 	        					  
@@ -339,8 +359,12 @@ function submitButton()
 	        		   }	
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   full.resource.clauses.applicationcode == 'CHANGEOFUSE') {
-	        			   if (citizenRole== 'true'  && full.resource.clauses.waterTaxDue > 0) { 
-        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
+	        			   if ( citizenRole== 'true'   ) { 
+        					   if(full.resource.clauses.waterTaxDue > 0)
+        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+        					   else{
+        						   return ('');   
+        					   }
         				   }
 	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.clauses.waterTaxDue > 0  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
@@ -388,8 +412,12 @@ function submitButton()
 	        		   } 
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   full.resource.clauses.applicationcode == 'RECONNECTION') {
-	        			   if (citizenRole== 'true'     && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) { 
-        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">Pay</option></select>');   
+	        			   if ( citizenRole== 'true'   ) { 
+        					   if(full.resource.clauses.waterTaxDue > 0)
+        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+        					   else{
+        						   return ('');   
+        					   }
         				   }
 	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.clauses.waterTaxDue > 0  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
