@@ -48,25 +48,25 @@ body {
 	background-color: #FFFFFF;
 	}
 	   
-a:link {
+a:link:not(.btn) {
 	color: #0066cc;
 	font-family: regular;
 	font-size: 10px;
 	}
 	
-a:visited {
+a:visited:not(.btn) {
 	color: #0066cc;
 	font-family: regular;
 	font-size: 10px;
 	}
 	
-a:hover {
+a:hover:not(.btn) {
 	color: #CC0000;
 	font-family: regular;
 	font-size: 10px;
 	}
 
-a:active {
+a:active:not(.btn) {
 	color: #0066cc;
 	font-family: regular;
 	font-size: 10px;

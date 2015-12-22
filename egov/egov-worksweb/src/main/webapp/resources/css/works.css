@@ -1219,8 +1219,8 @@ th.pagetableth {
 	overflow: hidden;
 	border-left: 1px solid #D1D9E1;
 	color: #00639B;
-	font-family: regular;
-	font-size: 11px;
+	font-family: semibold;
+	font-size: 12px;
 	font-weight: bold;
 	line-height: 12px;
 	padding: 3px;
@@ -1231,7 +1231,7 @@ th.pagetableth {
 td.pagetabletd{
 	color: #333333;
 	font-family: regular;
-	font-size: 10px;
+	font-size: 12px;
 	text-align: left;
 	line-height: 12px;
 	overflow: hidden;
@@ -1239,10 +1239,15 @@ td.pagetabletd{
 	padding: 3px;
 }
 
+td.pagetabletd .btn
+{
+	font-size:12px;
+}
+
 td.pagetabletdAmount{
 	color: #333333;
 	font-family: regular;
-	font-size: 10px;
+	font-size: 12px;
 	text-align: right;
 	line-height: 12px;
 	overflow: hidden;
