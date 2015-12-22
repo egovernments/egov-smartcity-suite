@@ -324,7 +324,7 @@ public class WaterConnectionDetailsService {
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         if (null != state) {
             map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
             map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
             map.put("status", state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
