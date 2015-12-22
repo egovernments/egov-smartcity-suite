@@ -112,7 +112,6 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.opensymphony.xwork2.validator.ValidationException;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
@@ -870,17 +869,17 @@ public class ReceiptAction extends BaseFormAction {
 
         LOGGER.info("Persisted receipts");
 
-        // Start work flow for all newly created receipts This might internally
-        // create vouchers also based on configuration
-        receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
-        receiptHeaderService.getSession().flush();
-        LOGGER.info("Workflow started for newly created receipts");
-
         if (serviceType.equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
             if (!receiptBulkUpload)
                 collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
             LOGGER.info("Updated billing system ");
         }
+        
+        // Start work flow for all newly created receipts This might internally
+        // create vouchers also based on configuration
+        receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
+        receiptHeaderService.getSession().flush();
+        LOGGER.info("Workflow started for newly created receipts");
 
         final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
         Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);
