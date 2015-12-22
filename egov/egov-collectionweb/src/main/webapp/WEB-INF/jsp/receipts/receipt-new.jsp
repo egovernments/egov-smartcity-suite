@@ -1372,7 +1372,7 @@ function onBodyLoad()
 		document.getElementById('instrumentChequeAmount').value="";
 	}
 	if(document.getElementById('paidBy').value==""){
-		var paidby =  "Paid By" + '<s:property value="%{payeeName}"/>';
+		var paidby =  '<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 		paidby = paidby.replace('&amp;','&');
 		document.getElementById('paidBy').value=paidby;
 	}
@@ -1666,7 +1666,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value='<s:property value="%{payeeName}"/>';
+	document.getElementById('paidBy').value='<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -1953,7 +1953,7 @@ function showHideMandataryMark(obj){
 	   <tr id="cashdetails" >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
+		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"/></td>
 	   </tr>
 	   
 	   
@@ -2002,7 +2002,7 @@ function showHideMandataryMark(obj){
 		       		<tr id="chequeamountrow">
 		       		    <td class="bluebox" width="3%"></td>
 						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -2052,7 +2052,7 @@ function showHideMandataryMark(obj){
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
 						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" /></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -2141,7 +2141,7 @@ function showHideMandataryMark(obj){
 				       		<tr id="bankamountrow">
 				       		<td class="bluebox" width="3%">&nbsp;</td>
 				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
+				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);"/></td>
 				       		</tr>
 						</table> 
 				<!-- End of bank grid table -->
