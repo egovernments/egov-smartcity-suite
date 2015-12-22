@@ -743,6 +743,11 @@ function autocompleteEntities1By20(obj)
 var yuiflag = new Array();
 function autocompletecode(obj,myEvent)
 {
+	//Fix-Me
+	var funObj = document.getElementById('billDetailslist[0].functionDetail');
+	jQuery(funObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
 	//alert('autocomplete');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
@@ -849,6 +854,12 @@ function loadDropDownCodesFunction()
 var yuiflagFunc = new Array();
 function autocompletecodeFunction(obj,myEvent)
 {
+	
+	//Fix-Me
+	var accCodeObj = document.getElementById('billDetailslist[0].glcodeDetail');
+	jQuery(accCodeObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
 	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
@@ -1001,8 +1012,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		}
 		check();
 	}else if (temp!="" &&(accCodeid==null || accCodeid=="")){
-		alert("Invalid Account Code selected .Please select code from auto complete.");
-		obj.value="";
+		//alert("Invalid Account Code selected .Please select code from auto complete.");
+		//obj.value="";
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 	}
 	var currRow=getRowIndex(obj);
@@ -1027,8 +1038,8 @@ function fillNeibrAfterSplitFunction(obj)
 		var functionId1 = document.getElementById('functionId').value;
 		var functionId2 = document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value;
 		if(functionValue=="" && functionId1==""){
-			alert("Invalid function selected .Please select code from auto complete.");
-			obj.value="";
+			//alert("Invalid function selected .Please select code from auto complete.");
+			//obj.value="";
 			document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value="";
 		}else if(functionValue!="" && functionId1!="" && functionId2!="" && functionValue != temp[0] && functionId1==functionId2){
 			alert("Invalid function selected .Please select code from auto complete.");
