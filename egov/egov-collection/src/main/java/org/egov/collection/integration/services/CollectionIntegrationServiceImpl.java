@@ -256,7 +256,7 @@ CollectionIntegrationService {
      */
     @Override
     public BillReceiptInfo createReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Started....");
+        LOGGER.info("Logs for CreateReceipt : Receipt Creation Started....");
         final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
@@ -392,7 +392,7 @@ CollectionIntegrationService {
          * receiptHeaderService.updateInstrument(voucherHeaderList,
          * instrumentHeaderList); }
          */
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
+        LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader);
     }
 
@@ -528,7 +528,7 @@ CollectionIntegrationService {
          * receiptHeaderService.updateInstrument(voucherHeaderList,
          * instrumentHeaderList); }
          */
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
+        LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader);
     }
 
