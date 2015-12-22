@@ -67,15 +67,20 @@ function generateNotice(obj, actionName, currentState){
 	var type = currentState.split(":");
 	var url = "";
 	if (actionName == 'Preview') {
-		url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		if(type == 'CLOSECONNECTION') {
+			url = "/wtms/application/acknowlgementNotice?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		} else if(type == 'RECONNECTION') {
+			url = "/wtms/application/ReconnacknowlgementNotice?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		} else {
+			url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		}
 		window.open(url, "NoticeWindow", params);
 		return false; 
 	} 
 	else {
-		var approvalPosition = $("#approvalPosition").val();
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber+'&approvalPosition='+approvalPosition+'&workFlowAction='+actionName+"&isDigSignPending=true",
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber,
 			target: '_self'
 		})
 		.appendTo(document.body).submit();
@@ -97,10 +102,9 @@ function signAllPendingDigitalSignature(actionName) {
 				idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value;
 			}
 		}
-		var approvalPosition = $("#approvalPosition").val();
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString()+'&approvalPosition='+approvalPosition+'&workFlowAction='+actionName+"&isDigSignPending=true",
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
 			target: '_self'
 		})
 		.appendTo(document.body).submit();

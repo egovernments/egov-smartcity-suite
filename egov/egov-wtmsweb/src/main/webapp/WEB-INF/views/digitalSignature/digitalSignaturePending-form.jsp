@@ -92,8 +92,8 @@
 										 				<c:out value="${record.propertyAddress}"/>
 										 			</td>
 										 			<td class="blueborderfortd" >	
-														 <span class="add-padding"><button type="button" id="previewButn" onclick="generateNotice(this, 'Preview', '<c:out value="${record.status}"/>');" class="btn btn-default">Preview</button></span>
-														 <span class="add-padding"><button type="button" id="signButn" onclick="generateNotice(this, 'Sign', '<c:out value="${record.status}"/>')" class="btn btn-default">Sign</button></span>
+														 <span class="add-padding"><button type="button" id="previewButn" onclick="generateNotice(this, 'Preview', '<c:out value="${record.state}"/>');" class="btn btn-default">Preview</button></span>
+														 <span class="add-padding"><button type="button" id="signButn" onclick="generateNotice(this, 'Sign', '<c:out value="${record.state}"/>')" class="btn btn-default">Sign</button></span>
 										 			</td>
 												</tr>
 											</c:forEach>

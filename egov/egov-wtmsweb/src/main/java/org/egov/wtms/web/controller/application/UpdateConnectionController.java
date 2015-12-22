@@ -113,9 +113,6 @@ public class UpdateConnectionController extends GenericConnectionController {
     protected UsageTypeService usageTypeService;
 
     @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
@@ -410,7 +407,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 || waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.ADDNLCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()
-                                .equals(WaterTaxConstants.CHANGEOFUSE)) { // Sign
+                                .equals(WaterTaxConstants.CHANGEOFUSE) 
+                                || waterConnectionDetails.getApplicationType().getCode()
+                                .equals(WaterTaxConstants.CLOSECONNECTION)) {
                             waterConnectionDetails.setWorkOrderDate(new Date());
                             waterConnectionDetails
                             .setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());

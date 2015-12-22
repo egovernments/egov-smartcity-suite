@@ -205,6 +205,7 @@ public class CloserConnectionController extends GenericConnectionController {
             waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
         final String addrule = request.getParameter("additionalRule");
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
+        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
                 waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);

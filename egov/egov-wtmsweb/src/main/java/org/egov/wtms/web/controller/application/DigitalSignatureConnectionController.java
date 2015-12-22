@@ -133,9 +133,6 @@ public class DigitalSignatureConnectionController {
         HttpSession session = request.getSession();
         Long approvalPosition = (Long)session.getAttribute(WaterTaxConstants.APPROVAL_POSITION);
         String approvalComent = (String)session.getAttribute(WaterTaxConstants.APPROVAL_COMMENT);
-        String workFlowAction = (String)session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
-        String mode = (String)session.getAttribute(WaterTaxConstants.MODE);
-        //String applicationNumber = (String)session.getAttribute(WaterTaxConstants.APPLICATION_NUMBER);
         Map<String, String> appNoFileStoreIdsMap = (Map<String, String>)session.getAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER);
         WaterConnectionDetails waterConnectionDetails = null;
         for(String fileStoreId : fileStoreIdArr) {
@@ -143,14 +140,12 @@ public class DigitalSignatureConnectionController {
             if(null != applicationNumber && !applicationNumber.isEmpty()) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
                 if(null == approvalPosition) {
-                    approvalPosition = Long.parseLong(request.getParameter("approvalPosition"));
-                }
-                Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
-                if(null != isDigSignPending && isDigSignPending) {
-                    workFlowAction = request.getParameter("workFlowAction");
+                    approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
+                            waterConnectionDetails, approvalPosition,
+                            waterConnectionDetails.getApplicationType().getCode(), "", WaterTaxConstants.SIGNWORKFLOWACTION);
                 }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
-                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode,
+                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), WaterTaxConstants.SIGNWORKFLOWACTION, "",
                         null);
             }
         }
@@ -227,9 +222,6 @@ public class DigitalSignatureConnectionController {
             request.getSession().setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
             model.addAttribute("fileStoreIds", fileStoreIds.toString());
             model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
-            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-            model.addAttribute("workFlowAction", request.getParameter("workFlowAction"));
-            model.addAttribute("isDigSignPending", request.getParameter("isDigSignPending"));
         }
         return "newConnection-digitalSignatureRedirection";
     }
@@ -267,10 +259,11 @@ public class DigitalSignatureConnectionController {
                             tempMap.put("waterConnectionDetails", waterConnectionDetails);
                             tempMap.put("ownerName", getOwnerName(waterConnectionDetails));
                             tempMap.put("propertyAddress", getPropertyAddress(waterConnectionDetails));
-                            Long approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-                                    waterConnectionDetails, null,
-                                    waterConnectionDetails.getApplicationType().getCode(), "", "");
-                            tempMap.put("approvalPosition", approvalPosition);
+                            String additionalRule = waterConnectionDetails.getApplicationType().getCode();
+                            if(additionalRule.equals("CLOSINGCONNECTION")) {
+                                additionalRule = WaterTaxConstants.CLOSECONNECTION;
+                            }
+                            tempMap.put("state", additionalRule);
                             resultList.add(tempMap);
                         }
                     }

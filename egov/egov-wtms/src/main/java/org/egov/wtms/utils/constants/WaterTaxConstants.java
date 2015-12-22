@@ -280,4 +280,6 @@ public class WaterTaxConstants {
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
     public static final String[] CREATECONNECTIONDMDDESC = {"Water Security Charges","Water Donation Charges","Water Estimation Charges"};
     public static final String[] WATERCHARGESDMDDESC = {"Water Charges"};
+    
+    public static final String CLOSECONNECTION = "CLOSECONNECTION";
 }
