@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,7 +51,6 @@ import javax.validation.Valid;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -103,9 +103,6 @@ public class CloserConnectionController extends GenericConnectionController {
 
     @Autowired
     private DocumentNamesService documentNamesService;
-    
-    @Autowired
-    private UserService userService;
 
     @Autowired
     public CloserConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -122,12 +119,16 @@ public class CloserConnectionController extends GenericConnectionController {
         return waterConnectionDetails;
     }
 
-    /*public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
-            @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setApplicationType(applicationTypeService
-                .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
-        return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
-    }*/
+    /*
+     * public @ModelAttribute("documentNamesList") List<DocumentNames>
+     * documentNamesList(
+     * @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
+     * waterConnectionDetails.setApplicationType(applicationTypeService
+     * .findByCode(WaterTaxConstants.CLOSINGCONNECTION)); return
+     * waterConnectionDetailsService
+     * .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
+     * }
+     */
 
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
@@ -141,7 +142,8 @@ public class CloserConnectionController extends GenericConnectionController {
         waterConnectionDetails.setPreviousApplicationType(waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("previousApplicationType", waterConnectionDetails.getPreviousApplicationType());
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("applicationDocList", waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
+        model.addAttribute("applicationDocList",
+                waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
@@ -186,16 +188,17 @@ public class CloserConnectionController extends GenericConnectionController {
 
         final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
                 .getAllActiveDocumentNames(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
-        if (!documentListForClosed.isEmpty() ){
-        final ApplicationDocuments applicationDocument = new ApplicationDocuments();
-        applicationDocument.setDocumentNames(documentListForClosed.get(0));
+        if (!documentListForClosed.isEmpty()) {
+            final ApplicationDocuments applicationDocument = new ApplicationDocuments();
+            applicationDocument.setDocumentNames(documentListForClosed.get(0));
 
-        applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
-        applicationDocument.setSupportDocs(addToFileStore(files));
-        //TODO: as off now saving 111 temp number for Closure Connection In ApplicationDocument as it is Its nOT NUll
-        applicationDocument.setDocumentNumber("111");
-        applicationDocument.setDocumentDate(new Date());
-        waterConnectionDetails.getApplicationDocs().add(applicationDocument);
+            applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
+            applicationDocument.setSupportDocs(addToFileStore(files));
+            // TODO: as off now saving 111 temp number for Closure Connection In
+            // ApplicationDocument as it is Its nOT NUll
+            applicationDocument.setDocumentNumber("111");
+            applicationDocument.setDocumentDate(new Date());
+            waterConnectionDetails.getApplicationDocs().add(applicationDocument);
         }
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
@@ -205,18 +208,28 @@ public class CloserConnectionController extends GenericConnectionController {
             waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
         final String addrule = request.getParameter("additionalRule");
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
+        waterConnectionDetails.setApplicationType(applicationTypeService
+                .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
                 waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
-        Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
-        String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
-        final String nextUser = waterTaxUtils.getApproverUserName(approvalPosition);
-        final String nextDesign = assignmentService
-                .getPrimaryAssignmentForEmployee(userService.getUserByUsername(nextUser).getId()).getDesignation()
-                .getName();
+        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
+                .getCurrentUser().getId(), new Date(), new Date());
+        String nextDesign = "";
+        Assignment assignObj = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+        if (assignObj != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignObj);
+        } else if (assignObj == null && approvalPosition != null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverName(approvalPosition)+ "," +currentUserDesgn+ "," + nextDesign;
+                + waterTaxUtils.getApproverName(approvalPosition) + ","
+                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                + (nextDesign != null ? nextDesign : "");
         return "redirect:/application/application-success?pathVars=" + pathVars;
 
     }

@@ -46,11 +46,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -89,9 +87,6 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
-    
-    @Autowired
-    private UserService userService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails changeOfUse) {
@@ -106,8 +101,9 @@ public class ChangeOfUseController extends GenericConnectionController {
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         if (null != connectionUnderChange.getConnection().getParentConnection())
-            parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetailsForParentConnectionNotNull(consumerCode, ConnectionStatus.ACTIVE);
-           
+            parentConnectionDetails = waterConnectionDetailsService
+            .getParentConnectionDetailsForParentConnectionNotNull(consumerCode, ConnectionStatus.ACTIVE);
+
         else
             parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(connectionUnderChange
                     .getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
@@ -115,7 +111,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             // TODO - error handling
         } else
             loadBasicData(model, parentConnectionDetails, changeOfUse, connectionUnderChange);
-            prepareWorkflow(model, changeOfUse, new WorkflowContainer());
+        prepareWorkflow(model, changeOfUse, new WorkflowContainer());
         return "changeOfUse-form";
     }
 
@@ -123,7 +119,8 @@ public class ChangeOfUseController extends GenericConnectionController {
     @RequestMapping(value = "/changeOfUse/changeOfUse-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails changeOfUse,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,final BindingResult errors) {
+            final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
+            final BindingResult errors) {
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
@@ -132,20 +129,16 @@ public class ChangeOfUseController extends GenericConnectionController {
         final WaterConnectionDetails parent = waterConnectionDetailsService.getParentConnectionDetails(
                 connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         final String message = changeOfUseService.validateChangeOfUseConnection(parent);
-        String consumerCode="";
-       if (!message.isEmpty() && !"".equals(message))
-        {
-            if(changeOfUse.getConnection().getParentConnection()!=null)
-            {
-                consumerCode=changeOfUse.getConnection().getParentConnection().getConsumerCode();
-            }
-            else{
-                consumerCode=changeOfUse.getConnection().getConsumerCode(); 
-            }
-            return "redirect:/application/changeOfUse/"+ consumerCode;
+        String consumerCode = "";
+        if (!message.isEmpty() && !"".equals(message)) {
+            if (changeOfUse.getConnection().getParentConnection() != null)
+                consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
+            else
+                consumerCode = changeOfUse.getConnection().getConsumerCode();
+            return "redirect:/application/changeOfUse/" + consumerCode;
         }
         int i = 0;
-        if (!changeOfUse.getApplicationDocs().isEmpty()){
+        if (!changeOfUse.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : changeOfUse.getApplicationDocs()) {
                 if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
                     final String fieldError = "applicationDocs[" + i + "].documentNumber";
@@ -158,20 +151,20 @@ public class ChangeOfUseController extends GenericConnectionController {
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        }
         waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse, resultBinder);
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
-                loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
-                prepareWorkflow(model,changeOfUse,new WorkflowContainer());
-                model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
-                model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
-                model.addAttribute("validationmessage",resultBinder.getFieldErrors().get(0).getField()+" = "+resultBinder.getFieldErrors().get(0).getDefaultMessage());
-                model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
-                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-                return "changeOfUse-form";
-           
+            loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
+            prepareWorkflow(model, changeOfUse, new WorkflowContainer());
+            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
+            model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
+            model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
+                    + resultBinder.getFieldErrors().get(0).getDefaultMessage());
+            model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
+            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            return "changeOfUse-form";
+
         }
         if (changeOfUse.getState() == null)
             changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
@@ -195,33 +188,41 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
-            if(userPosition ==null){
+            if (userPosition == null) {
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
                 loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
-                prepareWorkflow(model,changeOfUse,new WorkflowContainer());
+                prepareWorkflow(model, changeOfUse, new WorkflowContainer());
                 model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
                 model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
-                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));  
-                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping", "err.validate.connection.user.mapping");
+                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
+                        "err.validate.connection.user.mapping");
                 return "changeOfUse-form";
-            }
-            else {
+            } else
                 approvalPosition = userPosition.getId();
-            }
         }
 
         changeOfUse.setApplicationDate(new Date());
-        changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
-                changeOfUse.getApplicationType().getCode(), workFlowAction);
-        Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(),new Date());
-        String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "";
-        final String nextUser = waterTaxUtils.getApproverUserName(approvalPosition);
-        final String nextDesign = assignmentService
-                .getPrimaryAssignmentForEmployee(userService.getUserByUsername(nextUser).getId()).getDesignation()
-                .getName();
+        changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
+                .getApplicationType().getCode(), workFlowAction);
+        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
+                .getCurrentUser().getId(), new Date(), new Date());
+        String nextDesign = "";
+        Assignment assignObj = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+        if (assignObj != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignObj);
+        } else if (assignObj == null && approvalPosition != null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
         final String pathVars = changeOfUse.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverName(approvalPosition)+ "," +currentUserDesgn+ "," + nextDesign;
+                + waterTaxUtils.getApproverName(approvalPosition) + ","
+                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                + (nextDesign != null ? nextDesign : "");
         return "redirect:/application/application-success?pathVars=" + pathVars;
     }
 
@@ -248,10 +249,9 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("stateType", connectionUnderChange.getClass().getSimpleName());
         model.addAttribute("mode", "changeOfUse");
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute("validationMessage",
-                changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
-        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(connectionUnderChange);
-        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
+        model.addAttribute("validationMessage", changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(connectionUnderChange);
+        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
     }
 
