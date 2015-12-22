@@ -48,10 +48,12 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillType;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "egBillDAO")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EgBillHibernateDao implements EgBillDao {
 
 	@PersistenceContext
