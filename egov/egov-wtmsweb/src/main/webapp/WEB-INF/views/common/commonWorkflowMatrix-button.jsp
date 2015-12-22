@@ -43,12 +43,14 @@
 <script>
 
 
+
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value=name;
 	    var approverPosId = document.getElementById("approvalPosition");
 	    /* if(approverPosId && approverPosId.value != -1) {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
+			validateWorkFlowApprover('Forward');
 		}   */
 		var rejectbutton=document.getElementById("workFlowAction").value;
 		if(rejectbutton!=null && rejectbutton=='Reject')
@@ -58,6 +60,12 @@
 			$('#approvalPosition').removeAttr('required');
 			$('#approvalComent').attr('required', 'required');	
 			} 
+		 if(rejectbutton!=null && rejectbutton=='Forward'){
+			$('#approvalDepartment').attr('required', 'required');
+			$('#approvalDesignation').attr('required', 'required');
+			$('#approvalPosition').attr('required', 'required');
+			$('#approvalComent').removeAttr('required');
+		} 
 	   document.forms[0].submit;
 	   return true;
 	}
