@@ -344,7 +344,7 @@ $(document).ready(function(){
                         count++;
                 }
         });
-		if($("#assignmentTable tr").length==1 || count == 0 ){
+/*		if($("#assignmentTable tr").length==1 || count == 0 ){
 			$('.assignmentserror').html('At least one primary assignment should be entered ').show().fadeOut(5000);
 			$('.fromdateerror').hide();
 			$('.departmenterror').hide();
@@ -353,7 +353,7 @@ $(document).ready(function(){
 			$('.todateerror').hide();
 			$('.fromdateerror').focus();
 			return false;
-		}
+		}*/
         
        /* if(count == 0){
         	$('.assignmentserror').html('At least one primary assignment should be entered ').show().fadeOut(25000);
