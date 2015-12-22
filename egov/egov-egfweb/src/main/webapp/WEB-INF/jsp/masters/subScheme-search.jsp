@@ -220,7 +220,7 @@
 		function urlLoad(subSchemeId,showMode)
 		{
 		if(showMode=='edit')
-			url="../masters/subScheme-viewSubScheme.action?id="+subSchemeId+"&showMode=edit";
+			url="../masters/subScheme-beforeEdit.action?id="+subSchemeId+"&showMode=edit";
 		else
 			url="../masters/subScheme-viewSubScheme.action?id="+subSchemeId;
 		window.open(url,'subSchemeView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
