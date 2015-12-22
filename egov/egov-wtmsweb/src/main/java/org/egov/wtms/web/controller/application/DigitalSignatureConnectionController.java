@@ -197,7 +197,6 @@ public class DigitalSignatureConnectionController {
     @RequestMapping(value = "/waterTax/signWorkOrder", method = RequestMethod.POST)
     public String signWorkOrder(final HttpServletRequest request, final Model model) {
         WaterConnectionDetails waterConnectionDetails = null;
-        String workFlowAction = request.getParameter("workFlowAction");
         String[] applicationNumbers = null;
         Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<String, String>();
         StringBuffer fileStoreIds = new StringBuffer();
@@ -210,7 +209,7 @@ public class DigitalSignatureConnectionController {
                 String districtName = (String) request.getSession().getAttribute("districtName");
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
-                ReportOutput reportOutput = waterTaxUtils.getReportOutput(waterConnectionDetails, workFlowAction, cityMunicipalityName,
+                ReportOutput reportOutput = waterTaxUtils.getReportOutput(waterConnectionDetails, WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName,
                         districtName);
                 //Setting FileStoreMap object while Commissioner Signs the document   
                 if(reportOutput != null) {
