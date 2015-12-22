@@ -406,9 +406,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 || waterConnectionDetails.getApplicationType().getCode()
                                         .equals(WaterTaxConstants.ADDNLCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()
-                                        .equals(WaterTaxConstants.CHANGEOFUSE)
-                                || waterConnectionDetails.getApplicationType().getCode()
-                                        .equals(WaterTaxConstants.CLOSECONNECTION)) {
+                                        .equals(WaterTaxConstants.CHANGEOFUSE)) {
                             waterConnectionDetails.setWorkOrderDate(new Date());
                             waterConnectionDetails
                                     .setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());

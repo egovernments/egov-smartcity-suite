@@ -41,8 +41,12 @@ package org.egov.wtms.web.controller.application;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,6 +57,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
@@ -154,24 +159,27 @@ public class DigitalSignatureConnectionController {
         return "digitalSignature-success";
     }
     
-    @RequestMapping(value = "/waterTax/previewSignedWorkOrderConnection")
-    public @ResponseBody ResponseEntity<byte[]> previewSignedWorkOrderConnection(final HttpServletRequest request, final Model model) {
+    @RequestMapping(value = "/waterTax/downloadSignedWorkOrderConnection")
+    public void previewSignedWorkOrderConnection(final HttpServletRequest request, final HttpServletResponse response) {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
-        byte[] bFile;
-        try {
-            bFile = FileUtils.readFileToByteArray(file);
-        } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Exception while generating work order for New Connection : " + e);
+        response.setContentType("application/pdf");  
+        response.setContentType("application/octet-stream");
+        response.setHeader("content-disposition", "attachment; filename=\"" + signedFileStoreId + "\"");
+        try{
+            FileInputStream inStream = new FileInputStream(file);
+            PrintWriter outStream = response.getWriter();
+            int bytesRead = -1;
+            while ((bytesRead = inStream.read()) != -1) {
+                outStream.write(bytesRead);
+            }
+            inStream.close();
+            outStream.close(); 
+        } catch(FileNotFoundException fileNotFoundExcep) {
+            throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
+        } catch(final IOException ioExcep) {
+            throw new ApplicationRuntimeException("Exception while generating work order for New Connection : " + ioExcep);
         }
-        ReportOutput reportOutput = new ReportOutput();
-        reportOutput.setReportOutputData(bFile);
-        reportOutput.setReportFormat(FileFormat.PDF);
-        
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=WorkOrderConnection.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/digitalSignaturePending-form", method = RequestMethod.GET)
