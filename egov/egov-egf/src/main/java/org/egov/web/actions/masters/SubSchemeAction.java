@@ -127,15 +127,9 @@ public class SubSchemeAction extends BaseFormAction{
 		else
 			subScheme.setIsactive(false);
 
-		if (!showMode.equals("") && showMode.equals("view")) {
 			subScheme.setCreatedDate(new Date());
 			subScheme.setCreatedBy(getLoggedInUser());
 			subScheme.setLastmodifieddate(new Date());
-		} else {
-			subScheme.setLastModifiedBy(getLoggedInUser());
-			subScheme.setLastmodifieddate(new Date());
-		}
-		//validatemandatoryFields();
 		try {
 			subSchemeService.persist(subScheme);
 			subSchemeService.getSession().flush();
@@ -153,6 +147,10 @@ public class SubSchemeAction extends BaseFormAction{
 	}
 	@Action(value = "/masters/subScheme-edit")
         public String edit() {
+	    if (subSchemeId!=null)
+	    {
+	        subScheme.setId(subSchemeId.intValue());
+	    }
 	      if(isActive)
                   subScheme.setIsactive(true);
           else

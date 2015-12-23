@@ -70,9 +70,8 @@
 				return false;
 			}
 			var showMode = document.getElementById('showMode').value;
-			var id = document.getElementById('id').value;
 			if(showMode=='edit')
-			var	url='${pageContext.request.contextPath}/masters/subScheme-edit.action?id='+id;
+			var	url='${pageContext.request.contextPath}/masters/subScheme-edit.action';
 			else
 			var	url='${pageContext.request.contextPath}/masters/subScheme-create.action';
 			document.subSchemeForm.action=url;
@@ -111,9 +110,11 @@
 		<s:actionmessage />
 		</div>
 		<s:token/>
-		<s:hidden name="showMode"  />
-		<s:hidden id="id" name="id" value = "%{subScheme.id}"/>   
+		
 		<s:form id = "subSchemeForm" name="subSchemeForm" action="subScheme" theme="css_xhtml" validate="true">
+		
+		<s:hidden name="showMode" id ="showMode" value = "%{showMode}" />
+		<s:hidden id="subSchemeId" name="subSchemeId" value = "%{subScheme.id}"/>   
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
