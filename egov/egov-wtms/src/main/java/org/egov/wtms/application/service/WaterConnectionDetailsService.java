@@ -385,12 +385,12 @@ public class WaterConnectionDetailsService {
                 .getCode())
                 && waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE)
                 && waterConnectionDetails.getReConnectionReason() != null
-                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)
-                && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
+                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
             waterConnectionDetails.setReconnectionApprovalDate(new Date());
+            if(ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())){
             Installment nonMeterReconnInstallment = null;
             Boolean reconnInSameInstallment = null;
             if (checkTwoDatesAreInSameInstallment(waterConnectionDetails)) {
@@ -412,6 +412,7 @@ public class WaterConnectionDetailsService {
             }
             connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails,
                     nonMeterReconnInstallment, reconnInSameInstallment);
+            }
             updateIndexes(waterConnectionDetails);
         }
 

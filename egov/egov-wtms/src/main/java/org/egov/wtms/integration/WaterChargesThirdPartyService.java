@@ -53,7 +53,9 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesThirdPartyService {
 
     public WaterConnectionDetails waterConnectionDetails;
