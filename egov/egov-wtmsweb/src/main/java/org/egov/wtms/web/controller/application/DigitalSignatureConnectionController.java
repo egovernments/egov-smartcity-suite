@@ -160,7 +160,7 @@ public class DigitalSignatureConnectionController {
     }
     
     @RequestMapping(value = "/waterTax/downloadSignedWorkOrderConnection")
-    public void previewSignedWorkOrderConnection(final HttpServletRequest request, final HttpServletResponse response) {
+    public void downloadSignedWorkOrderConnection(final HttpServletRequest request, final HttpServletResponse response) {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
         response.setContentType("application/pdf");  
@@ -178,7 +178,7 @@ public class DigitalSignatureConnectionController {
         } catch(FileNotFoundException fileNotFoundExcep) {
             throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
         } catch(final IOException ioExcep) {
-            throw new ApplicationRuntimeException("Exception while generating work order for New Connection : " + ioExcep);
+            throw new ApplicationRuntimeException("Exception while generating work order : " + ioExcep);
         }
     }
 
