@@ -136,7 +136,8 @@ public class SubSchemeAction extends BaseFormAction{
 		}catch (ValidationException e) {
 			throw e;
 		}catch (ConstraintViolationException e) {
-			throw new ValidationException(Arrays.asList(new ValidationError("duplicate.subscheme","duplicate.subscheme")));
+		    addActionError(getText("duplicate.subscheme"));
+                    return NEW;
 		}catch (Exception e) {
 			throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator","An error occured contact Administrator")));
 		}
