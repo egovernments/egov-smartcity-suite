@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
@@ -173,6 +174,7 @@ public abstract class BaseLicenseService {
     public void create(TradeLicense license) {
          BigDecimal totalAmount = BigDecimal.ZERO;
          List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(license);
+         
         totalAmount = raiseNewDemand(feeList,license);
         license.getLicensee().setLicense(license);
         final LicenseStatus status = (LicenseStatus) persistenceService.find("from org.egov.tl.domain.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
@@ -227,7 +229,33 @@ public abstract class BaseLicenseService {
 	        return totalAmount;
 	    }
 	   
-	  
+    public BigDecimal recalculateDemand(List<FeeMatrixDetail> feeList,TradeLicense license) 
+	{
+
+		LOGGER.debug("Re calculating FEE          ...............................................");
+
+		  final EgDemand licenseDemand = license.getCurrentDemand();
+		BigDecimal totalAmount=BigDecimal.ZERO;
+		Set<EgDemandDetails> egDemandDetails = licenseDemand.getEgDemandDetails();
+		for(EgDemandDetails dmd:egDemandDetails)
+		{
+
+			for (final FeeMatrixDetail fm : feeList) {
+				
+				System.out.println("dmd:"+dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()+":");
+				System.out.println("fm:"+fm.getFeeMatrix().getFeeType().getName()+":");
+
+				if( dmd.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName()))
+				{
+					System.out.println(":"+fm.getAmount()+":");
+					dmd.setAmount(fm.getAmount());
+					totalAmount = totalAmount.add(fm.getAmount());
+				}
+			}
+		}
+		return totalAmount;
+	}  
+
 		
 	
 

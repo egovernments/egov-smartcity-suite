@@ -70,6 +70,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.pims.commons.Position;
+import org.egov.tl.domain.entity.FeeMatrixDetail;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseCategory;
 import org.egov.tl.domain.entity.LicenseDemand;
@@ -79,6 +80,7 @@ import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.BaseLicenseService;
+import org.egov.tl.domain.service.FeeMatrixService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
 import org.egov.tl.utils.LicenseUtils;
@@ -136,10 +138,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private DesignationService designationService;
     @Autowired
     private EisCommonService eisCommonService;
+    
     protected abstract License license();
     protected abstract BaseLicenseService service();
     protected String ackMessage;
+   
 
+    
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("licensee.boundary", Boundary.class);
@@ -153,6 +158,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     @SuppressWarnings("unchecked")
     public String approve() {
         processWorkflow(NEW);
+        
+        
         persistenceService.persist(license());
         // Generate PFA Certificate on final approval
         if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {

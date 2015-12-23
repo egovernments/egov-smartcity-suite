@@ -87,4 +87,13 @@
     <div class="col-sm-3 add-margin">
          <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="500" class="form-control"/>
     </div>
+    
+	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /></label>
+	<div class="col-sm-3 add-margin">
+	    
+		<s:date name="startDate" id="startdate" format="dd/MM/yyyy" />
+		<s:textfield name="startDate" id="startDate" onfocus="waterMarkTextIn('startDate','dd/mm/yyyy');" onblur="validateDateFormat(this);waterMarkTextOut('startDate','dd/mm/yyyy'); lessThanOrEqualToCurrentDate(this);" maxlength="10" size="10" value="%{startdate}" tabindex="4" onkeyup="DateFormat(this,this.value,event,false,'3')" />
+		<a href="javascript:show_calendar('forms[0].startDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img  alt="Date" width="18" height="18" border="0" align="absmiddle" id="calenderImgId" src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" /> </a>
+		
+    </div>
 </div>

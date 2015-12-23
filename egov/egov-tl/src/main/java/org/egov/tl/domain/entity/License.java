@@ -125,8 +125,9 @@ public abstract class License extends StateAware {
 
     private BigDecimal tradeArea_weight; 
     private UnitOfMeasurement uom;
-    private boolean legacy;
     
+    private boolean legacy;
+    private Date startDate;
     public abstract String generateApplicationNumber(String runningNumber);
 
     public abstract String generateLicenseNumber(String runningNumber);
@@ -859,4 +860,12 @@ public abstract class License extends StateAware {
     public void setLegacy(boolean legacy) {
         this.legacy = legacy;
     }
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 }

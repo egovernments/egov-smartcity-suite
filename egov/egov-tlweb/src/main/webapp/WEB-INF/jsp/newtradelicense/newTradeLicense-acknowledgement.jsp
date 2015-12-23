@@ -93,7 +93,7 @@
 								<s:text name="license.zone" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="boundary.parent.parent.name" />
+								<s:property value="boundary.parent.name" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -101,7 +101,7 @@
 								<s:text name="license.division" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content"> 
-								<s:property value="boundary.parent.name" />
+								<s:property value="boundary.parent.parent.name" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin">
 								<s:text name="licensee.applicantname" />
@@ -126,6 +126,17 @@
 								<s:property value="getPayableAmountInWords()" />
 							</div>
 						</div>
+						
+						
+						<div class="row add-border">
+							<div class="col-sm-3 col-xs-6 add-margin">
+								<s:text name="license.startdate" />
+							</div>
+							<div class="col-sm-3 col-xs-6 add-margin view-content">
+								<s:date name="startDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" />
+							</div>
+						</div>
+						
 					</div>
 				</div>
 			</s:push>
