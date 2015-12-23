@@ -146,6 +146,7 @@ $(document).ready(function()
 		$('.main-space').hide();
 		$('.workspace').removeClass('active');
 		clearnow();
+		$('.inline-elem input').val('');
 		$(this).addClass('active');
 		if($(this).attr('data-work') == 'worklist' ){
 			focussedmenu = "worklist";

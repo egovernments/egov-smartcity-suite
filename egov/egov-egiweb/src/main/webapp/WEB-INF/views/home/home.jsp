@@ -377,7 +377,7 @@
 									<label class="control-label">Re-type Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32"><br>
+									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32">
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>

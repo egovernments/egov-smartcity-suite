@@ -1579,10 +1579,10 @@ ul.nav-tabs>li.active>a:after {
 {
 	margin:0;
 	padding:0;
-	font-weight:bold;
+	/* font-weight:bold; */
 	display:inline-block;
 	word-wrap: break-word;
-	font-family: semibold;
+	/* font-family: semibold; */
 }
 .msg header a 
 {
