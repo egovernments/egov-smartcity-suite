@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-12-18T18:59:48 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
-	<property name="ireport.x" value="125"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="93"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="java.util.*"/>
 	<import value="java.math.*"/>
+	<import value="java.util.*"/>
 	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
@@ -66,7 +64,7 @@ $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? "AND EGF_INSTRUMENTTYPE.TYPE IN ('cheque'
 "AND EGF_INSTRUMENTTYPE.TYPE IN ('cash', 'card', 'bank', 'cheque', 'dd' , 'online')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_SOURCES" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{EGOV_SOURCE} == "SYSTEM" ? "AND EGCL_COLLECTIONHEADER.SOURCE  is null " :
+		<defaultValueExpression><![CDATA[$P{EGOV_SOURCE} == "SYSTEM" ? "AND EGCL_COLLECTIONHEADER.SOURCE  = 'SYSTEM' " :
 $P{EGOV_SOURCE} == "APONLINE" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'APONLINE'" :
 $P{EGOV_SOURCE} == "ESEVA" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'ESEVA'" :
 $P{EGOV_SOURCE} == "MEESEVA" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'MEESEVA'":
@@ -659,7 +657,7 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{SOURCE} == null ? "SYSTEM" : $F{SOURCE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SOURCE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
 				<reportElement stretchType="RelativeToTallestObject" x="40" y="0" width="82" height="20" isPrintWhenDetailOverflows="true" uuid="0e1d64cd-7c0a-4296-b0ba-50316ead9d90"/>
