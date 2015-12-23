@@ -51,13 +51,24 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import org.apache.commons.io.FileUtils;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -75,6 +86,7 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -125,6 +137,10 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private PropertyStatusDAO propertyStatusDAO;
+    
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -250,4 +266,27 @@ public class DigitalSignatureWorkflowController {
         return entityManager.unwrap(Session.class);
     }
 
+    @RequestMapping(value = "/propertyTax/downloadSignedNotice")
+    public void downloadSignedNotice(final HttpServletRequest request, final HttpServletResponse response) {
+        String signedFileStoreId = request.getParameter("signedFileStoreId");
+        File file = fileStoreService.fetch(signedFileStoreId, PropertyTaxConstants.FILESTORE_MODULE_NAME);
+        response.setContentType("application/pdf");  
+        response.setContentType("application/octet-stream");
+        response.setHeader("content-disposition", "attachment; filename=\"" + signedFileStoreId + "\"");
+        try{
+            FileInputStream inStream = new FileInputStream(file);
+            OutputStream outStream = response.getOutputStream();
+            int bytesRead = -1;
+            byte[] buffer = FileUtils.readFileToByteArray(file);
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            inStream.close();
+            outStream.close(); 
+        } catch(FileNotFoundException fileNotFoundExcep) {
+            throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
+        } catch(final IOException ioExcep) {
+            throw new ApplicationRuntimeException("Exception while downloading notice : " + ioExcep);
+        }
+    }
 }
