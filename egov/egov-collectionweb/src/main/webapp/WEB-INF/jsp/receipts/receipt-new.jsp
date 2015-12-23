@@ -238,6 +238,7 @@ var initialSetting="true";
 function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
 {
 	document.getElementById("receipt_error_area").innerHTML=""; 
+	document.getElementById("receipt_error_area").style.display="none";
 	var chequetable=document.getElementById('chequegrid');
 	var chequetablelen1 =chequetable.rows.length;
     if(!verifyChequeDetails(chequetable,chequetablelen1)){
