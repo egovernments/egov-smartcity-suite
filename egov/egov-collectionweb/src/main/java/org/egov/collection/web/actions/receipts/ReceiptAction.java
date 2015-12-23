@@ -97,6 +97,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -815,6 +816,7 @@ public class ReceiptAction extends BaseFormAction {
             receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                     CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
             receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
+            receiptHeader.setSource(Source.SYSTEM.toString());
 
             // If this is a new receipt in lieu of cancelling old
             // receipt, update

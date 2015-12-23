@@ -111,7 +111,8 @@ public class DailyWTCollectionReportService {
         return egwStatusHibernateDAO.getStatusByModule("ReceiptHeader");
     }
 
-    public List<DailyWTCollectionReport> getCollectionDetails(final Date fromDate, final Date toDate, final String collectionMode,
+    public List<DailyWTCollectionReport> getCollectionDetails(final Date fromDate, final Date toDate,
+            final String collectionMode,
             final String collectionOperator, final String status) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
 
@@ -136,7 +137,7 @@ public class DailyWTCollectionReportService {
         if (StringUtils.isNotBlank(status))
             query.setLong("status", Long.valueOf(status));
         final List<ReceiptHeader> receiptHeaderList = query.list();
-        final List<DailyWTCollectionReport> dailyWTCollectionReportList = new ArrayList<DailyWTCollectionReport>();
+        final List<DailyWTCollectionReport> dailyWTCollectionReportList = new ArrayList<DailyWTCollectionReport>(0);
         DailyWTCollectionReport result = null;
         BigDecimal currCollection = null;
         BigDecimal arrCollection = null;
@@ -199,17 +200,17 @@ public class DailyWTCollectionReportService {
                     String currentInstallment = null;
                     if (Arrays.asList(WaterTaxConstants.CREATECONNECTIONDMDDESC).contains(receiptDmdRsnDesc))
                         currentInstallment = connectionDemandService
-                                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
-                                .getDescription();
+                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
+                        .getDescription();
                     else if (Arrays.asList(WaterTaxConstants.WATERCHARGESDMDDESC).contains(receiptDmdRsnDesc))
                         if (ConnectionType.METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
-                                    .getDescription();
+                            .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                            .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
-                                    .getDescription();
+                            .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                            .getDescription();
 
                     if (null != rdesc
                             && rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim().equals(currentInstallment))
@@ -229,10 +230,10 @@ public class DailyWTCollectionReportService {
     }
 
     public Map<String, String> getCollectionModeMap() {
-        final Map<String, String> collectionModeMap = new LinkedHashMap<String, String>();
-        collectionModeMap.put(Source.ESEVA.toString(), "ESEVA");
-        collectionModeMap.put(Source.MEESEVA.toString(), "MEESEVA");
-        collectionModeMap.put(Source.APONLINE.toString(), "ONLINE");
+        final Map<String, String> collectionModeMap = new LinkedHashMap<String, String>(0);
+        collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
+        collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
+        collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
         return collectionModeMap;
     }
 }

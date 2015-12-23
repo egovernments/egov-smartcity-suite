@@ -99,7 +99,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         sourcesMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
         sourcesMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
         sourcesMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
-        sourcesMap.put(CollectionConstants.SOURCE_SYSTEM, CollectionConstants.SOURCE_SYSTEM);
+        sourcesMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
         return sourcesMap;
     }
 

@@ -523,7 +523,6 @@ public final class CollectionConstants {
     public static final String ESTIMATION_CHARGES_WATERTAX_MODULE= "Estimation Charges";
     
     
-    public static final String SOURCE_SYSTEM = "SYSTEM";
     public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
 
 }
