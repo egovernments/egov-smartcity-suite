@@ -178,11 +178,12 @@ $.ajax({url:"/pgr/dashboard/monthly-aggregate",
 $.ajax({url:"/pgr/dashboard/typewise-aggregate",
 	cache:true
 }).done(function(piedata) {
+	
 	$('#overviewGraph').highcharts({
 	    chart: {
 	    	borderRadius:'5px'
 	        },
-	        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
+	        /*colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
 	            return {
 	                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
 	                stops: [
@@ -190,7 +191,7 @@ $.ajax({url:"/pgr/dashboard/typewise-aggregate",
 	                        [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
 	                ]
 	            };
-	        }),
+	        }),*/
 	        exporting: { enabled: false },
 	        credits: {
 	            enabled: false
@@ -217,7 +218,7 @@ $.ajax({url:"/pgr/dashboard/typewise-aggregate",
 		                enabled: true,
 		                distance: -30,
 						color:'white',
-						style:{'fontSize':'xx-small'},
+						style:{'fontSize':'xx-small', "textShadow": "none"},
 		                formatter: function() {
 		                    return this.percentage.toFixed(1)+'%';
 		                }
