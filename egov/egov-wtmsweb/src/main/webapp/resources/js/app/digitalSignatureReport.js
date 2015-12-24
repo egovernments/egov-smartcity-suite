@@ -67,9 +67,9 @@ function generateNotice(obj, actionName, currentState){
 	var type = currentState.split(":");
 	var url = "";
 	if (actionName == 'Preview') {
-		if(type == 'CLOSECONNECTION') {
+		if(currentState == 'CLOSECONNECTION') {
 			url = "/wtms/application/acknowlgementNotice?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
-		} else if(type == 'RECONNECTION') {
+		} else if(currentState == 'RECONNECTION') {
 			url = "/wtms/application/ReconnacknowlgementNotice?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
 		} else {
 			url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
@@ -80,7 +80,7 @@ function generateNotice(obj, actionName, currentState){
 	else {
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber,
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber+'&currentState='+currentState,
 			target: '_self'
 		})
 		.appendTo(document.body).submit();
@@ -96,15 +96,17 @@ function signAllPendingDigitalSignature(actionName) {
 		var tbl = document.getElementById("digSignDetailsTab");
 		var lastRow = (tbl.rows.length) - 1;
 		var idArray = new Array();
-		var j = 0;
+		var applicationNoStatePair = new Array();
+		var j = 0, k = 0;
 		for (var i = 1; i <= lastRow; i++) {
 			if (getControlInBranch(tbl.rows[i], 'rowCheckBox').checked) {
 				idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value;
+				applicationNoStatePair[k++] = getControlInBranch(tbl.rows[i],'objectId').value + ':' + getControlInBranch(tbl.rows[i],'applicationState').value;
 			}
 		}
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString(),
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString()+'&signAll='+actionName+'&applicationNoStatePair='+applicationNoStatePair.toString(),
 			target: '_self'
 		})
 		.appendTo(document.body).submit();

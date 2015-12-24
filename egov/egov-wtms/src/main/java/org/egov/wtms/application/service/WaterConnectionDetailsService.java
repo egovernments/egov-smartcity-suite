@@ -374,18 +374,18 @@ public class WaterConnectionDetailsService {
             final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String mode, final ReportOutput reportOutput) throws ValidationException {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
-        if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED.equals(waterConnectionDetails.getStatus().getCode())
+        if (WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
-                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) {
+                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
             waterConnectionDetails.setCloseApprovalDate(new Date());
         }
-        if (WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED.equals(waterConnectionDetails.getStatus()
+        if (WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING.equals(waterConnectionDetails.getStatus()
                 .getCode())
                 && waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE)
                 && waterConnectionDetails.getReConnectionReason() != null
-                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) {
+                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);

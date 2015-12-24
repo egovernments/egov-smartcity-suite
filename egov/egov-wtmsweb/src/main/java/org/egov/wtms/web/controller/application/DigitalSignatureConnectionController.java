@@ -45,7 +45,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,11 +59,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -75,24 +72,19 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -118,10 +110,7 @@ public class DigitalSignatureConnectionController {
     
     @Autowired
     private SecurityUtils securityUtils;
-    
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-    
+     
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
     
@@ -130,6 +119,9 @@ public class DigitalSignatureConnectionController {
     
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+    
+    @Autowired
+    private ReportGenerationService reportGenerationService;
     
     @RequestMapping(value = "/waterTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -145,9 +137,12 @@ public class DigitalSignatureConnectionController {
             if(null != applicationNumber && !applicationNumber.isEmpty()) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
                 if(null == approvalPosition) {
+                    String additionalRule = waterConnectionDetails.getApplicationType().getCode();
+                    if(additionalRule.equalsIgnoreCase(WaterTaxConstants.CLOSINGCONNECTION)) {
+                        additionalRule = WaterTaxConstants.CLOSECONNECTION;
+                    }
                     approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-                            waterConnectionDetails, approvalPosition,
-                            waterConnectionDetails.getApplicationType().getCode(), "", WaterTaxConstants.SIGNWORKFLOWACTION);
+                            waterConnectionDetails, approvalPosition, additionalRule, "", WaterTaxConstants.SIGNWORKFLOWACTION);
                 }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), WaterTaxConstants.SIGNWORKFLOWACTION, "",
@@ -198,22 +193,49 @@ public class DigitalSignatureConnectionController {
     public String signWorkOrder(final HttpServletRequest request, final Model model) {
         WaterConnectionDetails waterConnectionDetails = null;
         String[] applicationNumbers = null;
+        String[] appNumberConTypePair = null;
         Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<String, String>();
         StringBuffer fileStoreIds = new StringBuffer();
         String pathVar = request.getParameter("pathVar");
+        String applicationNoStatePair = request.getParameter("applicationNoStatePair");
+        String currentState = request.getParameter("currentState");
+        String signAll = request.getParameter("signAll");
+        String fileName = "";
         if(pathVar != null) {
             applicationNumbers = request.getParameter("pathVar").split(",");
+            if(applicationNoStatePair != null) {
+                appNumberConTypePair = applicationNoStatePair.split(",");
+            }
             for(int i = 0; i < applicationNumbers.length; i++) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumbers[i]);
                 String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
                 String districtName = (String) request.getSession().getAttribute("districtName");
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
-                ReportOutput reportOutput = waterTaxUtils.getReportOutput(waterConnectionDetails, WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName,
-                        districtName);
+                ReportOutput reportOutput = null;
+                if(signAll != null && signAll.equalsIgnoreCase(WaterTaxConstants.SIGN_ALL)) {
+                    for(int j = 0; j < appNumberConTypePair.length; j++) {
+                        String[] appNoStatePair = appNumberConTypePair[j].split(":");
+                        if(applicationNumbers[i].equalsIgnoreCase(appNoStatePair[0])) {
+                            currentState = appNoStatePair[1];
+                        }
+                    }
+                }
+                if(currentState.equalsIgnoreCase(WaterTaxConstants.CLOSECONNECTION)) {
+                    reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails,
+                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                    fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber() + ".pdf";
+                } else if(currentState.equalsIgnoreCase(WaterTaxConstants.RECONNECTIONCONNECTION)) {
+                    reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails,
+                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                    fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber() + ".pdf";
+                } else {
+                    reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails,
+                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                    fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
+                }
                 //Setting FileStoreMap object while Commissioner Signs the document   
                 if(reportOutput != null) {
-                    final String fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
                     InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
                     final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                             WaterTaxConstants.FILESTORE_MODULECODE);

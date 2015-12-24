@@ -70,6 +70,7 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.enums.ClosureType;
@@ -125,6 +126,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private MeterCostService meterCostService;
+    
+    @Autowired
+    private ReportGenerationService reportGenerationService;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -414,13 +418,27 @@ public class UpdateConnectionController extends GenericConnectionController {
                         final String cityMunicipalityName = (String) request.getSession().getAttribute(
                                 "citymunicipalityname");
                         final String districtName = (String) request.getSession().getAttribute("districtName");
-                        final ReportOutput reportOutput = waterTaxUtils.getReportOutput(waterConnectionDetails,
-                                workFlowAction, cityMunicipalityName, districtName);
+                         ReportOutput reportOutput=null;
+                         reportOutput = getReportOutputObject(waterConnectionDetails, workFlowAction, cityMunicipalityName,
+                                districtName);
+                        
                         // Setting FileStoreMap object while Commissioner Signs
                         // the document
                         if (reportOutput != null) {
-                            final String fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX
-                                    + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
+                            String fileName = "";
+                            if (waterConnectionDetails.getApplicationType().getCode()
+                                    .equals(WaterTaxConstants.CLOSINGCONNECTION)) {
+                                fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX
+                                        + waterConnectionDetails.getApplicationNumber() + ".pdf";
+                            } else if (waterConnectionDetails.getApplicationType().getCode()
+                                    .equals(WaterTaxConstants.RECONNECTIONCONNECTION)) {
+                                fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX
+                                        + waterConnectionDetails.getApplicationNumber() + ".pdf";
+                            } else {
+                                fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX
+                                        + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
+                            }
+                            
                             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
                             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName,
                                     "application/pdf", WaterTaxConstants.FILESTORE_MODULECODE);
@@ -521,6 +539,26 @@ public class UpdateConnectionController extends GenericConnectionController {
         }
     }
 
+    private ReportOutput getReportOutputObject(WaterConnectionDetails waterConnectionDetails, String workFlowAction,
+            final String cityMunicipalityName, final String districtName) {
+        ReportOutput reportOutput;
+        if(waterConnectionDetails.getApplicationType().getCode()
+                 .equals(WaterTaxConstants.CLOSINGCONNECTION)){
+             reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails,
+                     workFlowAction, cityMunicipalityName, districtName);
+         }
+         else if(waterConnectionDetails.getApplicationType().getCode()
+                 .equals(WaterTaxConstants.RECONNECTIONCONNECTION)){
+             reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails,
+                     workFlowAction, cityMunicipalityName, districtName);
+         }
+         else
+        reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails,
+                workFlowAction, cityMunicipalityName, districtName);
+        
+        return reportOutput;
+    }
+
     private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
 
         if (waterConnectionDetails.getApprovalNumber() == null)
@@ -550,4 +588,5 @@ public class UpdateConnectionController extends GenericConnectionController {
         return true;
     }
 
+    
 }

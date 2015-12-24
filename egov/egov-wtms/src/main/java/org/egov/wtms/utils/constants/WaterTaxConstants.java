@@ -282,4 +282,8 @@ public class WaterTaxConstants {
     public static final String[] WATERCHARGESDMDDESC = {"Water Charges"};
     
     public static final String CLOSECONNECTION = "CLOSECONNECTION";
+    
+    public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
+    public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
+    public static final String SIGN_ALL = "SIGN_ALL";
 }
