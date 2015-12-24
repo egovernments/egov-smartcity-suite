@@ -117,6 +117,29 @@
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 				enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
+				showHideFirmName();
+			}
+
+			function enableDisableFirmName(obj){ 
+				var selIndex = obj.selectedIndex;
+				var selText = obj.options[selIndex].text; 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+				if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+					if(firmval.value!=null && firmval.value!="") 
+						firmval.value="";
+					firmval.readOnly = true;      
+				} else{
+					firmval.readOnly = false;
+				}
+			}  
+
+			function showHideFirmName(){
+				var rows = document.getElementById('floorDetails').rows.length - 1;  
+				for (var i = 0; i < rows; i++) {
+						enableDisableFirmName(document.forms[0].floorUsage[i]);
+				}
 			}
 
 			function enableAppartnaumtLandDetailsView() {
@@ -203,6 +226,7 @@
 
 </script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">

@@ -1313,11 +1313,11 @@ function addFloor()
 					     {
 							 jQuery(this).attr('data-result', jQuery(this).data('result').replace('[0]', '['+ nextIdx +']'));
 						 }
-						 
+						 jQuery(this).attr('readOnly',false); 
 						//set default selection for dropdown
 						if(jQuery(this).is( "select" ))
 						{
-							jQuery(this).prop('selectedIndex', 0);
+							jQuery(this).prop('selectedIndex', 0); 
 						}
 						 
 			    }).end().appendTo("#floorDetails");

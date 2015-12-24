@@ -84,6 +84,7 @@ public class Floor extends BaseModel implements Auditable {
 	private PropertyDetail propertyDetail;
 	private Date occupancyDate;
 	private String occupantName;
+	private String firmName;
 	private Boolean drainage;
 	private Integer noOfSeats;
 	private FloorwiseDemandCalculations floorDmdCalc;
@@ -94,7 +95,7 @@ public class Floor extends BaseModel implements Auditable {
 			String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
 			BigDecimal manualAlv, PropertyTypeMaster unitType, String unitTypeCategory, String waterRate,
 			BigDecimal alv, Date occupancyDate, String occupierName, Boolean drainage, Integer noOfSeats,
-			FloorwiseDemandCalculations floorDmdCalc) {
+			FloorwiseDemandCalculations floorDmdCalc,String firmName) {
 		super();
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
@@ -117,6 +118,7 @@ public class Floor extends BaseModel implements Auditable {
 		this.drainage = drainage;
 		this.noOfSeats = noOfSeats;
 		this.floorDmdCalc = floorDmdCalc;
+		this.firmName=firmName;
 	}
 
 	public Floor() {
@@ -452,5 +454,13 @@ public class Floor extends BaseModel implements Auditable {
 	public void setFloorDmdCalc(FloorwiseDemandCalculations floorDmdCalc) {
 		this.floorDmdCalc = floorDmdCalc;
 	}
+
+        public String getFirmName() {
+            return firmName;
+        }
+    
+        public void setFirmName(String firmName) {
+            this.firmName = firmName;
+        }
 
 }

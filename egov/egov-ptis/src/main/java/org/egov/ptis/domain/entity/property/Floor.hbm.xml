@@ -102,7 +102,7 @@
 		<property name="waterRate" column="WATER_RATE" />
 		<property name="noOfSeats" column="no_of_seats"	type="integer" />
 		<property name="drainage" column="drainage"	type="boolean" />
-		
+		<property name="firmName" column="firmname" type="java.lang.String"/> 
 		<!--
 		EXTRA_FIELD1 varchar
 		

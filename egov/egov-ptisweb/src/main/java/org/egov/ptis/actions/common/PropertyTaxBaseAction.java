@@ -75,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -123,11 +124,14 @@ import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
+import org.egov.ptis.master.service.PropertyUsageService;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
+import org.jsoup.select.Evaluator.IsEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -174,6 +178,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PositionMasterService positionMasterService;
     private PropertyImpl propertyModel;
     protected WorkflowBean workflowBean;
+    @Autowired
+    private PropertyUsageService propertyUsageService;
+    
 
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();
@@ -399,6 +406,16 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.usage", msgParams));
+                        
+                        if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
+                                || floor.getFirmName().equals("")){     
+                            if (floor.getPropertyUsage() != null || null != floor.getPropertyUsage().getId()
+                                    || !floor.getPropertyUsage().getId().toString().equals("-1")){
+                                final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor.getPropertyUsage().getId()));
+                                if(pu!=null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
+                                    addActionError(getText("mandatory.floor.firmName", msgParams)); 
+                            } 
+                        }
 
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
