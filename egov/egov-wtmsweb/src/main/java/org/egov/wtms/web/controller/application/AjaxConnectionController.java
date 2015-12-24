@@ -176,11 +176,25 @@ public class AjaxConnectionController {
         final  List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
                 		minPipesizeObj.getSizeInInch() , maxPipesizeObj.getSizeInInch());
-        if (donationHeaderTempList == null)
+        if (donationHeaderTempList.isEmpty())
             return 0;
         else{
                return 1;
             }
+    }
+    
+    @RequestMapping(value = "/ajax-minimumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double getMinimumPipeSizeInInch(
+            @RequestParam final Long minPipeSize) {
+          PipeSize minPipesizeObj=pipeSizeService.findBy(minPipeSize);
+          return minPipesizeObj.getSizeInInch();
+    }
+    
+    @RequestMapping(value = "/ajax-maximumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double getMaximumPipeSizeInInch(
+            @RequestParam final Long maxPipeSize) {
+          PipeSize maxPipesizeObj=pipeSizeService.findBy(maxPipeSize);
+          return maxPipesizeObj.getSizeInInch();
     }
     
     @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
