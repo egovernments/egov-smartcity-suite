@@ -547,13 +547,14 @@ CollectionIntegrationService {
         final StringBuilder queryBuilder = new StringBuilder(
                 "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
-                        +  " and source=:source  group by ulb,service  ");
+                        +  " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
         query.setDate("fromDate", aggrReq.getFromdate());
         query.setDate("toDate", aggrReq.getTodate());
         query.setString("serviceCode", aggrReq.getServicecode());
         query.setString("source", aggrReq.getSource());
+        query.setString("ulbCode", aggrReq.getUlbCode());
         
         LOGGER.debug(aggrReq.getSource());
 
