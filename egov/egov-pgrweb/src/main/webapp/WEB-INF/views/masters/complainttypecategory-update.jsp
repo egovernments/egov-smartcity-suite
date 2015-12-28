@@ -76,8 +76,8 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 			</div>
 			<div class="form-group">
 				<div class="text-center">
-					<button type="submit" class="btn btn-success"><spring:message code="btn.lbl.update.category"/></button>
-					<button type="button" class="btn btn-success" onclick="window.location='../search-for-edit'"><spring:message code="lbl.search"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="btn.lbl.update.category"/></button>
+					<button type="button" class="btn btn-primary" onclick="window.location='../search-for-edit'"><spring:message code="lbl.search"/></button>
 					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 					<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					<input type="hidden" name="complaintTypeCategory.id" value="${complaintTypeCategory.id}">

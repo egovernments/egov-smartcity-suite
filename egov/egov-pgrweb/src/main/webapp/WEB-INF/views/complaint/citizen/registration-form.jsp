@@ -99,7 +99,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 					</div>
 					
 					<div class="form-group">
-						<div class="col-sm-3 col-xs-12 change-text-align"  id="upload-section">
+						<div class="col-sm-3 col-xs-12 text-right"  id="upload-section">
 							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
 							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
 							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>

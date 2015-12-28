@@ -104,7 +104,7 @@
 										
 						<div class="row">
 							<div class="text-center">
-								<button type="button" id="complaintTypeReportSearch" class="btn btn-success">
+								<button type="button" id="complaintTypeReportSearch" class="btn btn-primary">
 									<spring:message code="lbl.complaintTypeWiseReport.button.search" /></button>
 									<a href="javascript:void(0)" class="btn btn-default"
 										onclick="self.close()"> <spring:message code="lbl.close" /></a>

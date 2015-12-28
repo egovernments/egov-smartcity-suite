@@ -106,10 +106,10 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-success" id="routerUpdateBtn">
+					<button type="submit" class="btn btn-primary" id="routerUpdateBtn">
 						<spring:message code="lbl.update"/>
 					</button>
-					<button type="submit" class="btn btn-success" id="routerDel" >
+					<button type="submit" class="btn btn-primary" id="routerDel" >
                         <spring:message code="lbl.delete"/>
                     </button>	
 					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">

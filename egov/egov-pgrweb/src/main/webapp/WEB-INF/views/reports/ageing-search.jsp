@@ -63,9 +63,9 @@
 							</c:choose>
 						</div>
 					</div>
-					<div class="panel-body custom-form">
+					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when"/> </label>
-						<div class="col-sm-4 add-margin">
+						<div class="col-sm-7 add-margin">
 							<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 							<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
 				                <option value=""><spring:message code="lbl.select" /></option>
@@ -93,7 +93,7 @@
 					</div>	
 					<div class="form-group"  id="recenter">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.ageingReport.complaintStatus" /></label>
-						<div class="col-sm-2">		
+						<div class="col-sm-7">		
 							<form:select path="complaintStatus" data-first-option="false" id="status" 
 							cssClass="form-control" cssErrorClass="form-control error">
 								<form:options items="${status}" />
@@ -103,7 +103,7 @@
 					</div>
 					<div class="row">
 						<div class="text-center">
-							<button type="button" id="ageingReportSearch" class="btn btn-success">
+							<button type="button" id="ageingReportSearch" class="btn btn-primary">
 								<spring:message code="lbl.ageingReport.button.search" />
 							</button>
 							<a href="javascript:void(0)" class="btn btn-default"

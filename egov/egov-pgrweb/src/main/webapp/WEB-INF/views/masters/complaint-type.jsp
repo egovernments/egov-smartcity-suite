@@ -150,7 +150,7 @@ eGov suite of products aim to improve the internal efficiency,transparency,
 			</div>
 			<div class="form-group">
 				<div class="text-center">
-					<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 					<c:if test="${mode != 'update'}">
 						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 					</c:if>
