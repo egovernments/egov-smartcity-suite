@@ -55,6 +55,7 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.search.domain.Searchable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
@@ -65,6 +66,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
+@Searchable
 @Unique(id = "id", tableName = "eg_city", fields = { "domainURL" }, columnName = { "domainURL" }, enableDfltMsg = true)
 @Table(name = "eg_city")
 @NamedQuery(name = City.QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
@@ -84,6 +86,7 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String name;
 
     @SafeHtml
@@ -94,6 +97,7 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String domainURL;
 
     @SafeHtml
@@ -106,20 +110,25 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String code;
 
     @SafeHtml
     @NotBlank
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String districtCode;
 
     @SafeHtml
     @NotBlank
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String districtName;
 
     @SafeHtml
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String regionName;
 
     @SafeHtml
+    @Searchable(group = Searchable.Group.CLAUSES)
     private String grade;
 
     private Float longitude;
@@ -276,13 +285,14 @@ public class City extends AbstractAuditable {
 
         cityPrefs.put("citynamelocal", localName);
         cityPrefs.put("cityCode", code);
-        cityPrefs.put("cityRecaptchaPK", recaptchaPK);
-        cityPrefs.put("cityRecaptchaPub", recaptchaPub);
+        cityPrefs.put("siteSecret", recaptchaPK);
+        cityPrefs.put("siteKey", recaptchaPub);
         cityPrefs.put("citylat", latitude);
         cityPrefs.put("citylng", longitude);
         cityPrefs.put("cityCode", code);
         cityPrefs.put("districtName", districtName);
         cityPrefs.put("districtCode", districtCode);
+        cityPrefs.put("cityGrade", grade);
         return cityPrefs;
     }
 

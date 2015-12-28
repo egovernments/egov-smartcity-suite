@@ -185,5 +185,5 @@ public interface PtDemandDao {
 	
 	public List<Object> getPropertyTaxDetails(String assessmentNo);
 	public Set<String> getDemandYears(String assessmentNo);
-	public List<Object> getTaxDetailsForWaterConnection(String assessmentNo) ;
+	public List<Object> getTaxDetailsForWaterConnection(String assessmentNo,String connectionType) ;
 }

@@ -44,5 +44,8 @@
 	  
     <import resource="classpath*:config/spring/applicationContext-eis.xml"/>
 	<import resource="applicationSecurityContext-eis.xml"/>
+
+	 <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+     </bean>  
 	
 </beans>

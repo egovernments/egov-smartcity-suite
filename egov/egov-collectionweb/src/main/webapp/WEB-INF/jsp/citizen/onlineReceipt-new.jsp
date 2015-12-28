@@ -38,12 +38,13 @@
 -->
 
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Online Payment</title>
 <script src="common/js/watermark.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/collectionspublic.css" />
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/css/collectionspublic.css" />
 <script type="text/javascript">
 
 jQuery.noConflict();
@@ -120,7 +121,7 @@ function populateapportioningamountnew(){
 		   		return;
 		    	}
 		    	if(collectiontotal==""){
-		   		waterMarkInitialize('paymentAmount','0.0');
+		   		waterMarkInitialize('paymentAmount','');
 		    		return;
 		    	}
 			if(collectiontotal <= billingtotal)
@@ -195,7 +196,8 @@ function populateapportioningamountnew(){
 			else
 			{
 				document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
-			dom.get("receipt_error_area").style.display="block";
+				dom.get("receipt_error_area").style.display="block";
+				window.scroll(0,0);
 			}
 		}
 			
@@ -248,6 +250,7 @@ function validateOnlineReceipt(){
 	if(amount==null || amount=="" || isNaN(amount) || amount=="0.0" || amount=="0" || amount<0 || amount.startsWith('+')){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.invalidamount" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
 		validation=false;
 		return false;
 	}
@@ -257,6 +260,7 @@ function validateOnlineReceipt(){
 	if(checkpartpaymentvalue=="false" && amount < billingtotal){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.partpaymenterror" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
 		validation=false;
 		return false;
 	}
@@ -265,11 +269,13 @@ function validateOnlineReceipt(){
 	{
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
 		validation=false;
 	}
 	if(dom.get("paymentServiceId").value=="-1"){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.selectpaymentgateway.errormessage" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
 		validation=false;
 		return false;
 	}
@@ -277,6 +283,7 @@ function validateOnlineReceipt(){
 	if(!dom.get("checkbox").checked){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.acceptterms" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
 		validation=false;
 	}
 	if(validation==false){
@@ -285,7 +292,8 @@ function validateOnlineReceipt(){
 	else {
 			doLoadingMask('#loadingMask');
 			document.collDetails.action="onlineReceipt-saveNew.action";
-			document.collDetails.submit();
+
+			return true;
   		}
 }
 
@@ -356,10 +364,10 @@ function onLoad(){
 <style type="text/css">
 <!--
 #apDiv1 {
-	position:absolute;
-	width:36px;
-	height:27px;
-	z-index:1;
+	position: absolute;
+	width: 36px;
+	height: 27px;
+	z-index: 1;
 	left: 424px;
 	top: 760px;
 }
@@ -368,195 +376,383 @@ function onLoad(){
 </head>
 
 <body onload="onLoad();">
-<div class="maincontainer">
-<s:form theme="simple" name="collDetails" action="OnlineReceiptAction.action">
- <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
-   <div class="formmainbox">
+	<div class="maincontainer">
+		<s:form theme="simple" name="collDetails"
+			action="OnlineReceiptAction.action">
+			<div class="errorstyle" id="receipt_error_area"
+				style="display: none;"></div>
+			<div class="formmainbox">
 
-   <div class="subheadnew">
+				<div class="subheadnew">
 					<span class="complaintmsg"><s:text
 							name="onlineReceipts.payyourtax" /></span>
 					<div class="dottedgridlarge2"></div>
+				</div>
+
+				<div class="margin20 container-medium">
+					<s:if test="%{!lastThreeOnlinePayments().isEmpty()}">
+						<div class="text-left margin-5">
+							<s:text name="onlineReceipts.lastthreetransaction" />
+						</div>
+
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+							<tr>
+								<th class="bluebgheadtd"><s:text
+										name="onlineReceipts.lastthreetbl.sno" /></th>
+								<th class="bluebgheadtd"><s:text
+										name="onlineReceipts.lastthreetbl.transid" /></th>
+								<th class="bluebgheadtd"><s:text
+										name="onlineReceipts.lastthreetbl.transdatetime" /></th>
+								<th class="bluebgheadtd"><s:text
+										name="onlineReceipts.lastthreetbl.amtrs" /></th>
+								<th class="bluebgheadtd"><s:text
+										name="onlineReceipts.lastthreetbl.status" /></th>
+							</tr>
+
+
+							<tr>
+								<%
+								    int onPayDtlCnt = 0;
+								%>
+								<s:iterator value="%{lastThreeOnlinePayments}"
+									status="onPaystatus">
+									<%
+									    onPayDtlCnt = onPayDtlCnt + 1;
+									%>
+									<tr>
+										<td class="blueborderfortd text-center"><%=onPayDtlCnt%></td>
+										<td class="blueborderfortd text-center"><s:property
+												value="%{receiptHeader.id}" /></td>
+										<td class="blueborderfortd text-center"><s:date
+												name='receiptHeader.createdDate' format='dd/MM/yyyy HH:mm'
+												var="createddate" /> <s:property value="createddate" /></td>
+										<td class="blueborderfortd text-center"><fmt:formatNumber
+												value="${receiptHeader.totalAmount}" pattern="#0.00" />
+										<td class="blueborderfortd text-center"><s:property
+												value="%{status.description}" /></td>
+									<tr>
+
+									</tr>
+								</s:iterator>
+							</tr>
+
+						</table>
+					</s:if>
+
+
+					<div class="rbroundbox3">
+
+						<div class="rbcontent4">
+							<div class="containerformsg1">
+
+								<div class="text-left margin-5">
+									<s:text name="onlineReceipts.paytaxtext" />
+								</div>
+								<table width="100%" border="0" cellspacing="0" cellpadding="0"
+									id="billsheaderinfotable">
+									<s:hidden name="collectXML" id="collectXML"
+										value="%{collectXML}" />
+									<s:hidden label="totalNoOfBills" id="totalNoOfBills"
+										name="totalNoOfBills" value="%{totalNoOfBills}" />
+									<s:hidden label="totalNoOfAccounts" id="totalNoOfAccounts"
+										value="%{totalNoOfAccounts}" name="totalNoOfAccounts" />
+									<s:hidden label="multiplePayee" id="multiplePayee"
+										name="multiplePayee" value="%{multiplePayee}" />
+									<s:hidden label="reasonForCancellation"
+										id="reasonForCancellation" name="reasonForCancellation" />
+									<s:hidden label="oldReceiptId" id="oldReceiptId"
+										name="oldReceiptId" />
+									<s:hidden label="overrideAccountHeads"
+										id="overrideAccountHeads" value="%{overrideAccountHeads}"
+										name="overrideAccountHeads" />
+									<s:hidden label="partPaymentAllowed" id="partPaymentAllowed"
+										value="%{partPaymentAllowed}" name="partPaymentAllowed" />
+									<s:hidden label="cashAllowed" id="cashAllowed"
+										value="%{cashAllowed}" name="cashAllowed" />
+									<s:hidden label="cardAllowed" id="cardAllowed"
+										value="%{cardAllowed}" name="cardAllowed" />
+									<s:hidden label="chequeDDAllowed" id="chequeDDAllowed"
+										value="%{chequeDDAllowed}" name="chequeDDAllowed" />
+									<s:hidden label="totalAmountToBeCollected"
+										id="totalAmountToBeCollected"
+										value="%{totalAmountToBeCollected}"
+										name="totalAmountToBeCollected" />
+									<s:hidden label="callbackForApportioning"
+										id="callbackForApportioning"
+										value="%{callbackForApportioning}"
+										name="callbackForApportioning" />
+									<s:hidden id="paymentServiceId" value="%{paymentServiceId}"
+										name="paymentServiceId" />
+									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
+									<%
+									    int i = 1;
+									%>
+									<%
+									    int rcptDtlCnt = 0;
+									%>
+
+									<tr>
+										<td>
+											<div class="switchgroup1"
+												id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
+
+
+
+												<table width="100%" border="0" cellpadding="0"
+													cellspacing="0" id="accountdetailtable<%=i%>"
+													name="accountdetailtable<%=i%>" class="tbl-medium">
+													<tr>
+														<th class="bluebgheadtd text-left" width="90%"><s:text
+																name="onlineReceipts.accountdetails.description" />
+														</td>
+														<th class="bluebgheadtd" width="10%"><div
+																align="right">
+																<s:text name="onlineReceipts.demand" />
+															</div>
+														</td>
+														<!--td class="head" width="19%" ><s:text name="onlineReceipts.collectedamount"/></td-->
+														<!--td class="head" width="19%" ><s:text name="onlineReceipts.balance"/></td-->
+													</tr>
+													<s:iterator value="%{receiptDetailList}"
+														status="rowreceiptdetailstatus">
+														<tr>
+
+
+															<td class="blueborderfortd"><s:property
+																	value="%{description}" /></td>
+
+															<td class="blueborderfortd">
+																<div align="right">
+																	<s:property value="%{cramountToBePaid}" />
+																	<input
+																		id="receiptDetailList[<%=rcptDtlCnt%>].cramountToBePaid"
+																		name="receiptDetailList[<%=rcptDtlCnt%>].cramountToBePaid"
+																		value='<s:property value="%{cramountToBePaid}"/>'
+																		type="hidden" readonly="true" disabled="disabled"
+																		size="12" />
+																</div> <input type="hidden" align="right"
+																id="receiptDetailList[<%=rcptDtlCnt%>].cramountDisplay" />
+																<input
+																name="receiptDetailList[<%=rcptDtlCnt%>].cramount"
+																value="0.0" type="hidden"
+																id="receiptDetailList[<%=rcptDtlCnt%>].cramount"
+																size="12"
+																onblur='checkandcalculatecredittotal(<%=rcptDtlCnt%>,this);' />
+
+																<input type="hidden"
+																name="receiptDetailList[<%=rcptDtlCnt%>].ordernumber"
+																id="receiptDetailList[<%=rcptDtlCnt%>].ordernumber"
+																value='<s:property value="ordernumber"/>' /> <input
+																type="hidden"
+																name="receiptDetailList[<%=rcptDtlCnt%>].dramount"
+																id="receiptDetailList[<%=rcptDtlCnt%>].dramount" /> <input
+																type="hidden"
+																name="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand"
+																id="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand"
+																value='<s:property value="isActualDemand"/>' /> <input
+																type="hidden"
+																id="receiptDetailList[<%=rcptDtlCnt%>].balanceAmtDisplay" />
+																<input type="hidden"
+																name="receiptDetailList[<%=rcptDtlCnt%>].balanceAmount"
+																id="receiptDetailList[<%=rcptDtlCnt%>].balanceAmount"
+																value="0.0" />
+
+
+															</td>
+
+														</tr>
+														<%
+														    rcptDtlCnt = rcptDtlCnt + 1;
+														%>
+													</s:iterator>
+													<!--  Finished iterating through the account heads (receipt detail) -->
+													<tr>
+														<!--td class="tablestyle">&nbsp;</td-->
+														<!--td class="tablestyle">&nbsp;</td-->
+														<td class="blueborderfortd text-right bg-gray"><span
+															class="justbold"><s:text
+																	name="onlineReceipts.totalbalance" /> :</span></td>
+														<td class="blueborderfortd text-right bg-gray"><span
+															class="justbold"><s:property
+																	value="%{totalAmountToBeCollected}" /></span></td>
+													</tr>
+													<tr>
+														<!--td class="tablestyle3">&nbsp;</td-->
+														<td colspan="1" class="blueborderfortd text-right bg-gray"><span
+															class="justbold"><s:text
+																	name="onlineReceipts.balanceamounttopay" /> :<span
+																class="mandatory1">*</span></span></td>
+														<td class="blueborderfortd text-right bg-gray"><s:textfield
+																label="paymentAmount" id="paymentAmount" maxlength="12"
+																name="paymentAmount" size="12" placeholder="0.0"
+																cssStyle="color:DarkGray; text-align:right"
+																onkeyup="populateapportioningamountnew()"
+																onload="waterMarkInitialize('paymentAmount','0.0');" /></td>
+													</tr>
+
+													<td colspan="2"><span class="mandatory1 padding-5"><s:text
+																name="onlineReceipts.mandatoryfields" /></span></td>
+
+													</tr>
+												</table>
+												<!-- End of accountdetailtable i -->
+												<%
+												    i = i + 1;
+												%>
+												<!-- End of table enclosing all account detail tables -->
+											</div>
+										</td>
+									</tr>
+
+								</table>
+
+								<div class="text-left margin-5">
+									<s:text name="onlineReceipts.paythrough" />
+								</div>
+
+								<table class="table-payment">
+
+
+
+									<s:set var="listSize" value="%{serviceDetailsList.size()}" />
+									<s:iterator var="p" value="%{serviceDetailsList}" status="s">
+
+										<s:set var="index" value="%{(#s.index+1)}" />
+
+
+										<s:if test="%{ (#s.index+1)%2 ==1}">
+											<tr>
+										</s:if>
+
+
+										<s:if test="%{#listSize == #index}">
+
+											<s:if test="%{ (#s.index+1)%2 ==1 }">
+
+												<td class="blueborderfortd" colspan="2" valign="top"><input
+													type="radio"
+													onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
+													name="radioButton1" /><span class="complaintmsg"> <s:property
+															value="name" />
+												</span> <br>
+												<s:text name="%{code}.transactionmessage" /></td>
+
+											</s:if>
+											<s:else>
+
+												<td class="blueborderfortd" width="50%" valign="top"><input
+													type="radio"
+													onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
+													name="radioButton1" /><span class="complaintmsg"> <s:property
+															value="name" />
+												</span> <br>
+												<s:text name="%{code}.transactionmessage" /></td>
+
+											</s:else>
+
+
+										</s:if>
+										<s:else>
+
+											<td class="blueborderfortd" width="50%" valign="top"><input
+												type="radio"
+												onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
+												name="radioButton1" /><span class="complaintmsg"> <s:property
+														value="name" />
+											</span> <br>
+											<s:text name="%{code}.transactionmessage" /></td>
+
+										</s:else>
+
+
+										<s:if test="%{ (#s.index+1)%2 ==0}">
+											</tr>
+										</s:if>
+									</s:iterator>
+
+
+
+									<tr class="blueborderfortd">
+
+
+										<td class="blueborderfortd" colspan="2">
+
+											<div id="transactiondiv" style="display: none"></div>
+
+											<div>
+												<label>Terms And Conditions: </label>
+											</div>
+											<ul>
+												<li>By accepting to make Payment online it is implied
+													that the customer agrees to the terms and conditions of
+													Netbanking System/credit card company.</li>
+												<li>Once the payment transaction is submitted request
+													for refund will not be entertained.</li>
+												<li>After completing payment entries, customer will get
+													a unique Payment Identification Number (BID Number) which
+													may be quoted for all future communications with reference
+													to this transaction.</li>
+												<li>The actual updation of payment by Corporation will
+													take place after getting confirmation from the Banks.</li>
+												<li>In the exigency of connection getting timedout or
+													user clicking to close the browser before getting payment
+													confirmation message he has to wait for sometime before
+													proceeding to make subsequent payment for the same bill(s).</li>
+												<li>If you are not getting the receipt or any break in
+													connectivity in the middle of the operations check the
+													receipt status on the next day. The System has a provision
+													for Auto Reconcilation and will generate the Receipt if the
+													Payment was actually effected from your side.</li>
+											</ul>
+
+											<div id="terms">
+												<input type="checkbox" id="checkbox" name="checkbox">
+												<label>&nbsp;Do you agree Terms and Conditions</label>
+											</div>
+											<div class="tablestyle" style="margin-top: 5px;">
+												Please check "Terms and conditions" and then click "Pay
+												Online" button to make a payment<br>
+											</div>
+
+										</td>
+									</tr>
+									<tr>
+										<td class="blueborderfortd" colspan="2">Any Discrepancy
+											found in the arrears mentioned above you may contact
+											respective Zonal Revenue Officer with payment receipt for
+											rectification.</td>
+									</tr>
+
+								</table>
+
+								<br />
+
+
+							</div>
+							<div class="contentright"></div>
+							<div class="dottedgridlarge"></div>
+							<div></div>
+							<div id="transactiondiv" style="display: none"></div>
+							<div id="loadingMask"
+								style="display: none; overflow: hidden; text-align: center">
+								<img
+									src="${pageContext.request.contextPath}/images/bar_loader.gif" />
+								<span style="color: red">Please wait....</span>
+							</div>
+							<div class="bottombuttonholder"  align="middle">
+								<input type="submit" class="buttonsubmit"
+									id="button2" value="Pay Online"
+									onclick="return validateOnlineReceipt();" />
+							</div>
+						</div>
+						<br />
+					</div>
+				</div>
+			</div>
+		</s:form>
+
 	</div>
-
-    <div class="margin20 container-medium">
-	
-	<div class="text-left margin-5"><s:text name="onlineReceipts.lastthreetransaction"/></div>
-	
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	
-	  <tr>
-	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.sno"/></th>
-	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.transid"/></th>
-	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.transdatetime"/></th>
-	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.amtrs"/></th>
-	    <th class="bluebgheadtd"><s:text name="onlineReceipts.lastthreetbl.status"/></th>
-	  </tr>
-	  
-	  <tr>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	    <td class="blueborderfortd text-center">-</td>
-	  </tr>
-	
-	</table>
-	
-	
-	<div class="rbroundbox3">
-	
-		<div class="rbcontent4"><div class="containerformsg1">
-		  
-	  <div class="text-left margin-5"><s:text name="onlineReceipts.paytaxtext"/></div>  
-      <table width="100%" border="0" cellspacing="0" cellpadding="0" id="billsheaderinfotable">
-     <s:hidden name="collectXML" id="collectXML" value="%{collectXML}" />
-<s:hidden label="totalNoOfBills" id="totalNoOfBills" name="totalNoOfBills" value="%{totalNoOfBills}"/>
-<s:hidden label="totalNoOfAccounts" id="totalNoOfAccounts" value="%{totalNoOfAccounts}" name="totalNoOfAccounts"/>
-<s:hidden label="multiplePayee" id="multiplePayee" name="multiplePayee" value="%{multiplePayee}"/>
-<s:hidden label="reasonForCancellation" id="reasonForCancellation" name="reasonForCancellation" />
-<s:hidden label="oldReceiptId" id="oldReceiptId" name="oldReceiptId"/>
-<s:hidden label="overrideAccountHeads" id="overrideAccountHeads" value="%{overrideAccountHeads}" name="overrideAccountHeads"/>
-<s:hidden label="partPaymentAllowed" id="partPaymentAllowed" value="%{partPaymentAllowed}" name="partPaymentAllowed"/>
-<s:hidden label="cashAllowed" id="cashAllowed" value="%{cashAllowed}" name="cashAllowed"/>
-<s:hidden label="cardAllowed" id="cardAllowed" value="%{cardAllowed}" name="cardAllowed"/>
-<s:hidden label="chequeDDAllowed" id="chequeDDAllowed" value="%{chequeDDAllowed}" name="chequeDDAllowed"/>
-<s:hidden label="totalAmountToBeCollected" id="totalAmountToBeCollected" value="%{totalAmountToBeCollected}" name="totalAmountToBeCollected"/>
-<s:hidden label="callbackForApportioning" id="callbackForApportioning" value="%{callbackForApportioning}" name="callbackForApportioning"/>
-<s:hidden id="paymentServiceId" value="%{paymentServiceId}" name="paymentServiceId"/>
-<%int i=1;%>
-<%int rcptDtlCnt=0; %>
-
-	<tr>
-	  <td>
-	    <div class="switchgroup1" id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
-	    
-	           
-	    
-		       <table width="100%" border="0" cellpadding="0" cellspacing="0"  id="accountdetailtable<%=i%>" name="accountdetailtable<%=i%>" class="tbl-medium">
-		              <tr>
-		               <th class="bluebgheadtd text-left" width="90%" ><s:text name="onlineReceipts.accountdetails.description"/></td>
-		               <th class="bluebgheadtd" width="10%" ><div align="right"><s:text name="onlineReceipts.demand"/></div></td>
-		                 <!--td class="head" width="19%" ><s:text name="onlineReceipts.collectedamount"/></td-->
-		        	 <!--td class="head" width="19%" ><s:text name="onlineReceipts.balance"/></td-->
-		                </tr>
-		                <s:iterator value="%{receiptDetailList}" status="rowreceiptdetailstatus">
-			              	<tr>
-
-				               
-				                <td class="blueborderfortd"><s:property  value="%{description}" /></td>
-
-				                <td class="blueborderfortd">
-				                	<div align="right">
-				                	<s:property value="%{cramountToBePaid}"/>
-				                	  	<input id="receiptDetailList[<%=rcptDtlCnt%>].cramountToBePaid" name="receiptDetailList[<%=rcptDtlCnt%>].cramountToBePaid" value='<s:property value="%{cramountToBePaid}"/>' type="hidden" readonly="true" disabled="disabled" size="12"/></div>
-							
-									<input type="hidden" align="right" id="receiptDetailList[<%=rcptDtlCnt%>].cramountDisplay" />
-									<input name="receiptDetailList[<%=rcptDtlCnt%>].cramount" value="0.0" type="hidden" id="receiptDetailList[<%=rcptDtlCnt%>].cramount"  size="12" onblur='checkandcalculatecredittotal(<%=rcptDtlCnt%>,this);'/>
-									
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].ordernumber" id="receiptDetailList[<%=rcptDtlCnt%>].ordernumber" value='<s:property value="ordernumber"/>' />
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].receiptHeader.referencenumber" id="receiptDetailList[<%=rcptDtlCnt%>].receiptHeader.referencenumber" value='<s:property value="referencenumber"/>'/>
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].dramount" id="receiptDetailList[<%=rcptDtlCnt%>].dramount" />
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand" id="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand" value='<s:property value="isActualDemand"/>' />
-								
-								<input type="hidden" id="receiptDetailList[<%=rcptDtlCnt%>].balanceAmtDisplay" />
-								<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].balanceAmount" id="receiptDetailList[<%=rcptDtlCnt%>].balanceAmount" value="0.0"/>
-										
-								
-								</td>
-								
-			              	</tr>
-			              	<%rcptDtlCnt=rcptDtlCnt+1;%>
-		                </s:iterator> <!--  Finished iterating through the account heads (receipt detail) -->
-		                  <tr>
-		          <!--td class="tablestyle">&nbsp;</td-->
-		          <!--td class="tablestyle">&nbsp;</td-->
-		          <td class="blueborderfortd text-right bg-gray"><span class="justbold"><s:text name="onlineReceipts.totalbalance"/> :</span></td>
-		          <td class="blueborderfortd text-right bg-gray"><span class="justbold"><s:property  value="%{totalAmountToBeCollected}" /></span></td>
-	            </tr>
-	             <tr>
-		          <!--td class="tablestyle3">&nbsp;</td-->
-		          <td colspan="1" class="blueborderfortd text-right bg-gray"><span class="justbold"><s:text name="onlineReceipts.balanceamounttopay"/> :<span class="mandatory1">*</span></span></td>
-		          <td class="blueborderfortd text-right bg-gray"><s:textfield label="paymentAmount" id="paymentAmount" maxlength="12" name="paymentAmount" size="12" value="0.0" cssStyle="color:DarkGray; text-align:right" onfocus = "waterMarkTextIn('paymentAmount','0.0');" onkeyup="populateapportioningamountnew()" onload="waterMarkInitialize('paymentAmount','0.0');"/></td>
-	            </tr>
-	      
-		       <td colspan="2">
-		         <span class="mandatory1 padding-5"><s:text name="onlineReceipts.mandatoryfields"/></span>
-		       </td>
-		       
-		       </tr>
-          </table> <!-- End of accountdetailtable i -->
-	          <%i=i+1;%>
-	        <!-- End of table enclosing all account detail tables -->
-	      </div></td>
-	  </tr>
-      
-      </table>
-      
-      <div class="text-left margin-5"><s:text name="onlineReceipts.paythrough"/></div>
-      
-      <table class="table-payment">
-        <tr>
-        
-          <td class="blueborderfortd" width="50%">
-           <div>
-             <s:iterator var="p" value="%{serviceDetailsList}" status="s">
-		    <s:if test="%{ (#s.index+1)%2 ==1}"> 
-				<tr>
-			</s:if> 
-					<td width="30%" valign="top" ><input type="radio" onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'  name="radioButton1"/><span class="complaintmsg"> <s:property value="name"/> </span>
-						<br><s:text name="%{code}.transactionmessage"/>
-					</td>
-			<s:if test="%{ (#s.index+1)%2 ==0}"> 
-				</tr>
-			</s:if>  
-		</s:iterator>
-      	 <div id="transactiondiv" style="display:none"> </div>
-            </div>
-          </td>
-          
-        </tr>
-        <tr>
-         <td class="blueborderfortd" colspan="2">
-          <div>
-           <label>Terms And Conditions: </label>
-          </div>
-          <ul>
-           <li>By accepting to make Payment online it is implied that the customer agrees to the terms and conditions of Netbanking System/credit card company.</li>
-           <li>Once the payment transaction is submitted request for refund will not be entertained.</li>
-           <li>After completing payment entries, customer will get a unique Payment Identification Number (BID Number) which may be quoted for all future communications with reference to this transaction.</li>
-           <li>The actual updation of payment by Corporation will take place after getting confirmation from the Banks.</li>
-           <li>In the exigency of connection getting timedout or user clicking to close the browser before getting payment confirmation message he has to wait for sometime before proceeding to make subsequent payment for the same bill(s).</li>
-           <li>If you are not getting the receipt or any break in connectivity in the middle of the operations check the receipt status on the next day. The System has a provision for Auto Reconcilation and will generate the Receipt if the Payment was actually effected from your side.</li>
-          </ul>
-         </td>
-        </tr>
-        <tr>
-          <td class="blueborderfortd" colspan="2">Any Discrepancy found in the arrears mentioned above you may contact respective Zonal Revenue Officer with payment receipt for rectification.</td>
-        </tr>
-      
-      </table>
-      
-      <br/>
-      
-      
-      </div><div class="contentright"></div><div class="dottedgridlarge"></div>
-      <div>
-			  	
-		  </div>
-       <div id="transactiondiv" style="display:none">
-       
-		  </div>
-	<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="${pageContext.request.contextPath}/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
-   	  <div class="bottombuttonholder" >
-   	    <input align="center" type="button"   class="buttonsubmit" id="button2" value="Pay Online" onclick="return validateOnlineReceipt();"/>
-   	 </div></div>
-   	 <br/>
-	</div></div>
-	</div>
-</s:form>
-
-</div>
 </body>
 
 

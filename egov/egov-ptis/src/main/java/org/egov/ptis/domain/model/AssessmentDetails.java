@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -40,19 +40,19 @@
 package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Set;
 
 /**
  * The AssessmentDetails class is used to contain assessment details such as property id, owner details, boundary details, and
  * block details.
- * 
+ *
  * @author ranjit
  *
  */
 @SuppressWarnings("serial")
 public class AssessmentDetails implements Serializable {
 
+    private static final long serialVersionUID = 355399781881256186L;
     private String propertyID;
     private String houseNo;
     private Set<OwnerName> ownerNames;
@@ -63,12 +63,14 @@ public class AssessmentDetails implements Serializable {
     private String primaryEmail;
     private String primaryMobileNo;
     private Integer flag;
+    private double latitude;
+    private double longitude;
 
     public String getPropertyID() {
         return propertyID;
     }
 
-    public void setPropertyID(String propertyID) {
+    public void setPropertyID(final String propertyID) {
         this.propertyID = propertyID;
     }
 
@@ -76,7 +78,7 @@ public class AssessmentDetails implements Serializable {
         return houseNo;
     }
 
-    public void setHouseNo(String houseNo) {
+    public void setHouseNo(final String houseNo) {
         this.houseNo = houseNo;
     }
 
@@ -84,7 +86,7 @@ public class AssessmentDetails implements Serializable {
         return ownerNames;
     }
 
-    public void setOwnerNames(Set<OwnerName> ownerNames) {
+    public void setOwnerNames(final Set<OwnerName> ownerNames) {
         this.ownerNames = ownerNames;
     }
 
@@ -92,7 +94,7 @@ public class AssessmentDetails implements Serializable {
         return boundaryDetails;
     }
 
-    public void setBoundaryDetails(BoundaryDetails boundaryDetails) {
+    public void setBoundaryDetails(final BoundaryDetails boundaryDetails) {
         this.boundaryDetails = boundaryDetails;
     }
 
@@ -100,7 +102,7 @@ public class AssessmentDetails implements Serializable {
         return propertyDetails;
     }
 
-    public void setPropertyDetails(PropertyDetails propertyDetails) {
+    public void setPropertyDetails(final PropertyDetails propertyDetails) {
         this.propertyDetails = propertyDetails;
     }
 
@@ -108,7 +110,7 @@ public class AssessmentDetails implements Serializable {
         return errorDetails;
     }
 
-    public void setErrorDetails(ErrorDetails errorDetails) {
+    public void setErrorDetails(final ErrorDetails errorDetails) {
         this.errorDetails = errorDetails;
     }
 
@@ -116,7 +118,7 @@ public class AssessmentDetails implements Serializable {
         return propertyAddress;
     }
 
-    public void setPropertyAddress(String propertyAddress) {
+    public void setPropertyAddress(final String propertyAddress) {
         this.propertyAddress = propertyAddress;
     }
 
@@ -124,7 +126,7 @@ public class AssessmentDetails implements Serializable {
         return primaryEmail;
     }
 
-    public void setPrimaryEmail(String primaryEmail) {
+    public void setPrimaryEmail(final String primaryEmail) {
         this.primaryEmail = primaryEmail;
     }
 
@@ -132,7 +134,7 @@ public class AssessmentDetails implements Serializable {
         return primaryMobileNo;
     }
 
-    public void setPrimaryMobileNo(String primaryMobileNo) {
+    public void setPrimaryMobileNo(final String primaryMobileNo) {
         this.primaryMobileNo = primaryMobileNo;
     }
 
@@ -140,7 +142,7 @@ public class AssessmentDetails implements Serializable {
         return flag;
     }
 
-    public void setFlag(Integer flag) {
+    public void setFlag(final Integer flag) {
         this.flag = flag;
     }
 
@@ -149,6 +151,22 @@ public class AssessmentDetails implements Serializable {
         return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
                 + boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
                 + ", errorDetails=" + errorDetails + "]";
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(final double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(final double longitude) {
+        this.longitude = longitude;
     }
 
 }

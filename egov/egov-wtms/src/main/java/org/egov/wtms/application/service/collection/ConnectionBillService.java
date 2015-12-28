@@ -112,7 +112,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 final EgBillDetails billdetail = new EgBillDetails();
                 if (demandDetail.getAmount() != null) {
                     billdetail.setDrAmount(BigDecimal.ZERO);
-                    billdetail.setCrAmount(demandDetail.getAmount());
+                    billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
 
                 LOGGER.info("demandDetail.getEgDemandReason()"
@@ -125,7 +125,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(
-                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription());
+                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " # " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription() ); 
                 billDetails.add(billdetail);
             }
         }

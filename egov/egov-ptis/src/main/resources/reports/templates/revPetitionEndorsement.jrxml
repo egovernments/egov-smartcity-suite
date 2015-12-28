@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-11-14T21:18:56 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionEndorsement" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -109,11 +111,11 @@
 				<textFieldExpression><![CDATA["Property enquiry have been done on your revision petition on assessment No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "  +$P{HouseNo} +" </style> with property tax reduced from Rs. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{AnnualPropertyTaxFrom}+"</style> to Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> " +$P{AnnualPropertyTaxTo}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="5" y="114" width="566" height="23" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
+				<reportElement x="5" y="114" width="567" height="36" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
 				<textElement verticalAlignment="Top" markup="styled">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["If you are not satisfied with this notice, you can file Appleal petition within 15 days after paying the Property Tax."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["If you are not satisfied with this notice, you can file Appeal petition within 15 days after paying the Property Tax."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="371" y="198" width="200" height="32" uuid="05d607a4-8727-447c-8c52-578a667914f2"/>

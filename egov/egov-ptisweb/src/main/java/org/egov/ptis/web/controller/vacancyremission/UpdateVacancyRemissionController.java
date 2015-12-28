@@ -64,6 +64,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/vacancyremission")
 public class UpdateVacancyRemissionController extends GenericWorkFlowController {
 
+	private static final String VACANCYREMISSION_EDIT = "vacancyRemission-edit";
+    private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
     private VacancyRemissionService vacancyRemissionService;
 
     private PropertyTaxUtil propertyTaxUtil;
@@ -91,7 +93,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             vacancyRemissionService.addModelAttributes(model, basicProperty);
         }
-        return "vacancyRemission-edit";
+        return VACANCYREMISSION_EDIT;
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
@@ -113,18 +115,19 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
+            Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                    workFlowAction);
+                    workFlowAction,propertyByEmployee);
 
             if (StringUtils.isNotBlank(workFlowAction)) {
                 if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE)) {
                     successMsg = "Vacancy Remission Approved Successfully in the System";
                 } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
                     successMsg = "Vacancy Remission rejected successfully and forwarded to : "
-                            + vacancyRemission.getCreatedBy().getUsername();
+                            + vacancyRemissionService.getInitiatorName(vacancyRemission);
                 } else {
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition);
+                            + propertyTaxUtil.getApproverUserName(approvalPosition)+" with application number : "+vacancyRemission.getApplicationNumber();
                 }
             }
 
@@ -135,6 +138,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 return "redirect:/vacancyremission/rejectionacknowledgement?pathVar=" + pathVars;
             }
         }
-        return "vacancyRemission-success";
+        return VACANCYREMISSION_SUCCESS;
     }
 }

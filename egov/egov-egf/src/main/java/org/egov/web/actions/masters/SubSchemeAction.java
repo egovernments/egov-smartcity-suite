@@ -78,10 +78,11 @@ public class SubSchemeAction extends BaseFormAction{
 	private int fundId;
 	private static final String REQUIRED = "required";
 	private int schemeId;
+	private Long subSchemeId;
 	private List<SubScheme> subSchemeList;
 	public static final String SEARCH = "search";
 	public static final String VIEW = "view";
-	private String showMode=VIEW;
+	private String showMode;
 	private SubSchemeService subSchemeService;
 	
 	@Override
@@ -107,7 +108,7 @@ public class SubSchemeAction extends BaseFormAction{
 	@SkipValidation
 	@Action(value = "/masters/subScheme-newForm")
     public String newForm() {
-		
+	        showMode = "new";
 		return NEW;
 		
 	}
@@ -126,34 +127,53 @@ public class SubSchemeAction extends BaseFormAction{
 		else
 			subScheme.setIsactive(false);
 
-		if (!showMode.equals("") && showMode.equals("view")) {
 			subScheme.setCreatedDate(new Date());
 			subScheme.setCreatedBy(getLoggedInUser());
 			subScheme.setLastmodifieddate(new Date());
-		} else {
-			subScheme.setLastModifiedBy(getLoggedInUser());
-			subScheme.setLastmodifieddate(new Date());
-		}
-		//validatemandatoryFields();
 		try {
 			subSchemeService.persist(subScheme);
 			subSchemeService.getSession().flush();
 		}catch (ValidationException e) {
 			throw e;
 		}catch (ConstraintViolationException e) {
-			throw new ValidationException(Arrays.asList(new ValidationError("duplicate.subscheme","duplicate.subscheme")));
+		    addActionError(getText("duplicate.subscheme"));
+                    return NEW;
 		}catch (Exception e) {
 			throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator","An error occured contact Administrator")));
 		}
 		clearValues = true;		
-		if(showMode.equals(EDIT))
-			return VIEW;
-		else
-		{
 			addActionMessage(getText("subscheme.saved.successfully"));
+			showMode = "";
 			return NEW;
-		}
 	}
+	@Action(value = "/masters/subScheme-edit")
+        public String edit() {
+	    if (subSchemeId!=null)
+	    {
+	        subScheme.setId(subSchemeId.intValue());
+	    }
+	      if(isActive)
+                  subScheme.setIsactive(true);
+          else
+                  subScheme.setIsactive(false);
+
+                  subScheme.setLastModifiedBy(getLoggedInUser());
+                  subScheme.setLastmodifieddate(new Date());
+          try {
+                  subSchemeService.persist(subScheme);
+                  subSchemeService.getSession().flush();
+          }catch (ValidationException e) {
+                  throw e;
+          }catch (ConstraintViolationException e) {
+                  throw new ValidationException(Arrays.asList(new ValidationError("duplicate.subscheme","duplicate.subscheme")));
+          }catch (Exception e) {
+                  throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator","An error occured contact Administrator")));
+          }
+          clearValues = true;             
+                  addActionMessage(getText("subscheme.modified.successfully"));
+                  showMode = "";
+                  return NEW;
+	    }
 
 	private void validatemandatoryFields() {
 		if (subScheme.getScheme() == null || subScheme.getScheme().getId() == null
@@ -175,12 +195,11 @@ public class SubSchemeAction extends BaseFormAction{
 					"subscheme.invalid.dates")));
 	}
 @SkipValidation
-@Action(value="/masters/subScheme-edit")
-	public String edit()
+@Action(value="/masters/subScheme-beforeEdit")
+	public String beforeEdit()
 	{
-		showMode=EDIT;
-		beforeSearch();
-		return SEARCH;
+                subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+		return NEW;
 	}
 @SkipValidation
 @Action(value="/masters/subScheme-beforeSearch")
@@ -315,6 +334,16 @@ public class SubSchemeAction extends BaseFormAction{
 	public boolean isClearValues() {
 		return clearValues;
 	}
+
+    public Long getSubSchemeId() {
+        return subSchemeId;
+    }
+
+    public void setSubSchemeId(Long subSchemeId) {
+        this.subSchemeId = subSchemeId;
+    }
+
+    
 	
 }
 

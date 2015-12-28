@@ -140,6 +140,15 @@ function dishonorSelectedChq() {
 		document.dishonorForm.submit();
 	}
 }
+function resetForm()
+{
+	
+	dom.get("bankBranchId").value=-1;
+	dom.get("accountCodes").value=-1;
+	dom.get("instrumentMode").value=0;
+	dom.get("chequeNo").value="";
+	dom.get("chqDDDate").value="";
+}
    
   </script>
   </head>
@@ -190,8 +199,8 @@ function dishonorSelectedChq() {
 					<td class="bluebox">
 						<SELECT id="instrumentMode" name="instrumentMode" >
 							<option value="0" selected >---Choose---</option>
-							<option value="1">DD</option>
-							<option value="2">Cheque</option>
+							<option value="dd">DD</option>
+							<option value="cheque">Cheque</option>
 						</SELECT>
 					</td>
 				</tr>
@@ -221,7 +230,7 @@ function dishonorSelectedChq() {
     	  <table align="center">  
 	    	<tr class="buttonbottom" id="buttondiv" style="align:middle" >
 	          <td><input type="submit" class="buttonsubmit" value="VIEW" id="searchButton" onclick="return validateFormAndSubmit();" />&nbsp;</td>
-	          <td><input type="button" class="button" value="RESET" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;</td>
+	          <td><input type="button" class="button" value="RESET" id="resetbutton" name="clear" onclick="resetForm();">&nbsp;</td>
 	          <td><input type="button" class="button" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" /></td>
         	</tr>
         	</table>
@@ -306,15 +315,12 @@ function dishonorSelectedChq() {
 				</td>
 			</tr>
 		</table>
-								<div class="buttonholderwk">
-									  <td><input type="submit" class="button" value="DISHONOR" id="dishonorButton" name="button" onclick="return dishonorSelectedChq();" />&nbsp;</td>
-	         						  <td><input type="button" class="button" value="RESET" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;</td>
+								<div class="buttonholderwk" align = "center">
+									<input type="submit" class="button" value="DISHONOR" id="dishonorButton" name="button" onclick="return dishonorSelectedChq();" />
 								</div>
 							</s:if>
 					<s:elseif test="%{searchResult.fullListSize == 0}">
-					<tr><td  align="center"><font color="red">No record Found.</font></td>
-																	
-					</tr>
+					<font color="red">No record Found.</font></td>
 </s:elseif>
 	  </s:form>  
   </body>

@@ -66,7 +66,7 @@
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when" /></label>
-								<div class="col-sm-4 add-margin">
+								<div class="col-sm-7 add-margin">
 									<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 									<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
 									<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
@@ -101,7 +101,7 @@
 						</div>	
 						<div class="row">
 							<div class="text-center">
-								<button type="button" id="drilldownReportSearch" class="btn btn-success">
+								<button type="button" id="drilldownReportSearch" class="btn btn-primary">
 									<spring:message code="lbl.drilldownReport.button.search" />
 								</button>
 								<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">

@@ -42,6 +42,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
 
@@ -54,7 +61,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
-	
+							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<div class="panel-heading" style="text-align: left">
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>

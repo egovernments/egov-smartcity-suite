@@ -50,7 +50,7 @@
 	<div class="page-container" id="page-container">
         	<div class="main-content">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
-				
+				<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">

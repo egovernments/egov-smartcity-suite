@@ -57,7 +57,11 @@
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
 	<mvc:interceptors>
-		<bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
+		</mvc:interceptor>
 	</mvc:interceptors>
 	
     <bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>

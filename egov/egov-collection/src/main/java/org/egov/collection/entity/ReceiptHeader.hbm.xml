@@ -181,6 +181,9 @@
 		<property name="payeeAddress" type="string">
 			<column name="payeeaddress" length="1024" />
 		</property>
+			<property name="source" type="string">
+			<column name="source" length="20" />
+		</property>
 			
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">
@@ -205,7 +208,7 @@
     <![CDATA[select receipt from org.egov.collection.entity.ReceiptHeader receipt where receipt.isReconciled = ?]]></query>
         
     <query name="CREATEDBYUSERS_OF_RECEIPTS">
-    <![CDATA[select distinct createdBy from org.egov.collection.entity.ReceiptHeader]]></query>
+    <![CDATA[select distinct createdBy from org.egov.collection.entity.ReceiptHeader rh where rh.createdBy.type not in ('CITIZEN','SYSTEM')]]></query>
     
     <query name="RECEIPT_BY_CHALLANID">
     <![CDATA[select receipt from org.egov.collection.entity.ReceiptHeader receipt, org.egov.collection.entity.Challan cl WHERE cl.receiptHeader.id = receipt.id and cl.id = ?]]></query>
@@ -235,7 +238,7 @@
 	</query>
 	
 	<query name="RECEIPTS_BY_DATE_AND_SERVICECODE">
-	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.receiptdate between ? and ? and rh.service.code = ? and rh.status.code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED') ]]>
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where date(rh.receiptdate) between ? and ? and rh.service.code = ? and  rh.source=? and rh.status.code in ('TO_BE_SUBMITTED','SUBMITTED','APPROVED','REMITTED') ]]>
 	</query>
 
 	<query name="RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE">

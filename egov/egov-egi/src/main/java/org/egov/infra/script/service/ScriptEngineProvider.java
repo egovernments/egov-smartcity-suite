@@ -42,8 +42,8 @@ package org.egov.infra.script.service;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.cache.LRUCache;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -47,8 +47,17 @@
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
-	function generateMutationCertificate() {
-		window.location = "printNotice.action?mutationId=" + mutationId.value;
+	function generateMutationCertificate(actionName) {
+		if (actionName == 'Preview') {
+			var params = [
+	   			'height='+screen.height,
+	   		    'width='+screen.width,
+	   		    'fullscreen=yes' 
+	   		].join(',');
+			window.open("printNotice.action?mutationId=" + mutationId.value + "&actionType=" + actionName, 'NoticeWindow', params);
+		} else {
+			window.location = "printNotice.action?mutationId=" + mutationId.value + "&actionType=" + actionName;
+		}
 	}
 
 	function onSubmit() {
@@ -60,7 +69,7 @@
 		} else if (actionName == 'Approve') {
 			document.forms[0].action = '/ptis/property/transfer/approve.action';
 		} else {
-			generateMutationCertificate();
+			generateMutationCertificate(actionName);
 			return false;
 		}
 		document.forms[0].submit;
@@ -359,7 +368,8 @@
 				</table>
 				<s:if
 					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@TRANSFER_FEE_COLLECTED)}">
+				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@TRANSFER_FEE_COLLECTED) && 
+				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 					</div>
@@ -368,7 +378,9 @@
 					</div>
 				</s:if>
 				<s:elseif
-					test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
+					test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+					model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING) || 
+					(model.receiptNum != '' && model.receiptDate != null)}">  
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>

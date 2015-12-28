@@ -46,13 +46,14 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 /**
  * Builder class for Application Index
  *
-*/
+ */
 public class ApplicationIndexBuilder {
 
     private final ApplicationIndex applicationIndex;
 
     public ApplicationIndexBuilder(final String moduleName, final String applicationNumber, final Date applicationDate,
-            final String applicationType, final String applicantName, final String status, final String url,final String applicantAddress) {
+            final String applicationType, final String applicantName, final String status, final String url,
+            final String applicantAddress, final String ownername) {
 
         applicationIndex = new ApplicationIndex();
         applicationIndex.setModuleName(moduleName);
@@ -63,6 +64,7 @@ public class ApplicationIndexBuilder {
         applicationIndex.setStatus(status);
         applicationIndex.setUrl(url);
         applicationIndex.setApplicantAddress(applicantAddress);
+        applicationIndex.setOwnername(ownername);
     }
 
     public ApplicationIndexBuilder applicationAddress(final String applicantAddress) {
@@ -82,6 +84,11 @@ public class ApplicationIndexBuilder {
 
     public ApplicationIndexBuilder mobileNumber(final String mobileNumber) {
         applicationIndex.setMobileNumber(mobileNumber);
+        return this;
+    }
+
+    public ApplicationIndexBuilder aadharNumber(final String aadharNumber) {
+        applicationIndex.setAadharNumber(aadharNumber);
         return this;
     }
 

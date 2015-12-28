@@ -16,6 +16,7 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -39,6 +40,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private PropertyStatusDAO propertyStatusDAO;
     @Autowired
     DesignationService designationService;
+    @Autowired
+    private SecurityUtils securityUtils;
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
@@ -137,6 +140,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private void updateIndex(final RevisionPetition objection) {
         final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(objection
                 .getObjectionNumber());
+        final User user = securityUtils.getCurrentUser();
         final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + objection.getObjectionNumber();
         if (null == applicationIndex) {
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
@@ -144,7 +148,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     objection.getCreatedDate() != null ? objection.getCreatedDate() : new Date(),
                     PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION, objection.getBasicProperty()
                             .getFullOwnerName(), objection.getState().getValue(), url, objection.getBasicProperty()
-                            .getAddress().toString());
+                            .getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
             applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
         } else {
             applicationIndex.setStatus(objection.getState().getValue());

@@ -48,40 +48,17 @@ jQuery(document).ready(function ($) {
 	        format: "dd/mm/yyyy"
 		});
 	    tableContainer=$('#aplicationSearchResults');
+	    document.onkeydown=function(evt){
+			 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+		if(keyCode == 13){
+			$('#searchResultDiv').show();
+			submitForm();	
+		}
+		 }
 	    $('#searchapplication').click(function () {
-	    	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
-			.done(function (searchResult) {
-				console.log(JSON.stringify(searchResult));
-				
-				tableContainer.dataTable({
-					destroy:true,
-					"sPaginationType": "bootstrap",
-					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-					"autoWidth": false,
-					searchable:true,
-					data: searchResult,
-					columns: [
-					{title: 'Application Type', data: 'resource.clauses.applicationtype'},
-					{title: 'url' ,data: 'resource.searchable.url',"bVisible": false},
-					{title: 'Application Number', data: 'resource.searchable.applicationnumber'},
-					{title: 'Application Date',
-						render: function (data, type, full) {
-							if(full!=null && full.resource!=undefined &&  full.resource.searchable.applicationdate != undefined) {
-								var regDateSplit = full.resource.searchable.applicationdate.split("T")[0].split("-");		
-								return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-							}
-							else return "";
-				    	}
-					},
-					{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
-					{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
-					{title: 'Status', data: 'resource.clauses.status'}
-					],
-					"aaSorting": [[3, 'desc']]
-				});
-			})
-		});
+	    	
+	    	submitForm();
+	    });
 		
 	
 	
@@ -177,3 +154,42 @@ jQuery(document).ready(function ($) {
 	
 	
 });
+
+function submitForm(){
+
+	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
+	.done(function (searchResult) {
+		console.log(JSON.stringify(searchResult));
+		
+		tableContainer.dataTable({
+			destroy:true,
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"autoWidth": false,
+			searchable:true,
+			data: searchResult,
+			columns: [
+			{title: 'Application Type', data: 'resource.clauses.applicationtype'},
+			{title: 'url' ,data: 'resource.searchable.url',"bVisible": false},
+			{title: 'Application Number', data: 'resource.searchable.applicationnumber'},
+			{title: 'Application Date',
+				render: function (data, type, full) {
+					if(full!=null && full.resource!=undefined &&  full.resource.searchable.applicationdate != undefined) {
+						var regDateSplit = full.resource.searchable.applicationdate.split("T")[0].split("-");		
+						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+					}
+					else return "";
+		    	}
+			},
+			{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
+			
+			{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
+			{title: 'Status', data: 'resource.clauses.status'},
+			{title: 'Current Owner', data: 'resource.clauses.ownername'}
+			],
+			"aaSorting": [[3, 'desc']]
+		});
+	})
+
+}

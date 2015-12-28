@@ -47,6 +47,9 @@
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
+                </c:if>
 		<form:form action="search" method ="get" class="form-horizontal form-groups-bordered"  id="userrolesearchform" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -60,7 +63,7 @@
 						<span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-6">
-							<input id="user_name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+							<input id="user_name" type="text" class="form-control typeahead is_valid_alphanumeric" placeholder="" autocomplete="off" />
 							<input type="hidden" name="userId" id="usernameId"/>
 						</div>
 					</div>

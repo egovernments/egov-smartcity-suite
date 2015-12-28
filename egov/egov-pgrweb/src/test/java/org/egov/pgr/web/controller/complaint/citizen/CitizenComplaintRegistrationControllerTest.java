@@ -48,12 +48,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 public class CitizenComplaintRegistrationControllerTest extends AbstractContextControllerTest<CitizenComplaintRegistrationController> {
@@ -62,6 +64,10 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
     private ComplaintService complaintService;
     @Mock
     private ComplaintTypeService complaintTypeService;
+    
+    @Mock
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
+    
     @Mock
     private SecurityUtils securityUtils;
     @InjectMocks

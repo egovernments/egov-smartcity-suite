@@ -57,15 +57,12 @@
 		enableBlock();
 		try {
 			jQuery(".datepicker").datepicker({
-				format : "dd/mm/yyyy"
+				format : "dd/mm/yyyy",
+				autoclose:true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
 		}
-
-		jQuery('.datepicker').on('changeDate', function(ev) {
-			jQuery(this).datepicker('hide');
-		});
 
 		var aadhartextboxes = jQuery('.txtaadhar');
 		console.log(aadhartextboxes);
@@ -103,7 +100,9 @@
 						<td class="bluebox"><span class="bold"><s:property
 									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
 								name="assessmentNo" id="assessmentNo"
-								value="%{basicproperty.upicNo}" /></td>
+								value="%{basicproperty.upicNo}" />
+								<s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
+			</td>
 						<td class="bluebox">&nbsp;</td>
 						<td style="width: 25%;">&nbsp;</td>
 					</tr>
@@ -220,7 +219,7 @@
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64" onblur="checkNumber(this);" /></td>
+								maxlength="64" onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
 						<td class="greybox"><s:text name="docDate" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"

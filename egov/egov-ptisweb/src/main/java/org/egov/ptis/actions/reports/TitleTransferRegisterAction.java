@@ -82,7 +82,6 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         addDropdownData("wardList", wardList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        // prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
             addDropdownData("blockList", Collections.EMPTY_LIST);
         prepareBlockDropDownData(wardId != null, areaId != null);
@@ -249,6 +248,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         }
         ttrObj.setDateOfTransfer(sdf.format(propertyMutation.getLastModifiedDate()));
         ttrObj.setCommissionerOrder("APPROVED");
+        ttrObj.setMutationFee(propertyMutation.getMutationFee());
 
         return ttrObj;
     }
@@ -281,6 +281,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
 
         ttrObj.setDateOfTransfer(sdf.format(propertyMutation.getLastModifiedDate()));
         ttrObj.setCommissionerOrder("APPROVED");
+        ttrObj.setMutationFee(propertyMutation.getMutationFee());
         return ttrObj;
     }
 

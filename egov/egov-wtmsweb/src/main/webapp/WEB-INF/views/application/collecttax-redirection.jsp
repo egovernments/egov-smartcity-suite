@@ -53,6 +53,7 @@
 
 			var collectXML = '${collectxml}';
 			var citizenRole= '${citizenrole}';
+			
 			if(citizenRole =='true'){
 			jQuery('<form>.').attr({
 				method: 'post',

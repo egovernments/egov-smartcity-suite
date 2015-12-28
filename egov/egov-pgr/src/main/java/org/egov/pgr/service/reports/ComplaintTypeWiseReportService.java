@@ -54,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ComplaintTypeWiseReportService {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintTypeWiseReportService.class);
-    String COMPLAINTSTATUS_COMPLETED = "Completed";
 
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintType, final String complaintDateType) {

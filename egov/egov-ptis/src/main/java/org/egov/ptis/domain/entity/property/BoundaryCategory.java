@@ -58,7 +58,11 @@ import org.egov.infstr.models.BaseModel;
  * @since 1.00
  */
 public class BoundaryCategory extends BaseModel {
-	private Boundary bndry;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private Boundary bndry;
 	private Category category;
 	private Date fromDate;
 	private Date toDate;

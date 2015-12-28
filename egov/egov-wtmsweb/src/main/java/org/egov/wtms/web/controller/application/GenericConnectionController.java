@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -106,9 +107,12 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     private MeterCostService meterCostService;
 
-    public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
+    @Autowired
+    protected AssignmentService assignmentService;
+    
+    /*public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
         return meterCostService.findAll();
-    }
+    }*/
 
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
@@ -118,7 +122,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
-    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+    /*public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
         return connectionCategoryService.getAllActiveConnectionCategory();
     }
 
@@ -128,7 +132,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
         return pipeSizeService.getAllActivePipeSize();
-    }
+    }*/
 
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();

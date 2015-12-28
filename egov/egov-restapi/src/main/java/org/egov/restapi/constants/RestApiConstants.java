@@ -197,12 +197,29 @@ public class RestApiConstants {
         public static final String THIRD_PARTY_ERR_MSG_CONSUMER__NO_REQUIRED = "Cosumer Code is required";
         
         public static final String THIRD_PARTY_ERR_CODE_DEMAND_AMOUNT_VALID = "WTMS-REST-11";
-        public static final String THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID= "Entered TotalAmount is not Valid";
+        public static final String THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID= "Paid Amount is greater than Total Amount to be paid";
         
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "WTMS-REST-13";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION__NO_REQUIRED = "Either Cosumer Code or Application number is required";
         
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN = "WTMS-REST-10";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_LEN = "Application number length can not less than 13 digits";
+	
+        public static final String THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED = "EGCL-REST-1";
+        public static final String THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG = "receiptNumber is required";
+        
+        public static final String THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQUIRED = "REST-51";
+        public static final String THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG = "ulbCode Required ";
+        
+        
+        public static final String THIRD_PARTY_ERR_CODE_REFNO_NO_REQUIRED = "EGCL-REST-2";
+        public static final String THIRD_PARTY_ERR_CODE_REFNO_NO_REQ_MSG = "referenceNo Required ";
+        
+        public static final String THIRD_PARTY_ERR_CODE_NO_DATA_FOUND = "EGCL-REST-3";
+        public static final String THIRD_PARTY_ERR_MESSAGE_NO_DATA_FOUND = "No Data Found "; 
+        
+        
+		public static final String THIRD_PARTY_ACTION_SUCCESS = "EGCL-REST-SUCCESS";
+		public static final String THIRD_PARTY_ACTION_FAILURE = "REST-FAILURE";
 
 }

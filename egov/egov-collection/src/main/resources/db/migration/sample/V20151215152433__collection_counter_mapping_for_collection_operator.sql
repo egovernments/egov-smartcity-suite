@@ -1,0 +1,2 @@
+﻿insert into eg_usercounter_map(id, userid, counterid, fromdate, todate, modifiedby, modifieddate) (select nextval('seq_eg_usercounter_map'), userid, (select id from eg_location where name='Zone-1'), 
+to_date('01-04-2012','DD-MM-YYYY'), to_date('31-03-2099','DD-MM-YYYY'),1, current_timestamp from eg_userrole  where roleid = (select id from eg_role where upper(name) = 'COLLECTION OPERATOR'));

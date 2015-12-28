@@ -249,7 +249,6 @@
 	</bean>
 	
 	<bean id="demandActivationJob" class="org.egov.ptis.scheduler.DemandActivationJob" lazy-init="true" scope="prototype">
-        <property name="basicPrpertyService" ref="basicPropertyService" />      
     </bean>
     
     <!-- This job will be triggered everyday at 12:15AM -->

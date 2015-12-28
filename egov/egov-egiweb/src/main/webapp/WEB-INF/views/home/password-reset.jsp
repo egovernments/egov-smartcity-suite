@@ -53,7 +53,7 @@
                 	</c:if>
 					<div class="form-group">
 						<label class="col-sm-4 control-label">
-							New Password
+							<spring:message code="lbl.new.pwd"/> <span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-4" >
 							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" minlength="8" maxlength="32"/>
@@ -62,17 +62,17 @@
 					
 					<div class="form-group">
 						<label class="col-sm-4 control-label">
-							Confirm Password
+							<spring:message code="lbl.pwd.confirm"/> <span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-4" >
 							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required" minlength="8" maxlength="32"/>
-							<div class="password-error error-msg display-hide">Password is mismatching</div>
+							<div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/> </div>
 						</div>
 					</div>
 					<div class="form-group text-center">
 						<div class="col-md-12 add-margin">
-							<button type="submit" class="btn btn-primary">Reset Password</button>
-							<button type="button" class="btn btn-default" onclick="self.close()">Close</button>
+							<button type="submit" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
+							<button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
 						</div>
 					</div>
 					</form:form>

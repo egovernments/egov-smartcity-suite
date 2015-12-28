@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-10-21T16:51:29 -->
+<!-- 2015-11-18T16:46:30 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_dishonored_cheque_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="749560f5-966f-4c9c-9c04-ed0be706f118">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="384"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -612,7 +611,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 				<text><![CDATA[Total:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="193" y="0" width="50" height="20" uuid="95ea0c5e-7730-46ec-9531-d6d7622af42f"/>
+				<reportElement x="193" y="0" width="97" height="20" uuid="95ea0c5e-7730-46ec-9531-d6d7622af42f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -626,7 +625,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_RECEIPT_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="609" y="0" width="50" height="20" uuid="c8f96573-0bbe-4b03-964e-60648c99144e"/>
+				<reportElement x="480" y="0" width="66" height="20" uuid="c8f96573-0bbe-4b03-964e-60648c99144e"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -640,7 +639,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_INSTRUMENT_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="243" y="0" width="366" height="20" uuid="e269a310-7db0-4f6c-956d-71bd8e0cfa75"/>
+				<reportElement x="290" y="0" width="190" height="20" uuid="e269a310-7db0-4f6c-956d-71bd8e0cfa75"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -651,7 +650,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="659" y="0" width="38" height="20" uuid="1fded7e5-e2ae-4dfe-8d48-cfa458d90942"/>
+				<reportElement x="546" y="0" width="151" height="20" uuid="1fded7e5-e2ae-4dfe-8d48-cfa458d90942"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

@@ -12,6 +12,9 @@ Our primary business motivator is to increase the footprint of eGovernance acros
 Report issues via the [eGov Opensource JIRA][].
 #### License
 The eGov suit is released under version 3.0 of the [GPL][].
+#### Powered By
+<a href="https://www.atlassian.com/" target="_blank"><img src="http://downloads.egovernments.org/atlassian.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/" target="_blank"><img src="http://downloads.egovernments.org/Octocat.png" width="48"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.jetbrains.com/" target="_blank"><img src="http://downloads.egovernments.org/icon_IntelliJIDEA.png" width="48"></a>
+
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
 
@@ -19,9 +22,9 @@ This section contains steps that are involved in build and deploy the applicatio
 
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.4.2][Elastic Search]
+* Install [Elastic Search >= v1.7.1][Elastic Search]
 * Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 20 or later][JDK8 build]
+* [Git][] and [JDK 8 update 66 or later][JDK8 build]
 
 #### Database Setup
 Create a database and user in postgres
@@ -136,9 +139,9 @@ $ ./deploy-local.sh
 
  Alternatively this can be done manually by following the below steps.
 
-  * Copy the generated exploded ear `<CLONED_REPO_DIR>/egov/egov-ear/target/egov-ear-1.0-SNAPSHOT` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
-  * Rename the copied folder `egov-ear-1.0-SNAPSHOT` to `egov-ear-1.0-SNAPSHOT.ear`
-  * Create or touch a file named `egov-ear-1.0-SNAPSHOT.ear.dodeploy` to make sure JBoss picks it up for auto deployment
+  * Copy the generated exploded ear `<CLONED_REPO_DIR>/egov/egov-ear/target/egov-ear-<VERSION>` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
+  * Rename the copied folder `egov-ear-<VERSION>` to `egov-ear-<VERSION>.ear`
+  * Create or touch a file named `egov-ear-<VERSION>.ear.dodeploy` to make sure JBoss picks it up for auto deployment
 
 5. Start the wildfly server by executing the below command
 
@@ -180,12 +183,12 @@ This section gives more details regarding developing and contributing to eGov su
 `git clone git@github.com:egovernments/eGov.git` or `git clone https://github.com/egovernments/eGov.git`
 #### Prerequisites
 
+* Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
-* Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.4.2][Elastic Search]
+* Install [Elastic Search >= v1.7.1][Elastic Search]
 * Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 20 or later][JDK8 build]
+* [Git][] and [JDK 8 update 66 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -202,7 +205,7 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 ##### 2. Intellij Deployment
 
-* TODO - Contribute
+* TODO - Contribution welcome
 
 ##### 3. Database Migration Procedure
 
@@ -235,9 +238,9 @@ Browser:-
 [Git]: http://help.github.com/set-up-git-redirect
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.0.Final.zip
+[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.2.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
-[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip
+[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
 [eGov Tools Repository]: http://182.74.137.193/downloads/

@@ -44,10 +44,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infstr.cache.LRUCache;
 
 /**
  * Utility methods related to report viewing

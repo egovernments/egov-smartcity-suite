@@ -101,7 +101,6 @@ public class User extends AbstractAuditable {
     @DocumentId
     private Long id;
 
-    @NotNull
     @Column(name = "username", unique = true)
     @Length(min = 2, max = 64)
     private String username;
@@ -174,6 +173,8 @@ public class User extends AbstractAuditable {
     @Column(name = "type")
     private UserType type;
 
+    private byte [] signature;
+    
     @Override
     public Long getId() {
         return id;
@@ -357,6 +358,15 @@ public class User extends AbstractAuditable {
 
     public void setGuardianRelation(final String guardianRelation) {
         this.guardianRelation = guardianRelation;
+    }
+
+    @JsonIgnore
+    public byte[] getSignature() {
+        return signature;
+    }
+
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
     }
 
 }

@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -57,12 +58,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
-import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +89,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
-    private PropertyService propertyService;
+    private PtDemandDao ptDemandDAO;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -115,8 +117,12 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
-     
-        final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
+        boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
+        if(hasChildPropertyUnderWorkflow){
+        	model.addAttribute("errorMsg", "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+            return PROPERTY_VALIDATION;
+        }
+        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
         final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
         final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
@@ -143,14 +149,14 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             @RequestParam String workFlowAction) {
 
         propertyDemolitionService.validateProperty(property, errors, request);
-        
+
         if (errors.hasErrors()) {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
             propertyDemolitionService.addModelAttributes(model, basicProperty);
             return DEMOLITION_FORM;
         } else {
-            
+
             final Character status = STATUS_WORKFLOW;
             Long approvalPosition = 0l;
             String approvalComent = "";
@@ -162,8 +168,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
-                    approvalPosition, DEMOLITION);
+            try {
+                propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
+                        approvalPosition, DEMOLITION);
+            } catch (TaxCalculatorExeption e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
             model.addAttribute(
                     "successMessage",

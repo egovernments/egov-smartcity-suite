@@ -6,6 +6,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 import org.egov.infra.search.elastic.Indexable;
+import org.egov.infra.utils.EgovThreadLocals;
 
 @MappedSuperclass
 public abstract class AbstractPersistable<PK extends Serializable> implements Serializable, Indexable {
@@ -57,6 +58,6 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
 
     @Override
     public String getIndexId() {
-        return getId().toString();
+        return EgovThreadLocals.getCityCode()+"-"+getId().toString();
     }
 }

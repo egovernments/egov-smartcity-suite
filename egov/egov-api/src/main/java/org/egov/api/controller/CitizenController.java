@@ -34,6 +34,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
@@ -60,6 +61,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
 public class CitizenController extends ApiController {
+	
+	private static final Logger LOGGER = Logger.getLogger(CitizenController.class);
 
     @Autowired
     private UserService userService;
@@ -88,12 +91,19 @@ public class CitizenController extends ApiController {
     @RequestMapping(value = ApiUrl.CITIZEN_GET_PROFILE, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getProfle(HttpServletRequest request) {
         ApiResponse res = ApiResponse.newInstance();
-        User user = userService.getUserByUsername(securityUtils.getCurrentUser().getUsername());
-        if (user == null) {
-            return res.error(getMessage("user.not.found"));
+        try
+        {
+	        User user = userService.getUserByUsername(securityUtils.getCurrentUser().getUsername());
+	        if (user == null) {
+	            return res.error(getMessage("user.not.found"));
+	        }
+	        return res.setDataAdapter(new UserAdapter()).success(user);
         }
-        return res.setDataAdapter(new UserAdapter()).success(user);
-
+        catch(Exception ex)
+        {
+            LOGGER.error("EGOV-API ERROR ",ex);
+        	return res.error(getMessage("server.error"));
+        }
     }
 
     // --------------------------------------------------------------------------------//
@@ -105,14 +115,21 @@ public class CitizenController extends ApiController {
      */
     @RequestMapping(value = ApiUrl.CITIZEN_LOGOUT, method = RequestMethod.POST)
     public ResponseEntity<String> logout(HttpServletRequest request, OAuth2Authentication authentication) {
-
-        OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
-        if (token == null) {
-            return ApiResponse.newInstance().error(getMessage("msg.logout.unknown"));
+    	try
+    	{
+	        OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
+	        if (token == null) {
+	            return ApiResponse.newInstance().error(getMessage("msg.logout.unknown"));
+	        }
+	
+	        tokenStore.removeAccessToken(token);
+	        return ApiResponse.newInstance().success("",getMessage("msg.logout.success"));
+    	}
+        catch(Exception ex)
+        {
+            LOGGER.error("EGOV-API ERROR ",ex);
+        	return ApiResponse.newInstance().error(getMessage("server.error"));
         }
-
-        tokenStore.removeAccessToken(token);
-        return ApiResponse.newInstance().success("",getMessage("msg.logout.success"));
     }
 
     // --------------------------------------------------------------------------------//
@@ -127,7 +144,6 @@ public class CitizenController extends ApiController {
     public ResponseEntity<String> updateProfile(@RequestBody JSONObject citizen) {
 
         ApiResponse res = ApiResponse.newInstance();
-        String msg = "";
         try {
             Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
             citizenUpdate.setName(citizen.get("name").toString());
@@ -144,9 +160,10 @@ public class CitizenController extends ApiController {
             return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("msg.citizen.update.success"));
 
         } catch (Exception e) {
-            msg = e.getMessage();
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return ApiResponse.newInstance().error(getMessage("server.error"));
         }
-        return res.error(msg);
+        
     }
 
 }

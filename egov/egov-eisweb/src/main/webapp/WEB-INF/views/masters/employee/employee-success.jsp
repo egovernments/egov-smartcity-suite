@@ -153,6 +153,16 @@
 											<c:out value="${employee.aadhaarNumber}"/>
 										</div>
 									</div>
+									<div class="row add-border">
+										<div class="col-md-3 col-xs-6 add-margin">
+											<spring:message code="lbl.sign"/>
+										</div>
+										<c:if test="${not empty image}">
+										<div class="col-md-3 col-xs-6 add-margin view-content">
+											<img width="100" height="70" src='data:image/png;base64,${image}' /> 
+										</div>	
+										</c:if>
+									</div>
 									<div class="row">
 										<div class="col-md-3 col-xs-6 add-margin">
 											<spring:message code="lbl.useractive.view"/>

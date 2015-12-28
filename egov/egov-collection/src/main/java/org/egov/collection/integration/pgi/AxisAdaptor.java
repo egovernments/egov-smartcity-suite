@@ -52,13 +52,14 @@ import javax.persistence.Query;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.utils.EGovConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.client.Client;
@@ -68,7 +69,8 @@ import com.sun.jersey.api.representation.Form;
 // import com.billdesk.pgidsk.PGIUtil;
 
 /**
- * The PaymentRequestAdaptor class frames the request object for the payment service.
+ * The PaymentRequestAdaptor class frames the request object for the payment
+ * service.
  */
 
 public class AxisAdaptor implements PaymentGatewayAdaptor {
@@ -77,42 +79,44 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private CollectionApplicationProperties collectionApplicationProperties;
+
     /**
-     * This method invokes APIs to frame request object for the payment service passed as parameter
+     * This method invokes APIs to frame request object for the payment service
+     * passed as parameter
      *
      * @param serviceDetails
      * @param receiptHeader
      * @return
      */
     @Override
-    @SuppressWarnings("deprecation")
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,
             final ReceiptHeader receiptHeader) {
         final DefaultPaymentRequest paymentRequest = new DefaultPaymentRequest();
         LOGGER.debug("inside createPaymentRequest");
         final Map<String, String> fields = new HashMap<String, String>(0);
-        fields.put(CollectionConstants.AXIS_VERSION, EGovConfig.getMessage(
-                CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_VERSION));
-        fields.put(CollectionConstants.AXIS_COMMAND, EGovConfig.getMessage(
-                CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_COMMAND));
-        fields.put(CollectionConstants.AXIS_ACCESS_CODE, EGovConfig.getMessage(
-                CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_ACCESS_CODE));
+        fields.put(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion().toString());
+        fields.put(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommand());
+        fields.put(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
         fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, receiptHeader.getId().toString());
-        fields.put(CollectionConstants.AXIS_MERCHANT, EGovConfig.getMessage(
-                CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_MERCHANT));
-        fields.put(CollectionConstants.AXIS_LOCALE, EGovConfig.getMessage(
-                CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_LOCALE));
+        fields.put(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
+        fields.put(CollectionConstants.AXIS_LOCALE, collectionApplicationProperties.axisLocale());
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
+        fields.put(CollectionConstants.AXIS_ORDER_INFO,
+                EgovThreadLocals.getCityCode() + "-" + EgovThreadLocals.getCityName());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
-                .append(paymentServiceDetails.getId());
+        .append(paymentServiceDetails.getId());
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
-        fields.put(
-                CollectionConstants.AXIS_AMOUNT,
-                receiptHeader.getTotalAmount()
-                        .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP).toString());
-        // fields.put(CollectionConstants.AXIS_AMOUNT, "400");
-        if (CollectionConstants.AXIS_SECURE_SECRET != null && CollectionConstants.AXIS_SECURE_SECRET.length() > 0) {
+        final BigDecimal amount = receiptHeader.getTotalAmount();
+        final float rupees = Float.parseFloat(amount.toString());
+        final Integer mantisa = (int) rupees;
+        final Float exponent = rupees - (float) mantisa;
+        final Integer paise = (int) (mantisa * 100 + exponent * 100);
+        fields.put(CollectionConstants.AXIS_AMOUNT, paise.toString());
+        final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
+        if (axisSecureSecret != null) {
             final String secureHash = hashAllFields(fields);
             fields.put(CollectionConstants.AXIS_SECURE_HASH, secureHash);
         }
@@ -132,7 +136,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
         // create a buffer for the md5 input and add the secure secret first
         final StringBuffer buf = new StringBuffer();
-        buf.append(CollectionConstants.AXIS_SECURE_SECRET);
+        final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
+        buf.append(axisSecureSecret);
 
         // iterate through the list and add the remaining field values
         final Iterator<String> itr = fieldNames.iterator();
@@ -176,9 +181,11 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     }
 
     /**
-     * This method parses the given response string into a AXIS payment response object.
+     * This method parses the given response string into a AXIS payment response
+     * object.
      *
-     * @param a <code>String</code> representation of the response.
+     * @param a
+     *            <code>String</code> representation of the response.
      * @return an instance of <code></code> containing the response information
      */
     @Override
@@ -211,7 +218,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
         Date transactionDate = null;
         try {
-            transactionDate = sdf.parse(fields.get(CollectionConstants.AXIS_AMOUNT));
+            transactionDate = sdf.parse(fields.get(CollectionConstants.AXIS_BATCH_NO));
             axisResponse.setTxnDate(transactionDate);
         } catch (final ParseException e) {
             LOGGER.error("Error occured in parsing the transaction date [" + fields.get("vpc_BatchNo") + "]", e);
@@ -219,11 +226,14 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         }
 
         /*
-         * If there has been a merchant secret set then sort and loop through all the data in the Virtual Payment Client response.
-         * while we have the data, we can append all the fields that contain values (except the secure hash) so that we can create
-         * a hash and validate it against the secure hash in the Virtual Payment Client response. NOTE: If the vpc_TxnResponseCode
-         * in not a single character then there was a Virtual Payment Client error and we cannot accurately validate the incoming
-         * data from the secure hash.
+         * If there has been a merchant secret set then sort and loop through
+         * all the data in the Virtual Payment Client response. while we have
+         * the data, we can append all the fields that contain values (except
+         * the secure hash) so that we can create a hash and validate it against
+         * the secure hash in the Virtual Payment Client response. NOTE: If the
+         * vpc_TxnResponseCode in not a single character then there was a
+         * Virtual Payment Client error and we cannot accurately validate the
+         * incoming data from the secure hash.
          */
 
         // remove the vpc_TxnResponseCode code from the response fields as we do
@@ -232,11 +242,10 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         final String vpc_Txn_Secure_Hash = null2unknown(fields.remove("vpc_SecureHash"));
         // defines if error message should be output
         boolean errorExists = false;
-
-        if (CollectionConstants.AXIS_SECURE_SECRET != null
-                && CollectionConstants.AXIS_SECURE_SECRET.length() > 0
+        final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
+        if (axisSecureSecret != null
                 && (fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != null || fields
-                        .get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != "No Value Returned")) {
+                .get(CollectionConstants.AXIS_TXN_RESPONSE_CODE) != "No Value Returned")) {
 
             // create secure hash and append it to the hash map if it was
             // created
@@ -303,8 +312,9 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     }
 
     /*
-     * This method takes a data String and returns a predefined value if empty If data Sting is null, returns string
-     * "No Value Returned", else returns input
+     * This method takes a data String and returns a predefined value if empty
+     * If data Sting is null, returns string "No Value Returned", else returns
+     * input
      * @param in String containing the data String
      * @return String containing the output String
      */
@@ -318,9 +328,12 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     /**
      * This method is for creating a URL query string.
      *
-     * @param buf is the inital URL for appending the encoded fields to
-     * @param fields is the input parameters from the order page
+     * @param buf
+     *            is the inital URL for appending the encoded fields to
+     * @param fields
+     *            is the input parameters from the order page
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     // Method for creating a URL query string
     void appendQueryFields(final StringBuffer buf, final Map fields) {
 
@@ -333,16 +346,15 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             final String fieldName = (String) itr.next();
             final String fieldValue = (String) fields.get(fieldName);
 
-            if (fieldValue != null && fieldValue.length() > 0) {
+            if (fieldValue != null && fieldValue.length() > 0)
                 // append the URL parameters
                 try {
                     buf.append(URLEncoder.encode(fieldName, "UTF-8"));
                     buf.append('=');
                     buf.append(URLEncoder.encode(fieldValue, "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     throw new RuntimeException(e.getMessage());
                 }
-            }
             // add a '&' to the end if we have more fields coming.
             if (itr.hasNext())
                 buf.append('&');
@@ -356,22 +368,15 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         final PaymentResponse axisResponse = new DefaultPaymentResponse();
         try {
             final Client client = Client.create();
-            final WebResource resource = client.resource(EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_RECONCILE_URL));
+            final WebResource resource = client.resource(collectionApplicationProperties.axisReconcileUrl());
             final Form formData = new Form();
-            formData.add(CollectionConstants.AXIS_VERSION, EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_VERSION));
-            formData.add(CollectionConstants.AXIS_COMMAND, EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_COMMAND_QUERY));
-            formData.add(CollectionConstants.AXIS_ACCESS_CODE, EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_ACCESS_CODE));
-            formData.add(CollectionConstants.AXIS_MERCHANT, EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_MERCHANT));
+            formData.add(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion());
+            formData.add(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommandQuery());
+            formData.add(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
+            formData.add(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
             formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, onlinePayment.getReceiptHeader().getId().toString());
-            formData.add(CollectionConstants.AXIS_OPERATOR_ID, EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_OPERATOR_ID));
-            formData.add(CollectionConstants.AXIS_PASSWORD, EGovConfig.getMessage(
-                    CollectionConstants.CUSTOMPROPERTIES_FILENAME, CollectionConstants.MESSAGEKEY_AXIS_PASSWORD));
+            formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
+            formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());
             LOGGER.debug("formData: " + formData);
             final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
                     formData);
@@ -397,7 +402,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             } else {
                 axisResponse.setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
                         && responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE).equals("0") ? "0300"
-                        : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
+                                : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
                 axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
                 axisResponse.setReceiptId(responseAxisMap.get(CollectionConstants.AXIS_MERCHANT_TXN_REF));
                 if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
@@ -411,7 +416,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                     } catch (final ParseException e) {
                         LOGGER.error(
                                 "Error occured in parsing the transaction date [" + responseAxisMap.get("vpc_BatchNo")
-                                        + "]", e);
+                                + "]", e);
                         throw new ApplicationException(".transactiondate.parse.error", e);
                     }
                 }

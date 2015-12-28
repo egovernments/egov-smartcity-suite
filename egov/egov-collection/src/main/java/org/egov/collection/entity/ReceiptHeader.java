@@ -120,6 +120,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     private String instrumentsAsString;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    private String source;
 
     public ReceiptHeader() {
     }
@@ -458,9 +459,15 @@ public class ReceiptHeader extends StateAware implements Auditable {
      */
     @Override
     public String myLinkId() {
-        return getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        final StringBuilder linkId = new StringBuilder();
+
+        linkId.append(getCurrentState().getNextAction() + CollectionConstants.SEPARATOR_HYPHEN + service.getCode()
                 + CollectionConstants.SEPARATOR_HYPHEN + getCreatedBy().getUsername()
-                + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId());
+                + CollectionConstants.SEPARATOR_HYPHEN + sdf.format(getReceiptdate())
+                + (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId()));
+
+        return linkId.toString();
     }
 
     /**
@@ -726,4 +733,11 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.id = id;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
 }

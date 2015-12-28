@@ -64,7 +64,7 @@ public class ChangeOfUseService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-    
+
     @Autowired
     private UserService userService;
 
@@ -86,8 +86,9 @@ public class ChangeOfUseService {
         String validationMessage = "";
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
         final String consumerCode = parentWaterConnectionDetail.getConnection().getConsumerCode();
-        final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository.findByConnection_ConsumerCodeAndConnectionStatus(
-                consumerCode, ConnectionStatus.INPROGRESS);
+        final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository
+                .findByConnection_ConsumerCodeAndConnectionStatus(
+                        consumerCode, ConnectionStatus.INPROGRESS);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
@@ -99,29 +100,43 @@ public class ChangeOfUseService {
         else if (null != assessmentDetails.getErrorDetails()
                 && null != assessmentDetails.getErrorDetails().getErrorCode())
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (null != assessmentDetails.getPropertyDetails()
-                && null != assessmentDetails.getPropertyDetails().getTaxDue()
-                && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
-            if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
-                        assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
-        } 
         else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.changeofUse.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() }, null);
-        else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-            BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
-            if ( waterTaxDueforParent.doubleValue() > 0)
-                validationMessage = messageSource
-                        .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
-            if (parentWaterConnectionDetail.getConnection().getId() != null)
-                if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
-                    validationMessage = messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
-                            null, null);
-        } 
+                            inWorkflow.getApplicationNumber() },
+                    null);
+        else {
+            if (null != assessmentDetails.getPropertyDetails()
+                    && null != assessmentDetails.getPropertyDetails().getTaxDue()
+                    && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
+                if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+                    validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                            assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                            parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
+            }
+
+            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
+                BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+                if (waterTaxDueforParent.doubleValue() > 0)
+                    if (validationMessage.equalsIgnoreCase(""))
+                        validationMessage = messageSource
+                                .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+                    else
+                        validationMessage = validationMessage + " and " + messageSource
+                                .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+                if (parentWaterConnectionDetail.getConnection().getId() != null)
+                    if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
+                        if (validationMessage.equalsIgnoreCase(""))
+                            validationMessage = messageSource.getMessage(
+                                    "err.validate.additional.connection.wtdue.forchangeofuse",
+                                    null, null);
+                        else
+                            validationMessage = validationMessage + " and "
+                                    + messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse",
+                                            null, null);
+            }
+        }
         return validationMessage;
     }
 
@@ -131,9 +146,8 @@ public class ChangeOfUseService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New
-     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
-     *         "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
+     * "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
@@ -147,10 +161,10 @@ public class ChangeOfUseService {
         if (appProcessTime != null)
             changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
-        if(userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals("anonymous")){
+        if (userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals("anonymous")) {
             EgovThreadLocals.setUserId(Long.valueOf("40"));
             savedChangeOfUse.setCreatedBy(userService.getUserById(EgovThreadLocals.getUserId()));
-            }
+        }
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,

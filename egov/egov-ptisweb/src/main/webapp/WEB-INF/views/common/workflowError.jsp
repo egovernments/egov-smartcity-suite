@@ -41,7 +41,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0"
@@ -51,10 +57,9 @@
 					<spring:message code="lbl.workflow.error" />
 				</div>
 			</div>
-			<div class="panel-body">
-				<div class="row">
-					<div class="text-center">
-						<h4>${wfPendingMsg}</h4>
+			<div class="panel-body" style="text-align: center">
+				<div class="mandatory">
+						${wfPendingMsg}
 					</div>
 				</div>
 				<div class="row">

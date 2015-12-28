@@ -60,6 +60,7 @@ public class Receipt {
     private List<Payment> payments;
     private List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>();
     private Character receiptStatus = null;
+    private String consumerCode;
     
     @Override
     public String toString() {
@@ -194,5 +195,13 @@ public class Receipt {
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
     }
+
+    public String getConsumerCode() {
+		return consumerCode;
+	}
+
+	public void setConsumerCode(String consumerCode) {
+		this.consumerCode = consumerCode;
+	}
 
 }

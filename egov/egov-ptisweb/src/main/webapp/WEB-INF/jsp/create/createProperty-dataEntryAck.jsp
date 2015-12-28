@@ -62,7 +62,7 @@
 	<s:form name="CreatePropertyAckForm" theme="simple">
 		<s:push value="model">
 			<s:token />
-			<s:hidden name="upicNo" id="upicNo" value="%{upicNo}"></s:hidden>
+			<s:hidden name="basicProperty.upicNo" id="upicNo" value="%{basicProperty.upicNo}"></s:hidden>
 			<div class="formmainbox">
 				<div class="headingbg">
 					<s:text name="CreatePropertyAckHeader" />

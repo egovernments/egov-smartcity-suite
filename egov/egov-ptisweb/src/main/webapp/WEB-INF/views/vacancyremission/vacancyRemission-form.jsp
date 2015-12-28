@@ -42,9 +42,22 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
-
+<c:if test="${errorMsg != ''}">
+ 	<div class="panel-heading">
+				<div class="add-margin error-msg" style="text-align:center;">
+					<strong><c:out value="${errorMsg}"/></strong>
+				</div>
+	</div>
+</c:if>
 <form:form id="vacancyRemissionForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
 	<div class="page-container" id="page-container">
@@ -53,7 +66,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
-	
+							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<div class="panel-heading" style="text-align: left">
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
@@ -87,8 +100,9 @@
 						</div>
 					</div>
 				</div>
-				
-				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				<c:if test="${propertyByEmployee == true}">
+					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				</c:if>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>

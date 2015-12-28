@@ -94,6 +94,16 @@
     	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-form.jsp"/>
     </definition>
     
+    <definition name="taxExemption-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.taxexemption.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-success.jsp"/>
+    </definition> 
+    
+    <definition name="taxExemption-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.taxexemption.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/exemption/taxExemption-view.jsp"/>
+    </definition>
+    
     <definition name="workFlowError" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/common/workflowError.jsp"/>
@@ -154,6 +164,26 @@
     <definition name="vacancyRemissionApproval-edit" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.vacancyremission.final.approval" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemissionApproval-edit.jsp"/>
+    </definition>
+     
+     <definition name="digitalSignatureReport-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.report.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/digitalSignature/digitalSignatureReport-form.jsp"/>
+     </definition>
+     
+     <definition name="digitalSignature-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/digitalSignature/digitalSignature-success.jsp"/>
+     </definition>
+
+    <definition name="propertyValidation" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/propertyValidation.jsp"/>
+    </definition>
+    
+    <definition name="dailyCollection-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.dailyCollection.report" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/dailyCollection-form.jsp"/>
     </definition>
     
 </tiles-definitions>

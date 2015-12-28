@@ -85,6 +85,12 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
     
+    @RequestMapping(value = { "citizen/complainttypes-by-category", "citizen/anonymous/complainttypes-by-category", "officials/complainttypes-by-category"}, 
+            method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody List<ComplaintType> complaintTypesByCategory(@RequestParam final Long categoryId) {
+        return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
+    }
+    
     @RequestMapping(value = {"pgrreport/complaintTypes","search/complaintTypes","search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllByNameLike(complaintTypeName);

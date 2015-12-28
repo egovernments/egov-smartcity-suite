@@ -91,8 +91,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This class is used to persist Collections .This is used for the integration
- * of Collections and Bills and property tax.
+ * This class is used to persist Collections .This is used for the integration of Collections and Bills and property tax.
  */
 @Transactional
 public class PropertyTaxCollection extends TaxCollection {
@@ -100,17 +99,17 @@ public class PropertyTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCollection.class);
     private PersistenceService persistenceService;
     private BigDecimal totalAmount = BigDecimal.ZERO;
-    private Installment currInstallment=null;
-    
+    private Installment currInstallment = null;
+
     @Autowired
     private ModuleService moduleDao;
-    
+
     @Autowired
     private EgBillDao egBillDAO;
-    
+
     @Autowired
     private DemandGenericDao demandGenericDAO;
-    
+
     @Autowired
     private PersistenceService<Property, Long> propertyImplService;
 
@@ -120,35 +119,38 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     @Override
-    public void updateDemandDetails(BillReceiptInfo billRcptInfo) {
+    public void updateDemandDetails(BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException {
         totalAmount = billRcptInfo.getTotalAmount();
-		currInstallment = PropertyTaxUtil.getCurrentInstallment();
+        currInstallment = PropertyTaxUtil.getCurrentInstallment();
         LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
-        EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-        String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode();
-        LOGGER.info("updateDemandDetails : Demand before proceeding : " + demand);
-        LOGGER.info("updateDemandDetails : collection back update started for property : " + assessmentNo
-                + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
-                + " with receipt no." + billRcptInfo.getReceiptNum());
-       
-        if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-            updateCollForRcptCreate(demand, billRcptInfo);
-            activateDemand(demand);
+        try {
+            EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+            String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode();
+            LOGGER.info("updateDemandDetails : Demand before proceeding : " + demand);
+            LOGGER.info("updateDemandDetails : collection back update started for property : " + assessmentNo
+                    + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount
+                    + " with receipt no." + billRcptInfo.getReceiptNum());
 
-        } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
-            updateCollForRcptCancel(demand, billRcptInfo);
+            if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
+                updateCollForRcptCreate(demand, billRcptInfo);
+                activateDemand(demand);
 
-        } else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
-            updateCollForChequeBounce(demand, billRcptInfo);
+            } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
+                updateCollForRcptCancel(demand, billRcptInfo);
+
+            } else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
+                updateCollForChequeBounce(demand, billRcptInfo);
+            }
+            LOGGER.info("updateDemandDetails : Demand after processed : " + demand);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage());
         }
-
-        LOGGER.info("updateDemandDetails : Demand after processed : " + demand);
         LOGGER.debug("updateDemandDetails : Updating Demand Details Finished...");
     }
 
     /**
-     * This method is invoked from Collections end when an event related to
-     * receipt in bill generation occurs.
+     * This method is invoked from Collections end when an event related to receipt in bill generation occurs.
      */
     @Override
     public void updateReceiptDetails(Set<BillReceiptInfo> billReceipts) {
@@ -192,8 +194,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Deducts the collected amounts as per the amount of the bounced cheque,
-     * and also imposes a cheque-bounce penalty.
+     * Deducts the collected amounts as per the amount of the bounced cheque, and also imposes a cheque-bounce penalty.
      */
     private void updateCollForChequeBounce(EgDemand demand, BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
@@ -290,13 +291,13 @@ public class PropertyTaxCollection extends TaxCollection {
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
 
                     if (rcptAccInfo.getGlCode().equalsIgnoreCase(
-                            /*GLCODEMAP_FOR_CURRENTTAX.get(*/PropertyTaxConstants.GLCODE_FOR_PENALTY/*)*/)) {
+                            /* GLCODEMAP_FOR_CURRENTTAX.get( */PropertyTaxConstants.GLCODE_FOR_PENALTY/* ) */)) {
 
                         if (demandDetail == null) {
-
+                            throw new ApplicationRuntimeException(" Penalty Demand Details is null ");
+                        } else {
+                            demandDetail.addCollected(rcptAccInfo.getCrAmount());
                         }
-
-                        demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
@@ -317,8 +318,7 @@ public class PropertyTaxCollection extends TaxCollection {
      * Return true if Arrear or Current General Tax GlCode or Advance GlCode
      * 
      * @param rcptAccInfo
-     * @return true if Arrear or Current General Tax GlCode or Advance GlCode
-     *         else false
+     * @return true if Arrear or Current General Tax GlCode or Advance GlCode else false
      */
     private boolean isArrearOrCurrentGenTaxGlCode(String glCode) {
         return glCode.equalsIgnoreCase(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX))
@@ -326,8 +326,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Reconciles the collection for respective account heads thats been paid
-     * with given cancel receipt
+     * Reconciles the collection for respective account heads thats been paid with given cancel receipt
      *
      * @param demand
      * @param billRcptInfo
@@ -459,8 +458,7 @@ public class PropertyTaxCollection extends TaxCollection {
     /**
      * Calculates Early Payment Rebate for given Tax Amount
      *
-     * @param rebateApplTaxAmt
-     *            for which Rebate has to be calculated
+     * @param rebateApplTaxAmt for which Rebate has to be calculated
      * @return rebate amount.
      */
     public BigDecimal calcEarlyPayRebate(BigDecimal instTaxAmount, BigDecimal rebateApplTaxAmt, BigDecimal collection) {
@@ -517,8 +515,7 @@ public class PropertyTaxCollection extends TaxCollection {
     /**
      * Gives the tax amount of Account head for which Rebate applicable
      *
-     * @param List
-     *            of <code>ReceiptDetail</code>
+     * @param List of <code>ReceiptDetail</code>
      * @return rebate applicable tax amount.
      */
     public BigDecimal getRebateApplAmount(List<ReceiptDetail> receiptDetails) {
@@ -526,9 +523,8 @@ public class PropertyTaxCollection extends TaxCollection {
         for (ReceiptDetail rd : receiptDetails) {
             if (rd.getAccounthead().getGlcode().equals(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX))) {
                 /*
-                 * getting rebate amount from getCramountToBePaid() because
-                 * before receipt created CrAmount is Zero and it will updated
-                 * as part of receipt creation.
+                 * getting rebate amount from getCramountToBePaid() because before receipt created CrAmount is Zero and it will
+                 * updated as part of receipt creation.
                  */
                 taxAmount = rd.getCramountToBePaid();
                 break;
@@ -548,9 +544,9 @@ public class PropertyTaxCollection extends TaxCollection {
             desc = rd.getDescription().split("-", 2);
             installment = desc[1].trim();
 
-            if (!glCode.equalsIgnoreCase(GLCODE_FOR_TAXREBATE) && 
+            if (!glCode.equalsIgnoreCase(GLCODE_FOR_TAXREBATE) &&
                     (GLCODEMAP_FOR_ARREARTAX.containsValue(glCode) || GLCODEMAP_FOR_CURRENTTAX.containsValue(glCode))) {
-                
+
                 if (retMap.get(installment) == null) {
                     retMap.put(installment, rd.getCramountToBePaid());
                 } else {
@@ -580,8 +576,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Method used to calculate the Total Cheque amount from he BillreceiptInfo
-     * object which is received from Collections Module.
+     * Method used to calculate the Total Cheque amount from he BillreceiptInfo object which is received from Collections Module.
      *
      * @param billRcptInfo
      * @return Total Cheque amount
@@ -617,8 +612,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Method used to insert penalty in EgDemandDetail table. Penalty Amount
-     * will be calculated depending upon the cheque Amount.
+     * Method used to insert penalty in EgDemandDetail table. Penalty Amount will be calculated depending upon the cheque Amount.
      *
      * @see createDemandDetails() -- EgDemand Details are created
      * @see getPenaltyAmount() --Penalty Amount is calculated
@@ -628,33 +622,32 @@ public class PropertyTaxCollection extends TaxCollection {
     public EgDemandDetails insertPenalty(String demandReason, BigDecimal penaltyAmount, Installment inst) {
         EgDemandDetails demandDetail = null;
         Module ptModule = null;
-        
+
         if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
-            
+
             ptModule = module();
             EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(demandReason,
                     ptModule);
-            
+
             if (egDemandReasonMaster == null) {
                 throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
             }
-            
+
             EgDemandReason egDemandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(
                     egDemandReasonMaster, inst, ptModule);
-            
+
             if (egDemandReason == null) {
                 throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
             }
-            
+
             demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, penaltyAmount);
         }
         return demandDetail;
     }
 
     /**
-     * Method used to create new EgDemandDetail Object depending upon the
-     * EgDemandReason , Collected amount and Demand amount(which are
-     * compulsory),Other wise returns Empty EgDemandDetails Object.
+     * Method used to create new EgDemandDetail Object depending upon the EgDemandReason , Collected amount and Demand
+     * amount(which are compulsory),Other wise returns Empty EgDemandDetails Object.
      *
      * @param egDemandReason
      * @param amtCollected
@@ -680,11 +673,11 @@ public class PropertyTaxCollection extends TaxCollection {
         EgBill egBill = (EgBill) egBillDAO.findById(billId, false);
 
         String query = "SELECT ptd FROM Ptdemand ptd " + "WHERE ptd.egInstallmentMaster = ? "
-                + "AND ptd.egptProperty.basicProperty.upicNo = ? " 
-        		+ "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
+                + "AND ptd.egptProperty.basicProperty.upicNo = ? "
+                + "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
                 + "AND ptd.egptProperty.basicProperty.active = true";
 
-		EgDemand egDemand = (EgDemand) persistenceService.find(query, currInstallment, egBill.getConsumerId());
+        EgDemand egDemand = (EgDemand) persistenceService.find(query, currInstallment, egBill.getConsumerId());
 
         LOGGER.debug("Exiting from getCurrentDemand");
         return egDemand;
@@ -722,19 +715,19 @@ public class PropertyTaxCollection extends TaxCollection {
         return demandDetail;
     }
 
-	// Activating the demand on payment
+    // Activating the demand on payment
     @Transactional
-	private void activateDemand(EgDemand demand) {
-		Property property = ((Ptdemand) demand).getEgptProperty();
-		if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-			property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
-			propertyImplService.persist(property);
-		}
-	}
+    private void activateDemand(EgDemand demand) {
+        Property property = ((Ptdemand) demand).getEgptProperty();
+        if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+            property.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+            propertyImplService.persist(property);
+        }
+    }
 
-	public void setPersistenceService(PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
-	}
+    public void setPersistenceService(PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {

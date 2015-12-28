@@ -39,17 +39,36 @@
  */
 package org.egov.ptis.domain.service.report;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.commons.Installment;
+import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
@@ -66,6 +85,8 @@ public class ReportService {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
+    private DesignationService designationService;
+
     /**
      * Method gives List of properties with current and arrear individual demand
      * details
@@ -77,7 +98,7 @@ public class ReportService {
     public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block) {
 
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("from PropertyMaterlizeView pmv ");
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ");
 
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" where pmv.ward.id=:ward ");
@@ -158,7 +179,7 @@ public class ReportService {
             } else {
                 baseRegisterResultObj.setArrearPeriod("N/A");
             }
-            
+
             baseRegisterResultObj.setArrearTotal(totalArrearPropertyTax.add(totalArrearEduCess).add(totalArreaLibCess));
             baseRegisterResultObj.setArrearPropertyTax(totalArrearPropertyTax);
             baseRegisterResultObj.setArrearLibraryTax(totalArreaLibCess);
@@ -168,6 +189,131 @@ public class ReportService {
             baseRegisterResultList.add(baseRegisterResultObj);
         }
         return baseRegisterResultList;
+    }
+
+    public List<DailyCollectionReportResult> getCollectionDetails(Date fromDate, Date toDate, String collectionMode,
+            String collectionOperator, String status) throws ParseException {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader inner join fetch receiptheader.receiptInstrument instHeader"
+                + " inner join fetch instHeader.instrumentType instType where receiptheader.service.name =:service and (receiptdate between :fromDate and :toDate) ");
+        if (StringUtils.isNotBlank(collectionMode)) {
+            queryStr.append(" and instType.id =:mode ");
+        }
+        if (StringUtils.isNotBlank(collectionOperator)) {
+            queryStr.append(" and receiptheader.createdBy.id =:operator ");
+        }
+        if (StringUtils.isNotBlank(status)) {
+            queryStr.append(" and receiptheader.status.id =:status ");
+        }
+        queryStr.append(" order by instHeader ");
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        query.setString("service", PTMODULENAME);
+        query.setDate("fromDate", fromDate);
+        query.setDate("toDate", toDate);
+        if (StringUtils.isNotBlank(collectionMode)) {
+            query.setLong("mode", Long.valueOf(collectionMode));
+        }
+        if (StringUtils.isNotBlank(collectionOperator)) {
+            query.setLong("operator", Long.valueOf(collectionOperator));
+        }
+        if (StringUtils.isNotBlank(status)) {
+            query.setLong("status", Long.valueOf(status));
+        }
+        List<ReceiptHeader> receiptHeaderList = query.list();
+        List<DailyCollectionReportResult> dailyCollectionReportList = new ArrayList<DailyCollectionReportResult>();
+        DailyCollectionReportResult result = null;
+        BigDecimal currCollection = null;
+        BigDecimal arrCollection = null;
+        BigDecimal totalPenalty = null;
+        BigDecimal arrLibCess = null;
+        BigDecimal currLibCess = null;
+
+        for (ReceiptHeader receiptHeader : receiptHeaderList) {
+            currCollection = BigDecimal.ZERO;
+            arrCollection = BigDecimal.ZERO;
+            totalPenalty = BigDecimal.ZERO;
+            arrLibCess = BigDecimal.ZERO;
+            currLibCess = BigDecimal.ZERO;
+            result = new DailyCollectionReportResult();
+            result.setReceiptNumber(receiptHeader.getReceiptnumber());
+            result.setReceiptDate(receiptHeader.getReceiptdate());
+            result.setAssessmentNumber(receiptHeader.getConsumerCode());
+            result.setOwnerName(receiptHeader.getPayeeName());
+            result.setPaidAt(receiptHeader.getSource());
+
+            String[] address = receiptHeader.getPayeeAddress().split(",");
+            result.setTotalCollection(receiptHeader.getTotalAmount());
+            if (address.length >= 4)
+                result.setDoorNumber(address[0]);
+            else
+                result.setDoorNumber("N/A");
+            result.setStatus(receiptHeader.getStatus().getDescription());
+
+            StringBuilder paymentMode = new StringBuilder(30);
+            int count = 0;
+            for (InstrumentHeader instrument : receiptHeader.getReceiptInstrument()) {
+                int instrumentSize = receiptHeader.getReceiptInstrument().size();
+                paymentMode.append(instrument.getInstrumentType().getType());
+                if(instrumentSize > 1 && count < instrumentSize-1) {
+                    paymentMode.append(",");
+                    count++;
+                }
+            }
+            result.setPaidAt(receiptHeader.getSource());
+            result.setPaymentMode(paymentMode.toString());
+            List<ReceiptDetail> receiptDetailsList = new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails());
+            int lastindex = receiptDetailsList.size() - 2;
+            if (null != receiptDetailsList.get(0).getDescription()) {
+                int index = receiptDetailsList.get(0).getDescription().indexOf("-");
+                String instDesc = receiptDetailsList.get(0).getDescription().substring(index + 1);
+                result.setFromInstallment(instDesc);
+            }
+            if (null != receiptDetailsList.get(lastindex).getDescription()) {
+                int index = receiptDetailsList.get(lastindex).getDescription().indexOf("-");
+                String instDesc = receiptDetailsList.get(lastindex).getDescription().substring(index + 1);
+                result.setToInstallment(instDesc);
+            }
+            for (ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+                if (GLCODES_FOR_CURRENTTAX.contains(receiptDetail.getAccounthead().getGlcode())) {
+                    currCollection = currCollection.add(receiptDetail.getCramount());
+                } else if (GLCODES_FOR_ARREARTAX.contains(receiptDetail.getAccounthead().getGlcode())) {
+                    arrCollection = arrCollection.add(receiptDetail.getCramount());
+                }
+                if (GLCODE_FOR_PENALTY.equals(receiptDetail.getAccounthead().getGlcode())) {
+                    totalPenalty = totalPenalty.add(receiptDetail.getCramount());
+                }
+
+                if (null != receiptDetail.getDescription()) {
+                    String[] arrLibCessArr = receiptDetail.getDescription().split("-");
+                    if (arrLibCessArr[0].equals(DEMANDRSN_STR_LIBRARY_CESS)
+                            && GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_LIBRARY_CESS).equals(
+                                    receiptDetail.getAccounthead().getGlcode())) {
+                        arrLibCess = arrLibCess.add(receiptDetail.getCramount());
+                    }
+                }
+                if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_LIBRARY_CESS).equals(
+                        receiptDetail.getAccounthead().getGlcode())) {
+                    currLibCess = currLibCess.add(receiptDetail.getCramount());
+                }
+            }
+            result.setArrearAmount(null != arrCollection ? arrCollection : new BigDecimal(0));
+            result.setCurrentAmount(currCollection);
+            result.setArrearLibCess(arrLibCess);
+            result.setCurrentLibCess(currLibCess);
+            result.setTotalLibCess(arrLibCess.add(currLibCess));
+            result.setTotalPenalty(totalPenalty);
+            result.setTotalCollection(currCollection.add(arrCollection).add(totalPenalty));
+            dailyCollectionReportList.add(result);
+        }
+
+        return dailyCollectionReportList;
+    }
+
+    public List<User> getCollectionOperators() {
+        return (List<User>) propPerServ.findAllBy(
+                "select assignment.employee from Assignment assignment where assignment.designation.name in (?,?) ",
+                JUNIOR_ASSISTANT, SENIOR_ASSISTANT);
     }
 
     public PersistenceService getPropPerServ() {

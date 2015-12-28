@@ -40,13 +40,8 @@
 <%@ include file="/includes/taglibs.jsp" %> 
 <html>  
 	<head>  
-    	<title><s:text name="contractor.grade.master.title" /></title> 
-    	<script>
-			function roundOffMaxMinAmount() {
-				/* document.contractorGrade.minAmount.value=roundTo(document.contractorGrade.minAmount.value);
-				document.contractorGrade.maxAmount.value=roundTo(document.contractorGrade.maxAmount.value); */
-			}
-		</script>
+    	<title><s:text name="contractor.grade.master.title" /></title>
+    	<script src="<egov:url path='resources/js/works.js'/>"></script> 
 	</head>  
 	<body onload="roundOffMaxMinAmount();">
     	<s:if test="%{hasErrors()}">
@@ -61,7 +56,7 @@
         	</div>
     	</s:if>
    
-		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" >
+		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" id="contractorGrade">
 			<s:token/>
 			<s:hidden name="model.id" />
 			<p>
@@ -70,7 +65,7 @@
 					<s:submit value="SAVE" method="save" cssClass="buttonfinal" id="saveButton" name="button"/>
 				</s:if>
 				<s:if test="%{model.id==null}" >
-					<s:reset value="CLEAR" cssClass="buttonfinal" />
+					<input type="button" value="CLEAR" class="buttonfinal" onclick="clearForm(this.form.id)"/>
 				</s:if>
 				<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" />
 			</p>

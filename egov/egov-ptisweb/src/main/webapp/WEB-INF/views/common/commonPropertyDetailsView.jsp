@@ -82,7 +82,7 @@
 									<spring:message code="lbl.annualvalue" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${ARV}" pattern="#,##0.00" /> 
+									Rs. <fmt:formatNumber value="${ARV}" pattern="#,##0" /> 
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.effectivedate" />
@@ -187,6 +187,14 @@
 				</div>
 				
 				<div class="row">
+				<%-- <c:choose>
+				<c:when test="${property.isExemptedFromTax == 'true'}">
+				<div class="panel-heading">
+	               This property tax is exempted with reason <span class="bold"><c:out default="N/A" value="${property.taxExemptedReason.name}" /></span>
+                 </div>
+				</c:when>
+				<c:otherwise> --%>
+				<c:if test="${property.isExemptedFromTax == 'false'}">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0"
 						style="text-align: left">
@@ -199,13 +207,13 @@
 									<spring:message code="lbl.currenttax" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${currTax}" pattern="#,##0.00" />
+									Rs. <fmt:formatNumber value="${currTax}" pattern="#,##0" />
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.edutax" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${eduCess}" pattern="#,##0.00" /> 
+									Rs. <fmt:formatNumber value="${eduCess}" pattern="#,##0" /> 
 								</div>
 							</div>
 							<div class="row add-border">
@@ -213,13 +221,13 @@
 									<spring:message code="lbl.currenttax.due" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${currTaxDue}" pattern="#,##0.00" /> 
+									Rs. <fmt:formatNumber value="${currTaxDue}" pattern="#,##0" /> 
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.librarycess" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${libraryCess}" pattern="#,##0.00" />  
+									Rs. <fmt:formatNumber value="${libraryCess}" pattern="#,##0" />  
 								</div>
 							</div>
 							<div class="row add-border">
@@ -227,13 +235,13 @@
 									<spring:message code="lbl.totalarrears.due" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${totalArrDue}" pattern="#,##0.00" />   
+									Rs. <fmt:formatNumber value="${totalArrDue}" pattern="#,##0" />   
 								</div>
 								<div class="col-xs-3 add-margin">
 									<spring:message code="lbl.propertytax" />
 								</div>
 								 <div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${propertyTax}" pattern="#,##0.00" /> 
+									Rs. <fmt:formatNumber value="${propertyTax}" pattern="#,##0" /> 
 								</div>
 							</div>
 							<c:choose>
@@ -242,10 +250,10 @@
 										<div class="col-xs-6 add-margin">
 										</div>
 										<div class="col-xs-3 add-margin">
-											Unauthorized <spring:message code="lbl.unauthorized.penalty" />
+											<spring:message code="lbl.unauthorized.penalty" />
 										</div>
 										<div class="col-xs-3 add-margin view-content">
-											Rs. <fmt:formatNumber value="${unauthorisedPenalty}" pattern="#,##0.00" /> 
+											Rs. <fmt:formatNumber value="${unauthorisedPenalty}" pattern="#,##0" /> 
 										</div>
 									</div>
 								</c:when>
@@ -257,10 +265,13 @@
 									<spring:message code="lbl.total.propertytax" />
 								</div>
 								<div class="col-xs-3 add-margin view-content">
-									Rs. <fmt:formatNumber value="${totalTax}" pattern="#,##0.00" /> 
+									Rs. <fmt:formatNumber value="${totalTax}" pattern="#,##0" /> 
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				</c:if>
+				<%-- </c:otherwise>
+				</c:choose> --%>
 		</div>

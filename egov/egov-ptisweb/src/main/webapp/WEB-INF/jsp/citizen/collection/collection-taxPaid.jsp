@@ -69,11 +69,11 @@
 	<div class="buttonbottom" align="center">
 		<td>
 			<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"
-			onclick="window.location='${pageContext.request.contextPath}/view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{propertyId}" />';" />
+			onclick="window.location='${pageContext.request.contextPath}/view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{assessmentNumber}"/>';" />
 		</td>
 		<td>
 			<input type="button" class="buttonsubmit" name="SearchProperty"
-					id="SearchProperty" value="Search Property" onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';" />
+					id="SearchProperty" value="Search Property" onclick="window.location='${pageContext.request.contextPath}/citizen/search/search-searchForm.action';" />
 		</td>
 		<td>
 			<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/>

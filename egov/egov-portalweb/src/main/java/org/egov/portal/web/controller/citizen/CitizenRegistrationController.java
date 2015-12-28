@@ -1,4 +1,4 @@
-/** eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
@@ -78,7 +79,7 @@ public class CitizenRegistrationController {
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");
-        if (!ValidatorUtils.isCaptchaValid(request))
+        if (!RecaptchaUtils.captchaIsValid(request))
             errors.rejectValue("active", "error.recaptcha.verification");
         if (errors.hasErrors())
             return "signup";

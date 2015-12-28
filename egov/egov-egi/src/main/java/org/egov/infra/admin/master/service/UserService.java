@@ -61,7 +61,7 @@ public class UserService {
     public User updateUser(final User user) {
         return userRepository.saveAndFlush(user);
     }
-    
+
     @Transactional
     public User createUser(final User user) {
         return userRepository.save(user);
@@ -106,7 +106,7 @@ public class UserService {
     public User getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
     }
-    
+
     public User getUserByMobileNumber(final String mobileNumber) {
         return userRepository.findByMobileNumber(mobileNumber);
     }
@@ -121,5 +121,9 @@ public class UserService {
 
     public Set<User> getUsersByRoleName(final String roleName) {
         return userRepository.findUsersByRoleName(roleName);
+    }
+
+    public List<User> getAllEmployeeUsers() {
+        return userRepository.findByTypeAndActiveTrueOrderByNameAsc(UserType.EMPLOYEE);
     }
 }

@@ -48,5 +48,9 @@ package org.egov.ptis.domain.entity.property;
  *      org.egov.ptis.property.model.PropertyImpl
  */
 public abstract class AbstractProperty extends PropertyImpl implements PropertyDetail {
-	public PropertyImpl propertyImpl;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    public PropertyImpl propertyImpl;
 }

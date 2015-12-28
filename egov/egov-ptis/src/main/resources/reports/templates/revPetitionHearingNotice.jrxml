@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-07T18:05:25 -->
+<!-- 2015-11-14T21:15:15 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionHearingNotice" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="92"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="docNumberObjection" class="java.lang.String"/>
 	<parameter name="receivedOn" class="java.lang.String"/>
@@ -111,7 +112,7 @@
 			<staticText>
 				<reportElement x="7" y="220" width="86" height="20" uuid="83fd3821-2aff-4aa6-9b36-64b68ac982f9"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[House No:]]></text>
+				<text><![CDATA[Assessment No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="96" y="219" width="195" height="23" uuid="5f1dc1e9-8e54-4854-a3e7-728e659ca699"/>

@@ -60,14 +60,30 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
+			jQuery(function($) {
+				try {
+					$(".datepicker").datepicker({
+						format : "dd/mm/yyyy",
+						autoclose:true
+					});
+					reInitializeDateOnChangeEvent();
+				} catch (e) {
+					console.warn("No Date Picker " + e);
+				}
+			});
+
 
 			function onSubmit() {
 				var actionName = document.getElementById('workFlowAction').value;
+				var nextAction = '<s:property value="%{model.state.nextAction}"/>'; 
 				var action = null;
 				var userDesg = '<s:property value="%{userDesgn}"/>';
 				var state = '<s:property value="%{model.state.value}"/>';
 				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
-					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT || @org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT}"/>' || state == 'Alter:Rejected') {
+					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT}"/>' 
+						|| userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT}"/>'
+						|| (nextAction != null && nextAction == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING}"/>')
+						|| state == 'Alter:Rejected') {
 						action = 'modifyProperty-forward.action';
 					} else {
 						action = 'modifyProperty-forwardView.action';
@@ -76,11 +92,21 @@
 					action = 'modifyProperty-approve.action';
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
 					action = 'modifyProperty-reject.action';
-				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'){
+				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'
+						|| actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_SIGN}"/>'){
 					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
-					action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType='+noticeType+'&noticeMode=modify';
+					action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType='+noticeType+'&noticeMode=modify&actionType='+actionName;
+				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_PREVIEW}"/>') {
+					var params = [
+			   			'height='+screen.height,
+			   		    'width='+screen.width,
+			   		    'fullscreen=yes' 
+			   		].join(',');
+					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+					window.open("../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=modify&actionType="+actionName, 'NoticeWindow', params);
+					return false;
 				}
-				document.forms[0].action = action;
+				document.forms[0].action = action; 
 				document.forms[0].submit;
 				return true;
 			}
@@ -91,6 +117,29 @@
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 				enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
+				showHideFirmName();
+			}
+
+			function enableDisableFirmName(obj){ 
+				var selIndex = obj.selectedIndex;
+				var selText = obj.options[selIndex].text; 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+				if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+					if(firmval.value!=null && firmval.value!="") 
+						firmval.value="";
+					firmval.readOnly = true;      
+				} else{
+					firmval.readOnly = false;
+				}
+			}  
+
+			function showHideFirmName(){
+				var rows = document.getElementById('floorDetails').rows.length - 1;  
+				for (var i = 0; i < rows; i++) {
+						enableDisableFirmName(document.forms[0].floorUsage[i]);
+				}
 			}
 
 			function enableAppartnaumtLandDetailsView() {
@@ -177,6 +226,7 @@
 
 </script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">
@@ -208,38 +258,42 @@
 						</s:elseif>
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
+					<s:if test="%{(model.state.nextAction!=null && 
+						@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(model.state.nextAction)) ||
 						((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) ||
 						@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
-							&& !model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}">
+							&& !model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
 						<tr>
 							<%@ include file="../modify/modifyPropertyForm.jsp"%>
-						</tr>
+						</tr> 
 					</s:if>
-					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+					<s:elseif test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+					        model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
 							((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
 							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) }">
+							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)) }">
 						<tr>
 							<%@ include file="../modify/modifyPropertyView.jsp"%>
 						</tr>
 					</s:elseif>
-					<s:if test="%{state != null}">
+					<s:if test="%{state != null}">   
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
-					</s:if>
-					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+					</s:if> 
+					<s:if test="%{(!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) ||
 						((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
 							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)))}">
+							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)))}">
 						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+					<s:if test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+					    model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
 						<div id="workflowCommentsDiv" align="center">
 					         <table width="100%">
 								<tr>

@@ -78,7 +78,7 @@
 		<![endif]-->
 	</head>
 	<body class="page-body index">
-		<div class="page-container" id="page-container">
+		<div class="page-container">
 			<header class="navbar navbar-fixed-top">
 				<!-- set fixed position by adding class "navbar-fixed-top" -->
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -116,7 +116,7 @@
 						</div>
 						<div class="col-md-12 community-card">
 							<a href="/pgr/complaint/citizen/anonymous/show-reg-form" target="_blank">
-								<div class="rounded-circle"><i class="fa fa-plus b"></i></div>&nbsp;
+								<div class="rounded-circle"><i class="fa fa-pencil b"></i></div>&nbsp;
 								<div class="label-font">
 									<spring:message code="lbl.reg.comp"/><br> 
 									<span class="label-subfont"><spring:message code="lbl.reg.comp.desc"/></span>
@@ -131,9 +131,9 @@
 							<div class="label-font" style="vertical-align: sub">
 								<spring:message code="lbl.check.comp.status"/>&nbsp;<br>
 								<input type="text" placeholder="Grievance number" id="compsearchtxt"
-									style="padding: 2px 5px; height: 30px; border: 1px solid #D0D2D7; font-size: 15px;">
+									style="padding: 2px 5px; height: 30px;font-size: 14px;border: 0;padding-left: 0;border-bottom: 1px solid #D0D2D7;outline: none;box-shadow: none;">
 								<button class="btn-custom" id="compsearch"
-									style="padding: 4px 5px; vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
+									style="padding: 4px 5px;border-radius: 4px;font-size: 14px;vertical-align: bottom;"><spring:message code="btn.lbl.search"/></button>
 							</div>
 							<div class="error-msg search-error-msg display-hide" style="padding-left: 65px;">Grievance number is mandatory</div>
 						</div>

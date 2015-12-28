@@ -43,7 +43,12 @@
 <html>  
 <head>  
     <title>
-    <s:text name="subScheme.add"/>
+    <s:if test="showMode == 'new'">
+			<s:text name="subScheme.add"/>	    	
+	</s:if>
+	<s:else>
+		 <s:text name="subscheme.modify.title"/> 
+	</s:else>
     </title>
     <sx:head/>
   <SCRIPT type="text/javascript">
@@ -52,34 +57,70 @@
 	        	undoLoadingMask();
 	    		return false;
 	            }
-			
+			 if(!validateDate(document.getElementById('validfrom').value)){
+					alert("Invalid Date! valid from date is greater than current date");
+					return false;
+			}
+			 else if (Date.parse(document.getElementById('validfrom').value) > Date.parse(document.getElementById('validtoId').value)) {
+					alert("Invalid Date Range! valid from date cannot be after valid to date!")
+					return false;
+					} 
 			if(isNaN(document.getElementById('initialEstimateAmount').value)){
 				alert("Please enter valid Initial Eastimate Amount");
 				return false;
 			}
-			document.subSchemeForm.action='${pageContext.request.contextPath}/masters/subScheme-create.action';
+			var showMode = document.getElementById('showMode').value;
+			if(showMode=='edit')
+			var	url='${pageContext.request.contextPath}/masters/subScheme-edit.action';
+			else
+			var	url='${pageContext.request.contextPath}/masters/subScheme-create.action';
+			document.subSchemeForm.action=url;
     		document.subSchemeForm.submit();
 			return true;
 		}
-		
+		function validateDate(date)
+		{
+			var todayDate = new Date();
+			 var todayMonth = todayDate.getMonth() + 1;
+			 var todayDay = todayDate.getDate();
+			 var todayYear = todayDate.getFullYear();
+			 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
+			if (Date.parse(date) > Date.parse(todayDateText)) {
+				return false;
+				}
+			return true; 
+		}
 </script>
 
 </head>  
 	<body>  
 		<jsp:include page="../budget/budgetHeader.jsp"/>
-		<div class="formmainbox"><div class="subheadnew"><s:text name="subScheme.add"/></div>
-		<div style="color: red">
-		<s:actionmessage theme="simple"/>
+		<div class="formmainbox"><div class="subheadnew">
+		 <s:if test="showMode == 'new'">
+			<s:text name="subScheme.add"/>	    	
+		</s:if>
+		<s:else>
+			 <s:text name="subscheme.modify.title"/> 
+		</s:else>
+		<div style="color: red">            
 		<s:actionerror/>  
-		<s:fielderror />
-		</div>  
+		<s:fielderror/> 
+		</div>
+		<div style="color: green">
+		<s:actionmessage />
+		</div>
+		<s:token/>
+		
 		<s:form id = "subSchemeForm" name="subSchemeForm" action="subScheme" theme="css_xhtml" validate="true">
+		
+		<s:hidden name="showMode" id ="showMode" value = "%{showMode}" />
+		<s:hidden id="subSchemeId" name="subSchemeId" value = "%{subScheme.id}"/>   
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
 				<td class="bluebox" width="20%"><strong>Scheme<span class="mandatory1"> *</span></strong></td>
 			    <td class="bluebox">
-			    	<s:select name="scheme" id ="scheme" list="dropdownData.schemeList"  listKey="id" listValue="name" headerKey="" headerValue="--- Select ---" value="%{scheme.id}" />
+			    	<s:select name="scheme" id ="scheme" list="dropdownData.schemeList"  listKey="id" listValue="name" headerKey="" headerValue="--- Select ---" value="%{subScheme.scheme.id}" />
 			    </td>
 				<td class="bluebox" width="20%"><strong>Name<span class="mandatory1"> *</span></strong></td>
 			    <td class="bluebox"><s:textfield id="name" name="name" value="%{subScheme.name}" cssStyle="width: 250px"/></td>
@@ -108,14 +149,14 @@
 			<tr>
 			    <td class="greybox">&nbsp;</td>
 				<td class="greybox"><strong>Department</strong></td>
-			    <td class="greybox"><s:select list="dropdownData.departmentList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="department" id="department" value="%{department.id}"></s:select></td>
+			    <td class="greybox"><s:select list="dropdownData.departmentList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="department" id="department" value="%{subScheme.department.id}"></s:select></td>
 				<td class="greybox"><strong>Initial Estimate Amount</strong></td>
-			    <td class="greybox"><s:textfield cssStyle="text-align: right;" id="initialEstimateAmount" name="initialEstimateAmount" value="%{initialEstimateAmount}"/></td>
+			    <td class="greybox"><s:textfield cssStyle="text-align: right;" id="initialEstimateAmount" name="initialEstimateAmount" value="%{subScheme.initialEstimateAmount}"/></td>
 			</tr>
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><strong>Council Loan Proposal Number</strong></td>
-			    <td class="bluebox"><s:textfield id="councilLoanProposalNumber" name="councilLoanProposalNumber" value="%{councilLoanProposalNumber}"/></td>
+			    <td class="bluebox"><s:textfield id="councilLoanProposalNumber" name="councilLoanProposalNumber" value="%{subScheme.councilLoanProposalNumber}"/></td>
 				<td class="bluebox"><strong>Council Loan Proposal Date</strong></td>
 			    <td class="bluebox">
    			    	<input type="text"  id="councilLoanProposalDate" name="councilLoanProposalDate" style="width:100px" value='<s:date name="councilLoanProposalDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
@@ -125,7 +166,7 @@
 			<tr>
 			    <td class="greybox">&nbsp;</td>
 				<td class="greybox"><strong>Council Admin Sanctioned Number</strong></td>
-			    <td class="greybox"><s:textfield id="councilAdminSanctionNumber" name="councilAdminSanctionNumber" value="%{councilAdminSanctionNumber}"/></td>
+			    <td class="greybox"><s:textfield id="councilAdminSanctionNumber" name="councilAdminSanctionNumber" value="%{subScheme.councilAdminSanctionNumber}"/></td>
 				<td class="greybox"><strong>Council Admin Sanctioned Date</strong></td>
 			    <td class="greybox">
    			    	<input type="text"  id="councilAdminSanctionDate" name="councilAdminSanctionDate" style="width:100px" value='<s:date name="councilAdminSanctionDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
@@ -135,7 +176,7 @@
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><strong>Government Loan Proposal Number</strong></td>
-			    <td class="bluebox"><s:textfield id="govtLoanProposalNumber" name="govtLoanProposalNumber" value="%{govtLoanProposalNumber}"/></td>
+			    <td class="bluebox"><s:textfield id="govtLoanProposalNumber" name="govtLoanProposalNumber" value="%{subScheme.govtLoanProposalNumber}"/></td>
 				<td class="bluebox"><strong>Government Loan Proposal Date</strong></td>
 			    <td class="bluebox">
    			    	<input type="text"  id="govtLoanProposalDate" name="govtLoanProposalDate" style="width:100px" value='<s:date name="govtLoanProposalDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
@@ -145,7 +186,7 @@
 			<tr>
 			    <td class="greybox">&nbsp;</td>
 				<td class="greybox"><strong>Government Admin Sanction Number</strong></td>
-			    <td class="greybox"><s:textfield id="govtAdminSanctionNumber" name="govtAdminSanctionNumber" value="%{govtAdminSanctionNumber}"/></td>
+			    <td class="greybox"><s:textfield id="govtAdminSanctionNumber" name="govtAdminSanctionNumber" value="%{subScheme.govtAdminSanctionNumber}"/></td>
 				<td class="greybox"><strong>Government Admin Sanction Date</strong></td>
 			    <td class="greybox">
    			    	<input type="text"  id="govtAdminSanctionDate" name="govtAdminSanctionDate" style="width:100px" value='<s:date name="govtAdminSanctionDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
@@ -154,11 +195,24 @@
 			</tr>
 		</table>
 		<br/><br/>
-		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<input type="submit" class="buttonsubmit" value="Save" id="saveButton" name="button" onclick="return validate();" />
-			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
-		</div>
-		<s:token/>
+		
+		 <s:if test="%{showMode=='new'}">
+			<div align="center" class="buttonbottom" style="padding-bottom:10px;"> 
+				<input type="submit" class="buttonsubmit" value="Save" id="saveButton" name="button" onclick="return validate();" />
+				<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+			</div>
+		</s:if>
+		<s:elseif test="%{showMode=='edit'}">
+			<div  class="buttonbottom" style="padding-bottom:10px;"> 
+				<input type="submit" class="buttonsubmit" value="Save" id="saveButton" name="button" onclick="return validate();" />
+				<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+			</div>
+		</s:elseif>
+		<s:else>
+		<div  class="buttonbottom" style="padding-bottom:10px;"> 
+			<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
+		</dev>
+		</s:else>
 		</s:form>
 		<script type="text/javascript">
 		<s:if test="%{clearValues == true}">

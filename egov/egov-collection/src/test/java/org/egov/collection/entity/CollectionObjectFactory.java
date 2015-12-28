@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.jcr.RepositoryException;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.integration.pgi.DefaultPaymentResponse;
 import org.egov.commons.Accountdetailkey;
@@ -155,7 +153,7 @@ public class CollectionObjectFactory {
 		return bank;
 	}
 
-	public ServiceDetails createServiceDetails() throws NumberFormatException, RepositoryException {
+	public ServiceDetails createServiceDetails() throws NumberFormatException {
 		ServiceDetails service = createUnsavedServiceDetails();
 		session.saveOrUpdate(service);
 		return service;
@@ -172,7 +170,7 @@ public class CollectionObjectFactory {
 		return service;
 	}
 
-	public ReceiptHeader createReceiptHeader(String receiptnumber) throws NumberFormatException, RepositoryException {
+	public ReceiptHeader createReceiptHeader(String receiptnumber) throws NumberFormatException {
 		return createReceiptHeader(receiptnumber,
 				CollectionConstants.RECEIPT_TYPE_BILL, "123456", "testCode",
 				createUser("egovernments"),null);
@@ -194,7 +192,7 @@ public class CollectionObjectFactory {
 	 * @throws NumberFormatException 
 	 */
 	public ReceiptHeader createUnsavedReceiptHeader(String receiptnumber,
-			char receiptType, String refNum, String statusCode, User user,EgwStatus status) throws NumberFormatException, RepositoryException {
+			char receiptType, String refNum, String statusCode, User user,EgwStatus status) throws NumberFormatException {
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setReceipttype(receiptType);
 		if(receiptnumber != null){
@@ -241,7 +239,7 @@ public class CollectionObjectFactory {
 	 * @throws NumberFormatException 
 	 */
 	public ReceiptHeader createReceiptHeader(String receiptnumber,
-			char receiptType, String refNum, String statusCode, User user, EgwStatus status) throws NumberFormatException, RepositoryException {
+			char receiptType, String refNum, String statusCode, User user, EgwStatus status) throws NumberFormatException {
 		ReceiptHeader receiptHeader = createUnsavedReceiptHeader(receiptnumber,
 				receiptType, refNum, statusCode, user,status);
 		session.saveOrUpdate(receiptHeader);
@@ -311,7 +309,7 @@ public class CollectionObjectFactory {
 			InstrumentType instrumentType, String instrumentNum,
 			Double instrumentAmount, Date instrumentDate,
 			String instrumentStatusCode, String glCode, String functionName,
-			String userName) throws NumberFormatException, RepositoryException {
+			String userName) throws NumberFormatException {
 		return createReceiptHeaderWithInstrument(receiptNum, receiptType,
 				statusCode, refNum, instrumentType, instrumentNum,
 				instrumentAmount, instrumentDate, instrumentStatusCode, glCode,
@@ -344,7 +342,7 @@ public class CollectionObjectFactory {
 			InstrumentType instrumentType, String instrumentNum,
 			Double instrumentAmount, Date instrumentDate,
 			String instrumentStatusCode, String glCode, String functionName,
-			String userName, String counterName) throws NumberFormatException, RepositoryException {
+			String userName, String counterName) throws NumberFormatException {
 
 		User user = createUser(userName);
 		Location counter = createCounter(counterName);
@@ -382,7 +380,7 @@ public class CollectionObjectFactory {
 			InstrumentType instrumentType, String instrumentNum,
 			Double instrumentAmount, Date instrumentDate,
 			String instrumentStatusCode, String glCode, String functionName,
-			User user, Location counter) throws NumberFormatException, RepositoryException {
+			User user, Location counter) throws NumberFormatException {
 		// Create employee for user
 		PersonalInformation emp = createPersonalInformation(user,
 				createDept("testDepartment"));
@@ -427,7 +425,7 @@ public class CollectionObjectFactory {
 		return receiptHeader;
 	}
 
-	public ReceiptHeader createUnsavedReceiptHeader() throws NumberFormatException, RepositoryException {
+	public ReceiptHeader createUnsavedReceiptHeader() throws NumberFormatException {
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setReceipttype('A');
 		receiptHeader.setService(createServiceDetails());
@@ -449,7 +447,7 @@ public class CollectionObjectFactory {
 		return receiptHeader;
 	}
 	
-	public ReceiptHeader createUnsavedPendingReceiptHeader() throws NumberFormatException, RepositoryException {
+	public ReceiptHeader createUnsavedPendingReceiptHeader() throws NumberFormatException {
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setReceipttype('A');
 		receiptHeader.setService(createServiceDetails());
@@ -683,7 +681,7 @@ public class CollectionObjectFactory {
 	 * @throws RepositoryException 
 	 * @throws NumberFormatException 
 	 */
-	public InstrumentHeader createBankInstrumentHeader() throws NumberFormatException, RepositoryException {
+	public InstrumentHeader createBankInstrumentHeader() throws NumberFormatException {
 		InstrumentHeader instrHdr = new InstrumentHeader();
 		instrHdr.setInstrumentAmount(BigDecimal.valueOf(1000));
 		instrHdr.setStatusId(createEgwStatus("testStatus", MODULE_NAME_TESTRECEIPTHEADER));
@@ -869,7 +867,7 @@ public class CollectionObjectFactory {
 		return voucher;
 	}
 
-	public ReceiptVoucher createReceiptVoucher() throws NumberFormatException, RepositoryException {
+	public ReceiptVoucher createReceiptVoucher() throws NumberFormatException {
 		ReceiptVoucher receiptVoucher = new ReceiptVoucher();
 		ReceiptHeader receiptHeader = createReceiptHeader("testReceiptNumber");
 		CVoucherHeader voucherHeader = createVoucher("testVoucher");
@@ -880,7 +878,7 @@ public class CollectionObjectFactory {
 		return receiptVoucher;
 	}
 
-	public ReceiptVoucher createReceiptVoucher(CVoucherHeader voucherHeader) throws NumberFormatException, RepositoryException {
+	public ReceiptVoucher createReceiptVoucher(CVoucherHeader voucherHeader) throws NumberFormatException {
 		ReceiptVoucher receiptVoucher = new ReceiptVoucher();
 
 		//ReceiptPayeeDetails payee = new ReceiptPayeeDetails();
@@ -900,7 +898,7 @@ public class CollectionObjectFactory {
 		return receiptVoucher;
 	}
 
-	public ReceiptDetail createReceiptDetail() throws NumberFormatException, RepositoryException {
+	public ReceiptDetail createReceiptDetail() throws NumberFormatException {
 		return createReceiptDetail(createCOA("1100201"), BigDecimal
 				.valueOf(100.00), BigDecimal.valueOf(100.00),
 				createFunction("Test Function"), 1L, "testGLDescription",
@@ -980,7 +978,7 @@ public class CollectionObjectFactory {
 		return receiptMisc;
 	}
 
-	public ReceiptMisc createReceiptMis() throws NumberFormatException, RepositoryException {
+	public ReceiptMisc createReceiptMis() throws NumberFormatException {
 		ReceiptMisc receiptMisc = new ReceiptMisc();
 		Fund fund = createFund("001");
 		Scheme scheme = createScheme("234", "testscheme1", fund);
@@ -1397,7 +1395,7 @@ public class CollectionObjectFactory {
 		return subscheme;
 	}
 
-	public ReceiptMisc createReceiptMisForMiscReceipt() throws NumberFormatException, RepositoryException {
+	public ReceiptMisc createReceiptMisForMiscReceipt() throws NumberFormatException {
 		ReceiptMisc receiptMisc = new ReceiptMisc();
 		Fund fund = createFund("001");
 		Scheme scheme = createScheme("234", "testscheme1", fund);
@@ -1573,7 +1571,7 @@ public class CollectionObjectFactory {
 		return subLedgerlist;
 	}
 	
-	public OnlinePayment createOnlinePayment() throws NumberFormatException, RepositoryException {
+	public OnlinePayment createOnlinePayment() throws NumberFormatException {
 		OnlinePayment onlinePayment = new OnlinePayment();
 		User user = createUser("testUser");
 
@@ -1600,7 +1598,7 @@ public class CollectionObjectFactory {
 	}
 	
 	public OnlinePayment createOnlinePayment(ReceiptHeader receiptHeader,
-			String transNo, BigDecimal transAmt,EgwStatus status) throws NumberFormatException, RepositoryException {
+			String transNo, BigDecimal transAmt,EgwStatus status) throws NumberFormatException {
 		OnlinePayment onlinePayment = new OnlinePayment();
 		User user = createUser("testUser");
 
@@ -1712,13 +1710,13 @@ public class CollectionObjectFactory {
 		return instrumentVoucherList;
 	}
 	
-	public Challan createChallan() throws NumberFormatException, RepositoryException {
+	public Challan createChallan() throws NumberFormatException {
 		Challan challan = createUnsavedChallan();
 		session.saveOrUpdate(challan);
 		return challan;
 	}
 	
-	public ReceiptHeader createReceiptHeaderWithChallan() throws NumberFormatException, RepositoryException {
+	public ReceiptHeader createReceiptHeaderWithChallan() throws NumberFormatException {
 		ReceiptHeader receiptHeader = createReceiptHeader("testReceiptNo");
 		
 		receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_CHALLAN);
@@ -1758,7 +1756,7 @@ public class CollectionObjectFactory {
 	}
 	
 	
-	public Challan createUnsavedChallan() throws NumberFormatException, RepositoryException {
+	public Challan createUnsavedChallan() throws NumberFormatException {
 		Challan challan = new Challan();
 		User user = createUser("testUser");
 		Date date = new Date();
@@ -1812,7 +1810,7 @@ public class CollectionObjectFactory {
 		return service;
 	}
 	
-	public ReceiptMisc createReceiptMisForChallan() throws NumberFormatException, RepositoryException {
+	public ReceiptMisc createReceiptMisForChallan() throws NumberFormatException {
 		ReceiptMisc receiptMisc = new ReceiptMisc();
 		Fund fund = createFund("001");
 		receiptMisc.setBoundary(createBoundary());
@@ -1872,7 +1870,7 @@ public class CollectionObjectFactory {
 		return billCreditDetailslist;
 	}
 
-	public ReceiptHeader createReceiptHeaderForChallan() throws NumberFormatException, RepositoryException{
+	public ReceiptHeader createReceiptHeaderForChallan() throws NumberFormatException{
 		//ReceiptPayeeDetails payee = createReceiptPayeeDetails();
 		ReceiptHeader receiptHeader = null ; //TODO: Fix the issue by getting ReceiptHeader //payee.getReceiptHeaders().iterator().next();
 		//receiptHeader.setReceiptPayeeDetails(payee);
@@ -1898,7 +1896,7 @@ public class CollectionObjectFactory {
 		
 	}
 	
-	public ReceiptDetail createReceiptDetailForChallan() throws NumberFormatException, RepositoryException{
+	public ReceiptDetail createReceiptDetailForChallan() throws NumberFormatException{
 		ReceiptDetail receiptDetail = createUnsavedReceiptDetail(createCOA("1100201"), BigDecimal
 				.valueOf(100.00), BigDecimal.valueOf(100.00),
 				createFunction("Test Function"), 1L, "testGLDescription",
@@ -1910,7 +1908,7 @@ public class CollectionObjectFactory {
 		session.saveOrUpdate(receiptDetail);
 		return receiptDetail;
 	}
-	public ServiceDetails createChallanServiceDetails() throws NumberFormatException, RepositoryException {
+	public ServiceDetails createChallanServiceDetails() throws NumberFormatException {
 		ServiceDetails service = new ServiceDetails();
 		String serviceName = "@testChallanSrvc$" + getRandomNumber(9999);
 		service.setName(serviceName);

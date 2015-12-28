@@ -50,13 +50,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.service.ServiceCategoryService;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
@@ -80,20 +77,20 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Namespace("/service")
-@ResultPath("/WEB-INF/jsp/")
 @Results({
-    @Result(name = ServiceDetailsAction.NEW, location = "service/serviceDetails-new.jsp"),
-    @Result(name = "list", location = "service/serviceDetails-list.jsp"),
-    @Result(name = ServiceDetailsAction.BEFORECREATE, location = "service/serviceDetails-beforeCreate.jsp"),
-    @Result(name = "codeUniqueCheck", location = "service/serviceDetails-codeUniqueCheck.jsp"),
-    @Result(name = ServiceDetailsAction.MESSAGE, location = "service/ serviceDetails-message.jsp")
+    @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
+    @Result(name = "list", location = "serviceDetails-list.jsp"),
+    @Result(name = ServiceDetailsAction.BEFORECREATE, location = "serviceDetails-beforeCreate.jsp"),
+    @Result(name = "codeUniqueCheck", location = "serviceDetails-codeUniqueCheck.jsp"),
+    @Result(name = ServiceDetailsAction.MESSAGE, location = "serviceDetails-message.jsp"),
+    @Result(name = "view", location = "serviceDetails-view.jsp"),
+    @Result(name = "SUCCESS", location = "serviceDetails-view.jsp"),
+    @Result(name = ServiceDetailsAction.BEFOREMODIFY, location = "serviceDetails-beforeModify.jsp"),
 })
 public class ServiceDetailsAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
-    @Autowired
-    private ServiceCategoryService serviceCategoryService;
+    private PersistenceService<ServiceCategory, Long>  serviceCategoryService;
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
     private ServiceDetails serviceDetails = new ServiceDetails();
     protected static final String BEFORECREATE = "beforeCreate";
@@ -123,12 +120,16 @@ public class ServiceDetailsAction extends BaseFormAction {
         return serviceDetails;
     }
 
-    @Action(value = "/serviceDetails-newform")
+    @Action(value = "/service/serviceDetails-newform")
     public String newform() {
-        addDropdownData("serviceCategoryList", serviceCategoryService.getAllActiveServiceCategories());
+        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
         return NEW;
     }
-
+    @Override
+    @Action(value = "/service/serviceDetails")
+    public String execute() {
+        return SUCCESS;
+    }
     @Override
     public void prepare() {
         super.prepare();
@@ -140,7 +141,7 @@ public class ServiceDetailsAction extends BaseFormAction {
             for (final Department department : serviceDetails.getServiceDept())
                 departmentList.add(department.getId());
         } else if (null != serviceDetails.getServiceCategory() && null != serviceDetails.getServiceCategory().getCode()) {
-            final ServiceCategory category = serviceCategoryService.findByCode(serviceDetails.getServiceCategory().getCode());
+            final ServiceCategory category = serviceCategoryService.findById(serviceDetails.getServiceCategory().getId(), false);
             serviceDetails.setServiceCategory(category);
         }
         addDropdownData("departmentList", departmentService.getAllDepartments());
@@ -166,7 +167,7 @@ public class ServiceDetailsAction extends BaseFormAction {
             addDropdownData("subschemeList", Collections.EMPTY_LIST);
     }
 
-    @Action(value = "/serviceDetails-beforeCreate")
+    @Action(value = "/service/serviceDetails-beforeCreate")
     public String beforeCreate() {
         accountDetails.add(new ServiceAccountDetails());
         subledgerDetails.add(new ServiceSubledgerInfo());
@@ -174,7 +175,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     }
 
     @ValidationErrorPage(value = BEFORECREATE)
-    @Action(value = "serviceDetails-create")
+    @Action(value = "/service/serviceDetails-create")
     public String create() {
         insertOrUpdateService();
         if (hasActionErrors())
@@ -182,17 +183,18 @@ public class ServiceDetailsAction extends BaseFormAction {
         return MESSAGE;
     }
 
-    @Action(value = "/serviceDetails-listServices")
+    @Action(value = "/service/serviceDetails-listServices")
     public String listServices() {
         return "list";
     }
-
+    @Action(value = "/service/serviceDetails-view")
     public String view() {
 
         return "view";
     }
 
     @ValidationErrorPage(value = BEFOREMODIFY)
+    @Action(value = "/service/serviceDetails-beforeModify")
     public String beforeModify() {
 
         if (null == accountDetails || accountDetails.isEmpty())
@@ -205,6 +207,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = BEFOREMODIFY)
+    @Action(value = "/service/serviceDetails-modify")
     public String modify() {
         final List<ServiceAccountDetails> accountList = getPersistenceService().getSession().
                 createCriteria(ServiceAccountDetails.class).add(Restrictions.eq("serviceDetails.id", serviceDetails.getId()))
@@ -238,6 +241,7 @@ public class ServiceDetailsAction extends BaseFormAction {
                 isVoucherApproved = serviceDetails.getIsVoucherApproved();
                 serviceDetails.setIsVoucherApproved(isVoucherApproved);
             }
+            serviceDetailsService.getSession().flush();
             serviceDetailsService.persist(serviceDetails);
             addActionMessage(getText("service.create.success.msg", new String[] { getModel().getCode(), getModel().getName() }));
         }
@@ -381,7 +385,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         return Boolean.TRUE;
     }
 
-    @Action(value = "/serviceDetails-codeUniqueCheck")
+    @Action(value = "/service/serviceDetails-codeUniqueCheck")
     public String codeUniqueCheck() {
 
         return "codeUniqueCheck";
@@ -436,6 +440,10 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public List<ServiceDetails> getServiceList() {
         return serviceList;
+    }
+
+    public void setServiceCategoryService(PersistenceService<ServiceCategory, Long> serviceCategoryService) {
+        this.serviceCategoryService = serviceCategoryService;
     }
 
 }

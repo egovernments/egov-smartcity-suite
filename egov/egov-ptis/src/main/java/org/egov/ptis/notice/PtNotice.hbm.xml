@@ -57,6 +57,7 @@
 		<property name="noticeNo" type="string" column="NOTICENO" length="64" />
 		<property name="noticeDate" type="java.util.Date" column="NOTICEDATE" length="7" />
 		<property name="userId" column="ID_USER" />
+		<property name="applicationNumber" column="APPLICATIONNO" />
 		<many-to-one name="basicProperty"
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASICPROPERTY"
 			insert="false" update="false" />

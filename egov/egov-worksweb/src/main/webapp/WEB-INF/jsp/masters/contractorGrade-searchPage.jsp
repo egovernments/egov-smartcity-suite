@@ -239,7 +239,7 @@
 														cellspacing="0">
 															<tr>
 																<td align="center">
-																	<font color="red">No record Found.</font>
+																	<font color="red"><s:text name="label.no.records.found"/></font>
 																</td>
 															</tr>
 														</table>

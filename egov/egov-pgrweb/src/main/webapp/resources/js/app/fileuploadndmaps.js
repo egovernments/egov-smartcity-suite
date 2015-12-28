@@ -357,6 +357,7 @@ $(document).ready(function(){
 			success : function(data){
 				 address = data.results[0].formatted_address;
 				 $('#location').typeahead('val', address);
+				 $('#latlngaddress').val(address);
 			}
 		});	
 		$('#lat').val(lat);

@@ -417,11 +417,14 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 					voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO)>0) {
 				addActionError(getText("journalvoucher.accdetail.amount",new String[]{voucherDetails.getGlcodeDetail()}));
 				isValFailed= true ;
-			}else if (( voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) >0 
+			}else if ((( voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) >0 
 					||voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) >0)
-					&& voucherDetails.getGlcodeDetail().trim().length()==0) {
+					&& voucherDetails.getGlcodeDetail().trim().length()==0) || voucherDetails.getGlcodeIdDetail() == null) {
 				addActionError(getText("journalvoucher.accdetail.accmissing",new String[]{""+index}));
 				isValFailed= true ;
+			}else if(voucherDetails.getFunctionDetail()!=null && !voucherDetails.getFunctionDetail().equalsIgnoreCase("") && voucherDetails.getFunctionIdDetail() == null){
+			    addActionError(getText("jv.funcMissing",new String[]{voucherDetails.getGlcodeDetail()}));
+                            isValFailed= true ;
 			}
 			else {
 				String functionId =null;

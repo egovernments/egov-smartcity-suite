@@ -96,8 +96,7 @@ public class CommonWaterTaxSearchController {
             return COMMON_FORM_SEARCH;
         }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.ADDNLCONNECTION))
-            if (!waterConnectionDetails.getLegacy()
-                    && waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+            if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                 return "redirect:/application/addconnection/"
                 + waterConnectionDetails.getConnection().getConsumerCode();
@@ -108,8 +107,7 @@ public class CommonWaterTaxSearchController {
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.CHANGEOFUSE))
-            if (!waterConnectionDetails.getLegacy()
-                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION) || waterConnectionDetails
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION) || waterConnectionDetails
                             .getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION))
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                 return "redirect:/application/changeOfUse/" + waterConnectionDetails.getConnection().getConsumerCode();
@@ -120,8 +118,7 @@ public class CommonWaterTaxSearchController {
             }
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE))
-            if (!waterConnectionDetails.getLegacy()
-                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode()
                             .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
                             .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
@@ -136,8 +133,7 @@ public class CommonWaterTaxSearchController {
         
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
-            if (!waterConnectionDetails.getLegacy()
-                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION))
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION))
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED)
                             && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                             && waterConnectionDetails.getCloseConnectionType().equals("T"))
@@ -150,8 +146,7 @@ public class CommonWaterTaxSearchController {
         
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED))
-            if (!waterConnectionDetails.getLegacy()
-                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION) 
                             || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
@@ -168,8 +163,7 @@ public class CommonWaterTaxSearchController {
             BigDecimal amoutToBeCollected = BigDecimal.ZERO;
             if (null != waterConnectionDetails.getDemand())
                 amoutToBeCollected=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-            if (!waterConnectionDetails.getLegacy()
-                    && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode()
                             .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
                             .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))

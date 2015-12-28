@@ -49,15 +49,15 @@
 		<th class="bluebgheadtd"><s:text name="currentCapitalValue"/></th>
 		<th class="bluebgheadtd"><s:text name="constCompl.date"/></th>
     </tr>
-	
-	<tr id="vacantLandRow">
+     <s:if test="%{property != null}">
+     <tr id="vacantLandRow">
         <td class="blueborderfortd" align="center">
 		 	<span class="bold"><s:property value="%{propertyDetail.surveyNumber}" default="N/A"/></span>
 		</td>
         <td class="blueborderfortd" align="center">
         	<span class="bold"><s:property value="%{propertyDetail.pattaNumber}" default="N/A"/></span>
         </td>
-        <td class="blueborderfortd" align="center">
+        <td class="blueborderfortd" align="center"> 
         	<span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
@@ -67,10 +67,35 @@
         	<span class="bold"><s:property value="%{propertyDetail.currentCapitalValue}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd">
-        <s:date name="%{propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
+        <s:date name="%{property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
         	<span class="bold"><s:property value="%{#occupationDate}" default="N/A"/></span>
         </td>
     </tr>
+     </s:if>
+     <s:else>
+     <tr id="vacantLandRow">
+        <td class="blueborderfortd" align="center">
+		 	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.surveyNumber}" default="N/A"/></span>
+		</td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.pattaNumber}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center"> 
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.sitalArea.area}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.marketValue}" default="N/A"/></span>
+		</td>
+        <td class="blueborderfortd">
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.currentCapitalValue}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd">
+        <s:date name="%{basicProperty.property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
+        	<span class="bold"><s:property value="%{#occupationDate}" default="N/A"/></span>
+        </td>
+    </tr>
+     </s:else>
+   	
     
    <tr>
    <td colspan="6">

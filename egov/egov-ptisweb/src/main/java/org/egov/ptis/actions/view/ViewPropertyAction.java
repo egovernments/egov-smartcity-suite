@@ -133,8 +133,10 @@ public class ViewPropertyAction extends BaseFormAction {
             viewMap = new HashMap<String, Object>();
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-            else if (applicationNo != null && !applicationNo.isEmpty())
-                getBasicPropForAppNo(applicationNo, applicationType);
+            else if (applicationNo != null && !applicationNo.isEmpty()){
+                getBasicPropForAppNo(applicationNo, applicationType); 
+                setPropertyId(basicProperty.getUpicNo());
+            }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
 
@@ -155,6 +157,7 @@ public class ViewPropertyAction extends BaseFormAction {
                     final List<Address> addrSet = propOwner.getOwner().getAddress();
                     for (final Address address : addrSet) {
                         ownerAddress = address.toString();
+                        viewMap.put("doorNo", address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
                         break;
                     }
                 }
@@ -169,17 +172,17 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
                 viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
 
-                viewMap.put("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                viewMap.put("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+                viewMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+                viewMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
                 BigDecimal totalTax = BigDecimal.ZERO;
                 if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                 	viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-                	totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                            .add(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-                	if(StringUtils.isNotBlank(property.getPropertyDetail().getDeviationPercentage())
-                			&& !property.getPropertyDetail().getDeviationPercentage().equalsIgnoreCase("-1")){
+                	viewMap.put("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
+                	totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
+	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                	if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
                 		viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
                 		viewMap.put("totalTax",totalTax
                                         .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
@@ -189,10 +192,16 @@ public class ViewPropertyAction extends BaseFormAction {
                     
                 } else {
                     viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    totalTax = demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)
-	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-	                            .add(demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    viewMap.put("totalTax",totalTax);
+                    totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
+	                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
+	                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                    if(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null){
+                    	viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                		viewMap.put("totalTax",totalTax
+                                        .add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                    }else{
+                    	viewMap.put("totalTax",totalTax);
+                    }
                 }
 
             } else {
@@ -221,7 +230,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
                 LOGGER.debug("Exit from method viewForm");
             }
-            return "view";
+            return "view"; 
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             throw new ApplicationRuntimeException("Exception in View Property : " + e);

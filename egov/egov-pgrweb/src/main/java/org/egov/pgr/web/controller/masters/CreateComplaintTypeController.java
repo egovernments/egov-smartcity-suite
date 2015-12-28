@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -48,6 +47,8 @@ import javax.validation.Valid;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,12 +67,17 @@ public class CreateComplaintTypeController {
 
     private final DepartmentService departmentService;
     private final ComplaintTypeService complaintTypeService;
-    
+    private @Autowired ComplaintTypeCategoryService complaintTypeCategoryService;
+
     @Autowired
-    public CreateComplaintTypeController(final DepartmentService departmentService,
-            final ComplaintTypeService complaintTypeService) {
+    public CreateComplaintTypeController(final DepartmentService departmentService, final ComplaintTypeService complaintTypeService) {
         this.departmentService = departmentService;
         this.complaintTypeService = complaintTypeService;
+    }
+
+    @ModelAttribute("categories")
+    public List<ComplaintTypeCategory> categories() {
+        return complaintTypeCategoryService.findAll();
     }
 
     @ModelAttribute("departments")
@@ -90,8 +96,8 @@ public class CreateComplaintTypeController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String createComplaintType(@Valid @ModelAttribute final ComplaintType complaintType,
-            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
+    public String createComplaintType(@Valid @ModelAttribute final ComplaintType complaintType, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "complaint-type";
         complaintTypeService.createComplaintType(complaintType);
@@ -101,8 +107,7 @@ public class CreateComplaintTypeController {
     }
 
     @RequestMapping(value = "/success/{name}", method = GET)
-    public ModelAndView successView(@PathVariable("name") final String name,
-            @ModelAttribute final ComplaintType complaintType) {
+    public ModelAndView successView(@PathVariable("name") final String name, @ModelAttribute final ComplaintType complaintType) {
         return new ModelAndView("complaintType/complaintType-success", "complaintType",
                 complaintTypeService.findByName(name));
 

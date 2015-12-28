@@ -40,12 +40,8 @@
 package org.egov.ptis.web.controller.demolition;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
@@ -56,24 +52,28 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-
-import java.math.BigDecimal;
-import java.util.Map;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -96,6 +96,12 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     public static final String VIEW = "view";
 
     PropertyDemolitionService propertyDemolitionService;
+    
+    @Autowired
+    private PersistenceService<Property, Long> persistenceService;
+    
+    @Autowired
+    protected AssignmentService assignmentService;
 
     @Autowired
     public UpdatePropertyDemolitionController(PropertyDemolitionService propertyDemolitionService) {
@@ -127,6 +133,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         String userDesgn = "";
         final String currState = property.getState().getValue();
+        final String nextAction = property.getState().getNextAction();
         final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
         if (null != designation)
             userDesgn = designation.getName();
@@ -138,7 +145,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         model.addAttribute("userDesgn", userDesgn);
         model.addAttribute("designation", COMMISSIONER_DESGN);
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)
+        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("mode", EDIT);
             return DEMOLITION_FORM;
@@ -172,34 +179,49 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                property.setStatus(STATUS_ISACTIVE);
-                oldProperty.setStatus(STATUS_ISHISTORY);
+            if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction) && property.getStatus().equals(STATUS_WORKFLOW)) {
+                if (oldProperty.getStatus().equals(STATUS_ISACTIVE)) {
+                    oldProperty.setStatus(STATUS_ISHISTORY);
+                    persistenceService.persist(oldProperty);
+                }
+                if (property.getStatus().equals(STATUS_WORKFLOW)) {
+                    property.setStatus(STATUS_ISACTIVE);
+                    persistenceService.persist(property);
+                }
             }
 
-            if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
+            if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE) ||
+                    WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction) ||
+                    WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) {
                 return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
                         + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION;
+                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType="+workFlowAction;
             } else {
 
                 if (request.getParameter("mode").equalsIgnoreCase(VIEW)) {
                     propertyDemolitionService.updateProperty(property, approvalComent, workFlowAction,
                             approvalPosition, DEMOLITION);
                 } else {
-                    propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
-                            workFlowAction, approvalPosition, DEMOLITION);
+                    try {
+                        propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
+                                workFlowAction, approvalPosition, DEMOLITION);
+                    } catch (TaxCalculatorExeption e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
-
+                Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + property.getCreatedBy().getName() + " with assessment number "
+                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
                     model.addAttribute(
                             "successMessage",
                             "Property Demolition rejected successfully and forwared to initiator "
-                                    + property.getCreatedBy().getName() + "with application number "
+                                    + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())+ " with application number "
                                     + property.getApplicationNo());
                 } else
                     model.addAttribute("successMessage",

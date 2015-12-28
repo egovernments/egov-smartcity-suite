@@ -1,0 +1,1 @@
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Failed',to_date('23-01-10','DD-MM-RR'),'FAILED',8);

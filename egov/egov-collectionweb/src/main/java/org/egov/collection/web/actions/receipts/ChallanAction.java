@@ -74,6 +74,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
+import org.egov.commons.entity.Source;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -669,6 +670,7 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.setIsModifiable(Boolean.FALSE);
         receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_CHALLAN);
         receiptHeader.setPaidBy(CollectionConstants.CHAIRPERSON);
+        receiptHeader.setSource(Source.SYSTEM.toString());
 
         receiptHeader.getReceiptMisc().setFund(
                 commonsServiceImpl.fundById(receiptHeader.getReceiptMisc().getFund().getId()));

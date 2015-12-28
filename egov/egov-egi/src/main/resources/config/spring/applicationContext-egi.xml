@@ -66,7 +66,7 @@
 
 	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
 
-	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
@@ -92,7 +92,7 @@
 
 	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
 
-	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService">
+	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="workflowService" ref="workflowService" />
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -140,6 +140,7 @@
 	</bean>
 	
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true"/>
+	
 	
 	<!-- Use this only for generic hibernate query -->
 	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">

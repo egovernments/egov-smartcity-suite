@@ -76,7 +76,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "search-new.jsp"),
-    @Result(name = SearchAction.TARGET, location = "search-result.jsp") })
+        @Result(name = SearchAction.TARGET, location = "search-result.jsp") })
 public class SearchAction extends BaseFormAction implements ServletRequestAware {
     /**
      *
@@ -85,7 +85,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     private final Logger LOGGER = Logger.getLogger(getClass());
 
-    private String assessmentNum; 
+    private String assessmentNum;
     private String mode;
     private List<Map<String, String>> searchResultList;
     private HttpServletRequest request;
@@ -108,7 +108,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     }
 
     /**
-     * @return to citizen search property screen 
+     * @return to citizen search property screen
      */
     @SkipValidation
     @Action(value = "/citizen/search/search-searchForm")
@@ -144,15 +144,16 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         return TARGET;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see com.opensymphony.xwork2.ActionSupport#validate()
      * @description : validates assessment no. Throw error in case its empty.
      */
     @Override
     public void validate() {
         if (org.apache.commons.lang.StringUtils.equals(mode, "assessment"))
-            if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils
-                    .isBlank(assessmentNum))
+            if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum)
+                    || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))
                 addActionError(getText("mandatory.assessmentNo"));
     }
 
@@ -176,11 +177,17 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
                 searchResultMap.put("address", basicProperty.getAddress().toString());
                 final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-                searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
-                searchResultMap.put("arrDemandDue",
-                        demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                searchResultMap.put("currDemandDue",
-                        demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                if (!property.getIsExemptedFromTax()) {
+                    searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                    searchResultMap.put("arrDemandDue",
+                            demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+                    searchResultMap.put("currDemandDue",
+                            demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                } else {
+                    searchResultMap.put("currDemand", "0");
+                    searchResultMap.put("arrDemandDue", "0");
+                    searchResultMap.put("currDemandDue", "0");
+                }
                 searchList.add(searchResultMap);
             }
         }
@@ -232,7 +239,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     @Override
     @SkipValidation
     public void setServletRequest(HttpServletRequest arg0) {
-            this.request = arg0;
+        this.request = arg0;
     }
 
     public String getAssessmentNum() {

@@ -62,7 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
@@ -79,14 +79,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -98,6 +96,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -121,7 +120,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -135,10 +133,13 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -181,6 +182,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,6 +218,9 @@ public class PropertyService {
     private InstallmentDao installmentDao;
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
@@ -249,7 +254,7 @@ public class PropertyService {
 
     private BigDecimal totalAlv = BigDecimal.ZERO;
 
-	/**
+    /**
      * Creates a new property if property is in transient state else updates
      * persisted property
      *
@@ -520,8 +525,9 @@ public class PropertyService {
      * @param property
      * @param dateOfCompletion
      * @return Property with installment wise demand set
+     * @throws TaxCalculatorExeption
      */
-    public Property createDemand(final PropertyImpl property, final Date dateOfCompletion) {
+    public Property createDemand(final PropertyImpl property, final Date dateOfCompletion) throws TaxCalculatorExeption {
         LOGGER.debug("Entered into createDemand");
         LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: " + dateOfCompletion);
 
@@ -565,11 +571,11 @@ public class PropertyService {
             if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
-            else if (installment.equals(currentInstall)){
-            	// FloorwiseDemandCalculations should be set only for the
+            else if (installment.equals(currentInstall)) {
+                // FloorwiseDemandCalculations should be set only for the
                 // current installment for each floor.
-                for (final Floor floor : property.getPropertyDetail().getFloorDetails()){
-                	ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
+                for (final Floor floor : property.getPropertyDetail().getFloorDetails()) {
+                    ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
                 }
                 ptDmdCalc.setAlv(totalAlv);
             }
@@ -663,8 +669,10 @@ public class PropertyService {
      * @param propertyModel
      * @param oldProperty
      * @return
+     * @throws TaxCalculatorExeption
      */
-    public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty) {
+    public Property modifyDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty)
+            throws TaxCalculatorExeption {
         Date propCompletionDate = null;
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -2274,8 +2282,15 @@ public class PropertyService {
      * @param applictionType
      */
     public void updateIndexes(final StateAware stateAwareObject, final String applictionType) {
-        // PropertyImpl property= (PropertyImpl) propertyObj;
-
+        Position position = stateAwareObject.getState().getOwnerPosition();
+        User user = null;
+        if (position == null) {
+            user = stateAwareObject.getState().getCreatedBy();
+        } else {
+            user = assignmentService.getAssignmentsForPosition(
+                    position.getId(), new Date()).get(0).getEmployee();
+        }
+    	Map<String, String> ownerMap = new HashMap<String, String>();
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
@@ -2285,14 +2300,24 @@ public class PropertyService {
                     .getApplicationNo());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
+            ownerMap = property.getBasicProperty().getOwnerMap();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
-                        property.getApplicationNo(), new Date(), applictionType, property.getBasicProperty()
-                                .getFullOwnerName(), property.getState().getValue(), url, property.getBasicProperty()
-                                .getAddress().toString());
+                        property.getApplicationNo(), new Date(), applictionType, ownerMap.get("OWNERNAME"), 
+                        property.getState().getValue(), url, property.getBasicProperty()
+                                .getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
+                applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
+                applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
+                applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
+                if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+                    applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
+                    applicationIndex.setApplicantName(ownerMap.get("OWNERNAME"));
+                    applicationIndex.setMobileNumber(ownerMap.get("MOBILENO"));
+                    applicationIndex.setAadharNumber(ownerMap.get("AADHARNO"));
+                }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2303,10 +2328,14 @@ public class PropertyService {
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
                     + "&applicationType=" + applictionType;
             if (null == applicationIndex) {
+                ownerMap = property.getBasicProperty().getOwnerMap();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
-                                : new Date(), applictionType, property.getBasicProperty().getFullOwnerName(), property
-                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString());
+                                : new Date(), applictionType, ownerMap.get("OWNERNAME"), property
+                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
+                applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
+                applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
+                applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2319,14 +2348,21 @@ public class PropertyService {
                     .getApplicationNo());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
+            ownerMap = property.getBasicProperty().getOwnerMap();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
-                                : new Date(), applictionType, property.getBasicProperty().getFullOwnerName(), property
-                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString());
+                                : new Date(), applictionType, ownerMap.get("OWNERNAME"), property
+                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
+                applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
+                applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
+                applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
+                applicationIndex.setApplicantName(ownerMap.get("OWNERNAME"));
+                applicationIndex.setMobileNumber(ownerMap.get("MOBILENO"));
+                applicationIndex.setAadharNumber(ownerMap.get("AADHARNO"));
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2510,8 +2546,6 @@ public class PropertyService {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (propertyDetail.isAppurtenantLandChecked() != null && propertyDetail.isAppurtenantLandChecked())
             area = area.add(BigDecimal.valueOf(propertyDetail.getExtentAppartenauntLand()));
-        else if (propertyDetail.getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-            area = convertYardToSquareMeters(propertyDetail.getSitalArea().getArea());
         else
             area = area.add(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
         return area;
@@ -2546,11 +2580,11 @@ public class PropertyService {
     }
 
     /**
-     *
-     * Getting User assignment based on designation ,department and zone boundary
-     * 
-     * Reading Designation and Department from appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone
+     * boundary Reading Designation and Department from appconfig values and
+     * Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
+     * 
      * @param basicProperty
      * @return
      */
@@ -2559,45 +2593,17 @@ public class PropertyService {
         final String departmentStr = getDepartmentForWorkFlow();
         String[] department = departmentStr.split(",");
         String[] designation = designationStr.split(",");
-        List<Assignment> assignment = new ArrayList<Assignment>(); 
-        if (department.length > 0 && designation.length > 0) {
-            if (StringUtils.isNotBlank(department[0]) && StringUtils.isNotBlank(designation[0])) {
+        List<Assignment> assignment = new ArrayList<Assignment>();
+        for (String dept : department) {
+            for (String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(department[0]).getId(),
-                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
-                                .getElectionBoundary().getId());
-                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                            .getDepartmentByName(department[0]).getId(),
-                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
-                                    .getPropertyID().getElectionBoundary().getId());
-
-                }
-            } else if (StringUtils.isNotBlank(department[1]) && StringUtils.isNotBlank(designation[0])) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(department[1]).getId(),
-                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
-                                .getElectionBoundary().getId());
-                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                            .getDepartmentByName(department[1]).getId(),
-                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
-                                    .getPropertyID().getElectionBoundary().getId());
-
-                }
-            } else if (StringUtils.isNotBlank(department[2]) && StringUtils.isNotBlank(designation[0])) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(department[2]).getId(),
-                        designationService.getDesignationByName(designation[0]).getId(), basicProperty.getPropertyID()
-                                .getElectionBoundary().getId());
-                if (assignment.isEmpty() && StringUtils.isNotBlank(designation[1])) {
-                    assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                            .getDepartmentByName(department[2]).getId(),
-                            designationService.getDesignationByName(designation[1]).getId(), basicProperty
-                                    .getPropertyID().getElectionBoundary().getId());
-
-                }
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        basicProperty.getPropertyID().getElectionBoundary().getId());
+                if (!assignment.isEmpty())
+                    break;
             }
+            if (!assignment.isEmpty())
+                break;
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
@@ -2684,13 +2690,13 @@ public class PropertyService {
         if (houseNo != null && !houseNo.trim().isEmpty())
             queryStr.append("and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append("and upper(trim(pmv.ownerName)) like :OwnerName");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setLong("locationId", locationId);
         if (houseNo != null && !houseNo.trim().isEmpty())
             query.setString("HouseNo", houseNo + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString("OwnerName", ownerName + "%");
+            query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
@@ -2708,18 +2714,26 @@ public class PropertyService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
-                .append("and bp.active='Y' and pmv.zone.id=:ZoneID and pmv.ward.id=:WardID ");
+                .append("and bp.active='Y' ");
+        if (null != zoneId && zoneId != -1)
+            queryStr.append(" and pmv.zone.id=:ZoneID");
+        if (null != wardId && wardId != -1)
+            queryStr.append(" and pmv.ward.id=:WardID");
         if (houseNum != null && !houseNum.trim().isEmpty())
-            queryStr.append("and pmv.houseNo like :HouseNo ");
+            queryStr.append(" and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append(" and upper(trim(pmv.ownerName)) like :OwnerName");
+
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
-        query.setLong("ZoneID", zoneId);
-        query.setLong("WardID", wardId);
+
+        if (null != zoneId && zoneId != -1)
+            query.setLong("ZoneID", zoneId);
+        if (null != wardId && wardId != -1)
+            query.setLong("WardID", wardId);
         if (houseNum != null && !houseNum.trim().isEmpty())
             query.setString("HouseNo", houseNum + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString("OwnerName", ownerName + "%");
+            query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
@@ -2753,6 +2767,67 @@ public class PropertyService {
         return propertyList;
     }
 
+    public Assignment getWorkflowInitiator(final PropertyImpl property) {
+        Assignment wfInitiator;
+        if (isEmployee(property.getCreatedBy()))
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+        else if (!property.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                    .getId());
+        return wfInitiator;
+    }
+
+    public List<Hashtable<String, Object>> populateHistory(State state) {
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        Hashtable<String, Object> map = new Hashtable<String, Object>();
+        Assignment assignment = null;
+        User user = null;
+        Position ownerPosition = null;
+        if (null != state) {
+            map.put("date", state.getLastModifiedDate());
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            map.put("comments", null != state.getComments() ? state.getComments() : "");
+            user = state.getOwnerUser();
+            ownerPosition = state.getOwnerPosition();
+            if (null != ownerPosition) {
+                assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
+                map.put("user", null != assignment && null != assignment.getEmployee() ? assignment.getEmployee()
+                        .getUsername() + "::" + assignment.getEmployee().getName() : "");
+            } else if (null != user) {
+                map.put("user", user.getUsername() + "::" + user.getName());
+
+            }
+            historyTable.add(map);
+            if (null != state.getHistory() && !state.getHistory().isEmpty()) {
+                Collections.reverse(state.getHistory());
+                for (StateHistory stateHistory : state.getHistory()) {
+                    final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                    HistoryMap.put("date", stateHistory.getLastModifiedDate());
+                    HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                            + stateHistory.getLastModifiedBy().getName());
+                    HistoryMap.put("status", stateHistory.getValue());
+                    HistoryMap.put("comments", null != stateHistory.getComments() ? stateHistory.getComments() : "");
+                    ownerPosition = stateHistory.getOwnerPosition();
+                    user = stateHistory.getOwnerUser();
+                    if (null != ownerPosition) {
+                        assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
+                        HistoryMap.put("user", null != assignment && null != assignment.getEmployee() ? assignment
+                                .getEmployee().getUsername() + "::" + assignment.getEmployee().getName() : "");
+                    } else if (null != user) {
+                        HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+
+                    }
+                    historyTable.add(HistoryMap);
+                }
+            }
+        }
+        return historyTable;
+    }
+
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
@@ -2774,10 +2849,10 @@ public class PropertyService {
     }
 
     public BigDecimal getTotalAlv() {
-		return totalAlv;
-	}
+        return totalAlv;
+    }
 
-	public void setTotalAlv(BigDecimal totalAlv) {
-		this.totalAlv = totalAlv;
-	}
+    public void setTotalAlv(BigDecimal totalAlv) {
+        this.totalAlv = totalAlv;
+    }
 }

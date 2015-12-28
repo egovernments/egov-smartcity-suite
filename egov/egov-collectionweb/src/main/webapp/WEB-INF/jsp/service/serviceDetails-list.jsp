@@ -82,7 +82,7 @@
 					<td width="5%"  class="bluebox"><input type="radio" onclick='dom.get("serviceId").value = <s:property value="id"/>'  name="radioButton1"/>  </td>
 					<td width="5%"  class="bluebox"> <s:property value="#s.index+1" />  </td>
 					<td width="30%"  class="bluebox"><div  align="center"><s:property value="code"/></div></td>
-					<td width="65%"  class="bluebox"><div  align="center"><s:property value="serviceName"/></div></td>
+					<td width="65%"  class="bluebox"><div  align="center"><s:property value="name"/></div></td>
 					<td width="5%"  class="bluebox" ><div  align="center"><s:if test="isEnabled" ><s:text name="text.yes"></s:text> </s:if><s:else><s:text name="text.no"></s:text> </s:else> </div></td>
 				</tr>
 		</s:iterator>
@@ -95,14 +95,14 @@
 		<s:if test="%{null != serviceCategory.services && serviceCategory.services.size() >0}">
 			<label>
 				<s:submit type="submit" cssClass="buttonsubmit" id="button"
-					value="View" method="view"
-					onclick="return validate();" />
+					value="View" 
+					onclick="return validate('serviceDetails-view.action');" />
 			</label>&nbsp;
 			
 			<label>
 				<s:submit type="submit" cssClass="buttonsubmit" id="button"
-					value="Modify" method="beforeModify"
-					onclick="return validate();" />
+					value="Modify" 
+					onclick="return validate('serviceDetails-beforeModify.action');" />
 			</label>	
 			</s:if>
 			<s:else>
@@ -115,7 +115,7 @@
 </s:push>
 </s:form>
 <script>
-	function validate(){
+	function validate(obj){
 		
 		dom.get('error_area').innerHTML = '';
 		dom.get("error_area").style.display="none";
@@ -123,7 +123,10 @@
 			dom.get("error_area").innerHTML = '<s:text name="service.error.select" />';
 			dom.get("error_area").style.display="block";
 			return false;
-		}
+		}else {
+			document.forms[0].action=obj;
+			document.forms[0].submit;
+			}
 
 	  return true;
 	}

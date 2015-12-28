@@ -50,13 +50,13 @@
     <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="waterSource" data-first-option="false"
+		<form:select path="waterSource" data-first-option="false" 
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
 			
-			<form:options items="${waterSourceTypes}" itemValue="id"
+			<form:options items="${waterSourceTypes}" itemValue="id" id="waterSourceDropdown"
 				itemLabel="waterSourceType" />
 		</form:select>
 		<form:errors path="waterSource" cssClass="add-margin error-msg" />

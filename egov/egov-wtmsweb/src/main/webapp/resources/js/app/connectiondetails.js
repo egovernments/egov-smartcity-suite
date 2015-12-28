@@ -47,7 +47,7 @@ $(document).ready(function(){
 		 loadPropertyPipeTypes();
  });
 	function loadPropertyPipeTypes(){
-	
+
         $.ajax({
 			url: "/wtms/ajax-PipeSizesByPropertyType",     
 			type: "GET",
@@ -70,6 +70,7 @@ $(document).ready(function(){
 		
 	}
 	function loadPropertyUsageTypes(){
+	
 		$.ajax({
 			url: "/wtms/ajax-UsageTypeByPropertyType",     
 			type: "GET",

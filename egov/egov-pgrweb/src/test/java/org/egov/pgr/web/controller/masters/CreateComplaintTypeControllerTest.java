@@ -61,11 +61,13 @@ import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.format.Formatter;
 import org.springframework.format.support.FormattingConversionService;
@@ -77,13 +79,17 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
     private DepartmentService departmentService;
     @Mock
     private ComplaintTypeService complaintTypeService;
+    @Mock
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
     
     private MockMvc mockMvc;
-
+    @InjectMocks
+    private CreateComplaintTypeController createComplaintTypeController;
+    
     @Override
     protected CreateComplaintTypeController initController() {
         initMocks(this);
-        return new CreateComplaintTypeController(departmentService, complaintTypeService);
+        return createComplaintTypeController;
     }
 
    @Before

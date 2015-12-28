@@ -70,6 +70,7 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
+		body{padding:0;}
 		footer {
 			background-color:#f3f4f5;bottom: 0;clear:both;position: fixed;width:100%;z-index: 9999;
 		}
@@ -298,7 +299,7 @@
 				<div class="constrain">
 					<div id="legal">
 						<span class="copyright">Copyright <span><i class="fa fa-copyright"></i></span> 2015 <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
-						<span class="version">eGov ERP - ${app_version}_${app_buildno}</span>
+						<span class="version">eGov ERP - ${app_version}_${app_buildno}<c:if test="${not empty app_core_build_no}"> @ Core - ${app_core_build_no}</c:if></span>
 					</div>
 				</div>
 			</footer>	
@@ -339,18 +340,18 @@
 			</div>
 		</div>
 		<!-- change password -->
-		<div class="modal fade change-password" data-backdrop="static">
+		<div class="modal fade change-password" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="close pass-cancel" data-dismiss="modal" aria-hidden="true">&times;</button>
 						<h4 class="modal-title">Change Password</h4>
 					</div>
 					
 					<div class="modal-body">
 						<c:if test="${dflt_pwd_reset_req}">
-							<div class="alert alert-warning" role="alert">
+							<div class="alert alert-warning" role="alert" id="pass-alert">
 							<i class="fa fa-exclamation-triangle"></i> Security alert...! You are using default password, please reset your password.
 							</div>
 						</c:if>
@@ -376,14 +377,14 @@
 									<label class="control-label">Re-type Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32"><br>
+									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32">
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>
 							<div class="form-group text-right">
 								<div class="col-md-12 add-margin">
 									<button type="submit" class="btn btn-primary">Change Password</button>
-									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+									<button type="button" class="btn btn-default pass-cancel" data-dismiss="modal">Cancel</button>
 								</div>
 							</div>
 							</form>
@@ -396,6 +397,7 @@
 		<c:if test="${dflt_pwd_reset_req}">
 			<script>
 			$('.change-password').modal('show');
+			$('.pass-cancel').attr('disabled','disabled');
 			</script>
 		</c:if>
 		<div class="modal fade favourites" data-backdrop="static">
@@ -468,7 +470,6 @@
 		var focussedmenu = "worklist";
 		var now;
 		</script>
-		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/custom-menu.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>

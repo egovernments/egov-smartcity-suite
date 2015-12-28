@@ -312,13 +312,10 @@ var makeContractorDataTable = function() {
             	<td class="whitebox2wk"><s:textfield name="pwdApprovalCode" id="pwdApprovalCode" maxlength="50" cssClass="selectwk" value = "%{pwdApprovalCode}" /></td>
            </tr>
            <tr>
-           <td class="greyboxwk">
-					<s:text name="contractor.editEnable.checkbox" />:</td>
-	   			<td class="greybox2wk">
-   					<s:checkbox name="isEditEnabled" id="isEditEnabled" value="%{isEditEnabled}"  />
-	   			</td>
-	   			<td class="greyboxwk" colspan="2" />
-	   		
+				<td class="greyboxwk"/>
+				<td class="greyboxwk"/>
+	   			<td class="greyboxwk"/>
+	   			<td class="greyboxwk"/>
 	   		</tr>
 	        <tr>
 	          	<td colspan="4" class="shadowwk"></td>

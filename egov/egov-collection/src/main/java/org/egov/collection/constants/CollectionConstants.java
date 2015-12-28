@@ -114,6 +114,9 @@ public final class CollectionConstants {
     public static final String RECEIPT_STATUS_CODE_FAILED = "FAILED";
     public static final String RECEIPT_STATUS_CODE_PENDING = "PENDING";
     public static final String RECEIPT_STATUS_CODE_REMITTED = "REMITTED";
+    public static final String RECEIPT_STATUS_CODE_CANCELLATION_CREATED = "CANCELLATION_CREATED";
+    public static final String RECEIPT_STATUS_CODE_CANCELLATION_CHECKED = "CANCELLATION_CHECKED";
+    public static final String RECEIPT_STATUS_CODE_CANCELLATION_REJECTED = "CANCELLATION_REJECTED";
 
     // Status descriptions - ideally we should not be using these - to be
     // discussed
@@ -165,6 +168,8 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_SERVICES_BY_TYPE = "getActiveServiceByType";
     public static final String QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE";
     public static final String QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE = "RECEIPTS_BY_DATE_AND_SERVICECODE";
+    public static final String QUERY_SERVICE_CATEGORY_FOR_TYPE = "getServiceCategoryForType";
+    public static final String QUERY_SERVICE_DETAIL_BY_CATEGORY = "getServiceDetailsByCategory";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -456,6 +461,8 @@ public final class CollectionConstants {
     public static final String COLLECTION_WORKFLOWDEPARTMENT = "COLLECTIONDEPARTMENTFORWORKFLOW";
     public static final String COLLECTION_DESIGNATIONFORCSCOPERATOR = "COLLECTIONDESIGNATIONFORCSCOPERATORASCLERK";
     public static final String COLLECTION_DEPARTMENT_COLLMODES = "COLLECTIONDEPARTMENTCOLLMODES";
+    public static final String COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER = "COLLECTIONDEPARTMENTFORWORKFLOWAPPROVER";
+    public static final String COLLECTION_DESIGNATIONFORAPPROVER = "COLLECTIONDESIGNATIONFORAPPROVER";
 
     // AXIS payment gateway variables name
     public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA";
@@ -476,6 +483,7 @@ public final class CollectionConstants {
     public static final String AXIS_RESP_MESSAGE = "vpc_Message";
     public static final String AXIS_TXN_NO = "vpc_TransactionNo";
     public static final String AXIS_BATCH_NO = "vpc_BatchNo";
+    public static final String AXIS_ORDER_INFO = "vpc_OrderInfo";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";
@@ -488,7 +496,7 @@ public final class CollectionConstants {
     public static final String MESSAGEKEY_AXIS_OPERATOR_ID = "axis.operator.id";
     public static final String MESSAGEKEY_AXIS_PASSWORD = "axis.password";
     public static final String MESSAGEKEY_AXIS_RECONCILE_URL = "axis.reconcile.url";
-    public static final String AXIS_SECURE_SECRET = "60D7AA77F54504B6057CCB7B3AEE86D4";
+    public static final String AXIS_SECURE_SECRET = "axis.secure.secret";
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
@@ -497,6 +505,8 @@ public final class CollectionConstants {
     public static final String AXIS_ABORTED_STATUS_CODE = "3";
 
     public static final TreeMap<String, String> INSTRUMENT_MODES_MAP = new TreeMap<String, String>() {
+
+        private static final long serialVersionUID = -3923246500888439628L;
         {
             put("cheque", "Cheque");
             put("dd", "DD");
@@ -505,5 +515,14 @@ public final class CollectionConstants {
     // Named query for dishonor changes
     public static final String QUERY_INSTRUMENT_DISHONOR_STATUSES = "INSTRUMENT_STATUS_FOR_DISHONOR";
     public static final String QUERY_DISHONOR_STATE_OWNERS = "DISHONOR_STATE_OWNERS";
+
+    // Cancel Receipt
+    public static final String RECEIPT_DEPOSITED_CANCELLED = "Receipt cannot be cancelled since Instrument is already deposited";
+    public static final String RECEIPT_CANCELLED_SUCCESS = "Receipt Cancelled Successfully";
+    public static final String RECEIPT_CANCELLED_REASON = "Receipt Cancelled by meSeva";
+    public static final String ESTIMATION_CHARGES_WATERTAX_MODULE= "Estimation Charges";
+    
+    
+    public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
 
 }

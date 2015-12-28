@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-10T19:20:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="46795a30-f2c3-4e7f-9acb-4a87b9bd797d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.collection.constants.*"/>
 	<parameter name="TOTAL_AMOUNT" class="java.math.BigDecimal">
 		<defaultValueExpression><![CDATA[BigDecimal.valueOf(0)]]></defaultValueExpression>
@@ -34,7 +35,7 @@
 		<variableExpression><![CDATA[$F{bankBranchName}.equals(null)?"":$F{bankBranchName}]]></variableExpression>
 	</variable>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" isRemoveLineWhenBlank="true" uuid="bbf4dba5-0fcf-4029-8c3b-f2ec5b07a07b"/>
 				<box leftPadding="5" rightPadding="5">
@@ -47,10 +48,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CASH ? "Received Cash: " + $P{TOTAL_AMOUNT} :
+				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CASH ? "Received Cash: " + ($P{TOTAL_AMOUNT}.setScale(2, BigDecimal.ROUND_UP)) :
 $F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque # " + $F{instrumentNumber} + " Drawn on " +  $F{bankName} + ", " + $V{branchname}+ " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :
-$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "Demand Draft # " + $F{instrumentNumber}  + " Drawn on " +  $F{bankName} + ", " + $V{branchname} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) : 
-$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan # " + $F{transactionNumber}  + " Drawn on " +  $F{bankName} + ", " + $F{bankBranchName} + ", " + $F{bankAccountNumber} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}) : 
+$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "Demand Draft # " + $F{instrumentNumber}  + " Drawn on " +  $F{bankName} + ", " + $V{branchname} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :
+$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan # " + $F{transactionNumber}  + " Drawn on " +  $F{bankName} + ", " + $F{bankBranchName} + ", " + $F{bankAccountNumber} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}) :
 "Online Transaction Number: " + $F{transactionNumber} + ",Payment Dated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate})]]></textFieldExpression>
 			</textField>
 		</band>

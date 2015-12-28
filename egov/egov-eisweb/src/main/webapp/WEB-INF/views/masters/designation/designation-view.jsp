@@ -58,6 +58,9 @@ $(document).ready(function(){
 					"mData" : "name",
 					"sTitle" : "Name",
 				}, {
+					"mData" : "code",
+					"sTitle" : "Code"
+				},{
 					"mData" : "description",
 					"sTitle" : "Description"
 				} ],

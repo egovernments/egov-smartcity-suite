@@ -69,8 +69,13 @@
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
 	<mvc:interceptors>
-		<bean class="org.egov.infra.web.spring.interceptor.DuplicateFormSubmissionInterceptor"/>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
+		</mvc:interceptor>
 	</mvc:interceptors>
+	
 	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
 	
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

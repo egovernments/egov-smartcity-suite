@@ -49,6 +49,6 @@ public interface FeeMatrixDetailRepositoryCustom {
 
     List<FeeMatrixDetail> findFeeList(License license);
 
-    FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate);
+    FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate,long financialYearId);
 
 }

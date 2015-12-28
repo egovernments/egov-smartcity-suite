@@ -122,9 +122,6 @@
 				<div class="buttonbottom" style="padding-bottom: 10px;">
 				
 				
-					<s:if test="%{showMode=='edit'}">
-					<input type="submit" class="buttonsubmit" value="Save" id="saveButton" name="button" onclick="return validate();" />
-					</s:if>
 					<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 				</div>
 		<script>

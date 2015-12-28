@@ -135,8 +135,10 @@ public class NatureOfUsageReportController {
     @SuppressWarnings("unchecked")
     private List<NatureOfUsageResult> getReportResults(final HttpServletRequest request) {
         final StringBuffer query = new StringBuffer(
-                "select distinct upicno \"assessmentNumber\", ownersname \"ownerName\", mobileno \"mobileNumber\", houseno \"doorNumber\", address \"address\", aggregate_current_demand \"halfYearTax\" "
-                        + "from egpt_mv_propertyInfo where upicno is not null");
+                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", pi.aggregate_current_demand \"halfYearTax\" "
+                        + "from egpt_mv_propertyInfo pi ");
+        final StringBuffer whereQuery = new StringBuffer(" where pi.upicno is not null");
+        
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");
         final String block = request.getParameter("block");
@@ -145,24 +147,25 @@ public class NatureOfUsageReportController {
         if (!(null == natureOfUsage || "-1".equals(natureOfUsage) || "".equals(natureOfUsage))) {
             final PropertyUsage propertyUsage = propertyUsageService.findById(Long.valueOf(natureOfUsage));
             srchCriteria.append(" Nature of usage : " + propertyUsage.getUsageName());
-            query.append(" and prop_usage_master = :natureOfUsage");
-            params.put("natureOfUsage", Long.valueOf(natureOfUsage));
+            query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
+            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage"); 
+            params.put("natureOfUsage", propertyUsage.getUsageName());
         }
         if (!(null == ward || "-1".equals(ward) || "".equals(ward))) {
             final Boundary wardBndry = boundaryService.getBoundaryById(Long.valueOf(ward));
             srchCriteria.append(" Ward : " + wardBndry.getName());
-            query.append(" and wardid = :ward");
+            whereQuery.append(" and pi.wardid = :ward");
             params.put("ward", Long.valueOf(ward));
         }
         if (!(null == block || "-1".equals(block) || "".equals(block))) {
-            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block));
+            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block)); 
             srchCriteria.append(" Block : " + blockBndry.getName());
-            query.append(" and blockid = :block");
+            whereQuery.append(" and pi.blockid = :block");
             params.put("block", Long.valueOf(block));
         }
         final SQLQuery sqlQuery = getSession()
                 .createSQLQuery(
-                        query.toString());
+                        query.append(whereQuery).toString());
         for (final String key : params.keySet())
             sqlQuery.setParameter(key, params.get(key));
         sqlQuery.setResultTransformer(Transformers.aliasToBean(NatureOfUsageResult.class));

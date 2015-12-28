@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	
+	 $('#propertyType').change(function(){
 	  $.ajax({
 			url: "/wtms/ajax-PipeSizesByPropertyType",     
 			type: "GET",
@@ -58,7 +58,7 @@ $(document).ready(function(){
 				console.log("failed");
 			}
 		});
-	  
+	  });
 	  
 	  $('#propertyType').change(function(){
 		  $.ajax({
@@ -86,44 +86,99 @@ $(document).ready(function(){
 	  $('#buttonid').click(function() {
 		  if ($( "#donationDetailsform" ).valid())
 			  {
-				   var minimum = parseInt($('#minpipeSize').val());
-					var maximum = parseInt($('#pipeSize').val());
+				   var minimum = getMinimumPipeSizeInInch();
+					var maximum = getMaximumPipeSizeInInch();
 					if( (minimum > 0) && (maximum  > 0) ){
 						if (minimum > maximum){
 							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
 							return false;
 						}else{
-							$.ajax({
-					            url: '/wtms/ajax-donationheadercombination',
-					            type: "GET",
-					            data: {
-					            	propertyType: $('#propertyType').val(),
-					            	categoryType: $('#connectionCategorie').val(),
-					            	usageType: $('#usageType').val(),
-					            	maxPipeSize :$('#pipeSize').val(),
-					            	minPipeSize :$('#minpipeSize').val()
-					            },
-					            dataType : 'json',
-					            success: function (response) {
-					    			console.log("success"+response);
-					    			if(response > 0){
-					    				if(!overwritedonation(response))
-					    				return false;
-						    			}
-					    			else{
-					    				 document.forms[0].submit();
-					    				 return true;
-					    			}
-					    		},error: function (response) {
-					    			console.log("failed");
-					    		}
-					        });
+							 if(!validateTapExecutionDate())
+								{
+								return false;
+								
+								}
+							  else{
+								  if($('#effectiveDate').val() !=undefined)
+							     donationheadercombination();
+							  }
+
 						}
 					}
 			  }
 		  		});
      });
 
+
+function getMinimumPipeSizeInInch() {
+	var minPipeSize = "";
+	$.ajax({
+        url: '/wtms/ajax-minimumpipesizeininch',
+        type: "GET",
+        async: false,
+        data: {
+        	minPipeSize :$('#minpipeSize').val()
+        },
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+			minPipeSize = response;
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+	return minPipeSize;
+}
+function getMaximumPipeSizeInInch()
+{
+	var maxPipeSize = "";
+	$.ajax({
+        url: '/wtms/ajax-maximumpipesizeininch',
+        type: "GET",
+        async: false,
+        data: {
+        	maxPipeSize :$('#pipeSize').val()
+        },
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+			maxPipeSize = response;
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+	return maxPipeSize;
+	}
+function donationheadercombination()
+{
+	$.ajax({
+        url: '/wtms/ajax-donationheadercombination',
+        type: "GET",
+        data: {
+        	propertyType: $('#propertyType').val(),
+        	categoryType: $('#connectionCategorie').val(),
+        	usageType: $('#usageType').val(),
+        	maxPipeSize :$('#pipeSize').val(),
+        	minPipeSize :$('#minpipeSize').val()
+        },
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+			if(response > 0){
+				var res = overwritedonation(response)
+				if(res==false)
+				return false;
+    			}
+			else{
+				 document.forms[0].submit();
+				 return true;
+			}
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+	
+}
 
 function overwritedonation(res)
 {
@@ -138,4 +193,37 @@ function overwritedonation(res)
 	    //document.forms[0].reset();
 	    return false;
 	}
+}
+	function compareDate(dt1, dt2){			
+	/*******		Return Values [0 if dt1=dt2], [1 if dt1<dt2],  [-1 if dt1>dt2]     *******/
+		var d1, m1, y1, d2, m2, y2, ret;
+		dt1 = dt1.split('/');
+		dt2 = dt2.split('/');
+		ret = (eval(dt2[2])>eval(dt1[2])) ? 1 : (eval(dt2[2])<eval(dt1[2])) ? -1 : (eval(dt2[1])>eval(dt1[1])) ? 1 : (eval(dt2[1])<eval(dt1[1])) ? -1 : (eval(dt2[0])>eval(dt1[0])) ? 1 : (eval(dt2[0])<eval(dt1[0])) ? -1 : 0 ;										
+		return ret;
+	}
+	function getTodayDate()
+	{
+	var date;
+	    var d = new Date();
+	var curr_date = d.getDate();
+	var curr_month = d.getMonth();
+		curr_month++;
+	var curr_year = d.getFullYear();
+	    date=curr_date+"/"+curr_month+"/"+curr_year;
+	    return date;
+	}
+	function validateTapExecutionDate() {
+	var formdate= $('#effectiveDate').val();
+	var todaysDate=getTodayDate();
+	if(compareDate(formdate,todaysDate) == 1  )
+	{		
+		alert('Effective Date should not be less than todays date');
+		obj.value="";
+		return false;
+		}
+	else
+		{
+		return true;
+		}
 }

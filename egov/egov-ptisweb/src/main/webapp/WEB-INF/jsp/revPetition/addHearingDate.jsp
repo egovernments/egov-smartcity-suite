@@ -71,7 +71,7 @@
 						name="objection.hearings[%{hearingIdx}].hearingTime"
 						listKey="key" listValue="value" list="hearingTimingMap"  id="hearingTime"
 						value="%{objection.hearings[%{hearingIdx}].hearingTime}"
-						 cssClass="selectnew" cssStyle="width:20%" 
+						 cssClass="selectnew" cssStyle="width:30%"  
 						data-optional="0" data-errormsg="Hearing time is required!"/>
 						
 					</td>

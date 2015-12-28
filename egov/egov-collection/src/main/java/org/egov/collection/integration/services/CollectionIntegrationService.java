@@ -39,7 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +46,7 @@ import java.util.Set;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
+import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.infstr.models.ServiceCategory;
@@ -151,19 +151,23 @@ public interface CollectionIntegrationService {
      * @param toDate To Date to Search the Aggregate Payment
      * @return List of <code>RestAggregatePaymentInfo</code> containing aggregate information of receipts
      */
-    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(Date fromDate, Date toDate);
+    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest paymentInfoSearchRequest);
     
     
     /**
      * This method returns the list of receipt created in the system for the 
      * given date range and service code of the billing system.
-     * @param fromDate From Date to Search the Aggregate Payment
+     * @param fromDate From Date to Search the Aggregate Paymentss
      * @param toDate To Date to Search the Aggregate Payment
      * @param serviceCode The service code of the billing system
      * @return List of <code>RestReceiptInfo</code> containing details of Receipt Information
      */
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String serviceCode);
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     
     public List<ServiceCategory>  getActiveServiceCategories();
+    
+    public String cancelReceipt(PaymentInfoSearchRequest paymentInfoSearchRequest);
+
+    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);  
 }

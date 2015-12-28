@@ -48,6 +48,8 @@ import java.util.Set;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.repository.PositionHierarchyRepository;
 import org.egov.eis.repository.PositionMasterRepository;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -121,10 +123,19 @@ public class PositionMasterService {
         return posList;
     }
 
+    public List<Position> getPositionsForDeptDesigAndNameLike(final Long departmentId, final Long designationId,
+            final String posName) {
+        List<Position> posList = new ArrayList<Position>();
+        posList = positionMasterRepository
+                .findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId,
+                        designationId, posName);
+        return posList;
+    }
+
     public boolean validatePosition(final Position position) {
         if (position != null && position.getName() != null) {
-            final List<Position> positionList = positionMasterRepository.findByNameContainingIgnoreCase(position
-                    .getName());
+            final List<Position> positionList = positionMasterRepository
+                    .findByNameContainingIgnoreCase(position.getName());
             if (positionList.size() > 0)
                 return false;
         }
@@ -180,8 +191,8 @@ public class PositionMasterService {
 
         final List<Position> positionList = new ArrayList<Position>();
 
-        final List<Assignment> assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(
-                departmentId, designationId, givenDate);
+        final List<Assignment> assignmentList = assignmentService
+                .getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, givenDate);
 
         for (final Assignment assignmentObj : assignmentList)
             positionList.add(assignmentObj.getPosition());
@@ -249,7 +260,7 @@ public class PositionMasterService {
             positions.add(assign.getPosition());
         return new ArrayList<Position>(positions);
     }
-    
+
     /**
      * Returns employee position for user
      *
@@ -257,13 +268,13 @@ public class PositionMasterService {
      * @return Position object
      */
     public Position getPositionByUserId(final Long userId) {
-        Assignment assignment=null;
-        assignment=assignmentService.getPrimaryAssignmentForUser(userId);
-        if(assignment!=null)
+        Assignment assignment = null;
+        assignment = assignmentService.getPrimaryAssignmentForUser(userId);
+        if (assignment != null)
             return assignment.getPosition();
         return null;
     }
-    
+
     /**
      * Returns primary assignment position for employee id
      *
@@ -272,6 +283,13 @@ public class PositionMasterService {
      */
     public Position getPrimaryAssignmentPositionForEmp(final Long empId) {
         return assignmentService.getPrimaryAssignmentForEmployee(empId).getPosition();
+    }
+
+    public String generatePositionByDeptDesig(final Department department, final Designation designation) {
+
+        String name = department.getCode() + "_" + designation.getCode() + "_";
+        name += positionMasterRepository.getPositionSerialNumberByName(name) + 1;
+        return name;
     }
 
 }

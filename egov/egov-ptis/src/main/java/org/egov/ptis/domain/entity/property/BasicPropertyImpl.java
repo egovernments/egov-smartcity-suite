@@ -101,6 +101,8 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private boolean underWorkflow;
     private Date assessmentdate;
     private List<VacancyRemission> vacancyRemissions = new ArrayList<VacancyRemission>();
+    private Double longitude;
+    private Double latitude;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -202,13 +204,16 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     @Override
     public boolean validateBasicProp() {
         if (getAddress() == null)
-            throw new ApplicationRuntimeException("BasicProperty validation failed: Address is not set, Please Check !!");
+            throw new ApplicationRuntimeException(
+                    "BasicProperty validation failed: Address is not set, Please Check !!");
 
         if (getCreatedBy() == null)
-            throw new ApplicationRuntimeException("BasicProperty validation failed: CreatedBy is not set, Please Check !!");
+            throw new ApplicationRuntimeException(
+                    "BasicProperty validation failed: CreatedBy is not set, Please Check !!");
 
         if (getPropertyID() == null)
-            throw new ApplicationRuntimeException("BasicProperty validation failed: PropertyID is not set, Please Check !!");
+            throw new ApplicationRuntimeException(
+                    "BasicProperty validation failed: PropertyID is not set, Please Check !!");
 
         return true;
     }
@@ -682,7 +687,40 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     public String getMobileNumber() {
         return getPropertyOwnerInfo().get(0).getOwner().getMobileNumber();
     }
+    
+    @Override
+    public String getAadharNumber() {
+        return getPropertyOwnerInfo().get(0).getOwner().getAadhaarNumber();
+    }
 
+    @Override
+    public Map<String, String> getOwnerMap() {
+        Map<String, String> ownerMap = new HashMap<String, String>();
+        final StringBuilder ownerName = new StringBuilder();
+        final StringBuilder mobileNo = new StringBuilder();
+        final StringBuilder aadharNo = new StringBuilder();
+        User owner = null;
+        for (final PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo()) {
+            owner = ownerInfo.getOwner();
+            ownerName.append(owner.getName()).append(", ");
+            if (owner.getMobileNumber() != null && owner.getMobileNumber().trim().length() > 0)
+                mobileNo.append(owner.getMobileNumber()).append(", ");
+            if (owner.getAadhaarNumber() != null && owner.getAadhaarNumber().trim().length() > 0)
+                aadharNo.append(owner.getAadhaarNumber()).append(", ");
+        }
+        if (ownerName.length() > 2)
+            ownerName.deleteCharAt(ownerName.length() - 2);
+        if (mobileNo.length() > 2)
+            mobileNo.deleteCharAt(mobileNo.length() - 2);
+        if (aadharNo.length() > 2)
+            aadharNo.deleteCharAt(aadharNo.length() - 2);
+        
+        ownerMap.put("OWNERNAME", ownerName.toString());
+        ownerMap.put("MOBILENO", mobileNo.toString());
+        ownerMap.put("AADHARNO", aadharNo.toString());
+        return ownerMap;
+    }
+    
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy() {
         return propertyOwnerInfoProxy;
@@ -728,21 +766,52 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         this.source = source;
 
     }
+
     @Override
-	public Date getAssessmentdate() {
-		return assessmentdate;
-	}
+    public Date getAssessmentdate() {
+        return assessmentdate;
+    }
+
     @Override
-	public void setAssessmentdate(Date assessmentdate) {
-		this.assessmentdate = assessmentdate;
-	}
-    
+    public void setAssessmentdate(Date assessmentdate) {
+        this.assessmentdate = assessmentdate;
+    }
+
     @Override
     public List<VacancyRemission> getVacancyRemissions() {
-		return vacancyRemissions;
-	}
+        return vacancyRemissions;
+    }
+
     @Override
-	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissions) {
-		this.vacancyRemissions = vacancyRemissions;
+    public void setVacancyRemissions(List<VacancyRemission> vacancyRemissions) {
+        this.vacancyRemissions = vacancyRemissions;
+    }
+
+    @Override
+    public Property getPropertyForBasicProperty() {
+        if (null != this.getProperty())
+            return this.getProperty();
+        else
+            return this.getActiveProperty();
+    }
+    
+    @Override
+    public Double getLongitude() {
+		return longitude;
+	}
+
+    @Override
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+    @Override
+	public Double getLatitude() {
+		return latitude;
+	}
+
+    @Override
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
 	}
 }

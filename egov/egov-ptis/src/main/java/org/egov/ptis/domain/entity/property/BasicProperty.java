@@ -259,6 +259,10 @@ public interface BasicProperty {
 	
 	String getMobileNumber();
 	
+	String getAadharNumber();
+	
+	public Map<String, String> getOwnerMap();
+	
 	public Boolean getActive();
 	
 	public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy();
@@ -278,4 +282,14 @@ public interface BasicProperty {
 	public List<VacancyRemission> getVacancyRemissions();
 
 	public void setVacancyRemissions(List<VacancyRemission> vacancyRemissionSet);
+	
+	public Property getPropertyForBasicProperty();
+	
+	public Double getLongitude();
+
+    public void setLongitude(Double longitude);
+    
+    public Double getLatitude();
+
+    public void setLatitude(Double latitude);
 }

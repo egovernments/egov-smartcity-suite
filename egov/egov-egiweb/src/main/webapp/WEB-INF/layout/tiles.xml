@@ -63,8 +63,9 @@
         <put-attribute name="title" value="eGov Urban Portal"/>
     </definition>
     
-    <definition name="help" template="/WEB-INF/views/home/help.jsp">
-        <put-attribute name="title" value="eGov Urban Portal Help"/>
+    <definition name="help" extends="base_layout">
+        <put-attribute name="page-title" value="title.help.page" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/home/help.jsp"/>
     </definition>
     
     <definition name="password/reset" extends="base_layout">
@@ -228,4 +229,8 @@
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/city/city-setup.jsp"/>
     </definition>
     
+    <definition name="reset-password" extends="base_layout">
+        <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/user/reset-password.jsp"/>
+    </definition>
 </tiles-definitions>

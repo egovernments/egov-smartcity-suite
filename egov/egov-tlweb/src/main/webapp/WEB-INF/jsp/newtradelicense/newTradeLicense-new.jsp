@@ -139,7 +139,7 @@
 				}
 				if(dom.get("mode").value=='view'){
 					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments',
-					                     'Forward','Reject','button2','Approve']);
+					                     'Forward','Reject','button2','Approve']); 
 	                  //remove onclick event for propertyno search button
 					  jQuery("#searchImg").removeAttr("onclick");
 					  // remove onclick event for add and delete button having class = add-padding

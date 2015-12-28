@@ -59,11 +59,8 @@ function populateBlock() {
 jQuery(document).ready(function() { 
 	
 	jQuery('.datepicker').datepicker({
-		format: 'dd/mm/yyyy'
-	});
-	
-	jQuery('.datepicker').on('changeDate', function(ev){
-		jQuery(this).datepicker('hide');
+		format: 'dd/mm/yyyy',
+		autoclose:true
 	});
 	
 	jQuery(':input').inputmask();
@@ -166,6 +163,9 @@ function callAjaxForTitleTransfer() {
 						}, {
 							"data" : "commissionerOrder",
 							"sTitle" : "Commissioner Orders"
+						}, {
+							"data" : "mutationFee",
+							"sTitle" : "Mutation Fee"
 						}]				
 			});
 }

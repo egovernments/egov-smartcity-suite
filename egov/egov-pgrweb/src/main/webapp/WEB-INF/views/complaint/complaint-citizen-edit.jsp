@@ -97,7 +97,7 @@
 			</c:if>
 	<div class="form-group">
 		<div class="text-center">
-			 <button type="submit" class="btn btn-success">
+			 <button type="submit" class="btn btn-primary">
 				<spring:message code="lbl.submit" />
 			</button>
 			<button type="reset" class="btn btn-default">

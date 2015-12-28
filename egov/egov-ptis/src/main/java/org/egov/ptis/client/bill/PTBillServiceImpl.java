@@ -139,14 +139,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final BasicProperty basicProperty = billable.getBasicProperty();
         final Property activeProperty = basicProperty.getProperty();
         Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
-        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
-        /**
-         * Not calculating penalty if collection is happening within two months from the assessment date
-         */
-        if (noOfMonths > 2) {
-            installmentPenaltyAndRebate = billable.getCalculatedPenalty();
-            billable.setInstTaxBean(installmentPenaltyAndRebate);
-        }
+        
+        installmentPenaltyAndRebate = billable.getCalculatedPenalty();
+        billable.setInstTaxBean(installmentPenaltyAndRebate);
 
         final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
         final HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(

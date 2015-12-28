@@ -64,10 +64,6 @@ function onSubmit(obj){
 				</tr>  
 				<s:iterator var="p" value="serviceCategoryList">  
 	            <tr>  
-	                <td class="blueborderfortd" style="display:none">  
-	                    <s:property value="%{id}" />
-	                </td>  
-					
 					<s:if test="name != null">								
 					<td class="blueborderfortd">
 					<div align="center">  
@@ -104,7 +100,6 @@ function onSubmit(obj){
 	            </tr>  
 	        	</s:iterator> 
 			</table> 
-			<s:hidden name="id" value="%{id}"/> 
 				<div class="buttonbottom">
 			 		<input name="button2" type="submit" class="buttonsubmit" id="button" onclick="return onSubmit('serviceCategory-newform.action');" value="Add New"/>
 					<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>

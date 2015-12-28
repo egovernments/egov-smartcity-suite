@@ -39,16 +39,18 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import java.io.IOException;
 import java.util.Arrays;
-
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,21 +58,24 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/employee")
 public class CreateEmployeeController {
+    private static final Logger LOGGER = Logger.getLogger(ViewAndUpdateEmployeController.class);
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private EmployeeTypeRepository employeeTypeRepository;
 
     @Autowired
     private EmployeeService employeeService;
-    
+
     @Autowired
     private BoundaryTypeService boundaryTypeService;
 
@@ -84,13 +89,23 @@ public class CreateEmployeeController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+            final RedirectAttributes redirectAttrs, @RequestParam final MultipartFile file, final Model model) {
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "create");
             return "employee-form";
         }
+        try {
+            employee.setSignature(file.getBytes());
+        } catch (IOException e) {
+            LOGGER.error("Error in loading Employee Signature" + e.getMessage(), e);
+        }
         employeeService.create(employee);
+        String image = null;
+        if (null != employee.getSignature()) {
+            image = Base64.encodeBytes(employee.getSignature());
+        }
+        model.addAttribute("image", image);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee created successfully");
         return "employee-success";

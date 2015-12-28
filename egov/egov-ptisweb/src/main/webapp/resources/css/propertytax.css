@@ -760,37 +760,6 @@ table.tablebottom
 	padding:10px;
 }
 
-.multiheadertbl
-{
-	overflow:auto;
-}
-
-.multiheadertbl thead th
-{
-  background: #f2851f;
-  color: #fff;
-  text-align:center;
-  vertical-align:middle !important;
-  font-size:12px;
-}
-
-.multiheadertbl thead tr:first-child th
-{
-	font-weight:bold;
-}
-
-.multiheadertbl tbody td
-{
-	font-size:10px;
-}
-
-.multiheadertbl tfoot td
-{
-	font-weight:bold;
-	font-size:12px;
-	font-family:semibold !important;
-}
-
 .pagination a
 {
 	float:none !important;

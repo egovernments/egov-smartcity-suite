@@ -45,7 +45,6 @@ import java.math.BigDecimal;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-@SuppressWarnings("serial")
 public class PayWaterTaxDetails implements Serializable {
     /**
      *
@@ -63,6 +62,8 @@ public class PayWaterTaxDetails implements Serializable {
     private String chqddDate;
     private String bankName;
     private String branchName;
+    @JsonIgnore
+    private String source;
 
     public String getConsumerNo() {
         return consumerNo;
@@ -159,12 +160,20 @@ public class PayWaterTaxDetails implements Serializable {
         this.branchName = branchName;
     }
 
-	public String getUlbCode() {
-		return ulbCode;
-	}
+    public String getUlbCode() {
+        return ulbCode;
+    }
 
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
+    public void setUlbCode(final String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
 }

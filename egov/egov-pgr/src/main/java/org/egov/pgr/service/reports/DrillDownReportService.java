@@ -54,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class DrillDownReportService {
     private static final Logger LOG = LoggerFactory.getLogger(DrillDownReportService.class);
-    String COMPLAINTSTATUS_COMPLETED = "Completed";
 
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintDateType, final String groupBy, final String department, final String boundary,

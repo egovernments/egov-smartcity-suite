@@ -50,6 +50,11 @@ import java.io.Serializable;
 public class Depreciation implements Serializable {
 
 	/**
+     * 
+     */
+    private static final long serialVersionUID = -7160905477619734291L;
+
+    /**
 	 * <p>
 	 * Represents ...
 	 * </p>

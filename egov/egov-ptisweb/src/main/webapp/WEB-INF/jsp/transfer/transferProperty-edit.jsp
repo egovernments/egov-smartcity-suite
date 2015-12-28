@@ -55,15 +55,12 @@
 		enableBlock();
 		try {
 			jQuery(".datepicker").datepicker({
-				format : "dd/mm/yyyy"
+				format : "dd/mm/yyyy",
+				autoclose:true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
 		}
-
-		jQuery('.datepicker').on('changeDate', function(ev) {
-			jQuery(this).datepicker('hide');
-		});
 
 		var aadhartextboxes = jQuery('.txtaadhar');
 		console.log(aadhartextboxes);
@@ -229,7 +226,7 @@
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64" /></td>
+								maxlength="64" onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')"/></td>
 						<td class="greybox"><s:text name="docDate" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"
@@ -238,9 +235,10 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
-					<s:if
+					<s:if 
 						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equals(userDesignation) &&
-						  !@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equals(userDesignation)}">
+						  !@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equals(userDesignation) &&
+						  !@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW.equals(state.value)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
 							<td class="bluebox"><s:text name="docValue" /><span
@@ -250,7 +248,7 @@
 							<td class="bluebox"><s:text name="payablefee" /><span
 								class="mandatory1">*</span> :</td>
 							<td class="bluebox"><s:textfield name="mutationFee"
-									id="mutationFee" readOnly="true" /></td>
+									id="mutationFee"/></td>
 						</tr>
 					</s:if>
 				</table>
@@ -276,39 +274,7 @@
 			Mandatory Fields</div>
 	</div>
 	<script type="text/javascript">
-		jQuery("#marketValue")
-				.blur(
-						function() {
-							if (jQuery("#marketValue").val().length >= 5) {
-								var marketVal = parseInt(jQuery("#marketValue")
-										.val());
-								var transferReason = document
-										.getElementById("transRsnId").options[document
-										.getElementById("transRsnId").selectedIndex].text;
-								if (isNaN(marketVal) || marketVal < 1)
-									return false;
-								jQuery
-										.ajax(
-												{
-													type : "GET",
-													url : "calculate-mutationfee.action",
-													cache : true,
-													data : {
-														"marketValue" : marketVal,
-														"transferReason" : transferReason,
-														"mutationId" : jQuery(
-																"#mutationId")
-																.val()
-													}
-												}).done(
-												function(value) {
-													jQuery("#mutationFee").val(
-															roundoff(value));
-												});
-							} else {
-								alert("Minimum five digit value is required for document value");
-							}
-						});
+		
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {

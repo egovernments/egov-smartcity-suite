@@ -219,4 +219,18 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/grievance-list.jsp"/>
     </definition>
     
+    <definition name="complainttype-category-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.create.comptype.category" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-create.jsp"/>
+    </definition>
+    
+    <definition name="complainttype-category-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.search.comptype.category" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-search.jsp"/>
+    </definition>
+    
+    <definition name="complainttype-category-update" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.update.comptype.category" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-update.jsp"/>
+    </definition>
 </tiles-definitions>

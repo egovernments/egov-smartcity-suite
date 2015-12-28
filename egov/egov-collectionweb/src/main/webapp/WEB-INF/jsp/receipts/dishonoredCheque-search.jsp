@@ -59,7 +59,7 @@
 
   function validateFormAndSubmit(){
 	var accountType = dom.get("instrumentMode").value;
-	var accountDDNo = dom.get("chequeNo").value;
+	var accountDDNo = dom.get("chequeNumber").value;
 	var accountDDDate  = dom.get("chequeDate").value;
 	dom.get("errorDiv").innerHTML='';
 	 if (accountType == 0){
@@ -195,8 +195,8 @@ function dishonorSelectedChq() {
 				<tr>
 						<td class="greybox"></td>
 						<td class="greybox"><s:text	name="dishonorcheque.cheque.dd.number" />:<span class="mandatory1">*</span></td>
-						<td class="greybox"><s:textfield name="chequeNo" style="width: 200px;"
-							id="chequeNo" value="%{chequeNo}" /></td>
+						<td class="greybox"><s:textfield name="chequeNumber" style="width: 200px;"
+							id="chequeNumber" value="%{chequeNumber}" maxlength="6" cssClass="patternvalidation" data-pattern="number"/></td>
 							
 						<td class="greybox"><s:text	name="dishonorcheque.cheque.dd.date" />:<span class="mandatory1">*</span></td>
 						<td class="greybox">

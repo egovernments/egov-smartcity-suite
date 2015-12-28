@@ -89,13 +89,16 @@ import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 /**
  * @author satyam
  */
 @Service("propertyTaxBillable")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
         RebateCalculator {
 
@@ -139,9 +142,15 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
+    // 1st installment starting month
+    private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(01).withMonthOfYear(04);
+    // 2nd installment starting month
+    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(10).withDayOfMonth(01);  
+    //1st installment month after grace period
+    private final DateTime PENALTY_EFFECTIVE_DATE_CUR_FIRST_HALF_JULY = new DateTime().withDayOfMonth(01).withMonthOfYear(07);
+    //2nd installment month after grace period 
+    private final DateTime PENALTY_EFFECTIVE_DATE_CUR_SECOND_HALF_JAN = new DateTime().withMonthOfYear(01).withDayOfMonth(01);     
 
-    private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(30).withMonthOfYear(06);
-    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(12).withDayOfMonth(31);
 
     @Autowired
     private RebatePeriodService rebatePeriodService;
@@ -359,7 +368,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Override
     public BigDecimal calculatePenalty(final Date latestCollReceiptDate, final Date fromDate, final BigDecimal amount) {
         BigDecimal penalty = BigDecimal.ZERO;
-        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date())-1;
         penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
                 BIGDECIMAL_100);
         return MoneyUtils.roundOff(penalty);
@@ -452,6 +461,15 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     public Map<Installment, PenaltyAndRebate> getCalculatedPenalty() {
 
+    	final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
+        /**
+         * Not calculating penalty if collection is happening within two months from the assessment date
+         */
+        if (noOfMonths <= 2) {
+        	return installmentPenaltyAndRebate;
+        }
+    	
         boolean thereIsBalance = false;
 
         Installment installment = null;
@@ -459,7 +477,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         BigDecimal collection = BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
         Property property = null;
-        final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
 
         if (getLevyPenalty()) {
 
@@ -499,7 +516,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
                     if (existingPenaltyDemandDetail == null) {
                         final Date penaltyEffectiveDate = getPenaltyEffectiveDate(installment,
-                                assessmentEffecInstallment, basicProperty.getAssessmentdate());
+                                assessmentEffecInstallment, basicProperty.getAssessmentdate(),currentInstall);
                         if (penaltyEffectiveDate.before(new Date()))
                             penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                     } else
@@ -514,12 +531,19 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     }
 
     private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
-            final Date assmentDate) {
+            final Date assmentDate, final Installment curInstallment) {
         final DateTime installmentDate = new DateTime(installment.getFromDate());
+        final DateTime installmentToDate = new DateTime(installment.getToDate());
         final DateTime firstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_FIRST_HALF.toDate())
                 .withYear(installmentDate.getYear());
         final DateTime secondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_SECOND_HALF.toDate())
                 .withYear(installmentDate.getYear());
+        
+        final DateTime curFirstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_CUR_FIRST_HALF_JULY.toDate())
+        .withYear(installmentDate.getYear());
+        final DateTime curSecondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_CUR_SECOND_HALF_JAN.toDate())
+        .withYear(installmentToDate.getYear());
+
         /**
          * If assessment date falls in the installment on which penalty is being
          * calculated then penalty calculation will be effective from two months
@@ -528,20 +552,29 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         if (installment.equals(assessmentEffecInstallment)) {
             final Calendar penalyDate = Calendar.getInstance();
             penalyDate.setTime(assmentDate);
-            penalyDate.add(Calendar.MONTH, 3);
+            penalyDate.add(Calendar.MONTH, 0); // Calculate penalty starting from the assessment month
             penalyDate.set(Calendar.DAY_OF_MONTH, 1);
             return penalyDate.getTime();
         } else if (propertyTaxUtil
-                .between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate()))
-            return firstHalfPeriod.toDate();
-        else
-            return secondHalfPeriod.toDate();
+                .between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate())){
+            if(installment.equals(curInstallment))
+                return curFirstHalfPeriod.toDate();
+            else 
+                return firstHalfPeriod.toDate();
+        }
+        else{
+            if(installment.equals(curInstallment))
+                return curSecondHalfPeriod.toDate(); 
+            else 
+                return secondHalfPeriod.toDate();
+        }
     }
 
     @Override
     public BigDecimal calculateEarlyPayRebate(final BigDecimal tax) {
         if (isEarlyPayRebateActive())
-            return tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100);
+            return (tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100)).setScale(0,
+                    BigDecimal.ROUND_HALF_UP);
         else
             return BigDecimal.ZERO;
     }
@@ -552,7 +585,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
         final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
         if (rebatePeriod != null)
-            if (rebatePeriod.getRebateDate().compareTo(new Date()) != 1)
+            if (rebatePeriod.getRebateDate().compareTo(new Date()) > 0)
                 value = true;
         return value;
     }

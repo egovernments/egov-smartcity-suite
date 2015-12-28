@@ -1,5 +1,7 @@
 package org.egov.ptis.actions.reports;
 
+import java.math.BigDecimal;
+
 
 public class TitleTransferReportResult {
 
@@ -12,6 +14,7 @@ public class TitleTransferReportResult {
     private String changedTitle;
     private String dateOfTransfer;
     private String commissionerOrder;
+    private BigDecimal mutationFee;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -83,6 +86,14 @@ public class TitleTransferReportResult {
 
     public void setPropertyTax(final String propertyTax) {
         this.propertyTax = propertyTax;
+    }
+
+    public BigDecimal getMutationFee() {
+        return mutationFee;
+    }
+
+    public void setMutationFee(BigDecimal mutationFee) {
+        this.mutationFee = mutationFee;
     }
 
 }

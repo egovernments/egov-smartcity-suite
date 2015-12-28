@@ -39,17 +39,21 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,12 +63,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/employee")
 public class ViewAndUpdateEmployeController {
-
+    private static final Logger LOGGER = Logger.getLogger(ViewAndUpdateEmployeController.class);
     @Autowired
     private DepartmentService departmentService;
 
@@ -73,13 +78,16 @@ public class ViewAndUpdateEmployeController {
 
     @Autowired
     private EmployeeService employeeService;
-    
+
+    @Autowired
+    private AssignmentService assignmentService;
+
     @Autowired
     private BoundaryTypeService boundaryTypeService;
-    
+
     @Autowired
     private JurisdictionService jurisdictionService;
-    
+
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
         return employeeService.getEmployeeByCode(code);
@@ -90,18 +98,35 @@ public class ViewAndUpdateEmployeController {
 
         setDropDownValues(model);
         model.addAttribute("mode", "update");
+        final Employee employee = employeeService.getEmployeeByCode(code);
+        String image = null;
+        if (null != employee.getSignature())
+            image = Base64.encodeBytes(employee.getSignature());
+        model.addAttribute("image", image);
         return "employee-form";
     }
 
-    @RequestMapping(value = "/update/{code}",method = RequestMethod.POST)
+    @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute Employee employee, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model,@RequestParam final String removedJurisdictionIds) {
+            final RedirectAttributes redirectAttrs, final Model model, @RequestParam final MultipartFile file,
+            @RequestParam final String removedJurisdictionIds, @RequestParam final String removedassignIds) {
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "update");
             return "employee-form";
         }
-        employee = jurisdictionService.removeDeletedJurisdictions(employee,removedJurisdictionIds);
+        try {
+            if (!file.isEmpty())
+                employee.setSignature(file.getBytes());
+        } catch (final IOException e) {
+            LOGGER.error("Error in loading Employee Signature" + e.getMessage(), e);
+        }
+        String image = null;
+        if (null != employee.getSignature())
+            image = Base64.encodeBytes(employee.getSignature());
+        model.addAttribute("image", image);
+        employee = jurisdictionService.removeDeletedJurisdictions(employee, removedJurisdictionIds);
+        employee = assignmentService.removeDeletedAssignments(employee, removedassignIds);
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee updated successfully");
@@ -110,6 +135,11 @@ public class ViewAndUpdateEmployeController {
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
     public String view(@PathVariable final String code, final Model model) {
+        final Employee employee = employeeService.getEmployeeByCode(code);
+        String image = null;
+        if (null != employee.getSignature())
+            image = Base64.encodeBytes(employee.getSignature());
+        model.addAttribute("image", image);
         return "employee-success";
     }
 

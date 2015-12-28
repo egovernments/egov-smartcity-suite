@@ -45,6 +45,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DES
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infstr.utils.StringUtils;
@@ -75,6 +77,9 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
 
     private Designation designation;
+    
+    @Autowired
+    private AssignmentService assignmentService;
 
     @Autowired
     public UpdateVRApprovalController(VacancyRemissionService vacancyRemissionService, PropertyTaxUtil propertyTaxUtil) {
@@ -117,7 +122,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
         String senderName = vacancyRemissionApproval.getCurrentState().getSenderName();
         if (!resultBinder.hasErrors()) {
-            String workFlowAction = "";
+            String workFlowAction = ""; 
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
 
@@ -134,16 +139,19 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                     approvalComent, null, workFlowAction);
 
             if (StringUtils.isNotBlank(workFlowAction)) {
+                Assignment assignment = new Assignment();
+                assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval.getVacancyRemission().getCreatedBy().getId());
                 if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE)) {
                     successMsg = "Vacancy Remission Approved Successfully in the System and forwarded to "
-                            + vacancyRemissionApproval.getVacancyRemission().getCreatedBy().getUsername();
+                            +assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
                 } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
                     if (designation.getName().equalsIgnoreCase(REVENUE_INSPECTOR_DESGN)) {
                         successMsg = "Vacancy Remission rejected successfully and forwarded to : "
-                                + vacancyRemissionApproval.getVacancyRemission().getCreatedBy().getUsername();
+                                + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
                     } else {
+                        assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval.getCreatedBy().getId());
                         successMsg = "Vacancy Remission rejected successfully and forwarded to : "
-                                + vacancyRemissionApproval.getCreatedBy().getUsername();
+                                + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
                     }
                 } else {
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "

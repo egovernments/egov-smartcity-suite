@@ -56,12 +56,12 @@ function populatesubSchemes(scheme){
 function validate(){
 	dom.get('error_area').innerHTML = '';
 	dom.get("error_area").style.display="none"
-	if(dom.get('serviceCode').value.trim().length == 0){
+	if(dom.get('serviceCode').value.trim() == ""){
 		dom.get("error_area").innerHTML = '<s:text name="service.code.null" />';
 		dom.get("error_area").style.display="block";
 		return false;
 	}
-	else if(dom.get('serviceName').value.trim().length == 0){
+	else if(dom.get('name').value.trim()== ""){
 		dom.get("error_area").innerHTML = '<s:text name="service.name.null" />';
 		dom.get("error_area").style.display="block";
 		return false;
@@ -119,7 +119,7 @@ function clearCodeIfExists(){
 			<td class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
 			 onkeyup="uniqueCheckCode();" onblur="clearCodeIfExists();"></s:textfield> </td>
 			<td class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory1">*</span></td>
-			<td class="bluebox"> <s:textfield name="serviceName" id="serviceName" maxLength="100" ></s:textfield> </td>
+			<td class="bluebox"> <s:textfield name="name" id="name" maxLength="100" ></s:textfield> </td>
 		</tr>
 		<tr>
             <td></td>

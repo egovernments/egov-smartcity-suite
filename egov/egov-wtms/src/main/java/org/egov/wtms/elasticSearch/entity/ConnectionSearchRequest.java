@@ -107,13 +107,13 @@ public class ConnectionSearchRequest {
 
     public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
+        andFilters.add(queryStringFilter("clauses.ulbname", ulbName));
         andFilters.add(queryStringFilter("searchable.consumername", applicantName));
         andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.locality", locality));
         andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
-        andFilters.add(queryStringFilter("searchable.doorno", doorNumber));
-        andFilters.add(queryStringFilter("clauses.ward", revenueWard));
+        //andFilters.add(queryStringFilter("clauses.doorno", doorNumber));
+        andFilters.add(termsStringFilter("clauses.ward", revenueWard));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);

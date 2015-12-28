@@ -216,3 +216,12 @@ function escapeSpecialChars(str) {
 	str4 = str3.replace(/([\n]|<br \>)/g,'');
 	return str4;
 }
+
+function clearForm(formId){
+	var form = jQuery('#'+formId);
+	jQuery.each(form[0].elements, function(key, val){
+		if(form[0].elements[key].type == 'text') {
+			form[0].elements[key].value = '';
+		}
+	});
+}

@@ -64,8 +64,10 @@
 				<security:filter-chain pattern="/image/**" filters="none" />
 				<security:filter-chain pattern="/rest/**" filters="none" />
 				<security:filter-chain pattern="/citizen/search/**" filters="none" /> 
-				<security:filter-chain pattern="/view/viewDCBProperty/**" filters="none" />
-				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
+				<security:filter-chain pattern="/view/viewDCBProperty-displayPropInfo.action" filters="none" /> 
+				<security:filter-chain pattern="/view/viewDCBProperty-displayHeadwiseDcb.action" filters="none" />
+				<security:filter-chain pattern="/view/viewDCBProperty-showMigData.action" filters="none" />
+				<security:filter-chain pattern="/citizen/collection/**" filters="none" /> 
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

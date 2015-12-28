@@ -91,23 +91,32 @@
 	   return true;
 	}
 	
-  function onSubmit() {
-	  var actionName = document.getElementById('workFlowAction').value;
-	  if(actionName == 'Generate Notice') {
-		  generateNotice();
-	   } else {
-		document.forms[0].action = 'createProperty-forward.action';
-		document.forms[0].submit;
-	    return true;
-	   }
+	function onSubmit() {
+		var actionName = document.getElementById('workFlowAction').value;
+	  	if(actionName == 'Generate Notice' || actionName == 'Sign') {
+			generateNotice(actionName);
+	   	} else if (actionName == 'Preview' ) {
+	   		var params = [
+	   			'height='+screen.height,
+	   		    'width='+screen.width,
+	   		    'fullscreen=yes' 
+	   		].join(',');
+	   		var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+		   	window.open("../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=create&actionType="+actionName, "NoticeWindow", params);
+		   	return false;
+	   	} else {
+			document.forms[0].action = 'createProperty-forward.action';
+			document.forms[0].submit;
+	    	return true;
+	   	}
 	 } 
 	 	
- 	function generateNotice(){
- 	 	var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
-	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=create";
+	function generateNotice(actionName){
+ 		var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=create&actionType="+actionName;
 		document.CreatePropertyForm.submit();
 	}
-	
+
   	function loadDesignationFromMatrix() {
   		var e = dom.get('approverDepartment');
   		var dept = e.options[e.selectedIndex].text;
@@ -178,15 +187,16 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if>
-					
-					<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+					<s:if test="%{!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-						</tr>
+						</tr> 
 					</s:if>
 				</table>
 				<br/>
-				<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+				<s:if test="%{(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+				     model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>

@@ -42,6 +42,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
 <script type="text/javascript"
 	src="<c:url value='/resources/javascript/validations.js'/>"></script>
 
@@ -194,8 +201,7 @@
 	jQuery("#marketValue").blur(function() {
 		var vacantLandArea = jQuery("#vacantLandArea").val();
 		var marketValue = jQuery("#marketValue").val();
-		//1 square yard = 0.836127 sqr mtrs
-		var capitalValue = vacantLandArea * marketValue * 0.836127;
+		var capitalValue = vacantLandArea * marketValue;
 		jQuery("#currentCapitalValue").val(roundoff(capitalValue));
 	});
 </script>

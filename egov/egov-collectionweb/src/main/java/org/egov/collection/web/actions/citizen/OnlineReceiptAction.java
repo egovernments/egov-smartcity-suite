@@ -83,6 +83,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -99,6 +100,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
     @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
     @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+    @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
     @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
@@ -140,11 +142,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private String consumerCode;
     private String receiptResponse = "";
     private ReceiptHeader receiptHeader;
+    private String refNumber;
     private List<ServiceDetails> serviceDetailsList = new ArrayList<ServiceDetails>(0);
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private FundHibernateDAO fundDAO;
+    private List<OnlinePayment> lastThreeOnlinePayments = new ArrayList<OnlinePayment>(0);
+    private Boolean onlinePayPending = Boolean.FALSE;
     private final String brokenTransactionErrorMessage = "If the amount has been deducted from "
             + "your account, then no further action is required from you right now. Such transactions are normally "
             + "resolved within 24 hours so you can check and download the receipt then." + "\n \n"
@@ -469,8 +474,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     @ValidationErrorPage(value = "reconresult")
+    @Action(value = "/citizen/onlineReceipt-reconcileOnlinePayment")  
     public String reconcileOnlinePayment() {
-
+   
         final HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
 
         final ReceiptHeader[] receipts = new ReceiptHeader[selectedReceipts.length];
@@ -492,14 +498,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 }
             }
 
-            if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {
+            if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {   
                 createSuccessPayment(receipts[i], transDate, getTransactionId()[i], receipts[i].getTotalAmount(), null,
                         getRemarks()[i]);
 
                 LOGGER.debug("Manually reconciled a success online payment");
 
                 try {
-                    receiptHeaderService.createVoucherForReceipt(receipts[i], Boolean.FALSE);
+                   // receiptHeaderService.createVoucherForReceipt(receipts[i], Boolean.FALSE);
                     LOGGER.debug("Updated financial systems and created voucher.");
                 } catch (final ApplicationRuntimeException ex) {
                     errors.add(new ValidationError(
@@ -566,6 +572,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return RECONRESULT;
     }
 
+    @Action(value = "/citizen/onlineReceipt-view")
     public String view() {
         setReceipts(new ReceiptHeader[1]);
         receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
@@ -634,12 +641,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 totalAmountToBeCollected = BigDecimal.valueOf(0);
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
-
+                setRefNumber(receiptHeader.getReferencenumber());
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
-                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
+                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
+                }
                 setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
+                
 
                 if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
@@ -657,6 +666,13 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
+     // Fetching Last three online transaction for the Consumer Code
+        if (null != consumerCode && !("".equals(consumerCode)))
+                lastThreeOnlinePayments = collectionsUtil.getOnlineTransactionHistory(consumerCode);
+        for (OnlinePayment onlinePay : lastThreeOnlinePayments) {
+                if (onlinePay.getStatus().getCode().equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING))
+                        onlinePayPending = Boolean.TRUE;
+        }
     }
 
     private String decodeBillXML() {
@@ -707,7 +723,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         // The cancelled receipt can be excluded from this processing.
         if (receiptHeader.getStatus() == null) {
             receiptHeader.setReceiptdate(new Date());
-
+            receiptHeader.setReferencenumber(getRefNumber());
             receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
             receiptHeader.setIsModifiable(Boolean.FALSE);
             // recon flag should be set as false when the receipt is
@@ -717,6 +733,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
             receiptHeader.setStatus(statusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                     CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
+            receiptHeader.setSource(Source.SYSTEM.toString());
 
             setOnlineInstrumenttotal(getOnlineInstrumenttotal().add(getPaymentAmount()));
 
@@ -1140,5 +1157,29 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
     public void setServiceDetailsList(final List<ServiceDetails> serviceDetailsList) {
         this.serviceDetailsList = serviceDetailsList;
+    }
+
+    public String getRefNumber() {
+        return refNumber;
+    }
+
+    public void setRefNumber(String refNumber) {
+        this.refNumber = refNumber;
+    }
+    
+    public List<OnlinePayment> getLastThreeOnlinePayments() {
+        return lastThreeOnlinePayments;
+    }
+    
+    public void setLastThreeOnlinePayments(List<OnlinePayment> lastThreeOnlinePayments) {
+            this.lastThreeOnlinePayments = lastThreeOnlinePayments;
+    }
+    
+    public Boolean getOnlinePayPending() {
+            return onlinePayPending;
+    }
+    
+    public void setOnlinePayPending(Boolean onlinePayPending) {
+            this.onlinePayPending = onlinePayPending;
     }
 }

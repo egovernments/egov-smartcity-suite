@@ -195,11 +195,13 @@ $(document).ready(function(){
 		}	
 	}
 	
+	
 	function addRow(index) {
 		var fund = (null!=$("#fundId").val() || 'undefined'!=$("#fundId").val())?$("#fundId").val():null;
 		var ftn = (null!=$("#functionId").val() || 'undefined'!=$("#functionId").val())?$("#functionId").val():null;
 		var functionary = (null!=$("#functionaryId").val() || 'undefined'!=$("#functionaryId").val())?$("#functionaryId").val():null;
 		var grade = (null!=$("#gradeId").val() || 'undefined'!=$("#gradeId").val())?$("#gradeId").val():null;
+		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
 		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
 		var hodInput="";
 		if(null!=hoddept){
@@ -207,10 +209,9 @@ $(document).ready(function(){
 				hodInput = hodInput+'<input type="hidden" id="assignments['+index+'].deptSet['+i+'].hod" name="assignments['+index+'].deptSet['+i+'].hod" value="'+hoddept[i]+'"/>';
 			}
 			hodInput = hodInput+'<input type="hidden" id="hodIds'+index+'" value="'+hoddept+'"/>';
-		}	
+		}
 		var del="";
-		if($("#mode").val()=='create')
-			del='<span class="parallel-actions"><i id="delete_row" class="fa fa-remove"></i></span>';
+		  del='<span class="parallel-actions"><i id="delete_row" class="fa fa-remove"></i></span>';
 		var text = 
 					'<tr>'+
 						'<td>'+
@@ -221,9 +222,9 @@ $(document).ready(function(){
 							'<input type="text" id="table_date_range'+index+'" class="form-control" readonly="readonly" style="text-align:center"/>'+
 						'</td>'+	
 						'<td>'+
-							'<input type="hidden" id="assignments['+index+'].primary" name="assignments['+index+'].primary" '+ 
+							'<input type="hidden" class="isPrimary" id="assignments['+index+'].primary" name="assignments['+index+'].primary" '+ 
 							'value="'+$("#primary_yes").prop("checked")+'"/>'+
-							'<input type="text" id="table_primary'+index+'" class="form-control" readonly="readonly" style="text-align:center"/>'+
+							'<input type="text" id="table_primary'+index+'" class="form-control checkPrimary" readonly="readonly" style="text-align:center"/>'+ 
 						'</td>'+	
 						'<td>'+
 							'<input type="hidden" id="assignments['+index+'].department" name="assignments['+index+'].department" '+
@@ -252,6 +253,7 @@ $(document).ready(function(){
 							'<span class="parallel-actions"><i id="edit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
 						'</td>'+	
 					'</tr>';	
+		
 		$("#assignmentTable").append(text);
 		$("#table_date_range"+index+"").val($("#fromDate").val() + " - "+$("#toDate").val());
 		$("#table_primary"+index+"").val($("#primary_yes").prop("checked")?"Yes":"No");
@@ -261,6 +263,10 @@ $(document).ready(function(){
 	}
 	
 	$(document).on('click',"#delete_row",function (){
+		if(!$("#removedassignIds").val()==""){
+			$("#removedassignIds").val($("#removedassignIds").val()+",");
+		}
+		$("#removedassignIds").val($("#removedassignIds").val()+$("#table_assignid"+$(this).attr("value")+"").val());
 		$(this).closest('tr').remove();
 	});
 	
@@ -285,6 +291,10 @@ $(document).ready(function(){
 			$("#primary_yes").prop("checked",true);
 			$("#primary_no").prop("checked",false);
 		}
+		if(primary=="false"){
+			$("#primary_yes").prop("checked",false);
+			$("#primary_no").prop("checked",true);
+		}		
 		$("#fromDate").val(fromDate);
 		$("#toDate").val(toDate);
 		$("#deptId").val(dept);
@@ -328,8 +338,14 @@ $(document).ready(function(){
 	});
 	
 	$("#submit").click(function () {
-		if($("#assignmentTable tr").length==1){
-			$('.assignmentserror').html('At least one assignment should be entered ').show().fadeOut(5000);
+		var count = 0;
+        jQuery(".table-bordered tr").find('input').each(function(){
+                if(jQuery(this).val() == "true"){
+                        count++;
+                }
+        });
+/*		if($("#assignmentTable tr").length==1 || count == 0 ){
+			$('.assignmentserror').html('At least one primary assignment should be entered ').show().fadeOut(5000);
 			$('.fromdateerror').hide();
 			$('.departmenterror').hide();
 			$('.designationerror').hide();
@@ -337,8 +353,21 @@ $(document).ready(function(){
 			$('.todateerror').hide();
 			$('.fromdateerror').focus();
 			return false;
-		}
+		}*/
+        
+       /* if(count == 0){
+        	$('.assignmentserror').html('At least one primary assignment should be entered ').show().fadeOut(25000);
+			$('.fromdateerror').hide();
+			$('.departmenterror').hide();
+			$('.designationerror').hide();
+			$('.positionerror').hide();
+			$('.todateerror').hide();
+			$('.fromdateerror').focus();
+			return false;
+        }	*/
 	});
+
+	
 	function validateJurisdiction() {
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();

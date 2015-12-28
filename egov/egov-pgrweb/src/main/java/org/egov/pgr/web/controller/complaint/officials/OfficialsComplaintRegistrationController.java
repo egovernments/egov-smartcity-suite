@@ -53,6 +53,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ReceivingCenterService;
+import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -102,7 +103,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
         }
 
         try {
-            complaint.setSupportDocs(addToFileStore(files));
+            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());

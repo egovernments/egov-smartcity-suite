@@ -64,10 +64,13 @@ import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.pims.commons.Designation;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -80,9 +83,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service                                                                                                                                                                                                                                                                                                                
+@Service
 @Transactional(readOnly = true)
-public class EmployeeService  implements EntityTypeService {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+public class EmployeeService implements EntityTypeService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -92,6 +95,9 @@ public class EmployeeService  implements EntityTypeService {
     }
 
     private final EmployeeRepository employeeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private AssignmentRepository assignmentRepository;
@@ -104,7 +110,7 @@ public class EmployeeService  implements EntityTypeService {
 
     @Autowired
     private ApplicationProperties applicationProperties;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -115,8 +121,8 @@ public class EmployeeService  implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession()
-                .createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list();
+        return getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)")
+                .list();
     }
 
     @SuppressWarnings("unchecked")
@@ -134,15 +140,18 @@ public class EmployeeService  implements EntityTypeService {
     public List<Fund> getAllGrades() {
         return getCurrentSession().createQuery("from GradeMaster order by name").list();
     }
+
     /**
-     * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
+     * since it is mapped to only one AccountDetailType -creditor it ignores the
+     * input parameter
      */
+    @Override
     @SuppressWarnings("unchecked")
-    public List<EntityType> getAllActiveEntities(Integer employeeId) {
-            List<EntityType> entities=new ArrayList<EntityType>();
-            List<Employee> employees  = getAllEmployees();
-            entities.addAll(employees);
-            return entities;
+    public List<EntityType> getAllActiveEntities(final Integer employeeId) {
+        final List<EntityType> entities = new ArrayList<EntityType>();
+        final List<Employee> employees = getAllEmployees();
+        entities.addAll(employees);
+        return entities;
     }
 
     @Transactional
@@ -161,12 +170,21 @@ public class EmployeeService  implements EntityTypeService {
                 hod.setAssignment(assign);
         }
         employee.setJurisdictions(employee.getJurisdictions().parallelStream()
-                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary()!= null ).collect(Collectors.toList()));
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
+                .collect(Collectors.toList()));
         for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
             jurisdiction.setEmployee(employee);
             jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
+        employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
+        employeeRepository.save(employee);
+    }
+
+    @Transactional
+    public void createEmployeeData(final Employee employee) {
+        employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+        employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
         employeeRepository.save(employee);
     }
@@ -184,7 +202,8 @@ public class EmployeeService  implements EntityTypeService {
                 hod.setAssignment(assign);
         }
         employee.setJurisdictions(employee.getJurisdictions().parallelStream()
-                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary()!= null ).collect(Collectors.toList()));
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
+                .collect(Collectors.toList()));
         for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
             jurisdiction.setEmployee(employee);
             jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
@@ -193,51 +212,52 @@ public class EmployeeService  implements EntityTypeService {
         employeeRepository.saveAndFlush(employee);
     }
 
-    public List<Employee> searchEmployees(EmployeeSearchDTO searchParams) {
-        
-        Criteria criteria  = getCurrentSession().createCriteria(Assignment.class,"assignment").
-                createAlias("assignment.employee", "employee");
-        if(null!=searchParams.getCode() && !searchParams.getCode().isEmpty())
-            criteria.add(Restrictions.eq("employee.code",searchParams.getCode()));
-        if(null!=searchParams.getName() && !searchParams.getName().isEmpty())
-            criteria.add(Restrictions.eq("employee.name",searchParams.getName()));
-        if(null!=searchParams.getAadhaar() && !searchParams.getAadhaar().isEmpty())
-            criteria.add(Restrictions.eq("employee.aadhaar",searchParams.getAadhaar()));
-        if(null!=searchParams.getMobileNumber() && !searchParams.getMobileNumber().isEmpty())
-            criteria.add(Restrictions.eq("employee.mobileNumber",searchParams.getMobileNumber()));
-        if(null!=searchParams.getPan() && !searchParams.getPan().isEmpty())
-            criteria.add(Restrictions.eq("employee.pan",searchParams.getPan()));
-        if(null!=searchParams.getEmail() && !searchParams.getEmail().isEmpty())
-            criteria.add(Restrictions.eq("employee.emailId",searchParams.getEmail()));
-        if(null!=searchParams.getStatus() && !searchParams.getStatus().isEmpty())
-            criteria.add(Restrictions.eq("employee.employeeStatus",EmployeeStatus.valueOf(searchParams.getStatus())));
-        if(null!=searchParams.getEmployeeType() && !searchParams.getEmployeeType().isEmpty()){
+    public List<Employee> searchEmployees(final EmployeeSearchDTO searchParams) {
+
+        final Criteria criteria = getCurrentSession().createCriteria(Assignment.class, "assignment")
+                .createAlias("assignment.employee", "employee");
+        if (null != searchParams.getCode() && !searchParams.getCode().isEmpty())
+            criteria.add(Restrictions.eq("employee.code", searchParams.getCode()));
+        if (null != searchParams.getName() && !searchParams.getName().isEmpty())
+            criteria.add(Restrictions.eq("employee.name", searchParams.getName()));
+        if (null != searchParams.getAadhaar() && !searchParams.getAadhaar().isEmpty())
+            criteria.add(Restrictions.eq("employee.aadhaar", searchParams.getAadhaar()));
+        if (null != searchParams.getMobileNumber() && !searchParams.getMobileNumber().isEmpty())
+            criteria.add(Restrictions.eq("employee.mobileNumber", searchParams.getMobileNumber()));
+        if (null != searchParams.getPan() && !searchParams.getPan().isEmpty())
+            criteria.add(Restrictions.eq("employee.pan", searchParams.getPan()));
+        if (null != searchParams.getEmail() && !searchParams.getEmail().isEmpty())
+            criteria.add(Restrictions.eq("employee.emailId", searchParams.getEmail()));
+        if (null != searchParams.getStatus() && !searchParams.getStatus().isEmpty())
+            criteria.add(Restrictions.eq("employee.employeeStatus", EmployeeStatus.valueOf(searchParams.getStatus())));
+        if (null != searchParams.getEmployeeType() && !searchParams.getEmployeeType().isEmpty()) {
             criteria.createAlias("employee.employeeType", "employeeType");
-            criteria.add(Restrictions.eq("employeeType.name",searchParams.getEmployeeType()));
+            criteria.add(Restrictions.eq("employeeType.name", searchParams.getEmployeeType()));
         }
-        if(null!=searchParams.getDepartment() && !searchParams.getDepartment().isEmpty()){
+        if (null != searchParams.getDepartment() && !searchParams.getDepartment().isEmpty()) {
             criteria.createAlias("assignment.department", "department");
-            criteria.add(Restrictions.eq("department.name",searchParams.getDepartment()));
+            criteria.add(Restrictions.eq("department.name", searchParams.getDepartment()));
         }
-        if(null!=searchParams.getDesignation() && !searchParams.getDesignation().isEmpty()) {
+        if (null != searchParams.getDesignation() && !searchParams.getDesignation().isEmpty()) {
             criteria.createAlias("assignment.designation", "designation");
-            criteria.add(Restrictions.eq("designation.name",searchParams.getDesignation()));
+            criteria.add(Restrictions.eq("designation.name", searchParams.getDesignation()));
         }
-        if(null!=searchParams.getFunctionary() && !searchParams.getFunctionary().isEmpty()) {
+        if (null != searchParams.getFunctionary() && !searchParams.getFunctionary().isEmpty()) {
             criteria.createAlias("assignment.functionary", "functionary");
-            criteria.add(Restrictions.eq("functionary.name",searchParams.getFunctionary()));
+            criteria.add(Restrictions.eq("functionary.name", searchParams.getFunctionary()));
         }
-        if(null!=searchParams.getFunction() && !searchParams.getFunction().isEmpty()) {
+        if (null != searchParams.getFunction() && !searchParams.getFunction().isEmpty()) {
             criteria.createAlias("assignment.function", "function");
-            criteria.add(Restrictions.eq("function.name",searchParams.getFunction()));
+            criteria.add(Restrictions.eq("function.name", searchParams.getFunction()));
         }
-        
-        final ProjectionList projections = Projections.projectionList().add(Projections.property("assignment.employee"));
+
+        final ProjectionList projections = Projections.projectionList()
+                .add(Projections.property("assignment.employee"));
         criteria.setProjection(projections);
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-        return (List<Employee>)criteria.list();
-        
+        return criteria.list();
+
     }
 
     @Transactional
@@ -305,9 +325,9 @@ public class EmployeeService  implements EntityTypeService {
      */
     public List<Employee> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
             final Long boundaryId) {
-        Set<Long> bndIds=new HashSet<Long>();
-        List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
-        boundaries.forEach((bndry)->bndIds.add(bndry.getId()));
+        final Set<Long> bndIds = new HashSet<Long>();
+        final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
+        boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
         return employeeRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, bndIds);
     }
 
@@ -351,23 +371,30 @@ public class EmployeeService  implements EntityTypeService {
     }
 
     @Override
-    public List<? extends EntityType> filterActiveEntities(String filterKey, int maxRecords, Integer accountDetailTypeId) {
+    public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
+            final Integer accountDetailTypeId) {
         return null;
     }
 
     @Override
-    public List getAssetCodesForProjectCode(Integer accountdetailkey) throws ValidationException {
+    public List getAssetCodesForProjectCode(final Integer accountdetailkey) throws ValidationException {
         return null;
     }
 
     @Override
-    public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList) throws ValidationException {
+    public List<? extends EntityType> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
         return null;
     }
 
     @Override
-    public List<? extends EntityType> getEntitiesById(List<Long> idsList) throws ValidationException {
+    public List<? extends EntityType> getEntitiesById(final List<Long> idsList) throws ValidationException {
         return null;
+    }
+
+    public String generateUserNameByDeptDesig(final Department department, final Designation designation) {
+        String name = department.getCode() + designation.getCode();
+        name += userRepository.getUserSerialNumberByName(name) + 1;
+        return name;
     }
 
 }

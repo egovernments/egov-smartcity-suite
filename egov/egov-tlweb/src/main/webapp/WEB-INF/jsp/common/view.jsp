@@ -102,6 +102,13 @@
 </div>
 <div class="panel-body">
 
+<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
+		<div class="col-xs-3 add-margin view-content">
+		<s:date  name="startDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" /></div>
+		
+	</div>
+
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.establishmentname' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{nameOfEstablishment}" /></div>

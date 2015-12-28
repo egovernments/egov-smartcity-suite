@@ -43,32 +43,79 @@
 	<head>
 		<%-- <sx:head /> --%>
 		<script type="text/javascript">
-			function populateWard() {
-				populatewardId( {
-					zoneId : document.getElementById("zoneId").value
-				});
-			}
-			function onSubmit(obj,formId){
+			function onSubmit(obj,formId) {
 				var formObj = document.getElementById(formId);
 				formObj.action=obj;
 				formObj.submit;
-			   return true;
+			    return true;
 			} 
-			function collectTax(){
-				var propertyId=document.getElementById('assessmentNum').value;
-				window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+			function collectTax() {
+				var propertyId = jQuery("#assessmentNum").val();
+				if(propertyId == '') {
+               	   alert("Please enter assessment number");
+               	   return false;
+               	 } else {
+				    window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+				    return true;
+               	 }
 			}
+			jQuery(document).ready(function(){
+             jQuery("#searchMobileno").click(function(e) {
+            	 if(jQuery("#mobileNumber").val() == '') {
+                	 alert("Please enter mobile number");
+                	 return false;
+                	 }
+                 });
+             
+             jQuery("#searchDoorno").click(function(e) {
+            	 if(jQuery("#doorNo").val() == '') {
+                	 alert("Please enter door number");
+                	 return false;
+                	 }
+                 });
+             jQuery("#searchByassmentno").click(function(e) {  
+            	 if(jQuery("#assessmentNum").val() == '') {
+                	 alert("Please enter assessment number");
+                	 return false;
+                	 }
+                 });
+             jQuery("#searchByBndry").click(function(e) { 
+            	 if(jQuery("#zoneId").val() == -1 && jQuery("#wardId").val() == -1) {
+                	 alert("Please select either zone or ward");
+                	 return false;
+                	 }
+                 });
+             jQuery("#searchByowner").click(function(e) {
+		            if(jQuery("#locationId").val() == -1) {
+		           	  alert("Please select location");
+		           	  return false;
+		           	 }
+		            if(jQuery("#ownerName").val() == '') {
+	               	  alert("Please enter owner name");
+	               	  return false;
+	               	 }
+	            });
+
+             jQuery("#searchByDemand").click(function(e) { 
+            	 if(jQuery("#fromDemand").val() == '' || jQuery("#toDemand").val() == '') {
+                	 alert("Please enter from and to demand data");
+                	 return false;
+                	 }
+                 });
+			});
 		</script>
 		<title><s:text name="searchProp.title"></s:text></title>
 	</head>
 	<body>
 		<div class="formmainbox">
-			<s:if test="%{hasErrors()}">
-				<div align="left">
+		<s:if test="%{hasErrors()}">
+			<div class="errorstyle" id="property_error_area">
+				<div class="errortext">
 					<s:actionerror />
 					<s:fielderror/>
-				</div>			
-			</s:if>
+				</div>
+			</div>
+		</s:if>
 			<s:if test="%{hasActionMessages()}">
 			    <div id="actionMessages" class="messagestyle">
 			    	<s:actionmessage theme="simple"/>
@@ -98,17 +145,16 @@
 							</tr>
 							
 							<tr>
-							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) || 
-								roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase())}">
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:right">
 										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByAssessment.action', 'assessmentform');"></s:submit>
+										<s:submit name="search" value="Search" id="searchByassmentno" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByAssessment.action', 'assessmentform');"></s:submit>
 									</div>		
 								</td>
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:left">
-									    <input type="button" name="CollectTax" value="Collect Tax" class="buttonsubmit" onclick="return collectTax()"/>
+									    <input type="button" name="CollectTax" id="CollectTax" value="Collect Tax" class="buttonsubmit" onclick="return collectTax();"/>
 									</div>
 								</td>
 							</s:if>
@@ -118,7 +164,7 @@
 								   <br/>
 									<div class="greybox" style="text-align:center">
 										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByAssessment.action', 'assessmentform');"></s:submit>
+										<s:submit name="search" id="searchByassmentno" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByAssessment.action', 'assessmentform');"></s:submit>
 									</div>
 								</td>
 								<td class="greybox">&nbsp;</td>
@@ -131,7 +177,7 @@
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					
-										<s:text name="search.mobile" />									
+										<s:text name="search.mobile" />
 									</div>									
 								</td>
 							</tr>
@@ -139,7 +185,8 @@
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="MobileNumber" />:
+									<s:text name="MobileNumber" />
+									<span class="mandatory1">*</span> :		
 								</td>
 								
 								<td class="bluebox">
@@ -154,7 +201,7 @@
 								   <br/>
 									<div class="greybox" style="text-align:center">
 										<s:hidden id="mode" name="mode" value="mobileNo"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByMobileNumber.action', 'mobileNoform');"></s:submit>
+										<s:submit name="search" value="Search" id="searchMobileno" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByMobileNumber.action', 'mobileNoform');"></s:submit>
 									</div>
 								</td>
 							</tr>
@@ -173,7 +220,8 @@
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="doorNo" />:
+									<s:text name="doorNo" />  
+									<span class="mandatory1">*</span> :		
 								</td>
 								
 								<td class="bluebox">
@@ -188,7 +236,7 @@
 								   <br/>
 									<div class="greybox" style="text-align:center">
 										<s:hidden id="mode" name="mode" value="doorNo"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByDoorNo.action', 'doorNoform');"></s:submit>
+										<s:submit name="search" id="searchDoorno" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByDoorNo.action', 'doorNoform');"></s:submit>
 									</div>
 								</td>
 							</tr>
@@ -208,16 +256,14 @@
 						<tr><td colspan="4"><br/></td></tr>		
 						<tr>
 							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox">
-								<s:text name="Zone" />
+							<td class="bluebox"> 
+								<s:text name="Zone" /> 
 								<span class="mandatory1">*</span> :
 							</td>
 							<td class="bluebox">
 								<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
 									listKey="key" listValue="value" headerKey="-1"
 									headerValue="%{getText('default.select')}" value="%{zoneId}" />
-								<%-- <egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-									dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" /> --%>
 							</td>
 							<td class="bluebox">&nbsp;</td>
 						</tr>
@@ -262,7 +308,7 @@
 							    <br/>
 								<div class="greybox" style="text-align:center">		
 									<s:hidden id="mode" name="mode" value="bndry"></s:hidden>
-									<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByBndry.action', 'zoneform');" ></s:submit>
+									<s:submit name="search" value="Search" id="searchByBndry" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByBndry.action', 'zoneform');" ></s:submit>
 								</div>
 							</td>						
 							<td class="greybox">&nbsp;</td>
@@ -301,7 +347,7 @@
 							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:textfield name="ownerName" />
+							<s:textfield name="ownerName" id="ownerName" />
 						</td>
 						<td class="greybox">&nbsp;</td>
 					</tr>
@@ -324,7 +370,7 @@
 						    <br/>
 							<div class="greybox" style="text-align:center">
 								<s:hidden id="mode" name="mode" value="location"></s:hidden>
-								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByLocation.action', 'locationform');"></s:submit>
+								<s:submit name="search" value="Search" id="searchByowner" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByLocation.action', 'locationform');"></s:submit>
 							</div>
 						</td>
 						<td class="greybox">&nbsp;</td>
@@ -347,9 +393,9 @@
 					  <td class="bluebox" style="text-align:center;" colspan="4">
 					   <br/>
 					    From <span class="mandatory1">*</span>:  &nbsp;&nbsp;&nbsp; 
-					    <s:textfield name="fromDemand" onblur="validNumber(this);checkZero(this,'From Demand');" />
+					    <s:textfield name="fromDemand" id="fromDemand" onblur="validNumber(this);checkZero(this,'From Demand');" />
 					    &nbsp;&nbsp;&nbsp; To <span class="mandatory1">*</span>: &nbsp;&nbsp;&nbsp;
-					     <s:textfield name="toDemand" onblur="validNumber(this);checkZero(this,'To Demand');" />
+					     <s:textfield name="toDemand" id="toDemand" onblur="validNumber(this);checkZero(this,'To Demand');" />
 					  </td>
 					</tr>
 					<tr>
@@ -362,7 +408,7 @@
 						<td class="bluebox" colspan="2">
 							<div class="bluebox" style="text-align:center">
 								<s:hidden id="mode" name="mode" value="demand"></s:hidden>
-								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchByDemand.action', 'demandForm');"></s:submit>
+								<s:submit name="search" value="Search" id="searchByDemand" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchByDemand.action', 'demandForm');"></s:submit>
 							</div>
 						</td>
 						<td class="bluebox">&nbsp;</td>

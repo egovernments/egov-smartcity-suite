@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-09-07T15:39:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="184"/>
+	<property name="ireport.y" value="144"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="java.util.*"/>
+	<import value="java.lang.*"/>
 	<import value="java.math.*"/>
+	<import value="java.util.*"/>
 	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
@@ -163,7 +161,7 @@ WHERE
 				<reportElement x="89" y="104" width="131" height="20" uuid="201daeef-f7c6-4937-8aa6-c5b0d4888d73"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
@@ -171,7 +169,7 @@ WHERE
 				<reportElement x="660" y="104" width="131" height="20" uuid="b1b138df-c376-493c-a2bd-1ca2d140c17c"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
 			</textField>
@@ -179,7 +177,7 @@ WHERE
 				<reportElement x="540" y="104" width="120" height="20" uuid="f7bef181-8d61-408d-b7d1-370f48397aa1"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Counter:]]></text>
 			</staticText>
@@ -187,7 +185,7 @@ WHERE
 				<reportElement x="660" y="124" width="131" height="20" uuid="597cccad-77f5-4a76-826d-7210765ea59d"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
 			</textField>
@@ -195,7 +193,7 @@ WHERE
 				<reportElement x="540" y="124" width="120" height="20" uuid="253aaa20-dbe7-4ea7-b8f5-d9e884ebb26b"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Name of Assistant/Shroff:]]></text>
 			</staticText>
@@ -203,7 +201,7 @@ WHERE
 				<reportElement x="89" y="124" width="131" height="20" uuid="b491307f-54f3-47d6-a09a-8d9ae7984fae"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
 			</textField>
@@ -211,7 +209,7 @@ WHERE
 				<reportElement x="10" y="124" width="80" height="20" uuid="65a015b0-1f64-48b7-874e-c2c622809e31"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
@@ -219,7 +217,7 @@ WHERE
 				<reportElement x="10" y="104" width="80" height="20" uuid="8979072f-7dc9-40f0-a58e-074553856cda"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
@@ -227,7 +225,7 @@ WHERE
 				<reportElement x="10" y="144" width="80" height="20" uuid="a3d355ab-b51f-4234-9f1b-000a9f12719d"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Zone:]]></text>
 			</staticText>
@@ -235,7 +233,7 @@ WHERE
 				<reportElement x="90" y="144" width="130" height="20" uuid="fe5f2459-31e6-4812-aa29-ba838a7a1d74"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "All Zones" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT LOCALNAME FROM EG_BOUNDARY WHERE ID = " + $P{EGOV_BOUNDARY_ID})]]></textFieldExpression>
 			</textField>
@@ -251,7 +249,7 @@ WHERE
 	<columnHeader>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement x="350" y="0" width="80" height="30" uuid="f1acaf2e-bcb0-4285-9b96-cc256f7bb62e"/>
+				<reportElement x="350" y="25" width="80" height="30" uuid="f1acaf2e-bcb0-4285-9b96-cc256f7bb62e"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -265,7 +263,7 @@ WHERE
 				<text><![CDATA[Cheque/DD No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="430" y="0" width="111" height="30" uuid="4464a2ae-d4b5-44a5-8289-9dbbfc86689e"/>
+				<reportElement x="430" y="25" width="111" height="30" uuid="4464a2ae-d4b5-44a5-8289-9dbbfc86689e"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -279,7 +277,7 @@ WHERE
 				<text><![CDATA[Bank]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="0" width="100" height="30" uuid="2c308388-561b-4e71-875a-36eeca0c4a39"/>
+				<reportElement x="541" y="25" width="100" height="30" uuid="2c308388-561b-4e71-875a-36eeca0c4a39"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -293,7 +291,7 @@ WHERE
 				<text><![CDATA[Branch]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="641" y="0" width="80" height="30" uuid="03b4ff07-1a0e-4390-892f-1a3b05285c2c"/>
+				<reportElement x="641" y="25" width="80" height="30" uuid="03b4ff07-1a0e-4390-892f-1a3b05285c2c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -307,7 +305,7 @@ WHERE
 				<text><![CDATA[Cheque/DD Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="40" height="30" uuid="0a6b50de-d057-4907-82f5-d72e20a153b7"/>
+				<reportElement x="0" y="25" width="40" height="30" uuid="0a6b50de-d057-4907-82f5-d72e20a153b7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -321,7 +319,7 @@ WHERE
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="721" y="0" width="101" height="30" uuid="78cf1470-a2ad-4555-8d98-eb6f991d1cfd"/>
+				<reportElement x="721" y="25" width="101" height="30" uuid="78cf1470-a2ad-4555-8d98-eb6f991d1cfd"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -335,7 +333,7 @@ WHERE
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="0" width="100" height="30" uuid="e64736dc-c635-4075-be16-f66170048e0a"/>
+				<reportElement x="140" y="25" width="100" height="30" uuid="e64736dc-c635-4075-be16-f66170048e0a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -349,7 +347,7 @@ WHERE
 				<text><![CDATA[Receipt No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="240" y="0" width="110" height="30" uuid="80ce7a32-35ec-4201-8c21-171d63926aac"/>
+				<reportElement x="240" y="25" width="110" height="30" uuid="80ce7a32-35ec-4201-8c21-171d63926aac"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -363,7 +361,7 @@ WHERE
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="40" y="0" width="100" height="30" uuid="87e9f957-d336-45b6-b25c-8ceee24d2243"/>
+				<reportElement x="40" y="25" width="100" height="30" uuid="87e9f957-d336-45b6-b25c-8ceee24d2243"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

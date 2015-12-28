@@ -338,7 +338,8 @@ public class EditDemandAction extends BaseFormAction {
             LOGGER.debug("Entered into newEditForm");
         String resultPage = "";
 
-        if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY)) {
+        if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY)
+                && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MIGRATION)) {
             setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY);
             resultPage = RESULT_ERROR;
         } else {

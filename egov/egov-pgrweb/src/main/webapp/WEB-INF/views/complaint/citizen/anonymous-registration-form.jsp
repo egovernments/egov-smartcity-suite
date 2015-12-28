@@ -1,42 +1,42 @@
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<!--
+eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
@@ -90,21 +90,44 @@
 				</div> 
 				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.category" /><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-6 add-margin">
+							<form:select path="complaintType.category" id="complaintTypeCategory"
+								cssClass="form-control" cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${categories}" itemValue="id" itemLabel="name" />
+							</form:select>
+							<form:errors path="complaintType.category" cssClass="error-msg" />
+						</div>
+					</div> 
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.complaintType"/><span class="mandatory"></span>
+						</label>
 						<div class="col-sm-6">
-							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder='<spring:message code="lbl.placholder.grievance"/>'
-								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
-							<form:hidden path="complaintType" id="complaintTypeId" value="0" />
+							<form:select path="complaintType" id="complaintType"
+								cssClass="form-control" cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${complaint.complaintType.category.complaintTypes}" itemLabel="name" itemValue="id"/>
+							</form:select>
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
 							<c:forEach items="${complaintTypes}" var="complaintType">
-								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
-										value="${complaintType.name}" /> </a>
+								<a onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">
+									<c:out value="${complaintType.name }" /> </a>
 							</c:forEach>
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.compDetails"/> <span class="mandatory"></span>
+						</label>
 						<div class="col-sm-6">
 							<form:textarea path="details" id="doc" minlength="10" placeholder="" maxlength="500" cssClass="form-control autogrow" required="required"/>
 							<div class="text-left"><small><spring:message code="lbl.comp.details"/></small></div>
@@ -113,7 +136,7 @@
 					</div>
 					
 					<div class="form-group">
-						<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+						<div class="col-sm-3 col-xs-12 text-right" id="upload-section">
 							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
 							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
 							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
@@ -150,6 +173,7 @@
                    				<form:hidden path="lng" id="lng"/>
 							</div>
 							<form:errors path="location" cssClass="add-margin error-msg"/>
+							<form:hidden path="latlngAddress" id="latlngaddress"/>
 						</div>
 					</div>
 					
@@ -163,7 +187,7 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-offset-3 col-md-6 text-center" id="captcha-section">
-						<div class="g-recaptcha" data-sitekey="6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs"></div>
+						<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
 						<form:errors cssClass="add-margin error-msg"/>
 					</div>
 				</div>
@@ -213,13 +237,3 @@
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaint.js'/>"></script>
-<script>
-	var complaintTypeId= '${complaint.complaintType.id}';
-	if(complaintTypeId !== ''){
-		$("#complaintTypeId").val(complaintTypeId);
-	}
-	/* var crosshierarchyId = '${crosshierarchyId}';
-	if(crosshierarchyId !== ''){
-		$("#crosshierarchyId").val(crosshierarchyId);
-	} */
-</script>

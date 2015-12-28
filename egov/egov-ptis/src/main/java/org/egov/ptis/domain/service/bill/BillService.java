@@ -86,7 +86,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Provides API to Generate a Demand Notice or the Bill giving the break up of the tax amounts
+ * Provides API to Generate a Demand Notice or the Bill giving the break up of
+ * the tax amounts
  */
 @Transactional(readOnly = true)
 public class BillService {
@@ -122,7 +123,8 @@ public class BillService {
     private CityService cityService;
 
     /**
-     * Generates a Demand Notice or the Bill giving the break up of the tax amounts and the <code>EgBill</code>
+     * Generates a Demand Notice or the Bill giving the break up of the tax
+     * amounts and the <code>EgBill</code>
      *
      * @see EgBill
      * @param basicProperty
@@ -146,14 +148,13 @@ public class BillService {
             demandNoticeInfo.setBillNo(getBillNo());
             demandNoticeInfo.setLocality(basicProperty.getPropertyID().getLocality().getName());
             demandNoticeInfo.setBillPeriod(PropertyTaxUtil.getCurrentInstallment().getDescription());
-            final PropertyWiseConsumptions pwc = propertyTaxUtil.getPropertyWiseConsumptions(basicProperty
-                    .getUpicNo());
+            final PropertyWiseConsumptions pwc = propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getUpicNo());
             demandNoticeInfo.setPropertyWiseConsumptions(pwc);
             demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty, pwc));
-            if(basicProperty.getVacancyRemissions().isEmpty()){
-            	demandNoticeInfo.setIsVacancyRemissionDone(false);
-            }else{
-            	demandNoticeInfo.setIsVacancyRemissionDone(true);
+            if (basicProperty.getVacancyRemissions().isEmpty()) {
+                demandNoticeInfo.setIsVacancyRemissionDone(false);
+            } else {
+                demandNoticeInfo.setIsVacancyRemissionDone(true);
             }
 
             ReportRequest reportRequest = null;
@@ -165,17 +166,19 @@ public class BillService {
             saveEgBill(basicProperty, userId);// saving eg_bill
             basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
             basicProperty.setBillCrtError(STRING_EMPTY);
-            final boolean flag = waterChargesIntegrationService.updateBillNo(basicProperty.getId().toString(), getBillNo());
+            final boolean flag = waterChargesIntegrationService.updateBillNo(basicProperty.getId().toString(),
+                    getBillNo());
             if (flag) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Billno updated successfully in water tax");
-            }
-            else {
+            } else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Failed to updated billno in water tax");
             }
-            noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);// Save
-            noticeService.getSession().flush(); // Added since notice was not getting saved
+            noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), getBillNo(),
+                    NOTICE_TYPE_BILL, basicProperty, billPDF);// Save
+            noticeService.getSession().flush(); // Added since notice was not
+                                                // getting saved
         } catch (final Exception e) {
             e.printStackTrace();
             throw new ApplicationRuntimeException("Bill Generation Exception : " + e);
@@ -250,7 +253,8 @@ public class BillService {
             } catch (final Exception e) {
                 basicProperty.setIsBillCreated('F');
                 basicProperty.setBillCrtError(e.getMessage());
-                final String msg = " Error while generating Demand bill via BulkBillGeneration Job " + modulo.toString();
+                final String msg = " Error while generating Demand bill via BulkBillGeneration Job "
+                        + modulo.toString();
                 final String propertyType = " for "
                         + (basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION) ? "  non-migrated property "
                                 : " migrated property");
@@ -267,8 +271,9 @@ public class BillService {
     }
 
     /**
-     * @description returns list of property assestment number(Zone and ward wise). properties for which bill is not created or
-     * cancelled.
+     * @description returns list of property assestment number(Zone and ward
+     *              wise). properties for which bill is not created or
+     *              cancelled.
      * @param modulo
      * @param billsCount
      * @return
@@ -340,14 +345,14 @@ public class BillService {
 
         return query;
     }
-    
+
     /**
      * @param zoneId
      * @param wardId
      * @param currentInstallment
      * @return
      */
-    public List<BulkBillGeneration> getBulkBill(Long zoneId, Long wardId, Installment currentInstallment){
+    public List<BulkBillGeneration> getBulkBill(Long zoneId, Long wardId, Installment currentInstallment) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select bbg from BulkBillGeneration bbg ").append(
                 " where bbg.zone.id=:zoneid and bbg.installment.id=:installment ");
@@ -358,18 +363,18 @@ public class BillService {
         query.setLong("installment", currentInstallment.getId());
         if (wardId != null && wardId != -1)
             query.setLong("wardid", wardId);
-        
+
         final List<BulkBillGeneration> bbgList = query.list();
         return bbgList;
     }
-    
+
     /**
      * @param zoneId
      * @param wardId
      * @param currentInstallment
      * @return
      */
-    public BulkBillGeneration saveBulkBill(Long zoneId, Long wardId, Installment currentInstallment){
+    public BulkBillGeneration saveBulkBill(Long zoneId, Long wardId, Installment currentInstallment) {
         BulkBillGeneration bulkBill = new BulkBillGeneration();
         bulkBill.setZone(boundaryService.getBoundaryById(zoneId));
         bulkBill.setWard(boundaryService.getBoundaryById(wardId));

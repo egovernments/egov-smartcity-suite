@@ -64,7 +64,10 @@
         	undoLoadingMask();
     		return false;
             }
-        
+        if(!validateDate(document.getElementById('validfromId').value)){
+			alert("Invalid Date! Start date is greater than current date");
+			return false;
+		}
         if (compareDate(document.getElementById('validfromId').value,document.getElementById('validtoId').value) == -1){
             alert("End date should be greater than Start date");
             undoLoadingMask();
@@ -86,6 +89,18 @@
     	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-newForm.action';
     	document.schemeForm.submit();
     }    
+	function validateDate(date)
+	{
+		var todayDate = new Date();
+		 var todayMonth = todayDate.getMonth() + 1;
+		 var todayDay = todayDate.getDate();
+		 var todayYear = todayDate.getFullYear();
+		 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
+		if (Date.parse(date) > Date.parse(todayDateText)) {
+			return false;
+			}
+		return true; 
+		}
     </SCRIPT>
   </head>
   <body >
@@ -156,9 +171,12 @@
 				<td><input type="submit" class="button" value="Reset" id="resetButton" name="button" onclick="resetForm();" />&nbsp;</td>
 			    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>&nbsp;</td>
 			</s:if>
-			<s:else>
+			<s:elseif test="%{mode=='edit'}">
 				<td><input type="submit" class="buttonsubmit" value="Modify" id="Modify" name="button" onclick="return validateFormAndSubmit();" />&nbsp;</td>
 			    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>&nbsp;</td>
+			</s:elseif>
+			<s:else>
+			<td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>&nbsp;</td>
 			</s:else>
 			
 			</tr>

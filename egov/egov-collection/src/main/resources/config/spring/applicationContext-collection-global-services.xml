@@ -40,9 +40,13 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
 	default-lazy-init="true">
+	
+	<context:component-scan base-package="org.egov.collection.config" />
 	
 	<bean id="collectionsUtil" class="org.egov.collection.utils.CollectionsUtil" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -55,11 +59,7 @@
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>
 	<bean class="org.egov.collection.repository.ServiceCategoryRepository" id="serviceCategoryRepository" />
-	
-	<bean class="org.egov.collection.service.ServiceCategoryService" id="serviceCategoryService" >
-		<constructor-arg index="0" ref="serviceCategoryRepository" />
-	</bean>
-	
+
 	<bean class="org.egov.collection.service.ReceiptHeaderService"
 		id="receiptHeaderService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.ReceiptHeader" />
@@ -107,27 +107,29 @@
 		<property name="persistenceService" ref="persistenceService"/>
     </bean>
     
-	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype">
-	    <property name="persistenceService" ref="persistenceService"/>
-    </bean>
-        
+	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
+
     <bean id="receiptHeaderPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.collection.entity.ReceiptHeader" />
     </bean>
     
-    <bean id="ReceiptHeaderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+    <bean id="ReceiptHeaderInboxRenderService" class="org.egov.collection.workflow.renderer.CollectionsWorkflowRenderService">
          <constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
    </bean>
-   
-   	<bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
+   <bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.Challan" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<!-- <property name="challanWorkflowService" ref="challanWorkflowService" /> -->
 	</bean>
 	
+	<bean id="serviceCategoryService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infstr.models.ServiceCategory" />
+	</bean>
+	
 	<bean id="serviceDetailsService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
 	</bean>
+	
 	
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
 	</bean>
@@ -154,7 +156,7 @@
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />
 	   <property name="reconciliationService" ref="reconciliationService" />
 	</bean>
-	
+
 	<bean class="org.egov.collection.integration.services.DishonorChequeService" id="dishonorChequeService" scope="prototype">
 	   <property name="persistenceService" ref="persistenceService" />
 	   <property name="receiptHeaderService" ref="receiptHeaderService" />

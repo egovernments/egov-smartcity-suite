@@ -272,25 +272,25 @@ public abstract class Address extends AbstractPersistable<Long> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         if (StringUtils.isNotBlank(houseNoBldgApt))
-            builder.append(houseNoBldgApt).append(", ");
-        if (StringUtils.isNotBlank(streetRoadLine))
-            builder.append(streetRoadLine).append(", ");
+            builder.append(StringUtils.trim(houseNoBldgApt)).append(", ");
         if (StringUtils.isNotBlank(areaLocalitySector))
-            builder.append(areaLocalitySector).append(", ");
+            builder.append(StringUtils.trim(areaLocalitySector)).append(", ");
+        if (StringUtils.isNotBlank(streetRoadLine))
+            builder.append(StringUtils.trim(streetRoadLine)).append(", ");
         if (StringUtils.isNotBlank(landmark))
-            builder.append(landmark).append(", ");
+            builder.append(StringUtils.trim(landmark)).append(", ");
         if (StringUtils.isNotBlank(cityTownVillage))
-            builder.append(cityTownVillage).append(", ");
+            builder.append(StringUtils.trim(cityTownVillage)).append(", ");
         if (StringUtils.isNotBlank(postOffice))
-            builder.append(postOffice).append(", ");
+            builder.append(StringUtils.trim(postOffice)).append(", ");
         if (StringUtils.isNotBlank(subdistrict))
-            builder.append(subdistrict).append(", ");
+            builder.append(StringUtils.trim(subdistrict)).append(", ");
         if (StringUtils.isNotBlank(district))
-            builder.append(district).append(", ");
+            builder.append(StringUtils.trim(district)).append(", ");
         if (StringUtils.isNotBlank(state))
-            builder.append(state).append(", ");
+            builder.append(StringUtils.trim(state)).append(", ");
         if (StringUtils.isNotBlank(country))
-            builder.append(country).append(", ");
+            builder.append(StringUtils.trim(country)).append(", ");
         if (StringUtils.isNotBlank(pinCode))
             builder.append("PIN : ").append(pinCode);
         return builder.toString();

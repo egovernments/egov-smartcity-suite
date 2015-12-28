@@ -233,7 +233,7 @@ function validate()
 	
 }
 
-var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
+/* var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
       		warn('improperreceiptNumberSelection');
 }
 var receiptNumberSearchSelectionHandler = function(sType, arguments) { 
@@ -248,7 +248,7 @@ var manualReceiptNumberSearchSelectionHandler = function(sType, arguments) {
 }
 var manualReceiptNumberSelectionEnforceHandler = function(sType, arguments) {
 		warn('impropermanualReceiptNumberSelectionWarning');
-}
+} */
 function checkviewforselectedrecord()
 {
 	dom.get("norecordselectederror").style.display="none";
@@ -349,7 +349,8 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.receiptno"/></td>
-	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="receiptNumberSearch_autocomplete"><div><s:textfield id="receiptNumberSearch" type="text" name="receiptNumber"/></div><span id="receiptNumberSearchResults"></span></div></div><egov:autocomplete name="receiptNumberSearch" width="15" field="receiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchAjax.action" queryQuestionMark="true" results="receiptNumberSearchResults" handler="receiptNumberSearchSelectionHandler" forceSelectionHandler="receiptNumberSelectionEnforceHandler"/><span class='warning' id="improperreceiptNumberSelectionWarning"></span></td>
+	      <td width="24%" class="bluebox">
+	      <div class="yui-skin-sam"><s:textfield id="receiptNumber" type="text" name="receiptNumber"/></td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	   
@@ -364,7 +365,7 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.manual.receiptno"/></td>
-	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="manualReceiptNumberSearch_autocomplete"><div><s:textfield id="manualReceiptNumberSearch" type="text" name="manualReceiptNumber"/></div><span id="manualReceiptNumberSearchResults"></span></div></div><egov:autocomplete name="manualReceiptNumberSearch" width="15" field="manualReceiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchManualReceiptNumberAjax.action" queryQuestionMark="true"  queryLength="3" results="manualReceiptNumberSearchResults" handler="manualReceiptNumberSearchSelectionHandler" forceSelectionHandler="manualReceiptNumberSelectionEnforceHandler"/><span class='warning' id="impropermanualReceiptNumberSelectionWarning"></span></td>
+	      <td width="24%" class="bluebox"><s:textfield id="manualReceiptNumber" type="text" name="manualReceiptNumber"/></td>
 	      <td width="21%" class="bluebox">&nbsp;</td>
 	      <td width="30%" class="bluebox"> &nbsp; </td>   
 	   
@@ -391,7 +392,7 @@ function checkviewforselectedrecord()
 <logic:notEmpty name="resultList">
 
 <div align="center">		
-<display:table name="resultList" uid="currentRow" pagesize = "20" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
+<display:table name="searchResult" uid="currentRow" pagesize = "20" style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 <display:caption media="pdf">&nbsp;</display:caption>
 <display:column headerClass="bluebgheadtd"  class="blueborderfortd" style="width:3%">
 <input name="selectedReceipts" type="checkbox" id="selectedReceipts"
@@ -417,13 +418,14 @@ function checkviewforselectedrecord()
 </div>
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Status" style="width:8%;text-align:center" property="status.description"></display:column>
-</display:table>	
+<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Owner" style="width:8%;text-align:center" property="workflowUserName"></display:column>
+</display:table>	 
 </div>
 <br/>
 <div class="buttonbottom">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="View" onclick="return checkviewforselectedrecord()"/>&nbsp;
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Print" onclick="return checkprintforselectedrecord()"/>&nbsp;
-   <egov-authz:authorize actionName="CancelReceipts">
+   <egov-authz:authorize actionName="CancelReceipt">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Cancel Receipt" onclick="return checkcancelforselectedrecord()"/>&nbsp;
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>

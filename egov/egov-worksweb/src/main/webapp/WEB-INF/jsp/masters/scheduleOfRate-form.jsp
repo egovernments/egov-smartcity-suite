@@ -277,9 +277,7 @@ var makeScheduleOfRateDataTable = function() {
         		<td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.category" />:</td>
           		<td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" onchange="UniqueCheckOnCodenumber();"/> </td>
                 <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.code" />:</td>
-          		<td width="53%" class="whitebox2wk"><s:textfield name="code" cssClass="selectwk" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" />
-					<%-- <egov:uniquecheck id="numberunique" fields="['Value']" url='/masters/ajaxScheduleOfRate!codeNumberUniqueCheck.action' key='codenumber.already.exists' /> --%>
-				</td>
+          		<td width="53%" class="whitebox2wk"><s:textfield name="code" cssClass="selectwk" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" /></td>
 			</tr>
 			<tr>
 				<td width="11%" class="whiteboxwk"></td>
@@ -439,10 +437,6 @@ var makeScheduleOfRateDataTable = function() {
 </div>
 
 <div class="rbbot2"><div></div></div>
-<!-- 
-<input type="button" value="Call1" onclick="testAjaxCall1()"/>
-<input type="button" value="Call2" onclick="testAjaxCall2()"/>
- -->
 </div>
 </div>
 </div>
@@ -476,18 +470,6 @@ var makeScheduleOfRateDataTable = function() {
 		}
 		enableLastEndDate();
 </s:if>	
-
-	function testAjaxCall1() {
-		var url1 = '${pageContext.request.contextPath}/masters/ajaxScheduleOfRate!getByResponseAware.action';
-        var ajaxcall = new Ajax.Request(url1, {
-            method:'get',onSuccess:handleSuccess });
-	}
-	
-	function testAjaxCall2() {
-		var url2 = '${pageContext.request.contextPath}/masters/ajaxScheduleOfRate!getByDirectResponse.action';
-        var ajaxcall = new Ajax.Request(url2, {
-            method:'get',onSuccess:handleSuccess });
-	}
 	
 	function handleSuccess(transport) {
 		alert('status :'+transport.status+' ,Result: '+transport.responseText);

@@ -41,8 +41,13 @@
 <%@ include file="/includes/taglibs.jsp" %>
 
 <head>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	rel="stylesheet" type="text/css" />
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -65,24 +70,32 @@ jQuery(document).ready(function() {
      doLoadingMask();
      onBodyLoad();
 
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+     
      jQuery( "#instrumentDate" ).datepicker({ 
-         dateFormat: 'dd/mm/yy',
-         beforeShow: function(input) {
-             jQuery(this).unbind('blur');
-             isDatepickerOpened=true;
-		 },
-         onSelect: function(dateText) {
-        	 //checkForCurrentDate(this);
-     	 },
-     	 onClose: function(dateText, inst){ 
-         	console.log('called!'); 
-         	isDatepickerOpened=false; 
-         	checkForCurrentDate(this);
-         	
-        }
-     	
-	  });
+    	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
+         onRender: function(date) {
+             console.log(date);
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+	  }).on('changeDate', function(ev) {
+		  isDatepickerOpened=false; 
+       	  checkForCurrentDate(this);
+	  }).data('datepicker');
 
+     jQuery( "#manualReceiptDate" ).datepicker({ 
+    	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
+    	 onRender: function(date) {
+       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+       	  }
+	  }).on('changeDate', function(ev) {
+		  isDatepickerOpened=false; 
+       	  checkForCurrentDate(this);
+		  validateManualReceiptDate(this);
+	  }).data('datepicker');
  });
 
 jQuery(window).load(function () {
@@ -225,6 +238,7 @@ var initialSetting="true";
 function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
 {
 	document.getElementById("receipt_error_area").innerHTML=""; 
+	document.getElementById("receipt_error_area").style.display="none";
 	var chequetable=document.getElementById('chequegrid');
 	var chequetablelen1 =chequetable.rows.length;
     if(!verifyChequeDetails(chequetable,chequetablelen1)){
@@ -969,9 +983,7 @@ function validate()
 		return false;
 	}
 	else {
-		doLoadingMask('#loadingMask');
 		document.collDetails.action="receipt-save.action";
-		document.collDetails.submit();
   		
 		return validation;
   		
@@ -1303,13 +1315,13 @@ function onBodyLoad()
 		document.getElementById('asteriskId').style.display="";
 	}
 	if(null != document.getElementById('manualreceiptinfo')){
-		document.getElementById('manualreceiptinfo').checked=true;
+		document.getElementById('manualreceiptinfo').checked=false;
 	}
 	if(null != document.getElementById('manualReceiptNumber')){
-		document.getElementById('manualReceiptNumber').disabled=false;
+		document.getElementById('manualReceiptNumber').disabled=true;
 	}
 	if(null != document.getElementById('manualReceiptDate')){
-		document.getElementById('manualReceiptDate').disabled=false;
+		document.getElementById('manualReceiptDate').disabled=true;
 	}
 
 	<s:if test="%{isBillSourcemisc()}"> 
@@ -1361,7 +1373,7 @@ function onBodyLoad()
 		document.getElementById('instrumentChequeAmount').value="";
 	}
 	if(document.getElementById('paidBy').value==""){
-		var paidby =  "Paid By" + '<s:property value="%{payeeName}"/>';
+		var paidby =  '<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 		paidby = paidby.replace('&amp;','&');
 		document.getElementById('paidBy').value=paidby;
 	}
@@ -1522,6 +1534,7 @@ function validateManualReceiptDate(obj)
 				  document.getElementById("receipt_dateerror_area").style.display="block";
 			      document.getElementById("receipt_dateerror_area").innerHTML+=
 							'<s:text name="billreceipt.manualreceipt.futuredate.errormessage" />'+'<br/>';
+				  jQuery(obj).val('');
 				  scrolltop();
 				  return false;
 			  }
@@ -1611,18 +1624,11 @@ function checkForCurrentDate(obj)
 			  document.getElementById("receipt_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
 		   </s:else>
-		   //obj.value = "";
-	       // obj.focus(); 
-	       obj.tabIndex="-1";
-	       var keyCode = document.all? window.event.keyCode:event.which;
-		   if(keyCode==9) {
-	       window.scroll(0,0);
-	       }
-	       window.scroll(0,0);
+		   jQuery(obj).val('');
+		   scrolltop();
 	       return false;
 		   }
 	   }
-	      
 	   }
 }
 
@@ -1661,7 +1667,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value="Payee" + '<s:property value="%{payeeName}"/>';
+	document.getElementById('paidBy').value='<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -1713,6 +1719,10 @@ function loadDropDownCodesBank()
 var yuiflagBank = new Array();
 function autocompletecodeBank(obj,myEvent)
 {
+	//Fix-Me
+	var branchObj = document.getElementById('instrumentBranchName');
+	jQuery(branchObj).trigger('focus');
+	jQuery(obj).focus();
 	var src = obj;	
 	var target = document.getElementById('bankcodescontainer');	
 	var posSrc=findPos(src); 
@@ -1756,11 +1766,11 @@ function fillAfterSplitBank(obj)
 		getControlInBranch(currRow,'bankName').value=temp[0];
 		
 	}
-	else
+	/* else
 	{
 		getControlInBranch(currRow,'bankID').value="";
 		getControlInBranch(currRow,'bankName').value="";
-	}
+	} */
 	
 }
 
@@ -1944,7 +1954,7 @@ function showHideMandataryMark(obj){
 	   <tr id="cashdetails" >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
+		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"/></td>
 	   </tr>
 	   
 	   
@@ -1993,7 +2003,7 @@ function showHideMandataryMark(obj){
 		       		<tr id="chequeamountrow">
 		       		    <td class="bluebox" width="3%"></td>
 						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -2043,7 +2053,7 @@ function showHideMandataryMark(obj){
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
 						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" /></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -2132,7 +2142,7 @@ function showHideMandataryMark(obj){
 				       		<tr id="bankamountrow">
 				       		<td class="bluebox" width="3%">&nbsp;</td>
 				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
+				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);"/></td>
 				       		</tr>
 						</table> 
 				<!-- End of bank grid table -->
@@ -2153,7 +2163,7 @@ function showHideMandataryMark(obj){
 					<tr>
 					<td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
-					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" checked="true" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
+					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
 					</tr>
 		 </s:if>
 		 
@@ -2163,7 +2173,7 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
 					<td class="bluebox"><s:textfield label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
-					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
 		
@@ -2183,7 +2193,7 @@ function showHideMandataryMark(obj){
 			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 			<div class="buttonbottom" align="center">
-			      <label><input align="center" type="button" class="buttonsubmit" id="button2" value="Pay" onclick="return validate();"/></label>
+			      <label><input align="center" type="submit" class="buttonsubmit" id="button2" value="Pay" onclick="return validate();"/></label>
 			      &nbsp;
 			      <input name="button" type="button" class="button" id="button" value="Reset" onclick="checkreset();"/>
 			      &nbsp;

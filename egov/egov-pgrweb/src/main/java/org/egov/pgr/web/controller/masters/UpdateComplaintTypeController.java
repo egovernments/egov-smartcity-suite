@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -46,6 +45,8 @@ import javax.validation.Valid;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,16 +62,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/complainttype/update/{code}")
 public class UpdateComplaintTypeController {
+    private static final String COMPLAINTTYPE_UPDATE_SUCCESS = "/complaintType-success";
 
     private final DepartmentService departmentService;
     private final ComplaintTypeService complaintTypeService;
-    private static final String COMPLAINTTYPE_UPDATE_SUCCESS = "/complaintType-success";
+    private @Autowired ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
-    public UpdateComplaintTypeController(final DepartmentService departmentService,
-            final ComplaintTypeService complaintTypeService) {
+    public UpdateComplaintTypeController(final DepartmentService departmentService, final ComplaintTypeService complaintTypeService) {
         this.departmentService = departmentService;
         this.complaintTypeService = complaintTypeService;
+    }
+
+    @ModelAttribute("categories")
+    public List<ComplaintTypeCategory> categories() {
+        return complaintTypeCategoryService.findAll();
     }
 
     @ModelAttribute("departments")
@@ -101,8 +107,7 @@ public class UpdateComplaintTypeController {
     }
 
     @RequestMapping(COMPLAINTTYPE_UPDATE_SUCCESS)
-    public ModelAndView successView(@PathVariable final String code,
-            @ModelAttribute final ComplaintType complaintType) {
+    public ModelAndView successView(@PathVariable final String code, @ModelAttribute final ComplaintType complaintType) {
         return new ModelAndView("complaintType/complaintType-success", "complaintType",
                 complaintTypeService.findByCode(code));
     }

@@ -59,9 +59,9 @@ import org.springframework.beans.factory.annotation.Autowired;
     @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
     @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
     @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
-            "namespace", "/reports" }),
+            "namespace", "/reports", "receiptDate",  "${receiptDate}"}),
             @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CHEQUE, type = "redirectAction", location = "chequeCollectionReport-submissionReport.action", params = {
-                    "namespace", "/reports" }),
+                    "namespace", "/reports", "receiptDate",  "${receiptDate}" }),
                     @Result(name = "cancel", type = "redirectAction", location = "receipt", params = { "namespace", "/receipts",
                             "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
@@ -133,6 +133,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     public void setWfAction(final String wfAction) {
         this.wfAction = wfAction;
     }
+    private String receiptDate;
 
     /**
      * Result for cash submission report (redirects to the cash collection report)
@@ -146,6 +147,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     @Autowired
     private SecurityUtils securityUtils;
+    private String inboxItemDetails;
+
+    public String getInboxItemDetails() {
+        return inboxItemDetails;
+    }
 
     /**
      * This method is called when user clicks on a collections work flow item in the inbox. The inbox item details contains the
@@ -156,12 +162,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 4) {
+        if (params.length == 5) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
-            setCounterId(Integer.valueOf(params[3]));
+            setCounterId(Integer.valueOf(params[4]));
+            setReceiptDate(params[3]);
         }
+        this.inboxItemDetails = inboxItemDetails;
     }
 
     /**
@@ -365,13 +373,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param statusCode Status code for which receipts are to be fetched
      * @param workflowAction Work flow action code
      */
-    private void fetchReceipts(final String statusCode, final String workflowAction) {// Get all receipts that are created by
-                                                                                      // currently logged in user from
+    private void fetchReceipts(final String statusCode, final String workflowAction) {// Get all receipts
+        // that
+        // are created by
+        // currently logged in user from
         // his/her current counter and are in SUBMITTED status
         final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
         receiptHeaders = receiptHeaderService
-                .findAllByStatusUserCounterService(statusCode, position.getId(),
-                        counterId, serviceCode);
+                .findAllByStatusUserCounterService(position.getId(), inboxItemDetails);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
@@ -389,16 +398,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @return Next page to be displayed (index)
      */
     public String listSubmit() {
-        userName = collectionsUtil.getLoggedInUserName();
         final Location counter = collectionsUtil.getLocationOfUser(getSession());
         if (counter != null)
             counterId = counter.getId();
 
         // In SUBMIT mode fetch receipts for ALL billing services
-        serviceCode = CollectionConstants.ALL;
+        // serviceCode = CollectionConstants.ALL;
 
         // Get all receipt headers to be submitted
-        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
+        fetchReceipts(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT);
         return INDEX;
     }
 
@@ -438,7 +446,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
-        if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
+        if (wfAction!=null && wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
             return listApprove();
         else
             return listSubmit();
@@ -516,6 +524,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             else
                 instrumentAmount = instrumentAmount.add(receiptAmount);
             instrumentWiseAmounts.put(instrumentType, instrumentAmount);
+            receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
         }
+    }
+
+    public String getReceiptDate() {
+        return receiptDate;
+    }
+
+    public void setReceiptDate(String receiptDate) {
+        this.receiptDate = receiptDate;
     }
 }

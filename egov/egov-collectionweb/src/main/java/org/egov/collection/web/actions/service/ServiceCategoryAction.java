@@ -42,63 +42,51 @@ package org.egov.collection.web.actions.service;
 import java.util.Collection;
 
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.collection.service.ServiceCategoryService;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceCategory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.egov.infstr.services.PersistenceService;
 
 @ParentPackage("egov")
-@Validations
-@Namespace("/service")
-@ResultPath("/WEB-INF/jsp/")
-@Results({
-        @Result(name = ServiceCategoryAction.NEW, location = "service/serviceCategory-new.jsp"),
-        @Result(name = ServiceCategoryAction.EDIT, location = "service/serviceCategory-edit.jsp"),
-        @Result(name = ServiceCategoryAction.INDEX, location = "service/serviceCategory-index.jsp")
-})
+@Results({ @Result(name = ServiceCategoryAction.NEW, location = "serviceCategory-new.jsp"),
+        @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
+        @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp") })
 public class ServiceCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
-    @Autowired
-    private ServiceCategoryService serviceCategoryService;
+    private PersistenceService<ServiceCategory, Long> serviceCategoryService;
     private Collection<ServiceCategory> serviceCategoryList = null;
     private ServiceCategory serviceCategoryInstance = new ServiceCategory();
     private String code;
 
-    @Action(value = "/serviceCategory-newform")
+    @Action(value = "/service/serviceCategory-newform")
     public String newform() {
         return NEW;
     }
 
-    @Action(value = "/serviceCategory-list")
+    @Action(value = "/service/serviceCategory-list")
     public String list() {
-        serviceCategoryList = serviceCategoryService.getAllServiceCategoriesOrderByCode();
+        serviceCategoryList = serviceCategoryService.findAll(CollectionConstants.SERVICECATEGORY_CODE);
         return INDEX;
     }
 
-    @Action(value = "/serviceCategory-edit")
+    @Action(value = "/service/serviceCategory-edit")
     public String edit() {
-        serviceCategoryInstance = serviceCategoryService.findByCode(code);
+        serviceCategoryInstance = serviceCategoryService.findByNamedQuery("SERVICE_CATEGORY_CODE", code);
         return EDIT;
     }
 
-    @Action(value = "/serviceCategory-save")
+    @Action(value = "/service/serviceCategory-save")
     public String save() {
-        serviceCategoryService.validate(serviceCategoryInstance);
         serviceCategoryService.update(serviceCategoryInstance);
         return list();
     }
 
-    @Action(value = "/serviceCategory-create")
+    @Action(value = "/service/serviceCategory-create")
     public String create() {
-        serviceCategoryService.validate(serviceCategoryInstance);
         serviceCategoryService.create(serviceCategoryInstance);
         return list();
     }
@@ -108,10 +96,6 @@ public class ServiceCategoryAction extends BaseFormAction {
         return serviceCategoryInstance;
     }
 
-    public void setModel(final ServiceCategory serviceCategoryInstance) {
-        this.serviceCategoryInstance = serviceCategoryInstance;
-    }
-
     /**
      * @return the serviceCategoryList
      */
@@ -119,6 +103,10 @@ public class ServiceCategoryAction extends BaseFormAction {
         return serviceCategoryList;
     }
 
+    public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
+        this.serviceCategoryService = serviceCategoryService;
+    }
+    
     public String getCode() {
         return code;
     }

@@ -53,7 +53,7 @@ public class AssignmentAdaptor implements JsonSerializer<Assignment> {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("positionId", assignment.getPosition().getId());
         jsonObject.addProperty("positionName", assignment.getPosition().getName());
-        jsonObject.addProperty("userName", assignment.getEmployee().getUsername());
+        jsonObject.addProperty("userName", assignment.getEmployee().getName());
         return jsonObject;
     }
 }

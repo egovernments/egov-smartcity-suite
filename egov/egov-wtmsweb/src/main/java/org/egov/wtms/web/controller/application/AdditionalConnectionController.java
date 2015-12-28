@@ -47,6 +47,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
@@ -123,22 +124,22 @@ public class AdditionalConnectionController extends GenericConnectionController 
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
                 additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
-        BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
-        model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
+        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
     }
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
-            @RequestParam String workFlowAction, final HttpServletRequest request,final BindingResult errors) {
+            @RequestParam String workFlowAction, final HttpServletRequest request, final BindingResult errors) {
 
         final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
         if (!message.isEmpty() && !"".equals(message))
             return "redirect:/application/addconnection/"
-                    + addConnection.getConnection().getParentConnection().getConsumerCode();
+            + addConnection.getConnection().getParentConnection().getConsumerCode();
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -155,7 +156,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection, resultBinder);
         if (addConnection.getState() == null)
             addConnection.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
@@ -164,7 +165,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(addConnection.getConnection());
             loadBasicDetails(addConnection, model, parentConnectionDetails);
-            prepareWorkflow(model,addConnection,new WorkflowContainer());
+            prepareWorkflow(model, addConnection, new WorkflowContainer());
+            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
             model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
             model.addAttribute("stateType", addConnection.getClass().getSimpleName());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
@@ -193,27 +195,40 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
                     .getPropertyIdentifier());
-            if(userPosition ==null)
-            {
+            if (userPosition == null) {
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(addConnection.getConnection());
                 loadBasicDetails(addConnection, model, parentConnectionDetails);
-                prepareWorkflow(model,addConnection,new WorkflowContainer());
+                prepareWorkflow(model, addConnection, new WorkflowContainer());
                 model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
                 model.addAttribute("stateType", addConnection.getClass().getSimpleName());
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping", "err.validate.connection.user.mapping");
+                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
+                        "err.validate.connection.user.mapping");
                 return "addconnection-form";
-            }
-            else {
+            } else
                 approvalPosition = userPosition.getId();
-            }
         }
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent,
                 addConnection.getApplicationType().getCode(), workFlowAction);
+        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
+                .getCurrentUser().getId(), new Date(), new Date());
+        String nextDesign = "";
+        Assignment assignObj = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+        if (assignObj != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignObj);
+        } else if (assignObj == null && approvalPosition != null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
         final String pathVars = addConnection.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverUserName(approvalPosition);
+                + waterTaxUtils.getApproverName(approvalPosition) + ","
+                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                + (nextDesign != null ? nextDesign : "");
         return "redirect:/application/application-success?pathVars=" + pathVars;
     }
 

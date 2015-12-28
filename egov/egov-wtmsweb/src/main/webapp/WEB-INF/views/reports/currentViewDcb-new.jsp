@@ -54,7 +54,12 @@
 				<div class="page-container" id="page-container">
 					<form:hidden id="mode" path="" name="mode" value="${mode}" />
 					<input type="hidden" id="consumerCode" name="consumerCode"
-						value="${waterConnectionDetails.connection.consumerCode}" /> <input
+						value="${waterConnectionDetails.connection.consumerCode}" />
+						<input type="hidden"  id="citizenRole" value="${citizenRole}" />
+						<input type="hidden"  name="applicationTypeCode" id="applicationTypeCode" value="${applicationTypeCode}" />
+						<input type="hidden"  name="waterTaxDueforParent" id="waterTaxDueforParent" value="${waterTaxDueforParent}" />
+						
+						 <input
 						type="hidden" id="totalRcptAmt" name="totalRcptAmt"
 						value="${totalRcptAmt}" />
 					<div class="panel-heading">
@@ -127,7 +132,7 @@
 
 												<td class="blueborderfortd">
 													<div align="right">
-														<c:forEach items="${var1.value.rebates}" var="var4"
+														<c:forEach items="${var1.value.balances}" var="var4"
 															varStatus="counter">
 															<c:out value="${var4.value}" />
 														</c:forEach>
@@ -234,7 +239,7 @@
 									<tr>
 									<th class="bluebgheadtd" align="center">Receipt Number</th>
 									<th class="bluebgheadtd" align="center">Receipt Date</th>
-									<th class="bluebgheadtd" align="center">Receipt TotalAmount</th>
+									<th class="bluebgheadtd" align="center">Receipt Amount</th>
 									</tr>
 									<c:forEach items="${activeRcpts}" var="rcpt" varStatus="r">
 
@@ -285,6 +290,7 @@
 									</tr>
 								</table>
 					</c:if>
+					<c:if test="${!citizenRole }" >
 					<table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
 								id="tbldcbdrilldown">
 								<td colspan="9"><div class="panel-heading">
@@ -296,7 +302,7 @@
 								<tr>
 									<th class="bluebgheadtd" align="center">Receipt Number</th>
 									<th class="bluebgheadtd" align="center">Receipt Date</th>
-									<th class="bluebgheadtd" align="center">Receipt TotalAmount</th>
+									<th class="bluebgheadtd" align="center">Receipt Amount</th>
 								</tr>
 								<c:forEach items="${cancelRcpt}" var="actr" varStatus="r22">
 									<input type="hidden" id="${actr.receiptNumber}"
@@ -342,12 +348,21 @@
 									</td>
 								</tr>
 							</table>
-						
+						</c:if>
 					<div class="row">
 						<div class="text-center">
 							<a href="javascript:void(0);" class="btn btn-primary"
 								onclick="self.close()"> <spring:message code='lbl.close' />
 							</a>
+							<c:if test="${citizenRole && waterTaxDueforParent > 0}" >
+							<a href="javascript:void(0);" class="btn btn-primary" onclick="onsubmitpay()"
+													target="_blank"> Pay Online
+												</a>
+							
+							</c:if>
+							<c:if test="${citizenRole}">
+							<input id="Searchconnection" class="btn btn-primary" type="button" onclick="window.location='/wtms/search/waterSearch/';" 
+									value="Search Connection" name="Searchconnection"></c:if>
 						</div>
 					</div>
 				</div>
@@ -355,6 +370,15 @@
 		</div>
 	</div>
 </div>
-
-
+<script type="text/javascript">
+function onsubmitpay()
+{
+	var consumerNumber=$('#consumerCode').val();
+	var applicationTypeCode=$('#applicationTypeCode').val();
+	var url = '/wtms/application/generatebillOnline/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
+											$('#editmeterWate11rConnectionform').attr('method', 'get');
+											$('#editmeterWate11rConnectionform').attr('action', url);
+											window.location = url;
+}
+</script>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>

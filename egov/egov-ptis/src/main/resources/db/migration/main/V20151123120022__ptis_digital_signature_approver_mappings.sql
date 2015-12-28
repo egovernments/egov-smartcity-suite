@@ -1,0 +1,4 @@
+﻿delete from eg_roleaction where roleid = (select id from eg_role where name  = 'Property Verifier') and actionid = (select id from eg_action where name = 'Search Pending Digital Signature');
+delete from eg_roleaction where roleid = (select id from eg_role where name  = 'Property Verifier') and actionid = (select id from eg_action where name = 'Generate Bulk Notices');
+INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name  = 'Property Approver'), (select id from eg_action where name = 'Search Pending Digital Signature'));
+INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role where name  = 'Property Approver'), (select id from eg_action where name = 'Generate Bulk Notices'));

@@ -471,19 +471,35 @@ public class PtDemandHibernateDao implements PtDemandDao {
     
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> getTaxDetailsForWaterConnection(final String assessmentNo) {
+    public List<Object> getTaxDetailsForWaterConnection(final String consumerNo,final String connectionType) {
         List<Object> list = new ArrayList<Object>();
-        String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
-                + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-                + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
-                + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+        String selectQuery="";
+        if(connectionType.equals("METERED")){
+         selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
+                + " from  egwtr_connection conn,egwtr_connectiondetails bp, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                + " where conn.id =bp.connection "
+                + " and bp.demand = d.id " + " and d.id = dd.id_demand "
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
-                + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
+                + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
                 + " and dd.amount > dd.amt_collected  "
-                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Water Tax Management' ))  ";
-        selectQuery=selectQuery+" order by inst.description desc ";
+                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Water Tax Management' ) and installment_type='Monthly' )  ";
+        }
+        else{
+            
+            selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
+                    + " from  egwtr_connection conn,egwtr_connectiondetails bp, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                    + " where conn.id =bp.connection "
+                    + " and bp.demand = d.id " + " and d.id = dd.id_demand "
+                    + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                    + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
+                    + " and dd.amount > dd.amt_collected  ";
+                  //  + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' ) )  ";
         
-        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
+            
+        }
+         selectQuery=selectQuery+" order by inst.description desc ";
+        
+        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("consumerNo", consumerNo);
         list = qry.list();
         return list;
     }

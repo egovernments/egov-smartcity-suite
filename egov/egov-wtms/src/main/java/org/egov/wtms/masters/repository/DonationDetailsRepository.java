@@ -52,13 +52,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DonationDetailsRepository extends JpaRepository<DonationDetails, Long> {
-
-    @Query(" from DonationDetails dd where dd.fromDate<=current_date and dd.toDate>=current_date and dd.donationHeader =:donationHeader")
+    
+    @Query(" from DonationDetails dd where dd.donationHeader =:donationHeader and ((dd.toDate is not null and current_date between dd.fromDate and dd.toDate) or (dd.toDate is null and dd.fromDate <= current_date))")
     DonationDetails findByDonationHeader(@Param("donationHeader") DonationHeader donationHeader);
 
-    @Query(" from DonationDetails dd where dd.donationHeader.propertyType=:propertyType and dd.donationHeader.category=:categoryType and dd.donationHeader.usageType=:usageType and dd.donationHeader.minPipeSize=:minPipeSize and dd.donationHeader.maxPipeSize=:maxPipeSize ")
+    @Query(" from DonationDetails dd where dd.donationHeader.propertyType=:propertyType and dd.donationHeader.category=:categoryType and dd.donationHeader.usageType=:usageType and dd.donationHeader.minPipeSize=:minPipeSize ")
     DonationDetails findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
             @Param("propertyType") PropertyType propertyType, @Param("categoryType") ConnectionCategory categoryType,
-            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize,
-            @Param("maxPipeSize") PipeSize maxPipeSize);
+            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize
+            );
 }

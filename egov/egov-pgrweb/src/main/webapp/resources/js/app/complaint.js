@@ -37,42 +37,31 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-	
+
+var currentType = "";
 jQuery(document).ready(function($)
 {
-	// Instantiate the Bloodhound suggestion engine
-	var complaintype = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: 'complaintTypes?complaintTypeName=%QUERY',
-			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (ct) {
-					return {
-						name: ct.name,
-						value: ct.id
-					};
+	$('#complaintTypeCategory').change(function() {
+		$('#complaintType').find('option:gt(0)').remove();
+		if (this.value === '') {
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "complainttypes-by-category",
+				cache: true,
+				data:{'categoryId' : this.value}
+			}).done(function(data) {
+				$.each(data, function(key,value) {
+					$('#complaintType').append('<option value="'+value.id+'">' + value.name + '</option>');
 				});
-			}
+				if (currentType != "") {
+					$("#complaintType").val(currentType);
+					currentType="";
+				}
+			});
 		}
 	});
-	
-	// Initialize the Bloodhound suggestion engine
-	complaintype.initialize();
-	// Instantiate the Typeahead UI
-	$('.typeahead').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 1
-		}, {
-		displayKey: 'name',
-		source: complaintype.ttAdapter()
-	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
-		$("#complaintTypeId").val(data.value);    
-    });
 	
 	// Instantiate the Bloodhound suggestion engine
 	var complaintlocation = new Bloodhound({
@@ -154,9 +143,14 @@ jQuery(document).ready(function($)
 			    content: "Enter your present residential address!"
 			  },
 			  {
-			    element: "#complaintTypeName",
+			    element: "#complaintTypeCategory",
+			    title: "Grievance Category",
+			    content: "Select your grievance category!"
+			  },
+			  {
+			    element: "#complaintType",
 			    title: "Grievance Type",
-			    content: "Enter your grievance type and select it from the suggestion or choose it from below frequently filed grievance type!"
+			    content: "Select your grievance type!"
 			  },
 			  {
 			    element: "#doc",
@@ -191,7 +185,7 @@ jQuery(document).ready(function($)
 			  storage: false,
 			  duration: 5000,
 			  onShown: function (tour) {
-				  console.log(tour.getCurrentStep());
+				  //console.log(tour.getCurrentStep());
 				  var step = tour.getCurrentStep();
 				  if(step == 0){
 					  typingfeel('James Jackson', '#f-name');
@@ -201,13 +195,16 @@ jQuery(document).ready(function($)
 					  typingfeel('james.jackson@gmail.com', '#email');
 				  }else if(step == 3){
 					  typingfeel('Colorado U.S', '#address');
-				  }else if(step == 4){ 
-				    typingfeelintypeahead('Dog','#complaintTypeName','Dog menace');
+				  }else if(step == 4){
+					  $('#complaintTypeCategory').val('1').attr("selected", "selected");
 				  }else if(step == 5){
+					  $('<option>').val('1').text('Absenteesim of sweepers').appendTo('#complaintType');
+					  $('#complaintType').val('1').attr("selected", "selected");
+				  }else if(step == 6){
 					  typingfeel('Dog menace in madiwala', '#doc');
-				  }else if(step == 7){ 
+				  }else if(step == 8){ 
 				    typingfeelintypeahead('Rev','#location','Revenue, Zone-4, Srikakulam  Municipality');
-				  }else if(step == 8){
+				  }else if(step == 9){
 					  typingfeel('Spencer Plaza', '#landmarkDetails');
 				  }
 			  },
@@ -245,6 +242,12 @@ $("#receivingCenter").change(function(){
 	}
 });	
 
+function setComplaintTypeId(type,category) {
+	$("#complaintTypeCategory").val(category);
+	$("#complaintTypeCategory").trigger('change');
+	currentType = type;
+}
+
 function typingfeel(text, input){
 	$.each(text.split(''), function(i, letter){
         setTimeout(function(){
@@ -269,10 +272,6 @@ function typingfeelintypeahead(text, input, typeaheadtext){
         	}
         }, 1000*(i+1));
     });
-}
-
-function setComplaintTypeId(obj) {
-	$("#complaintTypeId").val(obj)
 }
 
 function enableRC() {

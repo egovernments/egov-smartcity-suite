@@ -71,7 +71,11 @@ public class SearchUserRoleController {
     }
 
     @RequestMapping(params = { "userId" })
-    public String searchUserRole(@RequestParam final Long userId) {
+    public String searchUserRole(@RequestParam final Long userId, final Model model) {
+        if (userId == null || userId < 1) {
+            model.addAttribute("error", "invalid.user.entered");
+            return "userrole-search";
+        }
         return "redirect:/userrole/update/" + userId;
 
     }

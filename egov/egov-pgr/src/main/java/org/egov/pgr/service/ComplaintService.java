@@ -1,4 +1,4 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+/*eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  *
  * Copyright (C) <2015> eGovernments Foundation
@@ -27,13 +27,12 @@
  *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.service;
 
-import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,13 +48,10 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.service.CommonsService;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -64,12 +60,12 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -89,6 +85,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -96,7 +93,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class ComplaintService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
@@ -146,9 +143,15 @@ public class ComplaintService {
     @Autowired
     private AssignmentService assignmentService;
 
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
+
         if (StringUtils.isBlank(complaint.getCrn()))
             complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
@@ -170,9 +173,9 @@ public class ComplaintService {
             } catch (final Exception e) {
                 throw new ValidationException("gis.location.info.not.found");
             }
+
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getUsername() + "::"
-                + complaint.getComplainant().getUserDetail().getName())
+        complaint.transition().start().withSenderName(complaint.getComplainant().getName())
                 .withComments("Grievance registered with Complaint Number : " + complaint.getCrn())
                 .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
@@ -185,12 +188,16 @@ public class ComplaintService {
         else if (null != assignee)
             complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        complaint.setUlb(cityWebsite.getName());
-        complaint.setDistrict(cityWebsite.getDistrictName());
-        final Complaint savedComplaint = complaintRepository.save(complaint);
+        Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
+
+        Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
         sendEmailandSms(complaint);
+ 
+        //Indexing complaint here
+        complaintIndexService.createComplaintIndex(complaintIndex);
         return savedComplaint;
     }
 
@@ -204,10 +211,13 @@ public class ComplaintService {
      */
 
     @Transactional
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
         final Role goRole = roleService.getRoleByName(PGRConstants.GO_ROLE_NAME);
-        final String userName = securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName();
+        String userName = null;
+        if (securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN))
+            userName = securityUtils.getCurrentUser().getName();
+        else
+            userName = securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName();
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
@@ -245,20 +255,25 @@ public class ComplaintService {
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                         .withOwner(complaint.getState().getOwnerPosition());
         }
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        complaint.setUlb(cityWebsite.getName());
-        complaint.setDistrict(cityWebsite.getDistrictName());
+
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
+        
+          if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
+          complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
+          sendEmailandSmsOnCompletion(savedComplaint);
+         
+        Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
+
+        complaintIndexService.createComplaintIndex(complaintIndex);
         return savedComplaint;
     }
 
     public Complaint getComplaintById(final Long complaintID) {
         return complaintRepository.findOne(complaintID);
     }
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -272,9 +287,7 @@ public class ComplaintService {
         final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.status", "complaintStatus");
 
-        criteria.add(Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
-                .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
-                .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
+        criteria.add(Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", REOPENED.name()))
                 .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
                 .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
                 .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
@@ -325,8 +338,12 @@ public class ComplaintService {
         final State state = complaint.getState();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         map.put("date", state.getDateInfo());
-        map.put("comments", state.getComments()!=null?state.getComments():"");
-        map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+        map.put("comments", state.getComments() != null ? state.getComments() : "");
+        if (state.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                || state.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+            map.put("updatedBy", complaint.getComplainant().getName());
+        else
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
@@ -350,9 +367,13 @@ public class ComplaintService {
         for (final StateHistory stateHistory : complaint.getStateHistory()) {
             final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
             HistoryMap.put("date", stateHistory.getDateInfo());
-            HistoryMap.put("comments", stateHistory.getComments() !=null ?stateHistory.getComments() : "");
-            HistoryMap.put("updatedBy",
-                    state.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
+            HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
+            if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                    || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+                HistoryMap.put("updatedBy", complaint.getComplainant().getName());
+            else
+                HistoryMap.put("updatedBy",
+                        stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
             HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
             HistoryMap.put("status", stateHistory.getValue());
             final Position owner = stateHistory.getOwnerPosition();
@@ -375,6 +396,10 @@ public class ComplaintService {
     }
 
     public void sendEmailandSms(final Complaint complaint) {
+        Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(complaint, savedComplaintIndex);
+        ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
+        
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());
 
@@ -407,9 +432,24 @@ public class ComplaintService {
                         .append(", ")
                         .append(complaint.getComplainant().getMobile() == null ? "" : complaint.getComplainant().getMobile())
                         .append(" at ").append(complaint.getLocation().getName());
+                if (complaintIndex.getLatlngAddress() != null)
+                    smsBodyOfficial.append(", " + complaintIndex.getLatlngAddress());
+                else
+                    smsBodyOfficial
+                            .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName() : "");
+                smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails() : "");
                 messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
             }
         }
+
+    }
+
+    public void sendEmailandSmsOnCompletion(final Complaint complaint) {
+        final StringBuffer smsBody = new StringBuffer().append("Your Grievance regarding ")
+                .append(complaint.getComplaintType().getName())
+                .append(" with tracking number '").append(complaint.getCrn())
+                .append("' is updated to ").append(complaint.getStatus().getName());
+        messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
 
     }
 

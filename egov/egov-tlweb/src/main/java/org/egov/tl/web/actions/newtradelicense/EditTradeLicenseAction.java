@@ -64,13 +64,16 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.tl.domain.entity.FeeMatrixDetail;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.LicenseDocumentType;
 import org.egov.tl.domain.entity.Licensee;
 import org.egov.tl.domain.entity.MotorDetails;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.entity.WorkflowBean;
 import org.egov.tl.domain.service.BaseLicenseService;
+import org.egov.tl.domain.service.FeeMatrixService;
 import org.egov.tl.domain.service.TradeService;
 import org.egov.tl.domain.service.masters.LicenseCategoryService;
 import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
@@ -107,6 +110,9 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     private BaseLicenseService baseLicenseService;
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
+    @Autowired
+    private FeeMatrixService feeMatrixService;
+    BigDecimal totalAmount = BigDecimal.ZERO;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
     private List<MotorDetails> installedMotorList = new ArrayList<MotorDetails>();
 
@@ -242,7 +248,14 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             }
         
         service().processAndStoreDocument(tradeLicense.getDocuments());
-        persistenceService.update(tradeLicense); 
+        
+        LicenseAppType newAppType = (LicenseAppType)persistenceService.find("from  LicenseAppType where name='New' ");
+		tradeLicense.setLicenseAppType(newAppType);
+
+        tradeLicense= (TradeLicense)  persistenceService.update(tradeLicense); 
+        List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(tradeLicense);
+        totalAmount = service().recalculateDemand(feeList,tradeLicense);
+        
         /*
          * if (tradeLicense.getOldLicenseNumber() != null) doAuditing(AuditModule.TL, AuditEntity.TL_LIC, AuditEvent.MODIFIED,
          * tradeLicense.getAuditDetails());

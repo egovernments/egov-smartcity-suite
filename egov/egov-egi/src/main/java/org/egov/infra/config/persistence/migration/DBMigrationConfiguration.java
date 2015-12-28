@@ -65,9 +65,8 @@ public class DBMigrationConfiguration {
     @Bean
     @DependsOn("dataSource")
     public Flyway flyway(final DataSource dataSource) {
-        Flyway flyway = null;
-        for (final String schema : tenants()) {
-            flyway = new Flyway();
+        tenants().parallelStream().forEach(schema -> {
+            final Flyway flyway = new Flyway();
             flyway.setBaselineOnMigrate(true);
             flyway.setOutOfOrder(true);
             if (applicationProperties.devMode())
@@ -77,8 +76,21 @@ public class DBMigrationConfiguration {
             flyway.setDataSource(dataSource);
             flyway.setSchemas(schema);
             flyway.migrate();
+        });
+        runStatewideMigration(dataSource);
+        return new Flyway();
+    }
+
+    private void runStatewideMigration(final DataSource dataSource) {
+        if (!applicationProperties.devMode()) {
+            final Flyway flyway = new Flyway();
+            flyway.setBaselineOnMigrate(true);
+            flyway.setOutOfOrder(true);
+            flyway.setLocations("classpath:/db/migration/statewide/");
+            flyway.setDataSource(dataSource);
+            flyway.setSchemas("public");
+            flyway.migrate();
         }
-        return flyway;
     }
 
     @Bean(name = "tenants", autowire = Autowire.BY_NAME)
@@ -93,4 +105,5 @@ public class DBMigrationConfiguration {
         });
         return tenants;
     }
+
 }

@@ -46,10 +46,10 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.jasper.JasperReportService;
 import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.infstr.cache.LRUCache;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;

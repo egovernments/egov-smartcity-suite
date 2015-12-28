@@ -130,8 +130,10 @@
 								placeholder="<spring:message code='lbl.email'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="complaintType" class="form-control patternvalidation" data-pattern="alphabetwithspace" id="ct-type"
-								placeholder="<spring:message code='lbl.complaintType'/>" />
+							<form:select name="complaintType" path="" data-first-option="false" cssClass="form-control" >
+								<form:option value=""><spring:message code="lbl.complaintType" /></form:option>
+								<form:options items="${complaintTypedropdown}" itemValue="name" itemLabel="name" />  
+							</form:select>
 						</div>
 						<div class="col-md-4 add-margin">
 							<form:select name="complaintDepartment" path="" data-first-option="false" cssClass="form-control" >

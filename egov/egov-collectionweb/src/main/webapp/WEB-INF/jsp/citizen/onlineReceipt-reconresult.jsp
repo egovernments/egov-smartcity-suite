@@ -43,12 +43,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><s:text name="coc.title"/></title>
-<script type="text/javascript">
-function onBodyLoad(){
-	
-}
-
-</script>
 </head>
 <body>
 <s:if test="%{hasErrors()}">

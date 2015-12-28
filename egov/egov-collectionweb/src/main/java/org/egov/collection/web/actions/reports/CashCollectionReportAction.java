@@ -39,11 +39,14 @@
  */
 package org.egov.collection.web.actions.reports;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -55,7 +58,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 
@@ -65,7 +67,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 public class CashCollectionReportAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
-
+    private static final Logger LOGGER = Logger.getLogger(CashCollectionReportAction.class);
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     private ReportService reportService;
     private CollectionsUtil collectionsUtil;
@@ -81,6 +83,7 @@ public class CashCollectionReportAction extends BaseFormAction {
     private static final String EGOV_BOUNDARY_ID = "EGOV_BOUNDARY_ID";
     private static final String EGOV_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     private static final String CASH_COLLECTION_TEMPLATE = "cash_collection";
+    private String receiptDate;
 
     /*
      * (non-Javadoc)
@@ -228,10 +231,17 @@ public class CashCollectionReportAction extends BaseFormAction {
     public String submissionReport() {
         final Map<String, Object> session = getSession();
         collectionsUtil.getLoggedInUser();
-
-        final Date today = ReportUtil.today();
-        critParams.put(EGOV_FROM_DATE, today);
-        critParams.put(EGOV_TO_DATE, today);
+        
+       // final Date today = ReportUtil.today();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date rcptDate = null;
+        try {
+            rcptDate = sdf.parse(receiptDate);
+        } catch (ParseException e) {
+            LOGGER.error("Exception occured while parsing receipt created date", e);
+        }
+        critParams.put(EGOV_FROM_DATE, rcptDate);
+        critParams.put(EGOV_TO_DATE, rcptDate);
 
         // critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
         critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
@@ -279,5 +289,13 @@ public class CashCollectionReportAction extends BaseFormAction {
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
+    }
+
+    public String getReceiptDate() {
+        return receiptDate;
+    }
+
+    public void setReceiptDate(String receiptDate) {
+        this.receiptDate = receiptDate;
     }
 }

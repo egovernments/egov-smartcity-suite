@@ -62,20 +62,20 @@
  	<div class="col-sm-3 add-margin check-text">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<input type="checkbox" checked checked >&nbsp;<c:out value="${docs.documentName}"/> 
+				<input type="checkbox" checked disabled>&nbsp;<c:out value="${docs.documentName}" /> 
 			</c:when>
 			<c:otherwise>
 				<input type="checkbox" disabled>&nbsp;<c:out value="${docs.documentName}"/> 
 			</c:otherwise>		
 		</c:choose> 
 		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
-		<form:hidden id="applicationDocs${status.index}documentNames.required" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
+		<form:hidden id="applicationDocs${status.index}documentNames" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
 		<form:hidden id="applicationDocs${status.index}documentNames.documentName" path="applicationDocs[${status.index}].documentNames.documentName" value="${docs.documentName}" /> 
 	</div>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required"/>
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required" />
 			</c:when>
 			<c:otherwise>
 				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" />

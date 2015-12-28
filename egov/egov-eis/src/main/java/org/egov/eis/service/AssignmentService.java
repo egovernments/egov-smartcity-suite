@@ -1,41 +1,32 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ *
+ * Copyright (C) <2015> eGovernments Foundation
+ *
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ *
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ *
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ *
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.eis.service;
 
@@ -46,10 +37,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,8 +101,8 @@ public class AssignmentService {
     }
 
     /**
-     * Get all assignments for position and given date as given date which is passed as parameter. Includes both primary and
-     * secondary assignments.
+     * Get all assignments for position and given date as given date which is
+     * passed as parameter. Includes both primary and secondary assignments.
      *
      * @param posId
      * @param givenDate
@@ -237,7 +230,31 @@ public class AssignmentService {
     }
 
     /**
-     * Get list of primary assignments for deparment,designation,fromdate and todate
+     * Get employee primary/temporary assignment for given department and
+     * designation
+     *
+     * @param departmentId
+     * @param designationId
+     * @param givenDate
+     * @return List of assignment objects if present, else return empty list.
+     */
+    public List<Assignment> getAllPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
+            final Long designationId, final Date givenDate) {
+
+        if (departmentId != null && designationId != null)
+            return assignmentRepository.getAllAssignmentForDepartmentAndDesignation(departmentId, designationId,
+                    givenDate);
+        else if (designationId != null && departmentId == null)
+            return assignmentRepository.getAllAssignmentForDesignation(designationId, givenDate);
+        else if (designationId == null && departmentId != null)
+            return assignmentRepository.getAllAssignmentForDepartment(departmentId, givenDate);
+        return new ArrayList<Assignment>();
+
+    }
+
+    /**
+     * Get list of primary assignments for deparment,designation,fromdate and
+     * todate
      *
      * @param deptId
      * @param desigId
@@ -276,7 +293,8 @@ public class AssignmentService {
     }
 
     /**
-     * Gets all assignments for a particular department,designation and given boundary or all the employees under that boundary
+     * Gets all assignments for a particular department,designation and given
+     * boundary or all the employees who can operate under this boundary
      *
      * @param deptId
      * @param desigId
@@ -288,11 +306,12 @@ public class AssignmentService {
 
         List<Assignment> assignments = null;
         if (null == deptId)
-            assignments = assignmentRepository.findByDesignationAndBoundary(desigId, getBoundaries(boundaryId));
+            assignments = assignmentRepository.findByDesignationAndBoundary(desigId, getRequiredBoundaries(boundaryId));
         else if (null == desigId)
-            assignments = assignmentRepository.findByDepartmentAndBoundary(deptId, getBoundaries(boundaryId));
+            assignments = assignmentRepository.findByDepartmentAndBoundary(deptId, getRequiredBoundaries(boundaryId));
         else
-            assignments = assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, getBoundaries(boundaryId));
+            assignments = assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId,
+                    getRequiredBoundaries(boundaryId));
         return assignments;
     }
 
@@ -303,7 +322,35 @@ public class AssignmentService {
         return bndIds;
     }
 
+    public Set<Long> getRequiredBoundaries(final Long boundaryId) {
+        final Set<Long> bndIds = new HashSet<Long>();
+        final Boundary childBndry = boundaryService.getBoundaryById(boundaryId);
+        String childmpath = childBndry.getMaterializedPath();
+        final Set<String> mpathStr = new HashSet<String>();
+        mpathStr.add(childBndry.getMaterializedPath());
+        for (int i = 0; i < childmpath.length(); i++) {
+            childmpath = childmpath.substring(0, childmpath.lastIndexOf("."));
+            mpathStr.add(childmpath);
+        }
+
+        final List<Boundary> boundaries = boundaryService.findActiveBoundariesForMpath(mpathStr);
+        boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
+        return bndIds;
+    }
+
     public List<Assignment> getAllActiveAssignments(final Long designationId) {
         return assignmentRepository.getAllActiveAssignments(designationId);
+    }
+
+    @Transactional
+    public Employee removeDeletedAssignments(final Employee employee, final String removedAssignIds) {
+        if (null != removedAssignIds)
+            for (final String id : removedAssignIds.split(","))
+                employee.getAssignments().remove(assignmentRepository.findOne(Long.valueOf(id)));
+        return employee;
+    }
+    
+    public Set<User> getUsersByDesignations(final String [] designationNames){
+        return assignmentRepository.getUsersByDesignations(designationNames);
     }
 }

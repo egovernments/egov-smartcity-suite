@@ -56,9 +56,11 @@ public class LoginController {
     private IdentityRecoveryService identityRecoveryService;
 
     @RequestMapping(value = "/password/recover", method = RequestMethod.POST)
-    public String sendPasswordRecoveryURL(@RequestParam final String identity, @RequestParam final String originURL) {
-        return "redirect:/login/secure?recovered=" + identityRecoveryService.generateAndSendUserPasswordRecovery(identity,
-                originURL + "/egi/login/password/reset?token=");
+    public String sendPasswordRecoveryURL(@RequestParam final String identity, @RequestParam final String originURL,
+            final RedirectAttributes redirectAttrib) {
+        redirectAttrib.addAttribute("recovered", identityRecoveryService.generateAndSendUserPasswordRecovery(identity,
+                originURL + "/egi/login/password/reset?token="));
+        return "redirect:/login/secure";
     }
 
     @RequestMapping(value = "/password/reset", params = "token", method = RequestMethod.GET)

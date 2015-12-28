@@ -50,8 +50,12 @@
 
 			<div class="panel-heading">
 				<div class="panel-title">
+				<c:if test="${!citizenRole}" >
 					<strong><spring:message code='title.watertaxSearch' />
-					</strong>
+					</c:if>
+					<c:if test="${citizenRole}" >
+					<strong><spring:message code='lbl.headerforsearch.connection'/></strong></c:if>
+					
 				</div>
 
 			</div>
@@ -65,7 +69,9 @@
 					<input type="hidden"  id="cscUserRole" value="${cscUserRole}" />
 					<input type="hidden"  id="approverUserRole" value="${approverUserRole}" />
 					<input type="hidden"  id="operatorRole" value="${operatorRole}" />
-					<input type="text"  id="citizenRole" value="${citizenRole}" />
+					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
+					<input type="hidden"  id="billcollectionRole" value="${billcollectionRole}" />
+					
 					
 			<c:if test="${!citizenRole }" >
 					<div class="form-group">
@@ -75,14 +81,27 @@
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
-					</div></c:if>
+					</div>
 						<div class="form-group">
 				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 										  <div class="col-md-4 add-margin">
 							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo"/>
 						</div>
 						</div>
-						
+						</c:if>
+						<c:if test="${citizenRole}" >
+						<div class="form-group">
+				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.citizeconsumer.number'/></label>
+										  <div class="col-md-4 add-margin">
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" required="required" maxlength="15" id="app-appcodo"/>
+						</div>
+						</div>
+<%-- <div align="left" class="mandatory" style="font-size: 15px">
+			 
+			 <spring:message code='lbl.mandtryFlds'/>
+			 <span class="mandatory"></span>
+			</div> --%>
+</c:if>
 						<c:if test="${!citizenRole}" >
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
@@ -109,14 +128,15 @@
 				
 						</div>
 						</div>
-						<div class="form-group">
+						<%--  <div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.doornumber" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="doorNumber" class="form-control "   id="app-appcodo" />
 						</div>
-					</div></c:if>
+					</div>  --%></c:if>
+					<c:if test="${!citizenRole}" >
 					<div class="form-group">
 						<div class="text-center">
 							<a href="javascript:void(0);" id="searchapprvedapplication"
@@ -126,7 +146,13 @@
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
-				</div>
+				</div></c:if>
+				<c:if test="${citizenRole}" >
+				<div class="form-group">
+						<div class="text-center">
+							<a href="javascript:void(0);" id="searchapprvedapplication"
+								class="btn btn-primary"><spring:message code='lbl.Submit.button' /></a></div></div>
+				</c:if>
 
 
 				</form:form>
@@ -138,8 +164,8 @@
 		</div>
 
 	</div>
-</div>
 
+</div>
 
 <div class="row">
 					<div class="col-md-6 col-xs-6 table-header"><spring:message code='lbl.searchresult'/></div>

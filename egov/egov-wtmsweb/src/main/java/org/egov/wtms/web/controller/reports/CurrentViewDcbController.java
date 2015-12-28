@@ -58,6 +58,10 @@ import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.model.EgdmCollectedReceipt;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -66,6 +70,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -84,6 +89,9 @@ public class CurrentViewDcbController {
 
     @Autowired
     private ApplicationContext context;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired(required = true)
     protected WaterConnectionDetailsService waterConnectionDetailsService;
@@ -103,6 +111,22 @@ public class CurrentViewDcbController {
     private List<Receipt> getCancelReceipts() {
         return cancelRcpt;
     }
+    
+    @ModelAttribute("citizenRole")
+    public Boolean getCitizenUserRole() {
+        Boolean citizenrole = Boolean.FALSE;
+        if (EgovThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+            for (final Role userrole : currentUser.getRoles())
+                if (userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
+                    citizenrole = Boolean.TRUE;
+                    break;
+                }
+        } else
+            citizenrole = Boolean.TRUE;
+        return citizenrole;
+    }
+
 
     @PersistenceContext
     EntityManager entityManager;
@@ -149,6 +173,10 @@ public class CurrentViewDcbController {
             cancelRcpt = populateCancelledReceiptsOnly(dCBReport.getReceipts());
             model.addAttribute("totalRcptAmt", calculateReceiptTotal());
             model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal());
+            model.addAttribute("applicationTypeCode", waterConnectionDetails.getApplicationType().getCode());
+            BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+            model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
+            model.addAttribute("mode", "viewdcb"); 
 
         }
         return "currentDcb-new";

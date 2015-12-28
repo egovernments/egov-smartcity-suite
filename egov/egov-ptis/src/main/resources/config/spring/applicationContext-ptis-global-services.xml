@@ -86,6 +86,10 @@
          <constructor-arg index="0" ref="propertyMutationPersistenceService"/>
     </bean>
     
+    <bean id="propertyThirdPartyService" class="org.egov.ptis.domain.service.property.PropertyThirdPartyService" scope="prototype">
+        <property name="persistenceService" ref="persistenceService" />
+    </bean>
+    
     <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
     
     <bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
@@ -136,4 +140,7 @@
 		<property name="eisCommonsService" ref="eisCommonsService" />
 		<property name="basicPropertyService" ref="basicPropertyService" />
 	</bean>  
+	<bean id="taxExemptionService" class="org.egov.ptis.domain.service.exemption.TaxExemptionService" scope="prototype" />
+	<bean id="vacancyRemissionService" class="org.egov.ptis.domain.service.property.VacancyRemissionService" scope="prototype" autowire-candidate="true" />
+	
 </beans>

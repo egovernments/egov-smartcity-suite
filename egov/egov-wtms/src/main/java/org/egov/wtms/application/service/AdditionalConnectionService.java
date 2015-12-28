@@ -53,10 +53,10 @@ public class AdditionalConnectionService {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
+
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
+
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -81,27 +81,41 @@ public class AdditionalConnectionService {
         else if (null != assessmentDetails.getErrorDetails()
                 && null != assessmentDetails.getErrorDetails().getErrorCode())
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (null != assessmentDetails.getPropertyDetails()
-                && null != assessmentDetails.getPropertyDetails().getTaxDue()
-                && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
-            if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
-                        assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
-        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE)) {
-           BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
-           if ( waterTaxDueforParent.doubleValue() > 0)
-                validationMessage = messageSource
-                        .getMessage("err.validate.primary.connection.watertax.due", null, null);
-            if (parentWaterConnectionDetail.getConnection().getId() != null)
-                if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
-                    validationMessage = messageSource.getMessage("err.validate.additional.connection.watertax.due",
-                            null, null);
-        } else if (null != inWorkflow)
+        else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() }, null);
+                            inWorkflow.getApplicationNumber() },
+                    null);
+        else {
+            if (null != assessmentDetails.getPropertyDetails()
+                    && null != assessmentDetails.getPropertyDetails().getTaxDue()
+                    && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
+                if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+                    validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                            assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                            parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
+            }
+            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE)) {
+                BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+                if (waterTaxDueforParent.doubleValue() > 0)
+                    if (validationMessage.equalsIgnoreCase(""))
+                        validationMessage = messageSource
+                                .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                    else
+                        validationMessage = validationMessage + " and " + messageSource
+                                .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                if (parentWaterConnectionDetail.getConnection().getId() != null)
+                    if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
+                        if (validationMessage.equalsIgnoreCase(""))
+                            validationMessage = messageSource.getMessage("err.validate.additional.connection.watertax.due",
+                                    null, null);
+                        else
+                            validationMessage = validationMessage + " and "
+                                    + messageSource.getMessage("err.validate.additional.connection.watertax.due",
+                                            null, null);
+            }
+        }
         return validationMessage;
     }
 

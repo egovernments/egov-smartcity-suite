@@ -45,14 +45,9 @@
 <html>
   <head>
     <title><s:text name='ptis.notice.title'/></title>
-  <script>
-  	function refreshInboxByNoticeType(){
-		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-	}
-  </script>
   </head>
   
-   <body onload=" refreshInboxByNoticeType(); ">
+   <body>
   <s:form name="CreatePropertyNotice" theme="simple">
   <s:if test="%{hasErrors()}">
 		<div class="errorstyle"><s:actionerror /> <s:fielderror /></div>
@@ -69,5 +64,6 @@
 		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
 	</div>
   </s:form>
+  <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script> 
   </body>
 </html>

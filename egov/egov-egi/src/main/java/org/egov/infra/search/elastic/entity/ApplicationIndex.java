@@ -50,7 +50,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
@@ -127,9 +126,16 @@ public class ApplicationIndex extends AbstractAuditable {
     @Searchable(name = "consumercode")
     private String consumerCode;
 
-    @Length(min = 10, max = 12)
+    @Length(min = 10, max = 50)
     @Searchable(name = "mobilenumber")
     private String mobileNumber;
+
+    @Searchable(name = "ownername", group = Searchable.Group.CLAUSES)
+    private String ownername;
+
+    @Length(min = 10, max = 50)
+    @Searchable(name = "aadharnumber", group = Searchable.Group.SEARCHABLE)
+    private String aadharNumber;
 
     @Override
     public Long getId() {
@@ -245,8 +251,20 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-    @Override
-    public String getIndexId() {
-        return getId().toString().concat("_".concat(EgovThreadLocals.getCityCode()));
+    public String getOwnername() {
+        return ownername;
     }
+
+    public void setOwnername(final String ownername) {
+        this.ownername = ownername;
+    }
+
+    public String getAadharNumber() {
+        return aadharNumber;
+    }
+
+    public void setAadharNumber(final String aadharNumber) {
+        this.aadharNumber = aadharNumber;
+    }
+
 }

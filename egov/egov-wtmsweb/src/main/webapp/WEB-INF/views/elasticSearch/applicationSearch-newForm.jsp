@@ -59,7 +59,7 @@
 
 				<form:form  class="form-horizontal form-groups-bordered"
 					id="applicationSearchRequestForm" modelAttribute="applicationSearchRequest" action="">
-					<input type="text"  id="citizenRole" value="${citizenRole}" />
+					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 					<div class="form-group">
 					<label for="field-1" class="col-sm-3 control-label"> <spring:message
 										code="lbl.Service" /></label>
@@ -92,11 +92,12 @@
 						<div class="col-sm-3 add-margin">
 						<input type="text" name="applicationNumber" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="16" id="app-mobno"
 								 /></div>
+						
 						<c:if test="${ !citizenRole }">
 						<label for="field-1" class="col-sm-2 control-label"> <spring:message
-										code="lbl.applicant.name" /></label>
+										code="lbl1.consumer.number" /></label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="16" id="app-mobno"
+							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-mobno"
 								 />
 						</div></c:if>
 							
@@ -106,10 +107,10 @@
 						<c:if test="${ !citizenRole }">
 						<div class="form-group">
 							<label for="field-1" class="col-sm-3 control-label"><spring:message
-										code="lbl1.consumer.number" />
+										code="lbl.applicant.name" />
 								</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appconsumercodo"
+							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="15" id="app-appconsumercodo"
 								 />
 						</div>
 								<label for="field-1" class="col-sm-2 control-label"> <spring:message

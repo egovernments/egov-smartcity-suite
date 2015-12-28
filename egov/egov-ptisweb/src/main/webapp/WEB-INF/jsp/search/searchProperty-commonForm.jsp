@@ -67,7 +67,7 @@
 			</s:if>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<s:form action="searchProperty" name="assessmentform" theme="simple" id="assessmentform">
-						<s:hidden name="applicationType"/>
+						<s:hidden name="applicationType" value="%{applicationType}"/> 
 						<tr>
 							<td width="100%" colspan="4" class="headingbg">												
 								<div class="headingbg">					
@@ -94,6 +94,8 @@
 							   <br/>
 								<div class="greybox" style="text-align:center">
 									<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
+										<s:hidden id="meesevaApplicationNumber" name="meesevaApplicationNumber" value="%{meesevaApplicationNumber}"></s:hidden>
+											<s:hidden id="meesevaServiceCode" name="meesevaServiceCode" value="%{meesevaServiceCode}"></s:hidden>
 									<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-commonSearch.action', 'assessmentform');"></s:submit>
 								</div>
 							</td>

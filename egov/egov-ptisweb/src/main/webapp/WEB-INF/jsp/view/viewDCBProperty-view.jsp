@@ -62,7 +62,7 @@
 			function openNewWindow() {
 				window.open('../view/viewDCBProperty-showMigData.action?' + 
 							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
-							'_blank', 'width=650, height=500', false);
+							'_blank', 'width=650, height=500, scrollbars=yes', false);
 			}
 
 			function openHeadwiseDCBWindow() {
@@ -82,118 +82,131 @@
 				
 			}
 			
+			function gotoSearchForm(){
+				document.viewform.action='${pageContext.request.contextPath}/citizen/search/search-searchForm.action';
+				document.viewform.submit(); 
+			}
+			
 		</script>
 	</head>
 
 	<body onload="loadOnStartup();">
 		<div class="formmainbox">
+			<s:if test="%{hasErrors()}">
+			<div class="errorstyle" id="property_error_area">
+				<div class="errortext">
+					<s:actionerror />
+					<s:fielderror/>
+				</div>
+			</div>
+			</s:if>
 			<div class="headingbg">
-				<s:text name="viewDCB" />
+			<s:if test="%{isCitizen}">
+				<s:text name="taxdetailsheader" />
+			</s:if>
+		   <s:else>
+				 <s:text name="viewDCB" />
+		  </s:else>
 			</div>
 			<s:form action="#" theme="simple">
+			<s:if test="%{viewMap.taxExempted == true}">
+            <div class="headermessage">
+	             This property tax is exempted with reason <span class="bold"><s:property default="N/A" value="%{basicProperty.property.taxExemptedReason.name}" /></span>
+            </div>
+             </s:if>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td class="greybox" width="20%"></td>
-						<td class="greybox" width="25%">
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox" width="20%">
 							<s:text name="prop.Id" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold"> <s:property value="%{propertyId}" />
 							</span>
 						</td>
-					</tr>
-					<tr>
-						<td class="greybox" width="10%"></td>
-						<td class="greybox" width="13%">
+						<td class="greybox" width="20%">
 							<s:text name="Zone" /> :
 						</td>
-						<td class="bluebox">
+						<td class="bluebox" width="20%">
 							<span class="bold">
 								<s:property default="N/A" value="%{viewMap.propID.zone.name}" /> 
 							</span>
 						</td>
 					</tr>
+			
 					<tr>
-						<td class="greybox" width="10%"></td>
-						<td class="greybox" width="5%">
+							<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox" width="20%">
 							<s:text name="Ward" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold">
 								<s:property default="N/A" value="%{viewMap.propID.ward.name}" /> 
 							</span>
 						</td>
-					</tr>   
-					<tr>
-						<td class="greybox" width="10%"></td>
 						<td class="greybox" width="5%">
 							<s:text name="Block" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold">
 								<s:property default="N/A" value="%{viewMap.propID.area.name}" /> 
 							</span>
 						</td>
-					</tr>
+					</tr>   
+			
 					<tr>
-						<td class="greybox" width="10%"></td>
-						<td class="greybox" width="5%">
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox" width="20%">
 							<s:text name="locality" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold"> <s:property value="%{viewMap.propID.locality.name}" /> </span>
 						</td>
-					</tr>
-					<tr>
-						<td class="greybox" width="10%"></td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<s:text name="OwnerName" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold"> <s:property value="%{viewMap.ownerName}" /> </span>
 						</td>
 					</tr>
+				
 					<tr>   
-						<td class="greybox" width="10%"></td>
-						<td class="greybox">
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox" width="20%">
 							<s:text name="PropertyAddress" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold"> <s:property value="%{viewMap.propAddress}" />
+							</span>
+						</td>
+						<td class="greybox" width="20%">
+							<s:text name="ownership.type"></s:text> :
+						</td>
+						<td class="greybox" width="20%">
+							<span class="bold"> <s:property default="N/A" value="%{viewMap.ownershipType}" />
 							</span>
 						</td>
 
 					</tr>
+					
 					<tr>
-						<td class="greybox" width="10%"></td>
-						<td class="greybox">
-							<s:text name="ownership.type"></s:text> :
-						</td>
-						<td class="greybox">
-							<span class="bold"> <s:property default="N/A" value="%{viewMap.ownershipType}" />
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="greybox" width="10%"></td>
+						<td class="greybox" width="5%">&nbsp;</td>
 						<td class="greybox">
 							<s:text name="CurrentTax" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxAmount" /></s:text>
 							</span>
 						</td>
-					</tr>
-					<tr>
-						<td class="greybox" width="10%"></td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<s:text name="CurrentTaxDue" /> :
 						</td>
-						<td class="greybox">
+						<td class="greybox" width="20%">
 							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
 							</span>
 						</td>
 					</tr>
+			
 					<tr>
 						<td class="greybox" width="10%"></td>
 						<td class="greybox">
@@ -205,7 +218,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="3">
+						<td colspan="10">
 							<table width="100%" border="0" align="center" cellpadding="0"
 								cellspacing="0" class="tablebottom">
 
@@ -230,12 +243,12 @@
 									</th>
 								</tr>
 								<tr>
-
+                                  <s:if test="%{viewMap.taxExempted == false}">
 									<td class="blueborderfortd">
 										<div align="center">											
 											<a href="javascript:openHeadwiseDCBWindow();"><s:text name="viewHeadwiseDCB"/></a>
 										</div><br/>
-										<div align="center">											
+										<div align="center">			
 											<s:if test="%{basicProperty.source == 'M'}">
 												<a href="" onclick="openNewWindow();">Show Receipts</a>
 											</s:if>	
@@ -244,7 +257,7 @@
 											</s:else>										
 										</div>
 									</td>
-
+                                   </s:if>
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="Tax" /> </span>
@@ -408,7 +421,7 @@
 								<div align="right">
 							 		<span class="bold">
 							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalLpayPnlty()" />
+										<s:param value="dcbReport.getTotalLpayPnlty()" /> 
 									</s:text>
                                     </span> 
 								</div>
@@ -513,7 +526,7 @@
 											<td class="blueborderfortd">
 												<div align="right">
 													<span class="bold"> 
-														<s:text name="format.money">
+														<s:text name="format.money"> 
 															<s:param value="dcbReport.getFieldBalanceTotals()[#FieldNames]" />
 														</s:text>
 													</span>
@@ -732,7 +745,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="#rcpt.getConsumerCode()" />&serviceCode=PTMF" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>
@@ -767,7 +780,7 @@
 											<s:text name="msg.activeDemand" />
 										</div>			
 									</s:if>
-									<s:elseif test="%{isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+									<s:elseif test="%{viewMap.taxExempted == false && isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 										<div align="center">
 											<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 											<span style="font-size:15px; color:red ">										
@@ -776,9 +789,9 @@
 											</span>
 										</div><br>
 										<div align="center">
-											<s:if test="%{isCitizen}">
+											<s:if test="%{isCitizen && viewMap.taxExempted == false}">
 												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
-															onclick="window.location='../citizen/collection/collection-generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
+															onclick="window.location='../citizen/collection/collection-generateBill.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
 											</s:if>
 											<s:else> 
 												<input type="button" name="operatorPayBill" id="operatorPayBill" value="Pay Bill" class="buttonsubmit"
@@ -786,8 +799,10 @@
 											</s:else>
 										</div>
 									</s:elseif><br> 
-									<input type="button" name="button2" id="button2" value="Back"
-										class="button" onclick="history.back(-1)" />
+									<s:if test="%{isCitizen}">
+									<input id="SearchProperty" class="buttonsubmit" type="button" onclick="window.location='/ptis/citizen/search/search-searchForm.action';" 
+									value="Search Property" name="SearchProperty">
+									</s:if>
 									<input type="button" name="button2" id="button2" value="Close"
 										class="button" onclick="return confirmClose();" />
 							</div>

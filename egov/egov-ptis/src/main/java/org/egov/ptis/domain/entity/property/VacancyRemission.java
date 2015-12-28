@@ -53,8 +53,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
@@ -88,15 +90,26 @@ public class VacancyRemission extends StateAware {
     @Column(name = "vacancy_comments")
     private String vacancyComments;
 
+    @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionDetails> vacancyRemissionDetails = new LinkedList<VacancyRemissionDetails>();
 
     @Column(name = "status")
     private String status;
 
+    @Column(name = "applicationno")
+    private String applicationNumber;
+
+    @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
-
+    
+    @Transient
+    private String meesevaApplicationNumber;
+   
+    @Column(name = "source")
+    private Character source = 'A';
+    
     @Override
     public String getStateDetails() {
         return "Vacancy Remission" + " - " + this.basicProperty.getUpicNo();
@@ -167,4 +180,29 @@ public class VacancyRemission extends StateAware {
     public void setVacancyRemissionApproval(List<VacancyRemissionApproval> vacancyRemissionApproval) {
         this.vacancyRemissionApproval = vacancyRemissionApproval;
     }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+    public Character getSource() {
+        return source;
+    }
+
+    public void setSource(Character source) {
+        this.source = source;
+    }
+
 }

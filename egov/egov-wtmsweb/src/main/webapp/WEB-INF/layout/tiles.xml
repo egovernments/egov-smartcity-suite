@@ -50,8 +50,12 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-
+	<definition name="error" template="/WEB-INF/views/template/error.jsp">
+		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+	</definition>
 	<definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
@@ -181,6 +185,22 @@
     <definition name="donation-master-success" extends="base_layout">
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
+    </definition>   
+     <definition name="digitalSignature-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignature-success.jsp"/>
+     </definition>
+     <definition name="newConnection-digitalSignatureRedirection" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/newConnection-digitalSignatureRedirection.jsp"/>
+     </definition>
+     <definition name="digitalSignaturePending-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.pendingForm.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignaturePending-form.jsp"/>
+     </definition>
+     <definition name="dailyWTCollection-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dailyCollectionReport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dailyWTCollection-search.jsp"/>
     </definition>
-    
+     
 </tiles-definitions>

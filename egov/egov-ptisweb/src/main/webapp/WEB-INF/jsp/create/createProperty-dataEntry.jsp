@@ -96,8 +96,8 @@
 			<div class="buttonbottom" align="center">
 				<table style="width: 100%; text-align: center;">
 					<tr>
-						<td><input  type="submit" id="Create" class="btn btn-primary" value="Create" onclick="onSubmit();"/> 
-							<input type="button" name="button2" id="button2" value="Close" class="btn btn-primary" onclick="window.close();" /></td>
+						<td><input  type="submit" id="Create" class="buttonsubmit" value="Create" onclick="onSubmit();"/> 
+							<input type="button" name="button2" id="button2" value="Close"	class="button" onclick="window.close();" /></td>
 					</tr>
 				</table>
 			</div>
@@ -203,6 +203,7 @@ function loadOnStartUp() {
 	   		  getAadharDetails(this);
 	   	}
 	 });
+     populateBoundaries();
 }
 
 function onSubmit() { 

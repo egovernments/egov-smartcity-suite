@@ -164,6 +164,11 @@ function loadDropDownCodesFunction()
 var yuiflagFunc = new Array();
 function autocompletecodeFunction(obj,myEvent)
 {
+	//Fix-Me
+	var accCodeObj = document.getElementById('accountDetails[0].glCodeId.glcode');
+	jQuery(accCodeObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
 	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
@@ -254,6 +259,12 @@ function loadDropDownCodes()
 var yuiflag = new Array();
 function autocompletecode(obj,myEvent)
 {
+	//Fix-Me
+	var funObj = document.getElementById('accountDetails[0].function.name');
+	jQuery(funObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
+	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
@@ -444,7 +455,7 @@ var onDropdownChange = function(index,obj) {
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		document.getElementById(SUBLEDGERLIST+'['+obj.value+'].serviceAccountDetail.glCodeId.glcode').value =accountCode;
 		if(accountCode != '---Select---'){
-			var url = path+'/receipts/ajaxReceiptCreate!getDetailTypeForService.action?accountCode='+accountCode+'&index='+obj.value;
+			var url = path+'/receipts/ajaxReceiptCreate-getDetailTypeForService.action?accountCode='+accountCode+'&index='+obj.value;
 			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 		}else{
 				var d = document.getElementById(SUBLEDGERLIST+'['+obj.value+'].detailType.id');
@@ -495,7 +506,7 @@ function loadSLAccountCode(){
 		accountCodes[i] = document.getElementById('accountDetails['+i+'].glCodeId.glcode').value;
 	}
 	}
-	var url =  path+'/receipts/ajaxReceiptCreate!getDetailCode.action?accountCodes='+accountCodes;
+	var url =  path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackSLAccCode, null);
 }
 var callbackSLAccCode = {
@@ -588,7 +599,7 @@ function autocompleteForEntity(obj,myEvent){
 
 				if(onElementFocused(obj)){
 					ShowImage(obj);//To start loading image
-					var url =   path+ "/receipts/ajaxReceiptCreate!getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
+					var url =   path+ "/receipts/ajaxReceiptCreate-getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
 					var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackAutoCompleteEntities, null);
 				}
 			}

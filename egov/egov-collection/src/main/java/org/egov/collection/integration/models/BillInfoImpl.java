@@ -71,9 +71,11 @@ public class BillInfoImpl implements BillInfo {
     private List<String> collectionModesNotAllowed;
 
     @XStreamAlias("payees")
-    private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>();
+    private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>(0);
     
     private String transactionReferenceNumber;
+    
+    private String source;
 
     @Override
     public String getServiceCode() {
@@ -214,5 +216,13 @@ public class BillInfoImpl implements BillInfo {
 
     public void setTransactionReferenceNumber(String transactionReferenceNumber) {
         this.transactionReferenceNumber = transactionReferenceNumber;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

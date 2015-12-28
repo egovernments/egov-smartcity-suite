@@ -2,6 +2,7 @@ package org.egov.api.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
 public class CommonController extends ApiController {
+	
+	private static final Logger LOGGER = Logger.getLogger(CommonController.class);
 
     @Autowired
     private CitizenService citizenService;
@@ -56,8 +59,6 @@ public class CommonController extends ApiController {
     @RequestMapping(value = ApiUrl.CITIZEN_REGISTER, method = RequestMethod.POST, consumes = { "application/json" })
     public @ResponseBody ResponseEntity<String> register(@RequestBody JSONObject citizen) {
         ApiResponse res = ApiResponse.newInstance();
-        String msg = "";
-
         try {
             Citizen citizenCreate = new Citizen();
             citizenCreate.setUsername(citizen.get("mobileNumber").toString());
@@ -76,7 +77,7 @@ public class CommonController extends ApiController {
             User getUser=userservice.getUserByMobileNumber(citizenCreate.getMobileNumber());
             if(getUser != null)
             {
-            	return res.error("A user with same mobile number already registered!");
+            	return res.error(getMessage("user.register.duplicate.mobileno"));
             }
             
             if(citizenCreate.getEmailId() != null && ! citizenCreate.getEmailId().isEmpty())
@@ -84,20 +85,18 @@ public class CommonController extends ApiController {
             	getUser=userservice.getUserByEmailId(citizenCreate.getEmailId());
                 if(getUser != null)
                 {
-                	return res.error("A user with same email already registered!");
+                	return res.error(getMessage("user.register.duplicate.email"));
                 }
             }
-            
             
            citizenCreate.getDevices().add(device);
            citizenService.create(citizenCreate);
            return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
             
         } catch (Exception e) {
-        	e.printStackTrace();
-            msg = e.getMessage();
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return res.error(getMessage("server.error"));
         }
-        return res.error(msg);
     }
 
     // --------------------------------------------------------------------------------//
@@ -111,26 +110,31 @@ public class CommonController extends ApiController {
     @RequestMapping(value = ApiUrl.CITIZEN_ACTIVATE, method = RequestMethod.POST)
     public ResponseEntity<String> activate(@RequestParam("userName") String userName,
             @RequestParam("activationCode") String activationCode) {
-        Citizen citizen = citizenService.getCitizenByUserName(userName);
-        if (citizen == null) {
-            citizen = citizenService.getCitizenByEmailId(userName);
+    	ApiResponse res = ApiResponse.newInstance();
+    	try
+    	{
+	        Citizen citizen = citizenService.getCitizenByUserName(userName);
+	        if (citizen == null) {
+	            citizen = citizenService.getCitizenByEmailId(userName);
+	        }
+	
+	        if (citizen == null) {
+	            return res.error(getMessage("citizen.not.found"));
+	        } else if (activationCode == null) {
+	            return res.error(getMessage("citizen.valid.activationCode"));
+	        } else if (citizen.isActive()) {
+	            return res.success("", getMessage("citizen.activated"));
+	        } else if (citizen.getActivationCode().equals(activationCode)) {
+	            citizen.setActive(true);
+	            citizenService.update(citizen);
+	            return res.success("", getMessage("citizen.success.activated"));
+	        } else {
+	            return res.error(getMessage("citizen.valid.activationCode"));
+	        }
+    	} catch (Exception e) {
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return res.error(getMessage("server.error"));
         }
-        ApiResponse res = ApiResponse.newInstance();
-
-        if (citizen == null) {
-            return res.error(getMessage("citizen.not.found"));
-        } else if (activationCode == null) {
-            return res.error(getMessage("citizen.valid.activationCode"));
-        } else if (citizen.isActive()) {
-            return res.success("", getMessage("citizen.activated"));
-        } else if (citizen.getActivationCode().equals(activationCode)) {
-            citizen.setActive(true);
-            citizenService.update(citizen);
-            return res.success("", getMessage("citizen.success.activated"));
-        } else {
-            return res.error(getMessage("citizen.valid.activationCode"));
-        }
-
     }
 
     // --------------------------------------------------------------------------------//
@@ -143,24 +147,31 @@ public class CommonController extends ApiController {
     @RequestMapping(value = ApiUrl.CITIZEN_PASSWORD_RECOVER, method = RequestMethod.POST)
     public ResponseEntity<String> passwordRecover(HttpServletRequest request) {
         ApiResponse res = ApiResponse.newInstance();
-        String identity = request.getParameter("identity");
-        String redirectURL = request.getParameter("redirectURL");
-
-        if (identity == null || !identity.matches("\\d{10}")) {
-            return res.error("Invalid mobile number");
-        } 
-
-        Citizen citizen = citizenService.getCitizenByUserName(identity);
-        if (citizen == null) {
-            return res.error(getMessage("user.not.found"));
+        try
+    	{
+	        String identity = request.getParameter("identity");
+	        String redirectURL = request.getParameter("redirectURL");
+	
+	        if (identity == null || !identity.matches("\\d{10}")) {
+	            return res.error("Invalid mobile number");
+	        } 
+	
+	        Citizen citizen = citizenService.getCitizenByUserName(identity);
+	        if (citizen == null) {
+	            return res.error(getMessage("user.not.found"));
+	        }
+	       
+	        if (identityRecoveryService.generateAndSendUserPasswordRecovery(
+	                identity, redirectURL + "/egi/login/password/reset?token=")) {
+	            return res.success("", "Password has been sent to mail");
+	        }
+	
+	        return res.error("Password send failed");
+    	}
+        catch (Exception e) {
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return res.error(getMessage("server.error"));
         }
-       
-        if (identityRecoveryService.generateAndSendUserPasswordRecovery(
-                identity, redirectURL + "/egi/login/password/reset?token=")) {
-            return res.success("", "Password has been sent to mail");
-        }
-
-        return res.error("Password send failed");
 
     }
 
@@ -189,9 +200,9 @@ public class CommonController extends ApiController {
             citizenService.sendActivationMessage(citizen);
             return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("sendOTP.success"));
         } catch (Exception e) {
-            msg = e.getMessage();
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return res.error(getMessage("server.error"));
         }
-        return res.error(msg);
     }
 
 }

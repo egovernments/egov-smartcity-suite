@@ -108,10 +108,10 @@
 
                     <div class="form-group">
                         <div class="text-center">
-                            <button type="submit" id="buttonView" class="btn btn-success">
+                            <button type="submit" id="buttonView" class="btn btn-primary">
                             	<spring:message code="lbl.viewBoundaries"/>
                             </button>
-                            <button type="submit" id="buttonCreate" class="btn btn-success">
+                            <button type="submit" id="buttonCreate" class="btn btn-primary">
                             	<spring:message code="lbl.create"/>
                             </button>
                             <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>

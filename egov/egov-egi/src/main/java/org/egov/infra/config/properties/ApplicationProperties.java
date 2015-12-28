@@ -52,9 +52,9 @@ import org.springframework.core.env.Environment;
 @Configuration
 @PropertySource(value = {
         "classpath:config/application-config.properties",
-        "classpath:config/egov-erp-override.properties",
         "classpath:config/egov-erp-${user.name}.properties",
-        "classpath:config/application-config-${client.id}.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 @Order(0)
 public class ApplicationProperties {
 
@@ -161,8 +161,12 @@ public class ApplicationProperties {
         return environment.getProperty("redis.host.port", Integer.class);
     }
 
-    public String getProperty(final String propCode) {
-        return environment.getProperty(propCode, EMPTY);
+    public String getProperty(final String propKey) {
+        return environment.getProperty(propKey, EMPTY);
+    }
+
+    public <T> T getProperty(final String propKey, final Class<T> type) {
+        return environment.getProperty(propKey, type);
     }
 
     public String appVersion() {
@@ -171,6 +175,10 @@ public class ApplicationProperties {
 
     public String appBuildNo() {
         return environment.getProperty("app.build.no", EMPTY);
+    }
+
+    public String appCoreBuildNo() {
+        return environment.getProperty("app.core.build.no", EMPTY);
     }
 
     public String issueReportingUrl() {

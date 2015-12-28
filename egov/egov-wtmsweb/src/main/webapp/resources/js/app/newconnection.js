@@ -39,6 +39,7 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
+	loadPropertyDetails();
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
@@ -49,14 +50,14 @@ $(document).ready(function(){
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		}
-	
+
 	var documentName = $('#documentName').val();
 	var other ="Other"
 	
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
 	
-	
+	changecategory();
 	
 	$('#connectionType').change(function(){
 		if($('#legacy'))
@@ -73,26 +74,32 @@ $(document).ready(function(){
 	});
 		
 	$('#connectionCategorie').change(function(){
-		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
-			$("#cardHolderDiv").show();
-	    	$("#bplCardHolderName").attr('required', 'required');
-	    	$("#bplCardHolderName").val();
-			$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
-			$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);
-		}
-		else  {
-			$("#cardHolderDiv").hide();
-	    	$("#bplCardHolderName").removeAttr('required');
-	    	$("#bplCardHolderName").val('');
-	    	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
-	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
-	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
-		}
+		changecategory();
 	});
 	
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});
+	
+	function changecategory(){
+		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0 ) {  
+			$("#cardHolderDiv").show();
+	    	$("#bplCardHolderName").attr('required', 'required');
+	    	$("#bplCardHolderName").val();
+			/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
+			$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);
+			$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(true);*/
+		}
+		else if($('#connectionCategorie :selected').text().localeCompare("BPL") != -1)  {
+			$("#cardHolderDiv").hide();
+	    	$("#bplCardHolderName").removeAttr('required');
+	    	$("#bplCardHolderName").val('');
+	    	/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
+	     	$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(false);*/
+		}
+	}
 	
 	function validatePrimaryConnection() {
 		propertyID=$('#propertyIdentifier').val()
@@ -162,6 +169,60 @@ $(document).ready(function(){
 	$('#usageType').change(function () {
 		changeLabel();
 	});
+	
+	deptapp=$('#approvalDepartment').val() ;
+	if(deptapp.length != 0){
+	$.ajax({
+		url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
+		type: "GET",
+		data: {
+			approvalDepartment : $('#approvalDepartment').val(),
+			departmentRule : $('#approvalDepartment').find("option:selected").text(),
+			type : $('#stateType').val(),
+			currentState : $('#currentState').val(),
+			amountRule : $('#amountRule').val(),
+			additionalRule : $('#additionalRule').val(),
+			pendingAction : $('#pendingActions').val()
+		},
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			$('#approvalDesignation').empty();
+			
+			$.each(response, function(index, value) {
+				$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
+			});
+			
+		}, 
+		error: function (response) {
+			alert('json fail');
+			console.log("failed");
+		}
+	});
+	if($('#approvalPosOnValidate').val().length != 0){
+	$.ajax({
+		url: "/wtms/ajaxconnection/assignmentByPositionId",     
+		type: "GET",
+		data: {
+			approvalPositionId : $('#approvalPosOnValidate').val(),
+			
+		},
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			$('#approvalPosition').empty();
+			$.each(response, function(index, value) {
+				//$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));
+				$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
+			});
+			
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+	}
+	}
 	
 });
 $('#consumerCodeData').blur(function(){

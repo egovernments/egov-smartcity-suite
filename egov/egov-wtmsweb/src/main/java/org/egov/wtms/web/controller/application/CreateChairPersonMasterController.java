@@ -25,7 +25,7 @@ import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/application")
-public class CreateChairPersonMasterController extends GenericConnectionController {
+public class CreateChairPersonMasterController {
 
     @Autowired
     private ChairPersonService chairPersonService;

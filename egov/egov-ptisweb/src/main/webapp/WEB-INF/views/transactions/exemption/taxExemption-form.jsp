@@ -42,189 +42,31 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
+<c:if test="${errorMsg != ''}">
+ 	<div class="panel-heading">
+				<div class="add-margin error-msg" style="text-align:center;">
+					<strong><c:out value="${errorMsg}"/></strong>
+				</div>
+	</div>
+</c:if>
 <div class="row">
 	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" method="get"
+		<form:form class="form-horizontal form-groups-bordered" method="post"
 			name="taxExemptionForm" id="taxExemptionForm" action=""
 			modelAttribute="property">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.property.details" />
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-sm-3 add-margin">
-							<spring:message code="lbl.assmtno" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A" value="${property.basicProperty.upicNo}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.assmtno.parentproperty" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${parentAssessment}" default="N/A" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.category.ownership" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${property.propertyDetail.propertyTypeMaster.type}"
-								default="N/A" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.exemption.category" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${property.taxExemptedReason.name}" default="N/A" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.annualvalue" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<spring:message code="lbl.rs"/>
-							<fmt:formatNumber pattern="#,##0.00" value="${arv}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.effectivedate" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:choose>
-								<c:when
-									test="${property.basicProperty.propOccupationDate != null}">
-									<fmt:formatDate
-										value="${property.basicProperty.propOccupationDate}"
-										pattern="dd/MM/yyyy" />
-								</c:when>
-								<c:otherwise>
-									N/A
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.propertytype" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${property.basicProperty.property.propertyDetail.categoryType}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.appartmentorcomplex" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${property.basicProperty.property.propertyDetail.apartment.name}" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.extentofsite" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${property.propertyDetail.sitalArea.area}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.extent.appurtenant" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${property.propertyDetail.extentAppartenauntLand}" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.superstructure" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:choose>
-								<c:when test="${property.propertyDetail.structure == true}">
-									Yes
-								</c:when>
-								<c:otherwise>
-									No
-								</c:otherwise>
-							</c:choose>
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.siteowner" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A" value="${property.propertyDetail.siteOwner}" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.registrationDoc.no" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A" value="${property.basicProperty.regdDocNo}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.registrationDoc.date" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:choose>
-								<c:when test="${property.basicProperty.regdDocDate != null}">
-									<fmt:formatDate value="${property.basicProperty.regdDocDate}"
-										pattern="dd/MM/yyyy" />
-								</c:when>
-								<c:otherwise>
-									N/A
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.bp.no" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${property.propertyDetail.buildingPermissionNo}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.bp.date" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:choose>
-								<c:when test="${property.propertyDetail.buildingPermissionDate}">
-									<fmt:formatDate
-										value="${property.propertyDetail.buildingPermissionDate}"
-										pattern="dd/MM/yyyy" />
-								</c:when>
-								<c:otherwise>
-									N/A
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-3">
-							<spring:message code="lbl.deviation.percentage" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${property.propertyDetail.deviationPercentage}" />
-						</div>
-						<div class="col-xs-3">
-							<spring:message code="lbl.reason.creation"></spring:message>
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<c:out
-								value="${property.propertyDetail.propertyMutationMaster.mutationName}" />
-						</div>
-					</div>
-				</div>
+				<jsp:include page="../../common/commonPropertyDetailsView.jsp"></jsp:include>
+			    <jsp:include page="../../common/ownerDetailsView.jsp"></jsp:include>
+			    <form:hidden path="" name="mode" id="mode" value="${mode}"/>
+			    <form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="lbl.exemption.heading" />
@@ -233,40 +75,26 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-xs-3">
-							<spring:message code="lbl.exemption.reason" />
+							<spring:message code="lbl.exemption.reason" /><span class="mandatory"></span>
 						</div>
-						<div class="col-sm-3 add-margin">
-							<form:select path="taxExemptedReason" id="taxExemptedReason"
+						<div class="col-sm-3 add-margin control-label text-right">
+							<form:select path="taxExemptedReason" id="taxExemptedReason" name="taxExemptedReason"
 								data-first-option="false" cssClass="form-control"
 								required="required">
 								<form:option value="-1">
-									<spring:message code="lbl.option.select" />
-								</form:option>
-								<form:option value="-2">
 									<spring:message code="lbl.option.none" />
 								</form:option>
-								<form:options items="${taxExemptionReasons}" itemValue="id"
+								<form:options items="${taxExemptionReasons}" itemValue="id" 
 									itemLabel="name" />
 							</form:select>
-							<form:errors path="taxExemptedReason"
-								cssClass="add-margin error-msg" />
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="text-center">
-						<button type="button" id="btnsubmit" class="btn btn-primary">
-							<spring:message code="lbl.search" />
-						</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal"
-							onclick="window.close();">
-							<spring:message code="lbl.close" />
-						</button>
-					</div>
-				</div>
 			</div>
+			<c:if test="${propertyByEmployee == true}">
+			<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
+			</c:if>
+			<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript"
-	src="<c:url value='/resources/js/app/taxExemption.js'/>"></script>

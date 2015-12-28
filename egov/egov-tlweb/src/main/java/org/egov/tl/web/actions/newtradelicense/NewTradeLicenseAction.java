@@ -69,6 +69,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.service.WorkflowService;
+import org.egov.tl.domain.entity.FeeMatrixDetail;
 import org.egov.tl.domain.entity.License;
 import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.LicenseDocumentType;
@@ -135,6 +136,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
+    	
         tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", getSession().get("model.id"));
         if(mode.equalsIgnoreCase(VIEW) && tradeLicense!=null && !tradeLicense.isPaid() &&
                 (!workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT))){ 
@@ -153,6 +155,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                     .find("from org.egov.tl.domain.entity.LicenseStatus where code='ACT'");
             license().setStatus(activeStatus);
         }
+        
         return super.approve();
     }
 

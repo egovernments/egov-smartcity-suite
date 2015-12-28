@@ -251,8 +251,6 @@
 				<s:text name="bankRemittance.title" />
 			</div>
 			<logic:notEmpty name="paramList">
-				<table width="100%" border="0" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
 					<div align="center">
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
@@ -484,9 +482,7 @@
 						</div>
 
 					</logic:empty>
-				</table>
 		</div>
 	</s:form>
 </body>
 </html>
-

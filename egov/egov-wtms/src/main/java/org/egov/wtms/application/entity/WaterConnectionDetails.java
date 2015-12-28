@@ -69,6 +69,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
@@ -118,7 +119,6 @@ public class WaterConnectionDetails extends StateAware {
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ExistingConnectionDetails existingConnection;
 
-    // @Column(name = "applicationNumber", unique = true)
     @SafeHtml
     private String applicationNumber;
 
@@ -194,10 +194,10 @@ public class WaterConnectionDetails extends StateAware {
 
     @Temporal(value = TemporalType.DATE)
     private Date executionDate;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date closeApprovalDate;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date reconnectionApprovalDate;
 
@@ -233,14 +233,26 @@ public class WaterConnectionDetails extends StateAware {
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     private String closeConnectionType;
-    
+
     private String previousApplicationType;
 
     @Length(max = 1024)
     private String closeconnectionreason;
-    
+
     @Length(max = 1024)
     private String reConnectionReason;
+
+    @Transient
+    private String meesevaApplicationNumber;
+
+    @Enumerated(EnumType.STRING)
+    private Source source;
+
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -270,7 +282,7 @@ public class WaterConnectionDetails extends StateAware {
 
     @Override
     public String myLinkId() {
-        return applicationNumber;
+        return (applicationNumber !=null? applicationNumber :connection.getConsumerCode());
 
     }
 
@@ -278,7 +290,7 @@ public class WaterConnectionDetails extends StateAware {
         return previousApplicationType;
     }
 
-    public void setPreviousApplicationType(String previousApplicationType) {
+    public void setPreviousApplicationType(final String previousApplicationType) {
         this.previousApplicationType = previousApplicationType;
     }
 
@@ -469,8 +481,8 @@ public class WaterConnectionDetails extends StateAware {
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return String.format("Application Number %s for %s with application date %s.", applicationNumber,
-                applicationType.getName(), formatter.format(applicationDate));
+        return String.format("Application Number %s with application date %s.", (applicationNumber !=null?applicationNumber:connection.getConsumerCode()),
+                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date()))));
     }
 
     public String getBplCardHolderName() {
@@ -561,13 +573,11 @@ public class WaterConnectionDetails extends StateAware {
         this.nonmeteredBillDetails = nonmeteredBillDetails;
     }
 
-   
-
     public String getCloseConnectionType() {
         return closeConnectionType;
     }
 
-    public void setCloseConnectionType(String closeConnectionType) {
+    public void setCloseConnectionType(final String closeConnectionType) {
         this.closeConnectionType = closeConnectionType;
     }
 
@@ -583,7 +593,7 @@ public class WaterConnectionDetails extends StateAware {
         return reConnectionReason;
     }
 
-    public void setReConnectionReason(String reConnectionReason) {
+    public void setReConnectionReason(final String reConnectionReason) {
         this.reConnectionReason = reConnectionReason;
     }
 
@@ -591,7 +601,7 @@ public class WaterConnectionDetails extends StateAware {
         return closeApprovalDate;
     }
 
-    public void setCloseApprovalDate(Date closeApprovalDate) {
+    public void setCloseApprovalDate(final Date closeApprovalDate) {
         this.closeApprovalDate = closeApprovalDate;
     }
 
@@ -599,9 +609,40 @@ public class WaterConnectionDetails extends StateAware {
         return reconnectionApprovalDate;
     }
 
-    public void setReconnectionApprovalDate(Date reconnectionApprovalDate) {
+    public void setReconnectionApprovalDate(final Date reconnectionApprovalDate) {
         this.reconnectionApprovalDate = reconnectionApprovalDate;
     }
-    
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(final String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(final Source source) {
+        this.source = source;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(final Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(final String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
 
 }

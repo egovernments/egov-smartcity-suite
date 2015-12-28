@@ -42,9 +42,11 @@ package org.egov.works.web.actions.masters;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -75,11 +77,12 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({ @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-        @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
-        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
-        @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
-        @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
+@Results({
+    @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
+    @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
+    @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
+    @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
+    @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
 })
 public class ContractorAction extends SearchFormAction {
 
@@ -113,24 +116,22 @@ public class ContractorAction extends SearchFormAction {
     @Autowired
     private ContractorGradeService contractorGradeService;
     @Autowired
-    private BankHibernateDAO bankHibDAO;
-    // -----------------------Search parameters----------------------------------
+    private BankHibernateDAO bankHibernateDAO;
+
     private String contractorName;
     private String contractorCode;
     private Long departmentId;
     private Long gradeId;
     private Date searchDate;
     private boolean sDisabled;
-    // -----------------------------prashant--------------------------------------
-
-    /*
-     * added on 28th october for view contractor based on criteria
-     */
+    
     private Integer statusId;
     private List<ContractorDetail> contractorDetailList = null;
     private PersistenceService<ContractorDetail, Long> contractorDetailService;
     private Integer rowId;
     private boolean hasRoleMapped;
+    
+    private Map<String, Object> criteriaMap = null;
 
     public ContractorAction() {
         addRelatedEntity(WorksConstants.BANK, Bank.class);
@@ -157,56 +158,35 @@ public class ContractorAction extends SearchFormAction {
         return EDIT;
     }
 
-    /*@Override
+    @Override
     @Action(value = "/masters/contractor-search")
     public String search() {
         return VIEW_CONTRACTOR;
-    }*/
+    }
     
     @Action(value = "/masters/contractor-viewContractor")
     public String viewContractor() {
         return VIEW_CONTRACTOR;
     }
 
-	@Action(value = "/masters/contractor-viewResult")
-	public String viewResult() {
-		setPageSize(WorksConstants.PAGE_SIZE);
-		contractorList = contractorService.getContractorListForCriterias(contractorName, contractorCode, departmentId, statusId, gradeId);
-		search();
-		return VIEW_CONTRACTOR;
-	}
+    @Action(value = "/masters/contractor-viewResult")
+    public String viewResult() {
+        setPageSize(WorksConstants.PAGE_SIZE);
+        contractorList = contractorService.getContractorListForCriterias(createCriteriaMap());
+        super.search();
+        return VIEW_CONTRACTOR;
+    }
 
-    /* end listing contractor based on criteria */
     @Action(value = "/masters/contractor-save")
     public String save() {
         populateContractorDetails(mode);
         getHasRoleMapped();
-        if (mode.equalsIgnoreCase("") && !hasRoleMapped) {
-            if (org.apache.commons.lang.StringUtils.isNotBlank(contractor.getPanNumber()) && contractor.getBank() != null &&
-                    org.apache.commons.lang.StringUtils.isNotBlank(contractor.getBankAccount())
-                    && org.apache.commons.lang.StringUtils.isNotBlank(contractor.getIfscCode()))
-                contractor.setIsEditEnabled(false);
-            else
-                contractor.setIsEditEnabled(true);
-        } else if (mode.equalsIgnoreCase("edit") && contractor.getIsEditEnabled() && !hasRoleMapped) {
-            if (org.apache.commons.lang.StringUtils.isNotBlank(contractor.getPanNumber()) && contractor.getBank() != null &&
-                    org.apache.commons.lang.StringUtils.isNotBlank(contractor.getBankAccount())
-                    && org.apache.commons.lang.StringUtils.isNotBlank(contractor.getIfscCode()))
-                contractor.setIsEditEnabled(false);
-            else
-                contractor.setIsEditEnabled(true);
-        } else
-            contractor.setIsEditEnabled(contractor.getIsEditEnabled());
         contractor = contractorService.persist(contractor);
         createAccountDetailKey(contractor);
         addActionMessage(getText("contractor.save.success"));
         return list();
     }
 
-    /**
-     * This method will take user to the search contractor screen.
-     * @author prashant.gaurav
-     */
     @Action(value = "/masters/contractor-searchPage")
     public String searchPage() {
         final String negDate = (String) request.get(WorksConstants.NEGOTIATION_DATE);
@@ -221,13 +201,9 @@ public class ContractorAction extends SearchFormAction {
         return SEARCH;
     }
 
-    /**
-     * This method witll return the list of contrator based on search criteria entered.
-     * @author prashant.gaurav
-     */
     @Action(value = "/masters/contractor-searchResult")
     public String searchResult() {
-        contractorService.searchContractor(contractorName, contractorCode, departmentId, statusId, gradeId, null);
+        contractorService.searchContractor(createCriteriaMap());
         return SEARCH;
 
     }
@@ -244,36 +220,36 @@ public class ContractorAction extends SearchFormAction {
 
     protected void populateContractorDetails(String mode) {
         contractor.getContractorDetails().clear();
-        
+
         for (final ContractorDetail contractorDetail : actionContractorDetails)
             if (validContractorDetail(contractorDetail)) {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
-                contractorDetail.setStatus((EgwStatus)egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
+                contractorDetail.setStatus((EgwStatus) egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                	contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
+                    contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
                 contractorDetail.setContractor(contractor);
-                if(mode.equals("edit")) {
-                	setPrimaryDetails(contractorDetail);
+                if (mode.equals("edit")) {
+                    setPrimaryDetails(contractorDetail);
                 }
                 contractor.addContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
                     contractorDetail.setDepartment(null);
                 else
-                	contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
+                    contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 if (contractorDetail.getStatus() == null || contractorDetail.getStatus().getId() == null)
                     contractorDetail.setStatus(null);
                 else
-                	contractorDetail.setStatus((EgwStatus)egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
+                    contractorDetail.setStatus((EgwStatus) egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                	contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
+                    contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
                 contractorDetail.setContractor(contractor);
-                if(mode.equals("edit")) {
-                	setPrimaryDetails(contractorDetail);
+                if (mode.equals("edit")) {
+                    setPrimaryDetails(contractorDetail);
                 }
                 contractor.addContractorDetail(contractorDetail);
             }
@@ -303,7 +279,7 @@ public class ContractorAction extends SearchFormAction {
         setupDropdownDataExcluding(WorksConstants.BANK);
         addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
-        addDropdownData("bankList", bankHibDAO.findAll());
+        addDropdownData("bankList", bankHibernateDAO.findAll());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
     }
 
@@ -433,7 +409,7 @@ public class ContractorAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-    	return contractorService.prepareQuery(contractorName, contractorCode, departmentId, statusId, gradeId);
+    	return contractorService.prepareQuery(createCriteriaMap());
     }
 
     public boolean getHasRoleMapped() {
@@ -464,8 +440,15 @@ public class ContractorAction extends SearchFormAction {
     	contractorDetail.setCreatedDate(new Date());
     	return contractorDetail;
     }
-
-	public ContractorGradeService getContractorGradeService() {
-		return contractorGradeService;
-	} 
+    
+    private Map<String, Object> createCriteriaMap() {
+        criteriaMap = new HashMap<String, Object>();
+        criteriaMap.put(WorksConstants.CONTRACTOR_NAME, contractorName);
+        criteriaMap.put(WorksConstants.CONTRACTOR_CODE, contractorCode);
+        criteriaMap.put(WorksConstants.DEPARTMENT_ID, departmentId);
+        criteriaMap.put(WorksConstants.STATUS_ID, statusId);
+        criteriaMap.put(WorksConstants.GRADE_ID, gradeId);
+        criteriaMap.put(WorksConstants.SEARCH_DATE, searchDate);
+        return criteriaMap;
+    }
 }

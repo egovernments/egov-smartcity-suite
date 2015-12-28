@@ -55,13 +55,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -167,11 +165,12 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
+		//FIXME Wrong according to the existing user role logic
 		Query qry = persistenceService.getSession().createQuery(
-				"select distinct UI FROM UserImpl UI left join UI.userRoles ur left join ur.role r "
-						+ "where r.roleName = :roleName AND UI.isActive=1 AND ur.isHistory='N' order by UI.userName");
+				"select distinct UI FROM User UI left join UI.roles ur left join ur.role r "
+						+ "where r.name = :roleName AND UI.active=1 AND ur.isHistory='N' order by UI.userName");
 		qry.setParameter("roleName", PropertyTaxConstants.ROLE_OPERATOR);
-		List<UserImpl> userList = qry.list();
+		List<User> userList = qry.list();
 		addDropdownData("userList", userList);
 		LOGGER.debug("Exited from prepare method");
 	}

@@ -163,7 +163,8 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
+		<s:date name="%{basicProperty.regdDocDate}" var="regdDocDate" format="dd/MM/yyyy" />
+			<span class="bold"><s:property value="%{#regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr class="extentSite">

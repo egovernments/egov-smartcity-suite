@@ -51,11 +51,14 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
@@ -75,6 +78,9 @@ public class SearchReceiptAction extends SearchFormAction {
     private String target = "new";
     private String manualReceiptNumber;
     private List resultList;
+    
+    @Autowired
+    private EisCommonService eisCommonService; 
 
     @Override
     public Object getModel() {
@@ -139,11 +145,13 @@ public class SearchReceiptAction extends SearchFormAction {
         setPage(1);
         serviceTypeId = -1;
         counterId = -1;
+        userId = (long) -1;
         receiptNumber = "";
         fromDate = null;
-        toDate = null;
+        toDate = null; 
         instrumentType = "";
         searchStatus = -1;
+        manualReceiptNumber="";
         return SUCCESS;
     }
 
@@ -176,6 +184,21 @@ public class SearchReceiptAction extends SearchFormAction {
     public String search() {
         target = "searchresult";
         super.search();
+        ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>();
+        receiptList.addAll(searchResult.getList());
+        searchResult.getList().clear();
+      
+        Long posId = null;
+
+        for (ReceiptHeader receiptHeader : receiptList) {
+                if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
+                        posId = receiptHeader.getState().getOwnerPosition().getId();
+                        User user = null;
+                        user = (User) eisCommonService.getUserForPosition(posId, receiptHeader.getCreatedDate());
+                        receiptHeader.setWorkflowUserName(user.getUsername());
+                }
+                searchResult.getList().add(receiptHeader);
+        }
         resultList = searchResult.getList();
         return SUCCESS;
     }
@@ -248,7 +271,7 @@ public class SearchReceiptAction extends SearchFormAction {
         }
 
         final String searchQuery = searchQueryString.append(fromString).append(criteriaString).append(orderByString).toString();
-        final String countQuery = countQueryString.append(fromString).append(criteriaString).append(orderByString).toString();
+        final String countQuery = countQueryString.append(fromString).append(criteriaString).toString();
 
         return new SearchQueryHQL(searchQuery, countQuery, params);
     }

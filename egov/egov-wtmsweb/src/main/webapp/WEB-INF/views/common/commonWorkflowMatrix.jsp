@@ -63,13 +63,14 @@
 <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
+
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 				<div class="row show-row"  id="approverDetailHeading">
 				<div class="show-row form-group" >
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="" data-first-option="false"
+						<form:select path="approvalDepartment" data-first-option="false" name="approvalDepartment"
 							id="approvalDepartment" cssClass="form-control"
 							cssErrorClass="form-control error" required="required">
 							<form:option value="">
@@ -81,7 +82,7 @@
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="" data-first-option="false" 
+						<form:select path="" data-first-option="false" name="approvalDesignation"
 							id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
 							cssErrorClass="form-control error" required="required">  
 							<form:option value="">
@@ -98,8 +99,8 @@
 						id="approvalPosition" name="approvalPosition" cssClass="form-control" onfocus="callAlertForDesignation();" 
 						cssErrorClass="form-control error" required="required">  
 						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
+								<spring:message code="lbl.select" />
+							</form:option>
 					</form:select>		
 					</div> 
 				</div>
@@ -108,7 +109,7 @@
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">
-						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
+						<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>
 				

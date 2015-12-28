@@ -153,5 +153,9 @@ public interface BillReceiptInfo {
      * @return manual receipt date for back dated receipt
      */
     public abstract Date getManualReceiptDate();
-
+    
+    /**
+     * @return legacy check for billing system
+     */
+    public abstract Boolean getLegacy();
 }

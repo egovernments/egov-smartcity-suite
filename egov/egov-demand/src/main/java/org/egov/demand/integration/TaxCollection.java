@@ -113,8 +113,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
      */
 
     @Override
-    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) {
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Details Updating Started...");
+    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException{
+        LOGGER.debug("updateReceiptDetails : Receipt Details Updating Started...");
         for (final BillReceiptInfo bri : billReceipts)
             try {
                 LOGGER.debug("-----updateReceiptDetails is called----------------");
@@ -123,7 +123,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
                 LOGGER.error("Exception while updating receipt details in billing system", e);
                 throw new ApplicationRuntimeException("", e);
             }
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Details Updating Finished...");
+        LOGGER.debug("updateReceiptDetails : Receipt Details Updating Finished...");
     }
 
     /**
@@ -414,25 +414,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 
     public BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri,
             final List<EgBillDetails> billDetList) throws InvalidAccountHeadException {
-        BigDecimal totalCollAmt = BigDecimal.ZERO;
-        try {
-            if (bri != null && billDetList != null)
-                for (final EgBillDetails billDet : billDetList) {
-                    Boolean glCodeExist = false;
-                    for (final ReceiptAccountInfo acctDet : bri.getAccountDetails())
-                        if (billDet.getGlcode().equals(acctDet.getGlCode())) {
-                            glCodeExist = true;
-                            totalCollAmt = totalCollAmt.add(acctDet.getCrAmount());
-                        }
-                    if (!glCodeExist)
-                        throw new InvalidAccountHeadException("GlCode does not exist for "
-                                + billDet.getGlcode());
-                }
-        } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
-        }
-
-        return totalCollAmt;
+    	return bri.getTotalAmount();
     }
 
     /**

@@ -31,13 +31,17 @@ public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryC
 		return null;
 	}
 	
-public	FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate)
+public	FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate,long financialYearId)
 	{
+	
 		FeeMatrixDetail fmd=null;
-	String qlString="select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and :appdate >=fromDate  "
-		+ " order by fromDate desc";
+	String qlString="select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and fd.feeMatrix.financialYear.id=:financialYearId "
+			+ " order by fd.id desc";
 	List l=	entityManager.createQuery(qlString).setParameter("feeMatrix", feeMatrix)
-		.setParameter("uom", uom).setParameter("appdate", appdate).getResultList();
+		.setParameter("uom", uom).setParameter("financialYearId", financialYearId).getResultList();
+	
+	
+	
 	if(!l.isEmpty())
 	fmd=(FeeMatrixDetail)l.get(0);
 	

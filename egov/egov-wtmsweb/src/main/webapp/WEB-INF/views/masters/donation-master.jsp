@@ -47,7 +47,10 @@
     <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationDetails" id="donationDetailsform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+	</div>
+	<div class="panel-body custom-form">
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.propertytype" /><span class="mandatory"></span></label>
@@ -132,7 +135,7 @@
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="fromDate"  
-								class="form-control datepicker" data-date-end-date="0d"
+								class="form-control datepicker" 
 								id="effectiveDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>
@@ -142,6 +145,8 @@
 						<form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
+					</div>
+</div>
 	</form:form>
 				<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"

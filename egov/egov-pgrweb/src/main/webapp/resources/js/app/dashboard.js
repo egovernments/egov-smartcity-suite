@@ -79,7 +79,8 @@ function openCompPendency() {
 
 //===============================PERFORMANCE GIS=======================================//
 function performanceGIS() {
-	var gisOption = {
+	
+	 var gisOption = {
 			zoom: 11,
 			mapTypeId : google.maps.MapTypeId.TERRAIN, 
 			streetViewControl: true,
@@ -97,6 +98,7 @@ function performanceGIS() {
 				style: google.maps.ZoomControlStyle.SMALL
 			}
 	 };
+	
 	var map = new google.maps.Map(document.getElementById("performanceGIS"), gisOption);
 	var infoWin = new google.maps.InfoWindow();
 	var chartWin = new google.maps.InfoWindow();
@@ -281,9 +283,9 @@ function breakupTabularDrill(link) {
 			           // cursor: 'pointer',
 			            dataLabels: {
 			                enabled: true,
-			                distance: -13,
+			                distance: -30,
 							color:'white',
-							style:{'fontSize':'smaller'},
+							style:{'fontSize':'smaller', 'textShadow':'none'},
 			                formatter: function() {
 			                	if (this.y != 0) {
 			                        return this.y;
@@ -854,9 +856,9 @@ function slaPie() {
 		            slicedOffset: 0,
 		            dataLabels: {
 		                enabled: true,
-		                distance: -30,
+		                distance: -80,
 						color:'white',
-						style:{'fontSize':'smaller'},
+						style:{'fontSize':'smaller', 'textShadow':'none'},
 		                formatter: function() {
 		                    return this.y;
 		                }
@@ -1286,7 +1288,7 @@ function createPieInGmap() {
 		                enabled: true,
 		                distance: -30,
 						color:'white',
-						style:{'fontSize':'smaller'},
+						style:{'fontSize':'smaller', 'textShadow':'none'},
 		                formatter: function() {
 		                	var width = $(window).width(), height = $(window).height();
 		                	if (width >= 768) {

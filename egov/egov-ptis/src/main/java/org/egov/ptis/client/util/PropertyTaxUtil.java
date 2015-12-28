@@ -1747,14 +1747,14 @@ public class PropertyTaxUtil {
                 && propertyWiseConsumptions.getConsumerConsumptions().size() > 0) {
             for (final ConsumerConsumption cc : propertyWiseConsumptions.getConsumerConsumptions())
                 if (cc != null) {
-                    if (cc.getArrearDue() != null && cc.getArrearDue() != BigDecimal.ZERO) {
+                    if (cc.getArrearDue() != null && cc.getArrearDue().compareTo(BigDecimal.ZERO) > 0) {
                         if (arrearFromDate == "")
                             arrearFromDate = sdf.format(cc.getArrearFromDate().toDate());
                         arrearToDate = sdf.format(cc.getArrearToDate().toDate());
                         arrearAmount = arrearAmount.add(cc.getArrearDue());
 
                     }
-                    if (cc.getCurrentDue() != null && cc.getCurrentDue() != BigDecimal.ZERO) {
+                    if (cc.getCurrentDue() != null && cc.getCurrentDue().compareTo(BigDecimal.ZERO) > 0) {
                         if (currentFromDate == "")
                             currentFromDate = sdf.format(cc.getCurrentFromDate().toDate());
                         currentToDate = sdf.format(cc.getCurentToDate().toDate());
@@ -1855,7 +1855,7 @@ public class PropertyTaxUtil {
 
     public DepreciationMaster getDepreciationByDate(final Date depreciationDate) {
         String depreciationYear = null;
-        final int years = DateUtils.getNumberOfYearPassesed(new Date(), depreciationDate);
+        final int years = DateUtils.getNumberOfYearPassesed(depreciationDate, new Date());
         if (years >= 0 && years <= 25)
             depreciationYear = "0-25";
         else if (years > 25 && years <= 40)
@@ -1964,7 +1964,7 @@ public class PropertyTaxUtil {
      */
     public Query prepareQueryforCollectionSummaryReport(final String fromDate, final String toDate,
             final String collMode, final String transMode, final String mode, final String boundaryId,
-            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long areaId) {
+            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
         String srchQryStr = "";
         String baseQry = "", orderbyQry = "";
         final String ZONEWISE = "zoneWise";
@@ -2002,8 +2002,8 @@ public class PropertyTaxUtil {
                     srchQryStr = srchQryStr + " and cs.zoneId.id =" + zoneId;
                 if (wardId != null && !wardId.equals("") && wardId != -1)
                     srchQryStr = srchQryStr + " and cs.wardId.id =" + wardId;
-                if (areaId != null && !areaId.equals("") && areaId != -1)
-                    srchQryStr = srchQryStr + " and cs.areaId.id =" + areaId;
+                if (blockId != null && !blockId.equals("") && blockId != -1)
+                    srchQryStr = srchQryStr + " and cs.areaId.id =" + blockId;
                 orderbyQry = "order by cs.property.propertyDetail.categoryType";
             }
             if (mode.equals(ZONEWISE)) {
@@ -2341,14 +2341,14 @@ public class PropertyTaxUtil {
     public String getApproverUserName(final Long approvalPosition) {
         Assignment assignment = null;
         if (approvalPosition != null)
-            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        return assignment != null ? assignment.getEmployee().getUsername() : "";
+            assignment = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+        return assignment != null ? assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) : "";
     }
 
     public boolean enableVacancyRemission(String upicNo) {
         boolean vrFlag = false;
         List<VacancyRemission> remissionList = persistenceService.findAllBy(
-                "select vr from VacancyRemission vr where vr.basicProperty.upicNo=? ", upicNo);
+                "select vr from VacancyRemission vr where vr.basicProperty.upicNo=? order by id desc", upicNo);
         if (remissionList.isEmpty()) {
             vrFlag = true;
         } else {
@@ -2403,5 +2403,39 @@ public class PropertyTaxUtil {
             }
         }
         return vrApprovalFlag;
+    }
+
+    /**
+     * @Description : checks if the parent property has any child which is in
+     *              workflow
+     * @param upicNo
+     *            of the parent property
+     * @return boolean
+     */
+    public boolean checkForParentUsedInBifurcation(String upicNo) {
+        boolean isChildUnderWorkflow = false;
+        PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService
+                .find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' ",
+                        upicNo);
+        if (statusValues != null) {
+            isChildUnderWorkflow = true;
+        }
+        return isChildUnderWorkflow;
+    }
+
+    /**
+     * Method to get lowest installment for property
+     *
+     * @param property
+     * @return Lowest installment from date
+     */
+    public Date getLowestInstallmentForProperty(Property property) {
+        final String query = "select demandDetails.egDemandReason from Ptdemand ptd,EgDemandDetails demandDetails where ptd.egptProperty = :property "
+                + " and ptd.id = demandDetails.egDemand.id ";
+        List<EgDemandReason> egDemandReason = persistenceService.getSession().createQuery(query.toString())
+                .setEntity("property", property).list();
+        return (null != egDemandReason && !egDemandReason.isEmpty()) ? egDemandReason.get(0)
+                .getEgInstallmentMaster().getFromDate() : null;
+
     }
 }

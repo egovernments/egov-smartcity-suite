@@ -129,5 +129,17 @@
 	<query name="getAllLocations">
     <![CDATA[from Location loc where loc.isLocation = 1 order by loc.name]]></query>
     
+    <query name="getServiceCategoryForType">
+	<![CDATA[
+	select distinct c from org.egov.infstr.models.ServiceDetails s join s.serviceCategory c where s.serviceType=? and s.isEnabled=?
+	]]>
+	</query>
+	
+	 <query name="getServiceDetailsByCategory">
+	<![CDATA[
+	select s from org.egov.infstr.models.ServiceDetails s where s.serviceCategory.id=? and s.isEnabled=?
+	]]>
+	</query>
+    
     
 </hibernate-mapping>

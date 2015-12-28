@@ -215,4 +215,15 @@ public class WorksConstants {
     public static final String ACTION_WF_HISTORY = "WorkFlow History";
     public static final String ACTION_VIEW_DOCUMENT = "View Document";
     public static final String ACTION_COPY_ESTIMATE = "Copy Estimate";
+
+    public static final String GRADE = "grade";
+    public static final String MIN_AMOUNT = "minAmount";
+    public static final String MAX_AMOUNT = "maxAmount";
+    
+    public static final String CONTRACTOR_NAME = "contractorName";
+    public static final String CONTRACTOR_CODE = "contractorCode";
+    public static final String DEPARTMENT_ID = "departmentId";
+    public static final String STATUS_ID = "statusId";
+    public static final String GRADE_ID = "gradeId";
+    public static final String SEARCH_DATE = "searchDate";
 }

@@ -186,10 +186,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
         try {
             if (getBasicProperty() == null) {
+                addActionError("Property not found with given Assessment Number " + propertyId); 
                 throw new PropertyNotFoundException();
             } else {
                 LOGGER.debug("BasicProperty : " + basicProperty);
-                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId); 
                 viewMap = new HashMap<String, Object>();
                 viewMap.put("propID", basicProperty.getPropertyID());
                 PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
@@ -198,6 +199,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 Property property = getBasicProperty().getProperty();
                 viewMap.put("propAddress", getBasicProperty().getAddress().toString());
                 viewMap.put("ownerName", basicProperty.getFullOwnerName());
+                viewMap.put("taxExempted", property.getIsExemptedFromTax());
                 if (!property.getIsExemptedFromTax()) {
                     Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
                     viewMap.put("currTaxAmount", demandCollMap.get(CURR_DMD_STR));
@@ -221,8 +223,16 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 } else {
                     viewMap.put("currTaxAmount", BigDecimal.ZERO);
                     viewMap.put("currTaxDue", BigDecimal.ZERO);
-                    viewMap.put("currTaxAmount", BigDecimal.ZERO);
-                }
+                    viewMap.put("totalArrDue", BigDecimal.ZERO);
+                    dcbReport.setTotalDmdTax(BigDecimal.ZERO); 
+                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);  
+                    dcbReport.setTotalDmdPnlty(BigDecimal.ZERO);
+                    dcbReport.setTotalColTax(BigDecimal.ZERO);
+                    dcbReport.setTotalColPnlty(BigDecimal.ZERO);
+                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);  
+                    dcbReport.setTotalRebate(BigDecimal.ZERO); 
+                    dcbReport.setTotalBalance(BigDecimal.ZERO); 
+                } 
 
             }
         } catch (PropertyNotFoundException e) {
@@ -355,7 +365,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into getMigratedData");
         LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
         // List of property receipts
-        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=?",
+        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=? order by receiptDate desc",
                 getBasicProperty().getId());
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
@@ -378,6 +388,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 receipt.setReceiptNumber(propMutation.getReceiptNum());
                 receipt.setReceiptAmt(propMutation.getMutationFee());
                 receipt.setReceiptDate(propMutation.getReceiptDate());
+                receipt.setConsumerCode(propMutation.getApplicationNo());
                 mutationRcpts.add(receipt);
             }
         }

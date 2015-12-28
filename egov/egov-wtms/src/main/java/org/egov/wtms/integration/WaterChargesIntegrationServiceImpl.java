@@ -63,7 +63,11 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
+
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {
 
     @Autowired
@@ -98,7 +102,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 if (null != resultmap && !resultmap.isEmpty()) {
                     final BigDecimal arrInstallment = resultmap.get(WaterTaxConstants.ARR_INSTALFROM_STR);
                     if (null != arrInstallment && arrInstallment != BigDecimal.ZERO)
-                        arrInstal = (Installment) installmentDao.findById(arrInstallment.longValue(), false);
+                        arrInstal = (Installment) installmentDao.findById(new Integer(arrInstallment.toString()), false);
                     consumerConsumption.setCurrentDue(resultmap.get(WaterTaxConstants.CURR_DUE));
                     consumerConsumption.setArrearDue(resultmap.get(WaterTaxConstants.ARR_DUE));
                     if (null != arrInstal) {

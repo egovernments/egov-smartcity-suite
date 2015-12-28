@@ -149,12 +149,12 @@ $(document).ready(function()
 	    });
 	}
 	
-	$("select").each(function() { 
+	/*$("select").each(function() { 
 		if($(this).children('option').length == 2)
 		{
 		  $(this).find('option').eq(1).prop('selected', true);
 		}
-	});
+	});*/
 	
 	/*$(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
         $(".alert-danger").alert('close');

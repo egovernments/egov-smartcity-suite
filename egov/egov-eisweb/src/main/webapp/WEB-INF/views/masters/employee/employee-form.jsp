@@ -71,7 +71,7 @@
 		
 <div class="row">
 	<div class="col-md-12">
-		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" >
+		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" enctype="multipart/form-data" >
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                     <div class="alert alert-success" role="alert">${message}</div>
@@ -98,6 +98,7 @@
                             </c:if>
 								<form:hidden path="locale" value="en_IN"/>
 								<input type="hidden" value="" id="removedJurisdictionIds" name ="removedJurisdictionIds"/>
+								<input type="hidden" value="" id="removedassignIds" name ="removedassignIds"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
@@ -195,7 +196,7 @@
 											<form:errors path="employeeStatus" cssClass="error-msg" />
 										</div>
 									</div>
-
+					
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.emptype"/><span class="mandatory"></span></label>
 										
@@ -240,7 +241,44 @@
 											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
 										</div>
 									</div>
-
+									
+								    <c:if test="${not empty image}">
+								    <div class="form-group">
+									    <label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.sign"/></label>
+										<div class="col-md-3 col-xs-6 add-margin view-content">
+											<img width="100" height="70" src='data:image/png;base64,${image}' /> 
+									  	</div>
+								    </div>
+								    <div class="form-group">
+										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
+											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
+										</div>
+										<div class="col-sm-6 col-xs-12">
+											<div id="file1block" class="add-margin col-sm-3 col-xs-6">
+												<img id="preview1" src="#" alt="" class="display-hide "/>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+												<div class="add-padding" id="filename1"></div>
+										    </div>
+										</div>	
+					                 </div>	                 
+								     </c:if>
+								     
+									<c:if test="${ empty image}">
+                                    <div class="form-group">
+										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
+											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
+										</div>
+										<div class="col-sm-6 col-xs-12">
+											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+												<img id="preview1" src="#" alt="" class="display-hide "/>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+												<div class="add-padding" id="filename1"></div>
+										</div>
+										</div>
+					                </div>
+					                </c:if>
 
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.useractive"/><span class="mandatory"></span></label>
@@ -461,6 +499,9 @@
 											<c:forEach var="assign" items="${employee.assignments}" varStatus="status">
 												<tr>
 													<td>
+													    <input type="hidden" id="table_assignid${status.index}"
+													    name="assignments[${status.index}].id"
+													    value="${assign.id}"/>
 														<fmt:formatDate value="${assign.fromDate}" var="fromDate"
 															pattern="dd/MM/yyyy" />
 														<fmt:formatDate value="${assign.toDate}" var="toDate"
@@ -478,7 +519,7 @@
 													<td>
 														<input type="hidden" id="assignments[${status.index}].primary"
 															name="assignments[${status.index}].primary"
-															value="${assign.primary}"/>	
+															value="${assign.primary}"/>
 																
 																<c:if test="${assign.primary==true}" >
 																<input type="text" id="table_department${status.index}" class="form-control" 
@@ -533,7 +574,9 @@
 														</c:if>
 													</td>
 													<td>
-														<span class="parallel-actions"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+														<span class="parallel-actions" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+													   <span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														id="delete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 													</td>
 												</tr>
 											</c:forEach>
@@ -618,10 +661,10 @@
 													id="table_boundary${status.index}" class="form-control"
 													readonly="readonly" style="text-align: center"
 													value="${jurdctn.boundary.name}" /></td>
-													<td><span class="parallel-actions"><i
-														id="jurdctnedit_row" class="fa fa-edit" value="${status.index}"></i></span>
-														<span class="parallel-actions"><i
-														id="jurdctndelete_row" class="fa fa-remove" value="${status.index}"></i></span>
+													<td><span class="parallel-actions" data-toggle="tooltip" title="Edit"><i
+														id="jurdctnedit_row" class="fa fa-edit"  value="${status.index}"></i></span>
+														<span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														id="jurdctndelete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 												</td>
 												
 											</tr>
@@ -648,3 +691,4 @@
              </form:form>
     </div>
 </div>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>

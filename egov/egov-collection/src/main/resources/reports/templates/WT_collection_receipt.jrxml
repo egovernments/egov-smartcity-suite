@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-13T15:15:21 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2015-12-11T17:21:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="61"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.collection.constants.CollectionConstants"/>
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
@@ -24,6 +27,7 @@
 	<field name="receiptNum" class="java.lang.String">
 		<fieldDescription><![CDATA[Receipt Number]]></fieldDescription>
 	</field>
+	<field name="legacy" class="java.lang.Boolean"/>
 	<field name="receiptDate" class="java.util.Date"/>
 	<field name="payeeAddress" class="java.lang.String">
 		<fieldDescription><![CDATA[Payee Address]]></fieldDescription>
@@ -47,6 +51,7 @@
 	<field name="instrumentDetails" class="java.util.Collection"/>
 	<field name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc"/>
 	<field name="collectionType" class="java.lang.String"/>
+	<field name="createdBy" class="org.egov.infra.admin.master.entity.User"/>
 	<variable name="amountReceived" class="java.math.BigDecimal">
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>
@@ -347,7 +352,7 @@
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" uuid="488747bf-e344-4532-8f25-d6e603f717ea"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_accounts.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[($F{legacy} ==true ? ReportUtil.getTemplateAsStream("collection_receipt_accounts.jasper"): ReportUtil.getTemplateAsStream("WT_collection_receipt_accounts.jasper"))]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="61">
@@ -377,4 +382,22 @@
 			</subreport>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="50">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="125" y="0" width="430" height="20" uuid="122a3fca-9810-429e-8315-7b1078f5f564"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Collected By : "+$F{createdBy}.getName()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>

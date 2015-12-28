@@ -25,6 +25,7 @@ public class TitleTransferReportHelperAdaptor implements JsonSerializer<TitleTra
             jsonObject.addProperty("changedTitle", titleTransferReportObj.getChangedTitle());
             jsonObject.addProperty("dateOfTransfer", titleTransferReportObj.getDateOfTransfer());
             jsonObject.addProperty("commissionerOrder", titleTransferReportObj.getCommissionerOrder());
+            jsonObject.addProperty("mutationFee", titleTransferReportObj.getMutationFee());
         }
         return jsonObject;
     }
