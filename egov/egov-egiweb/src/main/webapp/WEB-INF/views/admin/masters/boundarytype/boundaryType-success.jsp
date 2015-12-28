@@ -79,10 +79,10 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-							<button type="submit" id="boundaryTypeCreateBtn" class="btn btn-success">
+							<button type="submit" id="boundaryTypeCreateBtn" class="btn btn-primary">
                             	<spring:message code="lbl.create"/>
                             </button>
-                            <button type="submit" id="boundaryTypeUpdateBtn" class="btn btn-success">
+                            <button type="submit" id="boundaryTypeUpdateBtn" class="btn btn-primary">
                             	<spring:message code="lbl.update"/>
                             </button>	
 			       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>

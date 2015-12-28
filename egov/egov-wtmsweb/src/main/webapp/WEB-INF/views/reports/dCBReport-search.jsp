@@ -83,8 +83,7 @@
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.connectiontype" /><small><i
-								class="entypo-star error-msg"></i></small> </label>
+								code="lbl.connectiontype" /><span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="connectionType" id="connectionType"
 								data-first-option="false" cssClass="form-control"
@@ -103,8 +102,7 @@
 						<c:when test="${reportType == 'zoneWise'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
-										code="lbl.zone" /> <small><i
-										class="entypo-star error-msg"></i></small>
+										code="lbl.zone" /> <span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="zones" multiple="true" size="10" id="zones"
@@ -121,8 +119,7 @@
 						<c:when test="${reportType == 'wardWise'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
-										code="lbl.ward" /> <small><i
-										class="entypo-star error-msg"></i></small>
+										code="lbl.ward" /> <span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="wards" multiple="true" size="10" id="wards"
@@ -139,8 +136,7 @@
 						<c:when test="${reportType == 'blockWise'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
-										code="lbl.block" /> <small><i
-										class="entypo-star error-msg"></i></small>
+										code="lbl.block" /><span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="blocks" multiple="true" size="10"
@@ -159,8 +155,7 @@
 						<c:when test="${reportType == 'localityWise'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
-										code="lbl.locality" /> <small><i
-										class="entypo-star error-msg"></i></small>
+										code="lbl.locality" /> <span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="localitys" multiple="true" size="10"
