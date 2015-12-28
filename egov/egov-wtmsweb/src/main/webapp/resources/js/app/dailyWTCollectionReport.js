@@ -91,7 +91,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 				"columns" : [
 							  { "data" : "receiptNo" , "title": "Receipt no"},  
 							  { "data" : "receiptDate", "title": "Receipt date"},
-							  { "data" : "consumerCode", "title": "Consumer Code"},
+							  { "data" : "consumerCode", "title": "Consumer Number"},
 							  { "data" : "consumerName", "title": "Consumer Name"},
 							  { "data" : "doorNumber", "title": "Door no"},
 							  { "data" : "paidAt", "title": "Paid at"},

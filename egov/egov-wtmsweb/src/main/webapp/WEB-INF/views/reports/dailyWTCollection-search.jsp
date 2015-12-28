@@ -69,18 +69,18 @@ body
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.fromDate" /><span class="mandatory"></span></label>
+								code="lbl.dailyReport.fromDate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-						<fmt:formatDate value="${currDate}" var="fromDate" pattern="dd/MM/yyyy"/>
+						<fmt:formatDate value="${currentDate}" var="fromDate" pattern="dd/MM/yyyy"/>
 							<form:input path="" name="fromDate" id="fromDate"
 								cssClass="form-control datepicker" value="${fromDate}"
 								cssErrorClass="form-control error" required="required"/>
 						</div>
 
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.toDate" /><span class="mandatory"></span></label>
+								code="lbl.dailyReport.toDate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-						<fmt:formatDate value="${currDate}" var="toDate" pattern="dd/MM/yyyy"/>
+						<fmt:formatDate value="${currentDate}" var="toDate" pattern="dd/MM/yyyy"/>
 							<form:input path="" name="toDate" id="toDate"
 								cssClass="form-control datepicker" value="${toDate}"
 								cssErrorClass="form-control error" required="required"/>
@@ -116,7 +116,7 @@ body
 
 					</div>
 				</div>
-				<div class="panel-body custom-form">
+				<%-- <div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.status" /></label>
@@ -130,13 +130,13 @@ body
 							</form:select>
 						</div>
 				</div>
-				</div>
+				</div> --%>
 			</div>
 			<div class="row">
 				<div class="text-center">
 					<button type="button" class="btn btn-success"
 						id="dailyCollectionReportSearch">
-						<spring:message code="lbl.search" />
+						<spring:message code="lbl.submit" />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						data-dismiss="modal" onclick="self.close()"><spring:message
@@ -145,7 +145,7 @@ body
 			</div>
 		</form:form>
 		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
-			<fmt:formatDate value="${currDate}" var="currDate"
+			<fmt:formatDate value="${currentDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
 			<spring:message code="lbl.dailyCollection.report.details" />:
 			<c:out value="${currDate}"></c:out>
