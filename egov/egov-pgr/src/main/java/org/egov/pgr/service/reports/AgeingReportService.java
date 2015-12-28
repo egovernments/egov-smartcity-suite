@@ -54,7 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AgeingReportService {
     private static final Logger LOG = LoggerFactory.getLogger(AgeingReportService.class);
-    String COMPLAINTSTATUS_COMPLETED = "Completed";
+    private static final String COMPLAINTSTATUS_COMPLETED = "Completed";
 
     public SQLQuery getageingReportQuery(final DateTime fromDate, final DateTime toDate, final String typeofReport,
             final String complaintDateType, final String groupBy) {
