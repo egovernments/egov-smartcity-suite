@@ -58,7 +58,10 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
+import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -117,6 +120,21 @@ public class CloserConnectionController extends GenericConnectionController {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
         return waterConnectionDetails;
+    }
+
+    @Override
+    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+        return connectionCategoryService.getAllActiveConnectionCategory();
+    }
+
+    @Override
+    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+        return usageTypeService.getActiveUsageTypes();
+    }
+
+    @Override
+    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
+        return pipeSizeService.getAllActivePipeSize();
     }
 
     /*

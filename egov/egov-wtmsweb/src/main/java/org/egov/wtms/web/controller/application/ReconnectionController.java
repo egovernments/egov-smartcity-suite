@@ -55,7 +55,10 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReconnectionService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
+import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -106,6 +109,21 @@ public class ReconnectionController extends GenericConnectionController {
         waterConnectionDetails.setApplicationType(applicationTypeService
                 .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
         return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
+    }
+
+    @Override
+    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+        return connectionCategoryService.getAllActiveConnectionCategory();
+    }
+
+    @Override
+    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+        return usageTypeService.getActiveUsageTypes();
+    }
+
+    @Override
+    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
+        return pipeSizeService.getAllActivePipeSize();
     }
 
     @RequestMapping(value = "/reconnection/{applicationCode}", method = RequestMethod.GET)

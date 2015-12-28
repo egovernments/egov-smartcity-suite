@@ -163,6 +163,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                     + resultBinder.getFieldErrors().get(0).getDefaultMessage());
             model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            
             return "changeOfUse-form";
 
         }
@@ -253,6 +254,9 @@ public class ChangeOfUseController extends GenericConnectionController {
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(connectionUnderChange);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
+        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
+        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
+        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
     }
 
 }
