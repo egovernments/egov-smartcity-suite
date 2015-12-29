@@ -168,7 +168,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
-    private Boolean isNagarPanchayat = Boolean.FALSE;
+    private boolean isNagarPanchayat = false;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -327,7 +327,6 @@ public class SearchPropertyAction extends BaseFormAction {
         if (null != doorNo)
             try {
                 final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByDoorNo(doorNo);
-                checkIsNagarPanchayat();
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByBndry : Property : " + propMatview);
@@ -357,7 +356,6 @@ public class SearchPropertyAction extends BaseFormAction {
             try {
                 final List<PropertyMaterlizeView> propertyList = propertyService
                         .getPropertyByMobileNumber(mobileNumber);
-                checkIsNagarPanchayat();
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByBndry : Property : " + propMatview);
@@ -407,7 +405,6 @@ public class SearchPropertyAction extends BaseFormAction {
                     throw new ValidationException(Arrays.asList(new ValidationError("resultCountValidation",
                             getText("search.validate.resultcountexceed500"))));
                 }
-                checkIsNagarPanchayat();
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByBndry : Property : " + propMatview);
@@ -451,7 +448,6 @@ public class SearchPropertyAction extends BaseFormAction {
                             "search.validate.resultcountexceed500");
                     throw new ValidationException(Arrays.asList(vr));
                 }
-                checkIsNagarPanchayat();
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByLocation : Property : " + propMatview);
@@ -491,7 +487,6 @@ public class SearchPropertyAction extends BaseFormAction {
                             "search.validate.resultcountexceed500");
                     throw new ValidationException(Arrays.asList(vr));
                 }
-                checkIsNagarPanchayat();
                 for (final PropertyMaterlizeView propMatview : propertyList) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("searchByDemand : Property : " + propMatview);
@@ -590,7 +585,6 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Assessment Number : " + assessmentNumber);
         }
         if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
-        	checkIsNagarPanchayat();
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BasicProperty : " + basicProperty);
@@ -646,16 +640,6 @@ public class SearchPropertyAction extends BaseFormAction {
         return searchList;
     }
 
-    private Boolean checkIsNagarPanchayat(){
-    	HttpServletRequest request = ServletActionContext.getRequest();
-    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
-                request.getSession().getAttribute("cityGrade").toString():null);
-    	if(StringUtils.isNotBlank(grade) && grade.equalsIgnoreCase(PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT)){
-    		isNagarPanchayat=true;
-        } else
-        	isNagarPanchayat=false;
-    	return isNagarPanchayat;
-    }
     /**
      * @param basicProperty
      */
@@ -967,11 +951,11 @@ public class SearchPropertyAction extends BaseFormAction {
         this.meesevaServiceCode = meesevaServiceCode;
     }
 
-    public Boolean getIsNagarPanchayat() {
-		return isNagarPanchayat;
+    public boolean getIsNagarPanchayat() {
+    	return propertyTaxUtil.checkIsNagarPanchayat();
 	}
 
-	public void setIsNagarPanchayat(Boolean isNagarPanchayat) {
+	public void setIsNagarPanchayat(boolean isNagarPanchayat) {
 		this.isNagarPanchayat = isNagarPanchayat;
 	}
 }

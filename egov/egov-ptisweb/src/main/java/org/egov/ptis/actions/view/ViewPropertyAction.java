@@ -123,7 +123,7 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
 
-    private Boolean isNagarPanchayat = Boolean.FALSE;
+    private boolean isNagarPanchayat = false;
     
     @Override
     public StateAware getModel() {
@@ -156,7 +156,6 @@ public class ViewPropertyAction extends BaseFormAction {
             if (property.getPropertyDetail().getFloorDetails().size() > 0)
                 setFloorDetails(property);
             checkIsDemandActive(property);
-            checkIsNagarPanchayat();
             if (getBasicProperty().getPropertyOwnerInfo() != null
                     && !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
                 for (final PropertyOwnerInfo propOwner : getBasicProperty().getPropertyOwnerInfo()) {
@@ -303,17 +302,6 @@ public class ViewPropertyAction extends BaseFormAction {
             LOGGER.debug("Exiting from setFloorDetails: ");
     }
     
-    private Boolean checkIsNagarPanchayat(){
-    	HttpServletRequest request = ServletActionContext.getRequest();
-    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
-                request.getSession().getAttribute("cityGrade").toString():null);
-    	if(StringUtils.isNotBlank(grade) && grade.equalsIgnoreCase(PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT)){
-    		isNagarPanchayat=true;
-        } else
-        	isNagarPanchayat=false;
-    	return isNagarPanchayat;
-    }
-
     public String getFloorNoStr(final Integer floorNo) {
         return FLOOR_MAP.get(floorNo);
     }
@@ -414,11 +402,11 @@ public class ViewPropertyAction extends BaseFormAction {
         this.errorMessage = errorMessage;
     }
 
-    public Boolean getIsNagarPanchayat() {
-		return isNagarPanchayat;
+    public boolean getIsNagarPanchayat() {
+    	return propertyTaxUtil.checkIsNagarPanchayat();
 	}
 
-	public void setIsNagarPanchayat(Boolean isNagarPanchayat) {
+	public void setIsNagarPanchayat(boolean isNagarPanchayat) {
 		this.isNagarPanchayat = isNagarPanchayat;
 	}
 }

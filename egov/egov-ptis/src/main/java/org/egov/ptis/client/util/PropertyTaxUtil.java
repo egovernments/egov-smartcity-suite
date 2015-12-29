@@ -105,6 +105,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.CFinancialYear;
@@ -2437,5 +2438,16 @@ public class PropertyTaxUtil {
         return (null != egDemandReason && !egDemandReason.isEmpty()) ? egDemandReason.get(0)
                 .getEgInstallmentMaster().getFromDate() : null;
 
+    }
+    
+    /**
+     * Method to check for Nagar Panchayats as Grade
+     * @return boolean
+     */
+    public boolean checkIsNagarPanchayat(){
+    	HttpServletRequest request = ServletActionContext.getRequest();
+    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
+                request.getSession().getAttribute("cityGrade").toString():null);
+    	return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
 }
