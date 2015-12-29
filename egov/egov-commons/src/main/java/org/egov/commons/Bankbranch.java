@@ -122,7 +122,7 @@ public class Bankbranch implements java.io.Serializable {
                 this.bankaccounts = bankaccounts;
         }
         public boolean isAccountsExist(){
-            return (this.bankaccounts!=null && bankaccounts.size()>0) ;
+            return (this.bankaccounts!=null && !this.bankaccounts.isEmpty()) ;
         }
         public Integer getId() {
                 return this.id;
