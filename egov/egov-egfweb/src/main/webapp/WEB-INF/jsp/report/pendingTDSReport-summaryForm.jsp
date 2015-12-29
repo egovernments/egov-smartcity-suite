@@ -40,7 +40,7 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
-	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 	<script type="text/javascript" src="/EGF/resources/javascript/tdsReportHelper.js"></script>
 	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
 	<style type="text/css">

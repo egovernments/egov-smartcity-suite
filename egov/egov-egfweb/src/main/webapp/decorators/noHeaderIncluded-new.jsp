@@ -65,7 +65,7 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
-		<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/ajaxCommonFunctions.js'/>"></script>
 		<decorator:head/>
 	</head>
 <script type="text/javascript" >

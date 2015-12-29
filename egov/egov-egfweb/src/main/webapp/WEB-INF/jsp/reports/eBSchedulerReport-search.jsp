@@ -58,7 +58,7 @@
 	#codescontainer li.yui-ac-highlight {background:#ff0;}
 	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
 	</style>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>

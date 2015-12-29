@@ -55,6 +55,8 @@ if(!updateAndCheckAmount())
 	undoLoadingMask();
 	return false;
 	}
+ 	document.dbpform.action='../payment/directBankPayment-create.action';
+	document.dbpform.submit();
 return true;
 }
 function updateAndCheckAmount()
@@ -91,12 +93,12 @@ function populateNarration(accnumObj){
 	var bankbranchId = bankbranchObj.options[bankbranchObj.selectedIndex].value;
 	var index=bankbranchId.indexOf("-");
 	var branchId=bankbranchId.substring(index+1,bankbranchId.length);
-	var url = '../voucher/common!loadAccNumNarration.action?accnum='+accnum+'&branchId='+branchId;
+	var url = '../voucher/common-loadAccNumNarration.action?accnum='+accnum+'&branchId='+branchId;
 	YAHOO.util.Connect.asyncRequest('POST', url, postTypeFrom, null);
 }
 
 function loadDocumentNoAndDate(billVhId){
-	var url = '../voucher/common!ajaxLoadDocumentNoAndDate.action?billVhId='+billVhId;
+	var url = '../voucher/common-ajaxLoadDocumentNoAndDate.action?billVhId='+billVhId;
 	YAHOO.util.Connect.asyncRequest('POST', url, documentNoAndDateTypeFrom, null);
 }
 
@@ -132,7 +134,6 @@ function populateAvailableBalance(accnumObj){
 
 var callback = {
 		success: function(o){
-	        alert(o.responseText.value);
 			document.getElementById('availableBalance').value=o.responseText;
 			},
 			failure: function(o) {
@@ -247,7 +248,7 @@ function disableForNonBillPayment()
 
 function openViewVouchers()
 {
-var url = '../voucher/voucherSearch!beforesearch.action?showMode=sourceLink';
+var url = '../voucher/voucherSearch-beforesearch.action?showMode=sourceLink';
 var val=	window.showModalDialog(url,"SearchBillVouchers","dialogwidth: 800; dialogheight: 600;");
 if(val!=undefined && val!=null && val!="" && val.split("$").length>0)
 {
