@@ -53,7 +53,7 @@
 <script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <style type="text/css">
 	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
@@ -89,7 +89,7 @@ display: none;
 <script>
 function showHistory(stateId)
 {
-var url="../voucher/common!showHistory.action?stateId="+stateId;
+var url="../voucher/common-showHistory.action?stateId="+stateId;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 
@@ -282,7 +282,7 @@ function addYUIRow_billDetailTable(obj)
 		}
 function printVoucher(){
 	
-	document.forms[0].action='../report/billPaymentVoucherPrint!print.action?id=<s:property value="paymentheader.id"/>';
+	document.forms[0].action='../report/billPaymentVoucherPrint-print.action?id=<s:property value="paymentheader.id"/>';
 	document.forms[0].submit();
 }
 

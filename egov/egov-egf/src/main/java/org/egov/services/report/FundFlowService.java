@@ -346,7 +346,7 @@ public class FundFlowService extends PersistenceService {
 	
 	
 	
-public BigDecimal	getBankBalance(Long bankaccountId,Date asPerDate, Long bankAccGlcodeId)
+	public BigDecimal getBankBalance(Long bankaccountId,Date asPerDate, Long bankAccGlcodeId)
 	{
 	 	
 	try {

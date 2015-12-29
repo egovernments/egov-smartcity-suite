@@ -242,9 +242,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Designation designation=null;
                  Double grossAmount =  getJVsGrassAmount(paymentheader);
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
-                        List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"grossAmount",grossAmount,"userId",
-                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime(),
-                                                                "paymentheader" , paymentheader));*///This fix is for Phoenix Migration.
+                        List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("eisCommonServiceBean", eisCommonService,"grossAmount",grossAmount,"userId",
+                                                                EgovThreadLocals.getUserId().intValue(),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime(),
+                                                                "paymentheader" , paymentheader));
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
                         for (String desgFuncryName : list) {

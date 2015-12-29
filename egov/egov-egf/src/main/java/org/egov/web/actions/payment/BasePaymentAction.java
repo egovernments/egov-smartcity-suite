@@ -67,7 +67,6 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 		@Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment", params = { "namespace", "/payment","method", "viewInboxItem" }) ,
 		@Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery", params = { "namespace", "/deduction","method", "viewInboxItem" }),
 		@Result(name = "contractoradvancepayment", type = "redirectAction", location = "advancePayment", params = { "namespace", "/payment", "method", "viewInboxItem" })})
-@Transactional(readOnly=true)	
 public class BasePaymentAction extends BaseVoucherAction {    
 	EisCommonService eisCommonService;
 	private static Logger LOGGER=Logger.getLogger(BasePaymentAction.class);

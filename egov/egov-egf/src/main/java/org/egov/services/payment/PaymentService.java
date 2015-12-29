@@ -120,7 +120,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public SimpleDateFormat sdf =new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
         public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
         private @Autowired AppConfigValueService appConfigValuesService;
-        protected PersistenceService persistenceService;	
+        private @Autowired PersistenceService persistenceService;	
         public List<CChartOfAccounts> purchaseBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> worksBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> salaryBillGlcodeList=new ArrayList<CChartOfAccounts>();
@@ -141,7 +141,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public Integer selectedRows=0;
         private Date currentDate = new Date();
         List<InstrumentVoucher> instVoucherList;
-        private EisCommonService eisCommonService;
+        private @Autowired EisCommonService eisCommonService;
         private BillsAccountingService  billsAccountingService;
         private FundFlowService fundFlowService;
         private ChequeAssignmentService chequeAssignmentService;
@@ -158,6 +158,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 EgovCommon common = new EgovCommon();
                 common.setPersistenceService(persistenceService);
                 common.setFundFlowService(fundFlowService);
+                common.setAppConfigValuesService(appConfigValuesService);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getAccountBalance.");
                 return common.getAccountBalance(formatter.parse(voucherDate), Long.valueOf(accountId),amount,paymentId, accGlcodeID);
         }
@@ -2524,7 +2525,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 Paymentheader paymentheader = new Paymentheader();
                 paymentheader.setType(type);
                 paymentheader.setVoucherheader(voucherHeader);
-                Bankaccount bankaccount =(Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,bankaccountId);
+                Bankaccount bankaccount =(Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,bankaccountId.longValue());
                 paymentheader.setBankaccount(bankaccount);
                 paymentheader.setPaymentAmount(amount);
                 persistenceService.setType(Paymentheader.class);

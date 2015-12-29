@@ -48,7 +48,7 @@
 <script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 	<style type="text/css">
@@ -74,7 +74,7 @@
 				{key:"functionid",hidden:true,width:90,  formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
 				{key:"function",hidden:true,label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},    
 				{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-				{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+				{key:"glcode",label:'Account Code <span class="mandatory1">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
 				{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
 				{key:"debitamount",label:'Debit Amount',width:90, className:'bluebgheadtd' ,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
 				{key:"creditamount",label:'Credit Amount',width:90,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
@@ -87,7 +87,7 @@
        			{key:"functionid",hidden:true,width:90,  formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
        			{key:"function",label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","text")},         
        			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-       			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+       			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
        			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
        			{key:"debitamount",label:'Debit Amount',width:90, className:'bluebgheadtd' ,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
        			{key:"creditamount",label:'Credit Amount',width:90,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
@@ -182,10 +182,10 @@
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
 			{key:"subledgerCode",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
-			{key:"glcode.id",label:'Account Code <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"glcode.id",label:'Account Code <span class="mandatory1">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
 			{key:"detailTypeName",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-			{key:"detailCode",label:'Code <span class="mandatory">*</span>',width:120, formatter:createSLDetailCodeTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)", ".search", "openSearchWindowFromJV(this)")},
+			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailCode",label:'Code <span class="mandatory1">*</span>',width:120, formatter:createSLDetailCodeTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)", ".search", "openSearchWindowFromJV(this)")},
 			{key:"detailKeyId",hidden:true,width:100, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
 			{key:"detailKey",label:'Name',width:180, formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
 			{key:"amount",label:'Amount',width:90, formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
@@ -253,7 +253,7 @@
 	
 </head>
 <body onload="onLoadTask_new();loadDropDownCodesExcludingCashAndBank();loadDropDownCodesFunction();">
-<s:form  action="directBankPayment" theme="css_xhtml" name="dbpform" validate="true">
+<s:form  action="directBankPayment" theme="css_xhtml" name="dbpform" validate="true"  >
 <s:push value="model">
 <jsp:include page="../budget/budgetHeader.jsp">
 <jsp:param value="Direct Bank Payment" name="heading"/>
@@ -265,7 +265,7 @@
 <p class="error-block" id="lblError" ></p>
 </font>
 </div>
-<span class="mandatory" >
+<span class="mandatory1" >
 				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
 				<s:actionmessage />
 			</span>
@@ -273,22 +273,24 @@
 		<tr>
 		<td width="10%" class="bluebox"></td>
 		<s:if test="%{shouldshowVoucherNumber()}">
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
+			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory1">*</span></td>
 			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td></s:if>
 			<s:hidden name="id"/>
 			
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
+			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory1">*</span></td>
 			<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy'/>
 			<td class="bluebox" width="34%">
 			<div name="daterow" >
-			<s:textfield  name="voucherDate" id="voucherDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="15" value="%{voucherDateId}"/><A href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none" align="left"><img img width="18" height="18" border="0" align="absmiddle" alt="Date" src="/egi/resources/erp2/images/calendaricon.gif" /></A> </div></td>
+			<s:textfield  name="voucherDate" id="voucherDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="15" value="%{voucherDateId}"/>
+			<a href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none" align="left">
+			<img img width="18" height="18" border="0" align="absmiddle" alt="Date" src="/egi/resources/erp2/images/calendaricon.gif" /></a>
+			</div></td>
 		</tr>
 	<%@include file="directBankPayment-form.jsp"%>  
 	
 	
 	<div class="subheadsmallnew"></div>
-	<div align="left" class="mandatory">* Mandatory Fields</div>                          
-	</div>
+	<div align="left" class="mandatory1">* Mandatory Fields</div>                          
 	<s:hidden name="typeOfAccount" id="typeOfAccount" value="%{typeOfAccount}"/>
 	
 	<tr>
@@ -304,18 +306,14 @@
 		<td class="bluebox" colspan="4"><s:textarea name="comments" id="comments" cols="100" rows="3" onblur="checkLength(this)" value="%{getComments()}"/></td>
 	</tr>
 	</table>
-	<table align="center">
-	<tr class="buttonbottom" id="buttondiv" style="align:middle" >
+	<div  align = "center" class="buttonbottom" id="buttondiv">    
 		<s:hidden  name="actionname" id="actionName" value="%{action}"/>   
 		<s:iterator value="%{getValidActions()}" var="p"  status="s">
-	 	<td> <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="create" onclick="return validate('%{name}','%{description}')"/> </td> 
+	 	 <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="create" onclick="return validate('%{name}','%{description}')"/>
 		</s:iterator>
-		<td><input type="button" value="Close" onclick="javascript:window.close()" class="button" /></td>
-	</tr>
-	<tr class="buttonbottom" id="buttondivdefault" style="align:middle;display:none" >
-	<td><input type="button" value="Close" onclick="javascript:window.close()" class="button" /></td>
-	</tr>
-	</table>
+		<input type="submit" class="buttonsubmit" value="Save And Forward" id="wfBtn%{#s.index}" name="uac_asst_approve" method="create" onclick="return validate('uac_asst_approve','Save And Forward')" />
+		<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+	</div>
 </s:push>
 <s:hidden name="showMode"/>
 <s:token/>
@@ -383,13 +381,13 @@ function	onLoadTask_new()
 			else if(button=="Save_View")
 				{
 						var vhId='<s:property value="voucherHeader.id"/>';
-						document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher!loadvoucherview.action?vhid="+vhId;
+						document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vhId;
 						document.forms[0].submit();
 				}
 			else if(button=="Save_New")
 				{      	
 					document.forms[0].button.value='';
-				    document.forms[0].action = "directBankPayment!newform.action";
+				    document.forms[0].action = "directBankPayment-newform.action";
 				 	document.forms[0].submit();
 				}
 		}
