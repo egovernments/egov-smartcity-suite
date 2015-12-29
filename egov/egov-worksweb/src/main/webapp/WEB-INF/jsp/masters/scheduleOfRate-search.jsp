@@ -185,7 +185,7 @@ body
 					</div>
 					
 					<div class="col-md-12 text-center report-table-container">
-					   <s:text name="label.no.records.found"/>
+					   <div class="alert alert-warning no-margin"><s:text name="label.no.records.found"/></div>
 					</div>
 				</div>
 			</s:elseif>

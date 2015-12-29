@@ -152,8 +152,10 @@ var makeMultiYearEstimateDataTable= function() {
 		var target = oArgs.target;
 		var record = this.getRecord(target);
 		var column = this.getColumn(target);
+
 		if (column.key == 'Add') { 
 			multiYearEstimateDataTable.addRow({SlNo:multiYearEstimateDataTable.getRecordSet().getLength()+1});
+
 		}
 
 		if (column.key == 'Delete') { 			
@@ -246,22 +248,26 @@ function validateDuplicate(records,oArgs){
 				<input type="hidden" name="abc" id="abc" value='<s:property value="%{top}"/>'/>	
 		     </s:iterator>
 		 </s:iterator>
-		<table id="multiYearHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-              	<tr>
-                	<td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer"><s:text name="multiYearEstimate.yearwiseEstimate" /></div></td>
-              	</tr>
-              	<tr>
-                	<td colspan="5">
-                	<div class="yui-skin-sam">
+
+
+		<div class="panel panel-primary" data-collapsed="0" style="text-align:left" id="multiYearHeaderTable">
+			<div class="panel-heading">
+				<div class="panel-title">
+				   <s:text name="multiYearEstimate.yearwiseEstimate" />
+				</div>
+			</div>
+			<div class="panel-body">
+			  <div class="form-group">
+			  
+			    <div class="yui-skin-sam">
                     	<div id="multiYearEstimateTable"></div>
                     	<div id="multiYearEstimateTotals"></div>  
                 	</div>
-                	</td>
-                </tr>
-                 <tr>
-                	<td colspan="5" class="shadowwk"></td>
-                </tr>
-		</table> 
+			  
+			  </div>
+			</div>
+		</div>
+		
 	<script>
 		makeMultiYearEstimateDataTable();
         <s:iterator id="multiYearIterator" value="multiYearEstimates" status="row_status">

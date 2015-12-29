@@ -205,14 +205,14 @@ function createMap(paramLat,paramLong,paramDraggable)
 		<s:hidden id="latitude" name="latitude" />
 		<s:hidden id="longitude" name="longitude" />
 		<s:hidden id="address" name="address" />
-		<div id="map_canvas" style="position: relative; left: 0px; top: 0px; width: 95%; height: 70%; z-index: 0;"  ></div>
+		<div id="map_canvas" style="position: relative; width: 95%; height: 70%; z-index: 0; margin:0 auto;"  ></div>
 		<br/>
 		<div align="center" style="position: relative;  z-index: 0;">
 			<s:if test="%{mapMode=='edit'}">
-				<input type="button"  value="CAPTURE" id="captureButton" name="captureButton" onclick="returnBackToParent('')"/>
-				<input type="button"  value="CLEAR" id="clearButton" name="clearButton" onclick="returnBackToParent('clear')"/>
+				<input type="button" class="btn btn-primary"  value="Capture" id="captureButton" name="captureButton" onclick="returnBackToParent('')"/>&nbsp;
+				<input type="button" class="btn btn-default" value="Clear" id="clearButton" name="clearButton" onclick="returnBackToParent('clear')"/>&nbsp;
 			</s:if>	
-			<input type="button"  value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
+			<input type="button" class="btn btn-default"  value="Close" id="closeButton" name="closeButton" onclick="window.close();"/>
 		</div>
 		</s:push>
 	</s:form>

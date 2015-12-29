@@ -20,8 +20,8 @@
 %>
 <style type="text/css">
 #<%=name%>_autocomplete {
-    width:<%=width%>em; /* set width here or else widget will expand to fit its container */
-    padding-bottom:2em;
+    /*width:<%=width%>em; 
+    padding-bottom:2em;*/
 }
 </style>
 <script type="text/javascript">

@@ -33,22 +33,20 @@
 	    return  onSubmit();
 	}
 </script>
-<div class="buttonbottom" align="center">
+<div class="form-group text-center" align="center">
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
-	<table>
-		<tr>
-			<td><s:if test="%{model.id==null || model.egwStatus.code=='NEW'}">
- 					<s:submit type="submit" cssClass="buttonsubmit" value="Save" id="Save" name="Save" 
+     <s:if test="%{model.id==null || model.egwStatus.code=='NEW'}">
+ 					<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="Save" name="Save" 
 						onclick="document.getElementById('workFlowAction').value='Save';return validate('Save');" />
+						&nbsp;
 	 			</s:if>
 				<s:iterator value="%{getValidActions()}" var="buttonName">
 					<s:if test="%{buttonName!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{buttonName}"
+						<s:submit type="submit" cssClass="btn btn-primary" value="%{buttonName}"
 							id="%{buttonName}" name="%{buttonName}"
-							onclick="return validateWorkFlowApprover('%{buttonName}','jsValidationErrors');" />
+							onclick="return validateWorkFlowApprover('%{buttonName}','jsValidationErrors');" />&nbsp;
 					</s:if>
-				</s:iterator> <input type="button" name="button2" id="button2" value="Close"
-				class="button" onclick="window.close();" /></td>
-		</tr>
-	</table>
+				</s:iterator> 
+				<input type="button" name="button2" id="button2" value="Close"
+				class="btn btn-default" onclick="window.close();" />
 </div>

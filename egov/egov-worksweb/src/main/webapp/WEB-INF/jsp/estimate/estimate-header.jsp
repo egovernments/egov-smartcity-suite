@@ -323,85 +323,120 @@ function jurisdictionSearchParameters(){
 		<img src="/egi/resources/erp2/images/loading.gif" alt="Help" width="50" height="50" border="0" />
 	</span>
 </div>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-                <div class="headplacer"><s:text name="estimate.header" />:</div></td>
-                </tr>
-              <tr>
-                <td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.user.department" />:</td>
-                <td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="selectwk" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="name" value="%{userDepartment.id}"/>
 
-                <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.executing.department" />:</td>
-                <td width="53%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="executingDepartment" id="executingDepartment" cssClass="selectwk" list="dropdownData.executingDepartmentList" listKey="id" listValue="name" value="%{executingDepartment.id}" />
-                </td>
-              </tr>
-              <tr>
-                <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.ward" />:</td>
-                <td width="21%" class="greybox2wk">
-                <div class="yui-skin-sam">
-                <div id="wardSearch_autocomplete">
-                <div><s:textfield id="wardSearch" type="text" name="wardName" value="%{ward.parent?(ward.parent?ward.name+'('+ward.parent.name+')':''):(ward.name?ward.name:'')}" class="selectwk"/><s:hidden id="wardID" name="ward" value="%{ward.id}"/></div>
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name="estimate.header" />
+		</div>
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.user.department" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="form-control" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="name" value="%{userDepartment.id}"/> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.executing.department" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="executingDepartment" id="executingDepartment" cssClass="form-control" list="dropdownData.executingDepartmentList" listKey="id" listValue="name" value="%{executingDepartment.id}" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.ward" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin" id="wardSearch_autocomplete">				
+                <s:textfield id="wardSearch" type="text" name="wardName" value="%{ward.parent?(ward.parent?ward.name+'('+ward.parent.name+')':''):(ward.name?ward.name:'')}" class="form-control" style="position:relative;"/><s:hidden id="wardID" name="ward" value="%{ward.id}"/>
                 <span id="wardSearchResults"></span>
-                </div>
-                </div>
                 <egov:autocomplete name="wardSearch" width="20" field="wardSearch" url="wardSearch-searchAjax.action?" queryQuestionMark="false" results="wardSearchResults" handler="wardSearchSelectionHandler" forceSelectionHandler="wardSelectionEnforceHandler" paramsFunction="jurisdictionSearchParameters"/>
                 <span class='warning' id="improperWardSelectionWarning"></span>
-                </td> 
-                <td class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.date" />:</td>
-
-                <td class="greybox2wk"><s:date name="estimateDate" var="estDateFormat" format="dd/MM/yyyy"/><s:textfield name="estimateDate" value="%{estDateFormat}" id="estimateDate" cssClass="selectwk" onBlur="dateChange()" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                    <a id="estDatePicker" href="javascript:show_calendar('forms[0].estimateDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" style="display:none"/>
-                    <input type='hidden' id='hiddenEstimateDate' name='hiddenEstimateDate'/>
-					<span class='warning' id="dateChangedWarning"></span></td>
-                </td>
-              </tr>
-              <tr>
-                <td class="whiteboxwk"><s:text name="estimate.location" />:</td>
-                <td class="whitebox2wk"><s:textfield name="location" value="%{location}" id="location" size="35" cssClass="selectwk" /><a href="javascript:openMap();" id="mapAnchor" title="Click here to add/view gis marker on map"><img height="18" width="18" align="absmiddle" src="/egi/resources/erp2/images/map_icon_small.jpg" /></a></td>
-                <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.nature" /></td>
-                <td width="53%" class="whitebox2wk">
-                <s:if test="%{(dropdownData.typeList.size==1)}" >
-	                <s:select name="type" id="type" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.date" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				  <s:date name="estimateDate" var="estDateFormat" format="dd/MM/yyyy"/><s:textfield name="estimateDate" value="%{estDateFormat}" id="estimateDate" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+                  <input type='hidden' id='hiddenEstimateDate' name='hiddenEstimateDate'/>
+				  <span class='warning' id="dateChangedWarning"></span>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.location" />
+			</label>
+			<div class="col-sm-3 add-margin">				
+                <div class="input-group">
+                  <s:textfield name="location" value="%{location}" id="location" size="35" cssClass="form-control"/>
+				  <span class="input-group-btn">
+				     <a href="javascript:openMap();" id="mapAnchor" title="Click here to add/view gis marker on map" class="btn btn-primary"><i class="fa fa-location-arrow icon-inputgroup"></i></a>
+				  </span>
+				</div>
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.nature" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				 <s:if test="%{(dropdownData.typeList.size==1)}" >
+	                <s:select name="type" id="type" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" />
                 </s:if>
                 <s:else>
-	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="type" id="type" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" 
+	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="type" id="type" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" 
 	                	onChange="javascript:warn('natureOfWorkChanged');resetAssets(this.options[this.selectedIndex].value);"/>	                
                 </s:else>
-                <span class='warning' id="natureOfWorkChangedWarning"></span></td>
-              </tr>
-              <tr id="latlonDiv" style="display:none;">
-	                <td width="11%" class="whiteboxwk"><s:text name="estimate.latitude" />:</td>
-	                <td width="21%" class="whitebox2wk"><s:textfield name="latitude" value="%{latitude}" id="latitude" readonly='true' cssClass="selectwk" tabindex="-1" /></td>
-	                <td width="15%" class="whiteboxwk"><s:text name="estimate.longitude" />:</td>
-	                <td width="53%" class="whitebox2wk"><s:textfield name="longitude" value="%{longitude}" id="longitude" readonly='true' cssClass="selectwk" tabindex="-1"/></td>
-              </tr>
-              <tr>
-                <td class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.work.name" />:</td>
-                <td class="greybox2wk" colspan="3"><s:textarea name="name" cols="100" rows="4" cssClass="selectwk" id="name" value="%{name}"/></td>
-              </tr>
-              <tr>
-                <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.description" />:</td>
-                <td class="whitebox2wk" colspan="3"><s:textarea name="description" cols="100" rows="4" cssClass="selectwk" id="description" value="%{description}"/></td>
-              </tr>
-
-              <tr>
-                <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.fund.name" />:</td>
-                <td width="21%" class="greybox2wk">
-	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="fundSource" id="fundSource" 
-	                cssClass="selectwk" list="dropdownData.fundSourceList" listKey="id" listValue="name" value="%{fundSource.id}"/>
-				</td>
-				
-                <td width="15%" class="greyboxwk">&nbsp;</td>
-                <td width="53%" class="greybox2wk">&nbsp;</td>
-              </tr>
-				
-              <tr>
-                <td  colspan="4" class="shadowwk"> </td>                 
-                </tr>
-                <tr><td>&nbsp;</td></tr>			
-            </table>   
-            
+                <span class='warning' id="natureOfWorkChangedWarning"></span>
+			</div>
+		</div>
+		
+		<div class="form-group" id="latlonDiv" style="display:none;">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.latitude" />
+			</label>
+			<div class="col-sm-3 add-margin">				
+                  <s:textfield name="latitude" value="%{latitude}" id="latitude" readonly='true' cssClass="form-control" tabindex="-1" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.longitude" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="longitude" value="%{longitude}" id="longitude" readonly='true' cssClass="form-control" tabindex="-1"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.name" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">				
+                <s:textarea name="name" cols="100" rows="4" cssClass="form-control" id="name" value="%{name}"/>
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.description" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				 <s:textarea name="description" cols="100" rows="4" cssClass="form-control" id="description" value="%{description}"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.fund.name" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">				
+                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="fundSource" id="fundSource" 
+	                cssClass="form-control" list="dropdownData.fundSourceList" listKey="id" listValue="name" value="%{fundSource.id}"/>
+			</div>
+		</div>
+		
+	</div>
+</div>   
     <script>
     	if(document.forms[0].estimateDate.value!=''){
     		document.forms[0].hiddenEstimateDate.value=document.forms[0].estimateDate.value;
@@ -409,4 +444,4 @@ function jurisdictionSearchParameters(){
     	else{
     		document.forms[0].hiddenEstimateDate.value=getCurrentDate();
     	}
-    </script>                 
+    </script>
