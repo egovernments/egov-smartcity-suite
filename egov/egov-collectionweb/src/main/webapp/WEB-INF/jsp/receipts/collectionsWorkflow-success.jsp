@@ -75,15 +75,12 @@ function refreshInbox() {
 
 	<s:if test="%{isSubmitAction == true}">	&nbsp;
 		
-	<s:submit type="submit" cssClass="buttonsubmit" id="buttonCashReport"
-			value="%{getText('collectionsWorkflow.submit.report.cash')}"
-			disabled="false"
-			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow-submissionReportCash.action'"/> &nbsp;
-
-	<s:submit type="submit" cssClass="buttonsubmit" id="buttonChequeReport"
-			value="%{getText('collectionsWorkflow.submit.report.cheque')}"
-			disabled="false"
-			onclick="document.collectionsWorkflowForm.action='collectionsWorkflow-submissionReportCheque.action'" /> &nbsp;
+	<input type="button" class="buttonsubmit" id="buttonCashReport"
+			value="Report - Cash"
+			onclick="window.open('${pageContext.request.contextPath}/receipts/collectionsWorkflow-submissionReportCash.action?receiptDate=<s:property value="%{receiptDate}" />', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+	<input type="button" class="buttonsubmit" id="buttonCashReport"
+			value="Report - Cheque"
+			onclick="window.open('${pageContext.request.contextPath}/receipts/collectionsWorkflow-submissionReportCheque.action?receiptDate=<s:property value="%{receiptDate}" />', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
 	</s:if>
 	</div>
 </s:form>
