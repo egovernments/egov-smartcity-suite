@@ -60,11 +60,11 @@ function refreshInbox() {
 <s:form theme="simple" name="collectionsWorkflowForm">
 
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
-		<s:text name="collectionsWorkflow.submitSuccess" />
+		<s:text name="collectionsWorkflow.submitSuccess" /> <s:property value="%{approverName}" />
 	</s:if> <s:elseif test="%{isApproveAction == true}">
-		<s:text name="collectionsWorkflow.approveSuccess" />
+		<s:text name="collectionsWorkflow.approveSuccess" /> <s:property value="%{approverName}" />
 	</s:elseif> <s:else>
-		<s:text name="collectionsWorkflow.rejectSuccess" />
+		<s:text name="collectionsWorkflow.rejectSuccess" /> <s:property value="%{approverName}" />
 	</s:else></div>
 	<br />
 	<s:hidden name="receiptDate" value="%{receiptDate}"/>

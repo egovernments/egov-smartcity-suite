@@ -43,6 +43,8 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -134,6 +136,9 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         this.wfAction = wfAction;
     }
     private String receiptDate;
+    protected String approverName;
+    @Autowired
+    protected AssignmentService assignmentService;
 
     /**
      * Result for cash submission report (redirects to the cash collection report)
@@ -359,6 +364,9 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             // Get the next receipt that is to be updated
             final ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
             receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
+            Assignment assignment = assignmentService
+                    .getPrimaryAssignmentForPositon(receiptHeader.getState().getOwnerPosition().getId());
+            approverName =  assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode()).concat("~").concat(assignment.getPosition().getName());
         }
         // Add the selected receipt ids to sereceiptHeader
         // Need to find a better mechanism to achieve this.
@@ -534,5 +542,13 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     public void setReceiptDate(String receiptDate) {
         this.receiptDate = receiptDate;
+    }
+
+    public String getApproverName() {
+        return approverName;
+    }
+
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
     }
 }
