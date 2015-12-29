@@ -112,7 +112,7 @@ public class ConnectionSearchRequest {
         andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.locality", locality));
         andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
-        //andFilters.add(queryStringFilter("clauses.doorno", doorNumber));
+        andFilters.add(termsStringFilter("clauses.doorno", doorNumber));
         andFilters.add(termsStringFilter("clauses.ward", revenueWard));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
