@@ -63,7 +63,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -120,6 +123,8 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
 
+    private Boolean isNagarPanchayat = Boolean.FALSE;
+    
     @Override
     public StateAware getModel() {
         return property;
@@ -151,6 +156,7 @@ public class ViewPropertyAction extends BaseFormAction {
             if (property.getPropertyDetail().getFloorDetails().size() > 0)
                 setFloorDetails(property);
             checkIsDemandActive(property);
+            checkIsNagarPanchayat();
             if (getBasicProperty().getPropertyOwnerInfo() != null
                     && !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
                 for (final PropertyOwnerInfo propOwner : getBasicProperty().getPropertyOwnerInfo()) {
@@ -296,6 +302,17 @@ public class ViewPropertyAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exiting from setFloorDetails: ");
     }
+    
+    private Boolean checkIsNagarPanchayat(){
+    	HttpServletRequest request = ServletActionContext.getRequest();
+    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
+                request.getSession().getAttribute("cityGrade").toString():null);
+    	if(StringUtils.isNotBlank(grade) && grade.equalsIgnoreCase(PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT)){
+    		isNagarPanchayat=true;
+        } else
+        	isNagarPanchayat=false;
+    	return isNagarPanchayat;
+    }
 
     public String getFloorNoStr(final Integer floorNo) {
         return FLOOR_MAP.get(floorNo);
@@ -397,4 +414,11 @@ public class ViewPropertyAction extends BaseFormAction {
         this.errorMessage = errorMessage;
     }
 
+    public Boolean getIsNagarPanchayat() {
+		return isNagarPanchayat;
+	}
+
+	public void setIsNagarPanchayat(Boolean isNagarPanchayat) {
+		this.isNagarPanchayat = isNagarPanchayat;
+	}
 }

@@ -167,6 +167,12 @@
 					<input type="button" name="generateBill" id="generateBill" value="Generate Demand Bill" class="buttonsubmit"
 						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
+				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat 
+					&& !basicProperty.underWorkflow && basicProperty.source=='M'}">
+					<input type="button" class="buttonsubmit" name="addArrearsButton"
+									id="addArrearsButton" value="Add Arrears" 
+									onclick="window.location='/ptis/addarrears/form/<s:property value="%{basicProperty.upicNo}" />'" />
+				</s:if>
 				<br/><br/> <!-- common buttons starts here -->	
 				<s:if test="%{!property.getIsExemptedFromTax()}">			
 				<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"

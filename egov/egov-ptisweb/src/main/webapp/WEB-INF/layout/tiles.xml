@@ -186,4 +186,14 @@
     	<put-attribute name="body" value="/WEB-INF/views/reports/dailyCollection-form.jsp"/>
     </definition>
     
+    <definition name="addArrears-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.addArrears.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/dataentry/addArrears-form.jsp"/>
+    </definition>
+    
+    <definition name="addArrears-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.addArrears.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/dataentry/addArrears-success.jsp"/>
+    </definition>
+    
 </tiles-definitions>
