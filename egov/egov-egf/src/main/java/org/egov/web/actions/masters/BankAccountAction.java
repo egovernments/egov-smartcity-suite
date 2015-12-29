@@ -133,13 +133,13 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	}
 
 	private void editBankAccount() {
-		final Bankaccount bankAccount = (Bankaccount)bankAccountPersistenceService.getSession().get(Bankaccount.class, id);
+		final Bankaccount bankAccount = (Bankaccount)bankAccountPersistenceService.getSession().get(Bankaccount.class, new Long(id));
 		populateBankAccountDetail(bankAccount);
 		bankAccountPersistenceService.update(bankAccount);
 	}
 
 	private void deleteBankAccount() {
-		final Bankaccount bankBranch = (Bankaccount) bankAccountPersistenceService.getSession().load(Bankaccount.class, id);
+		final Bankaccount bankBranch = (Bankaccount) bankAccountPersistenceService.getSession().load(Bankaccount.class,new Long(id));
 		persistenceService.delete(bankBranch);
 	}
 

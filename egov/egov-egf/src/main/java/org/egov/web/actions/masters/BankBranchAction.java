@@ -85,7 +85,9 @@ public class BankBranchAction extends JQueryGridActionSupport {
                         this.listAllBankBranches();
                 } else if ("CHECK_UNQ_MICR".equals(mode)) {
                         sendAJAXResponse(String.valueOf(checkIsUniqueMicr()));
-                }
+                } else if ("CHECK_BANK_ACC".equals(mode)) {
+                    sendAJAXResponse(String.valueOf(checkBankAccountsExists()));
+            }
                 return null;
         }
 
@@ -106,8 +108,8 @@ public class BankBranchAction extends JQueryGridActionSupport {
         }
 
         private void deleteBankBranch() {
-                final Bankbranch bankBranch =(Bankbranch) bankBranchPersistenceService.getSession().load(Bankbranch.class, id);
-                bankBranchPersistenceService.delete(bankBranch);
+                final Bankbranch bankBranch =(Bankbranch) bankBranchPersistenceService.getSession().load(Bankbranch.class,id);
+                	bankBranchPersistenceService.delete(bankBranch);
         }
 
         private void populateBankBranchDetail(final Bankbranch bankBranch) {
@@ -146,7 +148,18 @@ public class BankBranchAction extends JQueryGridActionSupport {
                 }).create().toJson(bankBranches).replaceAll("true", "\"Y\"").replaceAll("false", "\"N\"");
                 sendAJAXResponse(constructJqGridResponse(jsonString));
         }
-
+        private boolean checkBankAccountsExists() {
+            boolean bankAccountsExists = true;
+            Bankbranch branch = null;
+            if (id != null) {
+            	branch  = (Bankbranch) persistenceService.find("from Bankbranch where id=?", id);
+            } 
+            if(branch!=null && branch.getBankaccounts().size()==0)
+            	bankAccountsExists = false;
+            else
+            	bankAccountsExists = true;
+            return bankAccountsExists;
+        }
         private boolean checkIsUniqueMicr() {
                 boolean isUnique = true;
                 final String branchMICR = ServletActionContext.getRequest().getParameter("branchMICR");
