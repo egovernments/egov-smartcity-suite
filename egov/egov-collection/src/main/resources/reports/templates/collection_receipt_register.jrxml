@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-12-29T13:22:16 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="93"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="java.math.*"/>
 	<import value="java.util.*"/>
+	<import value="java.math.*"/>
 	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
@@ -71,11 +73,12 @@ $P{EGOV_SOURCE} == "MEESEVA" ? "AND EGCL_COLLECTIONHEADER.SOURCE = 'MEESEVA'":
 ""]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT
+		<![CDATA[SELECT RECEIPT_NUMBER,RECEIPT_DATE,DEPARTMENT_NAME,INSTRUMENT_TYPE,SOURCE,STATUS_DESCRIPTION,SERVICE_NAME,CASH_AMOUNT,sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT ,CARD_AMOUNT,BANK_AMOUNT, ONLINE_AMOUNT  from 
+(SELECT
      EGCL_COLLECTIONHEADER.RECEIPTNUMBER AS RECEIPT_NUMBER,
      EGCL_COLLECTIONHEADER.RECEIPTDATE AS RECEIPT_DATE,
      EG_DEPARTMENT.NAME AS DEPARTMENT_NAME,
-     EGF_INSTRUMENTTYPE.TYPE AS INSTRUMENT_TYPE,
+     (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' ELSE 'cheque/dd' END)  AS INSTRUMENT_TYPE,
      EGCL_COLLECTIONHEADER.SOURCE AS SOURCE,
      EGW_STATUS.DESCRIPTION AS STATUS_DESCRIPTION,
      SER.NAME AS SERVICE_NAME,
@@ -103,8 +106,24 @@ WHERE
 ORDER BY
      EGCL_COLLECTIONHEADER.RECEIPTDATE,
      EGCL_COLLECTIONHEADER.RECEIPTNUMBER,
-     EG_DEPARTMENT.NAME,
-     EGF_INSTRUMENTTYPE.TYPE]]>
+     EG_DEPARTMENT.NAME)    AS RESULT 
+GROUP BY 
+     RESULT.RECEIPT_NUMBER,
+     RESULT.RECEIPT_DATE,
+     RESULT.DEPARTMENT_NAME,
+     RESULT.SOURCE,
+     RESULT.INSTRUMENT_TYPE,
+     RESULT.STATUS_DESCRIPTION,
+     RESULT.SERVICE_NAME, 
+     RESULT.CASH_AMOUNT,
+     RESULT.CHEQUEDD_AMOUNT,
+     RESULT.CARD_AMOUNT,
+     RESULT.BANK_AMOUNT, 
+     RESULT.ONLINE_AMOUNT 
+ORDER BY
+     RESULT.RECEIPT_NUMBER,
+     RESULT.RECEIPT_DATE,
+     RESULT.DEPARTMENT_NAME]]>
 	</queryString>
 	<field name="RECEIPT_NUMBER" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -313,7 +332,7 @@ ORDER BY
 		<groupFooter>
 			<band height="52">
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="621" y="0" width="87" height="20" uuid="e6fc42f3-5a63-405c-8bc7-9158584fb080"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="621" y="1" width="87" height="20" uuid="e6fc42f3-5a63-405c-8bc7-9158584fb080"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -327,7 +346,7 @@ ORDER BY
 					<textFieldExpression><![CDATA[$V{TOTAL_ONLINE_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="449" height="20" uuid="e58a61aa-9305-4d05-ab20-634ebbb19704"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="1" width="449" height="20" uuid="e58a61aa-9305-4d05-ab20-634ebbb19704"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -341,7 +360,7 @@ ORDER BY
 					<text><![CDATA[Total :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="449" y="0" width="86" height="20" uuid="448cc8ba-2a35-4fff-976a-7b87df05e234"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="449" y="1" width="86" height="20" uuid="448cc8ba-2a35-4fff-976a-7b87df05e234"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -355,7 +374,7 @@ ORDER BY
 					<textFieldExpression><![CDATA[$V{TOTAL_CASH_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="535" y="0" width="86" height="20" uuid="0527e611-bb14-4f02-9521-ae8bff10697d"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="535" y="1" width="86" height="20" uuid="0527e611-bb14-4f02-9521-ae8bff10697d"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -369,7 +388,7 @@ ORDER BY
 					<textFieldExpression><![CDATA[$V{TOTAL_CHEQUEDD_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="20" width="449" height="20" uuid="1c62d4ff-bb0e-4d6f-95ce-b71bca2e6b36"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="21" width="449" height="20" uuid="1c62d4ff-bb0e-4d6f-95ce-b71bca2e6b36"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -383,7 +402,7 @@ ORDER BY
 					<text><![CDATA[Total Collection:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="449" y="20" width="259" height="20" uuid="60981d72-c4e5-4327-817d-c277f04aa091"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="449" y="21" width="259" height="20" uuid="60981d72-c4e5-4327-817d-c277f04aa091"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -560,7 +579,8 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="22" splitType="Stretch">
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="122" y="0" width="98" height="20" isPrintWhenDetailOverflows="true" uuid="9cc6cac4-7d24-4e1c-b798-101d85e19a99"/>
 				<box leftPadding="5" rightPadding="5">
