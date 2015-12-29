@@ -121,7 +121,9 @@ public class Bankbranch implements java.io.Serializable {
                 this.branchMICR = branchMICR;
                 this.bankaccounts = bankaccounts;
         }
-
+        public boolean isAccountsExist(){
+            return (this.bankaccounts!=null && bankaccounts.size()>0) ;
+        }
         public Integer getId() {
                 return this.id;
         }

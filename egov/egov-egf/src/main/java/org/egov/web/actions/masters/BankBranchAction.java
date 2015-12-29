@@ -149,16 +149,11 @@ public class BankBranchAction extends JQueryGridActionSupport {
                 sendAJAXResponse(constructJqGridResponse(jsonString));
         }
         private boolean checkBankAccountsExists() {
-            boolean bankAccountsExists = true;
             Bankbranch branch = null;
             if (id != null) {
             	branch  = (Bankbranch) persistenceService.find("from Bankbranch where id=?", id);
             } 
-            if(branch!=null && branch.getBankaccounts().size()==0)
-            	bankAccountsExists = false;
-            else
-            	bankAccountsExists = true;
-            return bankAccountsExists;
+            return (branch != null?branch.isAccountsExist():false);
         }
         private boolean checkIsUniqueMicr() {
                 boolean isUnique = true;
