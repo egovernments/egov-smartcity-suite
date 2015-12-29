@@ -61,7 +61,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.commons.Installment;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.PersistenceService;
@@ -194,11 +193,14 @@ public class ReportService {
     public List<DailyCollectionReportResult> getCollectionDetails(Date fromDate, Date toDate, String collectionMode,
             String collectionOperator, String status) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
-
-        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader inner join fetch receiptheader.receiptInstrument instHeader"
-                + " inner join fetch instHeader.instrumentType instType where receiptheader.service.name =:service and (receiptdate between :fromDate and :toDate) ");
+        final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader where receiptheader.service.name =:service and "
+                + " (receiptheader.receiptdate between to_timestamp('"+ fromDateFormatter.format(fromDate)
+                + "', 'YYYY-MM-DD HH24:MI:SS') and " + " to_timestamp('"+ toDateFormatter.format(toDate)
+                + "', 'YYYY-MM-DD HH24:MI:SS')) ");
         if (StringUtils.isNotBlank(collectionMode)) {
-            queryStr.append(" and instType.id =:mode ");
+            queryStr.append(" and receiptheader.source =:mode ");
         }
         if (StringUtils.isNotBlank(collectionOperator)) {
             queryStr.append(" and receiptheader.createdBy.id =:operator ");
@@ -206,11 +208,9 @@ public class ReportService {
         if (StringUtils.isNotBlank(status)) {
             queryStr.append(" and receiptheader.status.id =:status ");
         }
-        queryStr.append(" order by instHeader ");
+        queryStr.append(" order by receiptheader.receiptdate ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setString("service", PTMODULENAME);
-        query.setDate("fromDate", fromDate);
-        query.setDate("toDate", toDate);
         if (StringUtils.isNotBlank(collectionMode)) {
             query.setLong("mode", Long.valueOf(collectionMode));
         }
@@ -244,7 +244,7 @@ public class ReportService {
 
             String[] address = receiptHeader.getPayeeAddress().split(",");
             result.setTotalCollection(receiptHeader.getTotalAmount());
-            if (address.length >= 4)
+            if (address.length > 0)
                 result.setDoorNumber(address[0]);
             else
                 result.setDoorNumber("N/A");
@@ -255,7 +255,7 @@ public class ReportService {
             for (InstrumentHeader instrument : receiptHeader.getReceiptInstrument()) {
                 int instrumentSize = receiptHeader.getReceiptInstrument().size();
                 paymentMode.append(instrument.getInstrumentType().getType());
-                if(instrumentSize > 1 && count < instrumentSize-1) {
+                if (instrumentSize > 1 && count < instrumentSize - 1) {
                     paymentMode.append(",");
                     count++;
                 }
