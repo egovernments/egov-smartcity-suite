@@ -288,7 +288,7 @@ public class HomeController {
     }
 
     private boolean checkDefaultPassworResetRequired(final User user) {
-        return passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword());
+        return !applicationProperties.devMode() && (passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword()));
     }
 
 }
