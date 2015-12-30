@@ -167,13 +167,21 @@
 			return false;
 		}
 		if(document.getElementById('billDateFrom').value.trim().length == 0){
-			document.getElementById('lblError').innerHTML = "Please bill from date";
+			document.getElementById('lblError').innerHTML = "Please select bill from date";
 			return false;
 		}
 		if(document.getElementById('billDateTo').value.trim().length == 0){
-			document.getElementById('lblError').innerHTML = "Please bill to date";
+			document.getElementById('lblError').innerHTML = "Please select bill to date";
 			return false;
+			
 		}
+
+		if((document.getElementById('billDateFrom').value)>(document.getElementById('billDateTo').value))
+			{
+			document.getElementById('lblError').innerHTML = "Bill date from should be less than Bill date to";
+			return false;
+	
+			}
 		 <s:if test="%{isFieldMandatory('fund')}"> 
 				 if(null != document.getElementById('fundId') && document.getElementById('fundId').value == -1){
 

@@ -47,7 +47,7 @@
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252" />
-<title>Create Voucher</title>
+<title>Create Voucher From Bill</title>
 
 </head>
 
@@ -59,7 +59,7 @@
 		</jsp:include>
 		<div class="formmainbox">
 			<div class="formheading">
-				<div class="subheadnew">Create Voucher</div>
+				<div class="subheadnew">Create Voucher From Bill</div>
 			</div>
 			<div id="listid" style="display: block">
 				<br />
@@ -189,6 +189,7 @@ function onloadtask(){
 
 function validate()
 {
+	
 	var fromDate=document.getElementById('voucherDateFrom').value;
 	var toDate=document.getElementById('voucherDateTo').value;
 
@@ -200,52 +201,24 @@ function validate()
 		alert("Please select Bill Type");
 		return false;
 		}
-	if(!validateDate(fromDate)){
-		alert("Invalid Date! from date is greater than current date");
+	
+	
+	 if (fromDate > toDate) {
+		alert("Invalid Date Range! From Date cannot be after To Date!");
 		return false;
-	}
-	else if(!validateDate(toDate)){
-		alert("Invalid Date! to date is greater than current date");
-		return false;
-	}
-	else if (Date.parse(fromDate) > Date.parse(toDate)) {
-		alert("Invalid Date Range! From Date cannot be after To Date!")
-		return false;
-		} 
+		}  
 
-	if (validateSearch()) 
-    {
-    
+	
 	 document.billVoucher.action='${pageContext.request.contextPath}/voucher/billVoucher-lists.action';
 	 document.billVoucher.submit();
-	 
-    }else{
-		return false;
-	}
-document.getElementById('type').disabled=false;
+
+   
+document.getElementById('expType').disabled=false;
 return true;
 }
-function validateDate(date)
-{
-	var todayDate = new Date();
-	 var todayMonth = todayDate.getMonth() + 1;
-	 var todayDay = todayDate.getDate();
-	 var todayYear = todayDate.getFullYear();
-	 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
-	if (Date.parse(date) > Date.parse(todayDateText)) {
-		return false;
-		}
-	return true; 
-	}
-	function validateSearch(){
-	document.getElementById('lblError').innerHTML ="";
-	if((document.getElementById("expType").value) == -1 ){
-		document.getElementById('lblError').innerHTML ="Please select a bill type";
-		return false;
-	}
-	document.getElementById("departmentid").disabled=false;
-return true;
-}
+
+
+	
 
 	function resetForm()
 	{
