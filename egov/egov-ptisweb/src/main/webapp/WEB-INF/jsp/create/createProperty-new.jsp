@@ -165,7 +165,7 @@
 			var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 			document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 			toggleFloorDetails();
-			showHideFirmName();
+			
 			var aadhartextboxes = jQuery('.txtaadhar');
 			console.log(aadhartextboxes);
 			aadhartextboxes.each(function() {
@@ -175,7 +175,7 @@
 			});
 			populateBoundaries();
 			loadDesignationFromMatrix();
-			
+			showHideFirmName();
 		}
 
 		function onSubmit() {
@@ -190,16 +190,18 @@
 
 		function enableDisableFirmName(obj){ 
 			var selIndex = obj.selectedIndex;
-			var selText = obj.options[selIndex].text; 
-			var rIndex = getRow(obj).rowIndex;
-			var tbl = document.getElementById('floorDetails');
-			var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
-			if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
-				if(firmval.value!=null && firmval.value!="") 
-					firmval.value="";
-				firmval.readOnly = true;      
-			} else{
-				firmval.readOnly = false; 
+			if(selIndex != undefined){
+				var selText = obj.options[selIndex].text; 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+				if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+					if(firmval.value!=null && firmval.value!="") 
+						firmval.value="";
+					firmval.readOnly = true;      
+				} else{
+					firmval.readOnly = false; 
+				}
 			}
 		}  
 
