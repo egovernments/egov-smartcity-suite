@@ -88,7 +88,7 @@
 										<c:when test="${!demandDetailBeanList.isEmpty()}">
 											<c:forEach items="${demandDetailBeanList}" var="var1"
 												varStatus="counter">
-												<tr id="Floorinfo">
+												<tr id="Floorinfo" class="item">
 												
 												<td class="blueborderfortd"><form:input type="text" path=""
 														class="form-control low-width" value="${var1.installment}"
