@@ -60,8 +60,6 @@
         <link rel="stylesheet" href="<c:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
         <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.css' context='/egi'/>">
         <link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
-        <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/google/google-fonts-lora.css' context='/egi'/>">
-        <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/google/google-fonts-montse.css' context='/egi'/>">
         <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/dataTables.bootstrap.css' context='/egi'/>">
         <link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/css/dataTables.responsive.css' context='/dashboard'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css' context='/dashboard'/>" con>				
@@ -145,7 +143,7 @@
 	<script src="<c:url value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
 	<script src="<c:url value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
 	<script src="<c:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 	<script src="<c:url value='/resources/js/date.js' context='/dashboard'/>"></script>
 	<script src='<c:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
 	<script src="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
