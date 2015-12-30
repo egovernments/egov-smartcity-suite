@@ -62,7 +62,7 @@ function refreshInbox() {
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
 		<s:text name="collectionsWorkflow.submitSuccess" /> <s:property value="%{approverName}" />
 	</s:if> <s:elseif test="%{isApproveAction == true}">
-		<s:text name="collectionsWorkflow.approveSuccess" /> <s:property value="%{approverName}" />
+		<s:text name="collectionsWorkflow.approveSuccess" />
 	</s:elseif> <s:else>
 		<s:text name="collectionsWorkflow.rejectSuccess" /> <s:property value="%{approverName}" />
 	</s:else></div>
@@ -76,10 +76,10 @@ function refreshInbox() {
 	<s:if test="%{isSubmitAction == true}">	&nbsp;
 		
 	<input type="button" class="buttonsubmit" id="buttonCashReport"
-			value="Report - Cash"
+			value="<s:text name='collectionsWorkflow.submit.report.cash'/>"
 			onclick="window.open('${pageContext.request.contextPath}/receipts/collectionsWorkflow-submissionReportCash.action?receiptDate=<s:property value="%{receiptDate}" />', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
 	<input type="button" class="buttonsubmit" id="buttonCashReport"
-			value="Report - Cheque"
+			value="<s:text name='collectionsWorkflow.submit.report.cheque'/>"
 			onclick="window.open('${pageContext.request.contextPath}/receipts/collectionsWorkflow-submissionReportCheque.action?receiptDate=<s:property value="%{receiptDate}" />', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
 	</s:if>
 	</div>
