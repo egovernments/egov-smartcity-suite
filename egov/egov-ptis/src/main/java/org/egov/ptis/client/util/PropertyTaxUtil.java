@@ -1989,7 +1989,7 @@ public class PropertyTaxUtil {
             if (transMode != null && !transMode.equals("") && !transMode.equals("-1")) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Transaction Mode = " + transMode);
-                srchQryStr = srchQryStr + "and cs.paymentMode ='" + transMode + "' ";
+                srchQryStr = srchQryStr + "and (cs.paymentMode ='" + transMode + "' OR cs.paymentMode like '%' || '"+transMode+"' || '%')";
             }
             if (mode.equals(USAGEWISE)) {
                 if (propTypeCategoryId != null && !propTypeCategoryId.equals("") && !propTypeCategoryId.equals("-1")) {
@@ -2013,28 +2013,28 @@ public class PropertyTaxUtil {
                         LOGGER.debug("zoneNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.zoneId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.zoneId.boundaryNum";
+                orderbyQry = " and cs.zoneId.boundaryType.name = 'Zone' order by cs.zoneId.boundaryNum";
             } else if (mode.equals(WARDWISE)) {
                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("wardNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.wardId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.wardId.boundaryNum";
+                orderbyQry = " and cs.wardId.boundaryType.name = 'Ward' order by cs.wardId.boundaryNum";
             } else if (mode.equals(BLOCKWISE)) {
                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("blockNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.areaId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.areaId.boundaryNum";
+                orderbyQry = " and cs.areaId.boundaryType.name = 'Block' order by cs.areaId.boundaryNum";
             } else if (mode.equals(LOCALITYWISE)) {
                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("localityNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.localityId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.localityId.boundaryNum";
+                orderbyQry = "  order by cs.localityId.boundaryNum";
             }
             srchQryStr = baseQry + srchQryStr + orderbyQry;
 

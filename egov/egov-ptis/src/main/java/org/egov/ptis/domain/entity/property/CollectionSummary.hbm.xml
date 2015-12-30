@@ -42,16 +42,22 @@
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.egov.ptis.domain.entity.property.CollectionSummary" table="EGPT_MV_C10_REPORT">
+    <class name="org.egov.ptis.domain.entity.property.CollectionSummary" table="EGPT_MV_COLLECTIONREPORT">
     		<composite-id>
-            	<key-property name="receiptNumber" column="RECEIPT_NUMBER" />
+            	<key-property name="receiptHeaderId" column="receiptHeaderId" />
         	</composite-id>
+        	<property name="receiptNumber" type="string">
+                <column name="RECEIPT_NUMBER" length="64" />
+            </property>
             <property name="receiptDate" type="date">
                 <column name="RECEIPT_DATE" length="7" />
             </property>
             <property name="propertyId" type="string">
                 <column name="PROPERTYID" length="64" />
             </property>
+            <property name="taxColl" type="big_decimal">
+			  <column name="TAX_COLL" precision="22" scale="0" />
+		    </property>
             
 			<many-to-one name="property" class="org.egov.ptis.domain.entity.property.PropertyImpl" column="IDPROPERTY"/>
             <many-to-one name="zoneId" class="org.egov.infra.admin.master.entity.Boundary" column="ZONEID"/>
@@ -59,9 +65,14 @@
             <many-to-one name="areaId" class="org.egov.infra.admin.master.entity.Boundary" column="AREAID"/>
             <many-to-one name="localityId" class="org.egov.infra.admin.master.entity.Boundary" column="LOCALITYID"/>
             <many-to-one name="streetId" class="org.egov.infra.admin.master.entity.Boundary" column="STREETID"/>
+            <many-to-one name="user" class="org.egov.infra.admin.master.entity.User" column="userid"/>
+            <many-to-one name="status" class="org.egov.commons.EgwStatus" column="status"/>
             
             <property name="payeeName" type="string">
                 <column name="PAYEENAME" length="1024" />
+            </property>
+            <property name="houseNumber" type="string">
+                <column name="HOUSENUMBER" length="16" />
             </property>
             <property name="collectionType" type="java.lang.Character">
                 <column name="COLLECTIONTYPE" length="1" />
@@ -69,27 +80,15 @@
             <property name="paymentMode" type="string">
                 <column name="PAYMENT_MODE" length="11" />
             </property>
-            <property name="userName" type="string">
-                <column name="USERNAME" length="64" />
+            <property name="paidAt" type="string">
+                <column name="paidAt" length="11" />
             </property>
-            <property name="taxColl" type="big_decimal">
-                <column name="TAX_COLL" precision="22" scale="0" />
-            </property>
-            <property name="penaltyColl" type="big_decimal">
-                <column name="PENALTY_COLL" precision="22" scale="0" />
-            </property>
-            <property name="libCessColl" type="big_decimal">
-                <column name="librarycess_coll" precision="22" scale="0" />
-            </property>
-            <property name="arrearTaxColl" type="big_decimal">
-                <column name="arreartax_coll" precision="22" scale="0" />
-            </property>
-            <property name="arrearPenaltyColl" type="big_decimal">
-                <column name="arrearpenalty_coll" precision="22" scale="0" />
-            </property>
-            <property name="arrearLibCessColl" type="big_decimal">
-                <column name="arrearlibrarycess_coll" precision="22" scale="0" />
-            </property>
+            <set name="collectionDetails" table="EGPT_MV_COLLECTIONDETAILS" order-by="id" >
+            <key>
+                <column name="receiptHeaderId"  not-null="true" />
+            </key> 
+            <one-to-many class="org.egov.ptis.domain.entity.property.CollectionSummaryDetails"/>
+        </set>
           
     </class>
 </hibernate-mapping>
