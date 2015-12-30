@@ -42,11 +42,12 @@
  */
 jQuery.noConflict();
 function makePropertyTypeMandatory() {
-	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-	if (propertyType == "select") {
-		alert("Please select category of ownership");
-		return false;
-	}
+    var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
+    if (propertyType == "select") {
+            alert("Please select category of ownership");
+            jQuery('#propTypeId').focus();
+            return false;
+    }
 }
 
 function enableAppartnaumtLandDetails() {
