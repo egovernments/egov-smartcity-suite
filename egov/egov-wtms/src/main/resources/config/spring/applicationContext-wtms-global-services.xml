@@ -49,7 +49,7 @@
         <property name="type" value="org.egov.wtms.application.entity.WaterConnectionDetails" />
     </bean>
         
-    <bean id="WaterConnectionDetailsInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
+    <bean id="WaterConnectionDetailsInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="WaterConnectionDetailsPersistenceService"/>
     </bean>
         
