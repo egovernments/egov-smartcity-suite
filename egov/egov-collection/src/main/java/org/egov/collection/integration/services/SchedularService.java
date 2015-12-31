@@ -53,6 +53,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -64,6 +65,8 @@ public class SchedularService {
     private ReceiptHeader onlinePaymentReceiptHeader;
     private PaymentResponse paymentResponse;
     private ReconciliationService reconciliationService;
+    @Autowired
+    AxisAdaptor axisAdaptor;
 
     public void reconcileAXIS() {
 
@@ -88,7 +91,7 @@ public class SchedularService {
             for (final OnlinePayment onlinePaymentObj : reconcileList) {
                 final long startTimeInMilis = System.currentTimeMillis();
                 paymentResponse = null;
-                final AxisAdaptor axisAdaptor = new AxisAdaptor();
+               
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                 paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
                 if (null != paymentResponse) {
