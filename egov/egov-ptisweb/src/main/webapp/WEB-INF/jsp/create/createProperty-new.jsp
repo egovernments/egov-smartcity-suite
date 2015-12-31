@@ -206,10 +206,11 @@
 		}  
 
 		function showHideFirmName(){
-			var rows = document.getElementById('floorDetails').rows.length - 1;  
-			for (var i = 0; i < rows; i++) {
-					enableDisableFirmName(document.forms[0].floorUsage[i]);
-			}
+			var tbl=document.getElementById("floorDetails");
+            var tabLength = (tbl.rows.length)-1;
+            for(var i=1;i<=tabLength;i++){
+                 enableDisableFirmName(getControlInBranch(tbl.rows[i],'floorUsage'));
+            }
 		}
 				
 	</script>

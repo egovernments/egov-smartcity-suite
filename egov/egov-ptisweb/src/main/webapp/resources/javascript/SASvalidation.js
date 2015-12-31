@@ -1325,9 +1325,10 @@ function addFloor()
 				jQuery("#floorDetails tr:last td span[alt='AddF']").hide();
 				
 				//re-intialize datepicker fields
-				jQuery(".datepicker").datepicker({format: 'dd/mm/yyyy'});
-				reInitializeDateOnChangeEvent();
-				
+				jQuery(".datepicker").datepicker({
+					format: 'dd/mm/yyyy',
+					autoclose:true
+				});
 		}
 	}
 }
