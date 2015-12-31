@@ -121,6 +121,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
         private @Autowired AppConfigValueService appConfigValuesService;
         private @Autowired PersistenceService persistenceService;	
+        private CreateVoucher createVoucher; 
         public List<CChartOfAccounts> purchaseBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> worksBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> salaryBillGlcodeList=new ArrayList<CChartOfAccounts>();
@@ -206,7 +207,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         conBillIdlength=0;
                         getGlcodeIds();
                                           
-                        CreateVoucher createVoucher = new CreateVoucher();
+                        
                         HashMap<String, Object>  headerdetails = new HashMap<String, Object>();
                         
                         user = (User)persistenceService.find(" from User where id = ?", EgovThreadLocals.getUserId());
@@ -271,7 +272,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         
                         // credit to the bank glcode
                         HashMap<String,Object> accdetailsMap = new HashMap<String, Object>();
-                        Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where id = ? ", Integer.valueOf(parameters.get("bankaccount")[0]));
+                        Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where id = ? ", Long.valueOf(parameters.get("bankaccount")[0]));
                         accdetailsMap.put(VoucherConstant.GLCODE,ba.getChartofaccounts().getGlcode());
                         accdetailsMap.put(VoucherConstant.NARRATION,ba.getChartofaccounts().getName());
                         accdetailsMap.put(VoucherConstant.DEBITAMOUNT,0);
@@ -2869,4 +2870,11 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public void setVoucherService(VoucherService voucherService) {
                 this.voucherService = voucherService;
         }
+        public CreateVoucher getCreateVoucher() {
+            return createVoucher;
+        }
+        public void setCreateVoucher(CreateVoucher createVoucher) {
+            this.createVoucher = createVoucher;
+        }
+        
 }

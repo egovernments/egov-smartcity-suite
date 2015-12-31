@@ -42,7 +42,7 @@
 
 <html>  
 <head>  
-	<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css"/>
+	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css"/>
 	<s:if test="%{disableExpenditureType == true && enablePensionType == false}"><title>Salary Bill Payment Search</title></s:if>
 	<s:elseif test="%{disableExpenditureType == true && enablePensionType == true}"><title>Pension Bill Payment Search</title></s:elseif>
     <s:else><title>Bill Payment Search</title></s:else>
@@ -52,7 +52,7 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
         		<jsp:param name="heading" value="Bill Payment Search" />
 			</jsp:include>
-			<span class="mandatory" id="errorSpan">
+			<span class="mandatory1" id="errorSpan">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -65,27 +65,32 @@
 			</div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="bluebox" width="30%"><s:text name="payment.billnumber"/> </td>
+					<td class="bluebox"></td>
+					<td class="bluebox" ><s:text name="payment.billnumber"/> </td>
 					<td class="bluebox"><s:textfield name="billNumber" id="billNumber" maxlength="25" value="%{billNumber}" /></td>
+					<td class="bluebox"></td>
+					<td class="bluebox"></td>
 				</tr>
 				<tr>
-					<td class="greybox" width="30%"><s:text name="payment.billdatefrom"/> </td>
+					<td class="bluebox"></td>
+					<td class="greybox"><s:text name="payment.billdatefrom"/> </td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-					<td class="greybox" width="30%"><s:text name="payment.billdateto"/> </td>
+					<td class="greybox"><s:text name="payment.billdateto"/> </td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
-					<td class="bluebox" width="30%"><s:text name="payment.expendituretype"/> </td>
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="payment.expendituretype"/> </td>
 					<td class="bluebox"><s:select name="expType" id="expType" list="#{'-1':'----Choose----','Purchase':'Purchase','Works':'Works','Expense':'Expense'}" value="%{expType}"/></td>
+					<td class="bluebox"></td>
+					<td class="bluebox"></td>
+					
 				</tr>
 				<jsp:include page="../voucher/vouchertrans-filter.jsp"/>
 			</table>
-			<div  class="buttonbottom">
-				<s:submit method="search" value="Search" id="searchBtn" cssClass="buttonsubmit" onclick="return search()"/>
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-			</div>
+			
 		</div>
-		<s:if test="%{!validateUser('createpayment')}">
+	<%-- 	<s:if test="%{!validateUser('createpayment')}">
 		<script>
 			document.getElementById('searchBtn').disabled=true;
 			document.getElementById('errorSpan').innerHTML='<s:text name="payment.invalid.user"/>';
@@ -96,24 +101,30 @@
 				d.options[d.selectedIndex].text.value=-1;
 			}
 		</script>
-		</s:if>
-		<s:if test="%{validateUser('deptcheck')}">
+		</s:if> --%>
+		<%-- <s:if test="%{validateUser('deptcheck')}">
 			<script>
 				if(document.getElementById('vouchermis.departmentid'))
 				{
 					document.getElementById('vouchermis.departmentid').disabled=true;
 				}
 			</script>
-		</s:if>
+		</s:if> --%>
 		<s:hidden name="disableExpenditureType" id="disableExpenditureType" value="%{disableExpenditureType}"/>
 		<s:hidden name="enablePensionType" id="enablePensionType" value="%{enablePensionType}"/>
 		</s:form>
+		<div  align = "center" class="buttonbottom">
+				<input type="submit" class="buttonsubmit" value="Search" id="searchBtn" name="searchBtn" onclick="return search();" />
+				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+		</div>
 		<script>
 			function loadBank(obj){}
 			function search()
 			{
 				if(document.getElementById('vouchermis.departmentid'))
 					document.getElementById('vouchermis.departmentid').disabled=false;
+				document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
+	    		document.forms[0].submit();
 				return true;
 			}
 			<s:if test="%{disableExpenditureType == true && enablePensionType == false}">

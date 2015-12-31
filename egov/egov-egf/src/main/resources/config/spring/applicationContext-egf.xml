@@ -65,6 +65,10 @@
        <constructor-arg index="0" value="org.egov.commons.CFinancialYear"/>
        <constructor-arg index="1" ><null/></constructor-arg>
     </bean>
+   	<bean id="egwStatusHibernateDAO" class="org.egov.commons.dao.EgwStatusHibernateDAO">
+       <constructor-arg index="0" value="org.egov.commons.EgwStatus"/>
+       <constructor-arg index="1" ><null/></constructor-arg>
+    </bean>
     <bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO">
        <constructor-arg index="0" value="org.egov.commons.Functionary"/>
        <constructor-arg index="1" ><null/></constructor-arg>

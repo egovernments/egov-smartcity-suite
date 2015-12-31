@@ -318,22 +318,22 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             throw new ValidationException(Arrays.asList(new ValidationError("purposeId", "The supplied purposeId  can not be null or empty")));
         }
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
-        Query query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE purposeid in(:purposeId)AND classification=4 AND isActiveForPosting=1 ");
+        Query query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE purposeid in(:purposeId)AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
         
-        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId) ) AND classification=4 AND isActiveForPosting=1 ");
+        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId) ) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
         
-        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId))) AND classification=4 AND isActiveForPosting=1");
+        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId))) AND classification=4 AND isActiveForPosting=true");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
                 
-        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId)))) AND classification=4 AND isActiveForPosting=1 ");
+        query = HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId)))) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());

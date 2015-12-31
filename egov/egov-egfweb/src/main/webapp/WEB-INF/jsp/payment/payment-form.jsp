@@ -41,8 +41,6 @@
 <%@ page language="java"%>
 <html>
 <head>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
@@ -57,13 +55,14 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
         	<jsp:param name="heading" value="Bill Payment" />
 		</jsp:include>
-		<span class="mandatory">
+		
+		<span class="mandatory1">
 			<s:actionerror/>  
 			<s:fielderror />
 			<s:actionmessage />
 		</span>                               
-		<div class="formmainbox"><div class="subheadnew">Bill Payment</div>
-		<div id="budgetSearchGrid" style="display:block;width:100%;border-top:1px solid #ccc;" >
+		<div class="subheadnew">Bill Payment</div>
+		<div id="budgetSearchGrid" style="display:block;width:100%;" >
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 			<tr>
 			<td>
@@ -77,50 +76,50 @@
 					<span>
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td align="center" colspan="6" class="serachbillhead">Payment Details</td>
+							<td colspan="6"><div class="subheadsmallnew" style="border: 0;">Payment Details</div></td>
 						</tr>
   						<tr>
   							<td width="9%" class="bluebox"><s:hidden name="billregister.id"/></td>
 							<s:if test="%{shouldShowHeaderField('fund')}">
-								<td width="12%" class="bluebox"><strong><s:text name="voucher.fund"/></strong><s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+								<td width="12%" class="bluebox"><strong><s:text name="voucher.fund"/></strong><s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 								<td width="20%" class="bluebox"><s:property value="%{billregister.egBillregistermis.fund.name}"/></td>
 							</s:if>
 							<s:if test="%{shouldShowHeaderField('fundsource')}">
-								<td width="17%" class="bluebox"><strong><s:text name="voucher.fundsource"/></strong><s:if test="%{isFieldMandatory('fundsource')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+								<td width="17%" class="bluebox"><strong><s:text name="voucher.fundsource"/></strong><s:if test="%{isFieldMandatory('fundsource')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 								<td width="33%" class="bluebox"><s:property value="%{billregister.egBillregistermis.fundsource.name}"/></td>
 							</s:if>
 						</tr>
 						<tr>
 							<td class="greybox">&nbsp;</td>
 							<s:if test="%{shouldShowHeaderField('department')}">
-								<td class="greybox"><strong><s:text name="voucher.department"/></strong><s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+								<td class="greybox"><strong><s:text name="voucher.department"/></strong><s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 								<td class="greybox"><s:property value="%{billregister.egBillregistermis.egDepartment.deptName}"/></td>
 							</s:if>
 							<s:if test="%{shouldShowHeaderField('functionary')}">
-								<td class="greybox"><strong><s:text name="voucher.functionary"/></strong><s:if test="%{isFieldMandatory('functionary')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+								<td class="greybox"><strong><s:text name="voucher.functionary"/></strong><s:if test="%{isFieldMandatory('functionary')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 								<td class="greybox" colspan="4"><s:property value="%{billregister.egBillregistermis.functionaryid.name}"/></td>
 							</s:if>
 						</tr>
 						<tr>
 							<td class="bluebox">&nbsp;</td>
 							<s:if test="%{shouldShowHeaderField('scheme')}">
-								<td class="bluebox"><strong><s:text name="voucher.scheme"/></strong><s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory">*</span></s:if></td>
+								<td class="bluebox"><strong><s:text name="voucher.scheme"/></strong><s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory1">*</span></s:if></td>
 								<td class="bluebox"><s:property value="%{billregister.egBillregistermis.scheme.name}"/></td>
 							</s:if>
 							<s:if test="%{shouldShowHeaderField('subscheme')}">
-								<td class="bluebox"><strong><s:text name="voucher.subscheme"/></strong><s:if test="%{isFieldMandatory('subscheme')}"><span class="mandatory">*</span></s:if></td>
+								<td class="bluebox"><strong><s:text name="voucher.subscheme"/></strong><s:if test="%{isFieldMandatory('subscheme')}"><span class="mandatory1">*</span></s:if></td>
 								<td class="bluebox"><s:property value="%{billregister.egBillregistermis.subScheme.name}"/></td>
 							</s:if>
 						</tr>
 						<tr>   <td class="greybox">&nbsp;</td>                                               
 						<s:if test="%{shouldShowHeaderField('function')}">
-								<td class="greybox"><strong><s:text name="voucher.function"/></strong><s:if test="%{isFieldMandatory('function')}"><span class="mandatory">*</span></s:if></td>
+								<td class="greybox"><strong><s:text name="voucher.function"/></strong><s:if test="%{isFieldMandatory('function')}"><span class="mandatory1">*</span></s:if></td>
 								<td class="greybox" ><s:property value="%{billregister.egBillregistermis.function.name}"/></td>
 							</s:if>	
 							           
 							<td class="greybox">&nbsp;</td>
 							<s:if test="%{shouldShowHeaderField('field')}">
-								<td class="greybox"><strong><s:text name="voucher.field"/></strong><s:if test="%{isFieldMandatory('field')}"><span class="mandatory">*</span></s:if></td>
+								<td class="greybox"><strong><s:text name="voucher.field"/></strong><s:if test="%{isFieldMandatory('field')}"><span class="mandatory1">*</span></s:if></td>
 								<td class="greybox" colspan="4"><s:property value="%{billregister.egBillregistermis.fieldid.name}"/></td>
 							</s:if>
 							
@@ -138,22 +137,22 @@
 						<tr>
 							<td class="greybox">&nbsp;</td>
 							<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-								<td class="greybox"><s:text name="payment.voucherno"/><span class="mandatory">*</span></td>
+								<td class="greybox"><s:text name="payment.voucherno"/><span class="mandatory1">*</span></td>
 								<td class="greybox"><s:textfield name="vouchernumber" id="vouchernumber" value="%{vouchernumber}"/></td>
 							</s:if>
 							<s:else>
 								<td class="greybox"/>
 								<td class="greybox"/>
 							</s:else>
-							<td class="greybox"><s:text name="payment.voucherdate"/><span class="mandatory">*</span></td>
+							<td class="greybox"><s:text name="payment.voucherdate"/><span class="mandatory1">*</span></td>
 							<td class="greybox" colspan="2"><s:textfield name="voucherdate" id="voucherdate" maxlength="20" value="%{voucherdate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].voucherdate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 						</tr>
 						<s:if test='%{billSubType.equalsIgnoreCase("TNEB")}'> 
 								<tr>
 								<td class="bluebox">&nbsp;</td>
-									<td class="bluebox"><s:text name="payment.bank" /><span class="mandatory">*</span></td>
+									<td class="bluebox"><s:text name="payment.bank" /><span class="mandatory1">*</span></td>
 									<td class="bluebox"><s:property value="%{bank_branch}" /></td>
-									<td class="bluebox"><s:text name="payment.bankaccount"/><span class="mandatory">*</span></td>
+									<td class="bluebox"><s:text name="payment.bankaccount"/><span class="mandatory1">*</span></td>
 								    <td class="bluebox"><s:property value="%{bank_account}" /></td>
 								    <s:hidden name="bankbranch" id="bankbranch"/>
 									<s:hidden name="bank_branch" id="bank_branch"/>
@@ -164,12 +163,12 @@
 						<s:else>
 						<tr>
 							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="payment.bank"/><span class="mandatory">*</span></td>
+							<td class="bluebox"><s:text name="payment.bank"/><span class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select name="bankbranch" id="bankbranch" list="dropdownData.bankbranchList" listKey="id" listValue="bank.name+'-'+branchname"  headerKey="-1" headerValue="----Choose----" onchange="loadBankAccount(this)" value="%{bankbranch}"/></td>
-							<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common!ajaxLoadBankAccounts.action"/>
-							<td class="bluebox"><s:text name="payment.bankaccount"/><span class="mandatory">*</span></td>
+							<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common-ajaxLoadBankAccounts.action"/>
+							<td class="bluebox"><s:text name="payment.bankaccount"/><span class="mandatory1">*</span></td>
 							<td class="bluebox"  colspan="2"><s:select name="bankaccount" id="bankaccount" list="dropdownData.bankaccountList" listKey="id" listValue="accountnumber+'---'+accounttype"  headerKey="-1" headerValue="----Choose----" value="%{bankaccount}"/></td>
-							<egov:updatevalues id="balance" fields="['Text']" url="payment/payment!ajaxGetAccountBalance.action"/>
+							<egov:updatevalues id="balance" fields="['Text']" url="payment/payment-ajaxGetAccountBalance.action"/>
 						</tr>
 						</s:else>
 						<tr>
@@ -278,7 +277,6 @@
 				<%@include file="../voucher/workflowApproval.jsp"%>
 		</s:if>
 	</div>
-	</div>
 	
 	<div  class="buttonbottom" id="buttondiv">
 		<s:hidden  name="paymentid" value="%{paymentheader.id}"/>
@@ -288,6 +286,7 @@
 		<s:iterator value="%{getValidActions()}" var="p"  status="s">
 		  <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="create" onclick="return validate('%{name}','%{description}')"/>
 		</s:iterator>
+		<input type="submit" class="buttonsubmit" value="Save And Forward" id="uac_asst_approve" name="uac_asst_approve" onclick="return validate('save','uac_asst_approve','Save And Forward');" />
 		<s:if test="%{disableExpenditureType==true}">
 			<input type="button" method="beforeSearch" value="Back " class="buttonsubmit" id="backbtnid" onclick="return back();"/>
 		</s:if>
@@ -300,7 +299,7 @@
 	<div class="subheadsmallnew"></div>
 	<script>
 		function back(){
-			window.location = "/EGF/payment/payment!beforeSearch.action?salaryType";
+			window.location = "/EGF/payment/payment-beforeSearch.action?salaryType";
 			return true;
 		}
 		
@@ -420,6 +419,8 @@
 			{
 			return false;
 			}
+			document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+			document.forms[0].submit();
 			return true;
 		}
 		function checkLength(obj)

@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,6 +57,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -68,7 +68,9 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -79,8 +81,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.advance.EgAdvanceRequisition;
@@ -96,16 +96,15 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")  
 @Validation
-@Transactional(readOnly=true)
 @Results({
 @Result(name = "search", location = "payment-search.jsp"),
+@Result(name = "searchbills", location = "payment-searchbills.jsp"),
 @Result(name = "tnebSearch", location = "payment-tnebSearch.jsp"),
 @Result(name = "balance", location = "payment-balance.jsp"),
 @Result(name = "modify", location = "payment-modify.jsp"),
@@ -127,7 +126,7 @@ public class PaymentAction extends BasePaymentAction{
         private boolean isDepartmentDefault;
         private BigDecimal balance;
         @Autowired
-        private EgwStatusHibernateDAO egwStatusDAO;                                     
+        private EgwStatusHibernateDAO egwStatusHibernateDAO;                                     
         private Paymentheader paymentheader;
         private PaymentService paymentService;
         private VoucherService voucherService;
@@ -253,7 +252,7 @@ public class PaymentAction extends BasePaymentAction{
                 if(typeOfAccount != null && !typeOfAccount.equals("")) {
                         if(typeOfAccount.indexOf(",") !=  -1 ) {
                                 String [] strArray = typeOfAccount.split(",");
-                                addDropdownData("bankbranchList", persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1 and type in (?,?) ) and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc",fund, (String)strArray[0], (String)strArray[1] ));
+                                addDropdownData("bankbranchList", persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1 and type in (?,?) ) and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc",fund, BankAccountType.valueOf((String)strArray[0]), BankAccountType.valueOf((String)strArray[1] )));
                         } else {
                                 addDropdownData("bankbranchList", persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = 1 and type in (?) ) and br.isactive=1 and br.bank.isactive = 1 order by br.bank.name asc",fund, typeOfAccount ));
                         }
@@ -296,7 +295,7 @@ public class PaymentAction extends BasePaymentAction{
                 
                 
                 
-                if(validateUser("deptcheck"))
+                //if(validateUser("deptcheck"))
                         voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDepartment());
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed beforeSearch.");
                 return "search";
@@ -306,7 +305,7 @@ public class PaymentAction extends BasePaymentAction{
         public String beforeTNEBSearch()throws Exception{
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting beforeTNEBSearch...");
                 setTNEBMandatoryFields();
-                if(validateUser("deptcheck"))
+              //  if(validateUser("deptcheck"))
                         voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDepartment());
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed beforeSearch.");
                 return "tnebSearch";
@@ -415,8 +414,8 @@ public class PaymentAction extends BasePaymentAction{
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("start purchase bill");
                 if(expType==null || expType.equals("-1") || expType.equals("Purchase"))
                 {
-                        egwStatus = egwStatusDAO.getStatusByModuleAndCode("SBILL", "Approved");
-                        EgwStatus egwStatus1 = egwStatusDAO.getStatusByModuleAndCode("PURCHBILL", "Passed");
+                        egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SALBILL", "Approved");
+                        EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("PURCHBILL", "Passed");
                         String supplierBillSql=mainquery+" and bill.status in (?,?) "+sql.toString() +" order by bill.billdate desc";
                         String supplierBillSql1=mainquery1+" and bill.status in (?,?) "+sql.toString() +" order by bill.billdate desc";
                         supplierBillList = getPersistenceService().findPageBy(supplierBillSql,1,500,"Purchase",egwStatus,egwStatus1).getList();
@@ -435,8 +434,8 @@ public class PaymentAction extends BasePaymentAction{
                 if(expType==null || expType.equals("-1") || expType.equals("Works"))
                 {
                         // right not we dont know, the EGW-Status for works bill, passed from external system
-                        egwStatus = egwStatusDAO.getStatusByModuleAndCode("WORKSBILL", "Passed");
-                        EgwStatus egwStatus1 = egwStatusDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for external systems
+                        egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("WORKSBILL", "Passed");
+                        EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for external systems
                         String contractorBillSql=mainquery+" and bill.status in (?,?) "+sql.toString() + " order by bill.billdate desc";
                         String contractorBillSql1=mainquery1+" and bill.status in (?,?) "+sql.toString() + " order by bill.billdate desc";
                         contractorBillList = getPersistenceService().findPageBy(contractorBillSql,1,500,"Works",egwStatus,egwStatus1).getList();
@@ -462,8 +461,8 @@ public class PaymentAction extends BasePaymentAction{
                         String cBillmainquery1 = "from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('"+FinancialConstants.BILLSUBTYPE_TNEBBILL+"')) and bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 " +
                                         " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
                         
-                        egwStatus = egwStatusDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
-                        EgwStatus egwStatus1 = egwStatusDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external systems
+                        egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
+                        EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external systems
                         String cBillSql=cBillmainquery+" and bill.status in (?,?) "+sql.toString() + " order by bill.billdate desc";
                         String cBillSql1=cBillmainquery1+" and bill.status in (?,?) "+sql.toString() + " order by bill.billdate desc";
                         contingentBillList = getPersistenceService().findPageBy(cBillSql,1,500,FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT,egwStatus,egwStatus1).getList();
@@ -517,8 +516,8 @@ public class PaymentAction extends BasePaymentAction{
         
         private String salaryBills(StringBuffer sql,String mainquery,String mainquery1) {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting salaryBills...");
-                EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode("SALBILL", "Approved"); // for financial salary bills
-                EgwStatus egwStatus1 = egwStatusDAO.getStatusByModuleAndCode("SBILL", "Approved"); // for external systems
+                EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SALBILL", "Approved"); // for financial salary bills
+                EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved"); // for external systems
                 String sBillSql=mainquery+" and bill.status in (?,?) "+sql.toString()+" order by bill.billdate desc";
                 String sBillSql1=mainquery1+" and bill.status in (?,?) "+sql.toString()+" order by bill.billdate desc";
                 salaryBillList = getPersistenceService().findAllBy(sBillSql,FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY,egwStatus,egwStatus1);
@@ -542,7 +541,7 @@ public class PaymentAction extends BasePaymentAction{
         }
         private String pensionBills(StringBuffer sql,String mainquery,String mainquery1) {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting pensionBills...");
-                EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode("PENSIONBILL", "Approved");
+                EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("PENSIONBILL", "Approved");
                 String pBillSql=mainquery+" and bill.status in (?) "+sql.toString()+" order by bill.billdate desc";
                 String pBillSql1=mainquery1+" and bill.status in (?) "+sql.toString()+" order by bill.billdate desc";
                 pensionBillList = getPersistenceService().findAllBy(pBillSql,FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION,egwStatus);
@@ -597,8 +596,8 @@ public class PaymentAction extends BasePaymentAction{
                 if(year!=null && !year.equalsIgnoreCase("")){             
                         sql.append(" and ebd.financialyear.id="+year+"");              
                 }
-                EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
-                EgwStatus egwStatus1 = egwStatusDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external systems
+                EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
+                EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external systems
                 String tnebBillSql=tnebSqlMainquery+" and bill.status in (?,?) "+sql.toString()+" order by bill.billdate desc";
                 String tnebBillSql1=tnebSqlMainquery1+" and bill.status in (?,?) "+sql.toString()+" order by bill.billdate desc";
                 contingentBillList = getPersistenceService().findPageBy(tnebBillSql,1,500,FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT,egwStatus,egwStatus1).getList();
@@ -697,7 +696,7 @@ public class PaymentAction extends BasePaymentAction{
                         errors.add(new ValidationError("exception",e.getMessage()));
                         throw new ValidationException(errors);
                 }                                   
-                loadApproverUser(voucherHeader.getType());
+             //   loadApproverUser(voucherHeader.getType());
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed generatePayment.");
                 return "form";
                 
@@ -984,7 +983,7 @@ public class PaymentAction extends BasePaymentAction{
         public String beforeModify()throws Exception
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting beforeModify.");
-                if(validateUser("deptcheck"))
+                //if(validateUser("deptcheck"))
                         voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDepartment());
                 action="search";
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed beforeModify.");
@@ -998,7 +997,7 @@ public class PaymentAction extends BasePaymentAction{
                 descriptionList.add("New");
                 descriptionList.add("Deposited");
                 descriptionList.add("Reconciled");
-                List<EgwStatus> egwStatusList = egwStatusDAO.getStatusListByModuleAndCodeList("Instrument", descriptionList);
+                List<EgwStatus> egwStatusList = egwStatusHibernateDAO.getStatusListByModuleAndCodeList("Instrument", descriptionList);
                 String statusId="";
                 for(EgwStatus egwStatus : egwStatusList)
                         statusId = statusId+egwStatus.getId()+",";
@@ -1858,6 +1857,15 @@ public class PaymentAction extends BasePaymentAction{
         public void setScriptService(ScriptService scriptService) {
                 this.scriptService = scriptService;
         }
+
+        public EgwStatusHibernateDAO getEgwStatusHibernateDAO() {
+            return egwStatusHibernateDAO;
+        }
+
+        public void setEgwStatusHibernateDAO(EgwStatusHibernateDAO egwStatusHibernateDAO) {
+            this.egwStatusHibernateDAO = egwStatusHibernateDAO;
+        }
+
 
         
 }

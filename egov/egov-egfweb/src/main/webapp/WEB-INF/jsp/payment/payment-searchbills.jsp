@@ -41,8 +41,6 @@
 <%@ page language="java"%>
 <html>
 <head>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
 <script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
@@ -152,6 +150,8 @@ function check()
 			alert("Mode of payment for contractor bills should only be RTGS");
 			return false;
 		}	 
+		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-save.action';
+		document.forms[0].submit();
 	}	             
 	if(document.getElementById('miscount').value==0)
 	{
@@ -167,6 +167,8 @@ function search()
 {
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
+	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
+	document.forms[0].submit();
 	return true;
 }
 function selectAllContractors(element){
@@ -471,14 +473,13 @@ function checkContingentForSameMisAttribs(obj,len)
 		<jsp:include page="../budget/budgetHeader.jsp">
         	<jsp:param name="heading" value="Bill Payment Search" />
 		</jsp:include>
-		<span class="mandatory">
+		<span class="mandatory1">
 			<s:actionerror/>  
 			<s:fielderror />
 			<s:actionmessage />
 		</span>
-		
-		<div class="formmainbox"><div class="subheadnew">Bill Payment</div>
-		<div id="budgetSearchGrid" style="display:block;width:100%;border-top:1px solid #ccc;" >
+		<div class="subheadnew">Bill Payment</div>
+		<div id="budgetSearchGrid" style="display:block;width:100%;" >
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
 				<td>
@@ -491,24 +492,31 @@ function checkContingentForSameMisAttribs(obj,len)
                			<h2>Search Bill</h2>
 	                	<span>
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr><td align="center" colspan="6" class="serachbillhead">Search Bill</td></tr>
+						<tr><td colspan="6">	<div class="subheadsmallnew" style="border: 0;">Search Bill</div></td></tr>
 							<tr>
-								<td class="bluebox" width="30%"><s:text name="payment.billnumber"/> </td>
+								<td class="bluebox"></td>
+								<td class="bluebox" ><s:text name="payment.billnumber"/> </td>
 								<td class="bluebox"><s:textfield name="billNumber" id="billNumber" maxlength="25" value="%{billNumber}" /></td>
+								<td class="bluebox"></td>
+								<td class="bluebox"></td>
 							</tr>
 							<tr>
-								<td class="greybox" width="30%"><s:text name="payment.billdatefrom"/> </td>
+								<td class="bluebox"></td>
+								<td class="greybox"><s:text name="payment.billdatefrom"/> </td>
 								<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-								<td class="greybox" width="30%"><s:text name="payment.billdateto"/> </td>
+								<td class="greybox"><s:text name="payment.billdateto"/> </td>
 								<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 							</tr>
 							<tr>
-								<td class="bluebox" width="30%"><s:text name="payment.expendituretype"/> </td>
+								<td class="bluebox"></td>
+								<td class="bluebox"><s:text name="payment.expendituretype"/> </td>
 								<td class="bluebox"><s:select name="expType" id="expType" list="#{'-1':'---Select---','Purchase':'Purchase','Works':'Works', 'Expense':'Expense'}" value="%{expType}"/></td>
+								<td class="bluebox"></td>
+								<td class="bluebox"></td>
 							</tr>
 							<jsp:include page="../voucher/vouchertrans-filter.jsp"/>
 							<tr>
-								<td align="center" colspan="6">
+								<td align="center" colspan="5">
 									<div class="buttonbottom">
 									  <s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="return search()"/>
 									  <input type="submit" value="Close" onclick="javascript:window.close()" class="button"/>
@@ -564,7 +572,7 @@ function checkContingentForSameMisAttribs(obj,len)
 								</s:iterator>
 							</table>
 							<s:if test="contractorList == null || contractorList.size==0">
-								<div class="subheadsmallnew">No Records Found</div>
+								<div class="subheadsmallnew" style="border: 0;">No Records Found</div>
 							</s:if>
 						</div>
 						</td>
@@ -612,7 +620,7 @@ function checkContingentForSameMisAttribs(obj,len)
 								</s:iterator>
 							</table>
 							<s:if test="supplierList == null || supplierList.size==0">
-								<div class="subheadsmallnew">No Records Found</div>
+								<div class="subheadsmallnew" style="border: 0;">No Records Found</div>
 							</s:if>
 						</div>
 						</td>
@@ -661,7 +669,7 @@ function checkContingentForSameMisAttribs(obj,len)
 								</s:iterator>
 							</table>
 							<s:if test="contingentList == null || contingentList.size==0">
-								<div class="subheadsmallnew">No Records Found</div>
+								<div class="subheadsmallnew" style="border: 0;">No Records Found</div>
 							</s:if>
 						</div>
 						</td>
@@ -678,7 +686,6 @@ function checkContingentForSameMisAttribs(obj,len)
 		</tr>
 		</table>
 	</div>
-	</div>
 	<div id="paginationdiv" align="center" style="padding-top:10px;">
 		<!-- <a href="#"><<</a> <a href="#">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">>></a>&nbsp;&nbsp;&nbsp;
 		<select name="select">
@@ -692,14 +699,14 @@ function checkContingentForSameMisAttribs(obj,len)
 		<tr><font size="small" color="red">*Maximum of 500 records are displayed here</font></tr>
 		<tr>
 			<td class="modeofpayment">
-				<strong><s:text name="payment.mode"/><span class="mandatory">*</span></strong>
+				<strong><s:text name="payment.mode"/><span class="mandatory1">*</span></strong>
 				<input name="paymentMode" id="paymentModecheque" checked="checked" value="cheque" type="radio"><label for="paymentModecheque">Cheque</label>
 				<input name="paymentMode" id="paymentModecash" value="cash" type="radio"><label for="paymentModecash"><s:text name="cash.consolidated.cheque"/></label>
 				<input name="paymentMode" id="paymentModertgs" value="rtgs" type="radio"><label for="paymentModertgs">RTGS</label>
 			</td>
 		</tr>
 		<tr>
-			<td  class="buttonbottomnew" align="center"><br><s:submit method="save" value="Generate Payment" cssClass="buttonsubmit" onclick="return check()" /></td>
+			<td  class="buttonbottomnew" align="center"><br><input type="submit" class="buttonsubmit" value="Generate Payment" id="generatePayment"  onclick="return check();" /></td>
 		</tr>
 	</table>
 	</div>
