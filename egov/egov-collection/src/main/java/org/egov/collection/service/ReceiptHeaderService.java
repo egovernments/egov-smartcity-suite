@@ -80,6 +80,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
@@ -144,9 +145,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final boolean allWfAction = wfAction == null || wfAction.equals(CollectionConstants.ALL);
         final boolean allUserName = userName == null || userName.equals(CollectionConstants.ALL);
         final boolean allDate = receiptDate == null || receiptDate.equals(CollectionConstants.ALL);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date rcptDate = null;
+        try {
+            rcptDate = formatter.parse(receiptDate);
+        } catch (ParseException e) {
+            LOGGER.error("Exception while parsing ReceiptDate"+e.getMessage());
+        }
+                
         if (!allPositions)
             query.append(" and state.ownerPosition.id = :positionId");
-
         if (!allCounters)
             query.append(" and location.id = :counterId");
         if (!allServices)
@@ -156,22 +164,22 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (!allUserName)
             query.append(" and createdBy.username = :userName");
         if (!allDate)
-            query.append(" and (cast(receiptDate as date)) = to_date('" + receiptDate + "', 'DD/MM/YYYY') ");
+            query.append(" and (cast(receiptDate as date)) = :rcptDate");
         query.append(" order by receiptdate  desc");
         final Query listQuery = getSession().createQuery(query.toString());
-
+       
         if (!allPositions)
             listQuery.setLong("positionId", positionId);
-
         if (!allCounters)
             listQuery.setInteger("counterId", counterId);
-
         if (!allServices)
             listQuery.setString("serviceCode", serviceCode);
         if (!allWfAction)
             listQuery.setString("wfAction", wfAction);
         if (!allUserName)
             listQuery.setString("userName", userName);
+        if (!allDate)
+            listQuery.setDate("rcptDate", rcptDate);
         return listQuery.list();
     }
 
