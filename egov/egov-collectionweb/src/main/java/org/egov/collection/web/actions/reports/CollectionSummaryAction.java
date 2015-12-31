@@ -145,11 +145,6 @@ public class CollectionSummaryAction extends ReportFormAction {
         // Set default values of criteria fields
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
-
-        final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
-        if (dept != null)
-            setReportParam(EGOV_DEPT_ID, dept.getId());
-
         return INDEX;
     }
 
