@@ -38,6 +38,7 @@ import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.CollectionSummary;
+import org.egov.ptis.domain.entity.property.CollectionSummaryDetails;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -300,11 +301,12 @@ public class CollectionSummaryReportAction extends BaseFormAction {
 
         try {
             if (collectionSummaryList != null && !collectionSummaryList.isEmpty()) {
-                for (final CollectionSummary collSummObj : collectionSummaryList) {
-                    final CollectionSummary collSummary = collSummObj;
+                for (final CollectionSummary collSummary : collectionSummaryList) {
+                    List<CollectionSummaryDetails> collDetails = new ArrayList<CollectionSummaryDetails>(collSummary.getCollectionDetails());
+                    CollectionSummaryDetails summaryDetails = collDetails.get(0);
                     if (prevZone == null && prevWard == null && prevBlock == null && prevLocality == null
                             && prevPropertyType == null)
-                        initializeReasonAmount(collSummary);
+                        initializeReasonAmount(collSummary,summaryDetails);
                     else if (prevZone != null && prevZone.equals(collSummary.getZoneId().getId())
                             || prevWard != null && prevWard.equals(collSummary.getWardId().getId())
                             || prevBlock != null && prevBlock.equals(collSummary.getAreaId().getId())
@@ -312,41 +314,41 @@ public class CollectionSummaryReportAction extends BaseFormAction {
                             || prevPropertyType != null &&
                             prevPropertyType.equalsIgnoreCase(collSummary.getProperty().getPropertyDetail().getCategoryType())) {
                         if (taxAmount != null)
-                            taxAmount = collSummary.getTaxColl() != null ? taxAmount.add(collSummary.getTaxColl())
+                            taxAmount = summaryDetails.getCurrentTaxColl() != null ? taxAmount.add(summaryDetails.getCurrentTaxColl())
                                     : taxAmount;
                         else
-                            taxAmount = collSummary.getTaxColl();
+                            taxAmount = summaryDetails.getCurrentTaxColl();
                         if (arrearTaxAmount != null)
-                            arrearTaxAmount = collSummary.getArrearTaxColl() != null ? arrearTaxAmount.add(collSummary
+                            arrearTaxAmount = summaryDetails.getArrearTaxColl() != null ? arrearTaxAmount.add(summaryDetails
                                     .getArrearTaxColl())
                                     : arrearTaxAmount;
                         else
-                            arrearTaxAmount = collSummary.getArrearTaxColl();
+                            arrearTaxAmount = summaryDetails.getArrearTaxColl();
                         if (penaltyAmount != null)
-                            penaltyAmount = collSummary.getPenaltyColl() != null ? penaltyAmount.add(collSummary
+                            penaltyAmount = summaryDetails.getPenaltyColl() != null ? penaltyAmount.add(summaryDetails
                                     .getPenaltyColl()) : penaltyAmount;
                         else
-                            penaltyAmount = collSummary.getPenaltyColl();
+                            penaltyAmount = summaryDetails.getPenaltyColl();
                         if (arrearPenaltyAmount != null)
-                            arrearPenaltyAmount = collSummary.getArrearPenaltyColl() != null ? arrearPenaltyAmount
-                                    .add(collSummary
+                            arrearPenaltyAmount = summaryDetails.getArrearPenaltyColl() != null ? arrearPenaltyAmount
+                                    .add(summaryDetails
                                             .getArrearPenaltyColl()) : arrearPenaltyAmount;
                         else
-                            arrearPenaltyAmount = collSummary.getArrearPenaltyColl();
+                            arrearPenaltyAmount = summaryDetails.getArrearPenaltyColl();
                         if (libCessAmount != null)
-                            libCessAmount = collSummary.getLibCessColl() != null ? libCessAmount.add(collSummary
+                            libCessAmount = summaryDetails.getLibCessColl() != null ? libCessAmount.add(summaryDetails
                                     .getLibCessColl()) : libCessAmount;
                         else
-                            libCessAmount = collSummary.getLibCessColl();
+                            libCessAmount = summaryDetails.getLibCessColl();
                         if (arrearLibCessAmount != null)
-                            arrearLibCessAmount = collSummary.getArrearLibCessColl() != null ? arrearLibCessAmount
-                                    .add(collSummary
+                            arrearLibCessAmount = summaryDetails.getArrearLibCessColl() != null ? arrearLibCessAmount
+                                    .add(summaryDetails
                                             .getArrearLibCessColl()) : arrearLibCessAmount;
                         else
-                            arrearLibCessAmount = collSummary.getArrearLibCessColl();
+                            arrearLibCessAmount = summaryDetails.getArrearLibCessColl();
                     } else {
                         csrFinalList.add(getCalculatedResultMap());
-                        initializeReasonAmount(collSummary);
+                        initializeReasonAmount(collSummary,summaryDetails);
                     }
                 }
                 // Last Row
@@ -365,7 +367,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     /**
      * @param collSummary
      */
-    private void initializeReasonAmount(final CollectionSummary collSummary) {
+    private void initializeReasonAmount(final CollectionSummary collSummary,final CollectionSummaryDetails details) {
         if (mode.equals(ZONEWISE))
             prevZone = collSummary.getZoneId().getId();
         else if (mode.equals(WARDWISE))
@@ -376,12 +378,12 @@ public class CollectionSummaryReportAction extends BaseFormAction {
             prevLocality = collSummary.getLocalityId().getId();
         else if (mode.equals(USAGEWISE))
             prevPropertyType = collSummary.getProperty().getPropertyDetail().getCategoryType();
-        taxAmount = collSummary.getTaxColl();
-        arrearTaxAmount = collSummary.getArrearTaxColl();
-        penaltyAmount = collSummary.getPenaltyColl();
-        arrearPenaltyAmount = collSummary.getArrearPenaltyColl();
-        libCessAmount = collSummary.getLibCessColl();
-        arrearLibCessAmount = collSummary.getArrearLibCessColl();
+        taxAmount = details.getCurrentTaxColl();
+        arrearTaxAmount = details.getArrearTaxColl();
+        penaltyAmount = details.getPenaltyColl();
+        arrearPenaltyAmount = details.getArrearPenaltyColl();
+        libCessAmount = details.getLibCessColl();
+        arrearLibCessAmount = details.getArrearLibCessColl();
     }
 
     /**
@@ -400,10 +402,10 @@ public class CollectionSummaryReportAction extends BaseFormAction {
             result.setBoundaryName(boundaryService.getBoundaryById(prevLocality).getName());
         else if (mode.equals(USAGEWISE))
             result.setPropertyType(prevPropertyType);
+        
         result.setArrearTaxAmount(arrearTaxAmount != null ? arrearTaxAmount : ZERO);
         totArrearTaxAmt = arrearTaxAmount != null ? totArrearTaxAmt.add(arrearTaxAmount) : totArrearTaxAmt
                 .add(ZERO);
-
         result.setArrearLibraryCess(arrearLibCessAmount != null ? arrearLibCessAmount : ZERO);
         totArrearLibCessAmt = arrearLibCessAmount != null ? totArrearLibCessAmt.add(arrearLibCessAmount) : totArrearLibCessAmt
                 .add(ZERO);
@@ -411,7 +413,6 @@ public class CollectionSummaryReportAction extends BaseFormAction {
 
         result.setTaxAmount(taxAmount);
         totTaxAmt = taxAmount != null ? totTaxAmt.add(taxAmount) : totTaxAmt.add(ZERO);
-
         result.setLibraryCess(libCessAmount != null ? libCessAmount : ZERO);
         totLibCessAmt = libCessAmount != null ? totLibCessAmt.add(libCessAmount) : totLibCessAmt
                 .add(ZERO);
@@ -420,12 +421,12 @@ public class CollectionSummaryReportAction extends BaseFormAction {
         result.setPenalty(penaltyAmount != null ? penaltyAmount : ZERO);
         totPenaltyAmt = penaltyAmount != null ? totPenaltyAmt.add(penaltyAmount) : totPenaltyAmt
                 .add(ZERO);
-
         result.setArrearPenalty(arrearPenaltyAmount != null ? arrearPenaltyAmount : ZERO);
         totArrearPenaltyAmt = arrearPenaltyAmount != null ? totArrearPenaltyAmt.add(arrearPenaltyAmount) : totArrearPenaltyAmt
                 .add(ZERO);
         result.setPenaltyTotal(totPenaltyAmt.add(totArrearPenaltyAmt));
-
+        
+        taxAmount = taxAmount != null ? taxAmount : ZERO;
         if (arrearTaxAmount != null)
             taxAmount = taxAmount.add(arrearTaxAmount);
         if (penaltyAmount != null)

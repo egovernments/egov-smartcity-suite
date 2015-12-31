@@ -111,8 +111,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class EgovCommon {
 
         private static final Logger LOGGER = Logger.getLogger(EgovCommon.class);
+        @Autowired 
         private PersistenceService persistenceService;
-        @Autowired  private AppConfigValueService appConfigValuesService;
+        @Autowired 
+        private AppConfigValueService appConfigValuesService;
         @Autowired
         private ChartOfAccountsDAO chartOfAccountsDAO;
         @Autowired
@@ -130,6 +132,30 @@ public class EgovCommon {
 
         public void setFundFlowService(FundFlowService fundFlowService) {
                 this.fundFlowService = fundFlowService;
+        }
+
+        public AppConfigValueService getAppConfigValuesService() {
+            return appConfigValuesService;
+        }
+
+        public void setAppConfigValuesService(AppConfigValueService appConfigValuesService) {
+            this.appConfigValuesService = appConfigValuesService;
+        }
+
+        public ChartOfAccountsDAO getChartOfAccountsDAO() {
+            return chartOfAccountsDAO;
+        }
+
+        public void setChartOfAccountsDAO(ChartOfAccountsDAO chartOfAccountsDAO) {
+            this.chartOfAccountsDAO = chartOfAccountsDAO;
+        }
+
+        public FundHibernateDAO getFundDAO() {
+            return fundDAO;
+        }
+
+        public void setFundDAO(FundHibernateDAO fundDAO) {
+            this.fundDAO = fundDAO;
         }
 
         public FinancialYearHibernateDAO getFinDao() {
@@ -616,9 +642,9 @@ public class EgovCommon {
                         StringBuffer opBalncQuery1 = new StringBuffer(300);
                         opBalncQuery1
                                         .append(
-                                                        "SELECT decode(sum(openingdebitbalance),null,0,sum(openingdebitbalance))-")
+                                                        "SELECT CASE WHEN sum(openingdebitbalance) = null THEN 0 ELSE sum(openingdebitbalance) END -")
                                         .append(
-                                                        " decode(sum(openingcreditbalance),null,0,sum(openingcreditbalance)) as openingBalance from TransactionSummary")
+                                                        " CASE WHEN sum(openingcreditbalance) = null THEN 0 ELSE sum(openingcreditbalance) END  as openingBalance from TransactionSummary")
                                         .append(
                                                         " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
                                         .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
@@ -627,8 +653,8 @@ public class EgovCommon {
                                         .append(
                                                         "') and glcodeid.id=(select chartofaccounts.id from Bankaccount where id=? )");
                         List<Object> tsummarylist = (List<Object>) getPersistenceService()
-                                        .findAllBy(opBalncQuery1.toString(), bankId);
-                        opeAvailable = BigDecimal.valueOf((Double) tsummarylist.get(0));
+                                        .findAllBy(opBalncQuery1.toString(), bankId.longValue());
+                        opeAvailable = BigDecimal.valueOf(Double.parseDouble(tsummarylist.get(0).toString()));
 
                         if(LOGGER.isDebugEnabled())     LOGGER.debug("opeAvailable :" + opeAvailable);
 
@@ -636,16 +662,16 @@ public class EgovCommon {
                         List<Object> list = (List<Object>) getPersistenceService()
                                         .findAllBy(
                                                         "select chartofaccounts.id from Bankaccount where id=?",
-                                                        bankId);
+                                                        bankId.longValue());
                         Integer glcodeid = Integer.valueOf(list.get(0).toString());
 
                         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                                                        "finance", "statusexcludeReport");
+                                                        "EGF", "statusexcludeReport");
                         final String statusExclude = appList.get(0).getValue();
 
                         opBalncQuery2
                                         .append(
-                                                        "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+                                                        "SELECT (CASE WHEN sum(gl.debitAmount) = null THEN 0 ELSE sum(gl.debitAmount) END - CASE WHEN sum(gl.creditAmount) = null THEN 0 ELSE sum(gl.creditAmount) END)")
                                         .append(
                                                         " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId=? ")
                                         .append(
@@ -662,7 +688,7 @@ public class EgovCommon {
                                         "from CChartOfAccounts where id=?", Long.valueOf(glcodeid));
                         list = (List<Object>) getPersistenceService().findAllBy(
                                         opBalncQuery2.toString(), coa);
-                        bankBalance = BigDecimal.valueOf((Double) list.get(0));
+                        bankBalance = BigDecimal.valueOf(Double.parseDouble( list.get(0).toString()));
                         bankBalance = opeAvailable.add(bankBalance);
 
                         // get the preapproved voucher amount also, if payment workflow
@@ -698,7 +724,7 @@ public class EgovCommon {
                                 StringBuffer paymentQuery = new StringBuffer(400);
                                 paymentQuery
                                                 .append(
-                                                                "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+                                                                "SELECT (CASE WHEN sum(gl.debitAmount) = null THEN 0 ELSE sum(gl.debitAmount) END  - CASE WHEN sum(gl.creditAmount) = null THEN 0 ELSE sum(gl.creditAmount) END )")
                                                 .append(
                                                                 " as amount FROM  CGeneralLedger gl , CVoucherHeader vh,Paymentheader ph WHERE gl.voucherHeaderId.id=vh.id and ph.voucherheader.id=vh.id and gl.glcodeId=? ")
                                                 .append(

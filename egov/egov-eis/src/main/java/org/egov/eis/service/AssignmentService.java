@@ -42,6 +42,7 @@ import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -347,5 +348,9 @@ public class AssignmentService {
             for (final String id : removedAssignIds.split(","))
                 employee.getAssignments().remove(assignmentRepository.findOne(Long.valueOf(id)));
         return employee;
+    }
+    
+    public Set<User> getUsersByDesignations(final String [] designationNames){
+        return assignmentRepository.getUsersByDesignations(designationNames);
     }
 }

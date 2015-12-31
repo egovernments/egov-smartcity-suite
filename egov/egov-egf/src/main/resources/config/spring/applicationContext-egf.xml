@@ -102,7 +102,7 @@
 	 <bean id="incomeExpenditureScheduleService" class="org.egov.services.report.IncomeExpenditureScheduleService" parent="persistenceService">
 	 	<property name="incomeExpenditureService" ref="incomeExpenditureService"/>
 	 </bean>
-	 <bean id="functionwiseIEService" class="org.egov.services.report.FunctionwiseIEService" parent="persistenceService" />
+	 <bean id="functionwiseIEService" class="org.egov.services.report.FunctionwiseIEService" parent="persistenceService" scope="prototype"/>
 	<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService"  scope="prototype">
 	 </bean>
 	<bean id="budgetService" class="org.egov.services.budget.BudgetService"  scope="prototype">
@@ -143,7 +143,7 @@
     <bean id="budgetReAppropriationMiscService" class="org.egov.services.budget.BudgetReAppropriationMiscService" parent="persistenceService" scope="prototype">
        <property name="type" value="org.egov.model.budget.BudgetReAppropriationMisc"/>
     </bean>
-     <bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO">
+     <bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO" scope="prototype">
         <property name="budgetService" ref="budgetService"/>
         <property name="appConfigValuesService" ref="appConfigValuesService"/>
     </bean>
@@ -220,7 +220,7 @@
 	<bean id="voucherHeaderPersitService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.CVoucherHeader" />
 	</bean>
-	<bean id="accountEntityService" class="org.egov.masters.services.AccountEntityService">
+	<bean id="accountEntityService" class="org.egov.masters.services.AccountEntityService" scope="prototype">
 		<property name="type" value="org.egov.masters.model.AccountEntity" />
     </bean>
     <bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" scope="prototype">
@@ -314,7 +314,7 @@
 	<bean id="baseForm" class="org.egov.infra.web.struts.actions.BaseFormAction">
 		<property name="persistenceService"  ref="persistenceService" />
 	</bean>
-	<bean id="expenseBillPrint" class="org.egov.web.actions.bill.ExpenseBillPrintAction">
+	<bean id="expenseBillPrint" class="org.egov.web.actions.bill.ExpenseBillPrintAction" scope="prototype">
 	
 	</bean>
 	<bean id="common" class="org.egov.web.actions.voucher.CommonAction" parent="baseForm" scope="prototype" >
@@ -349,7 +349,7 @@
 	 </bean>
 	  <bean id="fundFlowService" class="org.egov.services.report.FundFlowService" parent="persistenceService" scope="prototype" />
 	 
-     <bean id="lgService" class="org.egov.services.report.LoanGrantService" parent="persistenceService" >
+     <bean id="lgService" class="org.egov.services.report.LoanGrantService" parent="persistenceService" scope="prototype">
       </bean>
      <bean id="rpService" class="org.egov.services.report.RPService" parent="persistenceService">
       </bean>
@@ -403,7 +403,7 @@
      <!-- <bean id="eBConsumerService" class="org.egov.eb.service.master.EBConsumerService" parent="persistenceService" scope="prototype">
       <property name="type" value="org.egov.eb.domain.master.entity.EBConsumer" />
      </bean> -->
-     <bean id="accountdetailkeyService" class="org.egov.services.masters.AccountdetailkeyService" >
+     <bean id="accountdetailkeyService" class="org.egov.services.masters.AccountdetailkeyService" scope="prototype" >
       <property name="type" value="org.egov.commons.Accountdetailkey" />
       <property name="persistenceService" ref="persistenceService" /> 
      </bean>

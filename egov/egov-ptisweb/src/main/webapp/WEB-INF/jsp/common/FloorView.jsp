@@ -44,6 +44,7 @@
 		<th class="bluebgheadtd"><s:text name="FloorNo" /></th>
 		<th class="bluebgheadtd"><s:text name="ConstructionType" /></th>
 		<th class="bluebgheadtd"><s:text name="Usage"/></th>
+		<th class="bluebgheadtd"><s:text name="firmName"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /></th>
@@ -70,6 +71,14 @@
 	    	<span class="bold"><s:property default="N/A" value="%{propertyUsage.usageName}" /></span>
 	        </div>
 	    </td>
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+	    	<div align="center">
+		    	<span class="bold">
+		    		<s:if test="%{firmName == ''}">N/A</s:if>
+		    		<s:else><s:property default="N/A" value="%{firmName}" /></s:else>
+		    	</span>
+	        </div>
+	    </td>	
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
 	    	<span class="bold"><s:property default="N/A" value="%{propertyOccupation.occupation}" /> </span>
@@ -108,7 +117,7 @@
 			<span class="bold"><div align="center"><s:property default="N/A" value="%{floorDmdCalc.categoryAmt}" /></div></span>
 	    </td>
 	</tr>
-   </s:iterator>
+   </s:iterator> 
 </table>
 
 <script>

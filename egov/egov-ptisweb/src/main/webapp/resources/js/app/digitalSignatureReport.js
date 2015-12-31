@@ -101,3 +101,12 @@ jQuery('#submitButton')
 								+ idArray.toString();
 					}
 				});
+
+function downloadSignedNotice(signedFileStoreId) {
+	var params = [
+		'height='+screen.height, 
+	    'width='+screen.width,
+	    'fullscreen=yes' 
+	].join(',');
+	window.open('/ptis/digitalSignature/propertyTax/downloadSignedNotice?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+}

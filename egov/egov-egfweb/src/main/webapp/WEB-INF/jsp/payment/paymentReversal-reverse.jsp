@@ -42,7 +42,7 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 
 </head>
 <body onload="onloadTask();">

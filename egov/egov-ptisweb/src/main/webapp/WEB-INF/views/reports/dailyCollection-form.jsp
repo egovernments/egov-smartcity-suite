@@ -100,7 +100,7 @@ body
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>
-								<form:options items="${instrumentTypes}"  itemValue="id" itemLabel="type" />
+								<form:options items="${collectionMode}"/>
 							</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label"><spring:message

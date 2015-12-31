@@ -97,6 +97,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -112,7 +113,6 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.opensymphony.xwork2.validator.ValidationException;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
@@ -816,6 +816,7 @@ public class ReceiptAction extends BaseFormAction {
             receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                     CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
             receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
+            receiptHeader.setSource(Source.SYSTEM.toString());
 
             // If this is a new receipt in lieu of cancelling old
             // receipt, update
@@ -870,17 +871,17 @@ public class ReceiptAction extends BaseFormAction {
 
         LOGGER.info("Persisted receipts");
 
-        // Start work flow for all newly created receipts This might internally
-        // create vouchers also based on configuration
-        receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
-        receiptHeaderService.getSession().flush();
-        LOGGER.info("Workflow started for newly created receipts");
-
         if (serviceType.equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
             if (!receiptBulkUpload)
                 collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
             LOGGER.info("Updated billing system ");
         }
+        
+        // Start work flow for all newly created receipts This might internally
+        // create vouchers also based on configuration
+        receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
+        receiptHeaderService.getSession().flush();
+        LOGGER.info("Workflow started for newly created receipts");
 
         final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
         Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);

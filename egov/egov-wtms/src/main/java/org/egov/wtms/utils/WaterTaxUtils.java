@@ -35,22 +35,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.lang.WordUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -59,16 +53,11 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
@@ -77,7 +66,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -108,15 +96,8 @@ public class WaterTaxUtils {
     private AssignmentService assignmentService;
 
     @Autowired
-    private EmployeeService employeeService;
-    @Autowired
     private DesignationService designationService;
 
-    @Autowired
-    private BoundaryTypeService boundaryTypeService;
-
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
     @Autowired
     private DepartmentService departmentService;
 
@@ -144,9 +125,6 @@ public class WaterTaxUtils {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
-    @Autowired
-    private ReportService reportService;
     
     @Autowired
     @Qualifier("fileStoreService")
@@ -312,9 +290,14 @@ public class WaterTaxUtils {
         if (commissionerDesgn.equals("Commissioner")) {
             final Department deptObj = departmentService
                     .getDepartmentByName(WaterTaxConstants.ROLE_COMMISSIONERDEPARTEMNT);
-            return assignmentService
-                    .getPositionsByDepartmentAndDesignationForGivenRange(deptObj.getId(), desgnObj.getId(), new Date())
-                    .get(0).getPosition();
+            List<Assignment> assignlist=null;
+            assignlist=	assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),new Date());
+            if(assignlist.isEmpty())
+            	 assignlist=	assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(), new Date());
+            if(assignlist.isEmpty())
+            	assignlist=assignmentService.getAllActiveAssignments(desgnObj.getId());
+           
+            return assignlist.get(0).getPosition();
         } else
             return !assignmentService.findPrimaryAssignmentForDesignationName(commdesgnname).isEmpty() ? assignmentService
                     .findPrimaryAssignmentForDesignationName(commdesgnname).get(0).getPosition()
@@ -330,9 +313,19 @@ public class WaterTaxUtils {
     
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
+        List<Assignment>asignList=null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        return assignment != null ? assignment.getEmployee().getName() : "";
+        if(assignment!=null )
+        {
+        	asignList=new ArrayList<Assignment>();
+        	asignList.add(assignment);
+        }
+        else if(assignment==null)
+        {
+        	asignList= assignmentService.getAssignmentsForPosition(approvalPosition,new Date());
+        }
+        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
@@ -501,65 +494,5 @@ public class WaterTaxUtils {
         } else
             citizenrole = Boolean.TRUE;
         return citizenrole;
-    }
-
-    public ReportOutput getReportOutput(final WaterConnectionDetails connectionDetails, final String workFlowAction, final String cityMunicipalityName, final String districtName) {
-        Map<String, Object> reportParams = new HashMap<String, Object>();
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
-        if (null != connectionDetails) {
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                    connectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS);
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final String propAddress = assessmentDetails.getPropertyAddress();
-            String doorno[] = null;
-            if(null != propAddress && !propAddress.isEmpty()) {
-                doorno = propAddress.split(",");
-            }
-            String ownerName = "";
-            final Set<OwnerName> ownerNames = assessmentDetails.getOwnerNames();
-            if(null != ownerNames && !ownerNames.isEmpty()) {
-                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                    ownerName = names.getOwnerName();
-                    break;
-                }
-            }
-            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationtype", messageSource.getMessage("msg.new.watertap.conn", null, null));
-            } else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationtype", messageSource.getMessage("msg.add.watertap.conn", null, null));
-            } else {
-                reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
-            }
-            reportParams.put("municipality", cityMunicipalityName);
-            reportParams.put("district", districtName);
-            reportParams.put("purpose", connectionDetails.getUsageType().getName());
-            if(null != workFlowAction) {
-                if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
-                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
-                }
-                if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                    reportParams.put("workorderdate", "");
-                    reportParams.put("workorderno", "");
-                }
-                if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
-                }
-            }
-            reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
-            reportParams.put("applicantname", WordUtils.capitalize(ownerName));
-            reportParams.put("address", propAddress);
-            reportParams.put("doorno", doorno != null ? doorno[0] : "");
-            reportParams.put("applicationDate",formatter.format(connectionDetails.getApplicationDate()));
-            reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
-        }
-        reportOutput = reportService.createReport(reportInput);
-        return reportOutput;
     }
 }

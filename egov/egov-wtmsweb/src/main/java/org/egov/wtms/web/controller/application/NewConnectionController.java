@@ -48,7 +48,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
@@ -93,8 +92,7 @@ public class NewConnectionController extends GenericConnectionController {
     private final WaterTaxUtils waterTaxUtils;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private UserService userService;
+
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
 
     @Autowired
@@ -251,18 +249,24 @@ public class NewConnectionController extends GenericConnectionController {
             LOG.debug("createNewWaterConnection is completed ");
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
-        final String currentUserDesgn = currentUserAssignment != null ? currentUserAssignment.getDesignation()
-                .getName() : "";
-        final String nextUser = waterTaxUtils.getApproverUserName(approvalPosition);
-        final String nextDesign = assignmentService
-                .getPrimaryAssignmentForEmployee(userService.getUserByUsername(nextUser).getId()).getDesignation()
-                .getName();
-
+        String nextDesign = "";
+        Assignment assignObj = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+        if (assignObj != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignObj);
+        } else if (assignObj == null && approvalPosition != null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverName(approvalPosition) + "," + currentUserDesgn + "," + nextDesign;
+                + waterTaxUtils.getApproverName(approvalPosition) + ","
+                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+                + (nextDesign != null ? nextDesign : "");
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="
-                    + waterConnectionDetails.getApplicationNumber();
+            + waterConnectionDetails.getApplicationNumber();
         else
             return "redirect:/application/application-success?pathVars=" + pathVars;
 
@@ -325,7 +329,7 @@ public class NewConnectionController extends GenericConnectionController {
             Iterator<MultipartFile> stream = null;
             if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
                 stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                        .iterator();
+                .iterator();
             if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null
                     && !stream.hasNext()) {
                 final String fieldError = "applicationDocs[" + i + "].files";
@@ -345,7 +349,7 @@ public class NewConnectionController extends GenericConnectionController {
                 Iterator<MultipartFile> stream = null;
                 if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
                     stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                            .iterator();
+                    .iterator();
                 if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null
                         && !stream.hasNext()) {
                     final String fieldError = "applicationDocs[" + i + "].files";
@@ -385,8 +389,7 @@ public class NewConnectionController extends GenericConnectionController {
                 applicationNumber = keyNameArray[0];
                 approverName = keyNameArray[1];
                 currentUserDesgn = keyNameArray[2];
-           }
-            else {
+            } else {
                 applicationNumber = keyNameArray[0];
                 approverName = keyNameArray[1];
                 currentUserDesgn = keyNameArray[2];
@@ -438,15 +441,15 @@ public class NewConnectionController extends GenericConnectionController {
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
             else // if it is not edit mode then only validate for existing
-                 // connection
-                if (waterConnectionDetails.getId() == null)
-                if (waterConnectionDetails.getApplicationType().getCode()
-                            .equalsIgnoreCase(WaterTaxConstants.NEWCONNECTION)) {
-                    errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
-                            .getConnection().getPropertyIdentifier());
-                    if (errorMessage != null && !errorMessage.equals(""))
-                        errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
-                }
+                // connection
+            if (waterConnectionDetails.getId() == null)
+                    if (waterConnectionDetails.getApplicationType().getCode()
+                        .equalsIgnoreCase(WaterTaxConstants.NEWCONNECTION)) {
+                        errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
+                                .getConnection().getPropertyIdentifier());
+                        if (errorMessage != null && !errorMessage.equals(""))
+                            errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+                    }
         }
     }
 

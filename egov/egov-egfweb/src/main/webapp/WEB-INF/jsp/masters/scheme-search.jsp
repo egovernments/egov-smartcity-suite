@@ -49,16 +49,51 @@
     </title>
     <SCRIPT type="text/javascript">
    
-    function validateFund(){
-    	var fund = document.getElementById('fundId').value;
-    	if(fund == "-1"){
-    		alert("Please select a Fund");
-    		return false;
-    	}   
+    function validateAndSubmit()
+	{
+		var fromDate=document.getElementById('validfromId').value;
+		var toDate=document.getElementById('validtoId').value;
+
+		var fundId=document.getElementById('fundId').value;
+		
+
+		if(fundId == "-1"){
+			alert("Please select fund");
+			return false;
+			}
+		
+		 
+		if(!validateDate(fromDate)){
+			alert("Invalid Date! Start date is greater than current date");
+			return false;
+		}
+		if (fromDate > toDate) {
+			alert("Invalid Date Range! Start Date should be less than End Date!")
+			return false;
+			} 
+
+		
     	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-search.action';
     	document.schemeForm.submit();
-    	return true;
-    }               
+    	//return true;
+    	
+	document.getElementById('type').disabled=false;
+	return true;
+	}
+	function validateDate(date)
+	{
+		var todayDate = new Date();
+		 var todayMonth = todayDate.getMonth() + 1;
+		 var todayDay = todayDate.getDate();
+		 var todayYear = todayDate.getFullYear();
+		 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
+		if (Date.parse(date) > Date.parse(todayDateText)) {
+			return false;
+			}
+		return true; 
+		}
+
+   
     </SCRIPT>
   </head>
   <body >
@@ -96,7 +131,7 @@
 		<div class="buttonbottom" >
     	<table align="center">  
     	 <tr>  
-			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateFund();" />&nbsp;</td>
+			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateAndSubmit();" />&nbsp;</td>
 		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
 	  </table>
 	  </div>

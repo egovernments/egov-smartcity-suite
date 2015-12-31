@@ -113,7 +113,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
      */
 
     @Override
-    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) {
+    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException{
         LOGGER.debug("updateReceiptDetails : Receipt Details Updating Started...");
         for (final BillReceiptInfo bri : billReceipts)
             try {

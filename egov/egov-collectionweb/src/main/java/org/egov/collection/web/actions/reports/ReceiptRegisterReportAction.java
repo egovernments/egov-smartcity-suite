@@ -75,6 +75,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private static final String EGOV_PAYMENT_MODE = "EGOV_PAYMENT_MODE";
     private static final String EGOV_STATUS_ID = "EGOV_STATUS_ID";
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
+    private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
@@ -98,7 +99,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         sourcesMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
         sourcesMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
         sourcesMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
-        sourcesMap.put(CollectionConstants.SOURCE_SYSTEM, CollectionConstants.SOURCE_SYSTEM);
+        sourcesMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
         return sourcesMap;
     }
 
@@ -221,16 +222,12 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         // Setup drop down data for department list
         addRelatedEntity("department", Department.class, "name");
         addRelatedEntity("status", EgwStatus.class, "description");
+        addDropdownData("servicetypeList",getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS));
         setupDropdownDataExcluding();
 
         // Set default values of criteria fields
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
-
-        final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
-        if (dept != null)
-            setReportParam(EGOV_DEPT_ID, dept.getId());
-
         return INDEX;
     }
 
@@ -253,6 +250,14 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 
     public Map<String, String> getSources() {
         return sources;
+    }
+    
+    public Long getServiceId() {
+        return (Long) getReportParam(EGOV_SERVICE_ID);
+    }
+
+    public void setServiceId(final Long serviceId) {
+        setReportParam(EGOV_SERVICE_ID, serviceId);
     }
     
 }

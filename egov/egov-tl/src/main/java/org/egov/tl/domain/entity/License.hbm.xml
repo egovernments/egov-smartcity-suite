@@ -20,7 +20,7 @@
    
        You should have received a copy of the GNU General Public License
        along with this program. If not, see http://www.gnu.org/licenses/ or 
-       http://www.gnu.org/licenses/gpl.html .
+       http://www.gnu.org/licenses/gpl.html .status
    
        In addition to the terms of the GPL license to be adhered to in using this
        program, the following additional terms are to be complied with:
@@ -68,6 +68,7 @@
 		<property name="tempLicenseNumber" column="TEMP_LICENSE_NUMBER" />
 		<property name="officeEmailId" column="OFFICE_EMAILID"/>
 		<property name="propertyNo" column="PROPERTY_NO" type="java.lang.String"/>
+		<property name="startDate" column="START_DATE" />
 		<property name="ownershipType" column="OWNERSHIP_TYPE" type="java.lang.String" not-null="true" />
 		<many-to-one name="category" class="org.egov.tl.domain.entity.LicenseCategory" fetch="select" not-null="true" >
 			<column name="ID_CATEGORY" precision="22" scale="0" />

@@ -69,7 +69,7 @@
 		<script type="text/javascript" src="../commonyui/build/autocomplete/autocomplete-debug.js"></script>
 		<script type="text/javascript" src="../commonyui/build/event/event-debug.js"></script>
 		<script type="text/javascript" src="../commonyui/build/animation/animation.js"></script>
-		<script language="javascript" src="../commonjs/ajaxCommonFunctions.js"></script>
+		<script language="javascript" src="../resources/javascript/ajaxCommonFunctions.js"></script>
 		
 		<link type="text/css" rel="stylesheet" href="../commonyui/build/reset/reset.css">
 		<link type="text/css" rel="stylesheet" href="../commonyui/build/fonts/fonts.css">

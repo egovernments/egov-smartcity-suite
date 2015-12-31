@@ -122,7 +122,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
-    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+    /*public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
         return connectionCategoryService.getAllActiveConnectionCategory();
     }
 
@@ -132,7 +132,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
         return pipeSizeService.getAllActivePipeSize();
-    }
+    }*/
 
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();

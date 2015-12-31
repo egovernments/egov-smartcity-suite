@@ -296,8 +296,8 @@ function warningInfo()
 		   
 		<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 		<div class="buttonbottom">
-		<input name="button32" type="button" class="buttonsubmit" id="button32"  value="Cancel Receipt" onclick="return warningInfo()"/>&nbsp;
-		<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>&nbsp;
+		<input name="button32" type="button" class="buttonsubmit" id="button32"  value="Cancel Receipt" onclick="return warningInfo()"/>
+		<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 		<input name="buttonBack" type="button" class="button" id="buttonBack" value="Back" onclick="window.location='${pageContext.request.contextPath}/receipts/searchReceipt.action';"  /> 
 		</div>
 	</s:iterator>

@@ -59,6 +59,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 /**
  * This will supports Action classes to integrate with jqgrid,
@@ -70,7 +71,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
 	protected static final String EDIT ="edit";
 	protected static final String DELETE ="del";
 	// Forjquery datatable pagination, saving and search filter.
-	protected Long id;
+	protected Integer id;
 	protected String oper;
 	private boolean _search;
 	private Integer rows;
@@ -241,7 +242,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
 		}
 	}
 
-	public void setId(final Long id) {
+	public void setId(final Integer id) {
 		this.id = id;
 	}
 

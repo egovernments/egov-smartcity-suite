@@ -44,6 +44,7 @@ package org.egov.web.actions.voucher;
 
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.convention.annotation.Result;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -81,6 +82,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.service.RelationService;
+import org.egov.commons.utils.BankAccountType;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
@@ -763,7 +765,7 @@ public class CommonAction extends BaseFormAction{
 			value="";
 			String accountNumId = parameters.get("accnum")[0];
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Bank account number id received = "+accountNumId);
-			value = (String)getPersistenceService().find("select narration from Bankaccount where id=?",Integer.valueOf(accountNumId));
+			value = (String)getPersistenceService().find("select narration from Bankaccount where id=?",Long.valueOf(accountNumId));
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Naration value = "+value);
 		}catch (HibernateException e) {
 			LOGGER.error("Exception occured while getting bank account narration "+e.getMessage(),new HibernateException(e.getMessage()));
@@ -871,9 +873,9 @@ public class CommonAction extends BaseFormAction{
 				if(typeOfAccount.indexOf(",") !=  -1 ) {
 					String [] strArray = typeOfAccount.split(",");
 					if(fundId!=null && fundId!=-1 && fundId!=0)
-						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, (String)strArray[0], (String)strArray[1]);
+						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, BankAccountType.valueOf((String)strArray[0]), BankAccountType.valueOf((String)strArray[1]));
 					else
-						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, (String)strArray[0], (String)strArray[1]);
+						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, BankAccountType.valueOf((String)strArray[0]), BankAccountType.valueOf((String)strArray[1]));
 				} else {
 					if(fundId!=null && fundId!=-1 && fundId!=0)
 						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ", fundId,branchId, typeOfAccount);

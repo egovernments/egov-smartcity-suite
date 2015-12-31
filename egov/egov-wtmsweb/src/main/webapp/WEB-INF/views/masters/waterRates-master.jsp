@@ -48,9 +48,15 @@
     modelAttribute="waterRatesHeader" id="donationDetailsform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+				</div>
+				<div class="panel-body custom-form">
+				
+				
 <form:hidden path="connectionType" value="${waterRatesConnecionType}" id="connectionType" name="waterRatesConnecionType"/>
 <div class="form-group">
-       <label class="col-sm-4 control-label text-right"><spring:message
+       <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="waterSource" data-first-option="false" id="waterSource"
@@ -64,9 +70,7 @@
 		</form:select>
 		<form:errors path="waterSource" cssClass="add-margin error-msg" />
 	</div>
-	</div>
-	<div class="form-group">
-	<label class="col-sm-4 control-label text-right"><spring:message
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.usagetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="usageType" data-first-option="false" id="usageType"
@@ -79,9 +83,9 @@
 		</form:select>
 		<form:errors path="usageType" cssClass="add-margin error-msg" />
 	</div>
-</div>
+	</div>
 <div class="form-group">
-<label class="col-sm-4 control-label text-right"><spring:message
+<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.hscpipesize.inches" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="pipeSize" data-first-option="false" id="pipeSize"
@@ -97,18 +101,18 @@
 </div>
 <c:forEach items="${waterRatesHeader.waterRatesDetails}" var="var1"
 												varStatus="counter">
-											<div class="form-group"><label class="col-sm-4 control-label text-right">Monthly Rate
+											<div class="form-group"><label class="col-sm-3 control-label text-right">Monthly Rate
 			<span class="mandatory"></span></label> 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control patternvalidation" data-pattern="number" maxlength="6"
 		name="waterRatesDetails[${counter.index}].monthlyRate" 
 		id="waterRatesDetails[${counter.index}].monthlyRate" required="required"  id="donationAmount"/>
-												</div></div>
-												<div class="form-group">	<label class="col-sm-4 control-label text-right"><spring:message
+												</div><label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.effective.fromdate" /><span class="mandatory"></span></label><div class="col-sm-3 add-margin"> <input type="text"
 														name="waterRatesDetails[${counter.index}].fromDate"
 														id="formDate"
 														class="form-control datepicker" 
 								data-inputmask="'mask': 'd/m/y'" required="required" ></div></div>
+												
 <%-- <div class="form-group">
 
 	<label class="col-sm-4 control-label text-right">Monthly Rate
@@ -134,6 +138,9 @@
 						<form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
+					
+					</div>
+			</div>
 	</form:form>
 				<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"

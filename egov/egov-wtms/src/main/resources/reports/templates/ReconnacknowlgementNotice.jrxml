@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-11T17:24:06 -->
+<!-- 2015-12-23T20:23:59 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="135"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
@@ -15,11 +17,13 @@
 	<parameter name="consumerCode" class="java.lang.String"/>
 	<parameter name="reconnApprovalDate" class="java.lang.String"/>
 	<parameter name="commissionerName" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="workFlowAction" class="java.lang.String"/>
 	<background>
 		<band height="802" splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="249" splitType="Stretch">
+		<band height="336" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement x="332" y="64" width="209" height="26" uuid="c6442c19-2eb8-4fcd-8b44-003862dbc137"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
@@ -35,21 +39,21 @@
 				<textFieldExpression><![CDATA["This is to acknowledge that an application for "+$P{applicationType}+" has been Approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+", with address "+$P{address}+". Re-Connection is effective from "+$P{reconnApprovalDate}+"."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="322" y="204" width="194" height="28" uuid="a2051f4a-cbc7-4c49-b109-a794268f1752"/>
+				<reportElement x="322" y="284" width="194" height="20" uuid="a2051f4a-cbc7-4c49-b109-a794268f1752"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="322" y="189" width="194" height="15" uuid="2a3e4bf2-8a7e-435f-a2df-223a3b549813"/>
+				<reportElement x="322" y="264" width="194" height="20" uuid="2a3e4bf2-8a7e-435f-a2df-223a3b549813"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{commissionerName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="322" y="163" width="194" height="25" uuid="5a9790dd-6c32-4dc0-a2c3-ecc0b6657599"/>
+				<reportElement x="322" y="244" width="194" height="20" uuid="5a9790dd-6c32-4dc0-a2c3-ecc0b6657599"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -76,6 +80,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">H.S.C Number : </style>"+$P{consumerCode}]]></textFieldExpression>
 			</textField>
+			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+				<reportElement x="322" y="193" width="193" height="50" uuid="f749260e-b285-4077-b8bc-e41b87cbb057"/>
+				<imageExpression><![CDATA[($P{workFlowAction} == "Sign") ? ReportUtil.getUserSignature($P{userId}) : null]]></imageExpression>
+			</image>
 		</band>
 	</title>
 </jasperReport>

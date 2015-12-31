@@ -91,8 +91,9 @@
 					<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory1">*</span> </td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
+					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate"/>
 					<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory1">*</span> </td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{tempToDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
 				<jsp:include page="../voucher/voucher-filter.jsp"/>
@@ -260,13 +261,14 @@
 
 			var url =  url+'='+ vid+'&showMode='+showMode;
 		}
+		
 			window.open(url,'','width=900, height=700');
 		}
 		function validateAndSubmit(){
 			if(validate()){
 				document.voucherSearch.action='${pageContext.request.contextPath}/voucher/voucherSearch-search.action';
 	    		document.voucherSearch.submit();
-				
+				return true;
 			}else{
 				return false;
 				}
@@ -276,8 +278,17 @@
 		{
 			var fromDate=document.getElementById('fromDate').value;
 			var toDate=document.getElementById('toDate').value;
-
+			var todayDate = new Date();
+			var todayMonth = todayDate.getMonth() + 1;
+			var todayDay = todayDate.getDate();
+			var todayYear = todayDate.getFullYear();
+			var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
 			var fundId=document.getElementById('fundId').value;
+
+			if(fromDate == ""){
+				alert("Please select from date");
+				return false;
+				}
 			
 			if(toDate == ""){
 				alert("Please select to date");
@@ -288,34 +299,24 @@
 				alert("Please select fund");
 				return false;
 				}
-			if(!validateDate(fromDate)){
+			
+			if(fromDate>todayDateText){
 				alert("Invalid Date! from date is greater than current date");
 				return false;
 			}
-			else if(!validateDate(toDate)){
+			if(toDate>todayDateText){
 				alert("Invalid Date! to date is greater than current date");
 				return false;
 			}
-			else if (Date.parse(fromDate) > Date.parse(toDate)) {
+			if (fromDate > toDate) {
 				alert("Invalid Date Range! From Date cannot be after To Date!")
 				return false;
 				} 
-		
+			
 		document.getElementById('type').disabled=false;
 		return true;
 		}
-		function validateDate(date)
-		{
-			var todayDate = new Date();
-			 var todayMonth = todayDate.getMonth() + 1;
-			 var todayDay = todayDate.getDate();
-			 var todayYear = todayDate.getFullYear();
-			 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
-			if (Date.parse(date) > Date.parse(todayDateText)) {
-				return false;
-				}
-			return true; 
-			}
+		
 			
 		var showMode = document.getElementById('showMode').value ;
 		if(showMode=='nonbillPayment')

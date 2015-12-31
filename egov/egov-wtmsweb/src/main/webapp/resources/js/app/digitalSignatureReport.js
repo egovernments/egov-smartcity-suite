@@ -44,13 +44,13 @@ function selectAllCheckbox(e){
 }
 
 //This function is used to show the report which is digitally signed.
-function previewSignedNotice(signedFileStoreId) {
+function downloadSignedNotice(signedFileStoreId) {
 	var params = [
 		'height='+screen.height, 
 	    'width='+screen.width,
 	    'fullscreen=yes' 
 	].join(',');
-	window.open('/wtms/digitalSignature/waterTax/previewSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+	window.open('/wtms/digitalSignature/waterTax/downloadSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
 }
 //Generate notice for the pending water connection document
 function generateNotice(obj, actionName, currentState){
@@ -67,15 +67,20 @@ function generateNotice(obj, actionName, currentState){
 	var type = currentState.split(":");
 	var url = "";
 	if (actionName == 'Preview') {
-		url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		if(currentState == 'CLOSECONNECTION') {
+			url = "/wtms/application/acknowlgementNotice?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		} else if(currentState == 'RECONNECTION') {
+			url = "/wtms/application/ReconnacknowlgementNotice?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		} else {
+			url = "/wtms/application/workorder?pathVar="+applicationNumber+"&workFlowAction="+actionName+"&isDigSignPending=true";
+		}
 		window.open(url, "NoticeWindow", params);
 		return false; 
 	} 
 	else {
-		var approvalPosition = $("#approvalPosition").val();
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber+'&approvalPosition='+approvalPosition+'&workFlowAction='+actionName+"&isDigSignPending=true",
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+applicationNumber+'&currentState='+currentState,
 			target: '_self'
 		})
 		.appendTo(document.body).submit();
@@ -91,16 +96,17 @@ function signAllPendingDigitalSignature(actionName) {
 		var tbl = document.getElementById("digSignDetailsTab");
 		var lastRow = (tbl.rows.length) - 1;
 		var idArray = new Array();
-		var j = 0;
+		var applicationNoStatePair = new Array();
+		var j = 0, k = 0;
 		for (var i = 1; i <= lastRow; i++) {
 			if (getControlInBranch(tbl.rows[i], 'rowCheckBox').checked) {
 				idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value;
+				applicationNoStatePair[k++] = getControlInBranch(tbl.rows[i],'objectId').value + ':' + getControlInBranch(tbl.rows[i],'applicationState').value;
 			}
 		}
-		var approvalPosition = $("#approvalPosition").val();
 		$('<form>.').attr({
 			method: 'post',
-			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString()+'&approvalPosition='+approvalPosition+'&workFlowAction='+actionName+"&isDigSignPending=true",
+			action: '/wtms/digitalSignature/waterTax/signWorkOrder?pathVar='+idArray.toString()+'&signAll='+actionName+'&applicationNoStatePair='+applicationNoStatePair.toString(),
 			target: '_self'
 		})
 		.appendTo(document.body).submit();

@@ -96,7 +96,7 @@ public class FeeMatrix extends AbstractAuditable {
         @JoinColumn(name = "unitOfMeasurement", nullable = false)
         private UnitOfMeasurement unitOfMeasurement;
         
-        //update: update egtl_feematrix set uniqueno=natureOfBusiness||'-'||licenseAppType||'-'||licenseCategory||'-'||subCategory||'-'||feeType||'-'||unitOfMeasurement;
+        //update: update egtl_feematrix set uniqueno=natureOfBusiness||'-'||licenseAppType||'-'||licenseCategory||'-'||subCategory||'-'||feeType||'-'||unitOfMeasurement||'-'financialYear;
         
         private String uniqueNo;
         

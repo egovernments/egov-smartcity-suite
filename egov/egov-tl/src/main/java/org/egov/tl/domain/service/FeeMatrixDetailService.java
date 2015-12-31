@@ -31,8 +31,8 @@ public class FeeMatrixDetailService  {
 	}
 
 	public FeeMatrixDetail findByLicenseFeeByRange(FeeMatrix feeMatrix,
-			BigDecimal uom, Date date) {
-	return 	feeMatrixDetailRepository.findFeeDetailList(feeMatrix,uom.intValue(),date) ;
+			BigDecimal uom, Date date,long financialYearId) {
+	return 	feeMatrixDetailRepository.findFeeDetailList(feeMatrix,uom.intValue(),date,financialYearId) ;
 		
 	}
 	

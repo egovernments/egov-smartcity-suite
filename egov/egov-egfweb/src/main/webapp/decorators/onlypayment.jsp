@@ -162,7 +162,7 @@
 		<script type="text/javascript" src="<c:url value='/commonyui/build/autocomplete/autocomplete-debug.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonyui/build/event/event-debug.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonyui/build/animation/animation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/ajaxCommonFunctions.js'/>"></script>
 		<SCRIPT type="text/javascript" src="<c:url value='/resources/javascript/jsCommonMethods.js' />"></SCRIPT>  
 		<script type="text/javascript" src="<c:url value='/exility/PageManager.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/PageValidator.js'/>"></script>

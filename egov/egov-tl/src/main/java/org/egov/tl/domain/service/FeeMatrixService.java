@@ -3,16 +3,20 @@ package org.egov.tl.domain.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.tl.domain.entity.FeeMatrix;
 import org.egov.tl.domain.entity.FeeMatrixDetail;
 import org.egov.tl.domain.entity.FeeType;
 import org.egov.tl.domain.entity.License;
+import org.egov.tl.domain.entity.LicenseAppType;
 import org.egov.tl.domain.entity.TradeLicense;
 import org.egov.tl.domain.repository.FeeMatrixRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +39,15 @@ public class FeeMatrixService  {
 	
 	@Autowired
 	private FeeMatrixDetailService feeMatrixDetailService;
+	
 
 	@Autowired
 	public FeeMatrixService(final FeeMatrixRepository feeMatrixRepository) {
 		this.feeMatrixRepository = feeMatrixRepository;
 	}
+	
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
 	@Transactional
 	public FeeMatrix create(final FeeMatrix feeMatrix) {
@@ -69,7 +77,8 @@ public class FeeMatrixService  {
 	}*/
 
 	public FeeMatrix search(FeeMatrix feeMatrix) {
-		return feeMatrixRepository.findByExample(feeMatrix);	
+		
+		return feeMatrixRepository.findByUniqueNo(feeMatrix.getUniqueNo());
 	}
 /**
  * 
@@ -94,6 +103,15 @@ public class FeeMatrixService  {
 	    // Make decision is charges for Permanent  and Temporary are Same
 
 	    String uniqueNo = generateFeeMatirixUniqueNo(license);
+	    if(uniqueNo==null)
+	    {
+	    
+	    	
+	    }
+	    Date applicationDate = license.getApplicationDate();
+	    
+	    CFinancialYear financialYearByDate=financialYearDAO.getFinancialYearByDate(applicationDate);
+		
 	    BigDecimal totalFee=BigDecimal.ZERO;
 	    List<FeeMatrixDetail> feeMatrixDetailList=new ArrayList<FeeMatrixDetail>();
 	    FeeMatrixDetail feeMatrixDetail=null;
@@ -107,12 +125,12 @@ public class FeeMatrixService  {
 	    		{
 	    		//First find License Fee with UOM		
 	    		case "LF" : 
-	    			feeMatrix = feeMatrixRepository.findByUniqueNo(uniqueNo+"-"+fee.getId()+"-"+uomId);
+	    			feeMatrix = feeMatrixRepository.findByUniqueNo(uniqueNo+"-"+fee.getId()+"-"+uomId+"-"+financialYearByDate.getId());
 	    			if(feeMatrix==null)
 	    			{
 	    				throw new ApplicationRuntimeException("License Fee Structure  is not defined for the selected combination");
 	    			}
-	    			feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate());
+	    			feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate(),financialYearByDate.getId());
 	    			if(feeMatrixDetail==null)
 	    			{
 	    				throw new ApplicationRuntimeException("License Fee Structure range is not defined for the selected combination");
@@ -127,12 +145,12 @@ public class FeeMatrixService  {
 	    		case "MF":
 	    			if(license.getTotalHP()!=null && license.getTotalHP().compareTo(BigDecimal.ZERO)==1 )
 	    			{
-	    				feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%");
+	    				feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%"+"-"+financialYearByDate.getId());
 	    				if(feeMatrix==null)
 	    				{
 	    					throw new ApplicationRuntimeException("Motor Fee Structure  is not defined for the selected combination");
 	    				}
-	    				feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTotalHP(),license.getApplicationDate());
+	    				feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTotalHP(),license.getApplicationDate(),financialYearByDate.getId());
 	    				if(feeMatrixDetail==null)
 	    				{
 	    					throw new ApplicationRuntimeException("Motor Fee Structure range is not defined for the entered capacity");
@@ -141,22 +159,22 @@ public class FeeMatrixService  {
 	    			}
 	    			break switchLoop;
 
-	    			//Find Worforce fee    
+	    			//Find Work force fee    
 	    		case "WF" :
 	    			if(license.getWorkersCapacity()!=null && license.getWorkersCapacity().compareTo(BigDecimal.ZERO)==1 )
 	    			{
-	    			feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%");
+	    			feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%"+"-"+financialYearByDate.getId());
 	    			if(feeMatrix==null)
 	    			{
 	    				throw new ApplicationRuntimeException("Workforce Fee Structure  is not defined for the selected combination");
 	    			}
-	    			feeMatrixDetail=feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate());
+	    			feeMatrixDetail=feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,license.getTradeArea_weight(),license.getApplicationDate(),financialYearByDate.getId());
 	    			if(feeMatrixDetail==null)
 	    			{
 	    				throw new ApplicationRuntimeException("Workforce Fee Structure range is not defined for the entered capacity");
 	    			}
 	    			
-	    			totalFee=	totalFee.add(feeMatrixDetail.getAmount());
+	    		//	totalFee=	totalFee.add(feeMatrixDetail.getAmount());
 	    			feeMatrixDetailList.add(feeMatrixDetail);
 	    			}
 	    			break switchLoop;

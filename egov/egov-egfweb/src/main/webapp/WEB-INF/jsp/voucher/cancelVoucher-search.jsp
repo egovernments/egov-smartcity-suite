@@ -84,6 +84,7 @@ function loadNamesForSelectedType()
 		loadVoucherNames(document.getElementById('type').value);
 		}
 	}
+	
 		
 </script>
 	<body onload="loadNamesForSelectedType()" >  
@@ -130,7 +131,7 @@ function loadNamesForSelectedType()
 			</div>
 			<div  class="buttonbottom">
 				<input type="submit" class="buttonsubmit" value="Search" id="Search" name="button" onclick="return loadSearch();" />                   
-				<s:submit method="beforeSearch" value="Cancel"  cssClass="button" />
+				<input type="reset" value="Reset"  class="buttonsubmit" onclick="return fieldReset();" />
 				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 			</div>
 			<div id="loading" class="loading" style="width: 700; height: 700;display: none " align="center" >
@@ -255,7 +256,16 @@ function loadSearch(){
 	document.cancelVoucher.submit();
 	}
 
-	
+function fieldReset()
+{
+	document.getElementById('voucherNumber').value="";
+	document.getElementById('fundId').value=-1;
+	document.getElementById('vouchermis.departmentid').value=-1;
+	document.getElementById('type').value=-1;
+	document.getElementById('name').value=-1;
+	document.getElementById('fromDate').value="";
+	document.getElementById('toDate').value="";
+}
 		</script>
 	</body>  
 </html>

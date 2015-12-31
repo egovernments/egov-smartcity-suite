@@ -117,6 +117,29 @@
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 				enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
+				showHideFirmName();
+			}
+
+			function enableDisableFirmName(obj){ 
+				var selIndex = obj.selectedIndex;
+				var selText = obj.options[selIndex].text; 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+				if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+					if(firmval.value!=null && firmval.value!="") 
+						firmval.value="";
+					firmval.readOnly = true;      
+				} else{
+					firmval.readOnly = false;
+				}
+			}  
+
+			function showHideFirmName(){
+				var rows = document.getElementById('floorDetails').rows.length - 1;  
+				for (var i = 0; i < rows; i++) {
+						enableDisableFirmName(document.forms[0].floorUsage[i]);
+				}
 			}
 
 			function enableAppartnaumtLandDetailsView() {
@@ -203,6 +226,7 @@
 
 </script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">
@@ -243,7 +267,8 @@
 							<%@ include file="../modify/modifyPropertyForm.jsp"%>
 						</tr> 
 					</s:if>
-					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+					<s:elseif test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+					        model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
 							@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
 							((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
@@ -253,20 +278,22 @@
 							<%@ include file="../modify/modifyPropertyView.jsp"%>
 						</tr>
 					</s:elseif>
-					<s:if test="%{state != null}">
+					<s:if test="%{state != null}">   
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
-					</s:if>
-					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+					</s:if> 
+					<s:if test="%{(!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) ||
 						((@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
 							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)))}">
 						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+					<s:if test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
+					    model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
 						<div id="workflowCommentsDiv" align="center">
 					         <table width="100%">
 								<tr>

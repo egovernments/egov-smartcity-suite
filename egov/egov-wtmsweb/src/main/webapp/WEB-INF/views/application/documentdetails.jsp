@@ -49,17 +49,17 @@
 </div>
 
 
-<div class="col-sm-12 view-content header-color hidden-xs">
-	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentname"/></div>											
-	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
-	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>
-	<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/>(<span class="mandatory"></span> )</div>																							
+<div class="form-group col-sm-12 view-content header-color hidden-xs">
+	<div class="col-sm-3 text-center"><spring:message code="lbl.documentname"/></div>											
+	<div class="col-sm-3 text-center"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
+	<div class="col-sm-3 text-center"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>
+	<div class="col-sm-3 text-center"><spring:message code="lbl.attachdocument"/>(<span class="mandatory"></span> )</div>																							
 </div>
 
 <c:forEach var="docs" items="${documentNamesList}" varStatus="status">	
 
 <div class="form-group">	
- 	<div class="col-sm-3 add-margin check-text">
+ 	<div class="col-sm-3 add-margin check-text text-center">
 		<c:choose>
 			<c:when test="${docs.required}">
 				<input type="checkbox" checked disabled>&nbsp;<c:out value="${docs.documentName}" /> 
@@ -72,7 +72,7 @@
 		<form:hidden id="applicationDocs${status.index}documentNames" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
 		<form:hidden id="applicationDocs${status.index}documentNames.documentName" path="applicationDocs[${status.index}].documentNames.documentName" value="${docs.documentName}" /> 
 	</div>
-	<div class="col-sm-3 add-margin">
+	<div class="col-sm-3 add-margin text-center">
 		<c:choose>
 			<c:when test="${docs.required}">
 				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required" />
@@ -83,7 +83,7 @@
 		</c:choose> 
 		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
 	</div>
-	<div class="col-sm-3 add-margin">
+	<div class="col-sm-3 add-margin text-center">
 		<c:choose>
 			<c:when test="${docs.required}">
 				<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
@@ -94,7 +94,7 @@
 		</c:choose> 
 			<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
 	</div>
-	<div class="col-sm-3 add-margin">
+	<div class="col-sm-3 add-margin text-center">
 		<c:choose>
 			<c:when test="${docs.required}">
 				<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file" required="required">

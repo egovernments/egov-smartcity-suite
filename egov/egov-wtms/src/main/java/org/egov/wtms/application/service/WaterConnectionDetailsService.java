@@ -59,7 +59,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -162,9 +161,6 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private AssignmentService assignmentService;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
 
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
@@ -328,7 +324,7 @@ public class WaterConnectionDetailsService {
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         if (null != state) {
             map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
             map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
             map.put("status", state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
@@ -378,23 +374,23 @@ public class WaterConnectionDetailsService {
             final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String mode, final ReportOutput reportOutput) throws ValidationException {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
-        if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED.equals(waterConnectionDetails.getStatus().getCode())
+        if (WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
-                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) {
+                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.CLOSINGCONNECTION));
             waterConnectionDetails.setCloseApprovalDate(new Date());
         }
-        if (WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED.equals(waterConnectionDetails.getStatus()
+        if (WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING.equals(waterConnectionDetails.getStatus()
                 .getCode())
                 && waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE)
                 && waterConnectionDetails.getReConnectionReason() != null
-                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)
-                && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
+                && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
             waterConnectionDetails.setReconnectionApprovalDate(new Date());
+            if(ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())){
             Installment nonMeterReconnInstallment = null;
             Boolean reconnInSameInstallment = null;
             if (checkTwoDatesAreInSameInstallment(waterConnectionDetails)) {
@@ -416,6 +412,7 @@ public class WaterConnectionDetailsService {
             }
             connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails,
                     nonMeterReconnInstallment, reconnInSameInstallment);
+            }
             updateIndexes(waterConnectionDetails);
         }
 
@@ -729,13 +726,16 @@ public class WaterConnectionDetailsService {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
-        final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        Iterator<OwnerName> ownerNameItr = null;
+        if(null != assessmentDetails.getOwnerNames()) {
+            ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        }
         final StringBuilder consumerName = new StringBuilder();
         final StringBuilder mobileNumber = new StringBuilder();
         Assignment assignment = null;
         User user = null;
         final StringBuilder aadharNumber = new StringBuilder();
-        if (ownerNameItr.hasNext()) {
+        if (null != ownerNameItr && ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
             consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : "");
             mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : "");
@@ -749,11 +749,22 @@ public class WaterConnectionDetailsService {
             }
 
         }
+        List<Assignment> asignList=null;
         if (waterConnectionDetails.getState() != null && waterConnectionDetails.getState().getOwnerPosition() != null) {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(waterConnectionDetails.getState().getOwnerPosition()
                     .getId(),new Date());
-            if (assignment != null && assignment.getEmployee() != null)
-                user = userService.getUserById(assignment.getEmployee().getId());
+            if(assignment!=null )
+            {
+            	asignList=new ArrayList<Assignment>();
+            	asignList.add(assignment);
+            }
+            else if(assignment==null)
+            {
+            	asignList= assignmentService.getAssignmentsForPosition(waterConnectionDetails.getState().getOwnerPosition()
+                        .getId(),new Date());
+            }
+            if (!asignList.isEmpty())
+            	user = userService.getUserById(asignList.get(0).getEmployee().getId());
         }
         else {
             user = securityUtils.getCurrentUser();

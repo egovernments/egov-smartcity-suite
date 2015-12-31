@@ -71,7 +71,7 @@ function refreshInbox() {
 	refreshInbox();
 	</script>
 	<div class="buttonbottom">
-	<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close()" />&nbsp;
+	<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close()" />
 	</div>
 </s:form>
 </body>

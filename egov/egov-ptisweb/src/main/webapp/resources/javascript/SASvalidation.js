@@ -1313,11 +1313,11 @@ function addFloor()
 					     {
 							 jQuery(this).attr('data-result', jQuery(this).data('result').replace('[0]', '['+ nextIdx +']'));
 						 }
-						 
+						 jQuery(this).attr('readOnly',false); 
 						//set default selection for dropdown
 						if(jQuery(this).is( "select" ))
 						{
-							jQuery(this).prop('selectedIndex', 0);
+							jQuery(this).prop('selectedIndex', 0); 
 						}
 						 
 			    }).end().appendTo("#floorDetails");
@@ -1325,9 +1325,10 @@ function addFloor()
 				jQuery("#floorDetails tr:last td span[alt='AddF']").hide();
 				
 				//re-intialize datepicker fields
-				jQuery(".datepicker").datepicker({format: 'dd/mm/yyyy'});
-				reInitializeDateOnChangeEvent();
-				
+				jQuery(".datepicker").datepicker({
+					format: 'dd/mm/yyyy',
+					autoclose:true
+				});
 		}
 	}
 }

@@ -62,6 +62,7 @@
     </style>
   </head>
   <body>
+  
     <div class="formmainbox"><div class="subheadnew"><s:text name="bank.modify.new"/></div>
     <jsp:include page="bank-form.jsp"></jsp:include>
     </div>
@@ -80,6 +81,10 @@
     existingCode = '${model.code}';
     existingName = '${model.name}';
 	initializeGrid();
+	  function validateFormAndSubmit(){
+		document.bankForm.action='${pageContext.request.contextPath}/masters/bank-save.action';
+		document.bankForm.submit();
+	}
     </script>
   </body>
 </html>

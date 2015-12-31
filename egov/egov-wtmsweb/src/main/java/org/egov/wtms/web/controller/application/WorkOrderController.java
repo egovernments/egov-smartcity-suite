@@ -47,10 +47,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -94,6 +96,9 @@ public class WorkOrderController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
     
     @RequestMapping(value = "/workorder", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
@@ -150,9 +155,11 @@ public class WorkOrderController {
                 if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
                     reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
                     reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                    User user = securityUtils.getCurrentUser();
+                    reportParams.put("userId", user.getId());
                 }
             }
-            
+            reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());

@@ -1251,4 +1251,7 @@ public interface PropertyTaxConstants {
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500"; 
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
+    
+    public static final String NATURE_OF_USAGE_RESIDENCE = "Residence";
+    public static final String GRADE_NAGAR_PANCHAYAT = "NP";
 }

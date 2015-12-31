@@ -198,4 +198,9 @@
     	<put-attribute name="page-title" value="lbl.digitalSignature.pendingForm.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignaturePending-form.jsp"/>
      </definition>
+     <definition name="dailyWTCollection-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dailyCollectionReport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dailyWTCollection-search.jsp"/>
+    </definition>
+     
 </tiles-definitions>

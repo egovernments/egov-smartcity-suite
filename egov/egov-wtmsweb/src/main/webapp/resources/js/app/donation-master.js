@@ -86,8 +86,8 @@ $(document).ready(function(){
 	  $('#buttonid').click(function() {
 		  if ($( "#donationDetailsform" ).valid())
 			  {
-				   var minimum = parseInt($('#minpipeSize').val());
-					var maximum = parseInt($('#pipeSize').val());
+				   var minimum = getMinimumPipeSizeInInch();
+					var maximum = getMaximumPipeSizeInInch();
 					if( (minimum > 0) && (maximum  > 0) ){
 						if (minimum > maximum){
 							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
@@ -100,7 +100,7 @@ $(document).ready(function(){
 								}
 							  else{
 								  if($('#effectiveDate').val() !=undefined)
-							donationheadercombination();
+							     donationheadercombination();
 							  }
 
 						}
@@ -109,6 +109,46 @@ $(document).ready(function(){
 		  		});
      });
 
+
+function getMinimumPipeSizeInInch() {
+	var minPipeSize = "";
+	$.ajax({
+        url: '/wtms/ajax-minimumpipesizeininch',
+        type: "GET",
+        async: false,
+        data: {
+        	minPipeSize :$('#minpipeSize').val()
+        },
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+			minPipeSize = response;
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+	return minPipeSize;
+}
+function getMaximumPipeSizeInInch()
+{
+	var maxPipeSize = "";
+	$.ajax({
+        url: '/wtms/ajax-maximumpipesizeininch',
+        type: "GET",
+        async: false,
+        data: {
+        	maxPipeSize :$('#pipeSize').val()
+        },
+        dataType : 'json',
+        success: function (response) {
+			console.log("success"+response);
+			maxPipeSize = response;
+		},error: function (response) {
+			console.log("failed");
+		}
+    });
+	return maxPipeSize;
+	}
 function donationheadercombination()
 {
 	$.ajax({

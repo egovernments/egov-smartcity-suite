@@ -168,6 +168,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
+    private boolean isNagarPanchayat = false;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -584,7 +585,6 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Assessment Number : " + assessmentNumber);
         }
         if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
-
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BasicProperty : " + basicProperty);
@@ -951,4 +951,11 @@ public class SearchPropertyAction extends BaseFormAction {
         this.meesevaServiceCode = meesevaServiceCode;
     }
 
+    public boolean getIsNagarPanchayat() {
+    	return propertyTaxUtil.checkIsNagarPanchayat();
+	}
+
+	public void setIsNagarPanchayat(boolean isNagarPanchayat) {
+		this.isNagarPanchayat = isNagarPanchayat;
+	}
 }

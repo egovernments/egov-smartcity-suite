@@ -41,8 +41,11 @@ package org.egov.wtms.web.controller.application;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,13 +56,12 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -70,24 +72,19 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -113,10 +110,7 @@ public class DigitalSignatureConnectionController {
     
     @Autowired
     private SecurityUtils securityUtils;
-    
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-    
+     
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
     
@@ -126,6 +120,9 @@ public class DigitalSignatureConnectionController {
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
     
+    @Autowired
+    private ReportGenerationService reportGenerationService;
+    
     @RequestMapping(value = "/waterTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
         final String fileStoreIds = request.getParameter("fileStoreId");
@@ -133,9 +130,6 @@ public class DigitalSignatureConnectionController {
         HttpSession session = request.getSession();
         Long approvalPosition = (Long)session.getAttribute(WaterTaxConstants.APPROVAL_POSITION);
         String approvalComent = (String)session.getAttribute(WaterTaxConstants.APPROVAL_COMMENT);
-        String workFlowAction = (String)session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
-        String mode = (String)session.getAttribute(WaterTaxConstants.MODE);
-        //String applicationNumber = (String)session.getAttribute(WaterTaxConstants.APPLICATION_NUMBER);
         Map<String, String> appNoFileStoreIdsMap = (Map<String, String>)session.getAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER);
         WaterConnectionDetails waterConnectionDetails = null;
         for(String fileStoreId : fileStoreIdArr) {
@@ -143,14 +137,15 @@ public class DigitalSignatureConnectionController {
             if(null != applicationNumber && !applicationNumber.isEmpty()) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
                 if(null == approvalPosition) {
-                    approvalPosition = Long.parseLong(request.getParameter("approvalPosition"));
-                }
-                Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
-                if(null != isDigSignPending && isDigSignPending) {
-                    workFlowAction = request.getParameter("workFlowAction");
+                    String additionalRule = waterConnectionDetails.getApplicationType().getCode();
+                    if(additionalRule.equalsIgnoreCase(WaterTaxConstants.CLOSINGCONNECTION)) {
+                        additionalRule = WaterTaxConstants.CLOSECONNECTION;
+                    }
+                    approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
+                            waterConnectionDetails, approvalPosition, additionalRule, "", WaterTaxConstants.SIGNWORKFLOWACTION);
                 }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
-                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode,
+                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), WaterTaxConstants.SIGNWORKFLOWACTION, "",
                         null);
             }
         }
@@ -159,24 +154,27 @@ public class DigitalSignatureConnectionController {
         return "digitalSignature-success";
     }
     
-    @RequestMapping(value = "/waterTax/previewSignedWorkOrderConnection")
-    public @ResponseBody ResponseEntity<byte[]> previewSignedWorkOrderConnection(final HttpServletRequest request, final Model model) {
+    @RequestMapping(value = "/waterTax/downloadSignedWorkOrderConnection")
+    public void downloadSignedWorkOrderConnection(final HttpServletRequest request, final HttpServletResponse response) {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
-        byte[] bFile;
-        try {
-            bFile = FileUtils.readFileToByteArray(file);
-        } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Exception while generating work order for New Connection : " + e);
+        response.setContentType("application/pdf");  
+        response.setContentType("application/octet-stream");
+        response.setHeader("content-disposition", "attachment; filename=\"" + signedFileStoreId + "\"");
+        try{
+            FileInputStream inStream = new FileInputStream(file);
+            PrintWriter outStream = response.getWriter();
+            int bytesRead = -1;
+            while ((bytesRead = inStream.read()) != -1) {
+                outStream.write(bytesRead);
+            }
+            inStream.close();
+            outStream.close(); 
+        } catch(FileNotFoundException fileNotFoundExcep) {
+            throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
+        } catch(final IOException ioExcep) {
+            throw new ApplicationRuntimeException("Exception while generating work order : " + ioExcep);
         }
-        ReportOutput reportOutput = new ReportOutput();
-        reportOutput.setReportOutputData(bFile);
-        reportOutput.setReportFormat(FileFormat.PDF);
-        
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=WorkOrderConnection.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/digitalSignaturePending-form", method = RequestMethod.GET)
@@ -194,24 +192,50 @@ public class DigitalSignatureConnectionController {
     @RequestMapping(value = "/waterTax/signWorkOrder", method = RequestMethod.POST)
     public String signWorkOrder(final HttpServletRequest request, final Model model) {
         WaterConnectionDetails waterConnectionDetails = null;
-        String workFlowAction = request.getParameter("workFlowAction");
         String[] applicationNumbers = null;
+        String[] appNumberConTypePair = null;
         Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<String, String>();
         StringBuffer fileStoreIds = new StringBuffer();
         String pathVar = request.getParameter("pathVar");
+        String applicationNoStatePair = request.getParameter("applicationNoStatePair");
+        String currentState = request.getParameter("currentState");
+        String signAll = request.getParameter("signAll");
+        String fileName = "";
         if(pathVar != null) {
             applicationNumbers = request.getParameter("pathVar").split(",");
+            if(applicationNoStatePair != null) {
+                appNumberConTypePair = applicationNoStatePair.split(",");
+            }
             for(int i = 0; i < applicationNumbers.length; i++) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumbers[i]);
                 String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
                 String districtName = (String) request.getSession().getAttribute("districtName");
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
-                ReportOutput reportOutput = waterTaxUtils.getReportOutput(waterConnectionDetails, workFlowAction, cityMunicipalityName,
-                        districtName);
+                ReportOutput reportOutput = null;
+                if(signAll != null && signAll.equalsIgnoreCase(WaterTaxConstants.SIGN_ALL)) {
+                    for(int j = 0; j < appNumberConTypePair.length; j++) {
+                        String[] appNoStatePair = appNumberConTypePair[j].split(":");
+                        if(applicationNumbers[i].equalsIgnoreCase(appNoStatePair[0])) {
+                            currentState = appNoStatePair[1];
+                        }
+                    }
+                }
+                if(currentState.equalsIgnoreCase(WaterTaxConstants.CLOSECONNECTION)) {
+                    reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails,
+                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                    fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber() + ".pdf";
+                } else if(currentState.equalsIgnoreCase(WaterTaxConstants.RECONNECTIONCONNECTION)) {
+                    reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails,
+                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                    fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber() + ".pdf";
+                } else {
+                    reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails,
+                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                    fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
+                }
                 //Setting FileStoreMap object while Commissioner Signs the document   
                 if(reportOutput != null) {
-                    final String fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber() + ".pdf";
                     InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
                     final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                             WaterTaxConstants.FILESTORE_MODULECODE);
@@ -227,9 +251,6 @@ public class DigitalSignatureConnectionController {
             request.getSession().setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
             model.addAttribute("fileStoreIds", fileStoreIds.toString());
             model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
-            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-            model.addAttribute("workFlowAction", request.getParameter("workFlowAction"));
-            model.addAttribute("isDigSignPending", request.getParameter("isDigSignPending"));
         }
         return "newConnection-digitalSignatureRedirection";
     }
@@ -267,10 +288,11 @@ public class DigitalSignatureConnectionController {
                             tempMap.put("waterConnectionDetails", waterConnectionDetails);
                             tempMap.put("ownerName", getOwnerName(waterConnectionDetails));
                             tempMap.put("propertyAddress", getPropertyAddress(waterConnectionDetails));
-                            Long approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-                                    waterConnectionDetails, null,
-                                    waterConnectionDetails.getApplicationType().getCode(), "", "");
-                            tempMap.put("approvalPosition", approvalPosition);
+                            String additionalRule = waterConnectionDetails.getApplicationType().getCode();
+                            if(additionalRule.equals("CLOSINGCONNECTION")) {
+                                additionalRule = WaterTaxConstants.CLOSECONNECTION;
+                            }
+                            tempMap.put("state", additionalRule);
                             resultList.add(tempMap);
                         }
                     }

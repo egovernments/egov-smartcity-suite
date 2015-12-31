@@ -240,7 +240,7 @@ public class WaterTaxConstants {
 
             put(WATERTAX_DONATION_CHARGE, "1100201");
             put(WATERTAX_SECURITY_CHARGE, "1100201");
-            put(WATERTAX_FIELDINSPECTION_CHARGE, "1100201");
+            put(WATERTAX_FIELDINSPECTION_CHARGE, "1407011");
             put(WATERTAXREASONCODE, "1405016");
 
         }
@@ -278,4 +278,12 @@ public class WaterTaxConstants {
     public static final String DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
     public static final String WATER_TAP_CONNECTION = "Water Tap Connection";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
+    public static final String[] CREATECONNECTIONDMDDESC = {"Water Security Charges","Water Donation Charges","Water Estimation Charges"};
+    public static final String[] WATERCHARGESDMDDESC = {"Water Charges"};
+    
+    public static final String CLOSECONNECTION = "CLOSECONNECTION";
+    
+    public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
+    public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
+    public static final String SIGN_ALL = "SIGN_ALL";
 }
