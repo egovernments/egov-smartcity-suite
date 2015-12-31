@@ -144,7 +144,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final boolean allWfAction = wfAction == null || wfAction.equals(CollectionConstants.ALL);
         final boolean allUserName = userName == null || userName.equals(CollectionConstants.ALL);
         final boolean allDate = receiptDate == null || receiptDate.equals(CollectionConstants.ALL);
-        Date rcptDate = null;
         if (!allPositions)
             query.append(" and state.ownerPosition.id = :positionId");
 
@@ -157,8 +156,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (!allUserName)
             query.append(" and createdBy.username = :userName");
         if (!allDate)
-            query.append(" and (cast(receiptDate as date)) >= to_date('" + receiptDate + "', 'DD/MM/YYYY') ");
-        query.append(" order by receiptdate");
+            query.append(" and (cast(receiptDate as date)) = to_date('" + receiptDate + "', 'DD/MM/YYYY') ");
+        query.append(" order by receiptdate  desc");
         final Query listQuery = getSession().createQuery(query.toString());
 
         if (!allPositions)
