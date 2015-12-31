@@ -86,7 +86,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WaterTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(WaterTaxCollection.class);
-    private BigDecimal totalAmount = BigDecimal.ZERO;
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
@@ -116,7 +115,7 @@ public class WaterTaxCollection extends TaxCollection {
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
-        totalAmount = billRcptInfo.getTotalAmount();
+        BigDecimal  totalAmount = billRcptInfo.getTotalAmount();
         final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
                 .getConsumerCode();
@@ -128,7 +127,7 @@ public class WaterTaxCollection extends TaxCollection {
         }
 
         if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-            updateCollForRcptCreate(demand, billRcptInfo);
+            updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
             updateWaterConnectionDetails(demand);
             updateWaterTaxIndexes(demand);
         } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
@@ -172,16 +171,16 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo, BigDecimal totalAmount) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
                     + " with BillReceiptInfo - " + billRcptInfo);
-        updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
+        updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo,totalAmount);
     }
 
     @Transactional
     private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails,
-            final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+            final EgDemand demand, final BillReceiptInfo billRcptInfo, BigDecimal totalAmount) {
 
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
