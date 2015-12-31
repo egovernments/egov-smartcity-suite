@@ -163,7 +163,7 @@ function validate()
 				<s:reset type="submit" cssClass="button"
 					value="%{getText('collectionReport.reset')}"
 					onclick="return clearErrors();" />
-			</label>&nbsp;
+			</label>
 			<label>
 				<input type="button" class="button" id="buttonClose"
 					value="<s:text name='common.buttons.close'/>"
