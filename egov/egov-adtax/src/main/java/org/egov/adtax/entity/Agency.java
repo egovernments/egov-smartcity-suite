@@ -107,7 +107,15 @@ public class Agency extends AbstractAuditable {
 
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Hoarding> hoardings = new HashSet<Hoarding>(0);
+    private Set<AdvertisementPermitDetail> advertisementPermits = new HashSet<AdvertisementPermitDetail>(0);
+
+    public Set<AdvertisementPermitDetail> getAdvertisementPermits() {
+        return advertisementPermits;
+    }
+
+    public void setAdvertisementPermits(Set<AdvertisementPermitDetail> advertisementPermits) {
+        this.advertisementPermits = advertisementPermits;
+    }
 
     @Override
     protected void setId(final Long id) {
@@ -184,13 +192,7 @@ public class Agency extends AbstractAuditable {
         this.depositAmount = depositAmount;
     }
 
-    public Set<Hoarding> getHoardings() {
-        return hoardings;
-    }
-
-    public void setHoardings(final Set<Hoarding> hoardings) {
-        this.hoardings = hoardings;
-    }
+   
 
     @Override
     public int hashCode() {

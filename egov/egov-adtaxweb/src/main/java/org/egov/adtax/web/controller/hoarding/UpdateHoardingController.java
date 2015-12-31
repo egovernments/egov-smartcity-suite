@@ -42,7 +42,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.validation.Valid;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.springframework.stereotype.Controller;
@@ -58,13 +58,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UpdateHoardingController extends HoardingControllerSupport {
 
     @ModelAttribute("hoarding")
-    public Hoarding hoarding(@PathVariable final String hoardingNumber) {
+    public Advertisement hoarding(@PathVariable final String hoardingNumber) {
         return hoardingService.findByHoardingNumber(hoardingNumber);
     }
 
     @RequestMapping(value = "update/{hoardingNumber}")
     public String updateHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        final Hoarding hoarding = hoardingService.getHoardingByHoardingNumber(hoardingNumber);
+        final Advertisement hoarding = hoardingService.getHoardingByAdvertisementNumber(hoardingNumber);
         
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(hoarding));
         model.addAttribute("hoarding", hoarding);
@@ -72,7 +72,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "update/{hoardingNumber}", method = POST)
-    public String updateHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+    public String updateHoarding(@Valid @ModelAttribute final Advertisement hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
      
         validateHoardingDocsOnUpdate(hoarding, resultBinder,redirAttrib);
               
@@ -82,7 +82,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             updateHoardingDocuments(hoarding);
             hoardingService.updateHoarding(hoarding);
             redirAttrib.addFlashAttribute("message", "hoarding.update.success");
-            return "redirect:/hoarding/view/" + hoarding.getHoardingNumber();
+            return "redirect:/hoarding/view/" + hoarding.getAdvertisementNumber();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return "hoarding-update";

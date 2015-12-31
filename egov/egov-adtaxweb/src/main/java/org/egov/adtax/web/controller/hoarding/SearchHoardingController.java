@@ -50,10 +50,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.adtax.service.HoardingService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -73,21 +73,21 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/hoarding")
 public class SearchHoardingController extends GenericController {
 
-    private final HoardingService hoardingService;
+    private final AdvertisementService hoardingService;
     @Autowired
     private ApplicationProperties applicationProperties;
 
     private final SubCategoryService subCategoryService;
 
     @Autowired
-    public SearchHoardingController(final HoardingService hoardingService, final SubCategoryService subCategoryService) {
+    public SearchHoardingController(final AdvertisementService hoardingService, final SubCategoryService subCategoryService) {
         this.hoardingService = hoardingService;
         this.subCategoryService = subCategoryService;
     }
 
     @ModelAttribute
-    public Hoarding hoarding() {
-        return new Hoarding();
+    public Advertisement hoarding() {
+        return new Advertisement();
     }
 
    /* @ModelAttribute("hoardingSearch")
@@ -106,7 +106,7 @@ public class SearchHoardingController extends GenericController {
     }
 
     @RequestMapping(value = "/search-list", method = GET, produces=APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(@ModelAttribute final Hoarding hoarding, final HttpServletRequest request,
+    public @ResponseBody void searchResult(@ModelAttribute final Advertisement hoarding, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
       //  final String hoardingJSONData = commonSearchResult(hoarding, searchType);
@@ -114,7 +114,7 @@ public class SearchHoardingController extends GenericController {
                 .toJson(hoardingService.getHoardingSearchResult(hoarding, searchType)) + "}", response.getWriter());
       }
 
-    public String commonSearchResult(final Hoarding hoarding, final String searchType) {
+    public String commonSearchResult(final Advertisement hoarding, final String searchType) {
         final List<HoardingSearch> searchResult = hoardingService.getHoardingSearchResult(hoarding, searchType);
         return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
     } 
@@ -132,7 +132,7 @@ public class SearchHoardingController extends GenericController {
 
     @RequestMapping(value = "view/{hoardingNumber}")
     public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        model.addAttribute("hoarding", hoardingService.getHoardingByHoardingNumber(hoardingNumber));
+        model.addAttribute("hoarding", hoardingService.getHoardingByAdvertisementNumber(hoardingNumber));
         return "hoarding-view";
     }
 

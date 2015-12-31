@@ -52,7 +52,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -95,7 +95,7 @@ public class AdvertisementDemandService {
  * @param hoarding
  * @return
  */
-    public EgDemand createDemand(final Hoarding hoarding) {
+    public EgDemand createDemand(final Advertisement hoarding) {
 
         EgDemand demand = null;
         final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
@@ -103,12 +103,12 @@ public class AdvertisementDemandService {
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
         if (hoarding != null && hoarding.getDemandId() == null) {
-            if (hoarding.getTaxAmount() != null || hoarding.getPendingTax()!=null) {
+        /*    if (hoarding.getCurrentTaxAmount() != null || hoarding.getPendingTax()!=null) {
                 
                 if( hoarding.getPendingTax()!=null)
                     taxAmount=taxAmount.add( hoarding.getPendingTax());
-                if( hoarding.getTaxAmount()!=null)
-                    taxAmount=taxAmount.add(hoarding.getTaxAmount());
+                if( hoarding.getCurrentTaxAmount()!=null)
+                    taxAmount=taxAmount.add(hoarding.getCurrentTaxAmount());
                 
                 demandDetailSet.add(createDemandDetails(
                         (taxAmount),
@@ -116,14 +116,14 @@ public class AdvertisementDemandService {
                                 installment), BigDecimal.ZERO));
                 totalDemandAmount=  totalDemandAmount.add((taxAmount));
             }
-            if (hoarding.getEncroachmentFee() != null) {
+            if (hoarding.getCurrentEncroachmentFee() != null) {
                 demandDetailSet.add(createDemandDetails(
-                        (hoarding.getEncroachmentFee()),
+                        (hoarding.getCurrentEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
                                 installment), BigDecimal.ZERO));
-                totalDemandAmount= totalDemandAmount.add((hoarding.getEncroachmentFee()));
+                totalDemandAmount= totalDemandAmount.add((hoarding.getCurrentEncroachmentFee()));
             }
-            demand = createDemand(demandDetailSet, installment, totalDemandAmount);
+*/            demand = createDemand(demandDetailSet, installment, totalDemandAmount);
         }
 
         return demand;
@@ -165,7 +165,7 @@ public class AdvertisementDemandService {
  * @param demand
  * @return
  */
-    public EgDemand updateDemand(final Hoarding hoarding,EgDemand demand) {
+    public EgDemand updateDemand(final Advertisement hoarding,EgDemand demand) {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
@@ -182,15 +182,15 @@ public class AdvertisementDemandService {
             EgDemandReason encroachmentFeeReason = getDemandReasonByCodeAndInstallment(
                     AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, installment);
 
-            if (hoarding.getTaxAmount() != null || hoarding.getPendingTax() != null) {
+/*            if (hoarding.getCurrentTaxAmount() != null || hoarding.getPendingTax() != null) {
 
                 if (hoarding.getPendingTax() != null)
                     taxAmount = taxAmount.add(hoarding.getPendingTax());
-                if (hoarding.getTaxAmount() != null)
-                    taxAmount = taxAmount.add(hoarding.getTaxAmount());
+                if (hoarding.getCurrentTaxAmount() != null)
+                    taxAmount = taxAmount.add(hoarding.getCurrentTaxAmount());
 
             }
-            for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+*/            for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
                 // Assumption: tax amount is mandatory.
                 if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()
                         && taxAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -201,13 +201,13 @@ public class AdvertisementDemandService {
                 }
                 // Encroachment fee may not mandatory. If already part of demand
                 // then
-                if (dmdDtl.getEgDemandReason().getId() == encroachmentFeeReason.getId()) {
+/*                if (dmdDtl.getEgDemandReason().getId() == encroachmentFeeReason.getId()) {
                     enchroachmentFeeAlreadyExistInDemand = true;
-                    if (hoarding.getEncroachmentFee() != null
-                            && hoarding.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
-                        totalDemandAmount = totalDemandAmount.add(hoarding.getEncroachmentFee().subtract(
+                    if (hoarding.getCurrentEncroachmentFee() != null
+                            && hoarding.getCurrentEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+                        totalDemandAmount = totalDemandAmount.add(hoarding.getCurrentEncroachmentFee().subtract(
                                 dmdDtl.getAmount()));
-                        dmdDtl.setAmount(hoarding.getEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
+                        dmdDtl.setAmount(hoarding.getCurrentEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
@@ -216,17 +216,17 @@ public class AdvertisementDemandService {
                     }
 
                 }
-            }
+*/            }
 
-            if (!enchroachmentFeeAlreadyExistInDemand && hoarding.getEncroachmentFee() != null
-                    && hoarding.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+         /*   if (!enchroachmentFeeAlreadyExistInDemand && hoarding.getCurrentEncroachmentFee() != null
+                    && hoarding.getCurrentEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
                 demand.addEgDemandDetails(createDemandDetails(
-                        (hoarding.getEncroachmentFee()),
+                        (hoarding.getCurrentEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
                                 installment), BigDecimal.ZERO));
-                totalDemandAmount = totalDemandAmount.add(hoarding.getEncroachmentFee());
+                totalDemandAmount = totalDemandAmount.add(hoarding.getCurrentEncroachmentFee());
             }
-            demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+         */   demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         }
         return demand;
@@ -258,7 +258,7 @@ public class AdvertisementDemandService {
  * @param hoarding
  * @return
  */
-    public Boolean checkAnyTaxIsPendingToCollect(final Hoarding hoarding) {
+    public Boolean checkAnyTaxIsPendingToCollect(final Advertisement hoarding) {
         Boolean pendingTaxCollection = false;
 
         if (hoarding != null && hoarding.getDemandId() != null)
@@ -365,14 +365,14 @@ public class AdvertisementDemandService {
      * @param hoarding
      * @return
      */
-    public boolean anyDemandPendingForCollection(final Hoarding hoarding) {
+    public boolean anyDemandPendingForCollection(final Advertisement hoarding) {
         return checkAnyTaxIsPendingToCollect(hoarding);
     }
 
     /*
      * Check any amount collected in the current financial year or not.
      */
-    public boolean collectionDoneForThisYear(final Hoarding hoarding) {
+    public boolean collectionDoneForThisYear(final Advertisement hoarding) {
         Boolean amountCollectedInCurrentYear = false;
         if (hoarding != null && hoarding.getDemandId() != null) {
             final Installment currentInstallment = getCurrentInstallment();

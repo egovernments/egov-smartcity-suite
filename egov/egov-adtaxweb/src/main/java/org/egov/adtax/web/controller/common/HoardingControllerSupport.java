@@ -41,7 +41,7 @@ package org.egov.adtax.web.controller.common;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.HoardingDocument;
 import org.egov.adtax.entity.HoardingDocumentType;
@@ -52,7 +52,7 @@ import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.HoardingDocumentTypeService;
-import org.egov.adtax.service.HoardingService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.service.RevenueInspectorService;
 import org.egov.adtax.service.SubCategoryService;
@@ -69,7 +69,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public class HoardingControllerSupport {
      protected SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected @Autowired HoardingService hoardingService;
+    protected @Autowired AdvertisementService hoardingService;
     protected @Autowired SubCategoryService subCategoryService;
     protected @Autowired FileStoreUtils fileStoreUtils;
     protected @Autowired BoundaryService boundaryService;
@@ -130,18 +130,18 @@ public class HoardingControllerSupport {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE );
     }
     
-    protected void storeHoardingDocuments(final Hoarding hoarding) {
+    protected void storeHoardingDocuments(final Advertisement hoarding) {
         hoarding.getDocuments().forEach(document -> {
             document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
-    protected void updateHoardingDocuments(final Hoarding hoarding) {
+    protected void updateHoardingDocuments(final Advertisement hoarding) {
         hoarding.getDocuments().forEach(document -> {
             document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
     
-    protected void validateHoardingDocs(final Hoarding hoarding, final BindingResult resultBinder) {
+    protected void validateHoardingDocs(final Advertisement hoarding, final BindingResult resultBinder) {
         int index = 0;
         for (final HoardingDocument document : hoarding.getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
@@ -151,7 +151,7 @@ public class HoardingControllerSupport {
             index++;
         }
     }
-    protected void validateHoardingDocsOnUpdate(final Hoarding hoarding, final BindingResult resultBinder, RedirectAttributes redirAttrib) {
+    protected void validateHoardingDocsOnUpdate(final Advertisement hoarding, final BindingResult resultBinder, RedirectAttributes redirAttrib) {
         int index = 0;
         for (final HoardingDocument document : hoarding.getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0){

@@ -36,17 +36,8 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.repository;
+package org.egov.adtax.entity.enums;
 
-import java.util.List;
-
-import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.search.contract.HoardingSearch;
-
-public interface HoardingRepositoryCustom {
-
-    List<Hoarding> fetchHoardingsLike(HoardingSearch hoarding);
-
-    List<Object[]> fetchHoardingsBySearchType(Hoarding hoarding, String searchType);
-    List<Hoarding> fetchHoardingsBySearchParams(Hoarding hoarding);
+public enum AdvertisementDuration {
+    WEEK, MONTH, YEAR
 }

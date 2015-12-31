@@ -50,7 +50,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.HoardingDocument;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
@@ -98,32 +98,32 @@ public class CreateHoardingController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "create", method = GET)
-    public String createHoardingForm(@ModelAttribute final Hoarding hoarding) {
+    public String createHoardingForm(@ModelAttribute final Advertisement hoarding) {
         return "hoarding-create";
     }
 
     @RequestMapping(value = "createLegacy", method = GET)
-    public String createLegacyHoardingForm(@ModelAttribute final Hoarding hoarding) {
+    public String createLegacyHoardingForm(@ModelAttribute final Advertisement hoarding) {
         hoarding.setLegacy(Boolean.TRUE);
         return "hoarding-createLegacy";
     }
 
     @RequestMapping(value = "create", method = POST)
-    public String createHoarding(@Valid @ModelAttribute final Hoarding hoarding, final BindingResult resultBinder,
+    public String createHoarding(@Valid @ModelAttribute final Advertisement hoarding, final BindingResult resultBinder,
             final RedirectAttributes redirAttrib) {
         validateHoardingDocs(hoarding, resultBinder);
         validateApplicationDate(hoarding, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-create";
         storeHoardingDocuments(hoarding);
-        hoarding.setPenaltyCalculationDate(hoarding.getApplicationDate());
+      //  hoarding.setPenaltyCalculationDate(hoarding.getApplicationDate());
         hoardingService.createHoarding(hoarding);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/create";
     }
 
-    private void validateApplicationDate(Hoarding hoarding, BindingResult resultBinder) {
-       if(hoarding!=null && hoarding.getApplicationDate()!=null )
+    private void validateApplicationDate(Advertisement hoarding, BindingResult resultBinder) {
+      /* if(hoarding!=null && hoarding.getApplicationDate()!=null )
        {
            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
            if (installmentObj != null && installmentObj.getFromDate() != null)
@@ -135,11 +135,11 @@ public class CreateHoardingController extends HoardingControllerSupport {
                }
            }
            
-       }
+       }*/
         
     }
-    private void validateLegacyApplicationDate(Hoarding hoarding, BindingResult resultBinder) {
-        if(hoarding!=null && hoarding.getApplicationDate()!=null )
+    private void validateLegacyApplicationDate(Advertisement hoarding, BindingResult resultBinder) {
+        /*if(hoarding!=null && hoarding.getApplicationDate()!=null )
         {
             final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
             if (installmentObj != null && installmentObj.getToDate() != null)
@@ -151,10 +151,10 @@ public class CreateHoardingController extends HoardingControllerSupport {
             }
             
         }
-         
+      */   
      }
     @RequestMapping(value = "createLegacy", method = POST)
-    public String createLegacyHoarding(@Valid @ModelAttribute final Hoarding hoarding,
+    public String createLegacyHoarding(@Valid @ModelAttribute final Advertisement hoarding,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         validateHoardingDocs(hoarding, resultBinder);
         validateLegacyApplicationDate(hoarding, resultBinder);

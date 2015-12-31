@@ -38,12 +38,15 @@
  */
 package org.egov.adtax.repository;
 
-import org.egov.adtax.entity.Hoarding;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface HoardingRepository extends JpaRepository<Hoarding, Long>, HoardingRepositoryCustom {
+import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.search.contract.HoardingSearch;
 
-    Hoarding findByHoardingNumber(String hoardingNumber);
+public interface AdvertisementRepositoryCustom {
+
+    List<Advertisement> fetchAdvertisementLike(HoardingSearch hoarding);
+
+    List<Object[]> fetchAdvertisementBySearchType(Advertisement hoarding, String searchType);
+    List<Advertisement> fetchAdvertisementBySearchParams(Advertisement hoarding);
 }

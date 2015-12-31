@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.Billable;
@@ -82,7 +82,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     @Autowired
     private ModuleService moduleService;
 
-    private Hoarding hoarding;
+    private Advertisement hoarding;
     private String collectionType;
 
     @Autowired
@@ -90,24 +90,24 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getBillPayee() {
-        if (hoarding != null)
-            /*
+/*        if (hoarding != null)
+            
              * if (collectionType != null &&
              * collectionTypeHoarding.equalsIgnoreCase(collectionType)) { return
              * hoarding.getOwnerDetail(); } else
-             */
+             
             return hoarding.getAgency() != null ? hoarding.getAgency().getName() : " ";
-        return null;
+*/        return null;
     }
 
     @Override
     public String getBillAddress() {
-        if (hoarding != null)
+       /* if (hoarding != null)
             if (collectionType != null && collectionTypeHoarding.equalsIgnoreCase(collectionType))
                 return " ";
             else
                 return hoarding.getAgency() != null ? hoarding.getAgency().getAddress() : " ";
-        return null;
+       */ return null;
     }
 
     @Override
@@ -221,9 +221,9 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public String getDescription() {
         final StringBuffer description = new StringBuffer();
 
-        if (hoarding != null && hoarding.getHoardingNumber() != null) {
+        if (hoarding != null && hoarding.getAdvertisementNumber() != null) {
             description.append(FEECOLLECTIONMESSAGE);
-            description.append(hoarding.getHoardingNumber() != null ? hoarding.getHoardingNumber() : "");
+            description.append(hoarding.getAdvertisementNumber() != null ? hoarding.getAdvertisementNumber() : "");
         }
         return description.toString();
     }
@@ -257,11 +257,11 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     }
 
-    public Hoarding getHoarding() {
+    public Advertisement getHoarding() {
         return hoarding;
     }
 
-    public void setHoarding(final Hoarding hoarding) {
+    public void setHoarding(final Advertisement hoarding) {
         this.hoarding = hoarding;
     }
 

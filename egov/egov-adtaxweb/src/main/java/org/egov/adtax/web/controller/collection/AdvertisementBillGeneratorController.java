@@ -47,11 +47,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.egov.adtax.entity.AgencyWiseCollection;
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AgencyService;
 import org.egov.adtax.service.AgencyWiseCollectionService;
-import org.egov.adtax.service.HoardingService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.collection.AdvertisementBillServiceImpl;
 import org.egov.adtax.service.collection.AdvertisementBillable;
 import org.egov.adtax.service.collection.AgencyWiseBillServiceImpl;
@@ -71,7 +71,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdvertisementBillGeneratorController {
 
     private final AdvertisementBillServiceImpl advertisementBillServiceImpl;
-    private final HoardingService hoardingService;
+    private final AdvertisementService hoardingService;
     private final AdvertisementBillable advertisementBillable;
     private final AgencyWiseBillable agencyWiseBillable;
 
@@ -85,7 +85,7 @@ public class AdvertisementBillGeneratorController {
     @Autowired
     public AdvertisementBillGeneratorController(final AgencyWiseBillable agencyWiseBillable,
             final AdvertisementBillable advertisementBillable,
-            final AdvertisementBillServiceImpl advertisementBillServiceImpl, final HoardingService hoardingService) {
+            final AdvertisementBillServiceImpl advertisementBillServiceImpl, final AdvertisementService hoardingService) {
         this.hoardingService = hoardingService;
         this.advertisementBillServiceImpl = advertisementBillServiceImpl;
         this.advertisementBillable = advertisementBillable;
@@ -137,7 +137,7 @@ public class AdvertisementBillGeneratorController {
     public String showCollectFeeForm(final Model model, @PathVariable final String collectionType,
             @PathVariable final String hoardingCode) {
 
-        final Hoarding hoarding = hoardingService.findByHoardingNumber(hoardingCode);
+        final Advertisement hoarding = hoardingService.findByHoardingNumber(hoardingCode);
         if (hoarding != null && hoarding.getDemandId() != null) {
             // CHECK ANY DEMAND PENDING OR NOT
             if (!advertisementDemandService.checkAnyTaxIsPendingToCollect(hoarding)) {
@@ -165,7 +165,7 @@ public class AdvertisementBillGeneratorController {
     }
 
     @RequestMapping(value = "/generatebill/{hoardingCode}", method = POST)
-    public String payTax(@ModelAttribute Hoarding hoarding, @PathVariable final String collectionType,
+    public String payTax(@ModelAttribute Advertisement hoarding, @PathVariable final String collectionType,
             final RedirectAttributes redirectAttributes, @PathVariable final String hoardingCode, final Model model) {
 
         hoarding = hoardingService.findByHoardingNumber(hoardingCode);

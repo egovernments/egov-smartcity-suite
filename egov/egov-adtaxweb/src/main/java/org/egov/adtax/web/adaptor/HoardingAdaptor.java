@@ -41,21 +41,21 @@ package org.egov.adtax.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class HoardingAdaptor implements JsonSerializer<Hoarding> {
+public class HoardingAdaptor implements JsonSerializer<Advertisement> {
 
     @Override
-    public JsonElement serialize(final Hoarding hoarding, final Type type,
+    public JsonElement serialize(final Advertisement hoarding, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("hoardingNumber", null != hoarding.getHoardingNumber() ? hoarding.getHoardingNumber() : "NA");
-        jsonObject.addProperty("agency", null != hoarding.getAgency() ? hoarding.getAgency().getName() : "NA");
+        jsonObject.addProperty("advertisementNumber", null != hoarding.getAdvertisementNumber() ? hoarding.getAdvertisementNumber() : "NA");
+ //       jsonObject.addProperty("agency", null != hoarding.getAgency() ? hoarding.getAgency().getName() : "NA");
         jsonObject.addProperty("amount",
                 null != hoarding.getDemandId() ? hoarding.getDemandId().getBaseDemand().toString() : "NA");
         jsonObject.addProperty("hoardingId", hoarding.getId());

@@ -48,7 +48,7 @@ import java.util.Set;
 
 import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.entity.AgencyWiseCollectionDetail;
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.repository.AgencyWiseCollectionRepository;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
@@ -65,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AgencyWiseCollectionService {
     private final AgencyWiseCollectionRepository agencyWiseCollectionRepository;
-    private @Autowired HoardingService hoardingService;
+    private @Autowired AdvertisementService hoardingService;
     private @Autowired AppConfigValueService appConfigValuesService;
     private @Autowired AdvertisementDemandService advertisementDemandService;
 
@@ -111,7 +111,7 @@ public class AgencyWiseCollectionService {
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.PENALTYCALCULATIONREQUIRED).get(0);
 
         for (final String hoardingId : hoardingList) {
-            final Hoarding hoarding = hoardingService.findBy(Long.valueOf(hoardingId.trim()));
+            final Advertisement hoarding = hoardingService.findBy(Long.valueOf(hoardingId.trim()));
 
             if (hoarding != null) {
                 BigDecimal penaltyAmount = BigDecimal.ZERO;

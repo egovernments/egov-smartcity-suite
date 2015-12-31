@@ -49,10 +49,10 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.adtax.entity.Hoarding;
-import org.egov.adtax.entity.enums.HoardingStatus;
+import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
-import org.egov.adtax.repository.HoardingRepository;
+import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.adtax.search.contract.HoardingDcbReport;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -67,9 +67,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class HoardingService {
+public class AdvertisementService {
 
-    private final HoardingRepository hoardingRepository;
+    private final AdvertisementRepository advertisementRepository;
   
     @PersistenceContext
     private EntityManager entityManager;
@@ -84,41 +84,41 @@ public class HoardingService {
     private AdvertisementDemandService advertisementDemandService;
 
     @Autowired
-    public HoardingService(final HoardingRepository hoardingRepository) {
-        this.hoardingRepository = hoardingRepository;
+    public AdvertisementService(final AdvertisementRepository hoardingRepository) {
+        this.advertisementRepository = hoardingRepository;
     }
 
     @Transactional
-    public Hoarding createHoarding(final Hoarding hoarding) {
+    public Advertisement createHoarding(final Advertisement hoarding) {
         if (hoarding != null && hoarding.getId() == null)
             hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
         roundOfAllTaxAmount(hoarding);
-        return hoardingRepository.save(hoarding);
+        return advertisementRepository.save(hoarding);
     }
 
     @Transactional
-    public Hoarding updateHoarding(final Hoarding hoarding) throws HoardingValidationError {
+    public Advertisement updateHoarding(final Advertisement hoarding) throws HoardingValidationError {
 
         getCurrentSession().evict(hoarding);
 
-        final Hoarding actualHoarding = getHoardingByHoardingNumber(hoarding.getHoardingNumber());
+        final Advertisement actualHoarding = getHoardingByAdvertisementNumber(hoarding.getAdvertisementNumber());
         final boolean anyDemandPendingForCollection = advertisementDemandService
                 .anyDemandPendingForCollection(actualHoarding);
 
-         if (!actualHoarding.getAgency().equals(hoarding.getAgency()) && anyDemandPendingForCollection)
+     /*    if (!actualHoarding.getAgency().equals(hoarding.getAgency()) && anyDemandPendingForCollection)
             throw new HoardingValidationError("agency", "ADTAX.001");
-        // If demand already collected for the current year, fee updated from
+     */   // If demand already collected for the current year, fee updated from
         // UI, do not update demand details. Update only fee details of hoarding.
         // We should not allow user to update demand if any collection happened in
         // the current year.
 
-        if (advertisementDemandService.collectionDoneForThisYear(actualHoarding) && anyDemandPendingForCollection
-                && (!actualHoarding.getTaxAmount().equals(hoarding.getTaxAmount())
+     /*   if (advertisementDemandService.collectionDoneForThisYear(actualHoarding) && anyDemandPendingForCollection
+                && (!actualHoarding.getCurrentTaxAmount().equals(hoarding.getCurrentTaxAmount())
                         || checkEncroachmentFeeChanged(hoarding, actualHoarding) || checkPendingTaxChanged(hoarding,
                             actualHoarding)))
             throw new HoardingValidationError("taxAmount", "ADTAX.002");
-        if (!actualHoarding.getStatus().equals(hoarding.getStatus())
-                && hoarding.getStatus().equals(HoardingStatus.CANCELLED) && anyDemandPendingForCollection)
+     */   if (!actualHoarding.getStatus().equals(hoarding.getStatus())
+                && hoarding.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection)
             throw new HoardingValidationError("status", "ADTAX.003");
 
         // If demand pending for collection, then only update demand details.
@@ -127,21 +127,21 @@ public class HoardingService {
         if (anyDemandPendingForCollection)
             advertisementDemandService.updateDemand(hoarding, actualHoarding.getDemandId());
         roundOfAllTaxAmount(hoarding);
-        return hoardingRepository.save(hoarding);
+        return advertisementRepository.save(hoarding);
     }
 
-    private void roundOfAllTaxAmount(final Hoarding hoarding) {
-        if(hoarding.getEncroachmentFee()!=null)
-            hoarding.setEncroachmentFee(hoarding.getEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
+    private void roundOfAllTaxAmount(final Advertisement hoarding) {
+/*        if(hoarding.getCurrentEncroachmentFee()!=null)
+            hoarding.setCurrentEncroachmentFee(hoarding.getCurrentEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
         
-        if(hoarding.getTaxAmount()!=null)
-            hoarding.setTaxAmount( hoarding.getTaxAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+        if(hoarding.getCurrentTaxAmount()!=null)
+            hoarding.setCurrentTaxAmount( hoarding.getCurrentTaxAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
             
         if(hoarding.getPendingTax()!=null)
             hoarding.setPendingTax( hoarding.getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP)); 
-    }
+*/    }
 
-    private boolean checkPendingTaxChanged(Hoarding hoarding, Hoarding actualHoarding) {
+    private boolean checkPendingTaxChanged(Advertisement hoarding, Advertisement actualHoarding) {
         if (actualHoarding.getPendingTax()== null && hoarding.getPendingTax() != null)
             return true;
         else if (hoarding.getPendingTax() == null && actualHoarding.getPendingTax() != null)
@@ -153,43 +153,43 @@ public class HoardingService {
         return false;
     }
 
-    private boolean checkEncroachmentFeeChanged(final Hoarding hoarding, final Hoarding actualHoarding) {
+    private boolean checkEncroachmentFeeChanged(final Advertisement hoarding, final Advertisement actualHoarding) {
 
-        if (actualHoarding.getEncroachmentFee() == null && hoarding.getEncroachmentFee() != null)
+      /*  if (actualHoarding.getCurrentEncroachmentFee() == null && hoarding.getCurrentEncroachmentFee() != null)
             return true;
-        else if (hoarding.getEncroachmentFee() == null && actualHoarding.getEncroachmentFee() != null)
+        else if (hoarding.getCurrentEncroachmentFee() == null && actualHoarding.getCurrentEncroachmentFee() != null)
             return true;
-        else if (actualHoarding.getEncroachmentFee() != null && hoarding.getEncroachmentFee() != null
-                && !actualHoarding.getEncroachmentFee().equals(hoarding.getEncroachmentFee()))
+        else if (actualHoarding.getCurrentEncroachmentFee() != null && hoarding.getCurrentEncroachmentFee() != null
+                && !actualHoarding.getCurrentEncroachmentFee().equals(hoarding.getCurrentEncroachmentFee()))
             return true;
-
+*/
         return false;
     }
 
-    public List<Object[]> searchBySearchType(final Hoarding hoarding, final String searchType) {
-        return hoardingRepository.fetchHoardingsBySearchType(hoarding, searchType);
+    public List<Object[]> searchBySearchType(final Advertisement hoarding, final String searchType) {
+        return advertisementRepository.fetchAdvertisementBySearchType(hoarding, searchType);
     }
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    public Hoarding getHoardingByHoardingNumber(final String hoardingNumber) {
-        return hoardingRepository.findByHoardingNumber(hoardingNumber);
+    public Advertisement getHoardingByAdvertisementNumber(final String hoardingNumber) {
+        return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
 
     public List<HoardingSearch> getHoardingSearchResult(final HoardingSearch hoardingSearch) {
-        final List<Hoarding> hoardings = hoardingRepository.fetchHoardingsLike(hoardingSearch);
+        final List<Advertisement> hoardings = advertisementRepository.fetchAdvertisementLike(hoardingSearch);
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
         hoardings.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
-            hoardingSearchResult.setHoardingNumber(result.getHoardingNumber());
-            hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
-            hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            hoardingSearchResult.setAgencyName(result.getAgency().getName());
+            hoardingSearchResult.setAdvertisementNumber(result.getAdvertisementNumber());
+          //  hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
+            //hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
+            //hoardingSearchResult.setAgencyName(result.getAgency().getName());
             hoardingSearchResult.setStatus(result.getStatus());
             hoardingSearchResults.add(hoardingSearchResult);
         });
         return hoardingSearchResults;
     }
     
-public List<HoardingDcbReport> getHoardingWiseDCBResult(final Hoarding hoarding) {
+public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoarding) {
      List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
     Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
         if(hoarding!=null && hoarding.getDemandId()!=null)
@@ -232,31 +232,31 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Hoarding hoarding)
     return HoardingDcbReportResults;
 
 }
-    public List<HoardingSearch> getHoardingSearchResult(final Hoarding hoarding, final String searchType) {
+    public List<HoardingSearch> getHoardingSearchResult(final Advertisement hoarding, final String searchType) {
 
-        final List<Hoarding> hoardings = hoardingRepository.fetchHoardingsBySearchParams(hoarding);
+        final List<Advertisement> hoardings = advertisementRepository.fetchAdvertisementBySearchParams(hoarding);
         final HashMap<String, HoardingSearch> agencyWiseHoardingList = new HashMap<String, HoardingSearch>();
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
 
         hoardings.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
-            hoardingSearchResult.setHoardingNumber(result.getHoardingNumber());
-            hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
-            hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            hoardingSearchResult.setAgencyName(result.getAgency().getName());
+            hoardingSearchResult.setAdvertisementNumber(result.getAdvertisementNumber());
+            //hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
+            //hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
+            //hoardingSearchResult.setAgencyName(result.getAgency().getName());
             hoardingSearchResult.setStatus(result.getStatus());
             if (result.getDemandId() != null){
                 if (searchType != null && searchType.equalsIgnoreCase("agency")) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                      final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService.checkPedingAmountByDemand(result.getDemandId(),result.getPenaltyCalculationDate());
-                     
-                     final HoardingSearch hoardingSearchObj = agencyWiseHoardingList.get(result.getAgency().getName());
+                     //TODO: DO CODE CHANGE
+                     final HoardingSearch hoardingSearchObj = null;//agencyWiseHoardingList.get(result.getAgency().getName());
                     if (hoardingSearchObj == null) {
                         hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                         hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                         hoardingSearchResult.setTotalHoardingInAgency(1);
                         hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
-                        agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
+              //          agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
                     } else {
                         StringBuffer hoardingIds= new StringBuffer();
                         hoardingSearchObj.setPenaltyAmount(
@@ -286,10 +286,10 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Hoarding hoarding)
 
     }
 
-    public Hoarding findByHoardingNumber(final String hoardingNumber) {
-        return hoardingRepository.findByHoardingNumber(hoardingNumber);
+    public Advertisement findByHoardingNumber(final String hoardingNumber) {
+        return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
-    public Hoarding findBy(final Long hoardingId) {
-        return hoardingRepository.findOne(hoardingId);
+    public Advertisement findBy(final Long hoardingId) {
+        return advertisementRepository.findOne(hoardingId);
     }
 }

@@ -3,9 +3,9 @@ package org.egov.adtax.web.controller.reports;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import org.egov.adtax.entity.Hoarding;
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.adtax.service.HoardingService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import com.google.gson.GsonBuilder;
 public class DcbReportController extends GenericController {
 
     @Autowired
-    private HoardingService hoardingService;
+    private AdvertisementService hoardingService;
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -42,7 +42,7 @@ public class DcbReportController extends GenericController {
 
     @RequestMapping(value = "getHoardingDcb/{hoardingNumber}")
     public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        final Hoarding hoarding = hoardingService.getHoardingByHoardingNumber(hoardingNumber);
+        final Advertisement hoarding = hoardingService.getHoardingByAdvertisementNumber(hoardingNumber);
         model.addAttribute("hoarding", hoarding);
         model.addAttribute("dcbResult", hoardingService.getHoardingWiseDCBResult(hoarding));
         return "report-dcbview";
