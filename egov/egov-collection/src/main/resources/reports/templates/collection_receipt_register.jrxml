@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-12-29T13:22:16 -->
+<!-- 2015-12-31T11:04:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
@@ -116,7 +116,6 @@ GROUP BY
      RESULT.STATUS_DESCRIPTION,
      RESULT.SERVICE_NAME, 
      RESULT.CASH_AMOUNT,
-     RESULT.CHEQUEDD_AMOUNT,
      RESULT.CARD_AMOUNT,
      RESULT.BANK_AMOUNT, 
      RESULT.ONLINE_AMOUNT 
