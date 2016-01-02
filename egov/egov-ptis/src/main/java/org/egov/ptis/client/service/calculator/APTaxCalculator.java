@@ -217,6 +217,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setSiteValue(floorSiteValue);
         unitTaxCalculationInfo.setGrossARV(floorGrossArv);
         unitTaxCalculationInfo.setDepreciation(floorDepreciation);
+        unitTaxCalculationInfo.setUnitUsage(floor.getPropertyUsage().getUsageCode());
+        unitTaxCalculationInfo.setUnitOccupation(floor.getPropertyOccupation().getOccupancyCode());
+        unitTaxCalculationInfo.setUnitStructure(floor.getStructureClassification().getConstrTypeCode());
         unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()

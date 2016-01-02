@@ -1393,14 +1393,18 @@ public class PropertyService {
      */
     private FloorwiseDemandCalculations createFloorDmdCalc(final PTDemandCalculations ptDmdCal, final Floor floor,
             final TaxCalculationInfo taxCalcInfo) {
-        // LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
-        // + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
+        LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal + ", floor: " + floor + ", taxCalcInfo: "
+                + taxCalcInfo);
         final FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
         floorDmdCalc.setPTDemandCalculations(ptDmdCal);
         floorDmdCalc.setFloor(floor);
 
         for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos()) {
-            if (FLOOR_MAP.get(floorDmdCalc.getFloor().getFloorNo()).equals(unitTax.getFloorNumber()))
+            if (FLOOR_MAP.get(floor.getFloorNo()).equals(unitTax.getFloorNumber())
+                    && floor.getPropertyUsage().getUsageCode().equalsIgnoreCase(unitTax.getUnitUsage())
+                    && floor.getPropertyOccupation().getOccupancyCode().equalsIgnoreCase(unitTax.getUnitOccupation())
+                    && floor.getStructureClassification().getConstrTypeCode().equalsIgnoreCase(unitTax.getUnitStructure())
+                    && floor.getBuiltUpArea().getArea().equals(Float.valueOf(unitTax.getFloorArea().toString())))
                 setFloorDmdCalTax(unitTax, floorDmdCalc);
         }
         totalAlv = totalAlv.add(floorDmdCalc.getAlv());
