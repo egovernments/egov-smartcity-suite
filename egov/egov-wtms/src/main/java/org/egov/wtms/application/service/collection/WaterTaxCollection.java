@@ -251,8 +251,8 @@ public class WaterTaxCollection extends TaxCollection {
                 + " with BillReceiptInfo - " + billRcptInfo);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
 
-        if (demand.getAmtCollected() != null && demand.getAmtCollected() != BigDecimal.ZERO)
-            demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));
+        /*if (demand.getAmtCollected() != null && demand.getAmtCollected() != BigDecimal.ZERO)
+            demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));*/
 
         updateDmdDetForRcptCancel(demand, billRcptInfo);
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
@@ -269,13 +269,14 @@ public class WaterTaxCollection extends TaxCollection {
     @Transactional
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
-
+        String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
             && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
-                final String installment = desc[1].trim();
+                String[] installsplit=desc[1].split("#") ;
+                installment = installsplit[0].trim();
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
@@ -289,6 +290,9 @@ public class WaterTaxCollection extends TaxCollection {
 
                         demandDetail
                                 .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                        demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        
                         LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
                                 + reason + " and installment : " + installment);
                     }
