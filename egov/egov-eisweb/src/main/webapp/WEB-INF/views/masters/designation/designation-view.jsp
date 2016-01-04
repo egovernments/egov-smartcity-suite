@@ -41,8 +41,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <link rel="stylesheet"	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-<link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 
 <script type="text/javascript">
 $(document).ready(function(){
