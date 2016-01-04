@@ -66,6 +66,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -336,7 +337,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             target = SEARCH;
         } else if (propertyMutation !=null) {
         	if(propertyMutation.getState() != null && propertyMutation.getState().getOwnerPosition() != null && propertyMutation.getReceiptDate() == null){
-        		Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getState().getOwnerPosition().getId());
+        		Assignment assignment = assignmentService.getAssignmentsForPosition(propertyMutation.getState().getOwnerPosition().getId(),new Date()).get(0);
         		if(assignment!=null){
         			Designation designation = assignment.getDesignation();
         			if(designation!=null){
