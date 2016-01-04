@@ -169,7 +169,7 @@
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${hoardingCategories}" itemLabel="name" itemValue="id"/>
 									</form:select>
-									<form:errors path="category" cssClass="error-msg" />
+									<form:errors path="advertisement.category" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.subcategory"/>
@@ -239,11 +239,11 @@
 								<spring:message code="lbl.hoarding.class"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="rateClass" id="rateClass" cssClass="form-control" cssErrorClass="form-control error" required="required">
+									<form:select path="advertisement.rateClass" id="rateClass" cssClass="form-control" cssErrorClass="form-control error" required="required">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
 										<form:options items="${rateClasses}" itemLabel="description" itemValue="id"/>
 									</form:select>
-									<form:errors path="rateClass" cssClass="error-msg" />
+									<form:errors path="advertisement.rateClass" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.rev.inspector"/><span class="mandatory"></span>
@@ -271,7 +271,7 @@
 								<spring:message code="lbl.hoarding.electricityservicenumber"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"  maxlength="25"  path="electricityServiceNumber" id="electricityServiceNumber"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"  maxlength="25"  path="advertisement.electricityServiceNumber" id="electricityServiceNumber"/>
                                		<form:errors path="advertisement.electricityServiceNumber" cssClass="error-msg" />
                            		</div>
 							</div>
@@ -300,8 +300,8 @@
 					<div class="tab-pane fade" id="hoardingattachments">
 						<c:choose>
 							<c:when test="${not empty hoardingDocumentTypes}">
-							<form:hidden path="latitude" id="latitude"/> 
-							<form:hidden path="longitude" id="longitude" /> 
+							<form:hidden path="advertisement.latitude" id="latitude"/> 
+							<form:hidden path="advertisement.longitude" id="longitude" /> 
 							<div class="col-sm-12 view-content header-color hidden-xs">
 								<div class="col-sm-1 table-div-column"><spring:message code="lbl.srl.no"/></div>
 								<div class="col-sm-5 table-div-column"><spring:message code="lbl.documentname"/></div>
@@ -321,8 +321,8 @@
 									</div>
 									<div class="col-sm-3 text-center">
 										<input type="file" name="documents[${status.index}].attachments" class="form-control" >
-										<form:errors path="documents[${status.index}].attachments" cssClass="add-margin error-msg" />
-										<form:hidden path="documents[${status.index}].doctype" value="${docs.id}" /> 
+										<form:errors path="advertisement.documents[${status.index}].attachments" cssClass="add-margin error-msg" />
+										<form:hidden path="advertisement.documents[${status.index}].doctype" value="${docs.id}" /> 
 									</div>
 								</div>
 							</c:forEach> 
