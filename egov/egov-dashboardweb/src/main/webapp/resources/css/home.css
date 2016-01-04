@@ -45,6 +45,12 @@
 	border-width: 0px;
 }
 
+@media (max-width: 1023px)
+{
+	.navbar-header.push-left {
+	  float: left;	 
+	}
+}
 .footer {
 	background: rgb(121, 96, 66);
 background: -moz-linear-gradient(90deg, rgb(121, 96, 66) 44%, rgb(107, 80, 47) 100%);
