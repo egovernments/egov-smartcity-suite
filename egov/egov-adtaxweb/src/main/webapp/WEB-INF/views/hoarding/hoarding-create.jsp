@@ -46,8 +46,9 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
-		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
-		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
+		<form:form id="advertisementform" method="post" class="form-horizontal form-groups-bordered" 
+		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
+		<form:hidden path="previousapplicationid" value="${previousapplicationid.id}"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">

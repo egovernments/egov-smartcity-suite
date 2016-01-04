@@ -39,8 +39,10 @@
 package org.egov.adtax.entity;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -58,8 +60,8 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.adtax.entity.enums.AdvertisementDuration;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -68,7 +70,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, sequenceName = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, allocationSize = 1)
 @Unique(id = "id", tableName = "EGADTAX_PERMITDETAILS", columnName = { "applicationNumber", "permissionNumber" }, fields = {
         "applicationNumber", "permissionNumber" }, enableDfltMsg = true)
-public class AdvertisementPermitDetail extends AbstractAuditable {
+public class AdvertisementPermitDetail extends StateAware {
 
     private static final long serialVersionUID = 845357231248646624L;
 
@@ -77,19 +79,18 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_ADTAX_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "advertisement", nullable = false)
-    private Advertisement advertisement ;
-    
+    private Advertisement advertisement;
+
     @NotNull
     @Column(name = "applicationNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
     private String applicationNumber;
 
-    
     @Column(name = "permissionNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
@@ -102,7 +103,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
     @Enumerated(EnumType.ORDINAL)
     private AdvertisementDuration advertisementDuration;
 
-    @NotNull
+    // @NotNull
     @Enumerated(EnumType.ORDINAL)
     private AdvertisementStatus status;
 
@@ -111,14 +112,15 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
 
     private BigDecimal encroachmentFee;
 
+    @JoinColumn
     private AdvertisementPermitDetail previousapplicationid;
     private Boolean isActive = false;
-    
-    @NotNull
+
+    // @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date permissionstartdate;
 
-    @NotNull
+    // @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date permissionenddate;
 
@@ -137,24 +139,25 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
     @SafeHtml
     @Length(max = 512)
     private String advertisementParticular;
-     
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "unitofmeasure", nullable = false)
     private UnitOfMeasure unitOfMeasure;
-   
-       
+
     private Double measurement;
     private Double length;
     private Double width;
     private Double breadth;
-    private Double totalHeight; 
-    
+    private Double totalHeight;
+
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -162,7 +165,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -170,7 +173,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return permissionNumber;
     }
 
-    public void setPermissionNumber(String permissionNumber) {
+    public void setPermissionNumber(final String permissionNumber) {
         this.permissionNumber = permissionNumber;
     }
 
@@ -178,7 +181,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return applicationDate;
     }
 
-    public void setApplicationDate(Date applicationDate) {
+    public void setApplicationDate(final Date applicationDate) {
         this.applicationDate = applicationDate;
     }
 
@@ -186,7 +189,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return advertisementDuration;
     }
 
-    public void setAdvertisementDuration(AdvertisementDuration advertisementDuration) {
+    public void setAdvertisementDuration(final AdvertisementDuration advertisementDuration) {
         this.advertisementDuration = advertisementDuration;
     }
 
@@ -194,7 +197,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return status;
     }
 
-    public void setStatus(AdvertisementStatus status) {
+    public void setStatus(final AdvertisementStatus status) {
         this.status = status;
     }
 
@@ -202,7 +205,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return taxAmount;
     }
 
-    public void setTaxAmount(BigDecimal taxAmount) {
+    public void setTaxAmount(final BigDecimal taxAmount) {
         this.taxAmount = taxAmount;
     }
 
@@ -210,7 +213,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return encroachmentFee;
     }
 
-    public void setEncroachmentFee(BigDecimal encroachmentFee) {
+    public void setEncroachmentFee(final BigDecimal encroachmentFee) {
         this.encroachmentFee = encroachmentFee;
     }
 
@@ -218,7 +221,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return previousapplicationid;
     }
 
-    public void setPreviousapplicationid(AdvertisementPermitDetail previousapplicationid) {
+    public void setPreviousapplicationid(final AdvertisementPermitDetail previousapplicationid) {
         this.previousapplicationid = previousapplicationid;
     }
 
@@ -226,7 +229,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return permissionstartdate;
     }
 
-    public void setPermissionstartdate(Date permissionstartdate) {
+    public void setPermissionstartdate(final Date permissionstartdate) {
         this.permissionstartdate = permissionstartdate;
     }
 
@@ -234,7 +237,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return permissionenddate;
     }
 
-    public void setPermissionenddate(Date permissionenddate) {
+    public void setPermissionenddate(final Date permissionenddate) {
         this.permissionenddate = permissionenddate;
     }
 
@@ -242,7 +245,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return advertisement;
     }
 
-    public void setAdvertisement(Advertisement advertisement) {
+    public void setAdvertisement(final Advertisement advertisement) {
         this.advertisement = advertisement;
     }
 
@@ -250,7 +253,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 
@@ -258,7 +261,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return ownerDetail;
     }
 
-    public void setOwnerDetail(String ownerDetail) {
+    public void setOwnerDetail(final String ownerDetail) {
         this.ownerDetail = ownerDetail;
     }
 
@@ -266,7 +269,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return agency;
     }
 
-    public void setAgency(Agency agency) {
+    public void setAgency(final Agency agency) {
         this.agency = agency;
     }
 
@@ -274,7 +277,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return advertiser;
     }
 
-    public void setAdvertiser(String advertiser) {
+    public void setAdvertiser(final String advertiser) {
         this.advertiser = advertiser;
     }
 
@@ -282,7 +285,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return advertisementParticular;
     }
 
-    public void setAdvertisementParticular(String advertisementParticular) {
+    public void setAdvertisementParticular(final String advertisementParticular) {
         this.advertisementParticular = advertisementParticular;
     }
 
@@ -290,7 +293,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return unitOfMeasure;
     }
 
-    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+    public void setUnitOfMeasure(final UnitOfMeasure unitOfMeasure) {
         this.unitOfMeasure = unitOfMeasure;
     }
 
@@ -298,7 +301,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return measurement;
     }
 
-    public void setMeasurement(Double measurement) {
+    public void setMeasurement(final Double measurement) {
         this.measurement = measurement;
     }
 
@@ -306,7 +309,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return length;
     }
 
-    public void setLength(Double length) {
+    public void setLength(final Double length) {
         this.length = length;
     }
 
@@ -314,7 +317,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return width;
     }
 
-    public void setWidth(Double width) {
+    public void setWidth(final Double width) {
         this.width = width;
     }
 
@@ -322,7 +325,7 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return breadth;
     }
 
-    public void setBreadth(Double breadth) {
+    public void setBreadth(final Double breadth) {
         this.breadth = breadth;
     }
 
@@ -330,8 +333,15 @@ public class AdvertisementPermitDetail extends AbstractAuditable {
         return totalHeight;
     }
 
-    public void setTotalHeight(Double totalHeight) {
+    public void setTotalHeight(final Double totalHeight) {
         this.totalHeight = totalHeight;
+    }
+
+    @Override
+    public String getStateDetails() {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return String.format("Advertisement Number %s with date %s.", applicationNumber,
+                applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()));
     }
 
 }

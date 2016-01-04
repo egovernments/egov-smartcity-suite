@@ -51,9 +51,11 @@ import javax.validation.Valid;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -64,7 +66,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
-public class CreateHoardingController extends HoardingControllerSupport {
+public class CreateAdvertisementController extends HoardingControllerSupport {
    
 
     /*
@@ -118,25 +120,27 @@ public class CreateHoardingController extends HoardingControllerSupport {
             return "hoarding-create";
         storeHoardingDocuments(advertisementPermitDetail);
       //  hoarding.setPenaltyCalculationDate(hoarding.getApplicationDate());
+        advertisementPermitDetail.setStatus(AdvertisementStatus.ACTIVE);
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/create";
     }
 
     private void validateApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
-      /* if(hoarding!=null && hoarding.getApplicationDate()!=null )
+       if(advertisementPermitDetail!=null && advertisementPermitDetail.getApplicationDate()!=null )
        {
            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
            if (installmentObj != null && installmentObj.getFromDate() != null)
            {
-               if( hoarding.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate()))||
-               hoarding.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
+               if( advertisementPermitDetail.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate()))||
+                       advertisementPermitDetail.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
                {
                    resultBinder.rejectValue("applicationDate", "invalid.applicationDate");
                }
            }
            
-       }*/
+       }
         
     }
     private void validateLegacyApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {

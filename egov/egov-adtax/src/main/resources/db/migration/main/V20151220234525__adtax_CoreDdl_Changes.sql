@@ -5,10 +5,11 @@ ALTER TABLE egadtax_hoarding RENAME TO egadtax_advertisement;
 ALTER SEQUENCE SEQ_EGADTAX_HOARDING RENAME TO SEQ_EGADTAX_ADVERTISEMENT;
 
 
-delete from egadtax_hoardingdocument;
+
 delete from egadtax_hoarding_docs;
 delete from egadtax_document_files;
 delete from egadtax_advertisement;
+delete from egadtax_hoardingdocument;
 
 alter table  egadtax_advertisement drop column applicationnumber;
 alter table  egadtax_advertisement drop column applicationdate;
@@ -45,5 +46,9 @@ CREATE TABLE EGADTAX_APPLICATION (
     previousapplicationid bigint 
 );
 
+ALTER TABLE ONLY egadtax_permitdetails
+    ADD CONSTRAINT pk_adtax_permitdetails PRIMARY KEY (id);
 
+ ALTER TABLE egadtax_permitdetails ADD CONSTRAINT fk_adtax_permitdetails_parent FOREIGN KEY (previousapplicationid) 
+    REFERENCES egadtax_permitdetails(id);
 -----------------END------------------

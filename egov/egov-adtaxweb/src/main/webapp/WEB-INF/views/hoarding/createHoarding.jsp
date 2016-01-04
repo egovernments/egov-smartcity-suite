@@ -89,8 +89,8 @@
 								<spring:message code="lbl.hoarding.type"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin dynamic-span capitalize">
-									<form:radiobuttons path="advertisement.structureType" element="span"/>
-									<form:errors path="advertisement.structureType" cssClass="error-msg" />
+									<form:radiobuttons path="advertisement.type" element="span"/>
+									<form:errors path="advertisement.type" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -126,24 +126,24 @@
 									<div class="col-sm-3 add-margin">
 										<form:select path="advertisement.propertyType" id="propertyType" cssClass="form-control" cssErrorClass="form-control error" required="required">
 											<form:option value=""><spring:message code="lbl.select" /></form:option>
-											<form:options items="${hoardingPropertyType}"/>
+											<form:options items="${propertyType}"/>
 										</form:select>
 									<form:errors path="advertisement.propertyType" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<%-- <label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.status"/>
 									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="status" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${hoardingStatus}"/>
+										<form:options items="${status}"/>
 									</form:select>
 									<form:errors path="status" cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label text-right">
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.owner.detail"/>
 								<span class="mandatory"></span>
 								</label>
@@ -317,10 +317,10 @@
 									</div>
 									<div class="col-sm-3 text-center">
 										<input type="checkbox" ${advertisement.documents[status.index].enclosed ? "checked='checked'" : ""} 
-										name="documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
+										name="advertisement.documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="file" name="documents[${status.index}].attachments" class="form-control" >
+										<input type="file" name="advertisement.documents[${status.index}].attachments" class="form-control" >
 										<form:errors path="advertisement.documents[${status.index}].attachments" cssClass="add-margin error-msg" />
 										<form:hidden path="advertisement.documents[${status.index}].doctype" value="${docs.id}" /> 
 									</div>

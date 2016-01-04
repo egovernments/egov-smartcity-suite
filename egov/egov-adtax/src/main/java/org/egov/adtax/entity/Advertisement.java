@@ -60,8 +60,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.adtax.entity.enums.AdvertisementPropertyType;
@@ -96,7 +94,7 @@ public class Advertisement extends AbstractAuditable {
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    private AdvertisementStructureType structureType;
+    private AdvertisementStructureType type;
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
@@ -111,7 +109,7 @@ public class Advertisement extends AbstractAuditable {
     @Length(max = 50)
     private String electricityServiceNumber;
 
-    @NotNull
+    //@NotNull
     @Enumerated(EnumType.ORDINAL)
     private AdvertisementStatus status;
 
@@ -368,12 +366,12 @@ public class Advertisement extends AbstractAuditable {
         this.advertisementNumber = advertisementNumber;
     }
 
-    public AdvertisementStructureType getStructureType() {
-        return structureType;
+    public AdvertisementStructureType getType() {
+        return type;
     }
 
-    public void setStructureType(AdvertisementStructureType structureType) {
-        this.structureType = structureType;
+    public void setType(AdvertisementStructureType type) {
+        this.type = type;
     }
 
     public Set<AdvertisementPermitDetail> getAdvertisementPermitDetail() {
