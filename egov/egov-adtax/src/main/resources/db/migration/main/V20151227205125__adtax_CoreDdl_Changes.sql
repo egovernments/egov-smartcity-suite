@@ -38,5 +38,10 @@ alter table EGADTAX_advertisement drop column  totalheight;
 alter table egadtax_hoarding_docs  rename column hoarding to advertisement;
 alter table egadtax_hoarding_docs rename to egadtax_advertisement_docs;
 
+ALTER TABLE ONLY egadtax_permitdetails
+    ADD CONSTRAINT pk_adtax_permitdetails PRIMARY KEY (id);
+
+ ALTER TABLE egadtax_permitdetails ADD CONSTRAINT fk_adtax_permitdetails_parent FOREIGN KEY (previousapplicationid) 
+    REFERENCES egadtax_permitdetails(id);
 
 -----------------END------------------

@@ -46,9 +46,5 @@ CREATE TABLE EGADTAX_APPLICATION (
     previousapplicationid bigint 
 );
 
-ALTER TABLE ONLY egadtax_permitdetails
-    ADD CONSTRAINT pk_adtax_permitdetails PRIMARY KEY (id);
 
- ALTER TABLE egadtax_permitdetails ADD CONSTRAINT fk_adtax_permitdetails_parent FOREIGN KEY (previousapplicationid) 
-    REFERENCES egadtax_permitdetails(id);
 -----------------END------------------
