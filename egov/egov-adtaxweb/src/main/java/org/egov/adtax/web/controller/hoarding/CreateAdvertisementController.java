@@ -107,6 +107,8 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         {
             advertisementPermitDetail.setAdvertisement(new Advertisement());
         }
+        advertisementPermitDetail.setStatus(AdvertisementStatus.ACTIVE);
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
         advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
         return "hoarding-createLegacy";
     }

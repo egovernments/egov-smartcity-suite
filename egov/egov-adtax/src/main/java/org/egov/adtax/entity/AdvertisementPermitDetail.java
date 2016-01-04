@@ -112,8 +112,10 @@ public class AdvertisementPermitDetail extends StateAware {
 
     private BigDecimal encroachmentFee;
 
-    @JoinColumn
+    @ManyToOne
+    @JoinColumn(name = "previousapplicationid")
     private AdvertisementPermitDetail previousapplicationid;
+    
     private Boolean isActive = false;
 
     // @NotNull
@@ -129,7 +131,7 @@ public class AdvertisementPermitDetail extends StateAware {
     private String ownerDetail;
 
     @ManyToOne
-    @JoinColumn(name = "agency", nullable = false)
+    @JoinColumn(name = "agency")
     private Agency agency;
 
     @SafeHtml
