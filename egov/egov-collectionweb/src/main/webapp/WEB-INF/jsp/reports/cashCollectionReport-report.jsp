@@ -56,8 +56,8 @@
 	</iframe>
 	<br />
 	<div class="buttonbottom">
-	<button type="button" class="button"
-		id="buttonClose" value="Close" onclick="window.close()" />dsfs
+	<input name="collectionReport.close" type="button" class="button"
+		id="buttonClose" value="Close" onclick="window.close()" />
 	</div>
 </s:form>
 </body>
