@@ -47,7 +47,7 @@
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
 		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
-		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
+		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
@@ -87,9 +87,9 @@
 </div>
 <script>
 //this is to reset the sub combobox upon field error
-var subcategory = '${hoarding.subCategory.id}';
-var adminBoundry = '${hoarding.ward.id}';
-var revenueBoundary = '${hoarding.locality.id}';
+var subcategory = '${advertisement.subCategory.id}';
+var adminBoundry = '${advertisement.ward.id}';
+var revenueBoundary = '${advertisement.locality.id}';
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

@@ -53,6 +53,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -92,23 +93,23 @@ public class AdvertisementDemandService {
     }
 /**
  * 
- * @param hoarding
+ * @param advertisementPermitDetail
  * @return
  */
-    public EgDemand createDemand(final Advertisement hoarding) {
+    public EgDemand createDemand(final Advertisement advertisement) {
 
         EgDemand demand = null;
         final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
-        if (hoarding != null && hoarding.getDemandId() == null) {
-        /*    if (hoarding.getCurrentTaxAmount() != null || hoarding.getPendingTax()!=null) {
+        if (advertisement != null && advertisement.getDemandId() == null) {
+        /*    if (advertisement.getCurrentTaxAmount() != null || advertisement.getPendingTax()!=null) {
                 
-                if( hoarding.getPendingTax()!=null)
-                    taxAmount=taxAmount.add( hoarding.getPendingTax());
-                if( hoarding.getCurrentTaxAmount()!=null)
-                    taxAmount=taxAmount.add(hoarding.getCurrentTaxAmount());
+                if( advertisement.getPendingTax()!=null)
+                    taxAmount=taxAmount.add( advertisement.getPendingTax());
+                if( advertisement.getCurrentTaxAmount()!=null)
+                    taxAmount=taxAmount.add(advertisement.getCurrentTaxAmount());
                 
                 demandDetailSet.add(createDemandDetails(
                         (taxAmount),
@@ -116,12 +117,12 @@ public class AdvertisementDemandService {
                                 installment), BigDecimal.ZERO));
                 totalDemandAmount=  totalDemandAmount.add((taxAmount));
             }
-            if (hoarding.getCurrentEncroachmentFee() != null) {
+            if (advertisement.getCurrentEncroachmentFee() != null) {
                 demandDetailSet.add(createDemandDetails(
-                        (hoarding.getCurrentEncroachmentFee()),
+                        (advertisement.getCurrentEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
                                 installment), BigDecimal.ZERO));
-                totalDemandAmount= totalDemandAmount.add((hoarding.getCurrentEncroachmentFee()));
+                totalDemandAmount= totalDemandAmount.add((advertisement.getCurrentEncroachmentFee()));
             }
 */            demand = createDemand(demandDetailSet, installment, totalDemandAmount);
         }
@@ -161,11 +162,11 @@ public class AdvertisementDemandService {
     }
 /**
  * 
- * @param hoarding
+ * @param advertisement
  * @param demand
  * @return
  */
-    public EgDemand updateDemand(final Advertisement hoarding,EgDemand demand) {
+    public EgDemand updateDemand(final Advertisement advertisement,EgDemand demand) {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
@@ -173,24 +174,24 @@ public class AdvertisementDemandService {
         // Boolean calculateTax=true;
         Boolean enchroachmentFeeAlreadyExistInDemand = false;
 
-        //EgDemand demand = hoarding.getDemandId();
+        //EgDemand demand = advertisement.getDemandId();
         if (demand == null) {
-            demand = createDemand(hoarding);
+            demand = createDemand(advertisement);
         } else {
             EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(
                     AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, installment);
             EgDemandReason encroachmentFeeReason = getDemandReasonByCodeAndInstallment(
                     AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, installment);
 
-/*            if (hoarding.getCurrentTaxAmount() != null || hoarding.getPendingTax() != null) {
+      /*      if (advertisement.getCurrentTaxAmount() != null || advertisement.getPendingTax() != null) {
 
-                if (hoarding.getPendingTax() != null)
-                    taxAmount = taxAmount.add(hoarding.getPendingTax());
-                if (hoarding.getCurrentTaxAmount() != null)
-                    taxAmount = taxAmount.add(hoarding.getCurrentTaxAmount());
+                if (advertisement.getPendingTax() != null)
+                    taxAmount = taxAmount.add(advertisement.getPendingTax());
+                if (advertisement.getCurrentTaxAmount() != null)
+                    taxAmount = taxAmount.add(advertisement.getCurrentTaxAmount());
 
-            }
-*/            for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+            }*/
+            for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
                 // Assumption: tax amount is mandatory.
                 if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()
                         && taxAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -203,11 +204,11 @@ public class AdvertisementDemandService {
                 // then
 /*                if (dmdDtl.getEgDemandReason().getId() == encroachmentFeeReason.getId()) {
                     enchroachmentFeeAlreadyExistInDemand = true;
-                    if (hoarding.getCurrentEncroachmentFee() != null
-                            && hoarding.getCurrentEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
-                        totalDemandAmount = totalDemandAmount.add(hoarding.getCurrentEncroachmentFee().subtract(
+                    if (advertisement.getCurrentEncroachmentFee() != null
+                            && advertisement.getCurrentEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+                        totalDemandAmount = totalDemandAmount.add(advertisement.getCurrentEncroachmentFee().subtract(
                                 dmdDtl.getAmount()));
-                        dmdDtl.setAmount(hoarding.getCurrentEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
+                        dmdDtl.setAmount(advertisement.getCurrentEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
@@ -218,13 +219,13 @@ public class AdvertisementDemandService {
                 }
 */            }
 
-         /*   if (!enchroachmentFeeAlreadyExistInDemand && hoarding.getCurrentEncroachmentFee() != null
-                    && hoarding.getCurrentEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+         /*   if (!enchroachmentFeeAlreadyExistInDemand && advertisement.getCurrentEncroachmentFee() != null
+                    && advertisement.getCurrentEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
                 demand.addEgDemandDetails(createDemandDetails(
-                        (hoarding.getCurrentEncroachmentFee()),
+                        (advertisement.getCurrentEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
                                 installment), BigDecimal.ZERO));
-                totalDemandAmount = totalDemandAmount.add(hoarding.getCurrentEncroachmentFee());
+                totalDemandAmount = totalDemandAmount.add(advertisement.getCurrentEncroachmentFee());
             }
          */   demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
@@ -255,14 +256,14 @@ public class AdvertisementDemandService {
     }
 /**
  * 
- * @param hoarding
+ * @param advertisementPermitDetail
  * @return
  */
-    public Boolean checkAnyTaxIsPendingToCollect(final Advertisement hoarding) {
+    public Boolean checkAnyTaxIsPendingToCollect(final Advertisement advertisementPermitDetail) {
         Boolean pendingTaxCollection = false;
 
-        if (hoarding != null && hoarding.getDemandId() != null)
-            for (final EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails())
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getDemandId() != null)
+            for (final EgDemandDetails demandDtl : advertisementPermitDetail.getDemandId().getEgDemandDetails())
                 if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
                     pendingTaxCollection = true;
                     break;
@@ -362,23 +363,50 @@ public class AdvertisementDemandService {
     }
     /**
      * 
-     * @param hoarding
+     * @param advertisementPermitDetail
      * @return
      */
-    public boolean anyDemandPendingForCollection(final Advertisement hoarding) {
-        return checkAnyTaxIsPendingToCollect(hoarding);
+    public boolean anyDemandPendingForCollection(final Advertisement advertisementPermitDetail) {
+        return checkAnyTaxIsPendingToCollect(advertisementPermitDetail);
+    }
+    /**
+     * 
+     * @param advertisementPermitDetail
+     * @return
+     */
+    public boolean anyDemandPendingForCollection(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return checkAnyTaxIsPendingToCollect(advertisementPermitDetail);
     }
 
-    /*
-     * Check any amount collected in the current financial year or not.
-     */
-    public boolean collectionDoneForThisYear(final Advertisement hoarding) {
+    private boolean checkAnyTaxIsPendingToCollect(AdvertisementPermitDetail advertisementPermitDetail) {
         Boolean amountCollectedInCurrentYear = false;
-        if (hoarding != null && hoarding.getDemandId() != null) {
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement().getDemandId() != null) {
             final Installment currentInstallment = getCurrentInstallment();
 
             if (currentInstallment != null) {
-                for (final EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails())
+                for (final EgDemandDetails demandDtl : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
+                {
+                    if (demandDtl.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                            && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
+                                    .getId()) {
+                        amountCollectedInCurrentYear = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return amountCollectedInCurrentYear;
+    }
+    /*
+     * Check any amount collected in the current financial year or not.
+     */
+    public boolean collectionDoneForThisYear(final Advertisement advertisement) {
+        Boolean amountCollectedInCurrentYear = false;
+        if (advertisement != null && advertisement.getDemandId() != null) {
+            final Installment currentInstallment = getCurrentInstallment();
+
+            if (currentInstallment != null) {
+                for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
                 {
                     if (demandDtl.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                             && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
@@ -403,5 +431,107 @@ public class AdvertisementDemandService {
         List<BillReceipt> billReceiptList = new ArrayList<BillReceipt>();
         billReceiptList = demandGenericDao.getBillReceipts(demand);
         return billReceiptList;
+    }
+    public EgDemand createDemand(AdvertisementPermitDetail advertisementPermitDetail) {
+
+
+        EgDemand demand = null;
+        final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
+        final Installment installment = getCurrentInstallment();
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal taxAmount = BigDecimal.ZERO;
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement().getDemandId() == null) {
+            if (advertisementPermitDetail.getTaxAmount() != null || advertisementPermitDetail.getAdvertisement().getPendingTax()!=null) {
+                
+                if( advertisementPermitDetail.getAdvertisement().getPendingTax()!=null)
+                    taxAmount=taxAmount.add( advertisementPermitDetail.getAdvertisement().getPendingTax());
+                if( advertisementPermitDetail.getTaxAmount()!=null)
+                    taxAmount=taxAmount.add(advertisementPermitDetail.getTaxAmount());
+                
+                demandDetailSet.add(createDemandDetails(
+                        (taxAmount),
+                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
+                                installment), BigDecimal.ZERO));
+                totalDemandAmount=  totalDemandAmount.add((taxAmount));
+            }
+            if (advertisementPermitDetail.getEncroachmentFee() != null) {
+                demandDetailSet.add(createDemandDetails(
+                        (advertisementPermitDetail.getEncroachmentFee()),
+                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
+                                installment), BigDecimal.ZERO));
+                totalDemandAmount= totalDemandAmount.add((advertisementPermitDetail.getEncroachmentFee()));
+            }
+            demand = createDemand(demandDetailSet, installment, totalDemandAmount);
+        }
+
+        return demand;
+    
+    }
+    public EgDemand updateDemand(AdvertisementPermitDetail advertisementPermitDetail, EgDemand demand) {
+        final Installment installment = getCurrentInstallment();
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal taxAmount = BigDecimal.ZERO;
+
+        // Boolean calculateTax=true;
+        Boolean enchroachmentFeeAlreadyExistInDemand = false;
+
+        //EgDemand demand = advertisement.getDemandId();
+        if (demand == null) {
+            demand = createDemand(advertisementPermitDetail);
+        } else {
+            EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, installment);
+            EgDemandReason encroachmentFeeReason = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, installment);
+
+            if (advertisementPermitDetail.getTaxAmount() != null || advertisementPermitDetail.getAdvertisement().getPendingTax() != null) {
+
+                if (advertisementPermitDetail.getAdvertisement().getPendingTax() != null)
+                    taxAmount = taxAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax());
+                if (advertisementPermitDetail.getTaxAmount() != null)
+                    taxAmount = taxAmount.add(advertisementPermitDetail.getTaxAmount());
+
+            }
+            for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+                // Assumption: tax amount is mandatory.
+                if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()
+                        && taxAmount.compareTo(BigDecimal.ZERO) > 0) {
+                    // TODO: Also check whether fully collected ?
+                    totalDemandAmount = totalDemandAmount.add(taxAmount.subtract(dmdDtl.getAmount()));
+                    dmdDtl.setAmount(taxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+
+                }
+                // Encroachment fee may not mandatory. If already part of demand
+                // then
+                if (dmdDtl.getEgDemandReason().getId() == encroachmentFeeReason.getId()) {
+                    enchroachmentFeeAlreadyExistInDemand = true;
+                    if (advertisementPermitDetail.getEncroachmentFee() != null
+                            && advertisementPermitDetail.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+                        totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee().subtract(
+                                dmdDtl.getAmount()));
+                        dmdDtl.setAmount(advertisementPermitDetail.getEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
+                        // update encroachment fee..
+                    } else {
+                        totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
+                        demand.removeEgDemandDetails(dmdDtl);
+                        // delete demand detail
+                    }
+
+                }
+            }
+
+            if (!enchroachmentFeeAlreadyExistInDemand && advertisementPermitDetail.getEncroachmentFee() != null
+                    && advertisementPermitDetail.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+                demand.addEgDemandDetails(createDemandDetails(
+                        (advertisementPermitDetail.getEncroachmentFee()),
+                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
+                                installment), BigDecimal.ZERO));
+                totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+            }
+            demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+
+        }
+        return demand;
+
     }
   }

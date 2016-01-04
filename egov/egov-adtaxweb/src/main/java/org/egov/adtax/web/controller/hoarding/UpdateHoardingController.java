@@ -42,7 +42,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.validation.Valid;
 
-import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.springframework.stereotype.Controller;
@@ -58,31 +58,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UpdateHoardingController extends HoardingControllerSupport {
 
     @ModelAttribute("hoarding")
-    public Advertisement hoarding(@PathVariable final String hoardingNumber) {
-        return hoardingService.findByHoardingNumber(hoardingNumber);
+    public AdvertisementPermitDetail hoarding(@PathVariable final String applicationNumber) {
+        return advertisementPermitDetailService.getAdvertisementPermitDetailsByApplicationNumber(applicationNumber);
     }
 
-    @RequestMapping(value = "update/{hoardingNumber}")
-    public String updateHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        final Advertisement hoarding = hoardingService.getHoardingByAdvertisementNumber(hoardingNumber);
+    @RequestMapping(value = "update/{applicationNumber}")
+    public String updateHoarding(@PathVariable final String applicationNumber, final Model model) {
+        final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.getAdvertisementPermitDetailsByApplicationNumber(applicationNumber);
         
-        model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(hoarding));
-        model.addAttribute("hoarding", hoarding);
+        model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
+        model.addAttribute("hoarding", advertisementPermitDetail);
         return "hoarding-update";
     }
 
-    @RequestMapping(value = "update/{hoardingNumber}", method = POST)
-    public String updateHoarding(@Valid @ModelAttribute final Advertisement hoarding, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+    @RequestMapping(value = "update/{applicationNumber}", method = POST)
+    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
      
-        validateHoardingDocsOnUpdate(hoarding, resultBinder,redirAttrib);
+        validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder,redirAttrib);
               
         if (resultBinder.hasErrors())
             return "hoarding-update";
         try {
-            updateHoardingDocuments(hoarding);
-            hoardingService.updateHoarding(hoarding);
+            updateHoardingDocuments(advertisementPermitDetail);
+            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail);
             redirAttrib.addFlashAttribute("message", "hoarding.update.success");
-            return "redirect:/hoarding/view/" + hoarding.getAdvertisementNumber();
+            return "redirect:/hoarding/view/" + advertisementPermitDetail.getApplicationNumber();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return "hoarding-update";

@@ -89,7 +89,7 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public Advertisement createHoarding(final Advertisement hoarding) {
+    public Advertisement createAdvertisement(final Advertisement hoarding) {
         if (hoarding != null && hoarding.getId() == null)
             hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
         roundOfAllTaxAmount(hoarding);
@@ -97,11 +97,11 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public Advertisement updateHoarding(final Advertisement hoarding) throws HoardingValidationError {
+    public Advertisement updateAdvertisement(final Advertisement advertisement) throws HoardingValidationError {
 
-        getCurrentSession().evict(hoarding);
+        getCurrentSession().evict(advertisement);
 
-        final Advertisement actualHoarding = getHoardingByAdvertisementNumber(hoarding.getAdvertisementNumber());
+        final Advertisement actualHoarding = getHoardingByAdvertisementNumber(advertisement.getAdvertisementNumber());
         final boolean anyDemandPendingForCollection = advertisementDemandService
                 .anyDemandPendingForCollection(actualHoarding);
 
@@ -117,17 +117,17 @@ public class AdvertisementService {
                         || checkEncroachmentFeeChanged(hoarding, actualHoarding) || checkPendingTaxChanged(hoarding,
                             actualHoarding)))
             throw new HoardingValidationError("taxAmount", "ADTAX.002");
-     */   if (!actualHoarding.getStatus().equals(hoarding.getStatus())
-                && hoarding.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection)
+     */   if (!actualHoarding.getStatus().equals(advertisement.getStatus())
+                && advertisement.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection)
             throw new HoardingValidationError("status", "ADTAX.003");
 
         // If demand pending for collection, then only update demand details.
         // If demand fully paid and user changed tax details, then no need to
         // update demand details.
         if (anyDemandPendingForCollection)
-            advertisementDemandService.updateDemand(hoarding, actualHoarding.getDemandId());
-        roundOfAllTaxAmount(hoarding);
-        return advertisementRepository.save(hoarding);
+            advertisementDemandService.updateDemand(advertisement, actualHoarding.getDemandId());
+        roundOfAllTaxAmount(advertisement);
+        return advertisementRepository.save(advertisement);
     }
 
     private void roundOfAllTaxAmount(final Advertisement hoarding) {
