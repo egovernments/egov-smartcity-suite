@@ -98,8 +98,6 @@ public class CurrentViewDcbController {
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
-    private DCBReport dCBReport = new DCBReport();
-   
     
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
@@ -116,12 +114,6 @@ public class CurrentViewDcbController {
         return citizenrole;
     }
 
-
-   
-    @ModelAttribute("dcbReport")
-    public DCBReport dCBReportResultModel() {
-        return dCBReport;
-    }
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
@@ -141,6 +133,7 @@ public class CurrentViewDcbController {
         
         List<Receipt> cancelRcpt = new ArrayList<Receipt>();
         List<Receipt> activeRcpts = new ArrayList<Receipt>();
+        DCBReport dCBReport = new DCBReport();
   
 
         model.addAttribute("consumerCode", waterConnectionDetails.getApplicationNumber());
