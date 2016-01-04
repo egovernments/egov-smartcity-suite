@@ -30,6 +30,7 @@
  ******************************************************************************/
 package org.egov.billsaccounting.services;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -171,6 +172,7 @@ public class CreateVoucher {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     // add here for other bills
 
@@ -218,6 +220,7 @@ public class CreateVoucher {
     private VoucherHelper voucherHelper;
 
     @Autowired
+    @Qualifier("voucherService")
     private VoucherService voucherService;
 
     @Autowired

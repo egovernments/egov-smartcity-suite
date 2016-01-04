@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.services.receipt;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

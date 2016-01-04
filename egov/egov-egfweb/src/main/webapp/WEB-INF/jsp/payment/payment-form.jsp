@@ -296,7 +296,6 @@
 		<input type="submit" value="Close" onclick="javascript:window.close()" class="button"/>
 	</div>
 	
-	<div class="subheadsmallnew"></div>
 	<script>
 		function back(){
 			window.location = "/EGF/payment/payment-beforeSearch.action?salaryType";

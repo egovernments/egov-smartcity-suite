@@ -42,6 +42,7 @@
  */
 package org.egov.egf.commons;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -112,6 +113,7 @@ public class EgovCommon {
 
         private static final Logger LOGGER = Logger.getLogger(EgovCommon.class);
         @Autowired 
+@Qualifier("persistenceService")
         private PersistenceService persistenceService;
         @Autowired 
         private AppConfigValueService appConfigValuesService;

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.services.payment;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -107,6 +109,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -120,8 +123,9 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public SimpleDateFormat sdf =new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
         public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
         private @Autowired AppConfigValueService appConfigValuesService;
+        @Qualifier("persistenceService")
         private @Autowired PersistenceService persistenceService;	
-        private CreateVoucher createVoucher; 
+        private @Autowired CreateVoucher createVoucher; 
         public List<CChartOfAccounts> purchaseBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> worksBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> salaryBillGlcodeList=new ArrayList<CChartOfAccounts>();
@@ -195,7 +199,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed createPayment.");
                 return paymentheader;
         }
-        
+        @Transactional 
         public Paymentheader createPayment(Map<String,String[]> parameters,List<PaymentBean> billList,EgBillregister billregister) throws ApplicationRuntimeException,ValidationException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting createPayment...");

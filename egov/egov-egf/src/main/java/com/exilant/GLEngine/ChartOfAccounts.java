@@ -39,6 +39,7 @@
  ******************************************************************************/
 //Source file: D:\\SUSHMA\\PROJECTS\\E-GOV\\ENGINEDESIGN\\com\\exilant\\GLEngine\\ChartOfAccounts.java
 package com.exilant.GLEngine;
+import org.springframework.beans.factory.annotation.Qualifier;
 //import com.exilant.eGov.src.domain.GeneralLedger;
 import java.math.BigDecimal;
 import java.sql.Connection;

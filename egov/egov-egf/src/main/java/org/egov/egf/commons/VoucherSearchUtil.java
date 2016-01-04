@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.egf.commons;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class VoucherSearchUtil {
 	@Autowired  private AppConfigValueService appConfigValuesService;
+@Qualifier("persistenceService")
 	private PersistenceService persistenceService;
 	private static final Logger LOGGER=Logger.getLogger(VoucherSearchUtil.class);
 	private FinancialYearDAO financialYearDAO;

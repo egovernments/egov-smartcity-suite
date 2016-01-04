@@ -46,6 +46,7 @@
 
 package org.egov.deduction.client;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;

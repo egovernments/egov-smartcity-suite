@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.services.voucher;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.ParseException;
@@ -127,10 +128,11 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
         private static final Logger     LOGGER  = Logger.getLogger(VoucherService.class);
-        protected PersistenceService persistenceService;
+        protected  PersistenceService persistenceService;
         protected EisCommonService eisCommonService;
         private BudgetDetailsDAO budgetDetailsDAO;
         private @Autowired AppConfigValueService appConfigValuesService;	
+        @Qualifier("voucherHibDAO")
         private VoucherHibernateDAO voucherHibDAO;
         @Autowired
         private ChartOfAccountsDAO coaDAO;

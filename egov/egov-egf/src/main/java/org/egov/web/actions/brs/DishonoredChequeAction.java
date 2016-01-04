@@ -1,5 +1,6 @@
 package org.egov.web.actions.brs;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,6 +45,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     private Date chqDDDate;
     private EgovPaginatedList paginatedList;
     @Autowired
+    @Qualifier("receiptService")
     private ReceiptService receiptService;
     @Autowired
     private InstrumentService instrumentService;
