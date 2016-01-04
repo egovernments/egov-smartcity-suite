@@ -63,12 +63,12 @@
 						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="%{selectedModeBndry}"/> 
 							<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
-										name="Zone" /> :</label>
+										name="Ward" /> :</label>
 								<div class="col-sm-6 add-margin">
 									<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="zoneId"
-										id="zoneId" listKey="key" listValue="value"
-										list="ZoneBndryMap" cssClass="form-control" value="%{zoneId}" />
+										headerValue="%{getText('default.select')}" name="wardId"
+										id="wardId" listKey="key" listValue="value"
+										list="wardBndryMap" cssClass="form-control" value="%{wardId}" />
 								</div>
 							</div>
 						</div>
