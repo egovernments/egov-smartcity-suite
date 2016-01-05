@@ -38,18 +38,57 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 
-package org.egov.tl.domain.repository;
+package org.egov.tl.domain.service;
 
 
-import org.egov.tl.domain.entity.LicenseAppType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.tl.domain.entity.Validity;
+import org.egov.tl.domain.repository.ValidityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
-@Repository 
-public interface LicenseAppTypeRepository extends JpaRepository<LicenseAppType,Long> {
+@Service 
+@Transactional(readOnly = true)
+public class ValidityService  {
 
-LicenseAppType findByName(String name);
+	private final ValidityRepository validityRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 
+	@Autowired
+	public ValidityService(final ValidityRepository validityRepository) {
+		this.validityRepository = validityRepository;
+	}
+	
+	
+
+	@Transactional
+	public Validity create(final Validity validity) {
+		return validityRepository.save(validity);
+	} 
+	@Transactional
+	public Validity update(final Validity validity) {
+		return validityRepository.save(validity);
+	} 
+	public List<Validity> findAll() {
+		return validityRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+	}
+	
+	public Validity findOne(Long id) {
+		return validityRepository.findOne(id);
+	}
+
+
+	public List<Validity> search(Validity validity) {
+		return new ArrayList<Validity>();
+	}
+	
 }

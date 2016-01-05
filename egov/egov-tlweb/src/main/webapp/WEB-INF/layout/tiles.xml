@@ -113,4 +113,26 @@
 	
 
 
+<definition name="validity-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.validity.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/validity/validity-new.jsp"/>
+</definition>
+<definition name="validity-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.validity.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/validity/validity-result.jsp"/>
+</definition>
+
+<definition name="validity-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.validity.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/validity/validity-view.jsp"/>
+</definition>
+
+<definition name="validity-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.validity.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/validity/validity-edit.jsp"/>
+</definition>
+
+
+
+
 </tiles-definitions>

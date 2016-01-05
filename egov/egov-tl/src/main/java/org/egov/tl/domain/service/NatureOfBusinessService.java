@@ -37,19 +37,51 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-
-package org.egov.tl.domain.repository;
-
-
-import org.egov.tl.domain.entity.LicenseAppType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+package org.egov.tl.domain.service;
 
 
-@Repository 
-public interface LicenseAppTypeRepository extends JpaRepository<LicenseAppType,Long> {
 
-LicenseAppType findByName(String name);
 
+import java.util.List;
+
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.tl.domain.entity.NatureOfBusiness;
+import org.egov.tl.domain.repository.NatureOfBusinessRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+@Service 
+@Transactional(readOnly = true)
+public class NatureOfBusinessService  {
+
+	private final NatureOfBusinessRepository natureOfBusinessRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@Autowired
+	public NatureOfBusinessService(final NatureOfBusinessRepository natureOfBusinessRepository) {
+		this.natureOfBusinessRepository = natureOfBusinessRepository;
+	}
+
+	@Transactional
+	public NatureOfBusiness create(final NatureOfBusiness natureOfBusiness) {
+		return natureOfBusinessRepository.save(natureOfBusiness);
+	} 
+	@Transactional
+	public NatureOfBusiness update(final NatureOfBusiness natureOfBusiness) {
+		return natureOfBusinessRepository.save(natureOfBusiness);
+	} 
+	public List<NatureOfBusiness> findAll() {
+		return natureOfBusinessRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+	}
+	public NatureOfBusiness findByName(String name){
+		return natureOfBusinessRepository.findByName(name);
+	}
 }

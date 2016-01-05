@@ -188,8 +188,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             populateWorkflowBean();
             service().transitionWorkFlow(license(), workflowBean);
             persistenceService.applyAuditing(license().getState());
-            persistenceService.create(license());
+            service().getPersistenceService().create(license);
         } catch (final RuntimeException e) {
+        	e.printStackTrace();
             loadAjaxedDropDowns();
             throw e;
         }

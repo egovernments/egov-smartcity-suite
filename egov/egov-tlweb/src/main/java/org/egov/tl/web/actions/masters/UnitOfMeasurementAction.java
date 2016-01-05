@@ -16,6 +16,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.domain.entity.UnitOfMeasurement;
 import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = UnitOfMeasurementAction.NEW, location = "unitOfMeasurement-new.jsp"),
@@ -34,6 +35,7 @@ public class UnitOfMeasurementAction extends BaseFormAction {
     private Map<Long, String> licenseUomMap;
 
     @Autowired
+    @Qualifier("unitOfMeasurementService")
     private UnitOfMeasurementService unitOfMeasurementService;
 
     private static final Logger LOGGER = Logger.getLogger(UnitOfMeasurementAction.class);
