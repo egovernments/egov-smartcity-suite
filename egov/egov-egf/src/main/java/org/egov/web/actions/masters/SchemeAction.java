@@ -63,11 +63,11 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
-@Results({ 
-		@Result(name = SchemeAction.NEW, location = "scheme-new.jsp"),
-		@Result(name = SchemeAction.SEARCH, location = "scheme-search.jsp"),
-		@Result(name = SchemeAction.VIEW, location = "scheme-view.jsp"),
-        @Result(name = SchemeAction.UNIQUECHECKFIELD, location = "scheme-fieldUniqueCheck.jsp") })
+@Results({
+    @Result(name = SchemeAction.NEW, location = "scheme-new.jsp"),
+    @Result(name = SchemeAction.SEARCH, location = "scheme-search.jsp"),
+    @Result(name = SchemeAction.VIEW, location = "scheme-view.jsp"),
+    @Result(name = SchemeAction.UNIQUECHECKFIELD, location = "scheme-fieldUniqueCheck.jsp") })
 public class SchemeAction extends BaseFormAction {
 
     private static final long serialVersionUID = 5697760395477552986L;
@@ -98,14 +98,14 @@ public class SchemeAction extends BaseFormAction {
         super.prepare();
         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
-      
+
     }
 
     @SkipValidation
     @Action(value = "/masters/scheme-newForm")
     public String newForm() {
-    	scheme.reset();
-    	if (LOGGER.isDebugEnabled())
+        scheme.reset();
+        if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside NewForm method..");
         mode = NEW;
         return NEW;
@@ -152,7 +152,7 @@ public class SchemeAction extends BaseFormAction {
             query.append(" where scheme.fund=" + scheme.getFund().getId());
         if (scheme.getValidfrom() != null && scheme.getValidto() != null)
             query.append(" and scheme.validfrom>='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()) + "'")
-                    .append("and scheme.validto<='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()) + "'");
+            .append("and scheme.validto<='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()) + "'");
         else if (scheme.getValidfrom() != null)
             query.append(" and scheme.validfrom>='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()) + "'");
         else if (scheme.getValidto() != null)
@@ -163,6 +163,7 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("Scheme List Size is" + schemeList.size());
         return SEARCH;
     }
+
     @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "fund", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "code", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "name", message = "", key = REQUIRED),
@@ -189,14 +190,12 @@ public class SchemeAction extends BaseFormAction {
         return NEW;
     }
 
-    
-
     @ValidationErrorPage(value = NEW)
     @Action(value = "/masters/scheme-create")
     public String create() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("............................Creating New Scheme method.......................");
-       
+
         try {
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
@@ -288,6 +287,5 @@ public class SchemeAction extends BaseFormAction {
     public void setSchemeService(final SchemeService schemeService) {
         this.schemeService = schemeService;
     }
-
 
 }

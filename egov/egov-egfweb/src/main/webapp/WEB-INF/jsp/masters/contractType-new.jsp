@@ -37,13 +37,13 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title><s:text name="contract.create"/></title>
-    <sx:head/>
-     <script type="text/javascript">
+<html>
+<head>
+<title><s:text name="contract.create" /></title>
+<sx:head />
+<script type="text/javascript">
 
 						function onLoadTask() {
 							var close = '<s:property value="close"/>';
@@ -68,30 +68,37 @@
 					</script>
 </head>
 <body onload="onLoadTask();">
-	<div class="formmainbox"><div class="subheadnew"><s:text name="contract.create"/></div>
-		 
-		<s:form name="contractForm" action="contractType" theme="css_xhtml" validate="true">
-		<s:push value="model">
-			<div style="color: red">
-				<s:actionmessage theme="css_xhtml" />
-				<s:actionerror />
-				<s:fielderror />
-			</div>
-			<%@include file="contractType-form.jsp"%>
-		<div class="buttonbottom" align="center"> 
-		<table align="center">
-			<tr class="buttonbottom" id="buttondiv" style="align:middle" >
-				<td><s:submit name="create" value="Save & New" method="create" cssClass="buttonsubmit"/></td>
-				<td><s:submit name="create" value="Save & Close" method="create" cssClass="buttonsubmit" onclick="setClose();"/></td>
-				<s:hidden name="close" id="close"/>
-				<td><input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/></td>
-			</tr>
-		</table>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="contract.create" />
 		</div>
-		</div>
-		<s:token/>
-		</s:push>
-		</s:form>
+
+		<s:form name="contractForm" action="contractType" theme="css_xhtml"
+			validate="true">
+			<s:push value="model">
+				<div style="color: red">
+					<s:actionmessage theme="css_xhtml" />
+					<s:actionerror />
+					<s:fielderror />
+				</div>
+				<%@include file="contractType-form.jsp"%>
+				<div class="buttonbottom" align="center">
+					<table align="center">
+						<tr class="buttonbottom" id="buttondiv" style="align: middle">
+							<td><s:submit name="create" value="Save & New"
+									method="create" cssClass="buttonsubmit" /></td>
+							<td><s:submit name="create" value="Save & Close"
+									method="create" cssClass="buttonsubmit" onclick="setClose();" /></td>
+							<s:hidden name="close" id="close" />
+							<td><input type="button" id="Close" value="Close"
+								onclick="javascript:window.close()" class="button" /></td>
+						</tr>
+					</table>
+				</div>
+	</div>
+	<s:token />
+	</s:push>
+	</s:form>
 	</div>
 </body>
 </html>

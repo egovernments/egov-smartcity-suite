@@ -37,10 +37,10 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-	<script>
+<script>
 		function populateParent(){
 			var finYear = document.getElementById('financialYear');
 			if(finYear.value == -1)
@@ -83,52 +83,74 @@
 		}
 		
 	</script>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<s:push value="model">
-			<tr>
-				<td class="bluebox" width="10%">&nbsp;</td>
-				<td class="bluebox"><s:text name="budget.budgetname"/> <span class="mandatory"></span></td>
-				<td class="bluebox"><s:textfield name="name" id="name" maxlength="50" size="60"/><span class="highlight2">Max. 50 characters</span></td>
-			</tr>
-			<tr>
-				<td class="greybox">&nbsp;</td>
-				<td class="greybox"><s:text name="budget.bere"/> <span class="mandatory"></span></td>
-				<td class="greybox"><s:radio name="isbere" list="isbereList" onchange="populateParent()"/></td>
-			</tr>
-			<tr>
-				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><s:text name="budget.financialYear"/> <span class="mandatory"></span></td>
-				<td class="bluebox"><s:select name="financialYear" id="financialYear" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="-1" headerValue="----Select----"  value="%{financialYear.id}" onchange="populateReferenceBudgets();populateParent()"/> </td>
-			</tr>
-			<tr>
-				<td class="greybox">&nbsp;</td>
-				<egov:ajaxdropdown id="parentId" fields="['Text','Value']" dropdownId="parentId" url="budget/budget!ajaxLoadParentBudgets.action"/>
-				<td class="greybox"><s:text name="budget.parent"/></td>
-				<td class="greybox"><s:select name="parentId" id="parentId" list="parMap"  headerKey="-1"  headerValue="----Select----"  value="%{parentId}"/></td>
-			</tr>
-			<tr>
-				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><s:text name="budget.description"/></td>
-				<td class="bluebox"><s:textarea name="description" id="description" cols="50" rows="5"/><span class="highlight2">Max. 250 characters</span></td>
-			</tr>
-			<tr>
-				<td class="greybox">&nbsp;</td>
-				<td class="greybox"><s:text name="budget.activebudget"/></td>
-				<td class="greybox"><s:checkbox name="isActiveBudget" id="isActiveBudget" /></td>
-			</tr>
-			<tr>
-				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><s:text name="budget.primarybudget"/></td>
-				<td class="bluebox"><s:checkbox name="isPrimaryBudget" id="isPrimaryBudget"/></td>
-			</tr>
-			<tr>
-				<td class="greybox">&nbsp;</td>
-				<td class="greybox"><div id="refBudgetLabel"><s:text name="budget.referencebudget"/></div></td>
-				<td class="greybox">
-					<div id="result">
-						<s:select name="referenceId" listKey="id" listValue="name" id="referenceId" list="referenceBudgetList"  headerKey="-1"  headerValue="----Select----"  value="%{referenceId}"/>
-					</div>
-				</td>
-			</tr>
-			</s:push>
-		</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<s:push value="model">
+		<tr>
+			<td class="bluebox" width="10%">&nbsp;</td>
+			<td class="bluebox"><s:text name="budget.budgetname" /> <span
+				class="mandatory"></span></td>
+			<td class="bluebox"><s:textfield name="name" id="name"
+					maxlength="50" size="60" /><span class="highlight2">Max. 50
+					characters</span></td>
+		</tr>
+		<tr>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="budget.bere" /> <span
+				class="mandatory"></span></td>
+			<td class="greybox"><s:radio name="isbere" list="isbereList"
+					onchange="populateParent()" /></td>
+		</tr>
+		<tr>
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox"><s:text name="budget.financialYear" /> <span
+				class="mandatory"></span></td>
+			<td class="bluebox"><s:select name="financialYear"
+					id="financialYear" list="dropdownData.financialYearList"
+					listKey="id" listValue="finYearRange" headerKey="-1"
+					headerValue="----Select----" value="%{financialYear.id}"
+					onchange="populateReferenceBudgets();populateParent()" /></td>
+		</tr>
+		<tr>
+			<td class="greybox">&nbsp;</td>
+			<egov:ajaxdropdown id="parentId" fields="['Text','Value']"
+				dropdownId="parentId"
+				url="budget/budget!ajaxLoadParentBudgets.action" />
+			<td class="greybox"><s:text name="budget.parent" /></td>
+			<td class="greybox"><s:select name="parentId" id="parentId"
+					list="parMap" headerKey="-1" headerValue="----Select----"
+					value="%{parentId}" /></td>
+		</tr>
+		<tr>
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox"><s:text name="budget.description" /></td>
+			<td class="bluebox"><s:textarea name="description"
+					id="description" cols="50" rows="5" /><span class="highlight2">Max.
+					250 characters</span></td>
+		</tr>
+		<tr>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="budget.activebudget" /></td>
+			<td class="greybox"><s:checkbox name="isActiveBudget"
+					id="isActiveBudget" /></td>
+		</tr>
+		<tr>
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox"><s:text name="budget.primarybudget" /></td>
+			<td class="bluebox"><s:checkbox name="isPrimaryBudget"
+					id="isPrimaryBudget" /></td>
+		</tr>
+		<tr>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><div id="refBudgetLabel">
+					<s:text name="budget.referencebudget" />
+				</div></td>
+			<td class="greybox">
+				<div id="result">
+					<s:select name="referenceId" listKey="id" listValue="name"
+						id="referenceId" list="referenceBudgetList" headerKey="-1"
+						headerValue="----Select----" value="%{referenceId}" />
+				</div>
+			</td>
+		</tr>
+	</s:push>
+</table>

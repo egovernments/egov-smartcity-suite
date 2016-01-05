@@ -37,16 +37,14 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>
-<s:text name="billInfoFetch.title"/> 
-</title>
-<sx:head/>
+<title><s:text name="billInfoFetch.title" /></title>
+<sx:head />
 <script type="text/javascript">
 	<s:if test="%{hasActionMessages()}">
 		undoLoadingMask();
@@ -54,12 +52,11 @@
 </script>
 </head>
 <script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-<body> 
+<body>
 	<s:actionmessage />
-	<s:actionerror/>
+	<s:actionerror />
 	<s:form name="billInfoFetchForm" id="billInfoFetchForm"
-		action="eBBillInfoFetch" theme="css_xhtml"
-		validate="true">
+		action="eBBillInfoFetch" theme="css_xhtml" validate="true">
 		<s:token />
 		<div class="formmainbox"></div>
 		<div class="formheading" />
@@ -71,12 +68,10 @@
 			<tr>
 				<td colspan="2" width="50%" style="text-align: right;"><s:text
 						name="billingCycle" /><span class="mandatory">*</span> :</td>
-				<td colspan="2" width="50%">
-					<s:select name="billingCycle"
+				<td colspan="2" width="50%"><s:select name="billingCycle"
 						id="oddOrEvenBilling" list="dropdownData.billingCycles"
-						headerKey="" headerValue="%{getText('default.select')}" />
-					<s:hidden name="type" />
-				</td>
+						headerKey="" headerValue="%{getText('default.select')}" /> <s:hidden
+						name="type" /></td>
 
 			</tr>
 		</table>

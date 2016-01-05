@@ -37,26 +37,27 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>Remittance Recovery  Approval</title>
-   
+<html>
+<head>
+<title>Remittance Recovery Approval</title>
+
 </head>
-	<body onload="refreshInbox()">  
-		<s:form action="preApprovedVoucher" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Remittance Recovery -Approval" />
-			</jsp:include>
-			<span class="mandatory">
-				<s:actionmessage /> 
-			</span>
-			<br/>
-			<s:submit cssClass="button" id="printPreview" value="Print Preview"  onclick="printVoucher()"/>
-			<input type="submit" value="Close" onclick="javascript:window.close()" class="button"/>
-			</s:form>
-<script>
+<body onload="refreshInbox()">
+	<s:form action="preApprovedVoucher" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Remittance Recovery -Approval" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionmessage />
+		</span>
+		<br />
+		<s:submit cssClass="button" id="printPreview" value="Print Preview"
+			onclick="printVoucher()" />
+		<input type="submit" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</s:form>
+	<script>
 	function refreshInbox()
 	{
 		
@@ -69,6 +70,6 @@ function printVoucher(){
 }
 </script>
 
-	</body>  
+</body>
 
 </html>

@@ -137,10 +137,10 @@
 							headerValue="--- Select ---" value="model.purpose"></s:select></td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.accountDetailType" />:</strong></td>
-					<td width="22%" ><s:select
+					<td width="22%"><s:select
 							list="dropdownData.accountDetailTypeList" listKey="id"
-							listValue="name" name="accountDetailTypeList" multiple="true" size = "5"
-							value="%{accountDetailTypeList.{id}}"></s:select></td>
+							listValue="name" name="accountDetailTypeList" multiple="true"
+							size="5" value="%{accountDetailTypeList.{id}}"></s:select></td>
 				</tr>
 				<tr>
 					<td width="20%" class="greybox">&nbsp;</td>

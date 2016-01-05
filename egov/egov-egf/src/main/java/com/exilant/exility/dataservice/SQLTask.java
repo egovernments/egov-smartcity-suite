@@ -1,45 +1,43 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package com.exilant.exility.dataservice;
-
-import com.exilant.exility.common.*;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -47,60 +45,67 @@ import java.util.HashMap;
 
 import org.egov.infstr.utils.EGovConfig;
 
+import com.exilant.exility.common.AbstractTask;
+import com.exilant.exility.common.DataCollection;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.common.XMLLoader;
+
 public class SQLTask extends AbstractTask {
-	static private SQLTask singletonInstance;
-	
-	//declaration for XML Loader, field not used anywhere
-	protected SQLTemplate sqlTemplate;
-	public HashMap sqlTemplates;
-	
-	//singleton 
-	public static SQLTask getTask()
-	{
-		if (singletonInstance == null)singletonInstance = new SQLTask();
-		return singletonInstance;
-	}
+    static private SQLTask singletonInstance;
 
+    // declaration for XML Loader, field not used anywhere
+    protected SQLTemplate sqlTemplate;
+    public HashMap sqlTemplates;
 
-	private SQLTask()
-	{
-		super();
-		//load all statements ... may be this is too many for a project.
-		// let us go with this approach at this time...
-		XMLLoader xmlLoader = new XMLLoader();
-		URL url = EGovConfig.class.getClassLoader().getResource("config/resource/sqlTemplates.xml");
-		//if(LOGGER.isDebugEnabled())     LOGGER.debug("url in SQLTask=================="+url);
-		xmlLoader.load(url.toString(),this);
-	}
-	
-	public String getSQL(String serviceID, DataCollection dc, Connection con) throws TaskFailedException
-	{
-		//locate the statement fromHashMap
-		SQLTemplate template = (SQLTemplate)this.sqlTemplates.get(serviceID);//Get based on the Id from the hashmap.
-		if (template == null)
-		{
-			dc.addMessage("exilNoSQLTemplate", serviceID);
-			throw new TaskFailedException() ;	
-		}
-		return template.getSQL(dc);
-		
-	}
-	
-	public void execute(String  serviceID,
-						String gridName,
-						DataCollection dc,
-						Connection con,
-						boolean erronNoData,
-						boolean gridHasColumnHeading, 
-						String prefix) throws TaskFailedException
-						{
-		//locate the statement fromHashMap
-		SQLTemplate template = (SQLTemplate)this.sqlTemplates.get(serviceID);//Get based on the Id from the hashmap.
-		if (template == null)
-		{
-			dc.addMessage("exilNoSQLTemplate", serviceID);
-			throw new TaskFailedException() ;	
-		}
-		String sql = this.getSQL(serviceID, dc, con);		
-		this.extractData(sql, gridName, dc, con, erronNoData, gridHasColumnHeading, prefix);	}
+    // singleton
+    public static SQLTask getTask()
+    {
+        if (singletonInstance == null)
+            singletonInstance = new SQLTask();
+        return singletonInstance;
+    }
+
+    private SQLTask()
+    {
+        super();
+        // load all statements ... may be this is too many for a project.
+        // let us go with this approach at this time...
+        final XMLLoader xmlLoader = new XMLLoader();
+        final URL url = EGovConfig.class.getClassLoader().getResource("config/resource/sqlTemplates.xml");
+        // if(LOGGER.isDebugEnabled()) LOGGER.debug("url in SQLTask=================="+url);
+        xmlLoader.load(url.toString(), this);
+    }
+
+    public String getSQL(final String serviceID, final DataCollection dc, final Connection con) throws TaskFailedException
+    {
+        // locate the statement fromHashMap
+        final SQLTemplate template = (SQLTemplate) sqlTemplates.get(serviceID);// Get based on the Id from the hashmap.
+        if (template == null)
+        {
+            dc.addMessage("exilNoSQLTemplate", serviceID);
+            throw new TaskFailedException();
+        }
+        return template.getSQL(dc);
+
+    }
+
+    @Override
+    public void execute(final String serviceID,
+            final String gridName,
+            final DataCollection dc,
+            final Connection con,
+            final boolean erronNoData,
+            final boolean gridHasColumnHeading,
+            final String prefix) throws TaskFailedException
+    {
+        // locate the statement fromHashMap
+        final SQLTemplate template = (SQLTemplate) sqlTemplates.get(serviceID);// Get based on the Id from the hashmap.
+        if (template == null)
+        {
+            dc.addMessage("exilNoSQLTemplate", serviceID);
+            throw new TaskFailedException();
+        }
+        final String sql = getSQL(serviceID, dc, con);
+        extractData(sql, gridName, dc, con, erronNoData, gridHasColumnHeading, prefix);
+    }
 }

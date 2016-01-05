@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,12 +73,12 @@ import com.exilant.exility.common.TaskFailedException;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = "detailed-code", location = "chartOfAccounts-detailed-code.jsp"),
-        @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
-        @Result(name = Constants.EDIT, location = "chartOfAccounts-edit.jsp"),
-        @Result(name = Constants.VIEW, location = "chartOfAccounts-view.jsp"),
-        @Result(name = "new", location = "chartOfAccounts-new.jsp"),
-        @Result(name = "generated-glcode", location = "chartOfAccounts-generated-glcode.jsp") })
+    @Result(name = "detailed-code", location = "chartOfAccounts-detailed-code.jsp"),
+    @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
+    @Result(name = Constants.EDIT, location = "chartOfAccounts-edit.jsp"),
+    @Result(name = Constants.VIEW, location = "chartOfAccounts-view.jsp"),
+    @Result(name = "new", location = "chartOfAccounts-new.jsp"),
+    @Result(name = "generated-glcode", location = "chartOfAccounts-generated-glcode.jsp") })
 public class ChartOfAccountsAction extends BaseFormAction {
     private static final long serialVersionUID = 3393565721493478018L;
     private static final long LONG_FOUR = 4l;
@@ -406,7 +405,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setGlcode(StringUtils.leftPad("", glCodeLengths.get(classification), '0'));
     }
 
-@Action(value="/masters/chartOfAccounts-save")
+    @Action(value = "/masters/chartOfAccounts-save")
     public String save() throws Exception {
         if (generatedGlcode == null || newGlcode == null) {
             addActionMessage(getText("chartOfAccount.invalid.glcode"));

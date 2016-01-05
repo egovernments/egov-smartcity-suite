@@ -37,16 +37,19 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title><s:text name="bill.salarybill.register"/></title>
-    <link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-	<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/payment.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-	<script type="text/javascript">
+<html>
+<head>
+<title><s:text name="bill.salarybill.register" /></title>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet"
+	type="text/css" />
+<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/payment.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript">
 	var path="${pageContext.request.contextPath}";
 	function disableControls(frmIndex, isDisable){
 		for(var i=0;i<document.forms[frmIndex].length;i++){
@@ -133,20 +136,22 @@
 		</s:iterator>
 	}
 	</script>
-</head> 
-	<body onload="disableControls(0, true);onLoadTask();populateFunctionName();computeTotal();">  
-		<s:form action="salaryBillRegister" theme="simple" name="salaryBill">  
-			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox"><div class="subheadnew"><s:text name="bill.salarybill.register"/></div>
-				<%@ include file='salaryBillRegister-form.jsp'%>
+</head>
+<body
+	onload="disableControls(0, true);onLoadTask();populateFunctionName();computeTotal();">
+	<s:form action="salaryBillRegister" theme="simple" name="salaryBill">
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="bill.salarybill.register" />
 			</div>
-			<div class="buttonbottom">
-				<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
-			</div>
-		</s:form>  
-	</body>  
+			<%@ include file='salaryBillRegister-form.jsp'%>
+		</div>
+		<div class="buttonbottom">
+			<s:submit value="Close" onclick="javascript: self.close()"
+				cssClass="button" />
+		</div>
+	</s:form>
+</body>
 </html>

@@ -8,4 +8,3 @@ import org.springframework.transaction.annotation.Transactional;
 public class BankService extends PersistenceService<Bank, Integer> {
 
 }
-

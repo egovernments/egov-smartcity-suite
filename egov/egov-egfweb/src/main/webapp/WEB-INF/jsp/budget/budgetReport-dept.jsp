@@ -37,15 +37,15 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <%@ page import="org.egov.budget.model.*"%>
 <jsp:include page="budgetHeader.jsp">
-    <jsp:param name="heading" value="Budget Report - Departmentwise" />
-</jsp:include> 
-<s:actionmessage theme="simple"/>
-<s:actionerror/>  
-<s:fielderror />  
+	<jsp:param name="heading" value="Budget Report - Departmentwise" />
+</jsp:include>
+<s:actionmessage theme="simple" />
+<s:actionerror />
+<s:fielderror />
 <script>
 	function popUp(url) {
 		newwindow=window.open(url,'name','height=200,width=150');
@@ -53,17 +53,22 @@
 		return false;
 	}
 </script>
-<s:actionmessage theme="simple"/>
-<s:form name="budgetDetailReportForm" action="budgetReport" theme="simple" >
-	<div class="formmainbox"><div class="subheadnew">Budget Report - Departmentwise</div>
-		<%@include file="budgetReport-form.jsp" %>
-		<div class="buttonbottom" style="padding-bottom:10px;">
-			<s:submit value="PRINT " method="printDepartmentWiseReport" cssClass="buttonsubmit"/>
-			<s:submit value="SAVE AS PDF" method="generateDepartmentWisePdf" cssClass="buttonsubmit"/>
-			<s:submit value="SAVE AS EXCEL" method="generateDepartmentWiseXls" cssClass="buttonsubmit"/>       
+<s:actionmessage theme="simple" />
+<s:form name="budgetDetailReportForm" action="budgetReport"
+	theme="simple">
+	<div class="formmainbox">
+		<div class="subheadnew">Budget Report - Departmentwise</div>
+		<%@include file="budgetReport-form.jsp"%>
+		<div class="buttonbottom" style="padding-bottom: 10px;">
+			<s:submit value="PRINT " method="printDepartmentWiseReport"
+				cssClass="buttonsubmit" />
+			<s:submit value="SAVE AS PDF" method="generateDepartmentWisePdf"
+				cssClass="buttonsubmit" />
+			<s:submit value="SAVE AS EXCEL" method="generateDepartmentWiseXls"
+				cssClass="buttonsubmit" />
 		</div>
 	</div>
-</s:form>  
+</s:form>
 <script>
 	document.getElementById('function').style.display="none";
 	document.getElementById('function_label').style.visibility="hidden";

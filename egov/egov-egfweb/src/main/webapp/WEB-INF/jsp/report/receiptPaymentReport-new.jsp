@@ -37,174 +37,210 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 
 <html>
-  <head>
-    <title>
-			<s:text name="receipt.payment.report"/>	    	
-	</title>
-  
-  </head>
-  
-  <body onload="bodyOnLoad();">
-	<div class="formmainbox"><div class="subheadnew"><s:text name="receipt.payment.report"/></div>
-	
-	<br/><br/>
-	
-	<s:form name="receiptPaymentReportForm" action="receiptPaymentReport" theme="simple" >
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    		<tr>
-    			<td  class="bluebox" width="15%"></td>
-				<td  class="bluebox" width="15%">
-					<s:text name="report.financialYear.report"/><span class="mandatory">*</span>
-				</td>
-				<td class="bluebox"><s:select list="dropdownData.financialYearList"  listKey="id" listValue="finYearRange" name="financialYear.id" headerKey="0" headerValue="--- Select ---" value="%{model.financialYear.id}" id="financialYear"></s:select></td>
-				<td  class="bluebox" width="15%">
-				<s:text name="report.period"/><span class="mandatory">*</span>
-				</td>
-				<td  class="bluebox" width="15%">
-				<s:select name="period" id="period" onchange="checkSelected(this)" list="#{'Yearly':'Yearly','Date Range':'Date Range'}" headerKey="0" headerValue="--- Select ---" value="%{model.period}"/>
-				</td>
-			</tr>
-			
-			<tr>
-				<td  class="greybox" width="15%"></td>
-				<td  class="greybox" width="15%">
-					<s:text name="report.fund"/>
-				</td>
-				<td class="greybox"><s:select list="dropdownData.fundList"  listKey="id" listValue="name" name="fund.id" headerKey="0" headerValue="--- Select ---" value="%{model.fund.id}" id="fund"></s:select></td>
-				<td  class="greybox" width="15%">
-				<s:text name="report.rupees"/><span class="mandatory">*</span>
-				</td>
-				<td  class="greybox" width="15%">
-				<s:select name="currency" id="currency" list="#{'Rupees':'Rupees','Thousands':'Thousands','Lakhs':'Lakhs'}" headerKey="0" headerValue="--- Select ---" value="%{model.currency}"/>
-				</td>
-			</tr>
-			
-			<tr id="dateran">
-				<td class="greybox" width="15%">&nbsp;</td>
-				<td class="greybox" width="10%">From Date:<span class="mandatory">*</span></td>
-				<td class="greybox">
-					<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px" value='%{model.fromDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('receiptPaymentReportForm.fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-				</td>
-				
-				<td class="greybox" width="10%">To Date:<span class="mandatory">*</span></td>
-				<td class="greybox">
-					<s:textfield name="toDate" id="toDate" cssStyle="width:100px" value='%{model.toDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('receiptPaymentReportForm.toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-				</td>
-			</tr>
-		
-    	</table>
-    	
-    	<br/><br/>
-    	
-    	<div class="buttonbottom">
-			<s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="return validate();"/>
-			<s:submit method="exportReceiptPaymentPdf"  value="EXPORT PDF" cssClass="buttonsubmit"   onclick="return validate();"/>
-			<s:submit method="exportReceiptPaymentXls"  value="EXPORT XLS" cssClass="buttonsubmit"   onclick="return validate();"/>
-			<input type="button" value="Close" onclick="javascript: self.close()" Class="button"/>
-		</div>
-		<s:if test="%{model.entries.size!=0}">
-		<!-- <div align="center" class="extracontent"><h4><s:property value="fundType"/>  <s:property value="budgetType"/></h4></div> 
-		<div align="right" class="extracontent"><b>Amount in Thousands</b></div> -->  
-		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom"> 
-		<tr>
-            <td  colspan="12">
-			<div class="subheadsmallnew"><strong><s:property value="header"/></strong></div></td>
-          </tr>
-          <tr>
-          <td class="bluebox" colspan="4"> <strong><s:text name="report.run.date"/>:<s:date name="todayDate" format="dd/MM/yyyy"/></strong>
-	    	</td>
-            <td  colspan="11">
-			<div class="blueborderfortd" align="right"><strong> <s:text name="report.amount.in"/> <s:property value="model.currency"/>&nbsp;&nbsp;&nbsp;&nbsp;</strong></div></td>
-          </tr>
-		<tr>
+<head>
+<title><s:text name="receipt.payment.report" /></title>
 
-			<th class="bluebgheadtd"  style="width:6%;text-align:center" align="center">
-			</th>
-			<th class="bluebgheadtd"  style="width:42%;text-align:center" align="center">
-				Head Of Account
-			</th>
-			<th class="bluebgheadtd"  style="width:13%;text-align:center" align="center">
-				Schedule No
-			</th>
-			
-			<s:if test="%{model.funds.size()>1}" >
-			<s:iterator value="model.funds" status="stat">
-            	<th class="bluebgheadtd"><s:property value="name"/> </th>
-			</s:iterator>
-		</s:if>	
-			<th class="bluebgheadtd"  style="width:13%;text-align:center" align="center">
-				<s:property value="currentYearToDate"/>
-			</th>
-			<th class="bluebgheadtd"  style="width:13%;text-align:center" align="center">
-				<s:property value="previousYearToDate"/>
-			</th>
-		</tr>
-		<c:set var="trclass" value="greybox"/>
-		<s:iterator  value="model.entries" status="stat">
-		<tr>
-			<s:if test='%{accountName == "Operating Payment" || accountName == "Payments"|| accountName == "Operating Receipt" || accountName == "Receipts"}'>
-			<td class="blueborderfortd"> &nbsp;</td>
-				<td class="blueborderfortd"> <strong><s:property value="accountName"/>&nbsp;</strong></td>
-				<td class="blueborderfortd"> &nbsp;</td>
-				<s:if test="%{model.funds.size()>1}">
-					<s:iterator value="model.funds" status="stat">
-		            	<td class="blueborderfortd">
-							<div align="right">
-								&nbsp;
-							</div>		
+</head>
+
+<body onload="bodyOnLoad();">
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="receipt.payment.report" />
+		</div>
+
+		<br />
+		<br />
+
+		<s:form name="receiptPaymentReportForm" action="receiptPaymentReport"
+			theme="simple">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebox" width="15%"></td>
+					<td class="bluebox" width="15%"><s:text
+							name="report.financialYear.report" /><span class="mandatory">*</span>
+					</td>
+					<td class="bluebox"><s:select
+							list="dropdownData.financialYearList" listKey="id"
+							listValue="finYearRange" name="financialYear.id" headerKey="0"
+							headerValue="--- Select ---" value="%{model.financialYear.id}"
+							id="financialYear"></s:select></td>
+					<td class="bluebox" width="15%"><s:text name="report.period" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" width="15%"><s:select name="period"
+							id="period" onchange="checkSelected(this)"
+							list="#{'Yearly':'Yearly','Date Range':'Date Range'}"
+							headerKey="0" headerValue="--- Select ---"
+							value="%{model.period}" /></td>
+				</tr>
+
+				<tr>
+					<td class="greybox" width="15%"></td>
+					<td class="greybox" width="15%"><s:text name="report.fund" />
+					</td>
+					<td class="greybox"><s:select list="dropdownData.fundList"
+							listKey="id" listValue="name" name="fund.id" headerKey="0"
+							headerValue="--- Select ---" value="%{model.fund.id}" id="fund"></s:select></td>
+					<td class="greybox" width="15%"><s:text name="report.rupees" /><span
+						class="mandatory">*</span></td>
+					<td class="greybox" width="15%"><s:select name="currency"
+							id="currency"
+							list="#{'Rupees':'Rupees','Thousands':'Thousands','Lakhs':'Lakhs'}"
+							headerKey="0" headerValue="--- Select ---"
+							value="%{model.currency}" /></td>
+				</tr>
+
+				<tr id="dateran">
+					<td class="greybox" width="15%">&nbsp;</td>
+					<td class="greybox" width="10%">From Date:<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
+							cssStyle="width:100px" value='%{model.fromDate}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('receiptPaymentReportForm.fromDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+
+					<td class="greybox" width="10%">To Date:<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:textfield name="toDate" id="toDate"
+							cssStyle="width:100px" value='%{model.toDate}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('receiptPaymentReportForm.toDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+				</tr>
+
+			</table>
+
+			<br />
+			<br />
+
+			<div class="buttonbottom">
+				<s:submit method="search" value="Search" cssClass="buttonsubmit"
+					onclick="return validate();" />
+				<s:submit method="exportReceiptPaymentPdf" value="EXPORT PDF"
+					cssClass="buttonsubmit" onclick="return validate();" />
+				<s:submit method="exportReceiptPaymentXls" value="EXPORT XLS"
+					cssClass="buttonsubmit" onclick="return validate();" />
+				<input type="button" value="Close"
+					onclick="javascript: self.close()" Class="button" />
+			</div>
+			<s:if test="%{model.entries.size!=0}">
+				<!-- <div align="center" class="extracontent"><h4><s:property value="fundType"/>  <s:property value="budgetType"/></h4></div> 
+		<div align="right" class="extracontent"><b>Amount in Thousands</b></div> -->
+				<table width="100%" border="0" align="center" cellpadding="0"
+					cellspacing="0" class="tablebottom">
+					<tr>
+						<td colspan="12">
+							<div class="subheadsmallnew">
+								<strong><s:property value="header" /></strong>
+							</div>
 						</td>
-					</s:iterator>
-				</s:if>        
-				<td class="blueborderfortd">&nbsp;</td>
-				<td class="blueborderfortd">&nbsp;</td>
-			</s:if>
-			<s:elseif test='%{accountName == "Grand Total"}'>
-				<td class="blueborderfortd"> &nbsp;</td>
-				<td class="blueborderfortd"> <strong><s:property value="accountName"/>&nbsp;</strong></td>
-				<td class="blueborderfortd"> &nbsp;</td>
-				<s:if test="%{model.funds.size()>1}">
-					<s:iterator value="model.funds" status="stat">
-		            	<td class="blueborderfortd">
-							<div align="right">
-							<strong><s:property value="fundWiseAmount[code]"/>&nbsp;</strong>
-							</div>		
+					</tr>
+					<tr>
+						<td class="bluebox" colspan="4"><strong><s:text
+									name="report.run.date" />:<s:date name="todayDate"
+									format="dd/MM/yyyy" /></strong></td>
+						<td colspan="11">
+							<div class="blueborderfortd" align="right">
+								<strong> <s:text name="report.amount.in" /> <s:property
+										value="model.currency" />&nbsp;&nbsp;&nbsp;&nbsp;
+								</strong>
+							</div>
 						</td>
+					</tr>
+					<tr>
+
+						<th class="bluebgheadtd" style="width: 6%; text-align: center"
+							align="center"></th>
+						<th class="bluebgheadtd" style="width: 42%; text-align: center"
+							align="center">Head Of Account</th>
+						<th class="bluebgheadtd" style="width: 13%; text-align: center"
+							align="center">Schedule No</th>
+
+						<s:if test="%{model.funds.size()>1}">
+							<s:iterator value="model.funds" status="stat">
+								<th class="bluebgheadtd"><s:property value="name" /></th>
+							</s:iterator>
+						</s:if>
+						<th class="bluebgheadtd" style="width: 13%; text-align: center"
+							align="center"><s:property value="currentYearToDate" /></th>
+						<th class="bluebgheadtd" style="width: 13%; text-align: center"
+							align="center"><s:property value="previousYearToDate" /></th>
+					</tr>
+					<c:set var="trclass" value="greybox" />
+					<s:iterator value="model.entries" status="stat">
+						<tr>
+							<s:if
+								test='%{accountName == "Operating Payment" || accountName == "Payments"|| accountName == "Operating Receipt" || accountName == "Receipts"}'>
+								<td class="blueborderfortd">&nbsp;</td>
+								<td class="blueborderfortd"><strong><s:property
+											value="accountName" />&nbsp;</strong></td>
+								<td class="blueborderfortd">&nbsp;</td>
+								<s:if test="%{model.funds.size()>1}">
+									<s:iterator value="model.funds" status="stat">
+										<td class="blueborderfortd">
+											<div align="right">&nbsp;</div>
+										</td>
+									</s:iterator>
+								</s:if>
+								<td class="blueborderfortd">&nbsp;</td>
+								<td class="blueborderfortd">&nbsp;</td>
+							</s:if>
+							<s:elseif test='%{accountName == "Grand Total"}'>
+								<td class="blueborderfortd">&nbsp;</td>
+								<td class="blueborderfortd"><strong><s:property
+											value="accountName" />&nbsp;</strong></td>
+								<td class="blueborderfortd">&nbsp;</td>
+								<s:if test="%{model.funds.size()>1}">
+									<s:iterator value="model.funds" status="stat">
+										<td class="blueborderfortd">
+											<div align="right">
+												<strong><s:property value="fundWiseAmount[code]" />&nbsp;</strong>
+											</div>
+										</td>
+									</s:iterator>
+								</s:if>
+								<td class="blueborderfortd"><strong><s:property
+											value="currentYearTotal" />&nbsp;</strong></td>
+								<td class="blueborderfortd"><strong><s:property
+											value="previousYearTotal" />&nbsp;</strong></td>
+							</s:elseif>
+							<s:else>
+								<td class="blueborderfortd">&nbsp;</td>
+								<td class="blueborderfortd"><s:property value="accountName" />&nbsp;</td>
+								<td class="blueborderfortd"><a href="#"
+									onclick="urlLoad('<s:property value="scheduleNo"/>');"
+									id="sourceLink" /> <s:property value="scheduleNo" />&nbsp; </a></td>
+								<s:if test="%{model.funds.size()>1}">
+									<s:iterator value="model.funds" status="stat">
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:property value="fundWiseAmount[code]" />
+												&nbsp;
+											</div>
+										</td>
+									</s:iterator>
+								</s:if>
+								<td class="blueborderfortd"><s:property
+										value="currentYearTotal" />&nbsp;</td>
+								<td class="blueborderfortd"><s:property
+										value="previousYearTotal" />&nbsp;</td>
+							</s:else>
+						</tr>
 					</s:iterator>
-				</s:if>
-				<td class="blueborderfortd"> <strong><s:property value="currentYearTotal"/>&nbsp;</strong></td>
-				<td class="blueborderfortd"><strong><s:property value="previousYearTotal"/>&nbsp;</strong></td>
-			</s:elseif>
-			<s:else>
-				<td class="blueborderfortd"> &nbsp;</td>
-				<td class="blueborderfortd"> <s:property value="accountName"/>&nbsp;</td>
-				<td class="blueborderfortd"> <a href="#" onclick="urlLoad('<s:property value="scheduleNo"/>');"	id="sourceLink"/> <s:property value="scheduleNo"/>&nbsp; </a></td>
-				<s:if test="%{model.funds.size()>1}">
-					<s:iterator value="model.funds" status="stat">
-		            	<td class="blueborderfortd">
-							<div align="right">
-								<s:property value="fundWiseAmount[code]"/>&nbsp;
-							</div>		
-						</td>
-					</s:iterator>
-				</s:if>
-				<td class="blueborderfortd"> <s:property value="currentYearTotal"/>&nbsp;</td>
-				<td class="blueborderfortd"> <s:property value="previousYearTotal"/>&nbsp;</td>
-			</s:else>
-		</tr>
-		</s:iterator>
-		</s:if>
-		
-		</table>
-	
-		
-		
-	</s:form>
-	<script>
+					</s:if>
+
+				</table>
+		</s:form>
+		<script>
 
 	function validate(){
     	var finYr=document.getElementById("financialYear").value;
@@ -263,5 +299,5 @@
 	
 
 	 </script>
-  </body>
+</body>
 </html>

@@ -38,4 +38,5 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<input type="hidden" id="balanceResult" value='<s:property value="availableBalance"/>'/>
+<input type="hidden" id="balanceResult"
+	value='<s:property value="availableBalance"/>' />

@@ -37,19 +37,16 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
-	<head>
-		<title>
-				<s:if test="%{showMode=='edit'}">
-					<s:text name="fund.modify" />
-				</s:if>
-				<s:if test="%{showMode=='view'}">
-					<s:text name="fund.view" />
-				</s:if>
-		</title>
-		<script type="text/javascript">
+<head>
+<title><s:if test="%{showMode=='edit'}">
+		<s:text name="fund.modify" />
+	</s:if> <s:if test="%{showMode=='view'}">
+		<s:text name="fund.view" />
+	</s:if></title>
+<script type="text/javascript">
 		
 	function openSearch(obj, val) {
 							var a = new Array(3);
@@ -127,38 +124,40 @@
 		}
 </script>
 
-	</head>
-	<body onload="onLoadTask();">
-		<s:actionmessage theme="simple" />
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:if test="%{showMode=='edit'}">
-					<s:text name="fund.modify" />
-				</s:if>
-				<s:if test="%{showMode=='view'}">
-					<s:text name="fund.view" />
-				</s:if>
-			</div>
+</head>
+<body onload="onLoadTask();">
+	<s:actionmessage theme="simple" />
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:if test="%{showMode=='edit'}">
+				<s:text name="fund.modify" />
+			</s:if>
+			<s:if test="%{showMode=='view'}">
+				<s:text name="fund.view" />
+			</s:if>
 		</div>
-		<s:actionerror />
-		<s:fielderror />
-		<s:form name="fundForm" action="fund"  theme="simple">
-		
+	</div>
+	<s:actionerror />
+	<s:fielderror />
+	<s:form name="fundForm" action="fund" theme="simple">
+
 		<s:push value="model">
-		<s:hidden name="showMode" />
+			<s:hidden name="showMode" />
 			<s:hidden name="id" />
-				<%@include file="fund-viewform.jsp"%>
-				<div class="buttonbottom">
-					<s:if test="%{showMode=='edit'}">
-						<s:submit name="edit" value="Modify And View" method="edit" cssClass="buttonsubmit" onclick="javascript: return validate();"/>
-						<s:submit name="edit" value="Modify And Close" method="edit" cssClass="buttonsubmit" onclick="validate();setClose();"/>
-						<s:hidden name="close" id="close" />
-					</s:if>
-					<input type="button" id="Close" value="Close"
-						onclick="javascript:window.close()" class="button" />
-				</div>
-			</s:push>
-			<s:token/>
-		</s:form>
-	</body>
+			<%@include file="fund-viewform.jsp"%>
+			<div class="buttonbottom">
+				<s:if test="%{showMode=='edit'}">
+					<s:submit name="edit" value="Modify And View" method="edit"
+						cssClass="buttonsubmit" onclick="javascript: return validate();" />
+					<s:submit name="edit" value="Modify And Close" method="edit"
+						cssClass="buttonsubmit" onclick="validate();setClose();" />
+					<s:hidden name="close" id="close" />
+				</s:if>
+				<input type="button" id="Close" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+		</s:push>
+		<s:token />
+	</s:form>
+</body>
 </html>

@@ -39,56 +39,62 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 <head>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 <style type="text/css">
 @media print {
-input#button1 {
-display: none;
-}
+	input#button1 {
+		display: none;
+	}
 }
 
 @media print {
-input#button2 {
-display: none;
-}
+	input#button2 {
+		display: none;
+	}
 }
 </style>
 
 </head>
 <body onload="onloadTask();">
-	<s:form  action="contraBTC" theme="simple" name="cbtcform"  >
-	<s:push value="model">
-		<jsp:include page="../budget/budgetHeader.jsp">
-			<jsp:param value="Cash Withdrawal" name="heading"/>
-		</jsp:include>
-	<div class="formmainbox">
-		<div class="subheadnew">View Cash Withdrawal</div>
-		<div id="listid" style="display:block"><br/></div>
-		<div align="center">
-			<font  style='color: red ;'><p class="error-block" id="lblError" ></p></font>
-			<s:if test="%{not close}">
-				<span class="mandatory">
-					<s:actionerror/>  
-					<s:fielderror />
-					<s:actionmessage />
-				</span>
-			</s:if>
-		</div>
-		<%@include file="contraBTC-form.jsp"%>	
+	<s:form action="contraBTC" theme="simple" name="cbtcform">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Cash Withdrawal" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="subheadnew">View Cash Withdrawal</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+				<div align="center">
+					<font style='color: red;'><p class="error-block"
+							id="lblError"></p></font>
+					<s:if test="%{not close}">
+						<span class="mandatory"> <s:actionerror /> <s:fielderror />
+							<s:actionmessage />
+						</span>
+					</s:if>
+				</div>
+				<%@include file="contraBTC-form.jsp"%>
 		</s:push>
-		<br/>
+		<br />
 		<div id="buttons">
-			<input name="button" type="button" class="buttonsubmit" id="button1" value="Print" onclick="window.print()"/>&nbsp;
-			<s:submit value="Close" onclick="javascript: self.close()" id="button2" cssClass="button"/>
+			<input name="button" type="button" class="buttonsubmit" id="button1"
+				value="Print" onclick="window.print()" />&nbsp;
+			<s:submit value="Close" onclick="javascript: self.close()"
+				id="button2" cssClass="button" />
 		</div>
 		<div id="resultGrid"></div>
-	</div>
-</s:form>
-<SCRIPT type="text/javascript">
+		</div>
+	</s:form>
+	<SCRIPT type="text/javascript">
 function onloadTask(){
 	disableControls(0,true);
 	var message = '<s:property value="message"/>';

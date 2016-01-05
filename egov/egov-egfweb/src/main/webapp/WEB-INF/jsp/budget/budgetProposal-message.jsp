@@ -37,26 +37,29 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title><s:text name="budgetdetail"/></title>
-    <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-    <jsp:include page="budgetHeader.jsp"/>
-   
-</head>  
-	<body>  
-	
+<html>
+<head>
+<title><s:text name="budgetdetail" /></title>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+<jsp:include page="budgetHeader.jsp" />
+
+</head>
+<body>
+
 	<div style="color: red">
-		<s:actionmessage theme="simple"/>
-		<s:actionerror/>  
+		<s:actionmessage theme="simple" />
+		<s:actionerror />
 		<s:fielderror />
 	</div>
-		
-		<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>	
-	</body>  
+
+	<input type="button" value="Close" onclick="javascript:window.close()"
+		class="button" />
+</body>
 </html>

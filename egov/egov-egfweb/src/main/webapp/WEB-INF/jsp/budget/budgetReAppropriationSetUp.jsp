@@ -356,4 +356,4 @@ function createAmountFieldFormatter(values,prefix,suffix){
 			budgetDetailsTable.hideColumn(budgetDetailsTable.getColumn('budgetDetail.boundary.id'))
 		</s:if>
 	}
-</SCRIPT>      
+</SCRIPT>

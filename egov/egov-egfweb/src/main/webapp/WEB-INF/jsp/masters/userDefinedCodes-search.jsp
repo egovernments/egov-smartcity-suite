@@ -37,16 +37,14 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 
 <html>
-  <head>
-    <title>
-			<s:text name="userDefCode.search"/>	    	
-	</title>
-	<script type="text/javascript">
+<head>
+<title><s:text name="userDefCode.search" /></title>
+<script type="text/javascript">
 	function validate(){
 		if(document.getElementById('accEntity.accountdetailtype.id').value == "" 
 				|| document.getElementById('accEntity.accountdetailtype.id').value=='---- Choose ----'){
@@ -56,94 +54,104 @@
 		return true;
 	}
 	</script>
-  </head>
-  <body>
-	<div class="formmainbox"><div class="subheadnew"><s:text name="userDefCode.search"/></div>
-	
-	<s:form name="userDefCodeForm" action="userDefinedCodes" theme="simple" >
-	<s:hidden name="showMode"  />
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td class="greybox"><s:text name="subCodeFor"/><span class="mandatory"></span></td>
-			    <td class="greybox">
-			    	<s:select list="dropdownData.userDefCodeList" id="accEntity.accountdetailtype.id" listKey="id"	
-			    		listValue="name" name="accEntity.accountdetailtype.id" headerKey="" headerValue="---- Choose ----" 
-			    		value="accEntity.accountdetailtype.id"></s:select>
-			    </td>
-			    <td class="greybox">&nbsp;</td>
-			    <td class="greybox">&nbsp;</td>
-			</tr>
-    		<tr>
-				<td class="greybox"><s:text name="userDefCode.code"/></td>
-			    <td class="greybox"><s:textfield id="code" name="code" /></td>
-			    <td class="greybox"><s:text name="userDefCode.name"/></td>
-			    <td class="greybox"><s:textfield id="name" name="name" /></td>
-			</tr>
-    	
-    	</table>
-    	
-    	
-    	<div class="buttonbottom">
-			<s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="javascript: return validate();"/>
-			<input type="submit" value="Close"
-				onclick="javascript:window.close()" class="button" />
+</head>
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="userDefCode.search" />
 		</div>
-		</div>
-		<s:if test="%{searchList.size!=0}">
-		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
-		
-		<tr>
-		
-			<th class="bluebgheadtd"  style="width:2%;text-align:center" align="center">
-				Sl No.
-			</th>
-			<th class="bluebgheadtd" style="width:4%;text-align:center" align="center">
-				Code
-			</th>
-			<th class="bluebgheadtd"  style="width:8%;text-align:center" align="center">
-				Name
-			</th>
-			<th class="bluebgheadtd" style="width:4%;text-align:center" align="center">
-				Account Detail Type
-			</th>
-			<th class="bluebgheadtd"  style="width:4%;text-align:center" align="center">
-				IsActive
-			</th>
-		</tr>
-		<c:set var="trclass" value="greybox"/>
-		<s:iterator var="sa" value="searchList" status="s">
-			<tr>
-			
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="#s.index+1" /></td>
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center">
-						<a href="#" onclick="urlLoad('<s:property value="%{id}" />','<s:property value="%{showMode}" />');"
-									id="sourceLink" /> <s:label value="%{code}" /> </a>
-				</td>
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="name" /></td>
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="accountdetailtype.name" /></td>
-			
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="isactive" />	</td>
-				<c:choose>
-					        <c:when test="${trclass=='greybox'}"><c:set var="trclass" value="bluebox"/></c:when>
-					        <c:when test="${trclass=='bluebox'}"><c:set var="trclass" value="greybox"/></c:when>
-			  </c:choose>
-			</tr>
-		</s:iterator>
-		
-		</table>
-		</s:if>
-		<s:if test="%{searchList.size==0}">
-			<div id="msgdiv" style="display: block">
-				<table align="center" class="tablebottom" width="80%">
-					<tr>
-						<th class="bluebgheadtd" colspan="7">
-							No Records Found
-						</td>
-					</tr>
-				</table>
+
+		<s:form name="userDefCodeForm" action="userDefinedCodes"
+			theme="simple">
+			<s:hidden name="showMode" />
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="greybox"><s:text name="subCodeFor" /><span
+						class="mandatory"></span></td>
+					<td class="greybox"><s:select
+							list="dropdownData.userDefCodeList"
+							id="accEntity.accountdetailtype.id" listKey="id" listValue="name"
+							name="accEntity.accountdetailtype.id" headerKey=""
+							headerValue="---- Choose ----"
+							value="accEntity.accountdetailtype.id"></s:select></td>
+					<td class="greybox">&nbsp;</td>
+					<td class="greybox">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="greybox"><s:text name="userDefCode.code" /></td>
+					<td class="greybox"><s:textfield id="code" name="code" /></td>
+					<td class="greybox"><s:text name="userDefCode.name" /></td>
+					<td class="greybox"><s:textfield id="name" name="name" /></td>
+				</tr>
+
+			</table>
+
+
+			<div class="buttonbottom">
+				<s:submit method="search" value="Search" cssClass="buttonsubmit"
+					onclick="javascript: return validate();" />
+				<input type="submit" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
-		</s:if>
-		
+	</div>
+	<s:if test="%{searchList.size!=0}">
+		<table width="100%" border="0" align="center" cellpadding="0"
+			cellspacing="0" class="tablebottom">
+
+			<tr>
+
+				<th class="bluebgheadtd" style="width: 2%; text-align: center"
+					align="center">Sl No.</th>
+				<th class="bluebgheadtd" style="width: 4%; text-align: center"
+					align="center">Code</th>
+				<th class="bluebgheadtd" style="width: 8%; text-align: center"
+					align="center">Name</th>
+				<th class="bluebgheadtd" style="width: 4%; text-align: center"
+					align="center">Account Detail Type</th>
+				<th class="bluebgheadtd" style="width: 4%; text-align: center"
+					align="center">IsActive</th>
+			</tr>
+			<c:set var="trclass" value="greybox" />
+			<s:iterator var="sa" value="searchList" status="s">
+				<tr>
+
+					<td class="<c:out value="${trclass}"/>" style="text-align: center"
+						align="center"><s:property value="#s.index+1" /></td>
+					<td class="<c:out value="${trclass}"/>" style="text-align: center"
+						align="center"><a href="#"
+						onclick="urlLoad('<s:property value="%{id}" />','<s:property value="%{showMode}" />');"
+						id="sourceLink" /> <s:label value="%{code}" /> </a></td>
+					<td class="<c:out value="${trclass}"/>" style="text-align: center"
+						align="center"><s:property value="name" /></td>
+					<td class="<c:out value="${trclass}"/>" style="text-align: center"
+						align="center"><s:property value="accountdetailtype.name" /></td>
+
+					<td class="<c:out value="${trclass}"/>" style="text-align: center"
+						align="center"><s:property value="isactive" /></td>
+					<c:choose>
+						<c:when test="${trclass=='greybox'}">
+							<c:set var="trclass" value="bluebox" />
+						</c:when>
+						<c:when test="${trclass=='bluebox'}">
+							<c:set var="trclass" value="greybox" />
+						</c:when>
+					</c:choose>
+				</tr>
+			</s:iterator>
+
+		</table>
+	</s:if>
+	<s:if test="%{searchList.size==0}">
+		<div id="msgdiv" style="display: block">
+			<table align="center" class="tablebottom" width="80%">
+				<tr>
+					<th class="bluebgheadtd" colspan="7">No Records Found
+					</td>
+				</tr>
+			</table>
+		</div>
+	</s:if>
+
 	</s:form>
 	<script type="text/javascript">
 	function urlLoad(id,showMode) {
@@ -154,5 +162,5 @@
 		window.open(url,'UsrDefCodeView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	</script>
-  </body>
+</body>
 </html>

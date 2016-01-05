@@ -37,59 +37,86 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
 <%@ page language="java"%>
 
-	<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-	</span>
-	<div class="formmainbox"><div class="subheadnew">VoucherDetails</div>
-<s:if test="%{viewReceiptDetailsList.size()>0}">
-<br/>
-<table width="99%" border="0" cellspacing="0" cellpadding="0">
+<span class="mandatory"> <font
+	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+		<s:actionmessage /></font>
+</span>
+<div class="formmainbox">
+	<div class="subheadnew">VoucherDetails</div>
+	<s:if test="%{viewReceiptDetailsList.size()>0}">
+		<br />
+		<table width="99%" border="0" cellspacing="0" cellpadding="0">
 
-		<tr>
-        <td class="blueborderfortd">
-		<div>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
 			<tr>
-					<th class="bluebgheadtdnew"><s:text name="Sl No"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.receipt.voucherno"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.receipt.amount"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.receipt.deductedamount"/></th>
-		  </tr>
-		<s:iterator value="viewReceiptDetailsList" status="stat" var="ChequeAssignment">
-			<tr>
-				<td class="blueborderfortd"><div align="left"><s:property value="#stat.index+1"/>&nbsp;</div></td>
-				<s:hidden id="voucherHeaderId" name="rtgsList[%{#counter}].voucherHeaderId" value="%{voucherHeaderId}"/>
-				<td class="blueborderfortd"><div align="left"> <a href="#" onclick="viewVoucher(<s:property value='voucherHeaderId'/>)" > <s:property value="voucherNumber"/></a>&nbsp;</div></td>
-				<td class="blueborderfortd"><div align="right"><s:text name="format.number" ><s:param value="%{receiptAmount}"/></s:text>&nbsp;</div></td>
-				<td class="blueborderfortd"><div align="right"><s:text name="format.number" ><s:param value="%{deductedAmount}"/></s:text>&nbsp;</div></td>
+				<td class="blueborderfortd">
+					<div>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0"
+							class="tablebottom">
+							<tr>
+								<th class="bluebgheadtdnew"><s:text name="Sl No" /></th>
+								<th class="bluebgheadtdnew"><s:text
+										name="chq.assignment.receipt.voucherno" /></th>
+								<th class="bluebgheadtdnew"><s:text
+										name="chq.assignment.receipt.amount" /></th>
+								<th class="bluebgheadtdnew"><s:text
+										name="chq.assignment.receipt.deductedamount" /></th>
+							</tr>
+							<s:iterator value="viewReceiptDetailsList" status="stat"
+								var="ChequeAssignment">
+								<tr>
+									<td class="blueborderfortd"><div align="left">
+											<s:property value="#stat.index+1" />
+											&nbsp;
+										</div></td>
+									<s:hidden id="voucherHeaderId"
+										name="rtgsList[%{#counter}].voucherHeaderId"
+										value="%{voucherHeaderId}" />
+									<td class="blueborderfortd"><div align="left">
+											<a href="#"
+												onclick="viewVoucher(<s:property value='voucherHeaderId'/>)">
+												<s:property value="voucherNumber" />
+											</a>&nbsp;
+										</div></td>
+									<td class="blueborderfortd"><div align="right">
+											<s:text name="format.number">
+												<s:param value="%{receiptAmount}" />
+											</s:text>
+											&nbsp;
+										</div></td>
+									<td class="blueborderfortd"><div align="right">
+											<s:text name="format.number">
+												<s:param value="%{deductedAmount}" />
+											</s:text>
+											&nbsp;
+										</div></td>
+								</tr>
+							</s:iterator>
+							<tr>
+								<td class="blueborderfortd" colspan="3"><div align="right">
+										<s:text name="total" />
+									</div></td>
+								<td class="blueborderfortd"><div align="right">
+										<s:property value="%{totalDeductedAmount}" />
+									</div></td>
+							</tr>
+						</table>
+					</div>
+				</td>
 			</tr>
-		</s:iterator>
-		<tr>
-		<td class="blueborderfortd"colspan="3"><div align="right"><s:text name="total"/></div></td>
-		<td class="blueborderfortd"><div align="right"><s:property value="%{totalDeductedAmount}"/></div></td>
-		</tr>
-			</table>
-        </div></td>
-      </tr>
-	</table>
+		</table>
 	</s:if>
-<s:else>No Voucher Details Found</s:else>
+	<s:else>No Voucher Details Found</s:else>
 
-		<script>
+	<script>
 			function viewVoucher(vid){
 				var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
 				window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 			}
 			                
-		</script>           
-		
-		
+		</script>

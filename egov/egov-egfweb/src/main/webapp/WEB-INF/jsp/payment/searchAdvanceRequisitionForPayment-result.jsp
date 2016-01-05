@@ -37,71 +37,92 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
- <%@ taglib uri="http://displaytag.sf.net" prefix="display"%> 
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <div>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr height="5">
-		<td></td>
-	</tr>
-	<tr>
-		<td>
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">				
-				<tr><td colspan="6" align="left"><div class="subheadsmallnew"><s:text name='search.result' /></div></td></tr>
-			</table>
-		</td>
-	</tr>
-</table>
-     <s:if test="%{searchResult.fullListSize != 0 && !hasErrors()}">
-     	<s:text id="slNo" name="%{getText('label.slno')}"></s:text>	
-     	<s:text id="select" name="%{getText('label.select')}"></s:text>		
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr height="5">
+			<td></td>
+		</tr>
+		<tr>
+			<td>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td colspan="6" align="left"><div class="subheadsmallnew">
+								<s:text name='search.result' />
+							</div></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<s:if test="%{searchResult.fullListSize != 0 && !hasErrors()}">
+		<s:text id="slNo" name="%{getText('label.slno')}"></s:text>
+		<s:text id="select" name="%{getText('label.select')}"></s:text>
 		<s:text id="arfnumber" name="%{getText('arf.arfnumber')}"></s:text>
 		<s:text id="arfdate" name="%{getText('arf.arfdate')}"></s:text>
-		<s:text id="advanceamount" name="%{getText('arf.advanceamount')}"></s:text>			
+		<s:text id="advanceamount" name="%{getText('arf.advanceamount')}"></s:text>
 		<s:text id="department" name="%{getText('arf.department')}"></s:text>
-		
- 	     <display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI=""
+
+		<display:table name="searchResult" pagesize="30" uid="currentRow"
+			cellpadding="0" cellspacing="0" requestURI=""
 			style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
-			<display:column headerClass="bluebgheadtdnew" class="blueborderfortdnew" title="${select}" style="width:5%;" >
+			<display:column headerClass="bluebgheadtdnew"
+				class="blueborderfortdnew" title="${select}" style="width:5%;">
 				<input name="radio" type="radio" id="radio"
-					value="<s:property value='%{#attr.currentRow.id}'/>" />					
-				<s:hidden id="arfId" name="arfId" value="%{#attr.currentRow.id}" />					
+					value="<s:property value='%{#attr.currentRow.id}'/>" />
+				<s:hidden id="arfId" name="arfId" value="%{#attr.currentRow.id}" />
 			</display:column>
-	        <display:column headerClass="bluebgheadtdnew"  class="blueborderfortdnew" title="${slNo}" style="width:5%;text-align:left" >
-			     <s:property value="#attr.currentRow_rowNum + (page-1)*pageSize"/>
+			<display:column headerClass="bluebgheadtdnew"
+				class="blueborderfortdnew" title="${slNo}"
+				style="width:5%;text-align:left">
+				<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
 			</display:column>
-			<display:column headerClass="bluebgheadtdnew" class="blueborderfortdnew" title="${arfnumber}" style="width:20%;text-align:left">
-			<a href="#" onclick="viewARF('<s:property value='%{#attr.currentRow.egAdvanceReqMises.sourcePath}'/>')"> 
-				<s:property value="#attr.currentRow.advanceRequisitionNumber" /> 
-			</a>
+			<display:column headerClass="bluebgheadtdnew"
+				class="blueborderfortdnew" title="${arfnumber}"
+				style="width:20%;text-align:left">
+				<a href="#"
+					onclick="viewARF('<s:property value='%{#attr.currentRow.egAdvanceReqMises.sourcePath}'/>')">
+					<s:property value="#attr.currentRow.advanceRequisitionNumber" />
+				</a>
 			</display:column>
-			<display:column headerClass="bluebgheadtdnew" class="blueborderfortdnew" title="${arfdate}" style="width:10%;text-align:left">
-				<s:date name="#attr.currentRow.advanceRequisitionDate" format="dd/MM/yyyy" />
-			</display:column>		
-			<display:column headerClass="bluebgheadtdnew" class="blueborderfortdnew" title="${advanceamount}" style="width:10%;text-align:right" >
-				<s:text name="payment.format.number" >
-					<s:param name="advanceRequisitionAmount" value='%{#attr.currentRow.advanceRequisitionAmount}' />
+			<display:column headerClass="bluebgheadtdnew"
+				class="blueborderfortdnew" title="${arfdate}"
+				style="width:10%;text-align:left">
+				<s:date name="#attr.currentRow.advanceRequisitionDate"
+					format="dd/MM/yyyy" />
+			</display:column>
+			<display:column headerClass="bluebgheadtdnew"
+				class="blueborderfortdnew" title="${advanceamount}"
+				style="width:10%;text-align:right">
+				<s:text name="payment.format.number">
+					<s:param name="advanceRequisitionAmount"
+						value='%{#attr.currentRow.advanceRequisitionAmount}' />
 				</s:text>
 			</display:column>
-			<display:column headerClass="bluebgheadtdnew" class="blueborderfortdnew" title="${department}" style="width:20%;text-align:left">
-				<s:property value="#attr.currentRow.egAdvanceReqMises.egDepartment.deptName" />
-			</display:column>					
-	   </display:table> 
-	   <P align="center">
-			<input type="button" style="width: 200px" class="buttongeneral" value="Generate Advance Payment" id="addButton"
-				name="createAdvancePaymentButton" onclick="goToCreateAdvancePayment();"	align="center" />
+			<display:column headerClass="bluebgheadtdnew"
+				class="blueborderfortdnew" title="${department}"
+				style="width:20%;text-align:left">
+				<s:property
+					value="#attr.currentRow.egAdvanceReqMises.egDepartment.deptName" />
+			</display:column>
+		</display:table>
+		<P align="center">
+			<input type="button" style="width: 200px" class="buttongeneral"
+				value="Generate Advance Payment" id="addButton"
+				name="createAdvancePaymentButton"
+				onclick="goToCreateAdvancePayment();" align="center" />
 		</P>
-	 </s:if> 
-	 <s:elseif test="%{searchResult.fullListSize == 0 && !hasErrors()}">
-		  <div>
-			<table width="100%" border="0" cellpadding="0" 	cellspacing="0">
+	</s:if>
+	<s:elseif test="%{searchResult.fullListSize == 0 && !hasErrors()}">
+		<div>
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-				   <td align="center">
-					 <font color="red"><s:text name="search.result.no.record" /></font>
-				   </td>
-			    </tr>
+					<td align="center"><font color="red"><s:text
+								name="search.result.no.record" /></font></td>
+				</tr>
 			</table>
-		  </div>
+		</div>
 	</s:elseif>
 </div>
 <script>

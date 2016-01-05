@@ -37,32 +37,34 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-<link rel="stylesheet" type="text/css" href="/EGF/commonyui/yui2.7/paginator/assets/skins/sam/paginator.css">
+<html>
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/EGF/commonyui/yui2.7/paginator/assets/skins/sam/paginator.css">
 <script src="/EGF/commonyui/yui2.7/paginator/paginator-min.js"></script>
 
-    <title><s:text name="budget.search"/></title>
-    <style>
-    .budgetSearch {
-		overflow:hidden;
-		font-size:12px;
-		width:90px;
-	}
-    </style>
-</head>  
-	<body>  
-		<jsp:include page="budgetHeader.jsp">
-        	<jsp:param name="heading" value="Budget Details" />
-		</jsp:include> 
-		<s:if test="%{not savedbudgetDetailList.empty}">
-			<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-			<div class="yui-skin-sam">
-				<div id="budgetDetailTable" style="width:100%;overflow-x:auto; overflow-y:hidden;"></div>
-			</div>
-			<script>
+<title><s:text name="budget.search" /></title>
+<style>
+.budgetSearch {
+	overflow: hidden;
+	font-size: 12px;
+	width: 90px;
+}
+</style>
+</head>
+<body>
+	<jsp:include page="budgetHeader.jsp">
+		<jsp:param name="heading" value="Budget Details" />
+	</jsp:include>
+	<s:if test="%{not savedbudgetDetailList.empty}">
+		<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+		<div class="yui-skin-sam">
+			<div id="budgetDetailTable"
+				style="width: 100%; overflow-x: auto; overflow-y: hidden;"></div>
+		</div>
+		<script>
 			function createAmountFieldFormatter(values,prefix,suffix){
 			    return function(el, oRecord, oColumn, oData) {
 					var value = (YAHOO.lang.isValue(oData))?oData:"";
@@ -185,12 +187,14 @@
 			}
 			budgetDetailTable();
 			</script>
-		</s:if>
-		<s:else>
-			<div class="error">
-				<s:text name="budget.no.details.found"/>
-			</div>
-		</s:else>
-		<br/><br/><br/>		
-	</body>  
+	</s:if>
+	<s:else>
+		<div class="error">
+			<s:text name="budget.no.details.found" />
+		</div>
+	</s:else>
+	<br />
+	<br />
+	<br />
+</body>
 </html>

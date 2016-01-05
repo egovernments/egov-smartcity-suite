@@ -67,10 +67,12 @@ public class Budget extends StateAware {
     private Budget referenceBudget;
     private Long documentNumber;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -128,8 +130,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isbere
-     *            the isbere to set
+     * @param isbere the isbere to set
      */
     public void setIsbere(final String isbere) {
         this.isbere = isbere;
@@ -143,8 +144,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isActiveBudget
-     *            the isActiveBudget to set
+     * @param isActiveBudget the isActiveBudget to set
      */
     public void setIsActiveBudget(final boolean isActiveBudget) {
         this.isActiveBudget = isActiveBudget;
@@ -158,8 +158,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isPrimaryBudget
-     *            the isPrimaryBudget to set
+     * @param isPrimaryBudget the isPrimaryBudget to set
      */
     public void setIsPrimaryBudget(final boolean isPrimaryBudget) {
         this.isPrimaryBudget = isPrimaryBudget;
@@ -178,8 +177,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param materialized_path
-     *            the materialized_path to set
+     * @param materialized_path the materialized_path to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;

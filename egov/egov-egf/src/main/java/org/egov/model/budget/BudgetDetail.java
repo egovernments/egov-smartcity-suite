@@ -239,8 +239,7 @@ public class BudgetDetail extends StateAware {
     }
 
     /**
-     * @param materializedPath
-     *            the materializedPath to set
+     * @param materializedPath the materializedPath to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;

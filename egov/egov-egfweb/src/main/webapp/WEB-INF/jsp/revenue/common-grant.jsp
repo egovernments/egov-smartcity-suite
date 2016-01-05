@@ -37,10 +37,10 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-    <SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript">
     //makeGrantTable for CFC, SFC & Stamp Duty
     var makeGrantTable = function() {
     	var grantTableColumns = [ 
@@ -520,23 +520,32 @@
 	}
 	//validation
    </SCRIPT>
- 
 
-    
-		<br></br>
-		<div id="labelAD" align="center">
-	 	<h1><s:text name="revenue.heading.create"/></h1></div>
-	 	<br></br>
-	 	
-		<div class="formmainbox"><div class="formheading"/><div class="subheadnew"><s:text name="revenue.heading.detail"/></div></div></div>
-		<div id="listid" style="display:block"></div>
-		<br></br>
-	 	
-	 	<div class="yui-skin-sam" align="center" style="overflow-x:scroll">
-       		<div id="grantTablediv"  ></div>
-     	</div>
-		     	
-     	<script type="text/javascript">
+
+
+<br></br>
+<div id="labelAD" align="center">
+	<h1>
+		<s:text name="revenue.heading.create" />
+	</h1>
+</div>
+<br></br>
+
+<div class="formmainbox">
+	<div class="formheading" />
+	<div class="subheadnew">
+		<s:text name="revenue.heading.detail" />
+	</div>
+</div>
+</div>
+<div id="listid" style="display: block"></div>
+<br></br>
+
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="grantTablediv"></div>
+</div>
+
+<script type="text/javascript">
      		<s:if test="%{grantsType =='Entertainment Tax'}">
      			makeGrantTableET();
 			</s:if>
@@ -545,7 +554,7 @@
 			</s:else>
      		document.getElementById('grantTablediv').getElementsByTagName('table')[0].width="80%";
      	</script>
-     	
-		
 
- 
+
+
+

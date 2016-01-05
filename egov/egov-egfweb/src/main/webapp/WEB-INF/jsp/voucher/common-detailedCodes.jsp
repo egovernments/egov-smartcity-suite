@@ -1,3 +1,3 @@
-<%@ page contentType="text/json" %>
+<%@ page contentType="text/json"%>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<s:property value="%{detailCodes}"/>
+<s:property value="%{detailCodes}" />

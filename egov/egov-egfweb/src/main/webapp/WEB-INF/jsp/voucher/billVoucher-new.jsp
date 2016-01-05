@@ -114,8 +114,7 @@
 
 					</table>
 				</div>
-				<br>
-				<br>
+				<br> <br>
 			</div>
 		</div>
 		<div align="center">
@@ -125,7 +124,8 @@
 
 						<td><s:submit value="Search" onclick="return validate()"
 								cssClass="buttonsubmit" />&nbsp;</td>
-						<td><input type="button" value="Reset" class="button" onclick="return resetForm()" />&nbsp;</td>
+						<td><input type="button" value="Reset" class="button"
+							onclick="return resetForm()" />&nbsp;</td>
 						<td><input type="button" value="Close"
 							onclick="javascript:window.close()" class="button" />&nbsp;</td>
 					</tr>

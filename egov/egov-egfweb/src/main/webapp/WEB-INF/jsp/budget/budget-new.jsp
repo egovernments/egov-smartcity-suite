@@ -37,37 +37,37 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>Budget Definition</title>
-</head> 
-	<body>  
-		<s:form action="budget" theme="simple" >
-		<s:token/>  
-			<jsp:include page="budgetHeader.jsp">
-        		<jsp:param name="heading" value="Budget Definition Create" />
-			</jsp:include>
-			<span class="error-msg">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox"><div class="subheadnew">Budget Definition Create</div>
-				<%@ include file='budget-form.jsp'%>
-				<div class="buttonbottom">
-					<label></label>
-					<label><s:submit method="create" value="Save " cssClass="buttonsubmit" />  </label>
-					<s:reset name="button" type="submit" cssClass="button" id="button" value="Cancel"/>
-					<label><input type="submit" value="Close" onclick="javascript:window.close()" class="button"/></label> 
-				</div>
+<html>
+<head>
+<title>Budget Definition</title>
+</head>
+<body>
+	<s:form action="budget" theme="simple">
+		<s:token />
+		<jsp:include page="budgetHeader.jsp">
+			<jsp:param name="heading" value="Budget Definition Create" />
+		</jsp:include>
+		<span class="error-msg"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew">Budget Definition Create</div>
+			<%@ include file='budget-form.jsp'%>
+			<div class="buttonbottom">
+				<label></label> <label><s:submit method="create"
+						value="Save " cssClass="buttonsubmit" /> </label>
+				<s:reset name="button" type="submit" cssClass="button" id="button"
+					value="Cancel" />
+				<label><input type="submit" value="Close"
+					onclick="javascript:window.close()" class="button" /></label>
 			</div>
+		</div>
 
-		</s:form>  
-		
-		<s:hidden name="targetvalue" value="%{target}" id="targetvalue"/>
-		<script>
+	</s:form>
+
+	<s:hidden name="targetvalue" value="%{target}" id="targetvalue" />
+	<script>
 			if(dom.get('targetvalue').value=='SUCCESS')
 			{
 				document.forms[0].name.value="";
@@ -79,5 +79,5 @@
 				document.forms[0].budget_isbereBE.checked=true;
 			}	
 		</script>
-	</body>  
+</body>
 </html>

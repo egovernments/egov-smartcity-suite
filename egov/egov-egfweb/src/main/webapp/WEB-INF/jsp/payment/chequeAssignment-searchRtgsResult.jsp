@@ -39,102 +39,159 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<link href="<egov:url path='/resources/css/displaytagFormatted.css'/>" rel="stylesheet" type="text/css" />         
-<html>  
-<head>  
-	<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css"/>
-    <title>RTGS Reference No Assignment </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link href="<egov:url path='/resources/css/displaytagFormatted.css'/>"
+	rel="stylesheet" type="text/css" />
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<title>RTGS Reference No Assignment</title>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 </head>
 
-	<body>  
+<body>
 	<script>
 		
 	</script>
-		<s:form action="chequeAssignment" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-				<jsp:param name="heading" value="RTGS Ref. No Assignment Search" />
-			</jsp:include>
- 			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox"><div class="subheadnew">RTGS Ref. No Assignment Search</div>
-			 <table align="center" width="100%" cellpadding="0" cellspacing="0" id="paymentTable">   
-				<tr>  
-					   <th class="bluebgheadtdnew"><s:text name="chq.assignment.select"/><s:checkbox id="selectall" name="selectall" onclick="checkAll(this)"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="Sl No"/></th>
-				 
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.department.name"/></th>       
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.payment.voucherno"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.payment.voucherdate"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.partycode"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.payment.amount"/></th>
-				    
+	<s:form action="chequeAssignment" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="RTGS Ref. No Assignment Search" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew">RTGS Ref. No Assignment Search</div>
+			<table align="center" width="100%" cellpadding="0" cellspacing="0"
+				id="paymentTable">
+				<tr>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.select" />
+						<s:checkbox id="selectall" name="selectall"
+							onclick="checkAll(this)" /></th>
+					<th class="bluebgheadtdnew"><s:text name="Sl No" /></th>
+
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.department.name" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.payment.voucherno" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.payment.voucherdate" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.partycode" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.payment.amount" /></th>
+
 				</tr>
-				<s:set var="counter" value="0"/>
+				<s:set var="counter" value="0" />
 				<s:iterator value="accountNoAndRtgsEntryMap" status="stat">
-				  <tr>  
-				     <td  class="greybox"> <s:property value="key.bankbranch.bank.name"  /> - <s:property value="key.bankbranch.branchname"  /></td>         
-				     <td  class="greybox"> <s:property value="key.accountnumber" />
-				     <s:set var="count" value="key.id"/></td>  <td> </td> <td> </td><td> </td><td> </td>              
-        			</tr>          
-        			<tr>
-        			              
-	        	 	<s:iterator value="value" status="s">
-	        	 	                 
-				  	  <td style="text-align:center" class="blueborderfortdnew">
-				  	  <s:hidden id="voucherHeaderId" name="rtgsList[%{#counter}].voucherHeaderId" value="%{voucherHeaderId}"/>
-				  	  <s:hidden id="billId" name="rtgsList[%{#counter}].billId" value="%{billId}"/>
-				  	  <s:hidden id="billNumber" name="rtgsList[%{#counter}].billNumber" value="%{billNumber}"/>  
-				  	   <s:hidden id="expenditureType" name="rtgsList[%{#counter}].expenditureType" value="%{expenditureType}"/>                                            
-				  	  <s:checkbox name="rtgsList[%{#counter}].isSelected" id="isSelected%{#counter}" onclick="update(this)"/></td>          
-				  	  <td align="left"   style="text-align:center" class="blueborderfortdnew"/> <s:property value="#s.index+1" /> </td>  
-				  	  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="departmentName" name="rtgsList[%{#counter}].departmentName" value="%{departmentName}"/><s:property value="%{departmentName}"/></td>
-				  	  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="voucherNumber" name="rtgsList[%{#counter}].voucherNumber" value="%{voucherNumber}"/><a href="javascript:void(0);" onclick='viewVoucher(<s:property value="%{voucherHeaderId}"/>);'><s:property value="%{voucherNumber}" /></a>&nbsp;</td>
-				 	  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="voucherDate" name="rtgsList[%{#counter}].voucherDate" value="%{voucherDate}"/><s:date name="%{voucherDate}" var="tempPaymentDate" format="dd/MM/yyyy"/><s:date name="%{voucherDate}" format="dd/MM/yyyy"/>
-      				  <s:hidden  name="rtgsList[%{#counter}].tempPaymentDate" value="%{tempPaymentDate}"></s:hidden></td>
-      				  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="paidTo" name="rtgsList[%{#counter}].paidTo" value="%{paidTo}"/><s:property value="%{paidTo}"/></td>
-      				  <td style="text-align:right" class="blueborderfortdnew"><s:hidden id="paidAmount" name="rtgsList[%{#counter}].paidAmount" value="%{paidAmount}"/><s:text name="format.number" ><s:param value="%{paidAmount}"/></s:text></td>
-      				  <s:hidden id="bankAccountId" name="rtgsList[%{#counter}].bankAccountId" value="%{bankAccountId}"/>                                          
-				       <s:set var="counter" value="%{#counter+1}"/>        
-				                    
-					</tr>                                          
-				</s:iterator>  
-				<tr><td> </td> <td> </td><td> </td><td> </td>
-				<td > </td>    <td > </td>         
-						<s:if test="%{ paymentMode=='rtgs'}">
+					<tr>
+						<td class="greybox"><s:property
+								value="key.bankbranch.bank.name" /> - <s:property
+								value="key.bankbranch.branchname" /></td>
+						<td class="greybox"><s:property value="key.accountnumber" />
+							<s:set var="count" value="key.id" /></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+
+						<s:iterator value="value" status="s">
+
+							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+									id="voucherHeaderId"
+									name="rtgsList[%{#counter}].voucherHeaderId"
+									value="%{voucherHeaderId}" /> <s:hidden id="billId"
+									name="rtgsList[%{#counter}].billId" value="%{billId}" /> <s:hidden
+									id="billNumber" name="rtgsList[%{#counter}].billNumber"
+									value="%{billNumber}" /> <s:hidden id="expenditureType"
+									name="rtgsList[%{#counter}].expenditureType"
+									value="%{expenditureType}" /> <s:checkbox
+									name="rtgsList[%{#counter}].isSelected"
+									id="isSelected%{#counter}" onclick="update(this)" /></td>
+							<td align="left" style="text-align: center"
+								class="blueborderfortdnew" />
+							<s:property value="#s.index+1" />
+							</td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+									id="departmentName" name="rtgsList[%{#counter}].departmentName"
+									value="%{departmentName}" />
+								<s:property value="%{departmentName}" /></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+									id="voucherNumber" name="rtgsList[%{#counter}].voucherNumber"
+									value="%{voucherNumber}" /><a href="javascript:void(0);"
+								onclick='viewVoucher(<s:property value="%{voucherHeaderId}"/>);'><s:property
+										value="%{voucherNumber}" /></a>&nbsp;</td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+									id="voucherDate" name="rtgsList[%{#counter}].voucherDate"
+									value="%{voucherDate}" />
+								<s:date name="%{voucherDate}" var="tempPaymentDate"
+									format="dd/MM/yyyy" />
+								<s:date name="%{voucherDate}" format="dd/MM/yyyy" /> <s:hidden
+									name="rtgsList[%{#counter}].tempPaymentDate"
+									value="%{tempPaymentDate}"></s:hidden></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+									id="paidTo" name="rtgsList[%{#counter}].paidTo"
+									value="%{paidTo}" />
+								<s:property value="%{paidTo}" /></td>
+							<td style="text-align: right" class="blueborderfortdnew"><s:hidden
+									id="paidAmount" name="rtgsList[%{#counter}].paidAmount"
+									value="%{paidAmount}" />
+								<s:text name="format.number">
+									<s:param value="%{paidAmount}" />
+								</s:text></td>
+							<s:hidden id="bankAccountId"
+								name="rtgsList[%{#counter}].bankAccountId"
+								value="%{bankAccountId}" />
+							<s:set var="counter" value="%{#counter+1}" />
+					</tr>
+				</s:iterator>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<s:if test="%{ paymentMode=='rtgs'}">
 						<!-- <td class="greybox">
 							<s:text name="chq.assignment.rtgs.refno"/><span class="mandatory">*</span>
 							<s:textfield id="rtgsRefNoMap['%{#count}']" name="rtgsRefNoMap['%{#count}']" value=""/>       
-						</td>         -->       
-						<td class="greybox">                         
-							<s:text name="chq.assignment.rtgs.date"/><span class="mandatory">*</span>     
-								<s:textfield id="rtgsdateMap[%{#count}]" name="rtgsdateMap[%{#count}]" value="%{rtgsdateMap[#count]}"   onchange="updateDate(this)" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-								<!-- <a href="javascript:show_calendar('forms[0].rtgsdateMap[%{#count}]');" style="text-decoration:none">&nbsp;
+						</td>         -->
+						<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
+							class="mandatory">*</span> <s:textfield
+								id="rtgsdateMap[%{#count}]" name="rtgsdateMap[%{#count}]"
+								value="%{rtgsdateMap[#count]}" onchange="updateDate(this)"
+								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <!-- <a href="javascript:show_calendar('forms[0].rtgsdateMap[%{#count}]');" style="text-decoration:none">&nbsp;
 								<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)  -->
-						</td>                                           
-						</s:if>                                                                  
-				</tr>                   
-		</s:iterator>             
+						</td>
+					</s:if>
+				</tr>
+				</s:iterator>
 			</table>
-			<div class="subheadsmallnew" id="noRecordsDiv" style="visibility:hidden">No Records Found</div>
-			<br/>
-			
-			<div  class="buttonbottom">    
-				<s:hidden id="selectedRows" name="selectedRows" value="%{selectedRows}"/>
-				<s:hidden id="rtgsContractorAssignment" name="rtgsContractorAssignment" value="%{rtgsContractorAssignment}"/>
-				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}"/>      
-				<s:hidden name="billSubType" id="billSubType" value="%{billSubType}"/>
-				
-				<s:submit id="assignChequeBtn" method="update" value="Assign RTGS Number" cssClass="buttonsubmit" onclick="return validate();" />
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+			<div class="subheadsmallnew" id="noRecordsDiv"
+				style="visibility: hidden">No Records Found</div>
+			<br />
+
+			<div class="buttonbottom">
+				<s:hidden id="selectedRows" name="selectedRows"
+					value="%{selectedRows}" />
+				<s:hidden id="rtgsContractorAssignment"
+					name="rtgsContractorAssignment" value="%{rtgsContractorAssignment}" />
+				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}" />
+				<s:hidden name="billSubType" id="billSubType" value="%{billSubType}" />
+
+				<s:submit id="assignChequeBtn" method="update"
+					value="Assign RTGS Number" cssClass="buttonsubmit"
+					onclick="return validate();" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
 		</div>
-		<s:token/>    
-		</s:form>
-		<script>
+		<s:token />
+	</s:form>
+	<script>
 			function update(obj)
 			{
 				if(obj.checked){
@@ -227,8 +284,8 @@
 				window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 		}
 			                
-		</script>           
-		
-		
-	</body>  
+		</script>
+
+
+</body>
 </html>

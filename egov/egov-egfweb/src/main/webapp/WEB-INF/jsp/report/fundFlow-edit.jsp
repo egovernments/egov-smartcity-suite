@@ -37,16 +37,17 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<html>  
-<head> 
- <script type="text/javascript" src="/EGF/resources/javascript/fundFlow.js"></script>
-    <title><s:text name="fundflowreportmodify"/></title>
-    
-  
-    <script type="text/javascript">
+<html>
+<head>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/fundFlow.js"></script>
+<title><s:text name="fundflowreportmodify" /></title>
+
+
+<script type="text/javascript">
     function onloadFundFlow()
     {
     
@@ -86,27 +87,30 @@
 
 
 </script>
-    
+
 </head>
-<body onload="onloadFundFlow()">  
+<body onload="onloadFundFlow()">
 	<div class="subheadnew">Modify Fund Flow Analysis Report</div>
-	<s:form  name="fundFlowReport" action="fundFlow" theme="simple">
-	<s:token />	
-	<%@include file="fundFlow-form.jsp" %>	
+	<s:form name="fundFlowReport" action="fundFlow" theme="simple">
+		<s:token />
+		<%@include file="fundFlow-form.jsp"%>
 
-	<s:if test="(receiptList!=null && receiptList.size()>0) ||( paymentList!=null && paymentList.size()>0) ">
+		<s:if
+			test="(receiptList!=null && receiptList.size()>0) ||( paymentList!=null && paymentList.size()>0) ">
 
 
-<div class="buttonbottom">
-	<s:submit value="Update" method="edit" cssClass="buttonsubmit" />
-	<s:reset name="button" type="submit" cssClass="button" id="button" value="Cancel"/>
-	<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
-</div>	
-</s:if>	
- 	</s:form>                   
- </body>
- </html>
- 
-      
-      
-      
+			<div class="buttonbottom">
+				<s:submit value="Update" method="edit" cssClass="buttonsubmit" />
+				<s:reset name="button" type="submit" cssClass="button" id="button"
+					value="Cancel" />
+				<s:submit value="Close" onclick="javascript: self.close()"
+					cssClass="button" />
+			</div>
+		</s:if>
+	</s:form>
+</body>
+</html>
+
+
+
+

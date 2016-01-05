@@ -37,22 +37,19 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>
-<s:text name="receiptInfoFetch.title"/> 
-</title>
-<sx:head/>
+<title><s:text name="receiptInfoFetch.title" /></title>
+<sx:head />
 </head>
 <script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-<body> 
+<body>
 	<s:form name="receiptInfoFetchForm" id="receiptInfoFetchForm"
-		action="eBReceiptInfoFetch" theme="css_xhtml"
-		validate="true">
+		action="eBReceiptInfoFetch" theme="css_xhtml" validate="true">
 		<s:token />
 		<div class="formmainbox"></div>
 		<div class="formheading" />
@@ -63,18 +60,16 @@
 		<table align="center" width="100%" cellspacing="0">
 			<tr>
 				<td width="25%"></td>
-				<td width="50%" colspan="2" style="text-align: center;">
-					<s:property value="%{ackMessage}" />
-				</td>
-				<td width="25">					
-				</td>
+				<td width="50%" colspan="2" style="text-align: center;"><s:property
+						value="%{ackMessage}" /></td>
+				<td width="25"></td>
 
 			</tr>
 		</table>
 		<div class="buttonbottom" align="center">
 			<table border="0px" cellpadding="0" cellspacing="10"
 				class="buttonbottom">
-				<tr align="center">					
+				<tr align="center">
 					<td style="padding: 0px"><input type="button" value="Close"
 						onclick="javascript:window.close();" class="button" /></td>
 				</tr>

@@ -37,12 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>Budget Report - Functionwise</title>
-    <script type="text/javascript">
+<html>
+<head>
+<title>Budget Report - Functionwise</title>
+<script type="text/javascript">
     
     function validateFinYear()
 	{
@@ -55,28 +55,40 @@
 			return true;
 	}
     </script>
-</head> 
-	<body>  
-		<s:form action="budgetReport" theme="simple" >  
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Budget Report - Functionwise" />
-			</jsp:include>
-			<div class="formmainbox"><div class="subheadnew">Budget Report - Budget At A Glance</div>
-		<table>
-		<tr>
-		<td class="greybox" width="5%"/>
-		<td class="greybox"><s:text name="report.financialYear"/> <span class="mandatory">*</span></td>
-		<td class="greybox"><s:select name="financialYear" id="financialYear" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="0" headerValue="----Select----"  value="%{model.financialYear.id}" /> </td>
-		<td class="bluebox" id="function_label" style="visibility:visible"><s:text name="report.function"/></td>
-		<td class="bluebox"><s:select name="function" id="function" list="dropdownData.functionList" listKey="id" listValue="name" headerKey="-1" headerValue="----Select----"  value="%{function.id}" /> </td>
-		</tr>
-		</table>
-				<s:hidden name="onSaveOrForward" value="true"/>
-				<div class="buttonbottom" style="padding-bottom:10px;">
-					<s:submit value="Submit" method="getAtGlanceReport" cssClass="buttonsubmit" onclick="return validateFinYear()"/>
-					<input type="button" value="Close" onclick="javascript:window.close()" class="button" />    
-				</div>
+</head>
+<body>
+	<s:form action="budgetReport" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Budget Report - Functionwise" />
+		</jsp:include>
+		<div class="formmainbox">
+			<div class="subheadnew">Budget Report - Budget At A Glance</div>
+			<table>
+				<tr>
+					<td class="greybox" width="5%" />
+					<td class="greybox"><s:text name="report.financialYear" /> <span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:select name="financialYear"
+							id="financialYear" list="dropdownData.financialYearList"
+							listKey="id" listValue="finYearRange" headerKey="0"
+							headerValue="----Select----" value="%{model.financialYear.id}" />
+					</td>
+					<td class="bluebox" id="function_label" style="visibility: visible"><s:text
+							name="report.function" /></td>
+					<td class="bluebox"><s:select name="function" id="function"
+							list="dropdownData.functionList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="----Select----"
+							value="%{function.id}" /></td>
+				</tr>
+			</table>
+			<s:hidden name="onSaveOrForward" value="true" />
+			<div class="buttonbottom" style="padding-bottom: 10px;">
+				<s:submit value="Submit" method="getAtGlanceReport"
+					cssClass="buttonsubmit" onclick="return validateFinYear()" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
-		</s:form>  
-	</body>  
+		</div>
+	</s:form>
+</body>
 </html>

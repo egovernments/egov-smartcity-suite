@@ -37,17 +37,20 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-	<STYLE type="text/css">
-	@media print
-    {
-        #non-printable { display: none; }
-    }
-	</STYLE>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<STYLE type="text/css">
+@media print {
+	#non-printable {
+		display: none;
+	}
+}
+</STYLE>
 </head>
 <script>
 var typeOfAcc="RECEIPTS_PAYMENTS,PAYMENTS";
@@ -252,84 +255,113 @@ function doAfterSubmit(){
 
 </script>
 <body onload="onLoadTask();">
-<div class="formmainbox">
-<div class="formheading"></div>
-<div class="subheadnew">Concurrence Report</div>
+	<div class="formmainbox">
+		<div class="formheading"></div>
+		<div class="subheadnew">Concurrence Report</div>
 
 
-<s:form action="concurrenceReport" theme="simple" name="concurrenceReport"  theme="simple"  method="post" onsubmit="javascript:doAfterSubmit()">
-	<table width="100%" cellpadding="0" cellspacing="0" border="0">
-		<tr>
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox">Fund</td>
-			<td class="bluebox" colspan="3">
-				<s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onChange="loadBank(this);"  value="%{fundId.id}"/>
-			</td>
-		</tr>
-		<tr>
-			<td class="greybox">&nbsp;</td>
-			<egov:ajaxdropdown id="bank" fields="['Text','Value']" dropdownId="bank" url="/voucher/common!ajaxLoadBanksByFundAndType.action" />
-	    	<td class="greybox">Bank Name:<span class="bluebox"></span></td>
-	    	<td class="greybox">
-	    		<s:select name="bank" id="bank" list="dropdownData.bankList" listKey="bankBranchId" listValue="bankBranchName" headerKey="-1" headerValue="----Choose----" onChange="populateAccNumbers(this);"  />
-	    	</td>
-	    	<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']" dropdownId="accountNumber" url="voucher/common!ajaxLoadAccNumAndType.action" />
-			<td class="greybox">Account Number:<span class="bluebox"></span></td>
-			<td class="greybox">
-				<s:select  name="bankAccount" id="accountNumber" list="dropdownData.accNumList" listKey="id" listValue="accountnumber" headerKey="-1" headerValue="----Choose----" onclick="validateBank()"/>
-			</td>
-		</tr>
-		<tr>
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox"><s:text name="Date Type"/><span class="mandatory">*</span></td>
-			<td class="bluebox" colspan="3"><s:radio id="dateType" name="dateType" list="#{'1':'AsOnDate','0':'Date Range'}" value="%{dateType}" onclick="loaddate(this)"/></td>
-		</tr>
-		<tr id="asdat1">
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox">As On Date:<span class="mandatory">*</span></td>
-			<td class="bluebox" colspan="3">
-				<s:textfield name="asOnDate" id="asOnDate" cssStyle="width:100px" value='%{getFormattedAsOnDate()}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-	    	</td>
-		</tr>
-		<tr id="dateran">
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox">From Date:<span class="mandatory">*</span></td>
-			<td class="bluebox">
-				<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px" value='%{getFormattedDate(this.value)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-			</td>
-			<td class="bluebox">To Date:<span class="mandatory">*</span></td>
-			<td class="bluebox">
-				<s:textfield name="toDate" id="toDate" cssStyle="width:100px" value='%{getFormattedDate()}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-			</td>
-		</tr>
-		<tr>
-			<td class="greybox">&nbsp;</td>
-			<td class="greybox"><s:text name="payment.mode"/></td>
-			<td class="greybox" colspan="3">
-				<s:radio id="chequeOrRTGS" name="chequeOrRTGS" list="#{'cheque':'Cheque','rtgs':'RTGS'}" value="%{chequeOrRTGS}"/>
-			</td>
-	</tr>
-	</table>
-<br/><br/>
-<div class="buttonbottom" id="non-printable">
-  	<input type="button" value="Submit" class="buttonsubmit" onclick="return getData()"/>
-  	&nbsp;
-	<s:reset name="button" type="submit" cssClass="button" id="button" value="Reset" onclick="validateCancel();"/>
-	<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
-</div>
-</div>
-<div id="loading" class="loading" style="width: 700; height: 700;display: none " align="center" >
-	<blink style="color: red">Searching processing, Please wait...</blink>
-</div> 
-</s:form>
+		<s:form action="concurrenceReport" theme="simple"
+			name="concurrenceReport" theme="simple" method="post"
+			onsubmit="javascript:doAfterSubmit()">
+			<table width="100%" cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox">Fund</td>
+					<td class="bluebox" colspan="3"><s:select name="fundId"
+							id="fundId" list="dropdownData.fundList" listKey="id"
+							listValue="name" headerKey="-1" headerValue="----Choose----"
+							onChange="loadBank(this);" value="%{fundId.id}" /></td>
+				</tr>
+				<tr>
+					<td class="greybox">&nbsp;</td>
+					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
+						dropdownId="bank"
+						url="/voucher/common!ajaxLoadBanksByFundAndType.action" />
+					<td class="greybox">Bank Name:<span class="bluebox"></span></td>
+					<td class="greybox"><s:select name="bank" id="bank"
+							list="dropdownData.bankList" listKey="bankBranchId"
+							listValue="bankBranchName" headerKey="-1"
+							headerValue="----Choose----" onChange="populateAccNumbers(this);" />
+					</td>
+					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
+						dropdownId="accountNumber"
+						url="voucher/common!ajaxLoadAccNumAndType.action" />
+					<td class="greybox">Account Number:<span class="bluebox"></span></td>
+					<td class="greybox"><s:select name="bankAccount"
+							id="accountNumber" list="dropdownData.accNumList" listKey="id"
+							listValue="accountnumber" headerKey="-1"
+							headerValue="----Choose----" onclick="validateBank()" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text name="Date Type" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" colspan="3"><s:radio id="dateType"
+							name="dateType" list="#{'1':'AsOnDate','0':'Date Range'}"
+							value="%{dateType}" onclick="loaddate(this)" /></td>
+				</tr>
+				<tr id="asdat1">
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox">As On Date:<span class="mandatory">*</span></td>
+					<td class="bluebox" colspan="3"><s:textfield name="asOnDate"
+							id="asOnDate" cssStyle="width:100px"
+							value='%{getFormattedAsOnDate()}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('concurrenceReport.asOnDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+				</tr>
+				<tr id="dateran">
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox">From Date:<span class="mandatory">*</span></td>
+					<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
+							cssStyle="width:100px" value='%{getFormattedDate(this.value)}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('concurrenceReport.fromDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+					<td class="bluebox">To Date:<span class="mandatory">*</span></td>
+					<td class="bluebox"><s:textfield name="toDate" id="toDate"
+							cssStyle="width:100px" value='%{getFormattedDate()}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('concurrenceReport.toDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+				</tr>
+				<tr>
+					<td class="greybox">&nbsp;</td>
+					<td class="greybox"><s:text name="payment.mode" /></td>
+					<td class="greybox" colspan="3"><s:radio id="chequeOrRTGS"
+							name="chequeOrRTGS" list="#{'cheque':'Cheque','rtgs':'RTGS'}"
+							value="%{chequeOrRTGS}" /></td>
+				</tr>
+			</table>
+			<br />
+			<br />
+			<div class="buttonbottom" id="non-printable">
+				<input type="button" value="Submit" class="buttonsubmit"
+					onclick="return getData()" /> &nbsp;
+				<s:reset name="button" type="submit" cssClass="button" id="button"
+					value="Reset" onclick="validateCancel();" />
+				<s:submit value="Close" onclick="javascript: self.close()"
+					cssClass="button" />
+			</div>
+	</div>
+	<div id="loading" class="loading"
+		style="width: 700; height: 700; display: none" align="center">
+		<blink style="color: red">Searching processing, Please wait...</blink>
+	</div>
+	</s:form>
 
-<div id="results">
-<script>
+	<div id="results">
+		<script>
 document.getElementById('loading').style.display ='none';
 </script>
-</div>
-<div id="resultGrid">
-</div>
+	</div>
+	<div id="resultGrid"></div>
 </body>
 </html>
 

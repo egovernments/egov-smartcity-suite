@@ -39,26 +39,28 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="20%"><strong><s:text name="party.code"/><span class="mandatory"></span></strong></td>
-			    <td class="bluebox">
-			    	<s:textfield id="code" name="code" value="%{code}" size="10" maxlength="20" />
-			    </td>
-				<td class="bluebox" width="20%"><strong><s:text name="party.parent"/></strong></td>
-			    <td class="bluebox">
-			    	<s:select list="dropdownData.partyTypeList" id="partyType.egPartytype.id" listKey="id"	listValue="code" 
-			    		name="partyType.egPartytype.id" headerKey=""	headerValue="---- Choose ----" value="egPartytype.id">
-			    	</s:select>
-			    </td>
-			</tr>
-			<tr>
-			    <td class="greybox">&nbsp;</td>
-			    <td class="greybox" width="20%"><strong><s:text name="party.desc"/><span class="mandatory"></span></strong></td>
-			    <td class="greybox">
-			    	<textarea maxlength="100" name="description" id="description" rows="3" cols="60" ><s:property value="description" /></textarea>
-			    </td>
-				<td class="greybox" width="20%">&nbsp;</td>
-			    <td class="greybox">&nbsp;</td>   
-			</tr>   
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="party.code" /><span class="mandatory"></span></strong></td>
+		<td class="bluebox"><s:textfield id="code" name="code"
+				value="%{code}" size="10" maxlength="20" /></td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="party.parent" /></strong></td>
+		<td class="bluebox"><s:select list="dropdownData.partyTypeList"
+				id="partyType.egPartytype.id" listKey="id" listValue="code"
+				name="partyType.egPartytype.id" headerKey=""
+				headerValue="---- Choose ----" value="egPartytype.id">
+			</s:select></td>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="20%"><strong><s:text
+					name="party.desc" /><span class="mandatory"></span></strong></td>
+		<td class="greybox"><textarea maxlength="100" name="description"
+				id="description" rows="3" cols="60"><s:property
+					value="description" /></textarea></td>
+		<td class="greybox" width="20%">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
+	</tr>
 </table>

@@ -37,20 +37,17 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
-	<head>
-		<title>
-				<s:if test="%{showMode=='edit'}">
-					<s:text name="party.modify" />
-				</s:if>
-				<s:if test="%{showMode=='view'}">
-					<s:text name="party.view" />
-				</s:if>
-		</title>
-		<sx:head/>
-		<script type="text/javascript">
+<head>
+<title><s:if test="%{showMode=='edit'}">
+		<s:text name="party.modify" />
+	</s:if> <s:if test="%{showMode=='view'}">
+		<s:text name="party.view" />
+	</s:if></title>
+<sx:head />
+<script type="text/javascript">
 		
 	function disableControls(isDisable) {
 		for ( var i = 0; i < document.partyForm.length; i++)
@@ -87,41 +84,45 @@
 		}
 </script>
 
-	</head>
-	<body onload="onLoadTask();">
-		<s:actionmessage theme="css_xhtml" />
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:if test="%{showMode=='edit'}">
-					<s:text name="party.modify" />
-				</s:if>
-				<s:if test="%{showMode=='view'}">
-					<s:text name="party.view" />
-				</s:if>
-			</div>
+</head>
+<body onload="onLoadTask();">
+	<s:actionmessage theme="css_xhtml" />
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:if test="%{showMode=='edit'}">
+				<s:text name="party.modify" />
+			</s:if>
+			<s:if test="%{showMode=='view'}">
+				<s:text name="party.view" />
+			</s:if>
 		</div>
-		<s:actionerror />
-		<s:fielderror />
-		<s:form name="partyForm" action="partyType"  theme="css_xhtml" validate="true">
-		
+	</div>
+	<s:actionerror />
+	<s:fielderror />
+	<s:form name="partyForm" action="partyType" theme="css_xhtml"
+		validate="true">
+
 		<s:push value="model">
-		<s:hidden name="showMode" />
+			<s:hidden name="showMode" />
 			<s:hidden name="id" />
-				<%@include file="partyType-form.jsp"%>
-		<div class="buttonbottom" align="center"> 
-			<table align="center">
-			<tr class="buttonbottom" id="buttondiv" style="align:middle" >
-					<s:if test="%{showMode=='edit'}">
-						<td><s:submit name="edit" value="Modify And View" method="edit" cssClass="buttonsubmit"/></td>
-						<td><s:submit name="edit" value="Modify And Close" method="edit" cssClass="buttonsubmit" onclick="setClose();"/></td>
-						<s:hidden name="close" id="close"/>
-					</s:if>
-					<td><input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button" /></td>
-			</tr>
-			</table>
-		</div>
-			</s:push>
-			<s:token/>
-		</s:form>
-	</body>
+			<%@include file="partyType-form.jsp"%>
+			<div class="buttonbottom" align="center">
+				<table align="center">
+					<tr class="buttonbottom" id="buttondiv" style="align: middle">
+						<s:if test="%{showMode=='edit'}">
+							<td><s:submit name="edit" value="Modify And View"
+									method="edit" cssClass="buttonsubmit" /></td>
+							<td><s:submit name="edit" value="Modify And Close"
+									method="edit" cssClass="buttonsubmit" onclick="setClose();" /></td>
+							<s:hidden name="close" id="close" />
+						</s:if>
+						<td><input type="button" id="Close" value="Close"
+							onclick="javascript:window.close()" class="button" /></td>
+					</tr>
+				</table>
+			</div>
+		</s:push>
+		<s:token />
+	</s:form>
+</body>
 </html>

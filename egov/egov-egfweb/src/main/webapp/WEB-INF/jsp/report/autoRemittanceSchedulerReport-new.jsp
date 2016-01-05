@@ -45,7 +45,8 @@
 <%@taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ include file="/includes/taglibs.jsp"%>
 
-<link href="<egov:url path='/resources/css/displaytagFormatted.css'/>" rel="stylesheet" type="text/css" />
+<link href="<egov:url path='/resources/css/displaytagFormatted.css'/>"
+	rel="stylesheet" type="text/css" />
 <html>
 <head>
 <title><s:text name="report.autoremittancescheduler.title" /></title>
@@ -65,38 +66,35 @@
 				<tr>
 					<td class="bluebox"><s:text name="report.remittancecoa" /></td>
 					<td class="bluebox"><s:select name="recoveryId"
-							id="recoveryId" list="recoveryMap" listKey="key" value='%{recoveryId}'
-							listValue="value" headerKey="" headerValue="----Choose----" /></td>
+							id="recoveryId" list="recoveryMap" listKey="key"
+							value='%{recoveryId}' listValue="value" headerKey=""
+							headerValue="----Choose----" /></td>
 
 					<td class="bluebox"><s:text name="report.schedulertype" /></td>
-					<td class="bluebox"><s:select name="schedulerType" value='%{schedulerType}'
-							id="schedulerType" list="dropdownData.schedulerTypeList"
-							headerKey="" /></td>
+					<td class="bluebox"><s:select name="schedulerType"
+							value='%{schedulerType}' id="schedulerType"
+							list="dropdownData.schedulerTypeList" headerKey="" /></td>
 
 				</tr>
 				<tr>
 					<td class="greybox"><s:text name="report.rundatefrom" />:</td>
-					<s:date name="runDateFrom" var="fromDateFormat"
-														format="dd/MM/yyyy" />
+					<s:date name="runDateFrom" var="fromDateFormat" format="dd/MM/yyyy" />
 					<td class="greybox"><s:textfield name="runDateFrom"
-							id="runDateFrom" cssStyle="width:100px"
-							value='%{fromDateFormat}'
+							id="runDateFrom" cssStyle="width:100px" value='%{fromDateFormat}'
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('autoRemittanceSchedulerReport.runDateFrom');"
 						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif"
-							border="0" alt="" /></a>(dd/mm/yyyy)<br /></td>
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0"
+							alt="" /></a>(dd/mm/yyyy)<br /></td>
 					<td class="greybox"><s:text name="report.rundateto" />:</td>
-					<s:date name="runDateTo" var="toDateFormat"
-														format="dd/MM/yyyy" />
+					<s:date name="runDateTo" var="toDateFormat" format="dd/MM/yyyy" />
 					<td class="greybox"><s:textfield name="runDateTo"
-							id="runDateTo" cssStyle="width:100px"
-							value='%{toDateFormat}'
+							id="runDateTo" cssStyle="width:100px" value='%{toDateFormat}'
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('autoRemittanceSchedulerReport.runDateTo');"
 						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif"
-							border="0" alt="" /></a>(dd/mm/yyyy)<br /></td>
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0"
+							alt="" /></a>(dd/mm/yyyy)<br /></td>
 				</tr>
 				<!-- <tr>
 					<td class="bluebox" width="10%"><s:text
@@ -127,7 +125,7 @@
 							style="width:3%;text-align:right">
 							<s:property
 								value="%{#attr.currentRowObject_rowNum+ (page-1)*pageSize}" />
-						</display:column> 
+						</display:column>
 						<display:column headerClass="pagetableth" class="pagetabletd"
 							title="Recovery CoA" titleKey="report.schedulertype"
 							style="width:20%;text-align:center">
@@ -145,19 +143,19 @@
 							style="width:5%;text-align:left">
 							<s:date name="#attr.currentRowObject.runDate" format="dd/MM/yyyy" />
 						</display:column>
-						
+
 						<display:column headerClass="pagetableth" class="pagetabletd"
 							title="Status" titleKey="report.schedulertype"
 							style="width:4%;text-align:center">
 							<s:property value="#attr.currentRowObject.status" />
 						</display:column>
-						
+
 						<display:column headerClass="pagetableth" class="pagetabletd"
 							title="Remarks" titleKey="report.schedulertype"
 							style="width:60%;text-align:center">
 							<s:property value="#attr.currentRowObject.remarks" />
 						</display:column>
-						
+
 						<display:column headerClass="pagetableth" class="pagetabletd"
 							title="Number of Payments" titleKey="report.schedulertype"
 							style="width:3%;text-align:center">
