@@ -96,9 +96,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
     private static BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
     private static BigDecimal SEASHORE_RESD_OWNER_DEPRECIATION = new BigDecimal(45);
-    private static BigDecimal BUIULDING_VALUE = new BigDecimal(0.67);
-    private static BigDecimal SITE_VALUE = new BigDecimal(0.33);
-
+    //private static BigDecimal BUIULDING_VALUE = new BigDecimal(0.67);
+    //private static BigDecimal SITE_VALUE = new BigDecimal(0.33);
+    
+    private BigDecimal BUIULDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
+    private BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal totalTaxPayable = BigDecimal.ZERO;
     private Boolean isCorporation = Boolean.FALSE;
     private Boolean isSeaShoreULB = Boolean.FALSE;
@@ -279,7 +281,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 generalTax = halfYearHeadTax;
             }
             if (applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
-                educationTax = generalTax.multiply(
+                educationTax = alv.multiply(
                         getTaxRate(DEMANDRSN_CODE_EDUCATIONAL_CESS).divide(new BigDecimal("100"))).setScale(0,
                         BigDecimal.ROUND_HALF_UP);
                 halfYearHeadTax = educationTax;
