@@ -40,7 +40,6 @@
 //Source file: D:\\SUSHMA\\PROJECTS\\E-GOV\\ENGINEDESIGN\\com\\exilant\\GLEngine\\ChartOfAccounts.java
 package com.exilant.GLEngine;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 //import com.exilant.eGov.src.domain.GeneralLedger;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -128,16 +127,20 @@ public class ChartOfAccounts {
         {
             // TODO Commenting reading cache from infinispan temporarily and building cachemanager through code
             // cache=(TreeCacheMBean)MBeanProxyExt.create(TreeCacheMBean.class, "jboss.cache:service=TreeCache", server);
-
+                LOGGER.debug("Inside static method ");
             EgovMasterDataCaching.getInstance();
+            LOGGER.debug("Got EgovMasterDataCaching ");
             final EmbeddedCacheManager manager = EgovMasterDataCaching.getCACHE_MANAGER();
             manager.defineConfiguration("chartofaccounts-cache", new ConfigurationBuilder().build());
 
             cache = manager.getCache("chartofaccounts-cache");
+                LOGGER.debug("Cache = " + cache);
             if (cache == null)
                 loadAccountData();
+                LOGGER.debug("loadAccountData is done");
         } catch (final Exception e)
         {
+                LOGGER.debug("Exception in static method");
             LOGGER.error(EXP + e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage());
         }
