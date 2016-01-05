@@ -48,23 +48,23 @@ public class FloorDetailsView implements Serializable {
      * 
      */
     private static final long serialVersionUID = -2878836256360657101L;
-    private Integer basicPropertyId;
+    private PropertyMaterlizeView propMatView;
     private Integer propertyId;
+    private Integer floorId;
     private String propertyUsage;
     private PropertyTypeMaster propertyTypeMaster;
     private String floorNo;
-    private BigDecimal sitalArea;
+    private BigDecimal plinthArea;
     private BigDecimal builtUpArea;
     private String classification;
     private PropertyOccupation propertyOccupation;
 
-
-    public Integer getBasicPropertyId() {
-        return basicPropertyId;
+    public PropertyMaterlizeView getPropMatView() {
+        return propMatView;
     }
 
-    public void setBasicPropertyId(Integer basicPropertyId) {
-        this.basicPropertyId = basicPropertyId;
+    public void setPropMatView(PropertyMaterlizeView propMatView) {
+        this.propMatView = propMatView;
     }
 
     public Integer getPropertyId() {
@@ -73,6 +73,14 @@ public class FloorDetailsView implements Serializable {
 
     public void setPropertyId(Integer propertyId) {
         this.propertyId = propertyId;
+    }
+
+    public Integer getFloorId() {
+        return floorId;
+    }
+
+    public void setFloorId(Integer floorId) {
+        this.floorId = floorId;
     }
 
     public String getPropertyUsage() {
@@ -99,12 +107,12 @@ public class FloorDetailsView implements Serializable {
         this.floorNo = floorNo;
     }
 
-    public BigDecimal getSitalArea() {
-        return sitalArea;
+    public BigDecimal getPlinthArea() {
+        return plinthArea;
     }
 
-    public void setSitalArea(BigDecimal sitalArea) {
-        this.sitalArea = sitalArea;
+    public void setPlinthArea(BigDecimal plinthArea) {
+        this.plinthArea = plinthArea;
     }
 
     public BigDecimal getBuiltUpArea() {
