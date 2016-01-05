@@ -64,11 +64,9 @@
 		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js"></script>
 		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" />
-		<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<decorator:head/>
 	</head>
