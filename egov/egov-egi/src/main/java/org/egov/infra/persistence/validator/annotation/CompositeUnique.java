@@ -56,16 +56,9 @@ import org.egov.infra.persistence.validator.CompositeUniqueCheckValidator;
 @Documented
 @Constraint(validatedBy = CompositeUniqueCheckValidator.class)
 public @interface CompositeUnique {
-    String[] fields() default {};
-    String[] compositefields() default {};
-    String id();
-
-    String tableName();
-
-    String[] columnName() default {};
-    String[] compositecolumnName() default{};
+    String id() default "id";
+    String[] fields();
     String message() default "{validator.unique}";
-
     boolean enableDfltMsg() default false;
     
     Class<?>[] groups() default {};
