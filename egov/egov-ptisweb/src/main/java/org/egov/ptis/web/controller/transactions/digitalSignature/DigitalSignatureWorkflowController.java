@@ -56,6 +56,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
+
 import org.apache.commons.io.FileUtils;
 
 import javax.persistence.EntityManager;
@@ -260,10 +262,10 @@ public class DigitalSignatureWorkflowController {
         if (propertyService.isEmployee(state.getCreatedBy()))
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
         else if (!state.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
+            wfInitiator = assignmentService.getAssignmentsForPosition(state.getStateHistory().get(0)
+                    .getOwnerPosition().getId(),new Date()).get(0);
         else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getState().getOwnerPosition().getId());
+            wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),new Date()).get(0); 
         return wfInitiator;
     }
 
