@@ -247,7 +247,7 @@
 									  	</div>
 								    </div>
 								    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -263,7 +263,7 @@
 								     
 									<c:if test="${ empty image}">
                                     <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -479,7 +479,7 @@
 										</div>
 									</div>
 
-									<div class="row form-group">
+									<div class="panel-heading custom_form_panel_heading">
 										<table id="assignmentTable" class="table table-bordered">
 										<thead>
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">
@@ -623,7 +623,7 @@
 										/ Modify</button>
 							</div>
 							</div>
-							<div class="row form-group">
+							<div class="panel-heading custom_form_panel_heading">
 								<table id="jurisdictionTable" class="table table-bordered">
 									<thead>
 										<div

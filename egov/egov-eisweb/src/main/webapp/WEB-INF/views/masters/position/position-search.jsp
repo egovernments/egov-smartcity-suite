@@ -174,6 +174,8 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="panel panel-primary" data-collapsed="0">
+								<div class="panel-heading">
+								</div>
 								<div class="panel-body">
 									<div class="row">
 										<div class="col-md-3 col-xs-6 add-margin">

@@ -65,7 +65,7 @@
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
-<div class="container-fluid">
+
  <div class="row">
 	<div class="col-md-12">
 		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" enctype="multipart/form-data" >
@@ -197,7 +197,7 @@
 									  	</div>
 								    </div>
 								    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -213,7 +213,7 @@
 								     
 									<c:if test="${ empty image}">
                                     <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -247,6 +247,4 @@
                 
              </form:form>
     </div>
- </div>
-</div>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
