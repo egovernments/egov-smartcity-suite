@@ -151,7 +151,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Querying to date range " + getFormattedDate(fromDate) + "to date "
                     + getFormattedDate(getNextDate(toDate)));
-        persistenceService.setType(InstrumentHeader.class);
+        //persistenceService.setType(InstrumentHeader.class);
         final Query query = HibernateUtil
                 .getCurrentSession()
                 .createSQLQuery(

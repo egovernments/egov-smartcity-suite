@@ -193,7 +193,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getFundName() {
         if (voucher != null && voucher.getFundId() != null) {
-            persistenceService.setType(Fund.class);
+            //persistenceService.setType(Fund.class);
             final Fund fund = (Fund) persistenceService.findById(voucher.getFundId().getId(), false);
             return fund == null ? "" : fund.getName();
         }
@@ -202,7 +202,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getDepartmentName() {
         if (voucher != null && voucher.getVouchermis() != null && voucher.getVouchermis().getDepartmentid() != null) {
-            persistenceService.setType(Department.class);
+            //persistenceService.setType(Department.class);
             final Department dept = (Department) persistenceService.findById(voucher.getVouchermis().getDepartmentid().getId(),
                     false);
             return dept == null ? "" : dept.getName();

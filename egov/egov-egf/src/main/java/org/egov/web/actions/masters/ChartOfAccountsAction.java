@@ -226,7 +226,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private void populateAccountDetailType() {
-        persistenceService.setType(Accountdetailtype.class);
+        //persistenceService.setType(Accountdetailtype.class);
         for (final String row : accountDetailTypeList)
             accountDetailType.add((Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?",
                     Integer.valueOf(row)));
@@ -237,7 +237,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         if (accounts.getChartOfAccountDetails() == null)
             return;
         chartOfAccountService.getSession().flush();
-        persistenceService.setType(CChartOfAccountDetail.class);
+        //persistenceService.setType(CChartOfAccountDetail.class);
         try {
             for (final Accountdetailtype row : accountDetailType) {
                 final Iterator<CChartOfAccountDetail> iterator = accounts.getChartOfAccountDetails().iterator();

@@ -80,7 +80,10 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     private BudgetDetailsHibernateDAO budgetDetailsDAO;
     private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationService.class);
     protected ScriptService sequenceNumberScript;
-
+    
+    public BudgetReAppropriationService(final Class<BudgetReAppropriation> budgetReAppropriation) {
+        this.type = budgetReAppropriation;
+    }
     public SequenceGenerator getSequenceGenerator() {
         return sequenceGenerator;
     }
@@ -107,7 +110,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     }
 
     public BudgetReAppropriationService(final BudgetDetailConfig budgetDetailConfig) {
-        setType(BudgetReAppropriation.class);
+        //setType(BudgetReAppropriation.class);
         this.budgetDetailConfig = budgetDetailConfig;
     }
 

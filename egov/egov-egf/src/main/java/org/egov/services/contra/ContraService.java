@@ -93,6 +93,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     private PersistenceService<ContraJournalVoucher, Long> contrajournalService;
     private PersistenceService<Bankreconciliation, Integer> bankReconService;
 
+    
     @Autowired
     private ChartOfAccountsDAO coaDAO;
     @Autowired
@@ -109,7 +110,9 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     public ContraService() throws Exception {
     }
-
+    public ContraService(final Class<ContraJournalVoucher> contraJournalVoucher) {
+        this.type = contraJournalVoucher;
+    }
     public Position getPositionForWfItem(final ContraJournalVoucher rv)
     {
         return eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
@@ -385,7 +388,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
         PersistenceService<AppConfig, Integer> appConfigSer;
         appConfigSer = new PersistenceService<AppConfig, Integer>();
-        appConfigSer.setType(AppConfig.class);
+        //appConfigSer.setType(AppConfig.class);
 
         final AppConfig appConfig = appConfigSer.find("from AppConfig where key_name =?", "PREAPPROVEDVOUCHERSTATUS");
         if (null != appConfig && null != appConfig.getAppDataValues())

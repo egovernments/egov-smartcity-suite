@@ -65,14 +65,14 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.ChequeAssignment;
+import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ChequeAssignmentService {
-    // extends PersistenceService<Paymentheader, Long> {
+public class ChequeAssignmentService  extends PersistenceService<Paymentheader, Long> {
 
     public SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
@@ -100,7 +100,10 @@ public class ChequeAssignmentService {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-
+    
+    public ChequeAssignmentService(final Class<Paymentheader> paymentheader) {
+        this.type = paymentheader;
+    }
     @SuppressWarnings("unchecked")
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;

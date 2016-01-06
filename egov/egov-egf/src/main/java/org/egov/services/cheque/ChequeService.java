@@ -72,11 +72,9 @@ public class ChequeService extends PersistenceService<AccountCheques, Long> {
         this.persistenceService = persistenceService;
     }
 
-    public ChequeService()
-    {
-        setType(AccountCheques.class);
+    public ChequeService(final Class<AccountCheques> accountCheques) {
+        this.type = accountCheques;
     }
-
     /**
      *
      * @param accId

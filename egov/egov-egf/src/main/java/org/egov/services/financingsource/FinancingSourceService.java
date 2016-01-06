@@ -61,6 +61,10 @@ import org.hibernate.criterion.Restrictions;
 public class FinancingSourceService extends PersistenceService<Fundsource, Integer> {
     private static final Logger LOGGER = Logger.getLogger(FinancingSourceService.class);
 
+    public FinancingSourceService(final Class<Fundsource> fundsource) {
+        this.type = fundsource;
+    }
+
     /**
      * @description - returns the list of financial source objects based on the parameter subscheme id.
      * @param subSchemeId - the subscheme id.

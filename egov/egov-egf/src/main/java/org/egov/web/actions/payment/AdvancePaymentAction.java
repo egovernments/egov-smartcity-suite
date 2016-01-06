@@ -453,7 +453,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
         paymentheader = getPayment();
         voucherHeader = paymentheader.getVoucherheader();
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        persistenceService.setType(CVoucherHeader.class);
+        //persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getText("payment.cancel.success"));

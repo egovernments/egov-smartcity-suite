@@ -247,14 +247,14 @@ public class LoanGrantAction extends LoanGrantBaseAction {
 
         setBankBranchMap(new HashMap<String, String>());
         addDropdownData("bankaccountList", Collections.EMPTY_LIST);
-        persistenceService.setType(LoanGrantDetail.class);
+        //persistenceService.setType(LoanGrantDetail.class);
         sanctionedAmountLGDetails = new ArrayList<LoanGrantDetail>();
         sanctionedAmountLGDetails.add(new LoanGrantDetail());
         unsanctionedAmountLGDetails = new ArrayList<LoanGrantDetail>();
         unsanctionedAmountLGDetails.add(new LoanGrantDetail());
         revisedAmountLGDetails = new ArrayList<LoanGrantDetail>();
         revisedAmountLGDetails.add(new LoanGrantDetail());
-        persistenceService.setType(FundingAgency.class);
+        //persistenceService.setType(FundingAgency.class);
         fundingAgencyList = new ArrayList<FundingAgency>();
         fundingAgencyList.addAll(persistenceService.findAllBy(" from FundingAgency where isActive=1 order by name"));
         loanGrantHeader.getReceiptList().add(new LoanGrantReceiptDetail());
@@ -327,7 +327,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
             if (loanGrantHeader.getRevisedCost() == null)
                 loanGrantHeader.setRevisedCost(BigDecimal.ZERO);
             SubSchemeProject subSchemeProject;
-            persistenceService.setType(SubSchemeProject.class);
+            //persistenceService.setType(SubSchemeProject.class);
             for (final LoanGrantBean bean : projectCodeList)
             {
                 subSchemeProject = new SubSchemeProject();
@@ -340,10 +340,10 @@ public class LoanGrantAction extends LoanGrantBaseAction {
             schemeBankaccount.setBankAccount(bankaccObj);
             schemeBankaccount.setScheme(scheme);
             schemeBankaccount.setSubScheme(subScheme);
-            persistenceService.setType(SchemeBankaccount.class);
+            //persistenceService.setType(SchemeBankaccount.class);
             persistenceService.persist(schemeBankaccount);
             createDetailAndReceiptList();
-            persistenceService.setType(LoanGrantHeader.class);
+            //persistenceService.setType(LoanGrantHeader.class);
             persistenceService.persist(loanGrantHeader);
         } catch (final ValidationException e) {
             throw e;
@@ -393,7 +393,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                     "delete from egf_subscheme_project where subschemeid= " + getSubSchemeId());
             query.executeUpdate();
             SubSchemeProject subSchemeProject;
-            persistenceService.setType(SubSchemeProject.class);
+            //persistenceService.setType(SubSchemeProject.class);
             for (final LoanGrantBean bean : projectCodeList)
             {
                 subSchemeProject = new SubSchemeProject();
@@ -405,7 +405,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                     "from SchemeBankaccount where scheme.id=?", getSchemeId());
             final Bankaccount accountObj = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount);
             schemeBankaccount.setBankAccount(accountObj);
-            persistenceService.setType(LoanGrantHeader.class);
+            //persistenceService.setType(LoanGrantHeader.class);
             persistenceService.persist(loanGrantHeader);
         } catch (final ValidationException e) {
             prepareBeforeEdit();

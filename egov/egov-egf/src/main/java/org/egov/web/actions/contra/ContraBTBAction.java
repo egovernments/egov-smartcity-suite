@@ -874,7 +874,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             final CVoucherHeader vh) {
         cjv.setInstrumentHeaderId(ih);
         final PersistenceService<ContraJournalVoucher, Long> contraJVService = new PersistenceService<ContraJournalVoucher, Long>();
-        contraJVService.setType(ContraJournalVoucher.class);
+        //contraJVService.setType(ContraJournalVoucher.class);
         cjv.setVoucherHeaderId(vh);
         getHibObjectsFromContraBean();
         cjv.setFromBankAccountId(contraVoucher.getFromBankAccountId());

@@ -633,7 +633,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
                 LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
             final PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
-            persistenceService.setType(CFiscalPeriod.class);
+            //persistenceService.setType(CFiscalPeriod.class);
             final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
                     Long.parseLong(fiscalPeriod));
             // Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
@@ -723,7 +723,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
                 LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
             final PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
-            persistenceService.setType(CFiscalPeriod.class);
+            //persistenceService.setType(CFiscalPeriod.class);
             final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
                     Long.parseLong(fiscalPeriod));
             // Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
@@ -805,7 +805,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
                 LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
             final PersistenceService persistenceService = new PersistenceService();
             // persistenceService.setSessionFactory(new SessionFactory());
-            persistenceService.setType(CFiscalPeriod.class);
+            //persistenceService.setType(CFiscalPeriod.class);
             final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
                     Long.parseLong(fiscalPeriod));
             // Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7

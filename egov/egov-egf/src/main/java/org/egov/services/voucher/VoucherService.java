@@ -143,14 +143,17 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private VoucherHelper voucherHelper;
 
     private MastersService masters;
-    private final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-    public SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
+    private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     @Autowired
     private SequenceGenerator sequenceGenerator;
     private FinancialYearHibernateDAO financialYearDAO;
 
     public VoucherService() {
 
+    }
+    public VoucherService(final Class<CVoucherHeader> voucherHeader) {
+        this.type = voucherHeader;
     }
 
     private EISServeable eisService;
@@ -830,7 +833,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             PersistenceService<EgfRecordStatus, Long> recordStatusSer;
             recordStatusSer = new PersistenceService<EgfRecordStatus, Long>();
             // recordStatusSer.setSessionFactory(new SessionFactory());
-            recordStatusSer.setType(EgfRecordStatus.class);
+            //recordStatusSer.setType(EgfRecordStatus.class);
             final String code = EGovConfig.getProperty("egf_config.xml", "confirmoncreate", "", voucherHeader.getType());
             if ("N".equalsIgnoreCase(code))
                 recordStatus.setStatus(Integer.valueOf(1));

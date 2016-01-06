@@ -287,7 +287,7 @@ public class ContingentBillAction extends BaseBillAction {
         if (null == cbill.getEgBillregistermis().getSourcePath()) {
             cbill.getEgBillregistermis().setSourcePath(
                     "/EGF/bill/contingentBill!beforeView.action?billRegisterId=" + cbill.getId());
-            persistenceService.setType(Cbill.class);
+            //persistenceService.setType(Cbill.class);
             persistenceService.update(cbill);
         }
         if (parameters.get(ACTION_NAME)[0].contains(APPROVE))
@@ -456,7 +456,7 @@ public class ContingentBillAction extends BaseBillAction {
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(statusQury);
         cbill.setStatus(egwStatus);
         cbill.setBillstatus(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
-        persistenceService.setType(Cbill.class);
+        //persistenceService.setType(Cbill.class);
         persistenceService.persist(cbill);
         HibernateUtil.getCurrentSession().flush();
         addActionMessage(getText("cbill.cancellation.succesful"));
@@ -573,7 +573,7 @@ public class ContingentBillAction extends BaseBillAction {
         EgBillSet.addAll(updateBillDetails(bill));
         checkBudgetandGenerateNumber(bill);
         HibernateUtil.getCurrentSession().refresh(bill);
-        persistenceService.setType(Cbill.class);
+        //persistenceService.setType(Cbill.class);
         persistenceService.persist(bill);
         HibernateUtil.getCurrentSession().flush();
         return bill;
@@ -759,7 +759,7 @@ public class ContingentBillAction extends BaseBillAction {
                     cbill.getPassedamount().toString() });
             sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
         }
-        persistenceService.setType(EgChecklists.class);
+        //persistenceService.setType(EgChecklists.class);
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
                 "from org.egov.infstr.models.EgChecklists where objectid=?",
                 billRegisterId);

@@ -434,7 +434,7 @@ public class FundFlowAction extends BaseFormAction {
                             "fundflow.report.already.generated",
                             "Fund Flow report is already Generated for the Date and Fund. Open in modify Mode")));
         final List<FundFlowBean> finalList = merge(receiptList, paymentList);
-        persistenceService.setType(FundFlowBean.class);
+        //persistenceService.setType(FundFlowBean.class);
         for (final FundFlowBean fbean : finalList) {
             fbean.setReportDate(asOnDate);
             persistenceService.persist(fbean);
@@ -553,7 +553,7 @@ public class FundFlowAction extends BaseFormAction {
     public String edit() {
         // Connection conn = null;
         final List<FundFlowBean> finalList = merge(receiptList, paymentList);
-        persistenceService.setType(FundFlowBean.class);
+        //persistenceService.setType(FundFlowBean.class);
         for (final FundFlowBean fbean : finalList) {
 
             fbean.setReportDate(asOnDate);

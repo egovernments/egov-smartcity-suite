@@ -88,7 +88,7 @@ public class RecoverySetupDelegate {
     SimpleDateFormat formatter2 = new SimpleDateFormat("dd/MM/yyyy");
     Date dt2;
 
-    private final RecoveryService recoveryService;
+    private RecoveryService recoveryService;
     private final EgDeductionDetailsHibernateDAO egDeductionDetHibernateDao;
     private final TdsHibernateDAO tdsHibernateDAO;
 
@@ -107,12 +107,8 @@ public class RecoverySetupDelegate {
 
     public RecoverySetupDelegate() {
 
-        recoveryService = new RecoveryService();
-        // recoveryService.setSessionFactory(new SessionFactory());
         egDeductionDetHibernateDao = RecoveryDAOFactory.getDAOFactory().getEgDeductionDetailsDAO();
         tdsHibernateDAO = RecoveryDAOFactory.getDAOFactory().getTdsDAO();
-        recoveryService.setEgDeductionDetHibernateDao(egDeductionDetHibernateDao);
-        recoveryService.setTdsHibernateDAO(tdsHibernateDAO);
 
         // coaDAO = (ChartOfAccountsHibernateDAO) CommonsHibernateDaoFactory.getDAOFactory().getChartOfAccountsDAO();
         // partyDAO = CommonsHibernateDaoFactory.getDAOFactory().getEgPartytypeDAO();

@@ -632,20 +632,20 @@ public class BankStatementEntriesAction extends DispatchAction {
         instrumentService.setPersistenceService(persistenceService);
 
         final PersistenceService<InstrumentHeader, Long> iHeaderService = new PersistenceService<InstrumentHeader, Long>();
-        iHeaderService.setType(InstrumentHeader.class);
+        //iHeaderService.setType(InstrumentHeader.class);
         instrumentService.setInstrumentHeaderService(iHeaderService);
 
         final PersistenceService<InstrumentType, Long> iTypeService = new PersistenceService<InstrumentType, Long>();
-        iTypeService.setType(InstrumentType.class);
+        //iTypeService.setType(InstrumentType.class);
         instrumentService.setInstrumentTypeService(iTypeService);
         final PersistenceService<InstrumentVoucher, Long> iVoucherService = new PersistenceService<InstrumentVoucher, Long>();
-        iVoucherService.setType(InstrumentVoucher.class);
+       // iVoucherService.setType(InstrumentVoucher.class);
         instrumentService.setInstrumentVouherService(iVoucherService);
         final PersistenceService<Bankreconciliation, Integer> bankreconciliationService = new PersistenceService<Bankreconciliation, Integer>();
-        bankreconciliationService.setType(Bankreconciliation.class);
+        //bankreconciliationService.setType(Bankreconciliation.class);
         instrumentService.setBankreconciliationService(bankreconciliationService);
         final PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService = new PersistenceService<InstrumentOtherDetails, Long>();
-        iOtherDetailsService.setType(InstrumentOtherDetails.class);
+        //iOtherDetailsService.setType(InstrumentOtherDetails.class);
         instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);
     }
 

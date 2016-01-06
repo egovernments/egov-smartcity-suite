@@ -138,7 +138,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        persistenceService.setType(Bank.class);
+        //persistenceService.setType(Bank.class);
         addDropdownData(
                 "bankList",
                 persistenceService

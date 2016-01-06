@@ -387,11 +387,11 @@ public class BankReconciliationAction extends DispatchAction {
             instrumentService.setPersistenceService(persistenceService);
 
             final PersistenceService<InstrumentHeader, Long> iHeaderService = new PersistenceService<InstrumentHeader, Long>();
-            iHeaderService.setType(InstrumentHeader.class);
+            //iHeaderService.setType(InstrumentHeader.class);
             // iHeaderService.setSessionFactory(new SessionFactory());
             instrumentService.setInstrumentHeaderService(iHeaderService);
             final PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService = new PersistenceService<InstrumentOtherDetails, Long>();
-            iOtherDetailsService.setType(InstrumentOtherDetails.class);
+            //iOtherDetailsService.setType(InstrumentOtherDetails.class);
             // iOtherDetailsService.setSessionFactory(new SessionFactory());
             instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);
 

@@ -66,7 +66,10 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long> {
     private @Autowired AppConfigValueService appConfigValuesService;
     private EmployeeServiceOld employeeServiceOld;
     private PersistenceService persistenceService;
-
+    
+    public ReceiptService(final Class<ReceiptVoucher> receiptVoucher) {
+        this.type = receiptVoucher;
+    }
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException
     {
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());

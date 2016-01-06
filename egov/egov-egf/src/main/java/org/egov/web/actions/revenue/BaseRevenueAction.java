@@ -103,7 +103,7 @@ public class BaseRevenueAction extends BaseFormAction {
 
     public String saveOrupdate() {
         // Grant gtr = grantsList.get(0);
-        // persistenceService.setType(Grant.class);
+        // //persistenceService.setType(Grant.class);
         for (final Grant gtr : grantsList) {
             gtr.setDepartment((Department) persistenceService.find("from Department where id=?", gtr.getDepartment().getId()));
             gtr.setFinancialYear((CFinancialYear) persistenceService.find("from CFinancialYear where id=?", gtr
@@ -126,7 +126,7 @@ public class BaseRevenueAction extends BaseFormAction {
                 gtr.setReceiptVoucher(null);
             gtr.setGrantType(getGrantsType());
         }
-        persistenceService.setType(Grant.class);
+        //persistenceService.setType(Grant.class);
         for (final Grant gtr : grantsList)
             persistenceService.persist(gtr);
         return "result";

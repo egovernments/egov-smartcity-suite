@@ -903,7 +903,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
             if (budgetheadid == null || budgetheadid.equals(EMPTY_STRING))
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
 
-            persistenceService.setType(BudgetGroup.class);
+            //persistenceService.setType(BudgetGroup.class);
             budgetgroup = (BudgetGroup) persistenceService.findById(budgetheadid, false);
             if (budgetgroup == null || budgetgroup.getId() == null)
                 throw new ValidationException(EMPTY_STRING, "Budget Head is not defined for this id [ " + budgetheadid + " ]");
@@ -1824,7 +1824,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     + coa.getGlcode() + "'  and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadByGlcode detailcode query=====" + query);
-            persistenceService.setType(BudgetGroup.class);
+            //persistenceService.setType(BudgetGroup.class);
             List bgList = persistenceService.findAllBy(query);
             if (bgList.isEmpty())
             {
@@ -1833,13 +1833,13 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                         + "' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("getBudgetHeadByGlcode minorcode query=====" + query);
-                persistenceService.setType(BudgetGroup.class);
+                //persistenceService.setType(BudgetGroup.class);
                 bgList = persistenceService.findAllBy(query);
                 if (bgList.isEmpty())
                 {
                     query = " from BudgetGroup bg where bg.majorCode.glcode='" + coa.getGlcode().substring(0, majorcodelength)
                             + "' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true ";
-                    persistenceService.setType(BudgetGroup.class);
+                    //persistenceService.setType(BudgetGroup.class);
                     bgList = persistenceService.findAllBy(query);
                     if (bgList.isEmpty())
                         throw new ValidationException(EMPTY_STRING,
@@ -1895,7 +1895,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     + " and bg in (select budgetGroup from BudgetDetail) and bg.isActive=1 order by bg.name";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadForGlcodeList detailcode query=====" + query);
-            persistenceService.setType(BudgetGroup.class);
+            //persistenceService.setType(BudgetGroup.class);
             final List bgList = persistenceService.findAllBy(query);
             return bgList;
 
@@ -1934,7 +1934,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     public PersistenceService getService() {
         service = new PersistenceService<BudgetDetail, Long>();
         // service.setSessionFactory(new SessionFactory());
-        service.setType(BudgetDetail.class);
+        //service.setType(BudgetDetail.class);
         return service;
     }
 

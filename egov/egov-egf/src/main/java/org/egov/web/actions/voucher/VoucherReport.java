@@ -81,7 +81,7 @@ public class VoucherReport {
     }
 
     public String getSlCode() {
-        persistenceService.setType(CGeneralLedgerDetail.class);
+        //persistenceService.setType(CGeneralLedgerDetail.class);
         if (generalLedger != null) {
             final List<CGeneralLedgerDetail> generalLedgerDetail = persistenceService.findAllBy(
                     "from CGeneralLedgerDetail where generalLedgerId=?", Integer.valueOf(generalLedger.getId().toString()));
@@ -89,7 +89,7 @@ public class VoucherReport {
                 return MULTIPLE;
             if (generalLedgerDetail.size() > 0) {
                 final Integer detailTypeId = generalLedgerDetail.get(0).getDetailTypeId();
-                persistenceService.setType(Accountdetailtype.class);
+                //persistenceService.setType(Accountdetailtype.class);
                 final List detailType = persistenceService.findAllBy("from Accountdetailtype where id=?", detailTypeId);
                 final EgovCommon common = new EgovCommon();
                 common.setPersistenceService(persistenceService);
@@ -110,7 +110,7 @@ public class VoucherReport {
 
     public String getFunctionName() {
         if (generalLedger != null) {
-            persistenceService.setType(CFunction.class);
+            //persistenceService.setType(CFunction.class);
             if (generalLedger.getFunctionId() != null) {
                 final CFunction function = fetchFunction(generalLedger.getFunctionId());
                 return function == null ? "" : function.getName();
@@ -129,7 +129,7 @@ public class VoucherReport {
 
     public String getFundName() {
         if (voucherDetail != null && voucherDetail.getVoucherHeaderId().getFundId() != null) {
-            persistenceService.setType(Fund.class);
+            //persistenceService.setType(Fund.class);
             final Fund fund = (Fund) persistenceService.findById(voucherDetail.getVoucherHeaderId().getFundId().getId(), false);
             return fund == null ? "" : fund.getName();
         }
@@ -137,7 +137,7 @@ public class VoucherReport {
     }
 
     private CGeneralLedger getGeneralLedger(final Integer voucherId, final CGeneralLedger voucherLineId) {
-        persistenceService.setType(CGeneralLedger.class);
+        //persistenceService.setType(CGeneralLedger.class);
         return (CGeneralLedger) persistenceService.find(
                 "from CGeneralLedger where voucherHeaderId.id=? and glcode=? and voucherlineId=?", Long.valueOf(voucherId),
                 voucherLineId.getGlcode(), voucherLineId.getId());

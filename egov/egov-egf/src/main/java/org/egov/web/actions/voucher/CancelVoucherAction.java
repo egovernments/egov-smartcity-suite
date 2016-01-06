@@ -282,7 +282,7 @@ public class CancelVoucherAction extends BaseFormAction {
                                     + FinancialConstants.CANCELLEDVOUCHERSTATUS +
                                     ") and vh.isConfirmed != 1 " + VoucherMisJoin + filterQuerySql);
             final Iterator<BigDecimal> payList = query1.list().iterator();
-            persistenceService.setType(CVoucherHeader.class);
+            //persistenceService.setType(CVoucherHeader.class);
             while (payList.hasNext())
                 voucherList.add((CVoucherHeader) persistenceService.findById(payList.next().longValue(), false));
 

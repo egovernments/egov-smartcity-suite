@@ -125,7 +125,7 @@ public class PartyTypeAction extends BaseFormAction {
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwTypeOfWork");
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwSubTypeOfWork");
 
-            persistenceService.setType(EgPartytype.class);
+            //persistenceService.setType(EgPartytype.class);
             persistenceService.persist(partyType);
             HibernateUtil.getCurrentSession().flush();
             HibernateUtil.getCurrentSession().clear();
@@ -168,7 +168,7 @@ public class PartyTypeAction extends BaseFormAction {
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwTypeOfWork");
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwSubTypeOfWork");
 
-            persistenceService.setType(EgPartytype.class);
+            //persistenceService.setType(EgPartytype.class);
             persistenceService.persist(partyType);
             // showMode = "view";
             setSuccess("yes");

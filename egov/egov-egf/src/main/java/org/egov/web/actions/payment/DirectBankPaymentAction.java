@@ -468,7 +468,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPayVoucherHeader(voucherHeader);
         miscbillDetail.setBillVoucherHeader(billVhId);
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        persistenceService.setType(Miscbilldetail.class);
+        //persistenceService.setType(Miscbilldetail.class);
         persistenceService.persist(miscbillDetail);
 
     }
@@ -486,7 +486,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPassedamount(commonBean.getAmount());
         miscbillDetail.setPaidamount(commonBean.getAmount());
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        persistenceService.setType(Miscbilldetail.class);
+        //persistenceService.setType(Miscbilldetail.class);
         persistenceService.persist(miscbillDetail);
     }
 
@@ -1120,7 +1120,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
         paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        persistenceService.setType(CVoucherHeader.class);
+        //persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getText("payment.cancel.success"));

@@ -45,12 +45,9 @@ import org.egov.infstr.services.PersistenceService;
 public class RemittancePersistenceService extends PersistenceService<EgRemittance, Long> {
     private PersistenceService persistenceService;
 
-    public RemittancePersistenceService() {
-        super();
-        setType(EgRemittance.class);
-        // TODO Auto-generated constructor stub
+    public RemittancePersistenceService(final Class<EgRemittance> egRemittance) {
+        this.type = egRemittance;
     }
-
     @Override
     public EgRemittance persist(final EgRemittance model) {
         // TODO Auto-generated method stub

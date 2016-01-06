@@ -60,6 +60,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = true)
 public class AccountEntityService extends PersistenceService<AccountEntity, Integer> implements EntityTypeService {
+    
+    public AccountEntityService(final Class<AccountEntity> accountEntity) {
+        this.type = accountEntity;
+    }
+    
     @Override
     public List<EntityType> getAllActiveEntities(final Integer accountDetailTypeId) {
         final List<EntityType> entities = new ArrayList<EntityType>();

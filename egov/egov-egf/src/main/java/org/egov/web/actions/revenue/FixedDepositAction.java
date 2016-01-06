@@ -214,7 +214,7 @@ public class FixedDepositAction extends BaseFormAction {
                 fd.setReceiptAmount(BigDecimal.ZERO);
 
         }
-        persistenceService.setType(FixedDeposit.class);
+        //persistenceService.setType(FixedDeposit.class);
 
         if (childFDList.size() > 0)
             for (final FixedDeposit fdd : fixedDepositList) {

@@ -115,7 +115,7 @@ public class UserDefinedCodesAction extends BaseFormAction {
             accEntity.setCreated(new Date());
             accEntity.setLastmodified(new Date());
             accEntity.setModifiedby(getLoggedInUser());
-            persistenceService.setType(AccountEntity.class);
+            //persistenceService.setType(AccountEntity.class);
             persistenceService.persist(accEntity);
             createOrModifyAccDetKey(accEntity);
             setSuccess("yes");
@@ -158,7 +158,7 @@ public class UserDefinedCodesAction extends BaseFormAction {
             else
                 accEntOld.setIsactive(accEntity.getIsactive());
             setAccEntity(accEntOld);
-            persistenceService.setType(AccountEntity.class);
+            //persistenceService.setType(AccountEntity.class);
             persistenceService.persist(accEntity);
             setSuccess("yes");
         } catch (final Exception e) {
@@ -182,7 +182,7 @@ public class UserDefinedCodesAction extends BaseFormAction {
         accDetKey.setDetailname(adt.getAttributename());
         accDetKey.setGroupid(1);
 
-        persistenceService.setType(Accountdetailkey.class);
+        //persistenceService.setType(Accountdetailkey.class);
         persistenceService.persist(accDetKey);
     }
 

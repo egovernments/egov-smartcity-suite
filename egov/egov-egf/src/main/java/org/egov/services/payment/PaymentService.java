@@ -58,6 +58,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.BillsAccountingService;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
+import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
@@ -154,7 +155,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private ChartOfAccountsHibernateDAO coaDAO;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-
+    
+    public PaymentService(final Class<Paymentheader> paymentheader) {
+        this.type = paymentheader;
+    }
     public BigDecimal getAccountBalance(final String accountId, final String voucherDate, final BigDecimal amount,
             final Long paymentId, final Long accGlcodeID)
             throws ParseException
@@ -316,7 +320,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     subledgerdetails);
             paymentheader = createPaymentHeader(voucherHeader, ba, parameters);
 
-            persistenceService.setType(Miscbilldetail.class);
+            //persistenceService.setType(Miscbilldetail.class);
             for (final Miscbilldetail miscbilldetail : miscBillList)
             {
                 miscbilldetail.setPayVoucherHeader(voucherHeader);
@@ -474,7 +478,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         paymentheader.setVoucherheader(voucherHeader);
         paymentheader.setBankaccount(ba);
         paymentheader.setPaymentAmount(BigDecimal.valueOf(Double.valueOf(parameters.get("grandTotal")[0])));
-        persistenceService.setType(Paymentheader.class);
+        //persistenceService.setType(Paymentheader.class);
         persistenceService.create(paymentheader);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createPaymentHeader.");
@@ -558,10 +562,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             paymentheader.setType(payheader.getType());
             paymentheader.setBankaccount(ba);
             paymentheader.setVoucherheader(voucher);
-            persistenceService.setType(Paymentheader.class);
+            //persistenceService.setType(Paymentheader.class);
             persistenceService.update(paymentheader);
             // update miscbill table
-            persistenceService.setType(Miscbilldetail.class);
+            //persistenceService.setType(Miscbilldetail.class);
             for (final Miscbilldetail miscbilldetail : miscBillList)
             {
                 miscbilldetail.setPayVoucherHeader(paymentheader.getVoucherheader());
@@ -647,7 +651,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         existingVH.setCgvn(vType + eg_voucher);
         existingVH.setLastModifiedDate(new Date());
         existingVH.setLastModifiedBy(user);
-        persistenceService.setType(CVoucherHeader.class);
+        //persistenceService.setType(CVoucherHeader.class);
         persistenceService.update(existingVH);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed updateVoucherHeader.");
@@ -2841,7 +2845,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 bankaccountId.longValue());
         paymentheader.setBankaccount(bankaccount);
         paymentheader.setPaymentAmount(amount);
-        persistenceService.setType(Paymentheader.class);
+        //persistenceService.setType(Paymentheader.class);
         persistenceService.create(paymentheader);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createPaymentHeader.");
@@ -2859,7 +2863,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         final Bankaccount bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccountId);
         paymentheader.setBankaccount(bankaccount);
         paymentheader.setPaymentAmount(amount);
-        persistenceService.setType(Paymentheader.class);
+        //persistenceService.setType(Paymentheader.class);
         persistenceService.persist(paymentheader);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed updatePaymentHeader.");

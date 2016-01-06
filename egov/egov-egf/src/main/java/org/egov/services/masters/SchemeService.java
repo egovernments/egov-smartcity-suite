@@ -43,5 +43,8 @@ import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
 
 public class SchemeService extends PersistenceService<Scheme, Integer> {
-
+   
+    public SchemeService(final Class<Scheme> scheme) {
+        this.type = scheme;
+    }
 }

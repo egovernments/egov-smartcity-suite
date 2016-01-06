@@ -214,7 +214,7 @@ public class TdsHibernateDAO extends GenericHibernateDAO
             LOGGER.debug("asONDate value received : " + asOndate);
         final PersistenceService<Recovery, Integer> persistenceService = new PersistenceService<Recovery, Integer>();
         // persistenceService.setSessionFactory(new SessionFactory());
-        persistenceService.setType(Recovery.class);
+        //persistenceService.setType(Recovery.class);
         final StringBuffer recoveryQuery = new StringBuffer(400);
         List<Recovery> listTds;
         recoveryQuery

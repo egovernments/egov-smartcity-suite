@@ -95,7 +95,7 @@ public class FundingAgencyAction extends BaseFormAction {
     public String create() {
         try {
             // validateMandatory();
-            persistenceService.setType(FundingAgency.class);
+            //persistenceService.setType(FundingAgency.class);
             persistenceService.persist(fundingAgency);
             // save to accountdetail key also
             final Accountdetailkey ac = new Accountdetailkey();
@@ -105,9 +105,9 @@ public class FundingAgencyAction extends BaseFormAction {
             ac.setAccountdetailtype(adt);
             ac.setDetailkey(fundingAgency.getId().intValue());
             ac.setDetailname(fundingAgency.getName());
-            persistenceService.setType(Accountdetailkey.class);
+            //persistenceService.setType(Accountdetailkey.class);
             persistenceService.persist(ac);
-            persistenceService.setType(FundingAgency.class);
+            //persistenceService.setType(FundingAgency.class);
         } catch (final ValidationException e) {
             throw e;
         } catch (final ConstraintViolationException e) {
@@ -153,7 +153,7 @@ public class FundingAgencyAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/masters/fundingAgency-edit")
     public String edit() {
-        persistenceService.setType(FundingAgency.class);
+        //persistenceService.setType(FundingAgency.class);
         persistenceService.persist(fundingAgency);
         // save to accountdetail key also
         final Accountdetailtype adt = (Accountdetailtype) persistenceService
@@ -161,7 +161,7 @@ public class FundingAgencyAction extends BaseFormAction {
         final Accountdetailkey ac = (Accountdetailkey) persistenceService.find(
                 "from Accountdetailkey where accountdetailtype=? and detailkey=?", adt, fundingAgency.getId().intValue());
         ac.setDetailname(fundingAgency.getName());
-        persistenceService.setType(Accountdetailkey.class);
+        //persistenceService.setType(Accountdetailkey.class);
         persistenceService.persist(ac);
         addActionMessage(getText("Funding Agency Modified Successfully"));
         return EDIT;

@@ -65,7 +65,7 @@ public class EgBillRegisterHibernateDAO extends GenericHibernateDAO {
         super(persistentClass, session);
         egBillRegisterService = new PersistenceService<EgBillregister, Long>();
         // egBillRegisterService.setSessionFactory(new SessionFactory());
-        egBillRegisterService.setType(EgBillregister.class);
+        //egBillRegisterService.setType(EgBillregister.class);
     }
 
     public EgBillRegisterHibernateDAO() {

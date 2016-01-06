@@ -96,6 +96,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -129,8 +130,10 @@ public class PaymentAction extends BasePaymentAction {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private Paymentheader paymentheader;
-    private PaymentService paymentService;
-    private VoucherService voucherService;
+    @Qualifier("paymentService")
+    private @Autowired PaymentService paymentService;
+    @Qualifier("voucherService")
+    private @Autowired VoucherService voucherService;
     private Integer bankaccount, bankbranch;
     private Integer departmentId;
     private Integer defaultDept;
@@ -1327,7 +1330,7 @@ public class PaymentAction extends BasePaymentAction {
         paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ", paymentheader.getId());
         voucherHeader = paymentheader.getVoucherheader();
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        persistenceService.setType(CVoucherHeader.class);
+        //persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getMessage("payment.cancel.success"));

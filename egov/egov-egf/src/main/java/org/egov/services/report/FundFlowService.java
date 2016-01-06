@@ -71,8 +71,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("unchecked")
 public class FundFlowService extends PersistenceService {
     private static Logger LOGGER = Logger.getLogger(FundFlowService.class);
-    SimpleDateFormat sqlformat = new SimpleDateFormat("dd-MMM-yyyy");
-    final String START_FINANCIALYEAR_DATE = "01-Apr-2012";
+    private static final SimpleDateFormat sqlformat = new SimpleDateFormat("dd-MMM-yyyy");
+    private static final String START_FINANCIALYEAR_DATE = "01-Apr-2012";
     private @Autowired AppConfigValueService appConfigValuesService;
 
     /**
@@ -413,7 +413,7 @@ public class FundFlowService extends PersistenceService {
         if (bankaccountId == null)
             throw new ValidationException(Arrays.asList(new ValidationError("bankaccount.id.is.null",
                     "BankAccountId is not provided")));
-        setType(FundFlowBean.class);
+       // setType(FundFlowBean.class);
         final FundFlowBean fundFlowBean = (FundFlowBean) this.find(
                 "from FundFlowBean where bankAccountId=? and to_date(reportDate)=?",
                 BigDecimal.valueOf(bankaccountId), asPerDate);

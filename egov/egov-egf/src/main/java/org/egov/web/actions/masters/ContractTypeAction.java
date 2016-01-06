@@ -142,7 +142,7 @@ public class ContractTypeAction extends BaseFormAction {
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwTypeOfWork");
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwSubTypeOfWork");
 
-            persistenceService.setType(EgwTypeOfWork.class);
+            //persistenceService.setType(EgwTypeOfWork.class);
             persistenceService.persist(typeOfWork);
             HibernateUtil.getCurrentSession().flush();
             HibernateUtil.getCurrentSession().clear();
@@ -196,7 +196,7 @@ public class ContractTypeAction extends BaseFormAction {
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwTypeOfWork");
             EgovMasterDataCaching.getInstance().removeFromCache("egi-egwSubTypeOfWork");
 
-            persistenceService.setType(EgwTypeOfWork.class);
+            //persistenceService.setType(EgwTypeOfWork.class);
             persistenceService.persist(typeOfWork);
             showMode = "view";
             setSuccess("yes");

@@ -138,7 +138,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     }
 
     public void setChartOfAccounts() {
-        engine.setVoucherHeaderPersitService(chartOfAccounts.getVoucherHeaderPersitService());
+        engine.setVoucherHeaderService(chartOfAccounts.getVoucherHeaderService());
         ChartOfAccounts.setChartOfAccountDetailService(ChartOfAccounts.getChartOfAccountDetailService());
         engine.setBudgetDetailsDAO(chartOfAccounts.getBudgetDetailsDAO());
 

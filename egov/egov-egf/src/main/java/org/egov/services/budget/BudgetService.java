@@ -83,6 +83,9 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         this.eisCommonService = eisCommonService;
     }
 
+    public BudgetService(final Class<Budget> budget) {
+        this.type = budget;
+    } 
     @Override
     public Budget persist(final Budget budget) {
         super.validate(budget);

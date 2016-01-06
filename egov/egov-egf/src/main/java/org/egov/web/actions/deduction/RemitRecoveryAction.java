@@ -334,7 +334,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     "from EgRemittanceGldtl where id=?",
                     rbean.getRemittance_gl_dtlId());
             remittancegldtl.setRemittedamt(rbean.getPartialAmount());
-            persistenceService.setType(EgRemittanceGldtl.class);
+            //persistenceService.setType(EgRemittanceGldtl.class);
             persistenceService.persist(remittancegldtl);
 
             // create EgRemittanceDetail
@@ -347,7 +347,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
         }
         remit.setEgRemittanceDetail(egRemittanceDetail);
-        persistenceService.setType(EgRemittance.class);
+        //persistenceService.setType(EgRemittance.class);
         persistenceService.persist(remit);
     }
 
@@ -563,7 +563,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Remittance Cancellation updated " + count + " generalledger entries");
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        persistenceService.setType(CVoucherHeader.class);
+        //persistenceService.setType(CVoucherHeader.class);
         persistenceService.persist(voucherHeader);
         paymentheader.transition(true).end();
         addActionMessage(getText("payment.voucher.cancelled"));
@@ -615,7 +615,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
                     " from Miscbilldetail where payVoucherHeader=?", voucherHeader);
             miscbillDetail.setPaidto(remittedTo);
-            persistenceService.setType(Miscbilldetail.class);
+            //persistenceService.setType(Miscbilldetail.class);
             persistenceService.persist(miscbillDetail);
             // updateMiscBillDetail();
 
@@ -639,7 +639,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     "from EgRemittanceDetail where id=?",
                     rbean.getRemittanceId());
             egrDetail.setRemittedamt(rbean.getPartialAmount());
-            persistenceService.setType(EgRemittanceDetail.class);
+            //persistenceService.setType(EgRemittanceDetail.class);
             persistenceService.persist(egrDetail);
         }
 
@@ -894,7 +894,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         miscbillDetail.setPayVoucherHeader(voucherHeader);
         // miscbillDetail.setBillVoucherHeader(vhid);
         miscbillDetail.setPaidto(remittedTo);
-        persistenceService.setType(Miscbilldetail.class);
+        //persistenceService.setType(Miscbilldetail.class);
         persistenceService.persist(miscbillDetail);
 
     }
@@ -906,7 +906,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
      * miscbillDetail.setPaidamount(remittanceBean.getTotalAmount());
      * miscbillDetail.setPassedamount(remittanceBean.getTotalAmount()); miscbillDetail.setPayVoucherHeader(voucherHeader);
      * //miscbillDetail.setBillVoucherHeader(vhid); miscbillDetail.setPaidto(recovery.getRemitted());
-     * persistenceService.setType(Miscbilldetail.class); persistenceService.persist(miscbillDetail); }
+     * //persistenceService.setType(Miscbilldetail.class); persistenceService.persist(miscbillDetail); }
      */
 
     @Override

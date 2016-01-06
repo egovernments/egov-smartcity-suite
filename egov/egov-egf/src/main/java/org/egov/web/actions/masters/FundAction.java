@@ -136,7 +136,7 @@ public class FundAction extends BaseFormAction {
             fund.setEgfAccountcodePurpose(accCodePurpose);
             fund.setFund(parentFund);
 
-            persistenceService.setType(Fund.class);
+            //persistenceService.setType(Fund.class);
             persistenceService.persist(fund);
             setSuccess("yes");
         } catch (final Exception e) {
@@ -175,7 +175,7 @@ public class FundAction extends BaseFormAction {
                     final Fund oldParentFund = (Fund) persistenceService.find("from Fund where id=?", fundOld.getFund().getId());
                     // setting the existing(old) parent fund isNotLeaf value
                     oldParentFund.setIsnotleaf(getParentIsNotLeaf(fundOld));
-                    persistenceService.setType(Fund.class);
+                    //persistenceService.setType(Fund.class);
                     persistenceService.update(oldParentFund);
                 }
 
@@ -193,7 +193,7 @@ public class FundAction extends BaseFormAction {
 
             fundOld.setFund(parentFund);
             setFund(fundOld);
-            persistenceService.setType(Fund.class);
+            //persistenceService.setType(Fund.class);
             persistenceService.persist(fund);
             setSuccess("yes");
 

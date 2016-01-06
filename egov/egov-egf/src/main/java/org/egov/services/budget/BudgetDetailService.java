@@ -98,7 +98,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private AppConfigValueService appConfigValuesService;
     PersistenceService persistenceService;
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailService.class);
-
+    
+    public BudgetDetailService(final Class<BudgetDetail> budgetDetail) {
+        this.type = budgetDetail;
+    }
     public boolean canViewApprovedAmount(final PersistenceService persistenceService, final Budget budget) {
         final Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
         final ScriptContext context = ScriptService.createContext("wfItem", budget, "eisCommonServiceBean", eisCommonService,
@@ -2296,10 +2299,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public void setBudgetDetailWorkflowService(final WorkflowService<BudgetDetail> budgetDetailWorkflowService) {
         this.budgetDetailWorkflowService = budgetDetailWorkflowService;
-    }
-
-    public BudgetDetailService() {
-        setType(BudgetDetail.class);
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {

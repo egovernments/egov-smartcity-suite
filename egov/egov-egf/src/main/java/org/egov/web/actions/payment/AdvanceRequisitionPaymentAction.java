@@ -193,7 +193,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
         miscbilldetail.setPaidamount(advanceRequisition.getAdvanceRequisitionAmount());
         miscbilldetail.setPaidto(advanceRequisition.getEgAdvanceReqMises().getPayto());
         miscbilldetail.setPayVoucherHeader(paymentheader.getVoucherheader());
-        persistenceService.setType(Miscbilldetail.class);
+        //persistenceService.setType(Miscbilldetail.class);
         persistenceService.persist(miscbilldetail);
     }
 

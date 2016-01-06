@@ -37,14 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.services.budget;
+/**
+ *
+ */
+package org.egov.services.cheque;
 
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.budget.BudgetReAppropriationMisc;
+import org.egov.model.cheque.ChequeDeptMapping;
 
-public class BudgetReAppropriationMiscService extends PersistenceService<BudgetReAppropriationMisc, Long> {
-    
-    public BudgetReAppropriationMiscService(final Class<BudgetReAppropriationMisc> budgetReAppropriationMisc) {
-        this.type = budgetReAppropriationMisc;
+public class ChequeDeptMappingService extends PersistenceService<ChequeDeptMapping, Long> {
+
+    public ChequeDeptMappingService(final Class<ChequeDeptMapping> chequeDeptMapping) {
+        this.type = chequeDeptMapping;
     }
 }

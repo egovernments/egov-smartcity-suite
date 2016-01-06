@@ -141,7 +141,7 @@ public class FunctionAction extends BaseFormAction {
                 parentFunc.setIsNotLeaf(1);
             }
 
-            persistenceService.setType(CFunction.class);
+            //persistenceService.setType(CFunction.class);
             persistenceService.persist(function);
             clearValues = true;
             setSuccess("yes");
@@ -180,7 +180,7 @@ public class FunctionAction extends BaseFormAction {
                             .getId());
                     // setting the existing(old) parent function isNotLeaf value
                     oldParentFunc.setIsNotLeaf(getParentIsNotLeaf(funcOld));
-                    persistenceService.setType(CFunction.class);
+                    //persistenceService.setType(CFunction.class);
                     persistenceService.update(oldParentFunc);
                 }
             funcOld.setLevel(parentLevel);
@@ -200,7 +200,7 @@ public class FunctionAction extends BaseFormAction {
             funcOld.setFunction(parentFunc);
 
             setFunction(funcOld);
-            persistenceService.setType(CFunction.class);
+            //persistenceService.setType(CFunction.class);
             persistenceService.persist(function);
             setSuccess("yes");
         } catch (final Exception e) {

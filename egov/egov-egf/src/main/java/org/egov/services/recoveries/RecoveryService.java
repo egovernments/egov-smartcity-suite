@@ -63,6 +63,10 @@ public class RecoveryService extends PersistenceService<Recovery, Long> {
     private static final Logger LOGGER = Logger.getLogger(RecoveryService.class);
     private static final String EMPTY_STRING = "";
 
+    public RecoveryService(final Class<Recovery> recovery) {
+        this.type = recovery;
+    }
+    
     public Recovery getTdsById(final Long tdsId)
     {
         return tdsHibernateDAO.findById(tdsId, false);

@@ -833,24 +833,24 @@ public class InstrumentService {
     public void setServicesForLegacyClasses() {
 
         final PersistenceService<InstrumentHeader, Long> iHeaderService = new PersistenceService<InstrumentHeader, Long>();
-        iHeaderService.setType(InstrumentHeader.class);
+        //iHeaderService.setType(InstrumentHeader.class);
         setInstrumentHeaderService(iHeaderService);
         final PersistenceService<InstrumentVoucher, Long> iVoucherService = new PersistenceService<InstrumentVoucher, Long>();
-        iVoucherService.setType(InstrumentVoucher.class);
+        //iVoucherService.setType(InstrumentVoucher.class);
         setInstrumentVouherService(iVoucherService);
         final PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService = new PersistenceService<InstrumentOtherDetails, Long>();
-        iOtherDetailsService.setType(InstrumentOtherDetails.class);
+        //iOtherDetailsService.setType(InstrumentOtherDetails.class);
         setInstrumentOtherDetailsService(iOtherDetailsService);
         final PersistenceService persistenceService = new PersistenceService();
         setPersistenceService(persistenceService);
         final PersistenceService<InstrumentType, Long> iTypeService = new PersistenceService<InstrumentType, Long>();
-        iTypeService.setType(InstrumentType.class);
+       // iTypeService.setType(InstrumentType.class);
         setInstrumentTypeService(iTypeService);
         final PersistenceService<InstrumentAccountCodes, Long> iAccountCodeService = new PersistenceService<InstrumentAccountCodes, Long>();
-        iAccountCodeService.setType(InstrumentAccountCodes.class);
+        //iAccountCodeService.setType(InstrumentAccountCodes.class);
         setInstrumentAccountCodesService(iAccountCodeService);
         final PersistenceService<Bankreconciliation, Integer> bankreconciliationService = new PersistenceService<Bankreconciliation, Integer>();
-        bankreconciliationService.setType(Bankreconciliation.class);
+        //bankreconciliationService.setType(Bankreconciliation.class);
         setBankreconciliationService(bankreconciliationService);
 
     }

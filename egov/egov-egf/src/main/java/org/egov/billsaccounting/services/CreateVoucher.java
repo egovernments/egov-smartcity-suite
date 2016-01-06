@@ -123,6 +123,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -272,11 +274,11 @@ public class CreateVoucher {
         {
 
             generalLedgerService = new PersistenceService<CGeneralLedger, Long>();
-            generalLedgerService.setType(CGeneralLedger.class);
+            //generalLedgerService.setType(CGeneralLedger.class);
             // generalLedgerService.setSessionFactory(new SessionFactory());
 
             generalLedgerDetailService = new PersistenceService<CGeneralLedgerDetail, Long>();
-            generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
+            //generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
             // generalLedgerDetailService.setSessionFactory(new SessionFactory());
 
         } catch (final Exception e)
@@ -289,7 +291,7 @@ public class CreateVoucher {
     }
 
     public void setChartOfAccounts() {
-        engine.setVoucherHeaderPersitService(chartOfAccounts.getVoucherHeaderPersitService());
+        engine.setVoucherHeaderService(chartOfAccounts.getVoucherHeaderService());
         ChartOfAccounts.setChartOfAccountDetailService(ChartOfAccounts.getChartOfAccountDetailService());
         engine.setBudgetDetailsDAO(chartOfAccounts.getBudgetDetailsDAO());
 
@@ -794,7 +796,7 @@ public class CreateVoucher {
              * if(voucherheader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT)) { // ReceiptVoucher rv=new
              * ReceiptVoucher(); PersistenceService<ReceiptVoucher, Long> persistenceService = new
              * PersistenceService<ReceiptVoucher, Long>(); persistenceService.setSessionFactory(new SessionFactory());
-             * persistenceService.setType(ReceiptVoucher.class); rv.setId(voucherheader.getId());
+             * //persistenceService.setType(ReceiptVoucher.class); rv.setId(voucherheader.getId());
              * rv.setVoucherHeader(voucherheader); persistenceService.create(rv); SimpleWorkflowService<ReceiptVoucher>
              * receiptWorkflowService = (SimpleWorkflowService) applicationContext.getBean("receiptWorkflowService");
              * receiptWorkflowService.start(rv, getPosition()); receiptWorkflowService.transition("co_approve", rv, "Created"); //
@@ -1049,7 +1051,7 @@ public class CreateVoucher {
      * @return voucherheader object in case of success and null in case of fail.
      * @throws ApplicationRuntimeException
      */
-    // @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional
     public CVoucherHeader createVoucher(final HashMap<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails,
             final List<HashMap<String, Object>> subledgerdetails) throws ApplicationRuntimeException {
@@ -1983,7 +1985,7 @@ public class CreateVoucher {
         PersistenceService<Functionary, Integer> functionarySer;
         functionarySer = new PersistenceService<Functionary, Integer>();
         // functionarySer.setSessionFactory(new SessionFactory());
-        functionarySer.setType(Functionary.class);
+        //functionarySer.setType(Functionary.class);
         final Functionary functionary = functionarySer.find("from Functionary where code=?", code);
         return functionary;
 
