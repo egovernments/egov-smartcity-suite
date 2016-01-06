@@ -40,7 +40,7 @@
 
 package org.egov.tl.web.controller;
 
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import javax.validation.Valid;
 
 import org.egov.tl.domain.entity.Validity;
@@ -58,78 +58,92 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
-@Controller 
+@Controller
 @RequestMapping("/validity")
 public class ValidityController {
-	private final static String VALIDITY_NEW="validity-new";
-	private final static String VALIDITY_RESULT="validity-result";
-	private final static String VALIDITY_EDIT="validity-edit";
-	private final static String VALIDITY_VIEW="validity-view";
+	private final static String VALIDITY_NEW = "validity-new";
+	private final static String VALIDITY_RESULT = "validity-result";
+	private final static String VALIDITY_EDIT = "validity-edit";
+	private final static String VALIDITY_VIEW = "validity-view";
 	private static final String VALIDITY_SEARCH = null;
 	@Autowired
-	private  ValidityService validityService;
+	private ValidityService validityService;
 	@Autowired
 	private NatureOfBusinessService natureOfBusinessService;
 	@Autowired
+	@Qualifier("licenseCategoryService")
 	private LicenseCategoryService licenseCategoryService;
+
 	private void prepareNewForm(Model model) {
-		model.addAttribute("natureOfBusinesss",natureOfBusinessService.findAll());
-		model.addAttribute("licenseCategorys",licenseCategoryService.findAll());
+		model.addAttribute("natureOfBusinesss",
+				natureOfBusinessService.findAll());
+		model.addAttribute("licenseCategorys", licenseCategoryService.findAll());
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String newForm(final Model model){
+	public String newForm(final Model model) {
 		prepareNewForm(model);
-		model.addAttribute("validity", new Validity() );
+		model.addAttribute("validity", new Validity());
 		return VALIDITY_NEW;
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute final Validity validity,final BindingResult errors,final Model model,final RedirectAttributes redirectAttrs){
+	public String create(@Valid @ModelAttribute final Validity validity,
+			final BindingResult errors, final Model model,
+			final RedirectAttributes redirectAttrs) {
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
-			return VALIDITY_NEW; }
+			return VALIDITY_NEW;
+		}
 		validityService.create(validity);
 		redirectAttrs.addFlashAttribute("message", "msg.validity.success");
-		return "redirect:/validity/result/"+validity.getId();
+		return "redirect:/validity/result/" + validity.getId();
 	}
 
 	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable("id") final Long id,Model model){
-		Validity validity  = validityService.findOne(id);
+	public String edit(@PathVariable("id") final Long id, Model model) {
+		Validity validity = validityService.findOne(id);
 		prepareNewForm(model);
-		model.addAttribute("validity", validity);	return VALIDITY_EDIT;
+		model.addAttribute("validity", validity);
+		return VALIDITY_EDIT;
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute final Validity validity,final BindingResult errors,final Model model,final RedirectAttributes redirectAttrs){
-		if (errors.hasErrors()){
-			prepareNewForm(model);return VALIDITY_EDIT;
-		}validityService.update(validity);
+	public String update(@Valid @ModelAttribute final Validity validity,
+			final BindingResult errors, final Model model,
+			final RedirectAttributes redirectAttrs) {
+		if (errors.hasErrors()) {
+			prepareNewForm(model);
+			return VALIDITY_EDIT;
+		}
+		validityService.update(validity);
 		redirectAttrs.addFlashAttribute("message", "msg.validity.success");
-		return "redirect:/validity/result/"+validity.getId();
+		return "redirect:/validity/result/" + validity.getId();
 	}
 
 	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-	public String view(@PathVariable("id") final Long id,Model model){
-		Validity validity  = validityService.findOne(id);
+	public String view(@PathVariable("id") final Long id, Model model) {
+		Validity validity = validityService.findOne(id);
 		prepareNewForm(model);
-		model.addAttribute("validity", validity);	return VALIDITY_VIEW;
+		model.addAttribute("validity", validity);
+		return VALIDITY_VIEW;
 	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	public String beforeSearch(@RequestParam("mode") final String  mode,Model model){
-		Validity validity  = new Validity();
+	public String beforeSearch(@RequestParam("mode") final String mode,
+			Model model) {
+		Validity validity = new Validity();
 		model.addAttribute("validity", validity);
 		return VALIDITY_SEARCH;
-		}
-	
-	/*@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public String search(@ModelAttribute final Validity validity,@RequestParam("mode") final String  mode,Model model){
-		List<Validity> validityList=validityService.search(validity);
-		model.addAttribute("validityList", validityList);
-		return VALIDITY_RESULT;}*/
+	}
 
-	
+	/*
+	 * @RequestMapping(value = "/search", method = RequestMethod.POST) public
+	 * String search(@ModelAttribute final Validity
+	 * validity,@RequestParam("mode") final String mode,Model model){
+	 * List<Validity> validityList=validityService.search(validity);
+	 * model.addAttribute("validityList", validityList); return
+	 * VALIDITY_RESULT;}
+	 */
+
 }

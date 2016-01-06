@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.domain.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
@@ -104,6 +105,7 @@ public abstract class BaseLicenseService {
 	private final static Logger LOGGER=Logger.getLogger(BaseLicenseService.class);
 	protected FeeService feeService;
 	@Autowired
+@Qualifier("persistenceService")
 	protected PersistenceService persistenceService;
 	protected SequenceGenerator sequenceGenerator;
 	@Autowired

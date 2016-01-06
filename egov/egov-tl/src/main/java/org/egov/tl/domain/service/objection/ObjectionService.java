@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.domain.service.objection;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 

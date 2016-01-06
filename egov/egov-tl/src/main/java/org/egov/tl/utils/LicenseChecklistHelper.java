@@ -41,47 +41,48 @@ package org.egov.tl.utils;
 
 public class LicenseChecklistHelper {
 
-    private Integer id;
-    private String name;
-    private String val;
-    private String checked;
+	private Integer id;
+	private String name;
+	private String val;
+	private String checked;
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setId(final Integer id) {
-        this.id = id;
-    }
+	public void setId(final Integer id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-    public String getVal() {
-        return val;
-    }
+	public String getVal() {
+		return val;
+	}
 
-    public void setVal(final String val) {
-        this.val = val;
-    }
+	public void setVal(final String val) {
+		this.val = val;
+	}
 
-    public String getChecked() {
-        return checked;
-    }
+	public String getChecked() {
+		return checked;
+	}
 
-    public void setChecked(final String checked) {
-        this.checked = checked;
-    }
+	public void setChecked(final String checked) {
+		this.checked = checked;
+	}
 
-    public LicenseChecklistHelper(final String name, final String val, final String checked) {
-        super();
-        this.name = name;
-        this.val = val;
-        this.checked = checked;
-    }
+	public LicenseChecklistHelper(final String name, final String val,
+			final String checked) {
+		super();
+		this.name = name;
+		this.val = val;
+		this.checked = checked;
+	}
 }

@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.domain.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class LicenseReportService {
     @Autowired
+@Qualifier("persistenceService")
     protected PersistenceService persistenceService;
     protected List<Map<String, Object>> licenseList = new ArrayList<Map<String, Object>>();
     protected EgovPaginatedList paginateList;

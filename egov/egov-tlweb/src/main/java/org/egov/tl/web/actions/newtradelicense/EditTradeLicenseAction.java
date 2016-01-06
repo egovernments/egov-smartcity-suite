@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.newtradelicense;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
