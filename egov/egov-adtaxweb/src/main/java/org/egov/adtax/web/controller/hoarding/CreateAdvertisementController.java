@@ -44,24 +44,31 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -97,7 +104,10 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "create", method = GET)
-    public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
+    public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,final Model model) {
+        prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+        model.addAttribute("additionalRule","CREATEHOARDING");
+        model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         return "hoarding-create";
     }
 
@@ -107,28 +117,40 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         {
             advertisementPermitDetail.setAdvertisement(new Advertisement());
         }
-        advertisementPermitDetail.setStatus(AdvertisementStatus.ACTIVE);
+        advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
         advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
         return "hoarding-createLegacy";
     }
 
     @RequestMapping(value = "create", method = POST)
-    public String createHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder,
-            final RedirectAttributes redirAttrib) {
+    public String createAdvertisement(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder,
+            final RedirectAttributes redirAttrib,final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateApplicationDate(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-create";
+        
         storeHoardingDocuments(advertisementPermitDetail);
-      //  hoarding.setPenaltyCalculationDate(hoarding.getApplicationDate());
-        advertisementPermitDetail.setStatus(AdvertisementStatus.ACTIVE);
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail);
-        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
-        return "redirect:/hoarding/create";
-    }
+        if (advertisementPermitDetail.getState() == null)
+            advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
+        Long approvalPosition = 0l;
+        String approvalComent = "";
 
+        if (request.getParameter("approvalComent") != null)
+            approvalComent = request.getParameter("approvalComent");
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition, approvalComent, "CREATEHOARDING", workFlowAction);
+        redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
+        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
+        return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+    }
+    
     private void validateApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
        if(advertisementPermitDetail!=null && advertisementPermitDetail.getApplicationDate()!=null )
        {
@@ -163,6 +185,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     @RequestMapping(value = "createLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateLegacyApplicationDate(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors())
@@ -177,11 +200,15 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                 e.printStackTrace();// TODO: CHECK THIS CASE AGAIN.
             }
 
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail);
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail,null,null,null,null);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/createLegacy";
     }
 
-  
+    @RequestMapping(value = "/success/{id}", method = GET)
+    public ModelAndView successView(@PathVariable("id") final String id, @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
+        return new ModelAndView("hoarding/hoarding-success", "hoarding", advertisementPermitDetailService.findBy(Long.valueOf(id)));
+
+    }
   
 }

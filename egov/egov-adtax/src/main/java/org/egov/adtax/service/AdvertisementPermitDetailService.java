@@ -39,6 +39,8 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -47,9 +49,16 @@ import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.adtax.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infstr.utils.StringUtils;
 import org.hibernate.Session;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,18 +79,33 @@ public class AdvertisementPermitDetailService {
     
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-
+    
+    @Autowired
+    private ApplicationContext context;
+    
+    @Autowired
+    public EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
     @Autowired
     public AdvertisementPermitDetailService(final AdvertisementPermitDetailRepository advertisementPermitDetailRepository) {
         this.advertisementPermitDetailRepository = advertisementPermitDetailRepository;
     }
 
     @Transactional
-    public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail) {
+    public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
             advertisementPermitDetail.getAdvertisement().setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
         roundOfAllTaxAmount(advertisementPermitDetail);
-        return advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        advertisementPermitDetail.setPermissionstartdate(new Date());
+        advertisementPermitDetail.setPermissionenddate(new LocalDate().plusYears(1).toDate());
+        advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
+            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
+                    approvalPosition, approvalComent, additionalRule, workFlowAction);
+        }
+        return advertisementPermitDetail;
     }
 
     @Transactional
@@ -161,5 +185,17 @@ public class AdvertisementPermitDetailService {
 
     public AdvertisementPermitDetail findBy(final Long advPermitId) {
         return advertisementPermitDetailRepository.findOne(advPermitId);
+    }
+    
+    public ApplicationWorkflowCustomDefaultImpl getInitialisedWorkFlowBean() {
+        ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = null;
+        if (null != context)
+            applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) context
+                    .getBean("applicationWorkflowCustomDefaultImpl");
+        return applicationWorkflowCustomDefaultImpl;
+    }
+    
+    public EgwStatus getStatusByModuleAndCode(String code) {
+        return egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,code);
     }
 }

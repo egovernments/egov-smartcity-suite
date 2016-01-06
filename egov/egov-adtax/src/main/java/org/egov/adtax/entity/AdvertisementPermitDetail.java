@@ -56,10 +56,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.adtax.entity.enums.AdvertisementDuration;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
@@ -103,9 +105,9 @@ public class AdvertisementPermitDetail extends StateAware {
     @Enumerated(EnumType.ORDINAL)
     private AdvertisementDuration advertisementDuration;
 
-    // @NotNull
-    @Enumerated(EnumType.ORDINAL)
-    private AdvertisementStatus status;
+    @ManyToOne
+    @JoinColumn(name = "statusid", nullable = false)
+    private EgwStatus status;
 
     @NotNull
     private BigDecimal taxAmount;
@@ -153,6 +155,12 @@ public class AdvertisementPermitDetail extends StateAware {
     private Double breadth;
     private Double totalHeight;
 
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
+    
     @Override
     public Long getId() {
         return id;
@@ -195,11 +203,11 @@ public class AdvertisementPermitDetail extends StateAware {
         this.advertisementDuration = advertisementDuration;
     }
 
-    public AdvertisementStatus getStatus() {
+    public EgwStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final AdvertisementStatus status) {
+    public void setStatus(EgwStatus status) {
         this.status = status;
     }
 
@@ -344,6 +352,22 @@ public class AdvertisementPermitDetail extends StateAware {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return String.format("Advertisement Number %s with date %s.", applicationNumber,
                 applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()));
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
     }
 
 }

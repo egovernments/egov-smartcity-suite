@@ -38,7 +38,6 @@
  */
 package org.egov.adtax.web.controller.common;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
@@ -58,6 +57,7 @@ import org.egov.adtax.service.RevenueInspectorService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -67,8 +67,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-public class HoardingControllerSupport {
-     protected SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+public class HoardingControllerSupport extends GenericWorkFlowController{
     protected @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
     protected @Autowired SubCategoryService subCategoryService;
     protected @Autowired FileStoreUtils fileStoreUtils;

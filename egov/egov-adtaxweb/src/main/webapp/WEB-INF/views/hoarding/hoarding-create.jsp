@@ -66,11 +66,15 @@
 			</div>
 
 		</div>
-		<div class="text-center">
-			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+		<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+		<div class="buttonbottom" align="center">
+			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		</div>
+				<%-- <div class="text-center">
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+				    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+				</div> --%>
 	</form:form>
 	</div>
 </div>
