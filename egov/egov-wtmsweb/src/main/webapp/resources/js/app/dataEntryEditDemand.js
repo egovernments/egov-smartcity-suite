@@ -109,11 +109,6 @@
 			  $this = $(this);
 			  var actamount = $this.find("#actualAmount").val();
 			  var actcollection = $this.find("#actualCollection").val();
-			  if(actamount > 0 && actcollection == 0){
-				  alert('please fill amount collected');
-				  e.preventDefault();
-				  return false;
-			  }
 			  if( actcollection > 0 && actamount == 0 ){
 				  alert('please fill actual amount');
 				  e.preventDefault();
