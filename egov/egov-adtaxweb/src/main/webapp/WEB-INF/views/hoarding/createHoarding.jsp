@@ -50,7 +50,7 @@
 								<div class="col-sm-3 add-margin">
 								<form:hidden path="advertisement.legacy" id="legacy" value="${advertisement.legacy}" />
 								<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
-								<form:hidden path="status" id="status" value="${status}" />
+								<%-- <form:hidden path="status" id="status" value="${status}" /> --%>
 								
 								<form:hidden path="advertisement.penaltyCalculationDate" id="penaltyCalculationDate" value="${advertisement.penaltyCalculationDate}" />
 								

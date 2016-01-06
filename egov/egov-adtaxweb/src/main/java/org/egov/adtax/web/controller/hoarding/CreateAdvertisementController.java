@@ -128,24 +128,24 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             final RedirectAttributes redirAttrib,final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateApplicationDate(advertisementPermitDetail, resultBinder);
+        if (advertisementPermitDetail.getState() == null)
+            advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
         if (resultBinder.hasErrors())
             return "hoarding-create";
         
         storeHoardingDocuments(advertisementPermitDetail);
-        if (advertisementPermitDetail.getState() == null)
-            advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
+        
         Long approvalPosition = 0l;
-        String approvalComent = "";
-
+        String approvalComment = "";
         if (request.getParameter("approvalComent") != null)
-            approvalComent = request.getParameter("approvalComent");
+            approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition, approvalComent, "CREATEHOARDING", workFlowAction);
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition, approvalComment, "CREATEADVERTISEMENT", workFlowAction);
         redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
         return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();

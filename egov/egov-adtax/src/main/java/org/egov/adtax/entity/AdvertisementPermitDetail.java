@@ -106,7 +106,7 @@ public class AdvertisementPermitDetail extends StateAware {
     private AdvertisementDuration advertisementDuration;
 
     @ManyToOne
-    @JoinColumn(name = "statusid", nullable = false)
+    @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
 
     @NotNull
