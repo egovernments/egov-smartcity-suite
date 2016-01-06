@@ -61,6 +61,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.gson.GsonBuilder;
 
@@ -70,8 +72,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
     private String mode;
     private String newGLCode = "", coaID = "";
     private Integer bankBranchId;
-    private PersistenceService<Bankaccount, Integer> bankAccountPersistenceService;
-    private PersistenceService<CChartOfAccounts, Long> chartOfAccountService;
+    private PersistenceService<Bankaccount, Integer> bankAccountService;
+    private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
     private AppConfigValueService appConfigValuesService;
 
     String code = EGovConfig.getProperty("egf_config.xml",
@@ -97,15 +99,6 @@ public class BankAccountAction extends JQueryGridActionSupport {
         return null;
     }
 
-    public PersistenceService<CChartOfAccounts, Long> getChartOfAccountService() {
-        return chartOfAccountService;
-    }
-
-    public void setChartOfAccountService(
-            final PersistenceService<CChartOfAccounts, Long> chartOfAccountService) {
-        this.chartOfAccountService = chartOfAccountService;
-    }
-
     private void addBankAccount() {
         final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
         new Date();
@@ -129,18 +122,18 @@ public class BankAccountAction extends JQueryGridActionSupport {
             bankAccount.setChartofaccounts(chartofaccounts);
         }
         populateBankAccountDetail(bankAccount);
-        bankAccountPersistenceService.persist(bankAccount);
+        bankAccountService.persist(bankAccount);
     }
 
     private void editBankAccount() {
-        final Bankaccount bankAccount = (Bankaccount) bankAccountPersistenceService.getSession().get(Bankaccount.class,
+        final Bankaccount bankAccount = (Bankaccount) bankAccountService.getSession().get(Bankaccount.class,
                 id.longValue());
         populateBankAccountDetail(bankAccount);
-        bankAccountPersistenceService.update(bankAccount);
+        bankAccountService.update(bankAccount);
     }
 
     private void deleteBankAccount() {
-        final Bankaccount bankBranch = (Bankaccount) bankAccountPersistenceService.getSession().load(Bankaccount.class,
+        final Bankaccount bankBranch = (Bankaccount) bankAccountService.getSession().load(Bankaccount.class,
                 id.longValue());
         persistenceService.delete(bankBranch);
     }
@@ -239,12 +232,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
         chart.setClassification(Long.parseLong("4"));
         chart.setIsActiveForPosting(true);
         chart.setMajorCode(chart.getGlcode().substring(0, majorCodeLength));
-        chartOfAccountService.persist(chart);
+        chartOfAccountsService.persist(chart);
         return String.valueOf(chart.getId());
-    }
-
-    public void setBankAccountPersistenceService(final PersistenceService<Bankaccount, Integer> bankAccountPersistenceService) {
-        this.bankAccountPersistenceService = bankAccountPersistenceService;
     }
 
     public void setMode(final String mode) {
@@ -262,6 +251,22 @@ public class BankAccountAction extends JQueryGridActionSupport {
     public void setAppConfigValuesService(
             final AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
+    }
+
+    public PersistenceService<Bankaccount, Integer> getBankAccountService() {
+        return bankAccountService;
+    }
+
+    public void setBankAccountService(PersistenceService<Bankaccount, Integer> bankAccountService) {
+        this.bankAccountService = bankAccountService;
+    }
+
+    public PersistenceService<CChartOfAccounts, Long> getChartOfAccountsService() {
+        return chartOfAccountsService;
+    }
+
+    public void setChartOfAccountsService(PersistenceService<CChartOfAccounts, Long> chartOfAccountsService) {
+        this.chartOfAccountsService = chartOfAccountsService;
     }
 
 }

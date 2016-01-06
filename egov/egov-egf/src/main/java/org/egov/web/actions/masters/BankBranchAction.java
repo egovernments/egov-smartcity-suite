@@ -52,6 +52,8 @@ import org.egov.commons.Bankbranch;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -62,7 +64,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
     private static final long serialVersionUID = 1L;
     private String mode;
     private Integer bankId;
-    private PersistenceService<Bankbranch, Integer> bankBranchPersistenceService;
+    private PersistenceService<Bankbranch, Integer> bankBranchService;
     private boolean isActive;
 
     @Override
@@ -90,24 +92,24 @@ public class BankBranchAction extends JQueryGridActionSupport {
     }
 
     private void addBankBranch() {
-        final Bank bank = (Bank) persistenceService.getSession().load(Bank.class, bankId);
+        final Bank bank = (Bank) bankBranchService.getSession().load(Bank.class, bankId);
         final Date currentDate = new Date();
         final Bankbranch bankBranch = new Bankbranch();
         bankBranch.setBank(bank);
         bankBranch.setCreated(currentDate);
         populateBankBranchDetail(bankBranch);
-        bankBranchPersistenceService.persist(bankBranch);
+        bankBranchService.persist(bankBranch);
     }
 
     private void editBankBranch() {
-        final Bankbranch bankBranch = (Bankbranch) bankBranchPersistenceService.getSession().get(Bankbranch.class, id);
+        final Bankbranch bankBranch = (Bankbranch) bankBranchService.getSession().get(Bankbranch.class, id);
         populateBankBranchDetail(bankBranch);
-        bankBranchPersistenceService.update(bankBranch);
+        bankBranchService.update(bankBranch);
     }
 
     private void deleteBankBranch() {
-        final Bankbranch bankBranch = (Bankbranch) bankBranchPersistenceService.getSession().load(Bankbranch.class, id);
-        bankBranchPersistenceService.delete(bankBranch);
+        final Bankbranch bankBranch = (Bankbranch) bankBranchService.getSession().load(Bankbranch.class, id);
+        bankBranchService.delete(bankBranch);
     }
 
     private void populateBankBranchDetail(final Bankbranch bankBranch) {
@@ -150,7 +152,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
     private boolean checkBankAccountsExists() {
         Bankbranch branch = null;
         if (id != null)
-            branch = (Bankbranch) persistenceService.find("from Bankbranch where id=?", id);
+            branch = (Bankbranch) bankBranchService.find("from Bankbranch where id=?", id);
         return branch != null && branch.isAccountsExist();
     }
 
@@ -158,14 +160,19 @@ public class BankBranchAction extends JQueryGridActionSupport {
         boolean isUnique = true;
         final String branchMICR = ServletActionContext.getRequest().getParameter("branchMICR");
         if (branchMICR != null && id != null)
-            isUnique = null == persistenceService.find("from Bankbranch where branchMICR=? and id!=?", branchMICR, id);
+            isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=? and id!=?", branchMICR, id);
         else if (branchMICR != null)
-            isUnique = null == persistenceService.find("from Bankbranch where branchMICR=?", branchMICR);
+            isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=?", branchMICR);
         return isUnique;
     }
 
-    public void setBankBranchPersistenceService(final PersistenceService<Bankbranch, Integer> bankBranchPersistenceService) {
-        this.bankBranchPersistenceService = bankBranchPersistenceService;
+
+    public PersistenceService<Bankbranch, Integer> getBankBranchService() {
+        return bankBranchService;
+    }
+
+    public void setBankBranchService(PersistenceService<Bankbranch, Integer> bankBranchService) {
+        this.bankBranchService = bankBranchService;
     }
 
     public void setMode(final String mode) {
@@ -183,4 +190,5 @@ public class BankBranchAction extends JQueryGridActionSupport {
     public void setIsActive(final boolean isActive) {
         this.isActive = isActive;
     }
+    
 }
