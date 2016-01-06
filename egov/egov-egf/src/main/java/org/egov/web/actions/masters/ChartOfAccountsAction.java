@@ -67,6 +67,7 @@ import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.exility.common.TaskFailedException;
@@ -83,7 +84,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private static final long serialVersionUID = 3393565721493478018L;
     private static final long LONG_FOUR = 4l;
     private static final long LONG_TWO = 2l;
-    PersistenceService<CChartOfAccounts, Long> chartOfAccountService;
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
     CChartOfAccounts model = new CChartOfAccounts();
     List<String> accountDetailTypeList = new ArrayList<String>();
     List<Accountdetailtype> accountDetailType = new ArrayList<Accountdetailtype>();
@@ -131,7 +134,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         populateCodeLength();
         parentForDetailedCode = getAppConfigValueFor("EGF", "parent_for_detailcode");
         populateGlCodeLengths();
-        allChartOfAccounts = chartOfAccountService.findAllBy("from CChartOfAccounts where classification=?",
+        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=?",
                 Long.valueOf(parentForDetailedCode));
         if (model != null)
             if (accountcodePurpose != null && accountcodePurpose.getId() != null)
@@ -162,7 +165,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     private void populateChartOfAccounts() {
         if (model.getId() != null)
-            model = chartOfAccountService.findById(model.getId(), false);
+            model = chartOfAccountsService.findById(model.getId(), false);
     }
 
     @Override
@@ -210,7 +213,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setIsActiveForPosting(activeForPosting);
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
-        chartOfAccountService.persist(model);
+        chartOfAccountsService.persist(model);
         saveCoaDetails(model);
         addActionMessage(getText("chartOfAccount.modified.successfully"));
         clearCache();
@@ -236,7 +239,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         String accountDetail = "";
         if (accounts.getChartOfAccountDetails() == null)
             return;
-        chartOfAccountService.getSession().flush();
+        chartOfAccountsService.getSession().flush();
         //persistenceService.setType(CChartOfAccountDetail.class);
         try {
             for (final Accountdetailtype row : accountDetailType) {
@@ -301,8 +304,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 chartOfAccountDetail.setGlCodeId(accounts);
                 accounts.getChartOfAccountDetails().add(chartOfAccountDetail);
             }
-        chartOfAccountService.persist(accounts);
-        chartOfAccountService.getSession().flush();
+        chartOfAccountsService.persist(accounts);
+        chartOfAccountsService.getSession().flush();
     }
 
     List<Accountdetailtype> getAccountDetailTypeToBeDeleted(final List<Accountdetailtype> accountDetailType,
@@ -344,7 +347,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model = new CChartOfAccounts();
         if (parentId != null)
             model.setParentId(parentId);
-        final CChartOfAccounts parent = chartOfAccountService.findById(parentId, false);
+        final CChartOfAccounts parent = chartOfAccountsService.findById(parentId, false);
         model.setType(parent.getType());
         setClassification(parent);
         final Long glCode = findNextGlCode(parent);
@@ -411,7 +414,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             addActionMessage(getText("chartOfAccount.invalid.glcode"));
             return NEW;
         }
-        final CChartOfAccounts coa = chartOfAccountService.find("from CChartOfAccounts where glcode=?",
+        final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                 generatedGlcode.concat(newGlcode));
         if (coa != null) {
             addActionMessage(getText("chartOfAccount.glcode.already.exists"));
@@ -421,7 +424,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         if ("0".equals(model.getPurposeId()))
             model.setPurposeId(null);
         if (parentId != null) {
-            final CChartOfAccounts parent = chartOfAccountService.findById(parentId, false);
+            final CChartOfAccounts parent = chartOfAccountsService.findById(parentId, false);
             model.setParentId(parentId);
             model.setType(parent.getType());
         }
@@ -431,7 +434,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setFunctionReqd(functionRequired);
         populateAccountDetailType();
         model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
-        chartOfAccountService.persist(model);
+        chartOfAccountsService.persist(model);
         saveCoaDetails(model);
         addActionMessage(getText("chartOfAccount.saved.successfully"));
         clearCache();
@@ -472,7 +475,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     @Action(value = "/masters/chartOfAccounts-detailed")
     public String detailed() throws Exception {
-        allChartOfAccounts = chartOfAccountService.findAllBy("from CChartOfAccounts where classification=4");
+        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=4");
         return "detailed-code";
     }
 
@@ -480,7 +483,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-modifySearch")
     public String modifySearch() throws Exception {
         if (glCode != null) {
-            model = chartOfAccountService.find("from CChartOfAccounts where classification=4 and glcode=?",
+            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?",
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
@@ -500,7 +503,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-viewSearch")
     public String viewSearch() throws Exception {
         if (glCode != null) {
-            model = chartOfAccountService.find("from CChartOfAccounts where classification=4 and glcode=?",
+            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?",
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
@@ -527,7 +530,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-create")
     public String create() throws Exception {
         if (glCode != null) {
-            final CChartOfAccounts parent = chartOfAccountService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts parent = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                     glCode.split("-")[0]);
             if (parent == null) {
                 addActionMessage(getText("chartOfAccount.no.data"));
@@ -537,7 +540,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 addActionMessage(getText("chartOfAccount.invalid.glcode"));
                 return "detailed";
             }
-            final CChartOfAccounts coa = chartOfAccountService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                     generatedGlcode.concat(newGlcode));
             if (coa != null) {
                 addActionMessage(getText("chartOfAccount.glcode.already.exists"));
@@ -554,7 +557,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             setPurposeOnCoa();
             model.setIsActiveForPosting(activeForPosting);
             populateAccountDetailType();
-            chartOfAccountService.persist(model);
+            chartOfAccountsService.persist(model);
             saveCoaDetails(model);
             addActionMessage(getText("chartOfAccount.detailed.saved"));
         } else
@@ -583,7 +586,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     public String ajaxNextGlCode() {
         final String parentGlcode = parameters.get("parentGlcode")[0];
         if (parentGlcode != null || !StringUtils.isBlank(parentGlcode)) {
-            final CChartOfAccounts coa = chartOfAccountService.find("from CChartOfAccounts where glcode=?", parentGlcode);
+            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?", parentGlcode);
             final Long glCode = findNextGlCode(coa);
             if (glCode == null) {
                 populateGlcode(coa.getClassification());
@@ -688,8 +691,13 @@ public class ChartOfAccountsAction extends BaseFormAction {
         this.accountDetailType = accountDetailType;
     }
 
-    public void setChartOfAccountService(final PersistenceService<CChartOfAccounts, Long> chartOfAccountService) {
-        this.chartOfAccountService = chartOfAccountService;
+
+    public PersistenceService<CChartOfAccounts, Long> getChartOfAccountsService() {
+        return chartOfAccountsService;
+    }
+
+    public void setChartOfAccountsService(PersistenceService<CChartOfAccounts, Long> chartOfAccountsService) {
+        this.chartOfAccountsService = chartOfAccountsService;
     }
 
     public void setModel(final CChartOfAccounts model) {

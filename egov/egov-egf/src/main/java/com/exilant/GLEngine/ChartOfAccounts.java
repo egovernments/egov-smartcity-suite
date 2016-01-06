@@ -81,8 +81,6 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.IntegerType;
 import org.infinispan.Cache;
-import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,7 +111,6 @@ public class ChartOfAccounts {
     private static final String EXILRPERROR = "exilRPError";
     private static PersistenceService<CChartOfAccountDetail, Integer> chartOfAccountDetailService;
     private PersistenceService<CVoucherHeader, Long> voucherHeaderService;
-    private List<Object[]> resultset;
 
     private static Cache<Object, Object> cache;
     @Autowired
@@ -1026,6 +1023,7 @@ public class ChartOfAccounts {
 
     private boolean updateInGL(final Transaxtion txnList[], final DataCollection dc) throws TaskFailedException, ParseException,
             SQLException {
+        List<Object[]> resultset;
         final GeneralLedger gLedger = new GeneralLedger();
         final GeneralLedgerDetail gLedgerDet = new GeneralLedgerDetail();
         EgRemittanceGldtl egRemitGldtl = new EgRemittanceGldtl();
