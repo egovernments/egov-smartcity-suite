@@ -236,7 +236,7 @@
 									</button>
 								</div>
 								<div class="row">
-									<div class="col-md-12 col-xs-12 text-right"
+									<div class="col-md-12 col-xs-12 text-right add-margin"
 										style="font-size: 12px;">
 										<a href="javascript:void(0);" data-toggle="modal"
 											data-target="#fpassword" data-backdrop="static"><spring:message code="lbl.forgot.pwd"/></a>

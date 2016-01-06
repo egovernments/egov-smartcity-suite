@@ -152,7 +152,23 @@
 		});
 		
 		jQuery('form').preventDoubleSubmission();
-	  
+
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy",
+				autoclose: true 
+			}); 
+
+			var d = new Date();
+			var currDate = d.getDate();
+			var currMonth = d.getMonth();
+			var currYear = d.getFullYear();
+			var startDate = new Date(currYear,currMonth,currDate);
+			jQuery('.today').datepicker('setDate',startDate);
+
+			}catch(e){
+			console.warn("No Date Picker");
+		}
 	  </script>
 	  
 	   
