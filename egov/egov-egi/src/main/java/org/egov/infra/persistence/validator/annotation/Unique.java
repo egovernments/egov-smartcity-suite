@@ -58,7 +58,7 @@ import org.egov.infra.persistence.validator.UniqueCheckValidator;
 public @interface Unique {
     String[] fields() default {};
 
-    String id();
+    String id() default "id";
 
     String tableName();
 
@@ -67,6 +67,8 @@ public @interface Unique {
     String message() default "{validator.unique}";
 
     boolean enableDfltMsg() default false;
+
+    boolean isSuperclass() default false;
     
     Class<?>[] groups() default {};
 

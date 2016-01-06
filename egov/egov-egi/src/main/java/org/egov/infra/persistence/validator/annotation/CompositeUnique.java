@@ -60,7 +60,7 @@ public @interface CompositeUnique {
     String[] fields();
     String message() default "{validator.unique}";
     boolean enableDfltMsg() default false;
-    
+    boolean isSuperclass() default false;
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

@@ -92,7 +92,7 @@ import com.google.gson.annotations.Expose;
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
 @Unique(id = "id", tableName = "eg_user", columnName = { "username", "pan", "aadhaarNumber",
-        "emailId" }, fields = { "username", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true)
+        "emailId" }, fields = { "username", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true, isSuperclass = true)
 @CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
 public class User extends AbstractAuditable {
     private static final long serialVersionUID = -2415368058955783970L;

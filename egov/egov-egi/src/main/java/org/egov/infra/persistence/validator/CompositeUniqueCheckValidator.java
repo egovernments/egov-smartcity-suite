@@ -45,6 +45,7 @@ import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
@@ -83,13 +84,13 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
     }
 
     private boolean checkCompositeUniqueKey(Object arg0, Long id) throws IllegalAccessException {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(arg0.getClass());
+        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
         Conjunction conjunction = Restrictions.conjunction();
         for (String fieldName : unique.fields())
             conjunction.add(Restrictions.eq(fieldName, FieldUtils.readField(arg0, fieldName, true)));
         if (id != null)
             conjunction.add(Restrictions.ne(this.unique.id(),id));
-        return criteria.add(conjunction).list().isEmpty();
+        return criteria.add(conjunction).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
     }
 
 }
