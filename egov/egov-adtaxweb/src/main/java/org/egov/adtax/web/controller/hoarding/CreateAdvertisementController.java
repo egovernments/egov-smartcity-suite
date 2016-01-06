@@ -43,14 +43,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -111,18 +108,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         return "hoarding-create";
     }
 
-    @RequestMapping(value = "createLegacy", method = GET)
-    public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
-        if(advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement()==null)
-        {
-            advertisementPermitDetail.setAdvertisement(new Advertisement());
-        }
-        advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
-        advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
-        return "hoarding-createLegacy";
-    }
-
+    
     @RequestMapping(value = "create", method = POST)
     public String createAdvertisement(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder,
             final RedirectAttributes redirAttrib,final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
@@ -167,43 +153,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
        }
         
     }
-    private void validateLegacyApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
-        /*if(hoarding!=null && hoarding.getApplicationDate()!=null )
-        {
-            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-            if (installmentObj != null && installmentObj.getToDate() != null)
-            {
-                if( hoarding.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate())))
-                {
-                    resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
-                }
-            }
-            
-        }
-      */   
-     }
-    @RequestMapping(value = "createLegacy", method = POST)
-    public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
-            final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        validateHoardingDocs(advertisementPermitDetail, resultBinder);
-        validateLegacyApplicationDate(advertisementPermitDetail, resultBinder);
-        if (resultBinder.hasErrors())
-            return "hoarding-createLegacy";
-        storeHoardingDocuments(advertisementPermitDetail);
-
-        final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-        if (installmentObj != null && installmentObj.getFromDate() != null)
-            try {
-                advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(formatter.parse(formatter.format(installmentObj.getFromDate())));
-            } catch (final ParseException e) {
-                e.printStackTrace();// TODO: CHECK THIS CASE AGAIN.
-            }
-
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail,null,null,null,null);
-        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
-        return "redirect:/hoarding/createLegacy";
-    }
+  
 
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final String id, @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
