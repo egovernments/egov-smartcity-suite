@@ -286,7 +286,7 @@
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<form:radiobutton path="active" id="isactive_no" value="true"/>
+											<form:radiobutton path="active" id="isactive_no" value="false"/>
 											<label>No</label>
 										</div>
 
