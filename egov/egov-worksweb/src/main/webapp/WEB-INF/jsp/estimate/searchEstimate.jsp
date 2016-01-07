@@ -102,7 +102,18 @@
 		var data = new Array();
 		wind=window.dialogArguments;
 	
-		validateForRCEstimates(value);
+		if(!validateForFundSourceEstimates())
+			return;
+		if(wind==undefined){
+			wind=window.opener;
+			data=value;
+			window.opener.update(data);
+		}
+		else{
+			wind=window.dialogArguments;
+			wind.result=value;
+		}
+		window.close();
 	}
 	else{
 		dom.get("searchEstimate_error").innerHTML='Please Select any one of the estimates'; 
@@ -114,59 +125,22 @@
 	return true;
 }
 
-    function validateForRCEstimates(estimateIds){
-    	makeJSONCall(["Value","estimateNum","estimateIds"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!checkIfMultipleRCEstimatesSelected.action',{estimateIds:estimateIds},validateRCEstimateSuccess,validateRCEstimateFailure) ;
-    }
-
-    validateRCEstimateSuccess = function(req,res){
-		results=res.results;
-		
-		var checkResult='';
-		var estimateNum='';
-		var data = new Array();
-		var wind=window.dialogArguments;
-		var fundSourceId1;
-		
-		if(results != '') {
-			checkResult =   results[0].Value;
-			estimateNum =   results[0].estimateNum;
-		}
-		
-		if(checkResult != '' && checkResult=='yes'){
-			dom.get("searchEstimate_error").innerHTML='<s:text name="wp.rcEstimate.check.msg1" />'+estimateNum+' '+'<s:text name="wp.rcEstimate.check.msg2" />';
-		    dom.get("searchEstimate_error").style.display='';
-		    return false;
-		}
-		else{
-			if(fundSourceIds.length>0){
-				fundSourceId1=fundSourceIds[0];
-				for(j=1;j<fundSourceIds.length;j++){
-					if(fundSourceId1!=fundSourceIds[j]){
-							dom.get("searchEstimate_error").innerHTML='<s:text name="wp.estimate.different.fund.source.not.allowed"/>'; 
-					        dom.get("searchEstimate_error").style.display='';
-							return false;
-					}
-					
-				}
+  function validateForFundSourceEstimates(){  
+	var fundSourceId1;		  	
+	if(fundSourceIds.length>0){
+		fundSourceId1=fundSourceIds[0];
+		for(j=1;j<fundSourceIds.length;j++){
+			if(fundSourceId1!=fundSourceIds[j]){
+					dom.get("searchEstimate_error").innerHTML='<s:text name="wp.estimate.different.fund.source.not.allowed"/>'; 
+			        dom.get("searchEstimate_error").style.display='';
+					return false;
 			}
 			
-			if(wind==undefined){
-					wind=window.opener;
-					data=results[0].estimateIds;
-					window.opener.update(data);
-				}
-				else{
-					wind=window.dialogArguments;
-					wind.result=value;
-				}
-				window.close();
-			}
+		}
 	}
- 
- validateRCEstimateFailure= function(){
-	    dom.get("searchEstimate_error").style.display='';
-		document.getElementById("searchEstimate_error").innerHTML='<s:text name="wp.rcEstimate.check.failure" />';
-	}    
+	return true;		
+}
+  
 function enableCreateTrackMilestone(){
 		dom.get("trackMilestoneButton").style.visibility='visible';
 		dom.get("createMilestoneButton").style.visibility='visible';

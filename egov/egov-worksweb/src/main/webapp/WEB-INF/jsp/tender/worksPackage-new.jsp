@@ -44,9 +44,11 @@
 </head>
 <body onload="populateDetails();load();noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
 <script src="<egov:url path='resources/js/works.js'/>"></script>
-
+<script src="../resources/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
-jQuery("#loadingMask").remove();
+
+var jq=jQuery.noConflict(true);
+jq("#loadingMask").remove();
 
 window.history.forward(1);
 function noBack() {
@@ -67,29 +69,6 @@ function load(){
 }
 
 
-designationLoadHandler = function(req,res){ 
-  results=res.results;
-  dom.get("designation").value=results[0].Designation;
-}
-
-designationLoadFailureHandler= function(){
-    dom.get("wp_error").style.display='';
-	document.getElementById("wp_error").innerHTML='<s:text name="unable.des"/>';
-}
-
-
-function showDesignation(elem){
-	var empId = elem.options[elem.selectedIndex].value;
-    makeJSONCall(["Designation"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!designationForUser.action',{empID:empId},designationLoadHandler,designationLoadFailureHandler) ;
-}
-function refreshInbox() {
-        var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-}
 function populateDetails()
 {
 	if(dom.get("packageDate").value=='') {
@@ -217,7 +196,7 @@ function validateBeforeSubmit()
 	   dom.get("wp_error").style.display='none';
 	   dom.get("wp_error").innerHTML='';
 
-	   jQuery(".commontopyellowbg").prepend('<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/bar_loader.gif"> <span id="message">Please wait....</span></div>')
+	   jq(".commontopyellowbg").prepend('<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/bar_loader.gif"> <span id="message">Please wait....</span></div>')
 	   doLoadingMask();
 	   
 	   return true;
@@ -240,8 +219,8 @@ function validateCancel() {
 }
 
 function validate(text){
-	if(!validateUser(text))
-		return false;
+	/* if(!validateUser(text))
+		return false; */
 	enableSelect();
 	return true;
 }
@@ -270,15 +249,6 @@ function disableDepartment(){
 function enableDepartment(){
 	document.getElementById('department').disabled = false;
 }
-
-function disablePreparedBy(){
-	document.getElementById('preparedBy').disabled = true;
-}
-
-function enablePreparedBy(){
-	document.getElementById('preparedBy').disabled = false;
-}
-
 
 </script>
 <div class="errorstyle" id="wp_error" style="display: none;"> 
@@ -377,7 +347,7 @@ function enablePreparedBy(){
          <tr>
             <td colspan="4">
             <div id="wp_details">
-           		<%@ include file="worksPackage-Details.jsp"%>  
+           		<%@ include file="worksPackage-details.jsp"%>  
             </div>        
             </td> 
           </tr> 

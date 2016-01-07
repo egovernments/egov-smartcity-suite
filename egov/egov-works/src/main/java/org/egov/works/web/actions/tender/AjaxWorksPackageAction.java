@@ -44,6 +44,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.Money;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -51,11 +55,16 @@ import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
+import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 
+@ParentPackage("egov")
+@Results({
+        @Result(name = AjaxWorksPackageAction.ESTIMATE_LIST, location = "ajaxWorksPackage-estList.jsp")
+})
 public class AjaxWorksPackageAction extends BaseFormAction {
 
     private static final long serialVersionUID = -5753205367102548473L;
-    private static final String ESTIMATE_LIST = "estList";
+    public static final String ESTIMATE_LIST = "estList";
     private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
     private AbstractEstimateService abstractEstimateService;
     private Money worktotalValue;
@@ -79,6 +88,8 @@ public class AjaxWorksPackageAction extends BaseFormAction {
     private List<String> estimateNumberSearchList = new LinkedList<String>();
     private static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
 
+    
+    @Action(value = "/tender/ajaxWorksPackage-estimateList")
     public String estimateList() {
         if (StringUtils.isNotBlank(estId)) {
             abstractEstimateList = abstractEstimateService.getAbEstimateListById(estId);
