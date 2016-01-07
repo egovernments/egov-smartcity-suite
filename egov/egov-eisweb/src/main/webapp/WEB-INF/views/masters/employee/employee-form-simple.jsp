@@ -44,18 +44,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -187,45 +182,46 @@
 												<div class="error-msg designationerror all-errors display-hide"></div>
 										</div>
 									</div>
+									<c:if test="${not empty image}">
+									    <div class="form-group">
+										    <label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.sign"/></label>
+											<div class="col-md-3 col-xs-6 add-margin view-content">
+												<img width="100" height="70" src='data:image/png;base64,${image}' /> 
+										  	</div>
+									    </div>
+									    <div class="form-group">
+											<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
+												<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
+												<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
+											</div>
+											<div class="col-sm-6 col-xs-12">
+												<div id="file1block" class="add-margin col-sm-3 col-xs-6">
+													<img id="preview1" src="#" alt="" class="display-hide "/>
+													<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+													<div class="add-padding" id="filename1"></div>
+											    </div>
+											</div>	
+						                 </div>	                 
+									     </c:if>
+									     
+										<c:if test="${ empty image}">
+	                                    <div class="form-group">
+											<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
+												<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
+												<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
+											</div>
+											<div class="col-sm-6 col-xs-12">
+												<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+													<img id="preview1" src="#" alt="" class="display-hide "/>
+													<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+													<div class="add-padding" id="filename1"></div>
+											</div>
+											</div>
+						                </div>
+					                </c:if>
 							</div>
 									
-								    <c:if test="${not empty image}">
-								    <div class="form-group">
-									    <label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.sign"/></label>
-										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<img width="100" height="70" src='data:image/png;base64,${image}' /> 
-									  	</div>
-								    </div>
-								    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
-											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
-											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
-										</div>
-										<div class="col-sm-6 col-xs-12">
-											<div id="file1block" class="add-margin col-sm-3 col-xs-6">
-												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename1"></div>
-										    </div>
-										</div>	
-					                 </div>	                 
-								     </c:if>
-								     
-									<c:if test="${ empty image}">
-                                    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
-											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
-											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
-										</div>
-										<div class="col-sm-6 col-xs-12">
-											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
-												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename1"></div>
-										</div>
-										</div>
-					                </div>
-					                </c:if>
+								    
 
 
 									
@@ -239,7 +235,7 @@
 				<div class="row">
 					<div class="text-center">
 						<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
                 

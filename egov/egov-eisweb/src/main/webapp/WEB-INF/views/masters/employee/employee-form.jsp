@@ -44,18 +44,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -679,7 +674,7 @@
 				<div class="row">
 					<div class="text-center">
 						<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
                 
