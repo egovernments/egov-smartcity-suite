@@ -16,6 +16,11 @@
 @whitecolor : #fff;
 @placeholdercolor: #999999;
 
+/*LESS - Parametric Mixins*/
+.font-size(@font){
+	font-size: @font;
+}
+
 /*Default settings - Pre-defined*/
 html, body {
 	margin:0;
@@ -97,10 +102,6 @@ b, label, strong{
 	display:none;
 }
 
-.font-size(@font){
-	font-size: @font;
-}
-
 .error-msg {
     color: rgb(255, 0, 0);
     .font-size(13px);
@@ -112,6 +113,10 @@ b, label, strong{
 
 .add-border {
     border-bottom: 1px solid #ebebeb;
+}
+
+.add-padding{
+	padding:0 5px;
 }
 
 .add-border:last-child {
@@ -135,13 +140,14 @@ b, label, strong{
     color: red;
 }
 
+/*LESS - Functions*/
 .oldbuttonsection{
     div.buttonbottom {
         margin-bottom: 10px;
         margin-top: 10px;
         padding: 15px;
         font-family: regular;
-        font-size: 11px;
+        .font-size(11px);
         color: #000000;
         text-align: center;
     }
@@ -151,7 +157,7 @@ b, label, strong{
         font-family: semibold;
         text-align: center;
         border-style: none;
-        font-size: 12px;
+        .font-size(12px);
         font-weight: bold;
         padding: 6px 12px;
         background: @basecolor none repeat scroll 0% 0%;
@@ -1038,11 +1044,11 @@ b, label, strong{
             
             .error-text {
                 padding-bottom: 25px;
-                font-size: 16px;
+                .font-size(16px);
             }
             
             .error-symbol {
-                font-size: 50px;
+                .font-size(50px);
             }
         }
         
@@ -1061,7 +1067,7 @@ b, label, strong{
 			display: inline;
 			overflow: hidden;
 			list-style-type: none;
-			font-size: 11px;
+			.font-size(11px);
 			color: #121212;
 			text-decoration: none;
 			font-weight: bold;
@@ -1071,7 +1077,7 @@ b, label, strong{
 			color: #121212;
 			margin: 0px;
 			text-decoration: none;
-			font-size: 11px;
+			.font-size(11px);
 			font-weight: bold;
 			position: static;
 			padding: 6px 10px;
@@ -1079,7 +1085,7 @@ b, label, strong{
 		
 		#tabmenu a.active {
 			text-decoration: none;
-			font-size: 11px;
+			.font-size(11px);
 			font-weight: bold;
 			padding: 6px 10px;
 			color: #0099ff;
@@ -1178,7 +1184,7 @@ b, label, strong{
             
             td.greybox {
 				background-color: @whitecolor;
-				font-size: 12px;
+				.font-size(12px);
 				padding:8px 5px;
 				color: #000000;
 				text-align: left;
@@ -1187,14 +1193,14 @@ b, label, strong{
 			
 			textarea {
 				font-family: regular;
-				font-size: 11px;
+				.font-size(11px);
 				color: #333333;
 				padding: 6px 12px;
 			}
 			
 			input, input.amount, input.tablerow, #select, input.hiddenslno, td.greybox input.hiddentext {
 				font-family: regular;
-				font-size: 11px;
+				.font-size(11px);
 				color: #333333;
 				background-color:@whitecolor;
 				border: 1px solid #CCCCCC;
@@ -1229,7 +1235,7 @@ b, label, strong{
                 background-color: #ffad01;
                 background-position: right bottom;
                 font-family: regular;
-                font-size: 20px;
+                .font-size(20px);
                 font-weight: bold;
                 color: @whitecolor;
                 text-align: center;
@@ -1246,7 +1252,7 @@ b, label, strong{
                 background-color: #486f9f;
                 background-position: right bottom;
                 font-family: regular;
-                font-size: 11px;
+                .font-size(11px);
                 color: #cccccc;
                 text-align: left;
                 white-space: normal;
@@ -1264,14 +1270,14 @@ b, label, strong{
                 float:right;
                 text-align: right;
                 font-family: regular;
-                font-size: 11px;
+                .font-size(11px);
                 color: #000;
             }
             
             div.commontopbreadc {
                 background-color:@whitecolor;
                 font-family: regular;
-                font-size: 11px;
+                .font-size(11px);
                 color: #999;
                 text-align: left;
                 white-space: normal;
@@ -1290,7 +1296,7 @@ b, label, strong{
                 font-family: regular;
                 color:#416a9c;
                 font-weight: bold;
-                font-size:10px;
+                .font-size(10px);
                 margin-left:4px;
                 margin-right: 4px;
             }
@@ -1326,7 +1332,7 @@ b, label, strong{
                 width:auto;
                 height: 30px;
                 padding: 5px 10px;
-                font-size: 12px;
+                .font-size(12px);
                 line-height: 1.5;
                 border-radius: 3px;
                 background-color: @whitecolor;
@@ -1383,7 +1389,7 @@ b, label, strong{
         
          div.subheadnew {
           font-family: semibold;
-          font-size: 16px;
+          .font-size(16px);
           font-weight: bold;
           color: @active;
           padding: 15px 15px;
@@ -1406,7 +1412,7 @@ b, label, strong{
           border-right-color: @basecolor;
           border-bottom-color: @basecolor;
           font-family: semibold;
-          font-size: 10px;
+          .font-size(10px);
           font-weight: bold;
           color: @whitecolor;
           padding: 4px;
@@ -1443,7 +1449,7 @@ b, label, strong{
         
         .tblactionicon i
         {
-            font-size:1.7em;
+            .font-size(1.7em);
         }
         
         .tblactionicon.add
@@ -1492,7 +1498,7 @@ b, label, strong{
 		    font-family: semibold;
 		    text-transform: uppercase;
 		    padding: 12px 15px 14px 15px;
-		    font-size: 14px;
+		    .font-size(14px);
 		}
 		
 		li.active > a:first-of-type, li.active>a:first-of-type:focus, li.active>a:first-of-type:hover, li.active>a:first-of-type:active {
@@ -1656,7 +1662,7 @@ b, label, strong{
         .panel-title {
             font-weight: normal;
             font-family: regular;
-            font-size: 19px;
+            .font-size(19px);
             color: #f5861f;
             text-align: left;
         }
@@ -1665,7 +1671,7 @@ b, label, strong{
 		    position: absolute;
 		    top: 17px;
 		    right: 10px;
-		    font-size: 16px;
+		    .font-size(16px);
 		    color: @active;
 		}
     }
@@ -1706,7 +1712,7 @@ b, label, strong{
 		    position: absolute;
 		    top: -11px;
 		    left: 3px;
-		    font-size: 16px;
+		    .font-size(16px);
 		    cursor: pointer;
 		}
 		
@@ -1787,6 +1793,7 @@ table.dataTable{
         
     }
     tbody{
+    	.font-size(13px);
         @media (max-width: 768px){
             display: block;
             tr{
@@ -1841,14 +1848,6 @@ table.dataTable#official_inbox thead th.sorting_desc:not(:last-child):after, tab
     
 }
 
-#official_inbox, #official_drafts, #official_notify {
-    
-    tbody{
-        .font-size(13px);
-    }
-    
-}
-
 .DTTT_container {
     
     margin: 5px 0;
@@ -1872,19 +1871,19 @@ table.dataTable#official_inbox thead th.sorting_desc:not(:last-child):after, tab
 	  color: @whitecolor;
 	  text-align:center;
 	  vertical-align:middle !important;
-	  font-size:12px;
+	  .font-size(12px);
 	  font-weight:normal;
 	}
 	
 	tbody td
 	{
-		font-size:10px;
+		.font-size(10px);
 	}
 	
 	tfoot td
 	{
 		font-weight:bold;
-		font-size:12px;
+		.font-size(12px);
 		font-family:semibold !important;
 	}
 

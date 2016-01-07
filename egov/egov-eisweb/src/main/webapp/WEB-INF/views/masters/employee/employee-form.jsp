@@ -566,8 +566,8 @@
 														</c:if>
 													</td>
 													<td>
-														<span class="parallel-actions" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
-													   <span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														<span class="add-padding" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+													   <span class="add-padding" data-toggle="tooltip" title="Delete"><i
 														id="delete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 													</td>
 												</tr>
@@ -653,9 +653,9 @@
 													id="table_boundary${status.index}" class="form-control"
 													readonly="readonly" style="text-align: center"
 													value="${jurdctn.boundary.name}" /></td>
-													<td><span class="parallel-actions" data-toggle="tooltip" title="Edit"><i
+													<td><span class="add-padding" data-toggle="tooltip" title="Edit"><i
 														id="jurdctnedit_row" class="fa fa-edit"  value="${status.index}"></i></span>
-														<span class="parallel-actions" data-toggle="tooltip" title="Delete"><i
+														<span class="add-padding" data-toggle="tooltip" title="Delete"><i
 														id="jurdctndelete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 												</td>
 												

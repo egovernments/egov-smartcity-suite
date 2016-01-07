@@ -74,7 +74,7 @@
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">Enclosed Documents</div>
 </div>
-<div class="col-sm-12 view-content header-color hidden-xs">
+<div class="form-group col-sm-12 view-content header-color hidden-xs">
 	<div class="col-sm-1 text-center"><s:text name="doctable.sno" /></div>
     <div class="col-sm-5 text-center"><s:text name="doctable.docname" /></div>
     <div class="col-sm-3 text-center"><s:text name="doctable.checklist"/></div>
@@ -82,7 +82,6 @@
 </div>
 <table class="table" id="docAttachmentTab">  
 <s:iterator value="documentTypes" status="status" var="documentType">
-<tr><td style="border: 0">
 	<div class="form-group">
     	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
         <div class="col-sm-5 text-center">
@@ -127,7 +126,6 @@
 			<div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
        	</div>
    	</div>
-</td></tr> 
 </s:iterator>
 </table>
 

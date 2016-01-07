@@ -8,6 +8,7 @@
   src: url(../../fonts/OpenSans-Semibold.ttf);
 }
 /*Default settings - Color variables*/
+/*LESS - Parametric Mixins*/
 /*Default settings - Pre-defined*/
 html,
 body {
@@ -91,6 +92,9 @@ strong {
 .add-border {
   border-bottom: 1px solid #ebebeb;
 }
+.add-padding {
+  padding: 0 5px;
+}
 .add-border:last-child {
   border-bottom: none;
 }
@@ -107,6 +111,7 @@ strong {
   font-weight: normal;
   color: red;
 }
+/*LESS - Functions*/
 .oldbuttonsection div.buttonbottom {
   margin-bottom: 10px;
   margin-top: 10px;
@@ -1622,6 +1627,9 @@ strong {
     display: block;
   }
 }
+table.dataTable tbody {
+  font-size: 13px;
+}
 @media (max-width: 768px) {
   table.dataTable tbody {
     display: block;
@@ -1670,11 +1678,6 @@ table.dataTable:not(#official_inbox) thead th.sorting_desc:after {
   .table-bordered tbody > tr td {
     border: none;
   }
-}
-#official_inbox tbody,
-#official_drafts tbody,
-#official_notify tbody {
-  font-size: 13px;
 }
 .DTTT_container {
   margin: 5px 0;
