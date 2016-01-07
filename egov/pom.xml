@@ -1169,7 +1169,7 @@
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
-				<!--<plugin>
+				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
 					<version>1.0.0</version>
@@ -1196,7 +1196,7 @@
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
-				</plugin>-->
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -1262,13 +1262,12 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 			</plugin>
 
-			<!--<plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.7.5.201505241946</version>
 				<executions>
-					<execution>srikanth!@#
-
+					<execution>
 						<id>default-prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
@@ -1285,7 +1284,7 @@
 				<configuration>
 					<propertyName>coverageAgent</propertyName>
 				</configuration>
-			</plugin>-->
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
