@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,25 +36,17 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------*/
 
-NotNull.rebatePeriod.rebateDate=Rebate date is required
-wf.pending.msg=Could not do {0} now, property is undergoing some work flow.
-#wf.pending.msg=Property is in work flow of {0}, please wait!
-vacancyToDate.incorrect = Vacancy remission is given only if property is vacant for minimum 6 months
+$(document).ready(function() {
+				$('#create').click(function() {
+					$('#wallTypeForm').attr('method', 'get');
+					$('#wallTypeForm').attr('action', '/ptis/wallType/create');
+					$('#wallTypeForm').submit();
+				});
+				$('#view').click(function() {
+							$('#wallTypeForm').attr('method', 'get');
+							$('#wallTypeForm').attr('action','/ptis/wallType/view/' + $('#name').val());
+			    });
 
-##Property Demolition
-pattaNumber.required = Please enter Patta Number
-surveyNumber.required = Please enter Survey Number
-vacantLandArea.required = Please enter Vacant land area
-marketValue.required = Please enter market value
-currCapitalValue.required = Please enter current capital area
-northBoundary.required = Please enter north boundary
-eastBoundary.required = Please enter east boundary
-westBoundary.required = Please enter west boundary
-southBoundary.required = Please enter south boundary
-demolitionReason.required = Please enter reason for demolition
-
-
-MEESEVA.002 = Duplicate Request
-MEESEVA.004 = Payment confirmation failed. Please try again.
+});
