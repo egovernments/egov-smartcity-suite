@@ -177,6 +177,8 @@ public class Advertisement extends AbstractAuditable {
     @JoinTable(name = "egadtax_advertisement_docs", joinColumns = @JoinColumn(name = "advertisement"), inverseJoinColumns = @JoinColumn(name = "document"))
     private List<HoardingDocument> documents = new ArrayList<>();
 
+    private Boolean taxPaidForCurrentYear=false;
+    
     @Override
     public Long getId() {
         return id;
@@ -380,6 +382,14 @@ public class Advertisement extends AbstractAuditable {
 
     public void setAdvertisementPermitDetail(Set<AdvertisementPermitDetail> advertisementPermitDetail) {
         this.advertisementPermitDetail = advertisementPermitDetail;
+    }
+
+    public Boolean getTaxPaidForCurrentYear() {
+        return taxPaidForCurrentYear;
+    }
+
+    public void setTaxPaidForCurrentYear(Boolean taxPaidForCurrentYear) {
+        this.taxPaidForCurrentYear = taxPaidForCurrentYear;
     }
 
 }

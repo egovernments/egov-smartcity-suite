@@ -88,7 +88,7 @@ public class AdvertisementPermitDetail extends StateAware {
     private Advertisement advertisement;
 
     @NotNull
-    @Column(name = "applicationNumber", unique = true)
+    @Column(name = "applicationNumber")
     @SafeHtml
     @Length(max = 25)
     private String applicationNumber;

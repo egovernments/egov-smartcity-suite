@@ -52,27 +52,15 @@
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
 					<li class="active"><a data-toggle="tab"
-						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.hoarding.details"/></a></li>
-					<li class=""><a data-toggle="tab" href="#hoardingattachments"
-						data-tabidx="1" aria-expanded="false"><spring:message code="lbl.hoarding.enclosure"/></a></li>
+						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.advertisement.details"/></a></li>
+					<%-- <li class=""><a data-toggle="tab" href="#hoardingattachments"
+						data-tabidx="1" aria-expanded="false"><spring:message code="lbl.advertisement.enclosure"/></a></li> --%>
 				</ul>
 			</div>
 			<div class="panel-body custom-form">
 				<div class="tab-content">
 					<div class="tab-pane fade active in" id="hoardingdetails">
-		
-				<jsp:include page="createHoarding.jsp"></jsp:include>
-				
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.pendingtax"/>
-									<span class="mandatory"></span>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="advertisement.pendingTax" id="pendingTax" required="required"/>
-                               		<form:errors path="advertisement.pendingTax" cssClass="error-msg" />
-								</div>
-							</div>
+							<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
 			</div>
 			</div>
 
@@ -92,4 +80,4 @@ var adminBoundry = '${advertisement.ward.id}';
 var revenueBoundary = '${advertisement.locality.id}';
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>
+<script src="<c:url value='/resources/app/js/legacyAdvertisement.js'/>"></script>
