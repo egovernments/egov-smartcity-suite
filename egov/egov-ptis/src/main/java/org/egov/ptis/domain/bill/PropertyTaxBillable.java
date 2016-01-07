@@ -457,7 +457,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         /**
          * Not calculating penalty if collection is happening within two months from the assessment date
          */
-        if (noOfMonths <= 2) {
+        if (noOfMonths <= 3) {
         	return installmentPenaltyAndRebate;
         }
     	
@@ -523,35 +523,38 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
             final Date assmentDate, final Installment curInstallment) {
-        Date penaltyEffDate;
+        Date penaltyEffDate = null;
         /**
-         * If assessment date falls in the installment on which penalty is being calculated then penalty calculation will be
-         * effective from two months after the assessment date
+         * If assessment date falls in the current installment then penalty calculation will be effective from three months after
+         * the assessment date
          */
-        if (installment.equals(assessmentEffecInstallment)) {
-            final Calendar penalyDate = Calendar.getInstance();
-            penalyDate.setTime(assmentDate);
-            penalyDate.add(Calendar.MONTH, 0); // Calculate penalty starting from the assessment month
-            penalyDate.set(Calendar.DAY_OF_MONTH, 1);
-            penaltyEffDate = penalyDate.getTime();
+        if (assessmentEffecInstallment.equals(curInstallment)) {
+            penaltyEffDate = penalyDateWithThreeMonths(assmentDate);
         } else {
             /*
-             * For all the passed installment penalty starts from 1st month of the respective installment. If its a current
-             * installment, first 3 months there is no peanlty from 4th month onwards penalty effective from 1st month of the
+             * For all the passed installment penalty starts from 4th month of the respective installment. If its a current
+             * installment, first 3 months there is no peanlty from 4th month onwards penalty effective from 4th month of the
              * installment
              */
             if (installment.equals(curInstallment)) {
                 final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
-                if (noOfMonths > 3)
-                    penaltyEffDate = installment.getFromDate();
-                else
+                if (noOfMonths > 3) {
+                    penalyDateWithThreeMonths(installment.getFromDate());
+                } else
                     penaltyEffDate = new Date();
-            }
-            else {
-                penaltyEffDate = installment.getFromDate();
+            } else {
+                penalyDateWithThreeMonths(installment.getFromDate());
             }
         }
         return penaltyEffDate;
+    }
+
+    private Date penalyDateWithThreeMonths(final Date date) {
+        final Calendar penalyDate = Calendar.getInstance();
+        penalyDate.setTime(date);
+        penalyDate.add(Calendar.MONTH, 3);
+        penalyDate.set(Calendar.DAY_OF_MONTH, 1);
+        return penalyDate.getTime();
     }
 
     @Override
