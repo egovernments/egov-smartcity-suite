@@ -172,10 +172,7 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
+									
 								</tr>
 								<tr>
 									<td class="blueborderfortd">&nbsp;</td>
@@ -194,10 +191,6 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
 								</tr>
 								<tr>
 									<td class="blueborderfortd">&nbsp;</td>
@@ -216,15 +209,8 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
-
-									<td class="blueborderfortd">&nbsp;</td>
 								</tr>
 							</table>
-						<td class="blueborderfortd">&nbsp;</td>
-						<td class="blueborderfortd">&nbsp;</td>
-
 					</tr>
 					<c:if test="${!activeRcpts.isEmpty()}">
 						<td colspan="9"><div class="panel-heading">

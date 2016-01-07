@@ -155,13 +155,13 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbdemandService.setBillable(waterConnectionBillable);
             dCBReport = dcbdemandService.getCurrentDCBAndReceipts(dcbDispInfo);
-            model.addAttribute("activeRcpts", populateActiveReceiptsOnly(dCBReport.getReceipts()));
-            model.addAttribute("cancelRcpt", populateCancelledReceiptsOnly(dCBReport.getReceipts()));
-            model.addAttribute("totalcancelRcptRcptAmt", calculateReceiptTotal(activeRcpts));
+            activeRcpts=populateActiveReceiptsOnly(dCBReport.getReceipts());
+            cancelRcpt= populateCancelledReceiptsOnly(dCBReport.getReceipts());
+            model.addAttribute("activeRcpts", activeRcpts);
+            model.addAttribute("cancelRcpt", cancelRcpt);
             model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal(cancelRcpt));
             model.addAttribute("applicationTypeCode", waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("dcbReport", dCBReport);
-            
             BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
             model.addAttribute("mode", "viewdcb"); 
@@ -180,7 +180,7 @@ public class CurrentViewDcbController {
             }
         return totalRcptAmt;
     }
-
+    
     public BigDecimal calculateCancelledReceiptTotal(List<Receipt> cancelRcpt) {
         final List<Receipt> rcpts = new ArrayList<Receipt>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
