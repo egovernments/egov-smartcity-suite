@@ -28,7 +28,7 @@ public class FloorType extends AbstractAuditable {
 	@SafeHtml
 	private String code;
 
-	public String getName() {
+	public  String getName() {
 		return name;
 	}
 

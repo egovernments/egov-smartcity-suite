@@ -122,20 +122,23 @@
 					<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.revenue.ward" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="revenueWard" class="form-control "  id="app-mobno"
-								 />
-							
-				
+						 <select name="revenueWard" id="app-mobno" class="form-control"
+								data-first-option="false">
+								<option value="${ward.name}"></option>
+								  <c:forEach items="${revenueWards}" var="ward">
+                                    <option value="${ward.name}"> ${ward.name} </option>
+                                </c:forEach>
+					     </select>
 						</div>
 						</div>
-						<%--  <div class="form-group">
+						 <div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.doornumber" /></label>
 				
 						<div class="col-md-4 add-margin">
 							<form:input path="" type="text" name="doorNumber" class="form-control "   id="app-appcodo" />
 						</div>
-					</div>  --%></c:if>
+					</div> </c:if>
 					<c:if test="${!citizenRole}" >
 					<div class="form-group">
 						<div class="text-center">
@@ -173,6 +176,8 @@
 						<span class="inline-elem"><spring:message code='lbl.search'/></span>
 						<span class="inline-elem"><input type="text" id="searchwatertax" class="form-control input-sm"></span>
 					</div>
+					<!-- <div class="col-md-12 add-margin text-center error-msg display-hide" id="search-exceed-msg">Search result exceeds the limit(<span id="search-exceed-count">1900</span>). Please, refine your search</div> -->
+					<div class="col-md-12 add-margin text-center error-msg display-hide" id="search-exceed-msg">Result contains more than 1000 records, please provide at least 1 search criteria</div>
 	<div class="col-md-12" id="searchResultDiv">	
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">

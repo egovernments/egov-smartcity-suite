@@ -39,82 +39,112 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<html>  
-<head>  
-	<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css"/>
-    <title>RTGS Ref. No Assignment Search</title>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<title>RTGS Ref. No Assignment Search</title>
 </head>
-	<body>  
-		<s:form action="chequeAssignment" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-				<jsp:param name="heading" value="RTGS Ref. No. Assignment Search" />
-			</jsp:include>
- 			<span class="mandatory" id="errorSpan">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>      
-			<div class="formmainbox"><div class="subheadnew"><s:text name="chq.rtgs.assignment.search.heading"/> </div>
+<body>
+	<s:form action="chequeAssignment" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="RTGS Ref. No. Assignment Search" />
+		</jsp:include>
+		<span class="mandatory" id="errorSpan"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="chq.rtgs.assignment.search.heading" />
+			</div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="bluebox" width="30%"><s:text name="chq.assignment.paymentvoucherdatefrom"/> </td>
-					<td class="bluebox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-					<td class="bluebox" width="30%"><s:text name="chq.assignment.paymentvoucherdateto"/> </td>
-					<td class="bluebox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox" width="30%"><s:text
+							name="chq.assignment.paymentvoucherdatefrom" /></td>
+					<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
+							maxlength="20" value="%{fromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].fromDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
+					<td class="bluebox" width="30%"><s:text
+							name="chq.assignment.paymentvoucherdateto" /></td>
+					<td class="bluebox"><s:textfield name="toDate" id="toDate"
+							maxlength="20" value="%{toDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].toDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
-					<td class="greybox"><s:text name="payment.mode"/><span class="mandatory">*</span></td>
-					<td class="greybox"><s:radio id="paymentMode" name="paymentMode" list="#{'rtgs':'RTGS'}"  onchange="enableOrDisableBillType(this)" value="%{paymentMode}"/></td>
-					<td class="greybox"><s:text name="chq.assignment.paymentvoucherno"/> </td>
-					<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" value="%{voucherNumber}"/></td>
+					<td class="greybox"><s:text name="payment.mode" /><span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:radio id="paymentMode"
+							name="paymentMode" list="#{'rtgs':'RTGS'}"
+							onchange="enableOrDisableBillType(this)" value="%{paymentMode}" /></td>
+					<td class="greybox"><s:text
+							name="chq.assignment.paymentvoucherno" /></td>
+					<td class="greybox"><s:textfield name="voucherNumber"
+							id="voucherNumber" value="%{voucherNumber}" /></td>
 				</tr>
 				<tr>
-					<td class="bluebox"><s:text name="payment.expendituretype"/></td>
-					<td class="bluebox"><s:property value="%{billType}" /></td>	
-					<td class="bluebox" ><s:text name="payment.tneb.bill.region"/><span class="mandatory">*</span></td>
-				    <td class="bluebox">
-					<s:select name="region" id="region" list="dropdownData.regionsList"  headerKey="" headerValue="----Choose----" />
-					</td> 
+					<td class="bluebox"><s:text name="payment.expendituretype" /></td>
+					<td class="bluebox"><s:property value="%{billType}" /></td>
+					<td class="bluebox"><s:text name="payment.tneb.bill.region" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:select name="region" id="region"
+							list="dropdownData.regionsList" headerKey=""
+							headerValue="----Choose----" /></td>
 				</tr>
-				<tr>             
-					<td class="greybox"><s:text name="voucher.fund"/></td>
-				    <td class="greybox"><s:property value="%{voucherHeader.fundId.name}" /></td>
-				    <td class="greybox"><s:text name="voucher.function"/></td>
-				    <td class="greybox"><s:property value="%{voucherHeader.vouchermis.function.name}" /></td>			
+				<tr>
+					<td class="greybox"><s:text name="voucher.fund" /></td>
+					<td class="greybox"><s:property
+							value="%{voucherHeader.fundId.name}" /></td>
+					<td class="greybox"><s:text name="voucher.function" /></td>
+					<td class="greybox"><s:property
+							value="%{voucherHeader.vouchermis.function.name}" /></td>
 				</tr>
 				<tr>
 					<td class="bluebox"><s:text name="voucher.department" /></td>
-					<td class="bluebox"><s:property value="%{voucherHeader.vouchermis.departmentid.deptName}" /></td>
+					<td class="bluebox"><s:property
+							value="%{voucherHeader.vouchermis.departmentid.deptName}" /></td>
 					<td class="bluebox"></td>
 					<td class="bluebox"></td>
 				</tr>
 				<tr>
 					<td class="greybox"><s:text name="chq.assignment.bank" /></td>
 					<td class="greybox"><s:property value="%{bank_branch}" /></td>
-					<td class="greybox"><s:text name="chq.assignment.bankaccount"/></td>
-				    <td class="greybox"><s:property value="%{bank_account}" /></td>
-				    
-		    </tr>
-				
+					<td class="greybox"><s:text name="chq.assignment.bankaccount" /></td>
+					<td class="greybox"><s:property value="%{bank_account}" /></td>
+
+				</tr>
+
 			</table>
-			<div  class="buttonbottom">          
-				<s:submit method="searchTNEBRTGS" value="Search" id="searchBtn" cssClass="buttonsubmit" onclick="return validateSearch()" />
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+			<div class="buttonbottom">
+				<s:submit method="searchTNEBRTGS" value="Search" id="searchBtn"
+					cssClass="buttonsubmit" onclick="return validateSearch()" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
 		</div>
-		<s:hidden name="bankbranch" id="bankbranch"/>
-		<s:hidden name="bank_branch" id="bank_branch"/>
-		<s:hidden name="bank_account" id="bank_account"/>
-		<s:hidden name="bankaccount" id="bankaccount"/>
-		<s:hidden name="rtgsContractorAssignment" id="rtgsContractorAssignment"/>
-		<s:hidden name="billSubType" id="billSubType" value="%{billSubType}"/>
-		<s:hidden name="region" id="region" value="%{region}"/>
-		<s:hidden name="billType" id="billType" value="%{billType}"/>
-		<s:hidden name="voucherHeader.fundId.id" id="voucherHeader.fundId.id" value="%{voucherHeader.fundId.id}"/>
-		<s:hidden name="voucherHeader.vouchermis.function.id" id="voucherHeader.vouchermis.function.id" value="%{voucherHeader.vouchermis.function.id}"/>
-		<s:hidden name="voucherHeader.vouchermis.departmentid.id" id="voucherHeader.vouchermis.departmentid.id" value="%{voucherHeader.vouchermis.departmentid.id}"/>
-		</s:form>
-		<script>
+		<s:hidden name="bankbranch" id="bankbranch" />
+		<s:hidden name="bank_branch" id="bank_branch" />
+		<s:hidden name="bank_account" id="bank_account" />
+		<s:hidden name="bankaccount" id="bankaccount" />
+		<s:hidden name="rtgsContractorAssignment"
+			id="rtgsContractorAssignment" />
+		<s:hidden name="billSubType" id="billSubType" value="%{billSubType}" />
+		<s:hidden name="region" id="region" value="%{region}" />
+		<s:hidden name="billType" id="billType" value="%{billType}" />
+		<s:hidden name="voucherHeader.fundId.id" id="voucherHeader.fundId.id"
+			value="%{voucherHeader.fundId.id}" />
+		<s:hidden name="voucherHeader.vouchermis.function.id"
+			id="voucherHeader.vouchermis.function.id"
+			value="%{voucherHeader.vouchermis.function.id}" />
+		<s:hidden name="voucherHeader.vouchermis.departmentid.id"
+			id="voucherHeader.vouchermis.departmentid.id"
+			value="%{voucherHeader.vouchermis.departmentid.id}" />
+	</s:form>
+	<script>
 		function validateSearch(){
 			var region = document.getElementById('region').value;
 			if(region == ""){
@@ -125,11 +155,11 @@
 			
 		}
 		</script>
-			<s:if test="%{!validateUser('chequeassignment')}"> 
-				<script>
+	<s:if test="%{!validateUser('chequeassignment')}">
+		<script>
 					document.getElementById('searchBtn').disabled=true;
 					document.getElementById('errorSpan').innerHTML='<s:text name="chq.assignment.invalid.user"/>'
 				</script>
-			</s:if>
-	</body>  
+	</s:if>
+</body>
 </html>

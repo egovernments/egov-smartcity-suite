@@ -103,6 +103,27 @@ function check_MICR(e) {
 	}
 }
 
+function check_BankAccounts(branchId) {
+	var response;
+		jQuery.ajax({
+			url : 'bankBranch.action?mode=CHECK_BANK_ACC',
+			data : {
+				id : branchId
+			},
+			type : 'POST',
+			async : false,
+			datatype : 'text',
+			success : function(data) {
+				if (data == 'true') {
+					response  = true;
+				}else{
+					response  = false;
+				}
+			
+			}
+		});
+		return response;
+}
 function initializeGrid() {
 	jQuery("#listsg11")
 			.jqGrid(
@@ -175,18 +196,18 @@ function initializeGrid() {
 											jQuery("#accounttype").prop('disabled',true);
 										},
 										afterSubmit: function(response,data){
-											return afterSubmit(response.responseText,data,"Bank Account Update, ");
+											return afterSubmit(response.responseText,data,"Bank Account Updated ");
 										}				
 									},
 									{
 										closeAfterAdd:true,
 										resize : true,
-										addCaption: "Add Bank Branch",
+										addCaption: "Add Bank Account",
 										beforeShowForm:function(response,data){
 											jQuery("#accounttype").prop('disabled',false);
 										},
 										afterSubmit: function(response,data){
-											return afterSubmit(response.responseText,data,"Bank Account Add, ");
+											return afterSubmit(response.responseText,data,"Bank Account Added ");
 										}
 									},{
 										 caption: "Remove Bank Account",
@@ -209,7 +230,7 @@ function initializeGrid() {
 					editCaption: "Edit Bank Branch",
 					resize : true,
 					afterSubmit: function(response,data){
-						return afterSubmit(response.responseText,data,"Bank Branch Update, ");
+						return afterSubmit(response.responseText,data,"Bank Branch Updated ");
 					}				
 				},
 				{
@@ -218,11 +239,21 @@ function initializeGrid() {
 					addCaption: "Add Bank Branch",
 					resize : true,
 					afterSubmit: function(response,data){
-						return afterSubmit(response.responseText,data,"Bank Branch Add, ");
+						return afterSubmit(response.responseText,data,"Bank Branch Added ");
 					}
 				},{
 					caption: "Remove Bank Branch",
-					 msg: "Remove the selected Bank Branch ?"
+					 msg: "Remove the selected Bank Branch ?",
+						 beforeSubmit : function(data, formid) { 
+							 if(check_BankAccounts(data)){
+								 return[false,"Should not delete branch!!!"];
+							 }
+							 else{
+								 return[true,"Deleted Bank branch successfully"];
+							 }
+								  
+
+						} 
 				},{multipleSearch:true});
 }
 
@@ -236,7 +267,7 @@ function afterSubmit(reply,data, action) {
 	var isSuccess = false;
 	var message='';
 	if (reply == "success") {
-		showMessage(action+"successful.");
+		showMessage(action+"successfully.");
 		isSuccess = true;
 	} else {
 		message = action+"failed.";

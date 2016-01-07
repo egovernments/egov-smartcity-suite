@@ -349,10 +349,10 @@ function readOnlyCheckBox() {
 				
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="service.name" title="Service" style="width:10%" />
+					property="service.name" title="Service" style="width:10%; text-align: center;" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					title="Bill Number" style="width:10%">&nbsp;${currentRow.referencenumber}</display:column>
+					title="Bill Number" style="width:10% text-align: right;">&nbsp;${currentRow.referencenumber}</display:column>
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					property="amount" title="Receipt Amount"
@@ -360,14 +360,14 @@ function readOnlyCheckBox() {
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					property="instrumentsAsString" title="Instrument(s)"
-					style="width:15%" />
+					style="width:15%; text-align: right;" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					property="payeeName" title="Payee Name"
-					style="width:15%" />
+					style="width:15%; text-align: center;" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					title="Bill Description" style="width:15%">&nbsp;${currentRow.referenceDesc}</display:column>
+					title="Bill Description" style="width:15%;">&nbsp;${currentRow.referenceDesc}</display:column>
 
 			</display:table>
 			

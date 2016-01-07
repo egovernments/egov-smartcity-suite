@@ -39,7 +39,8 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <script>
 
 path="${pageContext.request.contextPath}";
@@ -89,53 +90,83 @@ path="${pageContext.request.contextPath}";
 		}
 </script>
 
-		
-		<jsp:include page="../voucher/vouchertrans-filter.jsp"/>
-		<tr><egov:ajaxdropdown id="bankId" fields="['Text','Value']" dropdownId="bankId" url="voucher/common!ajaxLoadBanks.action" />
-		  <td class="greybox"><s:text name="payin.bank"/>
-		  <span class="bluebox"><span class="mandatory">*</span></span></td>
-		  <td class="greybox"><s:select name="contraBean.bankBranchId" id="bankId" list="dropdownData.bankList" listKey="bankBranchId" listValue="bankBranchName" headerKey="-1" headerValue="----Choose----" onChange="populateAccNum(this);" onClick="validateFundSelected();" /></td>
-		  <egov:ajaxdropdown id="accountNumber" fields="['Text','Value']" dropdownId="accountNumber" url="voucher/common!ajaxLoadAccountNumbers.action" />
-		<td class="greybox"><s:text name="payin.accountNum"/>
-		<span class="bluebox"><span class="mandatory">*</span></span></td>
-		<td class="greybox"><s:select  name="contraBean.accountNumberId" id="accountNumber" list="dropdownData.accNumList" listKey="id" listValue="accountnumber" headerKey="-1" headerValue="----Choose----" onChange="populateNarration(this);"/>
-		<s:textfield name="accnumnar" id="accnumnar" value="%{accnumnar}"/>
-		</td>
-	</tr>
-	
-		<tr id="voucherNumId">
-			<td class="bluebox"><s:text name="payin.vouchernumfrom"/></td>
-			<td class="bluebox"><s:textfield name="voucherTypeBean.voucherNumFrom" id="voucherNumFrom" /></td>
-			<td class="bluebox"><s:text name="payin.vouchernumto"/></td>
-			<td class="bluebox"><s:textfield name="voucherTypeBean.voucherNumTo" id="voucherNumTo" /></td>
-		</tr>
-		<tr id="voucherDateId"> 
-			<td class="greybox"><s:text name="payin.voucherDateFrom"/></td>
-			<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('payinform.voucherDateFrom');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-			<td class="greybox"><s:text name="payin.voucherDateTo"/></td>
-			<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateTo" id="voucherDateTo" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('payinform.voucherDateTo');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-		</tr>
-		<tr>
-			<td class="bluebox"><s:text name="payin.chequeInHand"/></td>
-			<td class="bluebox"><s:textfield name="contraBean.chequeInHand" id="chequeInHand" readonly="true" /></td>
-			<td class="bluebox"><s:text name="narration"/></td>
-			<td colspan="10"  class="bluebox"><s:textarea maxlength="250" rows="4" cols="60" name="narration"/>
-		</tr>
-	<tr id="reversenumanddate">
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox"><s:text name="reversalVoucherNumber"/><span class="mandatory">*</span></td>
-			<td class="greybox"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td></s:if>
-			<td class="greybox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
-			<td class="greybox"><s:textfield name="reversalVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('payinform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+
+<jsp:include page="../voucher/vouchertrans-filter.jsp" />
+<tr>
+	<egov:ajaxdropdown id="bankId" fields="['Text','Value']"
+		dropdownId="bankId" url="voucher/common!ajaxLoadBanks.action" />
+	<td class="greybox"><s:text name="payin.bank" /> <span
+		class="bluebox"><span class="mandatory">*</span></span></td>
+	<td class="greybox"><s:select name="contraBean.bankBranchId"
+			id="bankId" list="dropdownData.bankList" listKey="bankBranchId"
+			listValue="bankBranchName" headerKey="-1"
+			headerValue="----Choose----" onChange="populateAccNum(this);"
+			onClick="validateFundSelected();" /></td>
+	<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
+		dropdownId="accountNumber"
+		url="voucher/common!ajaxLoadAccountNumbers.action" />
+	<td class="greybox"><s:text name="payin.accountNum" /> <span
+		class="bluebox"><span class="mandatory">*</span></span></td>
+	<td class="greybox"><s:select name="contraBean.accountNumberId"
+			id="accountNumber" list="dropdownData.accNumList" listKey="id"
+			listValue="accountnumber" headerKey="-1" headerValue="----Choose----"
+			onChange="populateNarration(this);" /> <s:textfield name="accnumnar"
+			id="accnumnar" value="%{accnumnar}" /></td>
 </tr>
-	
+
+<tr id="voucherNumId">
+	<td class="bluebox"><s:text name="payin.vouchernumfrom" /></td>
+	<td class="bluebox"><s:textfield
+			name="voucherTypeBean.voucherNumFrom" id="voucherNumFrom" /></td>
+	<td class="bluebox"><s:text name="payin.vouchernumto" /></td>
+	<td class="bluebox"><s:textfield
+			name="voucherTypeBean.voucherNumTo" id="voucherNumTo" /></td>
+</tr>
+<tr id="voucherDateId">
+	<td class="greybox"><s:text name="payin.voucherDateFrom" /></td>
+	<td class="greybox"><s:textfield
+			name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom"
+			onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+		href="javascript:show_calendar('payinform.voucherDateFrom');"
+		style="text-decoration: none">&nbsp;<img tabIndex=-1
+			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+	<td class="greybox"><s:text name="payin.voucherDateTo" /></td>
+	<td class="greybox"><s:textfield
+			name="voucherTypeBean.voucherDateTo" id="voucherDateTo"
+			onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+		href="javascript:show_calendar('payinform.voucherDateTo');"
+		style="text-decoration: none">&nbsp;<img tabIndex=-1
+			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+</tr>
+<tr>
+	<td class="bluebox"><s:text name="payin.chequeInHand" /></td>
+	<td class="bluebox"><s:textfield name="contraBean.chequeInHand"
+			id="chequeInHand" readonly="true" /></td>
+	<td class="bluebox"><s:text name="narration" /></td>
+	<td colspan="10" class="bluebox"><s:textarea maxlength="250"
+			rows="4" cols="60" name="narration" />
+</tr>
+<tr id="reversenumanddate">
+	<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+		<td class="greybox"><s:text name="reversalVoucherNumber" /><span
+			class="mandatory">*</span></td>
+		<td class="greybox"><s:textfield name="reversalVoucherNumber"
+				id="reversalVoucherNumber" /></td>
+	</s:if>
+	<td class="greybox"><s:text name="reversalVoucherDate" /><span
+		class="mandatory">*</span></td>
+	<td class="greybox"><s:textfield name="reversalVoucherDate"
+			id="reversalVoucherDate"
+			onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+		href="javascript:show_calendar('payinform.reversalVoucherDate');"
+		style="text-decoration: none">&nbsp;<img tabIndex="-1"
+			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+</tr>
+
 </div>
-	<br/>
-		
-		
+<br />
+
+
 <script>
 
 

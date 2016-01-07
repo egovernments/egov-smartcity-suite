@@ -16,7 +16,7 @@ $(document).ready(function(){
 						{ "data": "designation","width": "15%" },
 						{ "data": "position","width": "15%" },
 						{ "data": "daterange","width": "20%" },
-						{ "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary edit-employee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary view-employee"><span class="glyphicon glyphicon-view"></span>&nbsp;View</button>'}
+						{ "data" : null, "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary edit-employee add-margin"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary view-employee"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>'}
 			]
 		});
 		

@@ -57,9 +57,7 @@
 	<br/>
 	<div class="buttonbottom">
 	<input name="collectionReport.close" type="button" class="button"
-		id="buttonClose" value="Close" onclick="window.close()" /> &nbsp;
-	<input name="collectionReport.back" type="button" class="button"
-		id="buttonBack" value="Back" onclick="history.back()" /> &nbsp;
+		id="buttonClose" value="Close" onclick="window.close()" />
 	</div>
 </s:form>
 </body>

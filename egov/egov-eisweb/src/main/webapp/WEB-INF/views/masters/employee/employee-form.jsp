@@ -45,20 +45,12 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -250,7 +242,7 @@
 									  	</div>
 								    </div>
 								    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -266,7 +258,7 @@
 								     
 									<c:if test="${ empty image}">
                                     <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -289,7 +281,7 @@
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<form:radiobutton path="active" id="isactive_no" value="true"/>
+											<form:radiobutton path="active" id="isactive_no" value="false"/>
 											<label>No</label>
 										</div>
 
@@ -482,7 +474,7 @@
 										</div>
 									</div>
 
-									<div class="row form-group">
+									<div class="panel-heading custom_form_panel_heading">
 										<table id="assignmentTable" class="table table-bordered">
 										<thead>
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">
@@ -626,7 +618,7 @@
 										/ Modify</button>
 							</div>
 							</div>
-							<div class="row form-group">
+							<div class="panel-heading custom_form_panel_heading">
 								<table id="jurisdictionTable" class="table table-bordered">
 									<thead>
 										<div
@@ -682,7 +674,7 @@
 				<div class="row">
 					<div class="text-center">
 						<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
                 

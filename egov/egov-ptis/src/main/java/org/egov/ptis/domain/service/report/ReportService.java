@@ -56,12 +56,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.commons.Installment;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.PersistenceService;
@@ -110,95 +110,128 @@ public class ReportService {
         if (StringUtils.isNotBlank(block))
             query.setLong("block", Long.valueOf(block));
 
+        queryStr.append(" order by pmv.basicPropertyID");
         List<PropertyMaterlizeView> properties = query.list();
-        List<BaseRegisterResult> baseRegisterResultList = new ArrayList<BaseRegisterResult>();
+        List<BaseRegisterResult> baseRegisterResultList = new LinkedList<BaseRegisterResult>();
 
         for (PropertyMaterlizeView propMatView : properties) {
-            BaseRegisterResult baseRegisterResultObj = new BaseRegisterResult();
-            baseRegisterResultObj.setAssessmentNo(propMatView.getPropertyId());
-            baseRegisterResultObj.setDoorNO(propMatView.getHouseNo());
-            baseRegisterResultObj.setOwnerName(propMatView.getOwnerName());
-            baseRegisterResultObj.setIsExempted(propMatView.getIsExempted());
-            baseRegisterResultObj.setCourtCase(Boolean.FALSE);
-
-            PropertyTypeMaster propertyType = null;
-            if (null != propMatView.getPropTypeMstrID()) {
-                propertyType = (PropertyTypeMaster) getPropPerServ().find("from PropertyTypeMaster where id = ?",
-                        propMatView.getPropTypeMstrID().getId());
-            }
-
-            BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
-            BigDecimal totalArrearEduCess = BigDecimal.ZERO;
-            BigDecimal totalArreaLibCess = BigDecimal.ZERO;
-            BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
-            List<InstDmdCollMaterializeView> instDemandCollList = new ArrayList<InstDmdCollMaterializeView>(
-                    propMatView.getInstDmdColl());
-            for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
-                if (instDmdCollObj.getInstallment().equals(propertyTaxUtil.getCurrentInstallment())) {
-                    if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-                        baseRegisterResultObj.setPropertyTax(instDmdCollObj.getVacantLandTax());
-                    } else {
-                        baseRegisterResultObj.setPropertyTax(instDmdCollObj.getGeneralTax());
-                    }
-                    baseRegisterResultObj.setEduCessTax(instDmdCollObj.getEduCessTax());
-                    baseRegisterResultObj.setLibraryCessTax(instDmdCollObj.getLibCessTax());
-                    baseRegisterResultObj.setPenaltyFines(instDmdCollObj.getPenaltyFinesTax());
-                    baseRegisterResultObj.setCurrTotal(instDmdCollObj.getGeneralTax()
-                            .add(instDmdCollObj.getEduCessTax()).add(instDmdCollObj.getLibCessTax()));
-                } else {
-                    if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-                        totalArrearPropertyTax = totalArrearPropertyTax.add(instDmdCollObj.getVacantLandTax());
-                    else
-                        totalArrearPropertyTax = totalArrearPropertyTax.add(instDmdCollObj.getGeneralTax());
-                    totalArrearEduCess = totalArrearEduCess.add(instDmdCollObj.getEduCessTax());
-                    totalArreaLibCess = totalArreaLibCess.add(instDmdCollObj.getLibCessTax());
-                    arrearPenaltyFine = arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax());
-                }
-            }
-            List<String> classificationOfBuilding = new ArrayList<String>();
-            List<String> natureOfUsage = new ArrayList<String>();
-            List<BigDecimal> area = new ArrayList<BigDecimal>();
-            List<FloorDetailsView> floorDetails = new ArrayList<FloorDetailsView>(propMatView.getFloorDetails());
-            if (!propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-                for (FloorDetailsView floor : floorDetails) {
-                    classificationOfBuilding.add(floor.getClassification());
-                    natureOfUsage.add(floor.getPropertyUsage());
-                    area.add(floor.getBuiltUpArea());
-                }
-            }
-            baseRegisterResultObj.setPropertyUsage(natureOfUsage);
-            baseRegisterResultObj.setClassificationOfBuilding(classificationOfBuilding);
-            baseRegisterResultObj.setArea(area);
-            String arrearPerFrom = "";
-            String arrearPerTo = "";
-            if (instDemandCollList.size() > 1) {
-                arrearPerTo = dateFormatter.format(instDemandCollList.get(instDemandCollList.size() - 2)
-                        .getInstallment().getToDate());
-                arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
-                baseRegisterResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);
+            List<FloorDetailsView> floorDetails = new LinkedList<FloorDetailsView>(propMatView.getFloorDetails());
+            if (floorDetails.size() > 1) {
+                addMultipleFloors(baseRegisterResultList, propMatView, floorDetails);
             } else {
-                baseRegisterResultObj.setArrearPeriod("N/A");
+                BaseRegisterResult baseRegisterResultObj = new BaseRegisterResult();
+                baseRegisterResultObj = addSingleFloor(baseRegisterResultObj, propMatView);
+                for (FloorDetailsView floor : floorDetails) {
+                    baseRegisterResultObj.setPlinthArea(floor.getPlinthArea());
+                    baseRegisterResultObj.setPropertyUsage(floor.getPropertyUsage());
+                    baseRegisterResultObj.setClassificationOfBuilding(floor.getClassification());
+                }
+                baseRegisterResultList.add(baseRegisterResultObj);
             }
-
-            baseRegisterResultObj.setArrearTotal(totalArrearPropertyTax.add(totalArrearEduCess).add(totalArreaLibCess));
-            baseRegisterResultObj.setArrearPropertyTax(totalArrearPropertyTax);
-            baseRegisterResultObj.setArrearLibraryTax(totalArreaLibCess);
-            baseRegisterResultObj.setArrearEduCess(totalArrearEduCess);
-            baseRegisterResultObj.setArrearPenaltyFines(arrearPenaltyFine);
-            baseRegisterResultObj.setPropertyType(propertyType.getCode());
-            baseRegisterResultList.add(baseRegisterResultObj);
         }
         return baseRegisterResultList;
+    }
+
+    private BaseRegisterResult addSingleFloor(BaseRegisterResult baseRegisterResultObj,
+            PropertyMaterlizeView propMatView) {
+        baseRegisterResultObj.setAssessmentNo(propMatView.getPropertyId());
+        baseRegisterResultObj.setDoorNO(propMatView.getHouseNo());
+        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName());
+        baseRegisterResultObj.setIsExempted(propMatView.getIsExempted() ? "Yes" : "No");
+        baseRegisterResultObj.setCourtCase("No");
+
+        PropertyTypeMaster propertyType = null;
+        if (null != propMatView.getPropTypeMstrID()) {
+            propertyType = (PropertyTypeMaster) getPropPerServ().find("from PropertyTypeMaster where id = ?",
+                    propMatView.getPropTypeMstrID().getId());
+        }
+
+        BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
+        BigDecimal totalArrearEduCess = BigDecimal.ZERO;
+        BigDecimal totalArreaLibCess = BigDecimal.ZERO;
+        BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
+        List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
+                propMatView.getInstDmdColl());
+        for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
+            if (instDmdCollObj.getInstallment().equals(propertyTaxUtil.getCurrentInstallment())) {
+                if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
+                    baseRegisterResultObj.setPropertyTax(instDmdCollObj.getVacantLandTax());
+                } else {
+                    baseRegisterResultObj.setPropertyTax(instDmdCollObj.getGeneralTax());
+                }
+                baseRegisterResultObj.setEduCessTax(instDmdCollObj.getEduCessTax());
+                baseRegisterResultObj.setLibraryCessTax(instDmdCollObj.getLibCessTax());
+                baseRegisterResultObj.setPenaltyFines(instDmdCollObj.getPenaltyFinesTax());
+                baseRegisterResultObj.setCurrTotal(instDmdCollObj.getGeneralTax().add(instDmdCollObj.getEduCessTax())
+                        .add(instDmdCollObj.getLibCessTax()));
+            } else {
+                if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+                    totalArrearPropertyTax = totalArrearPropertyTax.add(instDmdCollObj.getVacantLandTax());
+                else
+                    totalArrearPropertyTax = totalArrearPropertyTax.add(instDmdCollObj.getGeneralTax());
+                totalArrearEduCess = totalArrearEduCess.add(instDmdCollObj.getEduCessTax());
+                totalArreaLibCess = totalArreaLibCess.add(instDmdCollObj.getLibCessTax());
+                arrearPenaltyFine = arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax());
+            }
+        }
+
+        String arrearPerFrom = "";
+        String arrearPerTo = "";
+        if (instDemandCollList.size() > 1) {
+            arrearPerTo = dateFormatter.format(instDemandCollList.get(instDemandCollList.size() - 2).getInstallment()
+                    .getToDate());
+            arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
+            baseRegisterResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);
+        } else {
+            baseRegisterResultObj.setArrearPeriod("N/A");
+        }
+
+        baseRegisterResultObj.setArrearTotal(totalArrearPropertyTax.add(totalArrearEduCess).add(totalArreaLibCess));
+        baseRegisterResultObj.setArrearPropertyTax(totalArrearPropertyTax);
+        baseRegisterResultObj.setArrearLibraryTax(totalArreaLibCess);
+        baseRegisterResultObj.setArrearEduCess(totalArrearEduCess);
+        baseRegisterResultObj.setArrearPenaltyFines(arrearPenaltyFine);
+        baseRegisterResultObj.setPropertyType(propertyType.getCode());
+        return baseRegisterResultObj;
+    }
+
+    private void addMultipleFloors(List<BaseRegisterResult> baseRegisterResultList, PropertyMaterlizeView propMatView,
+            List<FloorDetailsView> floorDetails) {
+        BaseRegisterResult baseRegisterResultObj = null;
+        int count = 0;
+        for (FloorDetailsView floorview : floorDetails) {
+            if (count == 0) {
+                baseRegisterResultObj = new BaseRegisterResult();
+                baseRegisterResultObj = addSingleFloor(baseRegisterResultObj, propMatView);
+                baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
+                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage());
+                baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
+                count++;
+            } else {
+                baseRegisterResultObj = new BaseRegisterResult();
+                baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
+                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage());
+                baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
+            }
+            baseRegisterResultList.add(baseRegisterResultObj);
+        }
+
     }
 
     public List<DailyCollectionReportResult> getCollectionDetails(Date fromDate, Date toDate, String collectionMode,
             String collectionOperator, String status) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
-
-        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader inner join fetch receiptheader.receiptInstrument instHeader"
-                + " inner join fetch instHeader.instrumentType instType where receiptheader.service.name =:service and (receiptdate between :fromDate and :toDate) ");
+        final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+        queryStr.append("select distinct receiptheader from ReceiptHeader receiptheader where receiptheader.service.name =:service and "
+                + " (receiptheader.receiptdate between to_timestamp('"
+                + fromDateFormatter.format(fromDate)
+                + "', 'YYYY-MM-DD HH24:MI:SS') and "
+                + " to_timestamp('"
+                + toDateFormatter.format(toDate)
+                + "', 'YYYY-MM-DD HH24:MI:SS')) ");
         if (StringUtils.isNotBlank(collectionMode)) {
-            queryStr.append(" and instType.id =:mode ");
+            queryStr.append(" and receiptheader.source =:mode ");
         }
         if (StringUtils.isNotBlank(collectionOperator)) {
             queryStr.append(" and receiptheader.createdBy.id =:operator ");
@@ -206,11 +239,9 @@ public class ReportService {
         if (StringUtils.isNotBlank(status)) {
             queryStr.append(" and receiptheader.status.id =:status ");
         }
-        queryStr.append(" order by instHeader ");
+        queryStr.append(" order by receiptheader.receiptdate ");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setString("service", PTMODULENAME);
-        query.setDate("fromDate", fromDate);
-        query.setDate("toDate", toDate);
         if (StringUtils.isNotBlank(collectionMode)) {
             query.setLong("mode", Long.valueOf(collectionMode));
         }
@@ -244,7 +275,7 @@ public class ReportService {
 
             String[] address = receiptHeader.getPayeeAddress().split(",");
             result.setTotalCollection(receiptHeader.getTotalAmount());
-            if (address.length >= 4)
+            if (address.length > 0)
                 result.setDoorNumber(address[0]);
             else
                 result.setDoorNumber("N/A");
@@ -255,7 +286,7 @@ public class ReportService {
             for (InstrumentHeader instrument : receiptHeader.getReceiptInstrument()) {
                 int instrumentSize = receiptHeader.getReceiptInstrument().size();
                 paymentMode.append(instrument.getInstrumentType().getType());
-                if(instrumentSize > 1 && count < instrumentSize-1) {
+                if (instrumentSize > 1 && count < instrumentSize - 1) {
                     paymentMode.append(",");
                     count++;
                 }

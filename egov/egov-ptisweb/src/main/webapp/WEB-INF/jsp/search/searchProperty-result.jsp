@@ -68,6 +68,8 @@
 					window.location = "/ptis/property/demolition/" + assessmentNum;
 				} else if(selectedValue == 'TaxExemption'){
 					window.location = "/ptis/exemption/form/" + assessmentNum;
+				} else if(selectedValue == 'addArrears'){
+					window.location = "/ptis/addarrears/form/" + assessmentNum;
 				}
 			}
 
@@ -191,6 +193,13 @@
 														</option>
 													</s:if>
 												</c:if>
+												<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat}">
+													<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.source == 'M'}">
+														<option value="addArrears">
+															<s:text name="addArrears"></s:text>
+														</option>
+													</c:if>
+												</s:if>
 											</s:if>
 											<s:else>
 												<option value="RevisionPetition">

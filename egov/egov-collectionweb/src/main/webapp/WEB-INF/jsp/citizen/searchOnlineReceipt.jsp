@@ -316,7 +316,7 @@ function transitionStates(){
 </div>
 <br/>
 <div class="buttonbottom">
-  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Submit" onclick="return transitionStates()" />&nbsp;
+  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Submit" onclick="return transitionStates()" />
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>
 </div>	

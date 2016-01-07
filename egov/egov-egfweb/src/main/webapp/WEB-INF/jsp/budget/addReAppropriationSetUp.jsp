@@ -338,4 +338,4 @@ function makeAmountFieldFormatter(prefix,suffix){
 		</s:if>
 	}
 	
-</SCRIPT>      
+</SCRIPT>

@@ -57,7 +57,7 @@
 	<br />
 	<div class="buttonbottom">
 	<input name="collectionReport.close" type="button" class="button"
-		id="buttonClose" value="Close" onclick="window.close()" /> &nbsp;
+		id="buttonClose" value="Close" onclick="window.close()" />
 	</div>
 </s:form>
 </body>

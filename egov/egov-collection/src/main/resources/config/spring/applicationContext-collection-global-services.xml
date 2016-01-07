@@ -47,6 +47,7 @@
 	default-lazy-init="true">
 	
 	<context:component-scan base-package="org.egov.collection.config" />
+	<context:component-scan base-package="org.egov.collection.integration.pgi"/>
 	
 	<bean id="collectionsUtil" class="org.egov.collection.utils.CollectionsUtil" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />

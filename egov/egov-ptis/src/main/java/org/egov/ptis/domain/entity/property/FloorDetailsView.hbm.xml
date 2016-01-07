@@ -45,13 +45,16 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.FloorDetailsView"	table="EGPT_MV_CURRENT_FLOOR_DETAIL" polymorphism="explicit">
 		<composite-id>
-			<key-property name="basicPropertyId" column="BASICPROPERTYID" />
+			<key-many-to-one name="propMatView" class="org.egov.ptis.domain.entity.property.PropertyMaterlizeView" 
+				column="basicPropertyId"  />
+			<key-property name="floorId" column="FLOORID" />
 		</composite-id>
+
 		<many-to-one name="propertyTypeMaster" class="org.egov.ptis.domain.entity.property.PropertyTypeMaster" column="PROPERTYTYPE"/>
 		<property name="propertyId" column="propertyId"/>
 		<property name="propertyUsage" column="NATUREOFUSAGE"/>
 		<property name="floorNo" column="FLOORNO"/>  
-		<property name="sitalArea" column="PLINTHAREA"/> 
+		<property name="plinthArea" column="PLINTHAREA"/> 
 		<property name="builtUpArea" column="BUILTUPAREA"/> 
 		<property name="classification" column="CLASSIFICATION"/> 
 		<many-to-one name="propertyOccupation" class="org.egov.ptis.domain.entity.property.PropertyOccupation" column="occupation"/>

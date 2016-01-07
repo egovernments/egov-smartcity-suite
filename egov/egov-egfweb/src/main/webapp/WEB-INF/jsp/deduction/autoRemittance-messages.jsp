@@ -37,31 +37,30 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>Remittance Recovery  Approval</title>
-   
+<html>
+<head>
+<title>Remittance Recovery Approval</title>
+
 </head>
-	<body onload="refreshInbox()">  
-		<s:form action="preApprovedVoucher" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Remittance Recovery -Approval" />
-			</jsp:include>
-			<span class="mandatory">
-				<s:actionmessage /> 
-				<s:actionerror/>
-			</span>
-			<br/>
-			
-			
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
-			</s:form>
-<script>
+<body onload="refreshInbox()">
+	<s:form action="preApprovedVoucher" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Remittance Recovery -Approval" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionmessage /> <s:actionerror />
+		</span>
+		<br />
+
+
+		<input type="button" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</s:form>
+	<script>
 	
 </script>
 
-	</body>  
+</body>
 
 </html>

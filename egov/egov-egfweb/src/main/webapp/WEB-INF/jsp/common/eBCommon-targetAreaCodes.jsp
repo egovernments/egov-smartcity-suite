@@ -5,7 +5,7 @@
 </s:if>
 	<s:else>
 		<s:iterator var="s" value="targetAreaCodeList" status="status">
-      <s:property value="%{code}"/>~<s:property value="%{name}"/>~^
+			<s:property value="%{code}" />~<s:property value="%{name}" />~^
     </s:iterator>
 	</s:else>
 </s:else>

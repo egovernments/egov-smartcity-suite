@@ -40,26 +40,40 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
-		<td class="bluebox"><s:text name="masters.subscheme.search.fund"/>
-		<s:if test="%{defaultFundId==-1}"><span class="mandatory">*</span></s:if></td>
-		<td class="bluebox"><s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onchange="loadChanges(this)"  value="%{fundId.id}"/></td>
-		<s:if test="%{defaultFundId!=-1}">
+	<td class="bluebox"><s:text name="masters.subscheme.search.fund" />
+		<s:if test="%{defaultFundId==-1}">
+			<span class="mandatory">*</span>
+		</s:if></td>
+	<td class="bluebox"><s:select name="fundId" id="fundId"
+			list="dropdownData.fundList" listKey="id" listValue="name"
+			headerKey="-1" headerValue="----Choose----"
+			onchange="loadChanges(this)" value="%{fundId.id}" /></td>
+	<s:if test="%{defaultFundId!=-1}">
 		<script>
 		document.getElementById("fundId").value='<s:property value="defaultFundId"/>';
 		</script>
-		</s:if>
-	</tr>
-	<tr>
-    	<td class="greybox"><s:text name="masters.subscheme.search.scheme"/><span class="mandatory">*</span></td>
-		<s:hidden name="schemeId" id="schemeId"/>
-		<td class="greybox"><s:textfield value="%{subScheme.scheme.name}" name="subScheme.scheme.name" id="subScheme.scheme.name" autocomplete='off' onFocus="autocompleteSchemeBy20LG();" onBlur="splitSchemeCode(this)"/></td>
-		<td class="greybox"><s:text name="masters.subscheme.search"/><span class="mandatory">*</span></td>
-		<s:hidden name="subSchemeId" id="subSchemeId"/>
-		<td class="greybox"><s:textfield value="%{subScheme.name}" name="subScheme.name" id="subScheme.name" autocomplete='off'  onFocus="autocompleteSubSchemeBy20LG();"  onBlur="splitSubSchemeCode(this);checkuniquenesscode();" />
-		<egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="subSchemeId" fields="['Value']" url='masters/loanGrant!codeUniqueCheckCode.action'/>
-      </td>
-    </tr>
- <script>
+	</s:if>
+</tr>
+<tr>
+	<td class="greybox"><s:text name="masters.subscheme.search.scheme" /><span
+		class="mandatory">*</span></td>
+	<s:hidden name="schemeId" id="schemeId" />
+	<td class="greybox"><s:textfield value="%{subScheme.scheme.name}"
+			name="subScheme.scheme.name" id="subScheme.scheme.name"
+			autocomplete='off' onFocus="autocompleteSchemeBy20LG();"
+			onBlur="splitSchemeCode(this)" /></td>
+	<td class="greybox"><s:text name="masters.subscheme.search" /><span
+		class="mandatory">*</span></td>
+	<s:hidden name="subSchemeId" id="subSchemeId" />
+	<td class="greybox"><s:textfield value="%{subScheme.name}"
+			name="subScheme.name" id="subScheme.name" autocomplete='off'
+			onFocus="autocompleteSubSchemeBy20LG();"
+			onBlur="splitSubSchemeCode(this);checkuniquenesscode();" /> <egov:uniquecheck
+			id="codeuniquecode" name="codeuniquecode" fieldtoreset="subSchemeId"
+			fields="['Value']" url='masters/loanGrant!codeUniqueCheckCode.action' />
+	</td>
+</tr>
+<script>
 function loadChanges(obj)
 {
 	//NOTE - In the including jsp, if bankbranch and bankaccount dropdowns are there

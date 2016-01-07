@@ -79,7 +79,7 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "classification", "title": "Classification of Building"}, 
 						  { "data" : "area", "title": "Plinth Area"}, 
 						  ],
-						  "aaSorting": [[2, 'desc']] 
+						  "aaSorting": [] 
 				});
 		e.stopPropagation();
 	});

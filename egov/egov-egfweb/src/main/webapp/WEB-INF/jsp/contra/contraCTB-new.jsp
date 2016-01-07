@@ -37,86 +37,107 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	
-		
-		<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+
+
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <title>Contra - Cash Deposit</title>
 
 </head>
 
-	
+
 <body onload="onloadtask();">
-<s:form action="contraCTB" theme="simple" name="cashDepositForm" >
-<s:push value="model">
+	<s:form action="contraCTB" theme="simple" name="cashDepositForm">
+		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Cash Deposit" />
+				<jsp:param name="heading" value="Cash Deposit" />
 			</jsp:include>
-			
-			<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
+
+			<span class="mandatory"> <font
+				style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+					<s:actionmessage /></font>
 			</span>
-<div class="formmainbox">
-<div class="formheading"/><div class="subheadnew">Cash Deposit</div>
-<div id="listid" style="display:block">
-<div align="center">
-<font  style='color: red ; font-weight:bold '> 
-<p class="error-block" id="lblError" ></p></font>
-		<%@include file="contraCTB-form.jsp"%>
-		  <table border="0" width="100%">
-		
-		   <tr>
-				<td class="greybox" width="25%"><s:text name="contra.cashInHand"/></td>	         
-			<td class="greybox" width="25%"><s:textfield name="contraBean.cashInHand" id="cashInHand" tabindex="-1" readonly="true"  /></td>
-			<td class="greybox" width="25%"></td>
-			<td class="greybox" width="25%"></td>
-		</tr>
-	 </table> 
-	 <div class="subheadsmallnew"/></div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>
-		<div class="buttonbottom" >
-		<table border="0" width="80%" align="center"><tr></tr>
-			<tr>
-				<td>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close" id="save&close" name="save&close" method="create" onclick="return validateInput('saveclose')"/>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & New" id="save&new" name="save&new" method="create" onclick="return validateInput('savenew')"/>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & View" id="save&view" name="save&view" method="create" onclick="return validateInput('saveview')"/>
-				<s:reset name="Cancel" type="submit" cssClass="buttonsubmit" id="Cancel"  value="Cancel" />
-				<input type="submit" value="Close" onclick="javascript:window.close()" cssClass="buttonsubmit" class="buttonsubmit"/>
-				</td>
-			</tr>
-		</table>
-		
-	</div>
-</div>
-</div>
-</div>
-</div>
-<input type="hidden" id="voucherTypeBean.voucherName" name="voucherTypeBean.voucherName" value="CashToBank"/>
-<input type="hidden" id="voucherTypeBean.voucherType" name="voucherTypeBean.voucherType" value="Contra"/>
-<input type="hidden" id="voucherTypeBean.voucherNumType" name="voucherTypeBean.voucherNumType" value="Contra"/>
-<input type="hidden" id="voucherTypeBean.cgnType" name="voucherTypeBean.cgnType" value="CTB"/>
-<s:hidden name="contraBean.saveMode"  id="saveMode"/>
-<s:hidden name="contraBean.result"  id="result"/>
-<s:hidden name="contraBean.mode"  id="mode"/>
-<s:hidden id="cgn" name="cgn"></s:hidden>
-<s:hidden id="vouchermis.sourcePath" name="vouchermis.sourcePath" value="../contra/contraCTB!loadCTBVoucher.action?vhid="></s:hidden>
-</s:push>
-</s:form>
-<script>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Cash Deposit</div>
+				<div id="listid" style="display: block">
+					<div align="center">
+						<font style='color: red; font-weight: bold'>
+							<p class="error-block" id="lblError"></p>
+						</font>
+						<%@include file="contraCTB-form.jsp"%>
+						<table border="0" width="100%">
+
+							<tr>
+								<td class="greybox" width="25%"><s:text
+										name="contra.cashInHand" /></td>
+								<td class="greybox" width="25%"><s:textfield
+										name="contraBean.cashInHand" id="cashInHand" tabindex="-1"
+										readonly="true" /></td>
+								<td class="greybox" width="25%"></td>
+								<td class="greybox" width="25%"></td>
+							</tr>
+						</table>
+						<div class="subheadsmallnew" /></div>
+						<div class="mandatory" align="left">* Mandatory Fields</div>
+					</div>
+					<div class="buttonbottom">
+						<table border="0" width="80%" align="center">
+							<tr></tr>
+							<tr>
+								<td><s:submit type="submit" cssClass="buttonsubmit"
+										value="Save & Close" id="save&close" name="save&close"
+										method="create" onclick="return validateInput('saveclose')" />
+									<s:submit type="submit" cssClass="buttonsubmit"
+										value="Save & New" id="save&new" name="save&new"
+										method="create" onclick="return validateInput('savenew')" /> <s:submit
+										type="submit" cssClass="buttonsubmit" value="Save & View"
+										id="save&view" name="save&view" method="create"
+										onclick="return validateInput('saveview')" /> <s:reset
+										name="Cancel" type="submit" cssClass="buttonsubmit"
+										id="Cancel" value="Cancel" /> <input type="submit"
+									value="Close" onclick="javascript:window.close()"
+									cssClass="buttonsubmit" class="buttonsubmit" /></td>
+							</tr>
+						</table>
+
+					</div>
+				</div>
+			</div>
+			</div>
+			</div>
+			<input type="hidden" id="voucherTypeBean.voucherName"
+				name="voucherTypeBean.voucherName" value="CashToBank" />
+			<input type="hidden" id="voucherTypeBean.voucherType"
+				name="voucherTypeBean.voucherType" value="Contra" />
+			<input type="hidden" id="voucherTypeBean.voucherNumType"
+				name="voucherTypeBean.voucherNumType" value="Contra" />
+			<input type="hidden" id="voucherTypeBean.cgnType"
+				name="voucherTypeBean.cgnType" value="CTB" />
+			<s:hidden name="contraBean.saveMode" id="saveMode" />
+			<s:hidden name="contraBean.result" id="result" />
+			<s:hidden name="contraBean.mode" id="mode" />
+			<s:hidden id="cgn" name="cgn"></s:hidden>
+			<s:hidden id="vouchermis.sourcePath" name="vouchermis.sourcePath"
+				value="../contra/contraCTB!loadCTBVoucher.action?vhid="></s:hidden>
+		</s:push>
+	</s:form>
+	<script>
 
 function populateAccNum(branch){
 

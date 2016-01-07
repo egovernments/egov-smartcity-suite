@@ -42,14 +42,18 @@ package org.egov.ptis.domain.entity.property;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
+import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 
 public class CollectionSummary implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = -5582334620824717063L;
+    private Integer receiptHeaderId;
     private String receiptNumber;
     private Date receiptDate;
     private Property property;
@@ -62,13 +66,12 @@ public class CollectionSummary implements Serializable {
     private String payeeName;
     private Character collectionType;
     private String paymentMode;
-    private String userName;
+    private User user;
+    private String houseNumber;
+    private String paidAt;
+    private EgwStatus status;
     private BigDecimal taxColl;
-    private BigDecimal penaltyColl;
-    private BigDecimal libCessColl;
-    private BigDecimal arrearTaxColl;
-    private BigDecimal arrearPenaltyColl;
-    private BigDecimal arrearLibCessColl;
+    private Set<CollectionSummaryDetails> collectionDetails;
 
     public String getReceiptNumber() {
         return receiptNumber;
@@ -118,60 +121,12 @@ public class CollectionSummary implements Serializable {
         this.paymentMode = paymentMode;
     }
 
-    public String getUserName() {
-        return userName;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserName(final String userName) {
-        this.userName = userName;
-    }
-
-    public BigDecimal getTaxColl() {
-        return taxColl;
-    }
-
-    public void setTaxColl(final BigDecimal taxColl) {
-        this.taxColl = taxColl;
-    }
-
-    public BigDecimal getPenaltyColl() {
-        return penaltyColl;
-    }
-
-    public void setPenaltyColl(final BigDecimal penaltyColl) {
-        this.penaltyColl = penaltyColl;
-    }
-
-    public BigDecimal getLibCessColl() {
-        return libCessColl;
-    }
-
-    public void setLibCessColl(final BigDecimal libCessColl) {
-        this.libCessColl = libCessColl;
-    }
-
-    public BigDecimal getArrearTaxColl() {
-        return arrearTaxColl;
-    }
-
-    public void setArrearTaxColl(final BigDecimal arrearTaxColl) {
-        this.arrearTaxColl = arrearTaxColl;
-    }
-
-    public BigDecimal getArrearPenaltyColl() {
-        return arrearPenaltyColl;
-    }
-
-    public void setArrearPenaltyColl(final BigDecimal arrearPenaltyColl) {
-        this.arrearPenaltyColl = arrearPenaltyColl;
-    }
-
-    public BigDecimal getArrearLibCessColl() {
-        return arrearLibCessColl;
-    }
-
-    public void setArrearLibCessColl(final BigDecimal arrearLibCessColl) {
-        this.arrearLibCessColl = arrearLibCessColl;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Boundary getZoneId() {
@@ -220,6 +175,55 @@ public class CollectionSummary implements Serializable {
 
     public void setProperty(final Property property) {
         this.property = property;
+    }
+
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public String getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(String paidAt) {
+        this.paidAt = paidAt;
+    }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
+    }
+
+    
+    public Set<CollectionSummaryDetails> getCollectionDetails() {
+        return collectionDetails;
+    }
+
+    public void setCollectionDetails(Set<CollectionSummaryDetails> collectionDetails) {
+        this.collectionDetails = collectionDetails;
+    }
+
+    public Integer getReceiptHeaderId() {
+        return receiptHeaderId;
+    }
+
+    public void setReceiptHeaderId(Integer receiptHeaderId) {
+        this.receiptHeaderId = receiptHeaderId;
+    }
+
+    public BigDecimal getTaxColl() {
+        return taxColl;
+    }
+
+    public void setTaxColl(final BigDecimal taxColl) {
+        this.taxColl = taxColl;
     }
 
 }

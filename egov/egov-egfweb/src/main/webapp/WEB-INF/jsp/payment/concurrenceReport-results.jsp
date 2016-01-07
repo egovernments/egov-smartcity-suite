@@ -37,76 +37,126 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <s:if test="%{paymentHeaderListFnd.size()>0}">
-<br/>
-<div class="subheadnew">List Of Payments Made</div>
-<%
+	<br />
+	<div class="subheadnew">List Of Payments Made</div>
+	<%
 Integer srno=0;
 %>
-<table width="99%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td class="blueborderfortd">
-		<div>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
-              
-              <tr>
-                <th class="bluebgheadtd" width="2%" > Sl No</th>
-                <th class="bluebgheadtd" width="10%" >Bank</th>
-                <th class="bluebgheadtd" width="10%" >Bank Account</th>
-                <th class="bluebgheadtd" width="10%" >Department</th>
-                <th class="bluebgheadtd" width="10%" >Bill Number</th>
-                <th class="bluebgheadtd" width="10%" >Bill Date</th>
-                <th class="bluebgheadtd" width="10%" >UAC</th>
-                <th class="bluebgheadtd" width="10%" >BPV Number</th>
-                <th class="bluebgheadtd" width="10%" >BPV Date</th>
-                <th class="bluebgheadtd" width="10%" >BPV Account Code</th>
-                <th class="bluebgheadtd" width="10%" >Amount</th>
-				
-			  </tr>
-		<s:iterator value="paymentHeaderListFnd" status="stat" var="p">
+	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-		    
-			<td class="blueborderfortd"><s:if test="%{#p.bpvNumber != 'Total'}"><%=++srno %></s:if>	&nbsp;</td>
-			<td class="blueborderfortd"><div align="center"><s:property value="bankName"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="bankAccountNumber"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="departmentName"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="billNumber"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{getFormattedDate(#p.billDate)}"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="uac"/>&nbsp;</div></td>
-			
-			<td class="blueborderfortd"><div align="center"><s:property value="bpvNumber"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{getFormattedDate(#p.bpvDate)}"/>&nbsp;</div></td>
-			 <s:if test="%{#p.bpvNumber == 'Total'}">
-			 <td class="blueborderfortd"><div align="center"><strong><s:property value="bpvAccountCode"/>&nbsp;</div></td></strong>
-			<td class="blueborderfortd"><div align="center"><input type="text" style="text-align: right;" readonly="readonly" value='<s:text name="payment.format.number">
-			<strong><s:param name="value" value="amount"/></s:text>'/>&nbsp;</div></td></strong>
-			</s:if>	
-			<s:else><td class="blueborderfortd"><div align="center"><s:property value="bpvAccountCode"/>&nbsp;</div></td>
-			<td class="blueborderfortd"><div align="center"><input type="text" style="text-align: right;" readonly="readonly" value='<s:text name="payment.format.number">
-			<s:param name="value" value="amount"/></s:text>' id='netPayable<s:property value="#stat.index"/>'/>&nbsp;</div></td>
-			</s:else>	
-	   </tr>
-		</s:iterator>
+			<td class="blueborderfortd">
+				<div>
+					<table width="100%" border="0" cellpadding="0" cellspacing="0"
+						class="tablebottom">
+
+						<tr>
+							<th class="bluebgheadtd" width="2%">Sl No</th>
+							<th class="bluebgheadtd" width="10%">Bank</th>
+							<th class="bluebgheadtd" width="10%">Bank Account</th>
+							<th class="bluebgheadtd" width="10%">Department</th>
+							<th class="bluebgheadtd" width="10%">Bill Number</th>
+							<th class="bluebgheadtd" width="10%">Bill Date</th>
+							<th class="bluebgheadtd" width="10%">UAC</th>
+							<th class="bluebgheadtd" width="10%">BPV Number</th>
+							<th class="bluebgheadtd" width="10%">BPV Date</th>
+							<th class="bluebgheadtd" width="10%">BPV Account Code</th>
+							<th class="bluebgheadtd" width="10%">Amount</th>
+
+						</tr>
+						<s:iterator value="paymentHeaderListFnd" status="stat" var="p">
+							<tr>
+
+								<td class="blueborderfortd"><s:if
+										test="%{#p.bpvNumber != 'Total'}"><%=++srno %></s:if> &nbsp;</td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="bankName" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="bankAccountNumber" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="departmentName" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="billNumber" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="%{getFormattedDate(#p.billDate)}" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="uac" />
+										&nbsp;
+									</div></td>
+
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="bpvNumber" />
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div align="center">
+										<s:property value="%{getFormattedDate(#p.bpvDate)}" />
+										&nbsp;
+									</div></td>
+								<s:if test="%{#p.bpvNumber == 'Total'}">
+									<td class="blueborderfortd"><div align="center">
+											<strong><s:property value="bpvAccountCode" />&nbsp;
+										</div></td>
+									</strong>
+									<td class="blueborderfortd"><div align="center">
+											<input type="text" style="text-align: right;"
+												readonly="readonly"
+												value='<s:text name="payment.format.number">
+			<strong><s:param name="value" value="amount"/></s:text>' />&nbsp;
+										</div></td>
+									</strong>
+								</s:if>
+								<s:else>
+									<td class="blueborderfortd"><div align="center">
+											<s:property value="bpvAccountCode" />
+											&nbsp;
+										</div></td>
+									<td class="blueborderfortd"><div align="center">
+											<input type="text" style="text-align: right;"
+												readonly="readonly"
+												value='<s:text name="payment.format.number">
+			<s:param name="value" value="amount"/></s:text>'
+												id='netPayable<s:property value="#stat.index"/>' />&nbsp;
+										</div></td>
+								</s:else>
+							</tr>
+						</s:iterator>
+						<tr>
+							<td style="text-align: right" colspan="10"
+								class="blueborderfortdnew"><strong>Grand Total</strong></td>
+							<td class="blueborderfortd"><div align="center">
+									<input type="text" style="text-align: right;"
+										readonly="readonly"
+										value='<s:text name="payment.format.number">
+			<s:param name="grandTol" value="grandTol"/></s:text>' />&nbsp;
+								</div></td>
+						</tr>
+					</table>
+				</div>
+			</td>
+		</tr>
 		<tr>
-			<td style="text-align:right" colspan="10" class="blueborderfortdnew"><strong>Grand Total</strong></td>
-			<td class="blueborderfortd"><div align="center"><input type="text" style="text-align: right;" readonly="readonly" value='<s:text name="payment.format.number">
-			<s:param name="grandTol" value="grandTol"/></s:text>' />&nbsp;</div></td>
 		</tr>
-		</table>
-        </div></td>
-      </tr>
-       <tr>
-		</tr>
-	</table></td>
+	</table>
+	</td>
 	</tr>
 	<tr>
 		<div class="buttonbottom">
-		Export Options: 
-		<label onclick="return exportXls()"><a href='javascript:void(0);'>Excel</a></label> 
-		| <label onclick="return exportPdf()"><a href="javascript:void(0);">PDF</a></label>
+			Export Options: <label onclick="return exportXls()"><a
+				href='javascript:void(0);'>Excel</a></label> | <label
+				onclick="return exportPdf()"><a href="javascript:void(0);">PDF</a></label>
 		</div>
 	</tr>
-</table>
+	</table>
 </s:if>
 <s:else>No data found</s:else>

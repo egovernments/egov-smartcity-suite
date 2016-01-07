@@ -25,10 +25,10 @@
                    <br/>
 					<div class="row text-center">
 						<div class="row">
-								<button type="button" id="buttonCreate" class="btn btn-success">
+								<button type="button" id="buttonCreate" class="btn btn-primary">
 									<spring:message code="lbl.create" />
 								</button>
-								<button type="button" id="buttonEdit" class="btn btn-success">
+								<button type="button" id="buttonEdit" class="btn btn-primary">
 									<spring:message code="lbl.edit" />
 								</button>
 								<a href="javascript:void(0)" class="btn btn-default"

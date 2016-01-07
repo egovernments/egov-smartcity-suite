@@ -39,53 +39,71 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 <head>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 
 </head>
 <body onload="onloadTask();">
-<s:form  action="contraBTC" theme="simple" name="cbtcform"  >
-	<s:push value="model">
-	<jsp:include page="../budget/budgetHeader.jsp">
-		<jsp:param value="Bank to Cash Transfer" name="heading"/>
-	</jsp:include>
-	<div class="formmainbox">
-		<div class="formheading"/>
-		<div class="subheadnew">Reverse Cash Withdrawal</div>
-		<div id="listid" style="display:block"><br/></div>
-		<div align="center">
-			<font  style='color: red ;'><p class="error-block" id="lblError" ></p></font>
-			<span class="mandatory">
-				<s:actionerror id="actionerror"/>  
-				<s:fielderror id="fielderror"/>
-				<s:actionmessage id="actionmessage"/>
-			</span>
-		</div>
-		<%@include file="contraBTC-form.jsp"%>
-		<tr>
-			<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-				<td class="bluebox"><s:text name="reversalVoucherNumber"/><span class="mandatory">*</span></td>
-				<td class="bluebox"><s:textfield name="reverseVoucherNumber" id="reversalVoucherNumber" /></td>
-			</s:if>
-			<td class="bluebox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
-			<td class="bluebox"><s:textfield name="reverseVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('cbtcform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>	
+	<s:form action="contraBTC" theme="simple" name="cbtcform">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Cash Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Reverse Cash Withdrawal</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+				<div align="center">
+					<font style='color: red;'><p class="error-block"
+							id="lblError"></p></font> <span class="mandatory"> <s:actionerror
+							id="actionerror" /> <s:fielderror id="fielderror" /> <s:actionmessage
+							id="actionmessage" />
+					</span>
+				</div>
+				<%@include file="contraBTC-form.jsp"%>
+				<tr>
+					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+						<td class="bluebox"><s:text name="reversalVoucherNumber" /><span
+							class="mandatory">*</span></td>
+						<td class="bluebox"><s:textfield name="reverseVoucherNumber"
+								id="reversalVoucherNumber" /></td>
+					</s:if>
+					<td class="bluebox"><s:text name="reversalVoucherDate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:textfield name="reverseVoucherDate"
+							id="reversalVoucherDate"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('cbtcform.reversalVoucherDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+				</tr>
 		</s:push>
-		<br/><br/>
-		<input type="hidden" name="voucherHeader.id" value='<s:property value="voucherHeader.id"/>' id="voucherHeaderId"/>
+		<br />
+		<br />
+		<input type="hidden" name="voucherHeader.id"
+			value='<s:property value="voucherHeader.id"/>' id="voucherHeaderId" />
 		<div id="buttons">
-			<s:submit type="submit" cssClass="buttonsubmit" value="Reverse and View" method="saveReverse" id="reverse" onClick="return validate();"/>
-			<s:submit type="submit" cssClass="buttonsubmit" value="Reverse and Close" method="saveReverse" id="reverse" onClick="return validate();"/>
-			<s:submit value="Close" onclick="javascript: self.close()" id="button2" cssClass="button"/>
+			<s:submit type="submit" cssClass="buttonsubmit"
+				value="Reverse and View" method="saveReverse" id="reverse"
+				onClick="return validate();" />
+			<s:submit type="submit" cssClass="buttonsubmit"
+				value="Reverse and Close" method="saveReverse" id="reverse"
+				onClick="return validate();" />
+			<s:submit value="Close" onclick="javascript: self.close()"
+				id="button2" cssClass="button" />
 		</div>
 		<div id="resultGrid"></div>
-	</div>
-</s:form>
-<SCRIPT type="text/javascript">
+		</div>
+	</s:form>
+	<SCRIPT type="text/javascript">
 
 function onloadTask(){
 	disable(0);

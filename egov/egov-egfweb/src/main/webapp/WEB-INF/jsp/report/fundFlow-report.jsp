@@ -37,16 +37,17 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<html>  
-<head> 
- <script type="text/javascript" src="/EGF/resources/javascript/fundFlow.js"></script>
-    <title><s:text name="fundflowreport"/></title>
-    
-  
-    <script type="text/javascript">
+<html>
+<head>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/fundFlow.js"></script>
+<title><s:text name="fundflowreport" /></title>
+
+
+<script type="text/javascript">
     function onloadFundFlow()
     {
     <s:if test="%{mode=='edit'}">
@@ -77,25 +78,26 @@
 
 
 </script>
-    
+
 </head>
-<body onload="onloadFundFlow()">  
+<body onload="onloadFundFlow()">
 	<div class="subheadnew">Fund Flow Analysis Report</div>
-	<s:form  name="fundFlowReport" action="fundFlow" theme="simple">
-	<%@include file="fundFlow-form.jsp" %>	
+	<s:form name="fundFlowReport" action="fundFlow" theme="simple">
+		<%@include file="fundFlow-form.jsp"%>
 
-	<s:if test="(receiptList!=null && receiptList.size()>0) ||( paymentList!=null && paymentList.size()>0) ">
+		<s:if
+			test="(receiptList!=null && receiptList.size()>0) ||( paymentList!=null && paymentList.size()>0) ">
 
 
-<div class="buttonbottom">
-	<s:submit value="Export Excel" method="exportXls" cssClass="button" />
-	<s:submit value="Export Pdf" method="exportPdf" cssClass="button" />
-</div>	
-</s:if>	
- 	</s:form>                   
- </body>
- </html>
- 
-      
-      
-      
+			<div class="buttonbottom">
+				<s:submit value="Export Excel" method="exportXls" cssClass="button" />
+				<s:submit value="Export Pdf" method="exportPdf" cssClass="button" />
+			</div>
+		</s:if>
+	</s:form>
+</body>
+</html>
+
+
+
+

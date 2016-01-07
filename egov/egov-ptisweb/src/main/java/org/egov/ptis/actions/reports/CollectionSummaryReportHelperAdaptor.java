@@ -20,14 +20,21 @@ public class CollectionSummaryReportHelperAdaptor implements JsonSerializer<Coll
             jsonObject.addProperty("arrearTaxAmount", collectionSummaryReportObj.getArrearTaxAmount());
 
             jsonObject.addProperty("arrearLibraryCess", collectionSummaryReportObj.getArrearLibraryCess());
-            jsonObject.addProperty("arrearTotal", collectionSummaryReportObj.getArrearTotal());
+            jsonObject.addProperty(
+                    "arrearTotal",
+                    collectionSummaryReportObj.getArrearTaxAmount().add(
+                            collectionSummaryReportObj.getArrearLibraryCess()));
             jsonObject.addProperty("taxAmount", collectionSummaryReportObj.getTaxAmount());
 
             jsonObject.addProperty("libraryCess", collectionSummaryReportObj.getLibraryCess());
-            jsonObject.addProperty("currentTotal", collectionSummaryReportObj.getCurrentTotal());
+            jsonObject.addProperty(
+                    "currentTotal",
+                    collectionSummaryReportObj.getTaxAmount() != null ? collectionSummaryReportObj.getTaxAmount().add(
+                            collectionSummaryReportObj.getLibraryCess()) : collectionSummaryReportObj.getLibraryCess());
             jsonObject.addProperty("penalty", collectionSummaryReportObj.getPenalty());
             jsonObject.addProperty("arrearPenalty", collectionSummaryReportObj.getArrearPenalty());
-            jsonObject.addProperty("penaltyTotal", collectionSummaryReportObj.getPenaltyTotal());
+            jsonObject.addProperty("penaltyTotal",
+                    collectionSummaryReportObj.getPenalty().add(collectionSummaryReportObj.getArrearPenalty()));
             jsonObject.addProperty("total", collectionSummaryReportObj.getTotal());
         }
         return jsonObject;

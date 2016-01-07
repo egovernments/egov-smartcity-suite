@@ -52,10 +52,8 @@
 									</label>
 								
 								<div class="col-sm-3 add-margin">
-									<div class="input-group">
 										<form:input type="text" cssClass="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="15" path="propertyNumber" id="propertyNumber" />
                                			<form:errors path="propertyNumber" cssClass="error-msg" />
-									</div>
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.locality"/>

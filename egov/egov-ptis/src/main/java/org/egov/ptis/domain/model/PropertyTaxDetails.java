@@ -61,7 +61,7 @@ public class PropertyTaxDetails implements Serializable{
 	@JsonIgnore
 	private String guardianName;
 	
-	private String assessmentNo;
+	private String assessmentNo="";
 	@JsonIgnore
 	private String ownerAddress;
 	
@@ -86,7 +86,7 @@ public class PropertyTaxDetails implements Serializable{
 	private BigDecimal chqBouncePenalty;	
 	@JsonIgnore
 	private BigDecimal totalTaxAmt;
-	private String localityName;
+	private String localityName="";
 	@JsonIgnore
 	private Set<ArrearDetails> arrearDetails;
 	private List<OwnerDetails> ownerDetails;

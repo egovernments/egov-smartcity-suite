@@ -38,54 +38,57 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
-  <head>    
-    <title>
-    	<s:text name="bank.search.new"/>
-    </title>
-    <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
-   <style>
-   .autoComContainer {
-		width: auto;
-		padding-bottom: 2em;
-		z-index: 999;
-	}
-   </style>
-  </head>
-  <body>
-    <div class="formmainbox"><div class="subheadnew"><s:text name="bank.search.new"/></div>
-    	<div style="color: red">
-		<s:actionerror/>  
-		<s:fielderror />
+<head>
+<title><s:text name="bank.search.new" /></title>
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+<style>
+.autoComContainer {
+	width: auto;
+	padding-bottom: 2em;
+	z-index: 999;
+}
+</style>
+</head>
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="bank.search.new" />
 		</div>
-	    <s:form name="bankForm" action="bank" theme="simple" >
-	    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	    		<tr height="25px">
-	    			<td class="bluebox"></td>
-	    		</tr>
-	    		<tr>
-	    			<td class="greybox" width="20%"></td>
-				    <td class="greybox" style="text-align: center;"><s:text name="bank.create.name"/></td>				    	
-				    <td class="greybox">
-				    	<div class="ui-widget">
-							<input name="model.name" id="bankName" type="text" size="50"/>
-						</div>				    	
-				    </td>
-				</tr>	    	
-	    	</table>
-	    	<br/>
-	    	
-	    	
-	    	</div>
-	    	<div class="buttonbottom" style="padding-bottom:10px;">
-	    		<s:hidden name="mode"></s:hidden> 
-		<input type="submit" class="buttonsubmit" value="Modify" id="modifyButton" name="Modify" onclick="validateAndSubmit();" />
-		<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
-			</div>
-    </s:form>   
-    <script type="text/javascript">
+		<div style="color: red">
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+		<s:form name="bankForm" action="bank" theme="simple">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr height="25px">
+					<td class="bluebox"></td>
+				</tr>
+				<tr>
+					<td class="greybox" width="20%"></td>
+					<td class="greybox" style="text-align: center;"><s:text
+							name="bank.create.name" /></td>
+					<td class="greybox">
+						<div class="ui-widget">
+							<input name="model.name" id="bankName" type="text" size="50" />
+						</div>
+					</td>
+				</tr>
+			</table>
+			<br />
+	</div>
+	<div class="buttonbottom" style="padding-bottom: 10px;">
+		<s:hidden name="mode"></s:hidden>
+		<input type="submit" class="buttonsubmit" value="Modify"
+			id="modifyButton" name="Modify" onclick="validateAndSubmit();" /> <input
+			type="button" id="Close" value="Close"
+			onclick="javascript:window.close()" class="button" />
+	</div>
+	</s:form>
+	<script type="text/javascript">
     jQuery( "#bankName" ).autocomplete({
         source: "bank.action?mode=AUTO_COMP_BANK_NAME",
         minLength: 2
@@ -96,7 +99,7 @@
 	document.bankForm.submit();
 }
 
-    </script> 
-  </body>
-   
+    </script>
+</body>
+
 </html>

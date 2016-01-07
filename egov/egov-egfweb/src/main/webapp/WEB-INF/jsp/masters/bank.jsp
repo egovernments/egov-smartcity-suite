@@ -38,36 +38,38 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
 <%@ page language="java"%>
 <html>
-  <head>
-    <title>
-    	<s:text name="bank.create.new"/>
-    </title>
-    <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
-  </head>
-  <body>
-  <script>
+<head>
+<title><s:text name="bank.create.new" /></title>
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+</head>
+<body>
+	<script>
   function validateFormAndSubmit(){
 	document.bankForm.action='${pageContext.request.contextPath}/masters/bank-save.action';
 	document.bankForm.submit();
 }
   </script>
-  
-    <div class="formmainbox"><div class="subheadnew"><s:text name="bank.create.new"/></div>
-    <jsp:include page="bank-form.jsp"></jsp:include>    	
-    </div>
-      	<div class="buttonbottom" > 
-  	<input type="button" id="Search" value="Search" onclick="javascript:window.location.href='bank.action?mode=MODIFY'" class="buttonsubmit"/>
-	
-	<input type="submit" class="button" value="Save"
-							id="saveButton" name="button"
-							onclick="validateFormAndSubmit();" />
-	
-	<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="bank.create.new" />
+		</div>
+		<jsp:include page="bank-form.jsp"></jsp:include>
 	</div>
-  </body>
+	<div class="buttonbottom">
+		<input type="button" id="Search" value="Search"
+			onclick="javascript:window.location.href='bank.action?mode=MODIFY'"
+			class="buttonsubmit" /> <input type="submit" class="button"
+			value="Save" id="saveButton" name="button"
+			onclick="validateFormAndSubmit();" /> <input type="button"
+			id="Close" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</div>
+</body>
 </html>

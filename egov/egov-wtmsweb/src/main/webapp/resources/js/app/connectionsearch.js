@@ -201,7 +201,9 @@ function submitButton()
 	searchable : true,
 	data : searchResult,
 	columns : [{title : 'Applicant Name',data : 'resource.searchable.consumername'},
-	           {title : 'H.S.C Number',class : 'row-detail',data : 'resource.clauses.consumercode'},
+	           {title : 'H.S.C Number',class : 'row-detail',data : 'resource.clauses.consumercode',               
+		        "render": function ( data, type, full, meta ) {
+		            return '<div style="font-style: italic;text-decoration: underline;" class="view-content">'+data+'</div>';} },
 	           {title : 'Address',data : 'resource.searchable.locality'},
 	           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
 	           {title : 'Usage Type',data : 'resource.clauses.usage'},
@@ -488,5 +490,16 @@ function submitButton()
 				} ],
 				"aaSorting": [[8, 'desc']],
 	});
+	
+	if(tableContainer.fnGetData().length > 1000){
+		$('#searchResultDiv').hide();
+		$('#search-exceed-msg').show();
+	/*	$('#search-exceed-count').html(tableContainer.fnGetData().length);*/
+	}else{
+		$('#search-exceed-msg').hide();
+		$('#searchResultDiv').show();
+	}
+	
+	
 	})
 }

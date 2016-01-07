@@ -90,10 +90,12 @@
     
 	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /></label>
 	<div class="col-sm-3 add-margin">
+	
+	<s:textfield name="startDate" cssClass="form-control datepicker" data-date-end-date="0d" id="startDate"  maxlength="10" value="%{startdate}"/>
 	    
-		<s:date name="startDate" id="startdate" format="dd/MM/yyyy" />
-		<s:textfield name="startDate" id="startDate" onfocus="waterMarkTextIn('startDate','dd/mm/yyyy');" onblur="validateDateFormat(this);waterMarkTextOut('startDate','dd/mm/yyyy'); lessThanOrEqualToCurrentDate(this);" maxlength="10" size="10" value="%{startdate}" tabindex="4" onkeyup="DateFormat(this,this.value,event,false,'3')" />
+		<%--<s:date name="startDate" id="startdate" format="dd/MM/yyyy" />
+		 <s:textfield name="startDate" id="startDate" onfocus="waterMarkTextIn('startDate','dd/mm/yyyy');" onblur="validateDateFormat(this);waterMarkTextOut('startDate','dd/mm/yyyy'); lessThanOrEqualToCurrentDate(this);" maxlength="10" size="10" value="%{startdate}" tabindex="4" onkeyup="DateFormat(this,this.value,event,false,'3')" />
 		<a href="javascript:show_calendar('forms[0].startDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img  alt="Date" width="18" height="18" border="0" align="absmiddle" id="calenderImgId" src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" /> </a>
-		
+		 --%>
     </div>
 </div>

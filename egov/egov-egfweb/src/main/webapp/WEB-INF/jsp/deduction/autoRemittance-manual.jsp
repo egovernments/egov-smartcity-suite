@@ -37,74 +37,99 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title> <s:text name="auto.remit.schedule.title"/></title>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<title><s:text name="auto.remit.schedule.title" /></title>
 
 
 
 </script>
 </head>
 <body>
-	<s:form action="autoRemittance" theme="simple" name="autoRemittanceForm" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        			<jsp:param name="heading" value='Manual Scheduling ' />
-			</jsp:include>
-			
-			<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-			</span>
-		<div class="formheading"/><div class="subheadnew"><s:text name="remit.recovery.new.title"/></div>
-		<br/>
-<div align="center">
-<font  style='color: red ; font-weight:bold '> 
-<p class="error-block" id="lblError" ></p></font>
-    <table border="0" width="100%">
-	<tr>
-		<td class="greybox"></td>
-	    <td class="greybox"><s:text name="search.code"/><span class="mandatory">*</span></td>
-	    <td class="greybox"><s:select name="glcode" id="glcode" list="coaMap"  headerKey="-1" headerValue="----Choose----" onchange="loadLastRundate(this)" /></td>
-	</tr>	
-	<tr>
-		<td class="bluebox" ></td>
-		<td  class="bluebox"> <s:text name="lastrundate" /></td>
-		<td  class="bluebox" ><s:date name="lastRunDate" id="lastRunDate" format="dd/MM/yyyy" />
-		<s:textfield name="lastRunDate" id="lastRunDate" value="%{lastRunDate}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>**?
-		<a href="javascript:show_calendar('autoRemittanceForm.lastRunDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)    </td>
-	</tr>
-		
-	<tr>
-	<td class="greybox" ></td>	
-	<td class="greybox"><s:text name="department"/>
-	<td class="greybox"><s:select name="dept" id="dept" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="" headerValue="----Choose----"  onChange="loadDrawingOfficer(this);" /></td>
-	
-	</td>
-	</tr>
-	<tr>
-	<td class="greybox" ></td>
-	<td  class="bluebox"> <s:text name="drawingofficer" /></td>
-	<td><s:textfield name="drawingOfficer" id="drawingOfficer" size="50" /></td>
-	</tr>
-    </table>
+	<s:form action="autoRemittance" theme="simple"
+		name="autoRemittanceForm">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value='Manual Scheduling ' />
+		</jsp:include>
 
-	
-<div class="buttonbottom" style="padding-bottom:10px;">
-		<s:submit type="submit" cssClass="buttonsubmit" value="Generate Payment" id="search" name="search" method="schedule" onclick="return validateSearch();"/> 
-		<s:submit type="submit" cssClass="buttonsubmit" value="Cancel"   method="scheduleManual"/>
-		<input type="button" id="Close" value="Close" onclick="javascript:window.close()"   class="buttonsubmit" />
-	</div>
-<script>
+		<span class="mandatory"> <font
+			style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+				<s:actionmessage /></font>
+		</span>
+		<div class="formheading" />
+		<div class="subheadnew">
+			<s:text name="remit.recovery.new.title" />
+		</div>
+		<br />
+		<div align="center">
+			<font style='color: red; font-weight: bold'>
+				<p class="error-block" id="lblError"></p>
+			</font>
+			<table border="0" width="100%">
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="search.code" /><span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:select name="glcode" id="glcode"
+							list="coaMap" headerKey="-1" headerValue="----Choose----"
+							onchange="loadLastRundate(this)" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="lastrundate" /></td>
+					<td class="bluebox"><s:date name="lastRunDate"
+							id="lastRunDate" format="dd/MM/yyyy" /> <s:textfield
+							name="lastRunDate" id="lastRunDate" value="%{lastRunDate}"
+							maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" />**? <a
+						href="javascript:show_calendar('autoRemittanceForm.lastRunDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					</td>
+				</tr>
+
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="department" />
+					<td class="greybox"><s:select name="dept" id="dept"
+							list="dropdownData.departmentList" listKey="id"
+							listValue="deptName" headerKey="" headerValue="----Choose----"
+							onChange="loadDrawingOfficer(this);" /></td>
+
+					</td>
+				</tr>
+				<tr>
+					<td class="greybox"></td>
+					<td class="bluebox"><s:text name="drawingofficer" /></td>
+					<td><s:textfield name="drawingOfficer" id="drawingOfficer"
+							size="50" /></td>
+				</tr>
+			</table>
+
+
+			<div class="buttonbottom" style="padding-bottom: 10px;">
+				<s:submit type="submit" cssClass="buttonsubmit"
+					value="Generate Payment" id="search" name="search"
+					method="schedule" onclick="return validateSearch();" />
+				<s:submit type="submit" cssClass="buttonsubmit" value="Cancel"
+					method="scheduleManual" />
+				<input type="button" id="Close" value="Close"
+					onclick="javascript:window.close()" class="buttonsubmit" />
+			</div>
+			<script>
 function loadDrawingOfficer(obj)
 {
 	<s:iterator value="deptDOList" var="s">
@@ -128,10 +153,12 @@ function loadLastRundate(obj)
 
 }
 </script>
-	<div align="left" class="extracontent">
-	     **?. Application will generate remittance payments for all the pending vouchers till the date entered here<br />
-	     **?. Do not use date search for generating remittance payment for already triggered and cancelled remittance payments <br />
-</div>
-</s:form>
+			<div align="left" class="extracontent">
+				**?. Application will generate remittance payments for all the
+				pending vouchers till the date entered here<br /> **?. Do not use
+				date search for generating remittance payment for already triggered
+				and cancelled remittance payments <br />
+			</div>
+	</s:form>
 </body>
 </html>

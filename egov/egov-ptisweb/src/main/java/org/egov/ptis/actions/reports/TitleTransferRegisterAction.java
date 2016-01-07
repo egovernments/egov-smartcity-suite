@@ -3,6 +3,7 @@ package org.egov.ptis.actions.reports;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,7 +76,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
             LOGGER.debug("Entered into prepare method");
         super.prepare();
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
-        		REVENUE_HIERARCHY_TYPE);
+                REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
                 REVENUE_HIERARCHY_TYPE);
         addDropdownData("zoneList", zoneList);
@@ -94,14 +95,15 @@ public class TitleTransferRegisterAction extends BaseFormAction {
 
     /**
      * Load ward for selected zone
+     * 
      * @param zoneExists
      * @param wardExists
      */
     @SuppressWarnings("unchecked")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
         if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Entered into prepareWardDropDownData method");
-        LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
+            LOGGER.debug("Entered into prepareWardDropDownData method");
+            LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
         }
         if (zoneExists && wardExists) {
             List<Boundary> wardList = new ArrayList<Boundary>();
@@ -110,19 +112,20 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         } else
             addDropdownData("wardList", Collections.EMPTY_LIST);
         if (LOGGER.isDebugEnabled())
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
     /**
      * Load Block for selected ward
+     * 
      * @param wardExists
      * @param blockExists
      */
     @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
         if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Entered into prepareBlockDropDownData method");
-        LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
+            LOGGER.debug("Entered into prepareBlockDropDownData method");
+            LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
         }
         if (wardExists && blockExists) {
             List<Boundary> blockList = new ArrayList<Boundary>();
@@ -131,7 +134,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         } else
             addDropdownData("blockList", Collections.EMPTY_LIST);
         if (LOGGER.isDebugEnabled())
-        LOGGER.debug("Exit from prepareWardDropDownData method");
+            LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
     /**
@@ -146,14 +149,16 @@ public class TitleTransferRegisterAction extends BaseFormAction {
     }
 
     /**
-     *  Invoked by Title Transfer Register Report. Shows list of ownership transfer happend for a property
+     * Invoked by Title Transfer Register Report. Shows list of ownership
+     * transfer happend for a property
      */
     @SuppressWarnings("unchecked")
     @Action(value = "/titleTransferRegister-getPropertyList")
     public void getPropertyList() {
         List<TitleTransferReportResult> resultList = new ArrayList<TitleTransferReportResult>();
         String result = null;
-        final Query query = propertyTaxUtil.prepareQueryforTitleTransferReport(zoneId, wardId, areaId, fromDate, toDate);
+        final Query query = propertyTaxUtil
+                .prepareQueryforTitleTransferReport(zoneId, wardId, areaId, fromDate, toDate);
         resultList = prepareOutput(query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -199,13 +204,13 @@ public class TitleTransferRegisterAction extends BaseFormAction {
                 ttrInfoTotal = titleTransferReportInfo;
                 ttrFinalList.add(ttrInfoTotal);
             }
-        // executed for duplic basic property in list basicPropList
+            // executed for duplic basic property in list basicPropList
             else if (basicPropList.contains(propMutation.getBasicProperty().getId())) {
                 titleTransferReportInfo = addPropertyWiseInfo(propMutation, finyear);
                 ttrInfoTotal = titleTransferReportInfo;
                 ttrFinalList.add(ttrInfoTotal);
             }
-        // executed while adding unique basic property in list basicPropList
+            // executed while adding unique basic property in list basicPropList
             else if (!basicPropList.contains(propMutation.getBasicProperty().getId())) {
                 titleTransferReportInfo = PreparePropertyWiseInfo(propMutation, finyear);
                 basicPropList.add(propMutation.getBasicProperty().getId());
@@ -228,12 +233,15 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
             String newOwnerName = "";
             for (final User usr : propertyMutation.getTransfereeInfos())
-            	newOwnerName = newOwnerName + usr.getName() + ",";
+                newOwnerName = newOwnerName + usr.getName() + ",";
             ttrObj.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
         }
         ttrObj.setDoorNo(propertyMutation.getBasicProperty().getAddress().getHouseNoBldgApt());
         ttrObj.setLocation(propertyMutation.getBasicProperty().getPropertyID().getLocality().getName());
-        ttrObj.setPropertyTax(propertyTaxUtil.getPropertyTaxDetails(propertyMutation.getBasicProperty().getId(), finyear).toString());
+        BigDecimal taxAmount = propertyTaxUtil.getPropertyTaxDetails(propertyMutation.getBasicProperty().getId(),
+                finyear);
+        if (null != taxAmount)
+            ttrObj.setPropertyTax(taxAmount.toString());
         if (propertyMutation.getTransferorInfos() != null && propertyMutation.getTransferorInfos().size() > 0) {
             for (final User usr : propertyMutation.getTransferorInfos())
                 ownerName = ownerName + usr.getName() + ",";
@@ -258,7 +266,8 @@ public class TitleTransferRegisterAction extends BaseFormAction {
      * @param finyear
      * @return
      */
-    private TitleTransferReportResult addPropertyWiseInfo(final PropertyMutation propertyMutation, final CFinancialYear finyear) {
+    private TitleTransferReportResult addPropertyWiseInfo(final PropertyMutation propertyMutation,
+            final CFinancialYear finyear) {
         final TitleTransferReportResult ttrObj = new TitleTransferReportResult();
         String ownerName = "";
         ttrObj.setAssessmentNo("");

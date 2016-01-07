@@ -39,56 +39,72 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 <head>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 </head>
 <body onload="onloadTask_view()">
-<s:form  action="contraBTB" theme="simple" name="cbtbform"  >
-<s:push value="model">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Bank to Bank Transfer" name="heading"/>
-</jsp:include>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Create Bank to Bank Transfer</div>
-		<div id="listid" style="display:block">
-		<br/>
-		</div></div></div>
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr>
-		<td class="bluebox" width="10%"></td>
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/></td>
-			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>
-	<%@include file="contraBTB-form.jsp"%>	
-	
-	</table>
-	</div>	
-	<div class="buttonbottom" >
-<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/>
-</div>
+	<s:form action="contraBTB" theme="simple" name="cbtbform">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Bank Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Create Bank to Bank Transfer</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+			</div>
+			</div>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font> <span class="mandatory"> <s:actionerror /> <s:fielderror />
+					<s:actionmessage />
+				</span>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="bluebox" width="10%"></td>
+						<td class="bluebox" width="22%"><s:text name="voucher.number" /></td>
+						<td class="bluebox" width="22%"><s:textfield
+								name="voucherNumber" id="voucherNumber" /></td>
+						<s:hidden name="id" />
+						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+							class="mandatory">*</span></td>
+						<td class="bluebox" width="38%"><input type="text"
+							name="voucherDate"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+							href="javascript:show_calendar('cbtbform.voucherDate');"
+							style="text-decoration: none">&nbsp;<img tabIndex="-1"
+								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+					</tr>
+					<%@include file="contraBTB-form.jsp"%>
 
-<input type="hidden" id="voucherTypeBean.voucherName" name="voucherTypeBean.voucherName" value="BankToBank"/>
-<input type="hidden" id="voucherTypeBean.voucherType" name="voucherTypeBean.voucherType" value="Contra"/>
-<input type="hidden" id="voucherTypeBean.voucherNumType" name="voucherTypeBean.voucherNumType" value="Contra"/>
-<input type="hidden" id="voucherTypeBean.cgnType" name="voucherTypeBean.cgnType" value="BTB"/>
-</s:push>
-</s:form>
-<SCRIPT type="text/javascript">
+				</table>
+			</div>
+			<div class="buttonbottom">
+				<input type="button" id="closeButton" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+
+			<input type="hidden" id="voucherTypeBean.voucherName"
+				name="voucherTypeBean.voucherName" value="BankToBank" />
+			<input type="hidden" id="voucherTypeBean.voucherType"
+				name="voucherTypeBean.voucherType" value="Contra" />
+			<input type="hidden" id="voucherTypeBean.voucherNumType"
+				name="voucherTypeBean.voucherNumType" value="Contra" />
+			<input type="hidden" id="voucherTypeBean.cgnType"
+				name="voucherTypeBean.cgnType" value="BTB" />
+		</s:push>
+	</s:form>
+	<SCRIPT type="text/javascript">
 
 		function onloadTask_view()
 		{

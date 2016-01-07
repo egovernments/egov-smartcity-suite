@@ -39,74 +39,99 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 <head>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 </head>
 <body onload="onLoadTask_edit()">
-<s:form  action="contraBTB" theme="simple" name="cbtbform"  >
-<s:push value="model">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Bank to Bank Transfer" name="heading"/>
-</jsp:include>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Modify Bank to Bank Transfer</div>
-		<div id="listid" style="display:block">
-		<br/>
-		</div></div></div>
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
+	<s:form action="contraBTB" theme="simple" name="cbtbform">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Bank Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Modify Bank to Bank Transfer</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+			</div>
+			</div>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font> <span class="mandatory">
+					<div id="Errors">
+						<s:actionerror />
+						<s:fielderror />
+					</div> <s:actionmessage />
+				</span>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="bluebox" width="10%"></td>
+						<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+							<td class="bluebox" width="22%"><s:text
+									name="voucher.number" /><span class="mandatory">*</span></td>
+							<td class="bluebox" width="22%">
+								<table width="100%">
+									<tr>
+										<td style="width: 25%"><input type="text"
+											name="voucherNumberPrefix" id="voucherNumberPrefix"
+											readonly="true" style="width: 100%" /></td>
+										<td width="75%"><s:textfield name="voucherNumber"
+												id="voucherNumber" /></td>
+									</tr>
+								</table>
+							</td>
 
-<span class="mandatory">
-				<div id="Errors"><s:actionerror/><s:fielderror /></div>
-				<s:actionmessage />
-			</span>
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr>
-		<td class="bluebox" width="10%"></td>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="22%">
-			<table width="100%">
-			<tr>
-			<td style="width:25%"><input type="text" name="voucherNumberPrefix" id="voucherNumberPrefix" readonly="true"  style="width:100%"/></td> 
-			<td width="75%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			</tr>
-			</table>
-			</td>
-			
-			</s:if>
-		<s:else>
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="22%">
-			<table width="100%">
-			<tr>
-			<td style="width:25%"><input type="text" name="voucherNumberPrefix" id="voucherNumberPrefix" readonly="true"  style="width:100%"  /></td> 
-			<td width="75%"><s:textfield name="voucherNumber" id="voucherNumber" readonly="true"/></td>
-			</tr>
-			</table>
-			</td>
-			<s:hidden name="voucherNumber" id="voucherNumber" />	
-		</s:else>	
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="34%"><input type="text" name="voucherDate" id="voucherDate" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'  onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>
-	<%@include file="contraBTB-form.jsp"%>
-	</table>
-	<div class="subheadsmallnew"/></div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>	</div>	
-<%@include file="../voucher/modifyButtons.jsp"%>
-<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory" value="%{isBankBalanceMandatory()}"/>
-<s:hidden id="startDateForBalanceCheckStr" name="startDateForBalanceCheckStr" value="%{startDateForBalanceCheckStr}" />
-</s:push>
-</s:form>
-<SCRIPT type="text/javascript">
+						</s:if>
+						<s:else>
+							<td class="bluebox" width="22%"><s:text
+									name="voucher.number" /><span class="mandatory">*</span></td>
+							<td class="bluebox" width="22%">
+								<table width="100%">
+									<tr>
+										<td style="width: 25%"><input type="text"
+											name="voucherNumberPrefix" id="voucherNumberPrefix"
+											readonly="true" style="width: 100%" /></td>
+										<td width="75%"><s:textfield name="voucherNumber"
+												id="voucherNumber" readonly="true" /></td>
+									</tr>
+								</table>
+							</td>
+							<s:hidden name="voucherNumber" id="voucherNumber" />
+						</s:else>
+						<s:hidden name="id" />
+						<td class="bluebox" width="18%%"><s:text name="voucher.date" /><span
+							class="mandatory">*</span></td>
+						<td class="bluebox" width="34%"><input type="text"
+							name="voucherDate" id="voucherDate"
+							value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+							href="javascript:show_calendar('cbtbform.voucherDate');"
+							style="text-decoration: none">&nbsp;<img tabIndex="-1"
+								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+					</tr>
+					<%@include file="contraBTB-form.jsp"%>
+				</table>
+				<div class="subheadsmallnew" /></div>
+				<div class="mandatory" align="left">* Mandatory Fields</div>
+			</div>
+			</div>
+			<%@include file="../voucher/modifyButtons.jsp"%>
+			<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory"
+				value="%{isBankBalanceMandatory()}" />
+			<s:hidden id="startDateForBalanceCheckStr"
+				name="startDateForBalanceCheckStr"
+				value="%{startDateForBalanceCheckStr}" />
+		</s:push>
+	</s:form>
+	<SCRIPT type="text/javascript">
 	
 			function onLoadTask_edit() {
 			   var tempVoucherNumber='<s:property value="voucherHeader.voucherNumber"/>';

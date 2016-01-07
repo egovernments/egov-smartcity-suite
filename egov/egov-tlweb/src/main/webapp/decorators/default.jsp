@@ -47,12 +47,9 @@
         <link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
       	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/yui2.8/reset-fonts/reset-fonts.css' context='/egi'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/yui2.8/fonts/fonts-min.css' context='/egi'/>" />
-
-		<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 		<link href="<c:url value='/resources/css/modalbox.css'/>" rel="stylesheet" type="text/css"/>
 		
@@ -155,7 +152,23 @@
 		});
 		
 		jQuery('form').preventDoubleSubmission();
-	  
+
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy",
+				autoclose: true 
+			}); 
+
+			var d = new Date();
+			var currDate = d.getDate();
+			var currMonth = d.getMonth();
+			var currYear = d.getFullYear();
+			var startDate = new Date(currYear,currMonth,currDate);
+			jQuery('.today').datepicker('setDate',startDate);
+
+			}catch(e){
+			console.warn("No Date Picker");
+		}
 	  </script>
 	  
 	   

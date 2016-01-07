@@ -37,24 +37,62 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <div class="formmainbox">
-<div class="formheading"></div>
-<div class="subheadnew">Auto Remittance Payment Report</div>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<div class="formheading"></div>
+	<div class="subheadnew">Auto Remittance Payment Report</div>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
+	<script type="text/javascript"
+		src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+	<meta http-equiv="Content-Type"
+		content="text/html; charset=windows-1252">
 	<style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	</style>
-<script>  
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+</style>
+	<script>  
 function loadBank(fund){
 	if(fund.value!=-1){
 		populatebank({fundId:fund.options[fund.selectedIndex].value})   
@@ -213,101 +251,137 @@ function validateBank(){
 	
 </script>
 
-<s:form action="autoRemittanceReport" theme="simple" name="autoRemittanceReport">
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-	    <td class="bluebox" >Level:<span class="mandatory">*</span></td>
-	    <td class="bluebox">
-	    	<s:select name="level" id="level" list="#{'atdepartment':'At Department','atcoc':'At CoC'}"  headerKey="-1" headerValue="----Choose----" />
-	    </td>
-	    <td class="bluebox" ></td>
-	    <td class="bluebox"></td> 
-	</tr>
-	<tr>
-	    <td class="greybox" >Payment Voucher From date:</td>
-	    <td class="greybox">
-			<s:textfield name="paymentVoucherFromDate" id="paymentVoucherFromDate" cssStyle="width:100px" value='%{getFormattedDate(paymentVoucherFromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.paymentVoucherFromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-		<td class="greybox"></td>
-	       <td class="greybox" >Payment Voucher To date:</td>
-	    <td class="greybox">
-			<s:textfield name="paymentVoucherToDate" id="paymentVoucherToDate" cssStyle="width:100px" value='%{getFormattedDate(paymentVoucherToDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.paymentVoucherToDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	</tr>
-	<tr>
-	<td class="bluebox" >Department:</td>
-	    <td class="bluebox">
-	    	<s:select name="department" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" onChange="populateDO();"/><font color="red">This is mandate if Level is Department</font>
-	    </td>
-	    <td class="bluebox" >Remittance CoA:</td>
-		<td class="bluebox" >
-	    	<s:select name="recovery" id="recovery" list="dropdownData.recoveryList" listKey="id" listValue="type" headerKey="-1" headerValue="----Choose----" /><font color="red">This is mandate if Level is CoC</font>
-	    </td>
-	   
-	</tr>
-	<tr>
-		 <egov:ajaxdropdown id="drawingOfficerId" fields="['Text','Value']" dropdownId="drawingOfficerId" url="voucher/common!ajaxLoadDrawingOfficers.action" />
-	    <td class="greybox" >Drawing officer:</td>
-	    <td class="greybox">
-	    	<s:select name="drawingOfficer" id="drawingOfficerId" list="dropdownData.drawingList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" />
-	    </td> 
-	    <td class="greybox" >Contractor Code/Name:</td>
-	    <td class="greybox">
-	    	<input type="text" name="contractorCode" id="contractorCode" autocomplete="off"  onfocus='autocompleteEntities12By20(this,5);' onblur='splitEntitiesDetailCode(this);'/>
-	    </td>
-	</tr>
-	<tr>
-	    <td class="bluebox" >Supplier Code/Name:</td>
-	    <td class="bluebox">
-	    	<input type="text" name="supplierCode" id="supplierCode" autocomplete="off"  onfocus='autocompleteEntities12By20(this,2);' onblur='splitEntitiesDetailCode(this);'/>
-	    </td>
-	    <td class="bluebox" >Fund:</td>
-	    <td class="bluebox">
-	    	<s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="" headerValue="----Choose----" onChange="loadBank(this);"  value="%{fundId.id}" />
-	    </td>
-	</tr>
-	<tr>
-	    <td class="greybox" >RTGS Assigned From Date:</td>
-	    <td class="greybox">
-			<s:textfield name="rtgsAssignedFromDate" id="rtgsAssignedFromDate" cssStyle="width:100px" value='%{getFormattedDate(rtgsAssignedFromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('pendingTDSReport.rtgsAssignedFromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	    <td class="greybox" >RTGS Assigned To Date:</td>
-	    <td class="greybox">
-			<s:textfield name="rtgsAssignedToDate" id="rtgsAssignedToDate" cssStyle="width:100px" value='%{getFormattedDate(rtgsAssignedToDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('pendingTDSReport.rtgsAssignedToDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	</tr>
-	<tr>
-	 <egov:ajaxdropdown id="bank" fields="['Text','Value']" dropdownId="bank" url="voucher/common!ajaxLoadAllBanks.action" />
-	<td class="bluebox" >Bank:</td>
-	    <td class="bluebox">
-	    	<s:select name="bank" id="bank" list="dropdownData.bankList" listKey="bankBranchId" listValue="bankBranchName" headerKey="-1" headerValue="----Choose----" onclick="validateFund()" onChange="populateAccNumbers(this);" />
-	    </td>
-	    <egov:ajaxdropdown id="accountNumber" fields="['Text','Value']" dropdownId="accountNumber" url="voucher/common!ajaxLoadAccountNumbers.action" />
-	<td class="bluebox" >Account Number:</td>
-		<td class="bluebox">
-					<s:select  name="bankAccount" id="accountNumber" list="dropdownData.accNumList" listKey="id" listValue="accountnumber" headerKey="-1" headerValue="----Choose----" onclick="validateBank()"/>
-		</td>
-	</tr>
-	<tr>
-	<td class="greybox" >RTGS Number:</td>
-	    <td class="greybox">
-	    	<input type="text" name="instrumentnumber" id="instrumentnumber" autocomplete="off" onfocus='autocompleteRTGSNumbers(this);' />
-	    </td>
-	    <td class="greybox" ></td>
-	    <td class="greybox"></td>
-	</tr>
-</table>
-<br/>
-<div class="buttonbottom">
-  <input type="button" value="Search" class="buttonsubmit" onclick="return getData()"/>
-  &nbsp;
-	<s:reset name="button" type="submit" cssClass="button" id="button" value="Cancel"/>
-	<input type="button" value="Close" onclick="javascript: self.close()" Class="button"/>
-</div>
-<s:hidden name="detailKey" id="detailKey"></s:hidden>
-<div id="codescontainer"/>
-</s:form>
+	<s:form action="autoRemittanceReport" theme="simple"
+		name="autoRemittanceReport">
+		<table width="100%" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td class="bluebox">Level:<span class="mandatory">*</span></td>
+				<td class="bluebox"><s:select name="level" id="level"
+						list="#{'atdepartment':'At Department','atcoc':'At CoC'}"
+						headerKey="-1" headerValue="----Choose----" /></td>
+				<td class="bluebox"></td>
+				<td class="bluebox"></td>
+			</tr>
+			<tr>
+				<td class="greybox">Payment Voucher From date:</td>
+				<td class="greybox"><s:textfield name="paymentVoucherFromDate"
+						id="paymentVoucherFromDate" cssStyle="width:100px"
+						value='%{getFormattedDate(paymentVoucherFromDate)}'
+						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+					href="javascript:show_calendar('autoRemittanceReport.paymentVoucherFromDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+				</td>
+				<td class="greybox"></td>
+				<td class="greybox">Payment Voucher To date:</td>
+				<td class="greybox"><s:textfield name="paymentVoucherToDate"
+						id="paymentVoucherToDate" cssStyle="width:100px"
+						value='%{getFormattedDate(paymentVoucherToDate)}'
+						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+					href="javascript:show_calendar('autoRemittanceReport.paymentVoucherToDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+				</td>
+			</tr>
+			<tr>
+				<td class="bluebox">Department:</td>
+				<td class="bluebox"><s:select name="department" id="department"
+						list="dropdownData.departmentList" listKey="id"
+						listValue="deptName" headerKey="-1" headerValue="----Choose----"
+						onChange="populateDO();" /><font color="red">This is
+						mandate if Level is Department</font></td>
+				<td class="bluebox">Remittance CoA:</td>
+				<td class="bluebox"><s:select name="recovery" id="recovery"
+						list="dropdownData.recoveryList" listKey="id" listValue="type"
+						headerKey="-1" headerValue="----Choose----" /><font color="red">This
+						is mandate if Level is CoC</font></td>
+
+			</tr>
+			<tr>
+				<egov:ajaxdropdown id="drawingOfficerId" fields="['Text','Value']"
+					dropdownId="drawingOfficerId"
+					url="voucher/common!ajaxLoadDrawingOfficers.action" />
+				<td class="greybox">Drawing officer:</td>
+				<td class="greybox"><s:select name="drawingOfficer"
+						id="drawingOfficerId" list="dropdownData.drawingList" listKey="id"
+						listValue="name" headerKey="-1" headerValue="----Choose----" /></td>
+				<td class="greybox">Contractor Code/Name:</td>
+				<td class="greybox"><input type="text" name="contractorCode"
+					id="contractorCode" autocomplete="off"
+					onfocus='autocompleteEntities12By20(this,5);'
+					onblur='splitEntitiesDetailCode(this);' /></td>
+			</tr>
+			<tr>
+				<td class="bluebox">Supplier Code/Name:</td>
+				<td class="bluebox"><input type="text" name="supplierCode"
+					id="supplierCode" autocomplete="off"
+					onfocus='autocompleteEntities12By20(this,2);'
+					onblur='splitEntitiesDetailCode(this);' /></td>
+				<td class="bluebox">Fund:</td>
+				<td class="bluebox"><s:select name="fundId" id="fundId"
+						list="dropdownData.fundList" listKey="id" listValue="name"
+						headerKey="" headerValue="----Choose----"
+						onChange="loadBank(this);" value="%{fundId.id}" /></td>
+			</tr>
+			<tr>
+				<td class="greybox">RTGS Assigned From Date:</td>
+				<td class="greybox"><s:textfield name="rtgsAssignedFromDate"
+						id="rtgsAssignedFromDate" cssStyle="width:100px"
+						value='%{getFormattedDate(rtgsAssignedFromDate)}'
+						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+					href="javascript:show_calendar('pendingTDSReport.rtgsAssignedFromDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+				</td>
+				<td class="greybox">RTGS Assigned To Date:</td>
+				<td class="greybox"><s:textfield name="rtgsAssignedToDate"
+						id="rtgsAssignedToDate" cssStyle="width:100px"
+						value='%{getFormattedDate(rtgsAssignedToDate)}'
+						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+					href="javascript:show_calendar('pendingTDSReport.rtgsAssignedToDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+				</td>
+			</tr>
+			<tr>
+				<egov:ajaxdropdown id="bank" fields="['Text','Value']"
+					dropdownId="bank" url="voucher/common!ajaxLoadAllBanks.action" />
+				<td class="bluebox">Bank:</td>
+				<td class="bluebox"><s:select name="bank" id="bank"
+						list="dropdownData.bankList" listKey="bankBranchId"
+						listValue="bankBranchName" headerKey="-1"
+						headerValue="----Choose----" onclick="validateFund()"
+						onChange="populateAccNumbers(this);" /></td>
+				<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
+					dropdownId="accountNumber"
+					url="voucher/common!ajaxLoadAccountNumbers.action" />
+				<td class="bluebox">Account Number:</td>
+				<td class="bluebox"><s:select name="bankAccount"
+						id="accountNumber" list="dropdownData.accNumList" listKey="id"
+						listValue="accountnumber" headerKey="-1"
+						headerValue="----Choose----" onclick="validateBank()" /></td>
+			</tr>
+			<tr>
+				<td class="greybox">RTGS Number:</td>
+				<td class="greybox"><input type="text" name="instrumentnumber"
+					id="instrumentnumber" autocomplete="off"
+					onfocus='autocompleteRTGSNumbers(this);' /></td>
+				<td class="greybox"></td>
+				<td class="greybox"></td>
+			</tr>
+		</table>
+		<br />
+		<div class="buttonbottom">
+			<input type="button" value="Search" class="buttonsubmit"
+				onclick="return getData()" /> &nbsp;
+			<s:reset name="button" type="submit" cssClass="button" id="button"
+				value="Cancel" />
+			<input type="button" value="Close" onclick="javascript: self.close()"
+				Class="button" />
+		</div>
+		<s:hidden name="detailKey" id="detailKey"></s:hidden>
+		<div id="codescontainer" />
+	</s:form>
 </div>
 
-<div id="results">
-</div>
+<div id="results"></div>

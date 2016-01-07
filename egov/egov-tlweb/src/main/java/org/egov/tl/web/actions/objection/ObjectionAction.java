@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.objection;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,6 +85,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
     private LicenseStatusValues lsv;
     private LicenseObjection objection = new LicenseObjection();
     @Autowired
+@Qualifier("objectionService")
     protected ObjectionService objectionService;
     private License license;
     private String roleName;

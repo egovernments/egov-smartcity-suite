@@ -58,10 +58,13 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class AdvertisementBillable extends AbstractBillable implements Billable {
     private static final Logger LOGGER = Logger.getLogger(AdvertisementBillable.class);

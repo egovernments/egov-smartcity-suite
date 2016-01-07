@@ -37,6 +37,9 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<s:select list="budgetList"  listKey="id" listValue="name" name="budget" onchange="getSavedData();" value="model.budget.id" id="budgetDetail_budget" disabled="%{headerDisabled}" headerKey="0" headerValue="--- Select ---"></s:select>
+<s:select list="budgetList" listKey="id" listValue="name" name="budget"
+	onchange="getSavedData();" value="model.budget.id"
+	id="budgetDetail_budget" disabled="%{headerDisabled}" headerKey="0"
+	headerValue="--- Select ---"></s:select>

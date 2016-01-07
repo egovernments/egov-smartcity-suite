@@ -45,6 +45,7 @@
 		<th class="bluebgheadtd"><s:text name="FloorNo" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="ConstructionType" /><span class="mandatory1" id="constTypeMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span></th>
+		<th class="bluebgheadtd"><s:text name="firmName" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
@@ -82,10 +83,18 @@
 						name="property.propertyDetail.floorDetailsProxy[0].propertyUsage.id"
 						listKey="id" id="floorUsage"
 						value="%{property.propertyDetail.floorDetailsProxy[0].propertyUsage.id}"
-						listValue="usageName" list="dropdownData.UsageList"
+						listValue="usageName" list="dropdownData.UsageList" onchange="enableDisableFirmName(this);"
 						cssClass="selectnew"
 						cssStyle="width:100%" 
 						data-optional="0" data-errormsg="Nature of usage is required!"/>
+				</div>
+			</td>
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[0].firmName"
+						id="firmName" size="20"
+						value="%{property.propertyDetail.floorDetailsProxy[0].firmName}"
+						maxlength="32" cssStyle="width:100%"/>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -201,7 +210,7 @@
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
 								name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
-								listKey="id" id="floorUsage" listValue="usageName"
+								listKey="id" id="floorUsage" listValue="usageName" onchange="enableDisableFirmName(this);"
 								list="dropdownData.UsageList" cssClass="selectnew"
 								value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
@@ -211,14 +220,21 @@
 								headerValue="%{getText('default.select')}"
 								name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
 								listKey="id" id="floorUsage%{#floorsstatus.index-1}"
-								listValue="usageName" list="dropdownData.UsageList"
+								listValue="usageName" list="dropdownData.UsageList" onchange="enableDisableFirmName(this);"
 								cssClass="selectnew"
 								value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
 						</s:else>
 					</div>
 				</td>
-
+				<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].firmName"
+						id="firmName" size="25" maxlength="32"
+						value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].firmName}"
+						cssStyle="width:100%" />
+				</div>
+				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:select headerKey=""

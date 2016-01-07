@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,9 +51,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.model.instrument.InstrumentType;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 import org.egov.ptis.domain.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,11 +91,6 @@ public class DailyCollectionReportController {
         model.addAttribute("dailyCollectionReportResut", dailyCollectionReportResut);
     }
 
-    @ModelAttribute("instrumentTypes")
-    public List<InstrumentType> loadInstrumentTypes() {
-        return propertyTaxUtil.prepareInstrumentTypeList();
-    }
-
     @ModelAttribute("operators")
     public List<User> loadCollectionOperators() {
         return reportService.getCollectionOperators();
@@ -107,6 +104,7 @@ public class DailyCollectionReportController {
     @RequestMapping(method = RequestMethod.GET)
     public String seachForm(final Model model) {
         model.addAttribute("currDate", new Date());
+        model.addAttribute("collectionMode",Source.values());
         return DAILY_COLLECTION_FORM;
     }
 

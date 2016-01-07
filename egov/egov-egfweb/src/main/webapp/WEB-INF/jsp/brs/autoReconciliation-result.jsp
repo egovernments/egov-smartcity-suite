@@ -37,33 +37,47 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>AutoReconcilaition</title>
-    
-    </script>
+<html>
+<head>
+<title>AutoReconcilaition</title>
+
+</script>
 </head>
-	<body >
-	<s:form  action="autoReconciliation" theme="simple" name="arform">  
-	<s:hidden name="fromDate"/>
-	<s:hidden name="toDate"/>
-	<s:hidden name="accountId"/>
-	<s:hidden name="reconciliationDate"/>
-	<s:hidden name="branchId"/>
-	<s:hidden name="bankId"/>
-	<h3>Auto Reconciliation process Completed. <s:property value="rowCount"/> entries Processed  </h3>
-		<h3> <s:property value="count"/> entries succeeded ,<s:property value="rowCount-count"/> entries failed  </h3>
-	<br/>
-<div class="buttonbottom" id="buttondiv" align="center" >
-	<table>
-	<tr>	
-<td><input type="button" value="Close"  onclick="javascript:window.close()" class="button"/></td>
-<td><s:submit type="submit" cssClass="buttonsubmit" value="GenearateReport"  name="generateReport" method="generateReport" /></td>
-</tr></table></div>
-	
+<body>
+	<s:form action="autoReconciliation" theme="simple" name="arform">
+		<s:hidden name="fromDate" />
+		<s:hidden name="toDate" />
+		<s:hidden name="accountId" />
+		<s:hidden name="reconciliationDate" />
+		<s:hidden name="branchId" />
+		<s:hidden name="bankId" />
+		<h3>
+			Auto Reconciliation process Completed.
+			<s:property value="rowCount" />
+			entries Processed
+		</h3>
+		<h3>
+			<s:property value="count" />
+			entries succeeded ,
+			<s:property value="rowCount-count" />
+			entries failed
+		</h3>
+		<br />
+		<div class="buttonbottom" id="buttondiv" align="center">
+			<table>
+				<tr>
+					<td><input type="button" value="Close"
+						onclick="javascript:window.close()" class="button" /></td>
+					<td><s:submit type="submit" cssClass="buttonsubmit"
+							value="GenearateReport" name="generateReport"
+							method="generateReport" /></td>
+				</tr>
+			</table>
+		</div>
+
 	</s:form>
-	</body>  
+</body>
 
 </html>

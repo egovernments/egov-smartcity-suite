@@ -39,125 +39,174 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 <head>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 
 </head>
 <body onload="onloadTask();">
-<s:form  action="paymentReversal" theme="simple" name="cbtcform"  >
-	<s:push value="model">
-	<jsp:include page="../budget/budgetHeader.jsp">
-		<jsp:param value="Reverse Payment" name="heading"/>
-	</jsp:include>
-	<div class="formmainbox">
-		<div class="formheading"/>
-		<div class="subheadnew">Payment Details</div>
-		<div id="listid" style="display:block"><br/></div>
-		<div align="center">
-			<font  style='color: red ;'><p class="error-block" id="lblError" ></p></font>
-			<span class="mandatory">
-				<s:actionerror id="actionerror"/>  
-				<s:fielderror id="fielderror"/>
-				<s:actionmessage id="actionmessage"/>
-			</span>
-		</div>
-		
+	<s:form action="paymentReversal" theme="simple" name="cbtcform">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Reverse Payment" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Payment Details</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+				<div align="center">
+					<font style='color: red;'><p class="error-block"
+							id="lblError"></p></font> <span class="mandatory"> <s:actionerror
+							id="actionerror" /> <s:fielderror id="fielderror" /> <s:actionmessage
+							id="actionmessage" />
+					</span>
+				</div>
+
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  						<tr>
-  							<td width="9%" class="bluebox">&nbsp;</td>
-							<s:if test="%{shouldShowHeaderField('fund')}">
-								<td width="12%" class="bluebox"><strong><s:text name="voucher.fund"/></strong></td>
-								<td width="20%" class="bluebox"><s:property value="paymentHeader.voucherheader.fundId.name"/></td>
-							</s:if>
-							<s:if test="%{shouldShowHeaderField('fundsource')}">
-								<td width="17%" class="bluebox"><strong><s:text name="voucher.fundsource"/></strong></td>
-								<td width="33%" class="bluebox"><s:property value="paymentHeader.voucherheader.fundsourceId.name"/></td>
-							</s:if>
-						</tr>
-						<tr>
-							<td class="greybox">&nbsp;</td>
-							<s:if test="%{shouldShowHeaderField('department')}">
-								<td class="greybox"><strong><s:text name="voucher.department"/></strong></td>
-								<td class="greybox"><s:property value="paymentHeader.voucherheader.vouchermis.departmentid.deptName"/></td>
-							</s:if>
-							<s:if test="%{shouldShowHeaderField('functionary')}">
-								<td class="greybox"><strong><s:text name="voucher.functionary"/></strong></td>
-								<td class="greybox" colspan="2"><s:property value="paymentHeader.voucherheader.vouchermis.functionary.name"/></td>
-							</s:if>
-						</tr>
-						<tr>
-							<td class="bluebox">&nbsp;</td>
-							<s:if test="%{shouldShowHeaderField('scheme')}">
-								<td class="bluebox"><strong><s:text name="voucher.scheme"/></strong></td>
-								<td class="bluebox"><s:property value="paymentHeader.voucherheader.vouchermis.schemeid.name"/></td>
-							</s:if>
-							<s:if test="%{shouldShowHeaderField('subscheme')}">
-								<td class="bluebox"><strong><s:text name="voucher.subscheme"/></strong></td>
-								<td class="bluebox"><s:property value="paymentHeader.voucherheader.vouchermis.subschemeid.name"/></td>
-							</s:if>
-						</tr>
-						<tr>
-							<td class="greybox">&nbsp;</td>
-							<s:if test="%{shouldShowHeaderField('field')}">
-								<td class="greybox"><strong><s:text name="voucher.field"/></strong></td>
-								<td class="greybox" colspan="4"><s:property value="paymentHeader.voucherheader.vouchermis.divisionid.name"/></td>
-							</s:if>
-						</tr>
-						<tr>
-							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox"><strong><s:text name="payment.voucherno"/></strong></td>
-							<td class="bluebox"><s:property value="paymentHeader.voucherheader.voucherNumber"/></td>
-							<td class="bluebox"><strong><s:text name="payment.voucherdate"/></strong></td>
-							<td class="bluebox"><s:date name="paymentHeader.voucherheader.voucherDate"  format="dd/MM/yyyy"/></td>
-						</tr>
-						<tr>
-							<td class="greybox">&nbsp;</td>
-							<td class="greybox"><strong><s:text name="payment.bank"/></strong></td>
-							<td class="greybox"><s:property value="paymentHeader.bankaccount.bankbranch.bank.name"/>-<s:property value="paymentHeader.bankaccount.bankbranch.branchname"/></td>
-							<td class="greybox"><strong><s:text name="payment.bankaccount"/></strong></td>
-							<td class="greybox"  colspan="2"><s:property value="paymentHeader.bankaccount.accountnumber"/></td>
-						</tr>
-						<tr>
-							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox" width="15%"><strong><s:text name="payment.narration"/></strong></td>
-							<td class="bluebox" colspan="4"><s:property value="voucherHeader.description"/></td>
-						</tr>
-						<tr>
-							<td class="greybox">&nbsp;</td>
-							<td class="greybox"><strong><s:text name="payment.mode"/></strong></td>
-							<td class="greybox"><s:property value="paymentHeader.type"/></td>
-							<td class="greybox"><strong><s:text name="payment.amount"/></strong></td>
-							<td class="greybox" colspan="2"><s:text name="format.number" ><s:param value="%{paymentHeader.voucherheader.totalAmount}"/></s:text></td>
-						</tr>
-						<tr>
-							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox" ><strong>Comments</strong></td>
-							<td class="bluebox" colspan="4"><s:textarea name="comments" id="comments" cols="100" rows="3" onblur="checkLength(this)"/></td>
-						</tr>
-					  	</table>
-		<tr>
-			<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-				<td class="bluebox"><s:text name="reversalVoucherNumber"/><span class="mandatory">*</span></td>
-				<td class="bluebox"><s:textfield name="reverseVoucherNumber" id="reversalVoucherNumber" /></td>
-			</s:if>
-			<td class="bluebox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
-			<td class="bluebox"><s:textfield name="reverseVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('cbtcform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>	
+					<tr>
+						<td width="9%" class="bluebox">&nbsp;</td>
+						<s:if test="%{shouldShowHeaderField('fund')}">
+							<td width="12%" class="bluebox"><strong><s:text
+										name="voucher.fund" /></strong></td>
+							<td width="20%" class="bluebox"><s:property
+									value="paymentHeader.voucherheader.fundId.name" /></td>
+						</s:if>
+						<s:if test="%{shouldShowHeaderField('fundsource')}">
+							<td width="17%" class="bluebox"><strong><s:text
+										name="voucher.fundsource" /></strong></td>
+							<td width="33%" class="bluebox"><s:property
+									value="paymentHeader.voucherheader.fundsourceId.name" /></td>
+						</s:if>
+					</tr>
+					<tr>
+						<td class="greybox">&nbsp;</td>
+						<s:if test="%{shouldShowHeaderField('department')}">
+							<td class="greybox"><strong><s:text
+										name="voucher.department" /></strong></td>
+							<td class="greybox"><s:property
+									value="paymentHeader.voucherheader.vouchermis.departmentid.deptName" /></td>
+						</s:if>
+						<s:if test="%{shouldShowHeaderField('functionary')}">
+							<td class="greybox"><strong><s:text
+										name="voucher.functionary" /></strong></td>
+							<td class="greybox" colspan="2"><s:property
+									value="paymentHeader.voucherheader.vouchermis.functionary.name" /></td>
+						</s:if>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<s:if test="%{shouldShowHeaderField('scheme')}">
+							<td class="bluebox"><strong><s:text
+										name="voucher.scheme" /></strong></td>
+							<td class="bluebox"><s:property
+									value="paymentHeader.voucherheader.vouchermis.schemeid.name" /></td>
+						</s:if>
+						<s:if test="%{shouldShowHeaderField('subscheme')}">
+							<td class="bluebox"><strong><s:text
+										name="voucher.subscheme" /></strong></td>
+							<td class="bluebox"><s:property
+									value="paymentHeader.voucherheader.vouchermis.subschemeid.name" /></td>
+						</s:if>
+					</tr>
+					<tr>
+						<td class="greybox">&nbsp;</td>
+						<s:if test="%{shouldShowHeaderField('field')}">
+							<td class="greybox"><strong><s:text
+										name="voucher.field" /></strong></td>
+							<td class="greybox" colspan="4"><s:property
+									value="paymentHeader.voucherheader.vouchermis.divisionid.name" /></td>
+						</s:if>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><strong><s:text
+									name="payment.voucherno" /></strong></td>
+						<td class="bluebox"><s:property
+								value="paymentHeader.voucherheader.voucherNumber" /></td>
+						<td class="bluebox"><strong><s:text
+									name="payment.voucherdate" /></strong></td>
+						<td class="bluebox"><s:date
+								name="paymentHeader.voucherheader.voucherDate"
+								format="dd/MM/yyyy" /></td>
+					</tr>
+					<tr>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><strong><s:text
+									name="payment.bank" /></strong></td>
+						<td class="greybox"><s:property
+								value="paymentHeader.bankaccount.bankbranch.bank.name" />-<s:property
+								value="paymentHeader.bankaccount.bankbranch.branchname" /></td>
+						<td class="greybox"><strong><s:text
+									name="payment.bankaccount" /></strong></td>
+						<td class="greybox" colspan="2"><s:property
+								value="paymentHeader.bankaccount.accountnumber" /></td>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox" width="15%"><strong><s:text
+									name="payment.narration" /></strong></td>
+						<td class="bluebox" colspan="4"><s:property
+								value="voucherHeader.description" /></td>
+					</tr>
+					<tr>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><strong><s:text
+									name="payment.mode" /></strong></td>
+						<td class="greybox"><s:property value="paymentHeader.type" /></td>
+						<td class="greybox"><strong><s:text
+									name="payment.amount" /></strong></td>
+						<td class="greybox" colspan="2"><s:text name="format.number">
+								<s:param value="%{paymentHeader.voucherheader.totalAmount}" />
+							</s:text></td>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><strong>Comments</strong></td>
+						<td class="bluebox" colspan="4"><s:textarea name="comments"
+								id="comments" cols="100" rows="3" onblur="checkLength(this)" /></td>
+					</tr>
+				</table>
+				<tr>
+					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+						<td class="bluebox"><s:text name="reversalVoucherNumber" /><span
+							class="mandatory">*</span></td>
+						<td class="bluebox"><s:textfield name="reverseVoucherNumber"
+								id="reversalVoucherNumber" /></td>
+					</s:if>
+					<td class="bluebox"><s:text name="reversalVoucherDate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:textfield name="reverseVoucherDate"
+							id="reversalVoucherDate"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('cbtcform.reversalVoucherDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+				</tr>
 		</s:push>
-		<br/><br/>
-		<input type="hidden" name="voucherHeader.id" value='<s:property value="paymentHeader.voucherheader.id"/>' id="voucherHeaderId"/>
+		<br />
+		<br />
+		<input type="hidden" name="voucherHeader.id"
+			value='<s:property value="paymentHeader.voucherheader.id"/>'
+			id="voucherHeaderId" />
 		<div id="buttons">
-			<s:submit type="submit" cssClass="buttonsubmit" value="Reverse and View" method="saveReverse" id="reverse" onclick="return validate();"/>
-			<s:submit type="submit" cssClass="buttonsubmit" value="Reverse and Close" method="saveReverseAndClose" id="reverse" onclick="return validate();"/>
-			<s:submit value="Close" onclick="javascript: self.close()" id="button2" cssClass="button"/>
+			<s:submit type="submit" cssClass="buttonsubmit"
+				value="Reverse and View" method="saveReverse" id="reverse"
+				onclick="return validate();" />
+			<s:submit type="submit" cssClass="buttonsubmit"
+				value="Reverse and Close" method="saveReverseAndClose" id="reverse"
+				onclick="return validate();" />
+			<s:submit value="Close" onclick="javascript: self.close()"
+				id="button2" cssClass="button" />
 		</div>
 		<div id="resultGrid"></div>
-	</div>
-</s:form>
-<SCRIPT type="text/javascript">
+		</div>
+	</s:form>
+	<SCRIPT type="text/javascript">
 function onloadTask(){
 	var message = '<s:property value="message"/>';
 	var voucherHeaderId = <s:property value="voucherHeader.id"/>;

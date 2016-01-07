@@ -98,6 +98,10 @@
 		<build.number>${timestamp}</build.number>
 		<app.version>${project.version}</app.version>
 
+        <!-- Sonar properties -->
+        <sonar.exclusions>src/main/java/com/exilant/**/*</sonar.exclusions>
+        <sonar.dynamic>reuseReports</sonar.dynamic>
+
 		<!-- Application core dependency versions -->
 		<egov-search-version>1.0.2-SNAPSHOT</egov-search-version>
 
@@ -1161,7 +1165,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.7.1</version>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
@@ -1179,7 +1183,7 @@
 											jacoco-maven-plugin
 										</artifactId>
 										<versionRange>
-											[0.7.2.201409121644,)
+											[0.7.5.201505241946,)
 										</versionRange>
 										<goals>
 											<goal>prepare-agent</goal>
@@ -1261,7 +1265,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.2.201409121644</version>
+				<version>0.7.5.201505241946</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
@@ -1277,6 +1281,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<propertyName>coverageAgent</propertyName>
+				</configuration>
 			</plugin>
 
 			<plugin>

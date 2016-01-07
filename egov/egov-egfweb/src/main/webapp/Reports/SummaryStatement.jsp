@@ -57,7 +57,7 @@
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
 <script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
-<SCRIPT type="text/javascript" src="../commonjs/ajaxCommonFunctions.js"></Script>
+<SCRIPT type="text/javascript" src="../resources/javascript/ajaxCommonFunctions.js"></Script>
 
 <SCRIPT LANGUAGE="javascript">
 

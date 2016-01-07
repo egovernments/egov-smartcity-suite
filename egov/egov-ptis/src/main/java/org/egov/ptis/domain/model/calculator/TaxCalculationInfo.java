@@ -199,12 +199,12 @@ public abstract class TaxCalculationInfo {
 	}
 
 	@Override
-	public int hashCode() {
-		int hashCode = this.propertyOwnerName.hashCode() + this.propertyAddress.hashCode()
-				+ this.houseNumber.hashCode() + this.locality.hashCode() + this.zone.hashCode() + this.ward.hashCode()
-				+ this.totalTaxPayable.hashCode() + this.propertyType.hashCode() + this.propertyId.hashCode()
-				+ this.taxCalculationInfoXML.hashCode() + this.totalNetARV.hashCode();
-		return hashCode;
-	}
+    public int hashCode() {
+        int hashCode = this.propertyOwnerName.hashCode() + this.propertyAddress.hashCode()
+                + this.houseNumber.hashCode() + this.locality.hashCode() + this.zone.hashCode() + this.ward.hashCode()
+                + this.totalTaxPayable.hashCode() + this.propertyType.hashCode()
+                + this.taxCalculationInfoXML.hashCode() + this.totalNetARV.hashCode();
+        return hashCode;
+    }
 
 }

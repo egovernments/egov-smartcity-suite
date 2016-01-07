@@ -41,14 +41,18 @@
 package org.egov.wtms.web.controller.search;
 
 import static java.util.Arrays.asList;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+
 
 import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -58,7 +62,9 @@ import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
+import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.search.sort.SortOrder;
@@ -85,6 +91,9 @@ public class WaterTaxSearchController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     @Autowired
     public WaterTaxSearchController(final SearchService searchService, final CityService cityService) {
@@ -239,6 +248,12 @@ public class WaterTaxSearchController {
             }
         return userRole;
     }
+  
+    public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
+        return  boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
+    }
+   
 
     @RequestMapping(method = RequestMethod.GET)
     public String newSearchForm(final Model model) {

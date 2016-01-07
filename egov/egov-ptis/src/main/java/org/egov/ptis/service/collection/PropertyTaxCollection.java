@@ -144,7 +144,7 @@ public class PropertyTaxCollection extends TaxCollection {
             LOGGER.info("updateDemandDetails : Demand after processed : " + demand);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage());
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
         LOGGER.debug("updateDemandDetails : Updating Demand Details Finished...");
     }

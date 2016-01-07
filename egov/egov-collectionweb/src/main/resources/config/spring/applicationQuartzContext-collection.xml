@@ -50,8 +50,8 @@
 		<property name="schedulerName" value="collection-scheduler"/>
 		<property name="triggers">
 	    	<list>
-				<!-- <ref bean="bouncedChqInstrCronTrigger" />
-				<ref bean="axisReconciliationCronTrigger" />-->
+				<!-- <ref bean="bouncedChqInstrCronTrigger" />-->
+				<ref bean="axisReconciliationCronTrigger" />
 	    	</list>
 		</property>	
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-collection" />   
@@ -116,7 +116,7 @@
         <property name="jobDetail" ref="axisReconciliationJobScheduler" />
         <property name="group" value="COLLECTION_TRIGGER_GROUP"/>
 		<property name="name" value="Axis Reconciliation Trigger"/>
-       	<property name="cronExpression" value="0 */3 * * * ?"/>
+       	<property name="cronExpression" value="0 */30 * * * ?"/>
        	<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
      </bean>
      

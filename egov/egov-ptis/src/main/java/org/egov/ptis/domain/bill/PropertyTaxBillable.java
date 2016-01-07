@@ -142,15 +142,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
-    // 1st installment starting month
-    private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(01).withMonthOfYear(04);
-    // 2nd installment starting month
-    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(10).withDayOfMonth(01);  
-    //1st installment month after grace period
-    private final DateTime PENALTY_EFFECTIVE_DATE_CUR_FIRST_HALF_JULY = new DateTime().withDayOfMonth(01).withMonthOfYear(07);
-    //2nd installment month after grace period 
-    private final DateTime PENALTY_EFFECTIVE_DATE_CUR_SECOND_HALF_JAN = new DateTime().withMonthOfYear(01).withDayOfMonth(01);     
-
 
     @Autowired
     private RebatePeriodService rebatePeriodService;
@@ -368,7 +359,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Override
     public BigDecimal calculatePenalty(final Date latestCollReceiptDate, final Date fromDate, final BigDecimal amount) {
         BigDecimal penalty = BigDecimal.ZERO;
-        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date())-1;
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
         penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
                 BIGDECIMAL_100);
         return MoneyUtils.roundOff(penalty);
@@ -466,7 +457,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         /**
          * Not calculating penalty if collection is happening within two months from the assessment date
          */
-        if (noOfMonths <= 2) {
+        if (noOfMonths <= 3) {
         	return installmentPenaltyAndRebate;
         }
     	
@@ -532,42 +523,38 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
             final Date assmentDate, final Installment curInstallment) {
-        final DateTime installmentDate = new DateTime(installment.getFromDate());
-        final DateTime installmentToDate = new DateTime(installment.getToDate());
-        final DateTime firstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_FIRST_HALF.toDate())
-                .withYear(installmentDate.getYear());
-        final DateTime secondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_SECOND_HALF.toDate())
-                .withYear(installmentDate.getYear());
-        
-        final DateTime curFirstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_CUR_FIRST_HALF_JULY.toDate())
-        .withYear(installmentDate.getYear());
-        final DateTime curSecondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_CUR_SECOND_HALF_JAN.toDate())
-        .withYear(installmentToDate.getYear());
-
+        Date penaltyEffDate = null;
         /**
-         * If assessment date falls in the installment on which penalty is being
-         * calculated then penalty calculation will be effective from two months
-         * after the assessment date
+         * If assessment date falls in the current installment then penalty calculation will be effective from three months after
+         * the assessment date
          */
-        if (installment.equals(assessmentEffecInstallment)) {
-            final Calendar penalyDate = Calendar.getInstance();
-            penalyDate.setTime(assmentDate);
-            penalyDate.add(Calendar.MONTH, 0); // Calculate penalty starting from the assessment month
-            penalyDate.set(Calendar.DAY_OF_MONTH, 1);
-            return penalyDate.getTime();
-        } else if (propertyTaxUtil
-                .between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate())){
-            if(installment.equals(curInstallment))
-                return curFirstHalfPeriod.toDate();
-            else 
-                return firstHalfPeriod.toDate();
+        if (null != assessmentEffecInstallment && assessmentEffecInstallment.equals(curInstallment)) {
+            penaltyEffDate = penalyDateWithThreeMonths(assmentDate);
+        } else {
+            /*
+             * For all the passed installment penalty starts from 4th month of the respective installment. If its a current
+             * installment, first 3 months there is no peanlty from 4th month onwards penalty effective from 4th month of the
+             * installment
+             */
+            if (installment.equals(curInstallment)) {
+                final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
+                if (noOfMonths > 3) {
+                    penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
+                } else
+                    penaltyEffDate = new Date();
+            } else {
+                penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
+            }
         }
-        else{
-            if(installment.equals(curInstallment))
-                return curSecondHalfPeriod.toDate(); 
-            else 
-                return secondHalfPeriod.toDate();
-        }
+        return penaltyEffDate;
+    }
+
+    private Date penalyDateWithThreeMonths(final Date date) {
+        final Calendar penalyDate = Calendar.getInstance();
+        penalyDate.setTime(date);
+        penalyDate.add(Calendar.MONTH, 3);
+        penalyDate.set(Calendar.DAY_OF_MONTH, 1);
+        return penalyDate.getTime();
     }
 
     @Override

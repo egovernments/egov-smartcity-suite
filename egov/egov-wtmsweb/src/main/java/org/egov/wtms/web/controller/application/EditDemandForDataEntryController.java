@@ -118,7 +118,8 @@ public class EditDemandForDataEntryController {
         List<Installment> allInstallments = new ArrayList<Installment>();
         final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
-            allInstallments = waterTaxUtils.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
+         //   allInstallments = waterTaxUtils.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
+            allInstallments = waterTaxUtils.getInstallmentListByStartDate(dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
         } catch (final ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }

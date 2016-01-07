@@ -37,12 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title><s:text name="fund.create"/></title>
-     <script type="text/javascript">
+<html>
+<head>
+<title><s:text name="fund.create" /></title>
+<script type="text/javascript">
 
      function openSearch(obj, val)
      {
@@ -94,24 +94,30 @@
 </script>
 </head>
 <body onload="onLoadTask();">
-	<div class="formmainbox"><div class="subheadnew"><s:text name="fund.create"/></div>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="fund.create" />
+		</div>
 		<div style="color: red">
-		<s:actionmessage theme="simple"/>
-		<s:actionerror/>  
-		<s:fielderror />
-		</div>  
-		<s:form name="fundForm" action="fund" theme="simple" >
+			<s:actionmessage theme="simple" />
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+		<s:form name="fundForm" action="fund" theme="simple">
 			<%@include file="fund-form.jsp"%>
-		<div class="buttonbottom"> 
-			<s:submit name="create" value="Save & New" method="create" cssClass="buttonsubmit" onclick="javascript: return validate();"/>
-			<s:submit name="create" value="Save & Close" method="create" cssClass="buttonsubmit" onclick="validate();setClose();"/>
-			<s:hidden name="close" id="close"/>
-			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
-			<input type="hidden" name="tableName" id="tableName" value="fund"/>
-		</div>
-		</div>
-		<s:token/>
-		</s:form>
+			<div class="buttonbottom">
+				<s:submit name="create" value="Save & New" method="create"
+					cssClass="buttonsubmit" onclick="javascript: return validate();" />
+				<s:submit name="create" value="Save & Close" method="create"
+					cssClass="buttonsubmit" onclick="validate();setClose();" />
+				<s:hidden name="close" id="close" />
+				<input type="button" id="Close" value="Close"
+					onclick="javascript:window.close()" class="button" /> <input
+					type="hidden" name="tableName" id="tableName" value="fund" />
+			</div>
+	</div>
+	<s:token />
+	</s:form>
 	</div>
 	<script type="text/javascript">
 		<s:if test="%{clearValues == true}">
@@ -122,6 +128,6 @@
 			document.getElementById('chartofaccountsByPayglcodeid.name').value = "";
 			document.forms[0].isactive.checked=false;
 		</s:if>
-	</script>  
+	</script>
 </body>
 </html>

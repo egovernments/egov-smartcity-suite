@@ -186,4 +186,44 @@
     	<put-attribute name="body" value="/WEB-INF/views/reports/dailyCollection-form.jsp"/>
     </definition>
     
+    <definition name="addArrears-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.addArrears.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/dataentry/addArrears-form.jsp"/>
+    </definition>
+    
+    <definition name="addArrears-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.addArrears.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/dataentry/addArrears-success.jsp"/>
+    </definition>
+    
+    <definition name="floorType-main" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/floor/floorType-main.jsp"/>
+    </definition>
+    
+    <definition name="floorType-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/floor/floorType-form.jsp"/>
+    </definition>
+    
+    <definition name="floorType-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/floor/floorType-view.jsp"/>
+    </definition>
+    
+    <definition name="wallType-main" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg1" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-main.jsp"/>
+    </definition>
+    
+    <definition name="wallType-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg1" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-form.jsp"/>
+    </definition>
+    
+    <definition name="wallType-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.show.msg1" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-view.jsp"/>
+    </definition>
+    
 </tiles-definitions>

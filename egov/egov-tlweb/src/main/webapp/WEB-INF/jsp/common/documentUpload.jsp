@@ -75,10 +75,10 @@
     <div class="panel-title">Enclosed Documents</div>
 </div>
 <div class="col-sm-12 view-content header-color hidden-xs">
-	<div class="col-sm-1 table-div-column"><s:text name="doctable.sno" /></div>
-    <div class="col-sm-5 table-div-column"><s:text name="doctable.docname" /></div>
-    <div class="col-sm-3 table-div-column"><s:text name="doctable.checklist"/></div>
-    <div class="col-sm-3 table-div-column"><s:text name="doctable.attach.doc" /></div>	
+	<div class="col-sm-1 text-center"><s:text name="doctable.sno" /></div>
+    <div class="col-sm-5 text-center"><s:text name="doctable.docname" /></div>
+    <div class="col-sm-3 text-center"><s:text name="doctable.checklist"/></div>
+    <div class="col-sm-3 text-center"><s:text name="doctable.attach.doc" /></div>	
 </div>
 <table class="table" id="docAttachmentTab">  
 <s:iterator value="documentTypes" status="status" var="documentType">
@@ -124,7 +124,7 @@
 				</s:iterator>	
 			</s:else>
 			<form:errors path="documents[%{#status.index}].files" cssClass="add-margin error-msg" />
-			<div class="add-margin error-msg" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
+			<div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div>
        	</div>
    	</div>
 </td></tr> 

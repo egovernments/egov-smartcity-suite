@@ -46,10 +46,10 @@
 	
 	<context:component-scan base-package="org.egov.adtax" />
 	
-    <bean id="advertisementDemandService" class="org.egov.adtax.service.AdvertisementDemandService" scope="prototype">
+    <bean id="advertisementDemandService" class="org.egov.adtax.service.AdvertisementDemandService">
 	</bean>
 	
-     <bean id="ADTAXCollectionsInterface" class="org.egov.adtax.service.collection.AdvertisementTaxCollection" scope="prototype">
+     <bean id="ADTAXCollectionsInterface" class="org.egov.adtax.service.collection.AdvertisementTaxCollection" >
    </bean>
    
 </beans>

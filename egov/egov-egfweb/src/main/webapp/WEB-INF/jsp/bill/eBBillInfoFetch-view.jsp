@@ -37,14 +37,13 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>
-	<%@ include file='billInfoFetchTitle.jsp'%> 
+<title><%@ include file='billInfoFetchTitle.jsp'%>
 </title>
 <sx:head />
 <script type="text/javascript">
@@ -71,8 +70,9 @@
 					style="text-align: right; font-weight: bold;"><s:text
 						name="monthAndYear" /> :</td>
 				<td width="25%" class="greybox" style="text-align: left;">
-					&nbsp;&nbsp;&nbsp;&nbsp;<s:property value="monthAndYear" default="NA" />
-					<s:hidden name="monthAndYear" value="%{monthAndYear}" />
+					&nbsp;&nbsp;&nbsp;&nbsp;<s:property value="monthAndYear"
+						default="NA" /> <s:hidden name="monthAndYear"
+						value="%{monthAndYear}" />
 				</td>
 				<td width="25%" class="greybox"
 					style="text-align: right; font-weight: bold;"><s:text
@@ -104,17 +104,26 @@
 
 		<table align="center" width="100%" cellspacing="0" class="tablebottom">
 			<tr>
-				<th class="bluebgheadtd" style='width: 2%; text-align: center;'><s:text name="slNo" /></th>
-				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text name="consumerNo" /></th>
-				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text name="accountNo" /></th>
-				<th class="bluebgheadtd" style='width: 15%; text-align: center;'><s:text name="ward" /></th>
-				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text name="prevBillAmount" /></th>
-				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text name="currBillAmount" /></th>
-				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text name="variance" /></th>
-				<th class="bluebgheadtd" style='width: 15%; text-align: center;'><s:text name="remarks" /></th>
+				<th class="bluebgheadtd" style='width: 2%; text-align: center;'><s:text
+						name="slNo" /></th>
+				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text
+						name="consumerNo" /></th>
+				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text
+						name="accountNo" /></th>
+				<th class="bluebgheadtd" style='width: 15%; text-align: center;'><s:text
+						name="ward" /></th>
+				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text
+						name="prevBillAmount" /></th>
+				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text
+						name="currBillAmount" /></th>
+				<th class="bluebgheadtd" style='width: 5%; text-align: center;'><s:text
+						name="variance" /></th>
+				<th class="bluebgheadtd" style='width: 15%; text-align: center;'><s:text
+						name="remarks" /></th>
 				<th class="bluebgheadtd" style='width: 10%; text-align: center;'>
-					<s:text name="select" /><br/>
-					<input type="checkbox" id="selectAll" onclick="toggleCheckboxes();" style="padding:0px;"> Select All
+					<s:text name="select" /><br /> <input type="checkbox"
+					id="selectAll" onclick="toggleCheckboxes();" style="padding: 0px;">
+					Select All
 				</th>
 			</tr>
 
@@ -176,11 +185,9 @@
 						style='width:5%;text-align:right;color:<s:property value="%{#rowColor}" />;'>
 						<s:if test="%{ebDetailsList[#ebDetails.index].variance == 0}">
 							NA
-						</s:if>
-						<s:else>
+						</s:if> <s:else>
 							<s:property value="%{ebDetailsList[#ebDetails.index].variance}" />%
-						</s:else>
-						<s:hidden id='variance%{#ebDetails.index}'
+						</s:else> <s:hidden id='variance%{#ebDetails.index}'
 							name="ebDetailsList[%{#ebDetails.index}].variance"
 							value="%{ebDetailsList[#ebDetails.index].variance}" />
 					</td>
@@ -195,7 +202,8 @@
 						style='width:10%;text-align:center;color:<s:property value="%{#rowColor}" />;'>
 						<s:checkbox id="checkbox%{#ebDetails.index}"
 							name="ebDetailsList[%{#ebDetails.index}].isProcess"
-							value="%{#ebDetailsList[#ebDetails.index].isProcess}" onclick="toggleCheck(this.id);"/>
+							value="%{#ebDetailsList[#ebDetails.index].isProcess}"
+							onclick="toggleCheck(this.id);" />
 					</td>
 				</tr>
 			</s:iterator>
@@ -222,50 +230,51 @@
 			<s:hidden name="nextLevel" id="nextLevel" value="%{getNextAction()}"></s:hidden>
 			<s:hidden name="actionName" id="actionName"></s:hidden>
 			<div>
-			<s:if test="%{getNextAction() == 'END'}">
-				<div>
-					<table align="center" width="100%" cellspacing="0">
-						<tr>
-							<td width="25%" class="greybox" style="text-align: center;"
-								colspan="2"><span style="font-weight: bold;">Date :
-							</span> <s:date format="dd/MM/yyyy" name="%{todaysDate}" /></td>
-							<td width="25%" class="greybox" style="text-align: center;">
-								<span style="font-weight: bold;"><s:text
-										name="expenseCode" /> :</span> <s:property
-									value="%{@org.egov.eb.utils.EBConstants@BILL_DEBIT_GLCODE_ELECTRICITY}" />
-							</td>
-							<td width="25%" class="greybox" style="text-align: center;">
-								<span style="font-weight: bold;"><s:text
-										name="netPayableCode" /> : </span> <s:property
-									value="%{@org.egov.eb.utils.EBConstants@BILL_CREDIT_GLCODE}" />
-							</td>
-						</tr>
-					</table>
-				</div>
-			</s:if>
-			<s:if test="%{nextLevel!='END'}">
-				<%@ include file="/WEB-INF/jsp/payment/commonWorkflowMatrix.jsp"%>
-			</s:if>
-			</div> 
+				<s:if test="%{getNextAction() == 'END'}">
+					<div>
+						<table align="center" width="100%" cellspacing="0">
+							<tr>
+								<td width="25%" class="greybox" style="text-align: center;"
+									colspan="2"><span style="font-weight: bold;">Date :
+								</span> <s:date format="dd/MM/yyyy" name="%{todaysDate}" /></td>
+								<td width="25%" class="greybox" style="text-align: center;">
+									<span style="font-weight: bold;"><s:text
+											name="expenseCode" /> :</span> <s:property
+										value="%{@org.egov.eb.utils.EBConstants@BILL_DEBIT_GLCODE_ELECTRICITY}" />
+								</td>
+								<td width="25%" class="greybox" style="text-align: center;">
+									<span style="font-weight: bold;"><s:text
+											name="netPayableCode" /> : </span> <s:property
+										value="%{@org.egov.eb.utils.EBConstants@BILL_CREDIT_GLCODE}" />
+								</td>
+							</tr>
+						</table>
+					</div>
+				</s:if>
+				<s:if test="%{nextLevel!='END'}">
+					<%@ include file="/WEB-INF/jsp/payment/commonWorkflowMatrix.jsp"%>
+				</s:if>
+			</div>
 			<div class="buttonbottom" align="center">
 
 				<table id="ebDetailTable" align="center" border="0" cellpadding="0"
-								cellspacing="0" width="100%">
-								<tr>
-									<s:iterator value="%{getValidActions()}" var="name">
-										<s:if test="%{name!=''}">
-											<s:submit type="submit" cssClass="buttonsubmit"
-												value="%{name}" id="%{name}" name="%{name}" method="save"
-												onclick="return populateActionName('%{name}');" />
-										</s:if>
-									</s:iterator>
-									<input type="button" value="Close"	onclick="javascript:window.close();" class="button" />
-								</tr>
-				
-			</div>
-		</s:elseif>
-	</s:form>
-	<script type="text/javascript">
+					cellspacing="0" width="100%">
+					<tr>
+						<s:iterator value="%{getValidActions()}" var="name">
+							<s:if test="%{name!=''}">
+								<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
+									id="%{name}" name="%{name}" method="save"
+									onclick="return populateActionName('%{name}');" />
+							</s:if>
+						</s:iterator>
+						<input type="button" value="Close"
+							onclick="javascript:window.close();" class="button" />
+					</tr>
+
+					</div>
+					</s:elseif>
+					</s:form>
+					<script type="text/javascript">
 		
 		var size = parseInt('<s:property value="%{ebDetailsList.size}" />');
 	

@@ -1391,7 +1391,9 @@ function onBodyLoad()
 }
 
 function displayPaymentDetails(){
-if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
+	var collectionamount = parseFloat(document.getElementById("totalamounttobepaid").value);;
+	document.getElementById("totalamounttobepaid").value=isNaN(collectionamount)?collectionamount:collectionamount.toFixed(2);
+	if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
 		document.getElementById('bankradiobutton').checked=true;
 		document.getElementById('bankdetails').style.display='table-row';
        	document.getElementById('instrumentTypeCashOrCard').value="bank";

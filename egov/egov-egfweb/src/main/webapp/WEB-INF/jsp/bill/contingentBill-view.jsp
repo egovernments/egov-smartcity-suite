@@ -38,39 +38,80 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <html>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
-<title><s:text name="contingent.bill"/></title>
-<sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<title><s:text name="contingent.bill" /></title>
+<sx:head />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
 
 
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-
-
-
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<style type="text/css">
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
 }
 
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+}
 .yui-dt7-col-name .yui-dt-liner {
-overflow:hidden;
-width:560px;
+	overflow: hidden;
+	width: 560px;
 }
 </style>
 
@@ -456,121 +497,144 @@ function printPreview(){
 
 </script>
 </head>
-<body  >
-<s:form action="contingentBill" theme="css_xhtml" name="cbill" >
-<s:token/>     
-<s:push value="model">
-<div class="tabber" id="main" align="left">
-<div class="tabbertab" id=maintab >
-<h2>Header</h2>
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Contingent Bill" name="heading"/>
-</jsp:include>
-<div class="formmaininbox"><div class="formheading"/><div class="subheadnew"><s:text name="contingent.bill"/></div></div>
-<center>
-<span class="mandatory">
-<div id="Errors"><s:actionerror/><s:fielderror/></div>
-<s:actionmessage/>
-</span>
-</center>
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-<tr> 
-<td class="bluebox"></td>
-<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory1"> *</span></td>
-<td class="bluebox"><s:textfield name="commonBean.billNumber"/></td>
-<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory1"> *</span></td>
-<s:date name='commonBean.billDate' id="commonBean.billDateId" format='dd/MM/yyyy'/>
-<td class="bluebox"><s:textfield name="commonBean.billDate"  id="billDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.billDateId}"/>
-	<a tabindex="-1" href="javascript:show_calendar('cbill.billDate');"	style="text-decoration: none">&nbsp;<img 
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A></td>
-</tr>
-<%@include file="contingentBill-form.jsp"%>
-</table>
-<br/>
-<div align="center" style="font-family:arial; font-size:12pt;">
-<s:property value="sanctionedMessge" escape="false"/>
-</div>
-<br/>
-</div>
-</div>
-<div class="tabbertab" id="checkList">
-<h2>Check List</h2>
- 				<div class="yui-skin-sam" align="center">
-					<div id="checkListTable"></div>
+<body>
+	<s:form action="contingentBill" theme="css_xhtml" name="cbill">
+		<s:token />
+		<s:push value="model">
+			<div class="tabber" id="main" align="left">
+				<div class="tabbertab" id=maintab>
+					<h2>Header</h2>
+					<jsp:include page="../budget/budgetHeader.jsp">
+						<jsp:param value="Contingent Bill" name="heading" />
+					</jsp:include>
+					<div class="formmaininbox">
+						<div class="formheading" />
+						<div class="subheadnew">
+							<s:text name="contingent.bill" />
+						</div>
 					</div>
-				
-					<script>
+					<center>
+						<span class="mandatory">
+							<div id="Errors">
+								<s:actionerror />
+								<s:fielderror />
+							</div> <s:actionmessage />
+						</span>
+					</center>
+					<table border="0" width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td class="bluebox"></td>
+							<td class="bluebox"><s:text name="bill.Number" /><span
+								class="mandatory1"> *</span></td>
+							<td class="bluebox"><s:textfield
+									name="commonBean.billNumber" /></td>
+							<td class="bluebox"><s:text name="bill.Date" /><span
+								class="mandatory1"> *</span></td>
+							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+								format='dd/MM/yyyy' />
+							<td class="bluebox"><s:textfield name="commonBean.billDate"
+									id="billDate"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									value="%{commonBean.billDateId}" /> <a tabindex="-1"
+								href="javascript:show_calendar('cbill.billDate');"
+								style="text-decoration: none">&nbsp;<img
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+						</tr>
+						<%@include file="contingentBill-form.jsp"%>
+					</table>
+					<br />
+					<div align="center" style="font-family: arial; font-size: 12pt;">
+						<s:property value="sanctionedMessge" escape="false" />
+					</div>
+					<br />
+				</div>
+			</div>
+			<div class="tabbertab" id="checkList">
+				<h2>Check List</h2>
+				<div class="yui-skin-sam" align="center">
+					<div id="checkListTable"></div>
+				</div>
+
+				<script>
 			   	makeCheckListTable();
 			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
 	</script>
 
 
-</div>
-</div>
-<s:if test="%{mode=='approve'}">
-<div align='center'>
-<font  style='color: red ;align'> 
-<p class="error-block" id="lblError" style="font:bold" ></p>
-</font></div>
+			</div>
+			</div>
+			<s:if test="%{mode=='approve'}">
+				<div align='center'>
+					<font style='color: red;'>
+						<p class="error-block" id="lblError" style="font: bold"></p>
+					</font>
+				</div>
 
-<div id="apporoverSelection"  style="display:none">
-<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
-	<%@include file="../voucher/workflowApproval-contingent.jsp"%>
-</s:if>
-</div>
+				<div id="apporoverSelection" style="display: none">
+					<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
+						<%@include file="../voucher/workflowApproval-contingent.jsp"%>
+					</s:if>
+				</div>
 
-<div align="center">
-		<table border="0" width="100%">
-			<tr>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="150" rows="3" onblur="checkLength(this)" value="%{getComments()}"/></td>
-			</tr>
-			<br/>
-		</table>
-</div>
-<div id="wfHistoryDiv">
-	  	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
-	        <c:param name="stateId" value="${commonBean.stateId}"></c:param>
-        </c:import>
-</div>
-	<s:hidden name="nextLevel" id="nextLevel"></s:hidden>
-	<s:hidden name="actionName" id="actionName"></s:hidden>
-	<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
-	<div class="buttonbottom" >
-	
-<table border="0" cellspacing="0" align="center" ><tr></tr>
-	<tr >
-	  	
-			<s:iterator value="%{validButtons}" var="p"><td>
-		  		<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="update" onclick="return validate('%{name}','%{description}');  "/></td>
-			</s:iterator>
-		<td>
-				
-		</td>
-		<td>
-				<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/>
-		</td>
-			</tr>
-</table>
-</div>
-</s:if>
-<s:else>
-	<div id="wfHistoryDiv">
-	  	<%-- <c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
+				<div align="center">
+					<table border="0" width="100%">
+						<tr>
+							<td class="bluebox">Comments</td>
+							<td class="bluebox"><s:textarea name="comments"
+									id="comments" cols="150" rows="3" onblur="checkLength(this)"
+									value="%{getComments()}" /></td>
+						</tr>
+						<br />
+					</table>
+				</div>
+				<div id="wfHistoryDiv">
+					<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
+						context="/egi">
+						<c:param name="stateId" value="${commonBean.stateId}"></c:param>
+					</c:import>
+				</div>
+				<s:hidden name="nextLevel" id="nextLevel"></s:hidden>
+				<s:hidden name="actionName" id="actionName"></s:hidden>
+				<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
+				<div class="buttonbottom">
+
+					<table border="0" cellspacing="0" align="center">
+						<tr></tr>
+						<tr>
+
+							<s:iterator value="%{validButtons}" var="p">
+								<td><s:submit type="submit" cssClass="buttonsubmit"
+										value="%{description}" id="%{name}" name="%{name}"
+										method="update"
+										onclick="return validate('%{name}','%{description}');  " /></td>
+							</s:iterator>
+							<td></td>
+							<td><input type="button" id="closeButton" value="Close"
+								onclick="javascript:window.close()" class="button" /></td>
+						</tr>
+					</table>
+				</div>
+			</s:if>
+			<s:else>
+				<div id="wfHistoryDiv">
+					<%-- <c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
 	        <c:param name="stateId" value="${commonBean.stateId}"></c:param>
         </c:import> --%>
-	</div>
-	<table border="0" cellspacing="0" align="center" ><tr></tr>
-		<tr>
-			<td><input type="button" id="print" value="Print Preview" onclick="printPreview()" class="button"/>
-			<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/></td>
-		</tr>
-	</table>
-</s:else>
-</s:push>
-</s:form>
+				</div>
+				<table border="0" cellspacing="0" align="center">
+					<tr></tr>
+					<tr>
+						<td><input type="button" id="print" value="Print Preview"
+							onclick="printPreview()" class="button" /> <input type="button"
+							id="closeButton" value="Close"
+							onclick="javascript:window.close()" class="button" /></td>
+					</tr>
+				</table>
+			</s:else>
+		</s:push>
+	</s:form>
 
-<script>
+	<script>
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
 var net=document.getElementById('billDetailsTableNet[0].glcodeDetail');
 var i=0;
@@ -654,5 +718,5 @@ document.getElementById("departmentid").value=<s:property value="primaryDepartme
 
 </script>
 
-</body>  
+</body>
 </html>

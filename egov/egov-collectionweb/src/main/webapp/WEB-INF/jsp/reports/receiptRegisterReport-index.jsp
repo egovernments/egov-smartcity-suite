@@ -187,10 +187,10 @@
 			<label> <s:submit type="submit" cssClass="buttonsubmit"
 					id="button" value="%{getText('collectionReport.create')}"
 					onclick="return validate();" />
-			</label>&nbsp; <label> <s:reset type="submit" cssClass="button"
+			</label> <label> <s:reset type="submit" cssClass="button"
 					value="%{getText('collectionReport.reset')}"
 					onclick="return clearErrors();" />
-			</label>&nbsp; <label> <s:submit type="submit" cssClass="button"
+			</label> <label> <s:submit type="submit" cssClass="button"
 					value="Close" onclick="window.close()" />
 			</label>
 		</div>

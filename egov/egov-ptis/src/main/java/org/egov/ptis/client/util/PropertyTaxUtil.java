@@ -105,6 +105,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.CFinancialYear;
@@ -1988,14 +1989,14 @@ public class PropertyTaxUtil {
             if (transMode != null && !transMode.equals("") && !transMode.equals("-1")) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Transaction Mode = " + transMode);
-                srchQryStr = srchQryStr + "and cs.paymentMode ='" + transMode + "' ";
+                srchQryStr = srchQryStr + "and (cs.paymentMode ='" + transMode + "' OR cs.paymentMode like '%' || '"+transMode+"' || '%')";
             }
             if (mode.equals(USAGEWISE)) {
                 if (propTypeCategoryId != null && !propTypeCategoryId.equals("") && !propTypeCategoryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Transaction Mode = " + transMode);
                     srchQryStr = srchQryStr
-                            + "and  EXISTS (select floor.propertyDetail from Floor floor where floor.propertyDetail = cs.property.propertyDetail and floor.propertyUsage = '"
+                            + "and cs.property.propertyDetail in (select floor.propertyDetail from Floor floor where floor.propertyUsage = '"
                             + propTypeCategoryId + "')) ";
                 }
                 if (zoneId != null && !zoneId.equals("") && zoneId != -1)
@@ -2012,28 +2013,28 @@ public class PropertyTaxUtil {
                         LOGGER.debug("zoneNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.zoneId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.zoneId.boundaryNum";
+                orderbyQry = " and cs.zoneId.boundaryType.name = 'Zone' order by cs.zoneId.boundaryNum";
             } else if (mode.equals(WARDWISE)) {
                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("wardNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.wardId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.wardId.boundaryNum";
+                orderbyQry = " and cs.wardId.boundaryType.name = 'Ward' order by cs.wardId.boundaryNum";
             } else if (mode.equals(BLOCKWISE)) {
                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("blockNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.areaId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.areaId.boundaryNum";
+                orderbyQry = " and cs.areaId.boundaryType.name = 'Block' order by cs.areaId.boundaryNum";
             } else if (mode.equals(LOCALITYWISE)) {
                 if (boundaryId != null && !boundaryId.equals("") && !boundaryId.equals("-1")) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("localityNo = " + boundaryId);
                     srchQryStr = srchQryStr + "and cs.localityId.id =" + boundaryId;
                 }
-                orderbyQry = "order by cs.localityId.boundaryNum";
+                orderbyQry = "  order by cs.localityId.boundaryNum";
             }
             srchQryStr = baseQry + srchQryStr + orderbyQry;
 
@@ -2061,7 +2062,6 @@ public class PropertyTaxUtil {
      */
     public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode) {
 
-        final String ZONEWISE = "zone";
         final String WARDWISE = "ward";
         final String BLOCKWISE = "block";
         final String PROPERTY = "property";
@@ -2128,20 +2128,13 @@ public class PropertyTaxUtil {
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
             finalFrmQry = " )as dcbinfo,eg_boundary boundary ";
         }
-        if (mode.equalsIgnoreCase(ZONEWISE)) {
-            innerSelectQry0 = "select distinct pi.zoneid as zone,";
-            innerSelectQry1 = "select zone as zone,";
-            arrearGroupBy = ") as arrear  group by zone ";
-            collGroupBy = ") as collection  group by zone ";
-            if (param != 0)
-                whereQry = " and pi.zoneid = " + param;
-            finalWhereQry = " where dcbinfo.zone=boundary.id ";
-        } else if (mode.equalsIgnoreCase(WARDWISE)) {
+       if (mode.equalsIgnoreCase(WARDWISE)) {
             innerSelectQry0 = "select distinct pi.wardid as ward,";
             innerSelectQry1 = "select ward as ward,";
             arrearGroupBy = ") as arrear group by ward ";
             collGroupBy = ") as collection  group by ward ";
-            whereQry = " and pi.zoneid = " + param;
+            if (param != 0)
+              whereQry = " and pi.WARDID = " + param;
             finalWhereQry = " where dcbinfo.ward=boundary.id ";
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
             innerSelectQry0 = "select distinct pi.blockid as block,";
@@ -2437,5 +2430,16 @@ public class PropertyTaxUtil {
         return (null != egDemandReason && !egDemandReason.isEmpty()) ? egDemandReason.get(0)
                 .getEgInstallmentMaster().getFromDate() : null;
 
+    }
+    
+    /**
+     * Method to check for Nagar Panchayats as Grade
+     * @return boolean
+     */
+    public boolean checkIsNagarPanchayat(){
+    	HttpServletRequest request = ServletActionContext.getRequest();
+    	String grade=(request.getSession().getAttribute("cityGrade")!=null?
+                request.getSession().getAttribute("cityGrade").toString():null);
+    	return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
 }

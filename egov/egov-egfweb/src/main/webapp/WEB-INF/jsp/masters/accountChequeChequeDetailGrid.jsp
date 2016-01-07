@@ -162,26 +162,67 @@ function updateLabel(field,index,value){
 
 </script>
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	.yui-skin-sam tr.yui-dt-odd{background-color:#f7f7f7;}
-	.yui-skin-sam td.yui-dt-col-isExhusted .yui-dt-liner{text-align: center;}
-	.subheadcustom {
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: bold;
-		color: #000000;
-		background-color: #CCCCCC;
-		text-align: center;
-		padding-right: 8px;
-		padding-left: 8px;
-		border: 1px solid #CCCCCC;
-		padding-top: -2px;
-		padding-bottom: -2px;
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
 }
-	
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+.yui-skin-sam tr.yui-dt-odd {
+	background-color: #f7f7f7;
+}
+
+.yui-skin-sam td.yui-dt-col-isExhusted .yui-dt-liner {
+	text-align: center;
+}
+
+.subheadcustom {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #000000;
+	background-color: #CCCCCC;
+	text-align: center;
+	padding-right: 8px;
+	padding-left: 8px;
+	border: 1px solid #CCCCCC;
+	padding-top: -2px;
+	padding-bottom: -2px;
+}
 </style>

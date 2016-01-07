@@ -374,8 +374,8 @@ function checkviewforselectedrecord()
 </div>
 <div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
-      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>&nbsp;
-      <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>&nbsp;
+      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>
+      <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>
       <logic:empty name="results">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
       </logic:empty>
@@ -423,10 +423,10 @@ function checkviewforselectedrecord()
 </div>
 <br/>
 <div class="buttonbottom">
-  <input name="button32" type="button" class="buttonsubmit" id="button32" value="View" onclick="return checkviewforselectedrecord()"/>&nbsp;
-  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Print" onclick="return checkprintforselectedrecord()"/>&nbsp;
+  <input name="button32" type="button" class="buttonsubmit" id="button32" value="View" onclick="return checkviewforselectedrecord()"/>
+  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Print" onclick="return checkprintforselectedrecord()"/>
    <egov-authz:authorize actionName="CancelReceipt">
-  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Cancel Receipt" onclick="return checkcancelforselectedrecord()"/>&nbsp;
+  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Cancel Receipt" onclick="return checkcancelforselectedrecord()"/>
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>

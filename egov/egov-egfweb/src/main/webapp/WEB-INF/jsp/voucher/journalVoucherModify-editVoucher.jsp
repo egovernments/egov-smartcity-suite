@@ -37,145 +37,179 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252" />
 <title>Journal voucher Modify</title>
 </head>
-   	
-<body onload="loadDropDownCodes();loadDropDownCodesFunction();onloadtask()">
 
-<s:form  theme="simple" name="jvmodifyform" >
-<s:push value="model">
-<div id="loading" style="position:absolute; left:25%; top:70%; padding:2px; z-index:20001; height:auto;width:500px;display: none;">
-    <div class="loading-indicator" style="background:white;  color:#444; font:bold 13px tohoma,arial,helvetica; padding:10px; margin:0; height:auto;">
-        <img src="/egi/resources/erp2/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
-    </div>
-</div>
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Journal voucher -Modify" />
-			</jsp:include>
-			
-			<span class="mandatory1">
-				<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-			</span>
-		<div class="formmainbox">
-			<div class="subheadnew">Journal Voucher
+<body
+	onload="loadDropDownCodes();loadDropDownCodesFunction();onloadtask()">
+
+	<s:form theme="simple" name="jvmodifyform">
+		<s:push value="model">
+			<div id="loading"
+				style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
+				<div class="loading-indicator"
+					style="background: white; color: #444; font: bold 13px tohoma, arial, helvetica; padding: 10px; margin: 0; height: auto;">
+					<img src="/egi/resources/erp2/images/loading.gif" width="32"
+						height="32" style="margin-right: 8px; vertical-align: top;" />
+					Loading...
+				</div>
 			</div>
-				<div id="listid" style="display:block">
-				<br/>
-			<div align="center">
-			<font  style='color: red ;font-weight:bold '> 
-				<p class="error-block" id="lblError" ></p>
-			</font>
-<input type="hidden" name="selectedDate" id="selectedDate"/>
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param name="heading" value="Journal voucher -Modify" />
+			</jsp:include>
 
-	<table border="0" width="100%">
-	<tr>
-	<td  class="greybox">&nbsp;</td>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
-			<td class="greybox"><input type="text" name="voucherNumberPrefix" id="voucherNumberPrefix" readonly="true"  style="width:100%"/></td> 
-			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-		</s:if>
-		<s:else>
-			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
-			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" readonly="true" /></td>
-		</s:else>
-		</tr>
-		<tr>
-		<td  class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="voucher.date"/><span class="mandatory1"> *</span></td>
-			<td class="greybox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
-			<s:textfield  name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('jvmodifyform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-		</td>
-	</tr>
-	<jsp:include page="voucherSubType.jsp"/>
-	<jsp:include page="vouchertrans-filter.jsp"/>
-	<jsp:include page="loadYIDataTable.jsp"/>
-	<tr>
-			<td  class="greybox">&nbsp;</td>
-			<td class="greybox"><s:text name="voucher.narration" /></td>
-			<td class="greybox" colspan="3"><s:textarea  id="narration" name="description" style="width:580px" onblur="checkVoucherNarrationLen(this)"/></td>
-		</tr>	
-	</table>
-	</div>
-	<br/>
-	<div id="labelAD" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Account Details</th></table>
-	</div>
-	<div class="yui-skin-sam" align="center">
-       <div id="billDetailTable"></div>
-     </div>
-     <script type="text/javascript" >
+			<span class="mandatory1"> <font
+				style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+					<s:actionmessage /></font>
+			</span>
+			<div class="formmainbox">
+				<div class="subheadnew">Journal Voucher</div>
+				<div id="listid" style="display: block">
+					<br />
+					<div align="center">
+						<font style='color: red; font-weight: bold'>
+							<p class="error-block" id="lblError"></p>
+						</font> <input type="hidden" name="selectedDate" id="selectedDate" />
+
+						<table border="0" width="100%">
+							<tr>
+								<td class="greybox">&nbsp;</td>
+								<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+									<td class="greybox"><s:text name="voucher.number" /><span
+										class="mandatory1"> *</span></td>
+									<td class="greybox"><input type="text"
+										name="voucherNumberPrefix" id="voucherNumberPrefix"
+										readonly="true" style="width: 100%" /></td>
+									<td class="greybox"><s:textfield name="voucherNumber"
+											id="voucherNumber" /></td>
+								</s:if>
+								<s:else>
+									<td class="greybox"><s:text name="voucher.number" /><span
+										class="mandatory1"> *</span></td>
+									<td class="greybox"><s:textfield name="voucherNumber"
+											id="voucherNumber" readonly="true" /></td>
+								</s:else>
+							</tr>
+							<tr>
+								<td class="greybox">&nbsp;</td>
+								<td class="greybox"><s:text name="voucher.date" /><span
+									class="mandatory1"> *</span></td>
+								<td class="greybox"><s:date name="voucherDate"
+										id="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
+										name="voucherDate" id="voucherDate" value="%{voucherDateId}"
+										maxlength="10"
+										onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+									href="javascript:show_calendar('jvmodifyform.voucherDate');"
+									style="text-decoration: none">&nbsp;<img tabIndex=-1
+										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+								</td>
+							</tr>
+							<jsp:include page="voucherSubType.jsp" />
+							<jsp:include page="vouchertrans-filter.jsp" />
+							<jsp:include page="loadYIDataTable.jsp" />
+							<tr>
+								<td class="greybox">&nbsp;</td>
+								<td class="greybox"><s:text name="voucher.narration" /></td>
+								<td class="greybox" colspan="3"><s:textarea id="narration"
+										name="description" style="width:580px"
+										onblur="checkVoucherNarrationLen(this)" /></td>
+							</tr>
+						</table>
+					</div>
+					<br />
+					<div id="labelAD" align="center">
+						<table width="80%" border=0 id="labelid">
+							<th>Account Details</th>
+						</table>
+					</div>
+					<div class="yui-skin-sam" align="center">
+						<div id="billDetailTable"></div>
+					</div>
+					<script type="text/javascript">
 		
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
 	 </script type="text/javascript" >
-	 <div id="codescontainer"></div>
-	 <br/>
-	 	<div id="labelSL" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Sub-Ledger Details</th></table>
-	 	</div>
-	 	
-		<div class="yui-skin-sam" align="center">
-	       <div id="subLedgerTable"></div>
-	     </div>
-		<script type="text/javascript" >
+					<div id="codescontainer"></div>
+					<br />
+					<div id="labelSL" align="center">
+						<table width="80%" border=0 id="labelid">
+							<th>Sub-Ledger Details</th>
+						</table>
+					</div>
+
+					<div class="yui-skin-sam" align="center">
+						<div id="subLedgerTable"></div>
+					</div>
+					<script type="text/javascript">
 			
 			makeSubLedgerTable();
 			
 			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
 		</script>
-		
-		<br/>
-		<div class="subheadsmallnew"/></div>
-		<div id="wfHistoryDiv">
-	<%--   	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
+
+					<br />
+					<div class="subheadsmallnew" /></div>
+					<div id="wfHistoryDiv">
+						<%--   	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
 	        <c:param name="stateId" value="${voucherHeader.state.id}"></c:param>
         </c:import> --%>
-  		</div>        
-		<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>         
-			<%@include file="voucherWorkflow.jsp"%>         
-	    </s:if>	
-	    <div align="center">
-		<table border="0" width="100%">
-			<tr>
-				<td  class="bluebox">&nbsp;</td>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="150" rows="3" onblur="checkLength(this)"/></td>
-				<td><s:hidden id="methodName" name="methodName" value="save"/></td>
-				<s:hidden id="vhid" name="vhid" value="%{voucherHeader.id}"/><s:hidden  name="actionName"  id="actionName"/>
-			</tr>
-			<br/>
-		</table> 
-		</div> 
-	
-	<br/>
-</div>
-</div>
-<div id="codescontainer"></div>
-<div  class="buttonbottom" id="buttondiv">                                     
-		<s:iterator value="%{getValidActions('')}" var="p">            
-			<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="update" onclick="return validateJV('close','%{name}','%{description}')"/>
-		</s:iterator>     
-		<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateAndSubmitJV('close','%{aa_approve}','%{Send for Approval}');" />
-		<input type="button" class="button" id="print" value="Print Preview" action="journalVoucherPrint" method="print" onclick="printJV()"/>
-		<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-	</div>  
-		<!-- <div class="buttonbottom" style="padding-bottom:10px;" align="center">
+					</div>
+					<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
+						<%@include file="voucherWorkflow.jsp"%>
+					</s:if>
+					<div align="center">
+						<table border="0" width="100%">
+							<tr>
+								<td class="bluebox">&nbsp;</td>
+								<td class="bluebox">Comments</td>
+								<td class="bluebox"><s:textarea name="comments"
+										id="comments" cols="150" rows="3" onblur="checkLength(this)" /></td>
+								<td><s:hidden id="methodName" name="methodName"
+										value="save" /></td>
+								<s:hidden id="vhid" name="vhid" value="%{voucherHeader.id}" />
+								<s:hidden name="actionName" id="actionName" />
+							</tr>
+							<br />
+						</table>
+					</div>
+
+					<br />
+				</div>
+			</div>
+			<div id="codescontainer"></div>
+			<div class="buttonbottom" id="buttondiv">
+				<s:iterator value="%{getValidActions('')}" var="p">
+					<s:submit type="submit" cssClass="buttonsubmit"
+						value="%{description}" id="%{name}" name="%{name}" method="update"
+						onclick="return validateJV('close','%{name}','%{description}')" />
+				</s:iterator>
+				<input type="submit" class="buttonsubmit" value="Send for Approval"
+					id="%{aa_approve}" name="%{aa_approve}"
+					onclick="return validateAndSubmitJV('close','%{aa_approve}','%{Send for Approval}');" />
+				<input type="button" class="button" id="print" value="Print Preview"
+					action="journalVoucherPrint" method="print" onclick="printJV()" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+			<!-- <div class="buttonbottom" style="padding-bottom:10px;" align="center">
 		<table border="0" width="100%"><tr></tr>
 			<tr>
 				<td/><td>
@@ -187,16 +221,19 @@
 			</tr>
 		</table>
 	</div> -->
-<s:hidden id="cgn" name="cgn"></s:hidden>
-<s:hidden name="saveMode"  id="saveMode"/>
-<s:hidden  name="actionName" id="actionName"/>
-<input type="hidden" id="voucherTypeBean.voucherNumType" name="voucherTypeBean.voucherNumType" value="Journal Voucher"/>
-<s:hidden  id="type" name="type" value="Journal Voucher"/>
-<input type="hidden" id="worksVoucherRestrictedDate" name="worksVoucherRestrictedDate" value="${worksVoucherRestrictedDate}"/>
-</s:push>
-</s:form>
+			<s:hidden id="cgn" name="cgn"></s:hidden>
+			<s:hidden name="saveMode" id="saveMode" />
+			<s:hidden name="actionName" id="actionName" />
+			<input type="hidden" id="voucherTypeBean.voucherNumType"
+				name="voucherTypeBean.voucherNumType" value="Journal Voucher" />
+			<s:hidden id="type" name="type" value="Journal Voucher" />
+			<input type="hidden" id="worksVoucherRestrictedDate"
+				name="worksVoucherRestrictedDate"
+				value="${worksVoucherRestrictedDate}" />
+		</s:push>
+	</s:form>
 
-<script type="text/javascript" >
+	<script type="text/javascript">
 function validateApproverUser(name,value){
 //	alert("name value"+name);    
 	document.getElementById("actionName").value= name;

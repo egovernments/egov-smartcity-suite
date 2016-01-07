@@ -718,7 +718,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
                         + new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(instrument
                                 .getInstrumentDate()));
 
-            instrumentDetailsBuilder.append(" - " + instrument.getInstrumentAmount());
+            instrumentDetailsBuilder.append(" - " + instrument.getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
         }
         return instrumentDetailsBuilder.toString();
     }

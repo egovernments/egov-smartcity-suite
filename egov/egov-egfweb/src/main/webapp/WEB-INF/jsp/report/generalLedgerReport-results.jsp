@@ -37,89 +37,148 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-	<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-	</span>
+<span class="mandatory"> <font
+	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+		<s:actionmessage /></font>
+</span>
 <s:if test="%{generalLedgerDisplayList.size!=0}">
-	<display:table name="generalLedgerDisplayList"  id ="currentRowObject" uid="currentRowObject" class="tablebottom" style="width:100%;" cellpadding="0" cellspacing="0" export="true" requestURI="generalLedgerReport!ajaxSearch.action" >
-			<display:caption>
-				<div class="headingsmallbgnew" align="center" style="text-align:center;width:98%;">
+	<display:table name="generalLedgerDisplayList" id="currentRowObject"
+		uid="currentRowObject" class="tablebottom" style="width:100%;"
+		cellpadding="0" cellspacing="0" export="true"
+		requestURI="generalLedgerReport!ajaxSearch.action">
+		<display:caption>
+			<div class="headingsmallbgnew" align="center"
+				style="text-align: center; width: 98%;">
 				<s:property value="%{heading}" />
-				</div>
-				<div align="left" style="text-align:left;width:98%;"> <s:property value="%{generalLedgerReport.isConfirmedCount}" /> in <s:property value="%{generalLedgerReport.totalCount}" />  are unconfirmed</div>
-				<table width="100%" border="1" cellspacing="0" cellpadding="0">   
-     			<tr>
-					<td class="bluebgheadtd" colspan="4"><s:text name="generalLedger.debit"/></td>
-				    <td class="bluebgheadtd" colspan="4"><s:text name="generalLedger.credit"/> </td>
+			</div>
+			<div align="left" style="text-align: left; width: 98%;">
+				<s:property value="%{generalLedgerReport.isConfirmedCount}" />
+				in
+				<s:property value="%{generalLedgerReport.totalCount}" />
+				are unconfirmed
+			</div>
+			<table width="100%" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebgheadtd" colspan="4"><s:text
+							name="generalLedger.debit" /></td>
+					<td class="bluebgheadtd" colspan="4"><s:text
+							name="generalLedger.credit" /></td>
 				</tr>
-			</table>	
-			</display:caption>	
-			<display:column  media="pdf" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Date" style="width:5%;text-align:center" property="voucherdate" />
-			<display:column  media="excel" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Date" style="width:5%;text-align:center" property="voucherdate" />
-			<display:column  media="html"  headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Date" style="width:5%;text-align:center" >
-			<s:if test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
-				<b><s:property value="#attr.currentRowObject.voucherdate"/></b>
+			</table>
+		</display:caption>
+		<display:column media="pdf" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Date"
+			style="width:5%;text-align:center" property="voucherdate" />
+		<display:column media="excel" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Date"
+			style="width:5%;text-align:center" property="voucherdate" />
+		<display:column media="html" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Date"
+			style="width:5%;text-align:center">
+			<s:if
+				test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
+				<b><s:property value="#attr.currentRowObject.voucherdate" /></b>
 			</s:if>
 			<s:else>
-				<s:property value="#attr.currentRowObject.voucherdate"/>
-			</s:else>	
-			</display:column>		
-			<display:column  media="pdf" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center" property="vouchernumber" />
-			<display:column  media="excel" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center" property="vouchernumber" />
-			<display:column  media="html" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center">
-				<a href="#" onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')" > 
-				<s:property value="#attr.currentRowObject.vouchernumber"/>
-				</a>
-			</display:column>
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Type Name" style="width:8%;text-align:center" property="debitVoucherTypeName" />
-			<display:column  media="pdf" headerClass="bluebgheadtd" class="blueborderfortd" title="Amount" style="width:6%;text-align:right" property="debitamount" />
-			<display:column  media="excel" headerClass="bluebgheadtd" class="blueborderfortd" title="Amount" style="width:6%;text-align:right" property="debitamount" />
-			<display:column  media="html"  headerClass="bluebgheadtd" class="blueborderfortd" title="Amount" style="width:6%;text-align:right" >
-			<s:if test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
-				<b><s:property value="#attr.currentRowObject.debitamount"/></b>
-			</s:if>
-			<s:else>
-				<s:property value="#attr.currentRowObject.debitamount"/>
+				<s:property value="#attr.currentRowObject.voucherdate" />
 			</s:else>
-			</display:column>		
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Date" style="width:5%;text-align:center" property="creditdate" />
-			<display:column  media="pdf" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center" property="creditvouchernumber" />
-			<display:column  media="excel" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center" property="creditvouchernumber" />
-			<display:column  media="html" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center">
-				<a href="#" onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')" > 
-				<s:property value="#attr.currentRowObject.creditvouchernumber"/>
-				</a>
-			</display:column>				
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Type Name" style="width:8%;text-align:center" property="creditVoucherTypeName"/>
-			<display:column  media="pdf" headerClass="bluebgheadtd" class="blueborderfortd" title="Amount" style="width:6%;text-align:right" property="creditamount"/>
-			<display:column  media="excel" headerClass="bluebgheadtd" class="blueborderfortd" title="Amount" style="width:6%;text-align:right" property="creditamount"/>					
-			<display:column  media="html" headerClass="bluebgheadtd" class="blueborderfortd" title="Amount" style="width:6%;text-align:right" >
-			<s:if test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
-				<b><s:property value="#attr.currentRowObject.creditamount"/></b>
+		</display:column>
+		<display:column media="pdf" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center" property="vouchernumber" />
+		<display:column media="excel" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center" property="vouchernumber" />
+		<display:column media="html" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center">
+			<a href="#"
+				onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')">
+				<s:property value="#attr.currentRowObject.vouchernumber" />
+			</a>
+		</display:column>
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Voucher Type Name" style="width:8%;text-align:center"
+			property="debitVoucherTypeName" />
+		<display:column media="pdf" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Amount"
+			style="width:6%;text-align:right" property="debitamount" />
+		<display:column media="excel" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Amount"
+			style="width:6%;text-align:right" property="debitamount" />
+		<display:column media="html" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Amount"
+			style="width:6%;text-align:right">
+			<s:if
+				test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
+				<b><s:property value="#attr.currentRowObject.debitamount" /></b>
 			</s:if>
 			<s:else>
-				<s:property value="#attr.currentRowObject.creditamount"/>
-			</s:else>	
-			</display:column>
-				<display:caption  media="pdf">
-				<div align="left" style="text-align:left;"> <s:property value="%{generalLedgerReport.heading}" /> (<s:property value="%{generalLedgerReport.isConfirmedCount}" /> in <s:property value="%{generalLedgerReport.totalCount}" />  are unconfirmed)</div>
-			   </display:caption>
-			   <display:caption  media="excel">
+				<s:property value="#attr.currentRowObject.debitamount" />
+			</s:else>
+		</display:column>
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Voucher Date" style="width:5%;text-align:center"
+			property="creditdate" />
+		<display:column media="pdf" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center" property="creditvouchernumber" />
+		<display:column media="excel" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center" property="creditvouchernumber" />
+		<display:column media="html" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center">
+			<a href="#"
+				onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')">
+				<s:property value="#attr.currentRowObject.creditvouchernumber" />
+			</a>
+		</display:column>
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Voucher Type Name" style="width:8%;text-align:center"
+			property="creditVoucherTypeName" />
+		<display:column media="pdf" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Amount"
+			style="width:6%;text-align:right" property="creditamount" />
+		<display:column media="excel" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Amount"
+			style="width:6%;text-align:right" property="creditamount" />
+		<display:column media="html" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Amount"
+			style="width:6%;text-align:right">
+			<s:if
+				test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
+				<b><s:property value="#attr.currentRowObject.creditamount" /></b>
+			</s:if>
+			<s:else>
+				<s:property value="#attr.currentRowObject.creditamount" />
+			</s:else>
+		</display:column>
+		<display:caption media="pdf">
+			<div align="left" style="text-align: left;">
+				<s:property value="%{generalLedgerReport.heading}" />
+				(
+				<s:property value="%{generalLedgerReport.isConfirmedCount}" />
+				in
+				<s:property value="%{generalLedgerReport.totalCount}" />
+				are unconfirmed)
+			</div>
+		</display:caption>
+		<display:caption media="excel">
 				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						  General Ledger Report  
 				</display:caption>
-					<display:setProperty name="export.pdf" value="true" />
-					<display:setProperty name="export.pdf.filename" value="General Ledger Report.pdf" /> 
-					<display:setProperty name="export.excel" value="true" />
-					<display:setProperty name="export.excel.filename" value="General Ledger Report.xls"/>	
-					<display:setProperty name="export.csv" value="false" />	
-					<display:setProperty name="export.xml" value="false" />							
-</display:table>
-				 	
+		<display:setProperty name="export.pdf" value="true" />
+		<display:setProperty name="export.pdf.filename"
+			value="General Ledger Report.pdf" />
+		<display:setProperty name="export.excel" value="true" />
+		<display:setProperty name="export.excel.filename"
+			value="General Ledger Report.xls" />
+		<display:setProperty name="export.csv" value="false" />
+		<display:setProperty name="export.xml" value="false" />
+	</display:table>
+
 </s:if>

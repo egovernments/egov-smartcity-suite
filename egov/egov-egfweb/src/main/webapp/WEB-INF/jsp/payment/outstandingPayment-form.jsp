@@ -37,17 +37,20 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	<STYLE type="text/css">
-	@media print
-    {
-        #non-printable { display: none; }
-    }
-	</STYLE>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<STYLE type="text/css">
+@media print {
+	#non-printable {
+		display: none;
+	}
+}
+</STYLE>
 </head>
 <script>
 var callback = {
@@ -191,58 +194,78 @@ function exportPdf(){
 }
 </script>
 <body>
-<div class="formmainbox">
-<div class="formheading"></div>
-<div class="subheadnew">Outstanding Bank Payments & Running Balance Report</div>
+	<div class="formmainbox">
+		<div class="formheading"></div>
+		<div class="subheadnew">Outstanding Bank Payments & Running
+			Balance Report</div>
 
-<s:form action="outstandingPayment" theme="simple" name="outstandingPayment">
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td class="greybox" width="20%">&nbsp;</td>
-		<td class="greybox" width="10%">Fund:<span class="mandatory">*</span></td>
-		<td class="greybox">
-			<s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onChange="loadBank(this);" />
-		</td>
-		<td class="greybox" width="10%">As On Date:<span class="mandatory">*</span></td>
-		<td class="greybox">
-			<s:textfield name="asOnDate" id="asOnDate" value='%{getFormattedDate(asOnDate)}' cssStyle="width:100px"  onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('outstandingPayment.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	</tr>
-	<tr>
-		<td width="20%">&nbsp;</td>
-	    <egov:ajaxdropdown id="bank" fields="['Text','Value']" dropdownId="bank" url="voucher/common!ajaxLoadBanksWithPaymentInWorkFlow.action" />
-	    <td class="bluebox" width="10%">Bank Name:<span class="bluebox"><span class="mandatory">*</span></span></td>
-	    <td class="bluebox">
-	    	<s:select name="bank" id="bank" list="dropdownData.bankList" listKey="bankBranchId" listValue="bankBranchName" headerKey="-1" headerValue="----Choose----" onclick="validateFund()" onChange="populateAccNumbers(this);"  />
-	    </td>
-	    <egov:ajaxdropdown id="accountNumber" fields="['Text','Value']" dropdownId="accountNumber" url="voucher/common!ajaxLoadBankAccountsWithPaymentInWorkFlow.action" />
-		<td class="bluebox" width="10%">Account Number:<span class="bluebox"><span class="mandatory">*</span></span></td>
-		<td class="bluebox">
-			<s:select  name="bankAccount" id="accountNumber" list="dropdownData.accNumList" listKey="id" listValue="accountnumber" headerKey="-1" headerValue="----Choose----" onclick="validateBank()"/>
-		</td>
-	</tr>
-	
-</table>
-<br/><br/>
-<div class="buttonbottom" id="non-printable">
-  <input type="button" value="Submit" class="buttonsubmit" onclick="return getData()"/>
-  &nbsp;
-	<s:reset name="button" type="submit" cssClass="button" id="button" value="Cancel"/>
-	<s:submit value="Close" onclick="javascript: self.close()" cssClass="button"/>
-</div>
-</div>
-<div id="loading" class="loading" style="width: 700; height: 700;display: none " align="center" >
-	<blink style="color: red">Searching processing, Please wait...</blink>
-</div> 
-</s:form>
+		<s:form action="outstandingPayment" theme="simple"
+			name="outstandingPayment">
+			<table width="100%" cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td class="greybox" width="20%">&nbsp;</td>
+					<td class="greybox" width="10%">Fund:<span class="mandatory">*</span></td>
+					<td class="greybox"><s:select name="fundId" id="fundId"
+							list="dropdownData.fundList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="----Choose----"
+							onChange="loadBank(this);" /></td>
+					<td class="greybox" width="10%">As On Date:<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate"
+							value='%{getFormattedDate(asOnDate)}' cssStyle="width:100px"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('outstandingPayment.asOnDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+				</tr>
+				<tr>
+					<td width="20%">&nbsp;</td>
+					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
+						dropdownId="bank"
+						url="voucher/common!ajaxLoadBanksWithPaymentInWorkFlow.action" />
+					<td class="bluebox" width="10%">Bank Name:<span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:select name="bank" id="bank"
+							list="dropdownData.bankList" listKey="bankBranchId"
+							listValue="bankBranchName" headerKey="-1"
+							headerValue="----Choose----" onclick="validateFund()"
+							onChange="populateAccNumbers(this);" /></td>
+					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
+						dropdownId="accountNumber"
+						url="voucher/common!ajaxLoadBankAccountsWithPaymentInWorkFlow.action" />
+					<td class="bluebox" width="10%">Account Number:<span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:select name="bankAccount"
+							id="accountNumber" list="dropdownData.accNumList" listKey="id"
+							listValue="accountnumber" headerKey="-1"
+							headerValue="----Choose----" onclick="validateBank()" /></td>
+				</tr>
+
+			</table>
+			<br />
+			<br />
+			<div class="buttonbottom" id="non-printable">
+				<input type="button" value="Submit" class="buttonsubmit"
+					onclick="return getData()" /> &nbsp;
+				<s:reset name="button" type="submit" cssClass="button" id="button"
+					value="Cancel" />
+				<s:submit value="Close" onclick="javascript: self.close()"
+					cssClass="button" />
+			</div>
+	</div>
+	<div id="loading" class="loading"
+		style="width: 700; height: 700; display: none" align="center">
+		<blink style="color: red">Searching processing, Please wait...</blink>
+	</div>
+	</s:form>
 
 
-<div id="results">
-<script>
+	<div id="results">
+		<script>
 document.getElementById('loading').style.display ='none';
 </script>
-</div>
-<div id="resultGrid">
-</div>
+	</div>
+	<div id="resultGrid"></div>
 </body>
 </html>
