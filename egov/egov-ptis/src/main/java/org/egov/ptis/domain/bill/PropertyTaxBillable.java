@@ -359,7 +359,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Override
     public BigDecimal calculatePenalty(final Date latestCollReceiptDate, final Date fromDate, final BigDecimal amount) {
         BigDecimal penalty = BigDecimal.ZERO;
-        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date())-1;
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
         penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
                 BIGDECIMAL_100);
         return MoneyUtils.roundOff(penalty);
@@ -528,7 +528,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
          * If assessment date falls in the current installment then penalty calculation will be effective from three months after
          * the assessment date
          */
-        if (assessmentEffecInstallment.equals(curInstallment)) {
+        if (null != assessmentEffecInstallment && assessmentEffecInstallment.equals(curInstallment)) {
             penaltyEffDate = penalyDateWithThreeMonths(assmentDate);
         } else {
             /*
@@ -539,11 +539,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             if (installment.equals(curInstallment)) {
                 final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
                 if (noOfMonths > 3) {
-                    penalyDateWithThreeMonths(installment.getFromDate());
+                    penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
                 } else
                     penaltyEffDate = new Date();
             } else {
-                penalyDateWithThreeMonths(installment.getFromDate());
+                penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
             }
         }
         return penaltyEffDate;
