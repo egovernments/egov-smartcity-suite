@@ -73,6 +73,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.envers.Audited;
@@ -90,8 +91,9 @@ import com.google.gson.annotations.Expose;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
-@Unique(id = "id", tableName = "eg_user", columnName = { "username", "mobileNumber", "pan", "aadhaarNumber",
-        "emailId" }, fields = { "username", "mobileNumber", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eg_user", columnName = { "username", "pan", "aadhaarNumber",
+        "emailId" }, fields = { "username", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true, isSuperclass = true)
+@CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
 public class User extends AbstractAuditable {
     private static final long serialVersionUID = -2415368058955783970L;
     public static final String SEQ_USER = "SEQ_EG_USER";

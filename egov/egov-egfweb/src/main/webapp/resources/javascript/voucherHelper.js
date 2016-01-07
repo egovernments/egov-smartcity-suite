@@ -788,7 +788,11 @@ function autocompletecode(obj,myEvent)
 
 function autocompletecodeCommon(obj,myEvent)
 {
-	//alert('autocomplete');
+	//Fix-Me
+	var accCodeObj = document.getElementById('billDetailsTable[0].debitAmountDetail');
+	jQuery(accCodeObj).trigger('focus');
+	jQuery(obj).trigger('focus');
+	
 	var src = obj;	
 	//alert(obj.scrollHeight);
 	var target = document.getElementById('codescontainer');	
@@ -900,6 +904,10 @@ function autocompletecodeFunction(obj,myEvent)
 
 function autocompletecodeFunctionHeader(obj,myEvent)
 {
+	//Fix-Me
+	var accCodeObj = document.getElementById('description');
+	jQuery(accCodeObj).trigger('focus');
+	jQuery(obj).trigger('focus');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
@@ -1898,7 +1906,7 @@ if(temp.trim()!="")
 	{
 	
 		//alert(obj.value+":"+invalidAccountCode); this line will cause problem for mouse selection
-		obj.value="";
+	//	obj.value="";
 		var hiddenfieldname=obj.name;
 		var accountHeadeName=obj.name;
 		var isSubledger=obj.name;

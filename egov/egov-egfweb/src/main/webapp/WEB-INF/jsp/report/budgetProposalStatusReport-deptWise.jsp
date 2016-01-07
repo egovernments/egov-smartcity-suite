@@ -37,63 +37,93 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 
-<div id="budgetSearchGrid" style="width:1250px;overflow-x:auto; overflow-y:hidden;">
-<br/>
-<script>
+<div id="budgetSearchGrid"
+	style="width: 1250px; overflow-x: auto; overflow-y: hidden;">
+	<br />
+	<script>
 function showFunctionWise(deptId){
 		window.open('/EGF/report/budgetProposalStatusReport!functionWise.action?deptId='+deptId,'','height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 </script>
-<div style="overflow-x:scroll; overflow-y:scroll;">
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td>
-      <div align="center"><br/>
-        <table border="0" cellspacing="0" cellpadding="0" class="tablebottom" width="100%">
-          <tr>
-            <td  colspan="12">
-			<div class="subheadsmallnew"><strong><s:property value="statementheading"/></strong></div></td>
-          </tr>
-          <tr>
-          <td class="bluebox" colspan="4"> <strong><s:text name="report.run.date"/>:</strong><s:date name="todayDate" format="dd/MM/yyyy" />
-	    	</td>
-          </tr>
-          <tr>
-		    <th class="bluebgheadtd"><s:text name="report.department"/></th>
-            <th class="bluebgheadtd"><s:text name="report.hod"/></th>
-            <th class="bluebgheadtd"><s:text name="report.asstbud"/></th>
-            <th class="bluebgheadtd"><s:text name="report.smbud"/></th>
-            <th class="bluebgheadtd"><s:text name="report.aobud"/></th>
-            <th class="bluebgheadtd"><s:text name="report.caobud"/></th> 
+	<div style="overflow-x: scroll; overflow-y: scroll;">
+		<table width="100%" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td>
+					<div align="center">
+						<br />
+						<table border="0" cellspacing="0" cellpadding="0"
+							class="tablebottom" width="100%">
+							<tr>
+								<td colspan="12">
+									<div class="subheadsmallnew">
+										<strong><s:property value="statementheading" /></strong>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="bluebox" colspan="4"><strong><s:text
+											name="report.run.date" />:</strong>
+								<s:date name="todayDate" format="dd/MM/yyyy" /></td>
+							</tr>
+							<tr>
+								<th class="bluebgheadtd"><s:text name="report.department" /></th>
+								<th class="bluebgheadtd"><s:text name="report.hod" /></th>
+								<th class="bluebgheadtd"><s:text name="report.asstbud" /></th>
+								<th class="bluebgheadtd"><s:text name="report.smbud" /></th>
+								<th class="bluebgheadtd"><s:text name="report.aobud" /></th>
+								<th class="bluebgheadtd"><s:text name="report.caobud" /></th>
+							</tr>
+							</tr>
+							<s:iterator value="budgetProposalStatusDeptList" status="stat">
+								<tr>
+									<td class="blueborderfortd">
+										<div align="center">
+											<s:property value="department.deptName" />
+											&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											<a href="javascript:void(0);"
+												onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property
+													value="hod" /></a>&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											<a href="javascript:void(0);"
+												onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property
+													value="asstBud" /></a>&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											<a href="javascript:void(0);"
+												onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property
+													value="smBud" /></a>&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											<a href="javascript:void(0);"
+												onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property
+													value="aoBud" /></a>&nbsp;
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
+											<a href="javascript:void(0);"
+												onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property
+													value="caoBud" /></a>&nbsp;
+										</div>
+									</td>
+								</tr>
+							</s:iterator>
+						</table>
+					</div>
+				</td>
 			</tr>
-		</tr>
-		<s:iterator value="budgetProposalStatusDeptList" status="stat">
-		<tr>
-			<td class="blueborderfortd">
-				<div align="center"><s:property value="department.deptName"/>&nbsp;</div>		
-			</td>
-			<td class="blueborderfortd">
-				<div align="center"><a href="javascript:void(0);" onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property value="hod"/></a>&nbsp;</div>
-			</td>
-			<td class="blueborderfortd">
-				<div align="center"><a href="javascript:void(0);" onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property value="asstBud"/></a>&nbsp;</div>
-			</td>
-			<td class="blueborderfortd">
-				<div align="center"><a href="javascript:void(0);" onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property value="smBud"/></a>&nbsp;</div>
-			</td>
-			<td class="blueborderfortd">
-				<div align="center"><a href="javascript:void(0);" onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property value="aoBud"/></a>&nbsp;</div>
-			</td>
-			<td class="blueborderfortd">
-				<div align="center"><a href="javascript:void(0);" onclick="return showFunctionWise('<s:property value="department.id"/>')"><s:property value="caoBud"/></a>&nbsp;</div>
-			</td>
-		</tr>
-		</s:iterator>
-        </table>
-</div>
-</td>
-</tr>
-</table>
-</div>
+		</table>
+	</div>

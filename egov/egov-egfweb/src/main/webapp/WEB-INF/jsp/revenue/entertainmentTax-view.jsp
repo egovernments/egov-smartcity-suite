@@ -37,31 +37,37 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
-  <head>
-    <title>Entertainment Tax Master</title>
-	<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/loanGrantHelper.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-  </head>
+<head>
+<title>Entertainment Tax Master</title>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/loanGrantHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+</head>
 
 <body>
-	<s:form action="entertainmentTax" theme="simple" name="entertainmentTaxform" >
-			<jsp:include page="../revenue/common-grant.jsp"></jsp:include>
-			<div align="center" class="buttonbottom">
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+	<s:form action="entertainmentTax" theme="simple"
+		name="entertainmentTaxform">
+		<jsp:include page="../revenue/common-grant.jsp"></jsp:include>
+		<div align="center" class="buttonbottom">
+			<input type="button" value="Close"
+				onclick="javascript:window.close()" class="button" />
+		</div>
+		<s:if test="%{grantsList.size()>0}">
+			<div class="buttonbottom">
+				<s:submit value="Export Excel" method="exportXls" cssClass="button" />
+				<s:submit value="Export Pdf" method="exportPdf" cssClass="button" />
 			</div>
-			<s:if test="%{grantsList.size()>0}">
-		<div class="buttonbottom">
-		<s:submit value="Export Excel" method="exportXls" cssClass="button" />
-		<s:submit value="Export Pdf" method="exportPdf" cssClass="button" />
-		</div>	
-		</s:if>  
+		</s:if>
 	</s:form>
 </body>
 </html>

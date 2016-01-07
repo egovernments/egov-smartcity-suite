@@ -135,7 +135,7 @@ body
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-success"
+					<button type="button" class="btn btn-primary"
 						id="dailyCollectionReportSearch">
 						<spring:message code="lbl.search" />
 					</button>

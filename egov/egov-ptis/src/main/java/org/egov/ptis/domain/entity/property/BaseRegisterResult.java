@@ -60,12 +60,12 @@ public class BaseRegisterResult {
     private BigDecimal arrearEduCess;
     private BigDecimal arrearPenaltyFines;
     private BigDecimal arrearTotal;
-    private Boolean isExempted;
-    private Boolean courtCase;
+    private String isExempted;
+    private String courtCase;
     private String arrearPeriod;
-    private List<String> propertyUsage;
-    private List<String> classificationOfBuilding;
-    private List<BigDecimal> area;
+    private String propertyUsage;
+    private String classificationOfBuilding;
+    private BigDecimal plinthArea;
     private String propertyType;
  
     public String getAssessmentNo() {
@@ -166,19 +166,20 @@ public class BaseRegisterResult {
         this.natureOfUsage = natureOfUsage;
     }
 
-    public Boolean getIsExempted() {
+
+    public String getIsExempted() {
         return isExempted;
     }
 
-    public void setIsExempted(Boolean isExempted) {
+    public void setIsExempted(String isExempted) {
         this.isExempted = isExempted;
     }
 
-    public Boolean getCourtCase() {
+    public String getCourtCase() {
         return courtCase;
     }
 
-    public void setCourtCase(Boolean courtCase) {
+    public void setCourtCase(String courtCase) {
         this.courtCase = courtCase;
     }
 
@@ -190,28 +191,28 @@ public class BaseRegisterResult {
         this.arrearPeriod = arrearPeriod;
     }
 
-    public List<String> getPropertyUsage() {
+    public String getPropertyUsage() {
         return propertyUsage;
     }
 
-    public void setPropertyUsage(List<String> propertyUsage) {
+    public void setPropertyUsage(String propertyUsage) {
         this.propertyUsage = propertyUsage;
     }
 
-    public List<String> getClassificationOfBuilding() {
+    public String getClassificationOfBuilding() {
         return classificationOfBuilding;
     }
 
-    public void setClassificationOfBuilding(List<String> classificationOfBuilding) {
+    public void setClassificationOfBuilding(String classificationOfBuilding) {
         this.classificationOfBuilding = classificationOfBuilding;
     }
 
-    public List<BigDecimal> getArea() {
-        return area;
+    public BigDecimal getPlinthArea() {
+        return plinthArea;
     }
 
-    public void setArea(List<BigDecimal> area) {
-        this.area = area;
+    public void setPlinthArea(BigDecimal plinthArea) {
+        this.plinthArea = plinthArea;
     }
 
     public BigDecimal getPropertyTax() {

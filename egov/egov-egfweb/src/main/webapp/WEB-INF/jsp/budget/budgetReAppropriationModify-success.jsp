@@ -37,20 +37,25 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <%@ page import="org.egov.budget.model.*"%>
-<html>  
-<head>  
-    <title> <s:text name="budgetReAppropriation.modify"/></title>
-</head>  
-<body>  
-	<div class="formmainbox"><div class="subheadnew"><s:text name="budgetReAppropriation.modify"/></div></div>
-	<s:actionmessage theme="simple"/>
-	<s:actionerror/>  
-	<s:fielderror />  
+<html>
+<head>
+<title><s:text name="budgetReAppropriation.modify" /></title>
+</head>
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="budgetReAppropriation.modify" />
+		</div>
+	</div>
+	<s:actionmessage theme="simple" />
+	<s:actionerror />
+	<s:fielderror />
 	<div class="buttonbottom">
-		<input type="button" value="Close" onclick="javascript: self.close()" class="button"/>
+		<input type="button" value="Close" onclick="javascript: self.close()"
+			class="button" />
 	</div>
 </body>
 </html>

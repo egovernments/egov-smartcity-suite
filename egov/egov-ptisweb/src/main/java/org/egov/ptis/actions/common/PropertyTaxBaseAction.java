@@ -521,8 +521,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         } else{
             currentState = null;
             if (null != approverPositionId && approverPositionId != -1){
-                Assignment assignment = assignmentService
-                        .getPrimaryAssignmentForPositon(approverPositionId);
+                Assignment assignment = assignmentService.getAssignmentsForPosition(approverPositionId,new Date()).get(0);
                 approverName =  assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
             }
         }

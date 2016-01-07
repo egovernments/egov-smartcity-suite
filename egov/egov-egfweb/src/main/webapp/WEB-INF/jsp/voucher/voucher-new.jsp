@@ -37,32 +37,71 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-		<SCRIPT type="text/javascript" src="/EGF/resources/javascript/jsCommonMethods.js"></SCRIPT>  
-		<script type="text/javascript" src="/EGF/exility/PageManager.js"></script>
-		<script type="text/javascript" src="/EGF/exility/PageValidator.js"></script>
-		<script type="text/javascript" src="/EGF/exility/data.js"></script>
-		<script type="text/javascript" src="/EGF/exility/ExilityParameters.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<SCRIPT type="text/javascript"
+	src="/EGF/resources/javascript/jsCommonMethods.js"></SCRIPT>
+<script type="text/javascript" src="/EGF/exility/PageManager.js"></script>
+<script type="text/javascript" src="/EGF/exility/PageValidator.js"></script>
+<script type="text/javascript" src="/EGF/exility/data.js"></script>
+<script type="text/javascript" src="/EGF/exility/ExilityParameters.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <title>PJV-Create</title>
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
 </style>
 </head>
 
-	<script>
+<script>
 		path="${pageContext.request.contextPath}";
 		var totaldbamt=0,totalcramt=0;
 		
@@ -196,79 +235,91 @@ PageManager.DataService.callDataService("subschemelist");
 }
 
 	</script>
-<body onload="loadDropDownCodes();loadDropDownCodesFunction();refreshInbox()">
+<body
+	onload="loadDropDownCodes();loadDropDownCodesFunction();refreshInbox()">
 
-<s:form action="voucher" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="JV-Create" />
-			</jsp:include>
-			
-			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-		<div class="formmainbox"><div class="formheading"></div>
-		<div id="listid" style="display:block">
-		<br/>
-<div align="center">
-	<table border="0" width="80%">
-	<jsp:include page="voucher-filter.jsp"/>
-	<tr>
-			<td class="bluebox">Financing Source &nbsp; </td>
-			<td class="bluebox"><s:select name="financingSourceId" id="financingSourceId" list="dropdownData.subschemeList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"/></td>
-			<td width="23%"  class="bluebox">Narration &nbsp;</td>
-			<td colspan="3"  class="bluebox"><s:textarea name="narration"/></td>
-	</tr>
-	</table>
-	</div>
-	<br/>
-	<div id="labelAD" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Account Details</th></table>
-	</div>
-	<div class="yui-skin-sam" align="center">
-       <div id="billDetailTable"></div>
-     </div>
-     <script>
+	<s:form action="voucher" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="JV-Create" />
+		</jsp:include>
+
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="formheading"></div>
+			<div id="listid" style="display: block">
+				<br />
+				<div align="center">
+					<table border="0" width="80%">
+						<jsp:include page="voucher-filter.jsp" />
+						<tr>
+							<td class="bluebox">Financing Source &nbsp;</td>
+							<td class="bluebox"><s:select name="financingSourceId"
+									id="financingSourceId" list="dropdownData.subschemeList"
+									listKey="id" listValue="name" headerKey="-1"
+									headerValue="----Choose----" /></td>
+							<td width="23%" class="bluebox">Narration &nbsp;</td>
+							<td colspan="3" class="bluebox"><s:textarea name="narration" /></td>
+						</tr>
+					</table>
+				</div>
+				<br />
+				<div id="labelAD" align="center">
+					<table width="80%" border=0 id="labelid">
+						<th>Account Details</th>
+					</table>
+				</div>
+				<div class="yui-skin-sam" align="center">
+					<div id="billDetailTable"></div>
+				</div>
+				<script>
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
 	 </script>
-	 <div id="codescontainer"></div>
-	 <br/>
-	 	<div id="labelSL" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Sub-Ledger Details</th></table>
-	 	</div>
-	 	
-		<div class="yui-skin-sam" align="center">
-	       <div id="subLedgerTable"></div>
-	     </div>
-		<script>
+				<div id="codescontainer"></div>
+				<br />
+				<div id="labelSL" align="center">
+					<table width="80%" border=0 id="labelid">
+						<th>Sub-Ledger Details</th>
+					</table>
+				</div>
+
+				<div class="yui-skin-sam" align="center">
+					<div id="subLedgerTable"></div>
+				</div>
+				<script>
 			
 			makeSubLedgerTable();
 		
 			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
 		</script>
-		
-		<div align="center">
-		
-		<table border="0" width="80%">
-			<tr>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox"><s:textarea name="comments" id="comments" cols="50" rows="3" value="%{voucherHeader.state.text1}"/></td>
-			</tr>
-			<tr>
-				<td/><td>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close" id="save&close" name="save&close" method="create" onclick="return validate()"/>
-				<s:submit cssClass="button" id="save&new" name="save&new" value="Save & New"  method="create" onclick="return validate()"/>
-				<input type="submit" value="Close" onclick="javascript:window.close()" class="button"/></td>
-			</tr>
-		</table>
-		
-	</div>
-</div>
-</div>
-<div id="codescontainer"></div>
-</s:form>
+
+				<div align="center">
+
+					<table border="0" width="80%">
+						<tr>
+							<td class="bluebox">Comments</td>
+							<td class="bluebox"><s:textarea name="comments"
+									id="comments" cols="50" rows="3"
+									value="%{voucherHeader.state.text1}" /></td>
+						</tr>
+						<tr>
+							<td />
+							<td><s:submit type="submit" cssClass="buttonsubmit"
+									value="Save & Close" id="save&close" name="save&close"
+									method="create" onclick="return validate()" /> <s:submit
+									cssClass="button" id="save&new" name="save&new"
+									value="Save & New" method="create" onclick="return validate()" />
+								<input type="submit" value="Close"
+								onclick="javascript:window.close()" class="button" /></td>
+						</tr>
+					</table>
+
+				</div>
+			</div>
+		</div>
+		<div id="codescontainer"></div>
+	</s:form>
 
 </body>
 

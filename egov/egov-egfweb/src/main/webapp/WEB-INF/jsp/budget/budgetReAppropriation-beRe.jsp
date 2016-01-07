@@ -37,7 +37,11 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<s:select list="dropdownData.budgetList"  listKey="id" listValue="name" name="budgetDetail.budget.id" headerKey="0" headerValue="--- Select ---"  id="newBudgetDropDownList" cssStyle="display:none"/>
-<input type="hidden" name="newBeRe" id="newBeRe" value='<s:property value="beRe"/>'/>
+<s:select list="dropdownData.budgetList" listKey="id" listValue="name"
+	name="budgetDetail.budget.id" headerKey="0"
+	headerValue="--- Select ---" id="newBudgetDropDownList"
+	cssStyle="display:none" />
+<input type="hidden" name="newBeRe" id="newBeRe"
+	value='<s:property value="beRe"/>' />

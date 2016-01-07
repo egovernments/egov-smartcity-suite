@@ -37,17 +37,21 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet"
+	type="text/css" />
 <link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet"
 	type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
 
 <script>
 	function fetchDeptId() {
@@ -152,7 +156,8 @@
 			<font style='color: red;'>
 				<p id="lblError" style="font: bold"></p>
 			</font>
-			<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+			<span class="mandatory"> <s:actionerror /> <s:fielderror />
+				<s:actionmessage />
 			</span>
 			<div class="formmainbox">
 				<div class="subheadnew">Dishonor Cheque Workflow</div>
@@ -165,16 +170,25 @@
 								<table id="glcodeTable" align="center" border="0"
 									cellpadding="0" cellspacing="0" width="100%">
 									<tr>
-										<s:hidden id="bankChargesAmt" name="bankChargesAmt"	value="%{bankChargesAmt}" />
-										<s:hidden id="bankReferenceNumber" name="bankReferenceNumber"	value="%{bankReferenceNumber}" />
-										<s:hidden id="instrumentDishonorReason"	name="instrumentDishonorReason"	value="%{instrumentDishonorReason}" />
-									
+										<s:hidden id="bankChargesAmt" name="bankChargesAmt"
+											value="%{bankChargesAmt}" />
+										<s:hidden id="bankReferenceNumber" name="bankReferenceNumber"
+											value="%{bankReferenceNumber}" />
+										<s:hidden id="instrumentDishonorReason"
+											name="instrumentDishonorReason"
+											value="%{instrumentDishonorReason}" />
+
 										<s:hidden id="id" name="id" value="%{id}" />
 										<s:hidden id="status" name="status" value="%{status.id}" />
-										<s:hidden id="originalVoucherHeader" name="originalVoucherHeader" value="%{originalVoucherHeader.id}" />
-										<s:hidden id="instrumentHeader" name="instrumentHeader"	value="%{instrumentHeader.id}" />
-										<s:hidden id="bankchargeGlCodeId" name="bankchargeGlCodeId"	value="%{bankchargeGlCodeId.id}" />
-										<s:hidden id="createdBy" name="createdBy"		value="%{createdBy.id}" />
+										<s:hidden id="originalVoucherHeader"
+											name="originalVoucherHeader"
+											value="%{originalVoucherHeader.id}" />
+										<s:hidden id="instrumentHeader" name="instrumentHeader"
+											value="%{instrumentHeader.id}" />
+										<s:hidden id="bankchargeGlCodeId" name="bankchargeGlCodeId"
+											value="%{bankchargeGlCodeId.id}" />
+										<s:hidden id="createdBy" name="createdBy"
+											value="%{createdBy.id}" />
 										<s:hidden id="state" name="state" value="%{state.id}" />
 										<s:hidden id="modifiedBy" name="modifiedBy"
 											value="%{modifiedBy.id}" />
@@ -192,15 +206,18 @@
 
 										<td width="20%" class="bluebox"><strong>Voucher
 												Date</strong></td>
-										<td width="20%" class="bluebox"><s:date	name="dishonorChequeView.originalVoucherHeader.voucherDate"
-												format="dd/MM/yyyy" var="tempVoucherDate" /><s:property value="%{tempVoucherDate}" /></td>
+										<td width="20%" class="bluebox"><s:date
+												name="dishonorChequeView.originalVoucherHeader.voucherDate"
+												format="dd/MM/yyyy" var="tempVoucherDate" />
+											<s:property value="%{tempVoucherDate}" /></td>
 									</tr>
 
 									<tr>
 										<td width="20%" class="bluebox"><strong>Bank </strong></td>
 										<td width="20%" class="bluebox"><s:hidden
 												name="dishonorChequeView.instrumentHeader.bankAccountId.bankbranch.bank.name" />
-											<s:property	value="%{dishonorChequeView.instrumentHeader.bankAccountId.bankbranch.bank.name}" /></td>
+											<s:property
+												value="%{dishonorChequeView.instrumentHeader.bankAccountId.bankbranch.bank.name}" /></td>
 
 										<td width="20%" class="bluebox"><strong>Bank
 												Branch </strong></td>
@@ -241,87 +258,31 @@
 											<s:property
 												value="%{dishonorChequeView.instrumentHeader.instrumentAmount}" /></td>
 
-										<td width="20%" class="bluebox"><strong>Cheque Reversal Date</strong> <span class="mandatory">*</span></td>
-										<s:date name='dishonorChequeView.transactionDate' format="dd/MM/yyyy" var="tempTransactionDate" />
-										<td class="bluebox"><s:textfield name="dishonorChequeView.transactionDate" id="dishonorChequeView.transactionDate"
-												onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempTransactionDate}" /> 
-								<!-- <a tabindex="-1" href="javascript:show_calendar('dishonorChequeWorkflow.dishonorChequeView.transactionDate');"	style="text-decoration: none">&nbsp;<img 
+										<td width="20%" class="bluebox"><strong>Cheque
+												Reversal Date</strong> <span class="mandatory">*</span></td>
+										<s:date name='dishonorChequeView.transactionDate'
+											format="dd/MM/yyyy" var="tempTransactionDate" />
+										<td class="bluebox"><s:textfield
+												name="dishonorChequeView.transactionDate"
+												id="dishonorChequeView.transactionDate"
+												onkeyup="DateFormat(this,this.value,event,false,'3')"
+												value="%{tempTransactionDate}" /> <!-- <a tabindex="-1" href="javascript:show_calendar('dishonorChequeWorkflow.dishonorChequeView.transactionDate');"	style="text-decoration: none">&nbsp;<img 
 										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></a></td>-->
 									</tr>
 									<tr>
-											<td width="20%" class="bluebox"><strong>Remarks</strong></td>
-											<td width="20%" class="bluebox"><s:property value="%{instrumentDishonorReason}" />
-											<td width="20%" class="bluebox"><strong>Reason</strong></td>
-											<td width="20%" class="bluebox"><s:property value="dishonorChequeView.instrumentHeader.surrendarReason" />
+										<td width="20%" class="bluebox"><strong>Remarks</strong></td>
+										<td width="20%" class="bluebox"><s:property
+												value="%{instrumentDishonorReason}" />
+										<td width="20%" class="bluebox"><strong>Reason</strong></td>
+										<td width="20%" class="bluebox"><s:property
+												value="dishonorChequeView.instrumentHeader.surrendarReason" />
 									</tr>
 									<table border="1" width="100%" cellspacing="0">
-											<tr>
-								                <th colspan="5"><div class="subheadsmallnew">Account Details</div></th>
-								            </tr>
-									
-									<tr>
-										<th class="bluebgheadtd" width="18%">Function Name</th>
-										<th class="bluebgheadtd" width="17%">Account&nbsp;Code</th>
-										<th class="bluebgheadtd" width="19%">Account Head</th>
-										<th class="bluebgheadtd" width="17%">Debit&nbsp;Amount(Rs)</th>
-										<th class="bluebgheadtd" width="16%">Credit&nbsp;Amount(Rs)</th>
-									</tr>
-									<tr>
-										<td width="18%" class="bluebox"><s:if test="%{function!=null}"><s:property	value="function.name" /></s:if></td>
-										<td width="17%" class="bluebox"><s:property	value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.glcode" />
-										<s:property value="%{dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.glcode" /></td>
-										<td width="19%" class="bluebox"><s:property	value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.name" />
-											<s:property value="%{dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.name" /></td>
-										<td width="17%" class="bluebox" style="text-align: right"><s:text		name="payment.format.number">
-												<s:param value="%{0.0}" /></s:text></td>						
-										<td width="16%" class="bluebox" style="text-align: right"><s:text name="payment.format.number">
-												<s:param	value="%{dishonorChequeView.instrumentHeader.instrumentAmount}" />
-											</s:text></td>
-									</tr>
-								<s:set var="totalDebit" value="0"/>
-									<s:iterator var="p" value="%{dishonorChequeView.details}"
-										status="s">
 										<tr>
-											<td width="18%" class="bluebox"><s:if test="%{function!=null}"><s:property	value="function.name" /></s:if></td>
-											<td width="17%" class="bluebox"><s:property
-													value="glcodeId.glcode" /></td>
-											<td width="19%" class="bluebox"><s:property
-													value="glcodeId.name" /></td>
-											<td width="17%" class="bluebox" style="text-align: right"><s:text
-													name="payment.format.number">
-													<s:param value="%{debitAmt}" />
-												</s:text></td>
-											<td width="16%" class="bluebox" style="text-align: right"><s:text
-													name="payment.format.number">
-													<s:param value="%{0.0}" />
-												</s:text></td>
-												<s:set var="totalDebit" value="#totalDebit + #p.debitAmt" />        
+											<th colspan="5"><div class="subheadsmallnew">Account
+													Details</div></th>
 										</tr>
-									</s:iterator>
-									<tr>
-									<td class="greybox" style="text-align:right" colspan="3"/>Total</td>
-									<td class="greybox" style="text-align:right"><s:text       
-													name="payment.format.number"><s:param value="#totalDebit"/></s:text></td>
-									<td class="greybox" style="text-align:right"><s:text name="payment.format.number">
-									<s:param	value="%{dishonorChequeView.instrumentHeader.instrumentAmount}" />
-									</s:text></td>              
-									</tr>
-									</table>
-									
 
-									<s:if test="dishonorChequeView.bankChargesAmt != null && dishonorChequeView.bankChargesAmt>0">
-										<table border="1" width="100%" cellspacing="0">
-										<tr>
-							                <th colspan="5"><div class="subheadsmallnew">Bank Charges Details</div></th>
-							            </tr>
-										<br/>
-										<tr>
-											<td width="20%" class="bluebox"><strong>Bank Charges Reason</strong></td>
-											<td width="20%" class="bluebox"><s:hidden name="bankreason" /><s:property value="%{bankreason}" />
-										</tr>
-										<tr><th colspan="5"><div class="subheadsmallnew">Account
-												Details</div></th>
-												</tr>
 										<tr>
 											<th class="bluebgheadtd" width="18%">Function Name</th>
 											<th class="bluebgheadtd" width="17%">Account&nbsp;Code</th>
@@ -329,42 +290,144 @@
 											<th class="bluebgheadtd" width="17%">Debit&nbsp;Amount(Rs)</th>
 											<th class="bluebgheadtd" width="16%">Credit&nbsp;Amount(Rs)</th>
 										</tr>
-
 										<tr>
-											<td width="18%" class="bluebox"><s:if test="%{function!=null}"><s:property	value="function.name" /></s:if></td>
+											<td width="18%" class="bluebox"><s:if
+													test="%{function!=null}">
+													<s:property value="function.name" />
+												</s:if></td>
 											<td width="17%" class="bluebox"><s:property
-													value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.glcode" /></td>
+													value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.glcode" />
+												<s:property
+													value="%{dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.glcode" /></td>
 											<td width="19%" class="bluebox"><s:property
-													value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.name" /></td>
+													value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.name" />
+												<s:property
+													value="%{dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.name" /></td>
 											<td width="17%" class="bluebox" style="text-align: right"><s:text
 													name="payment.format.number">
 													<s:param value="%{0.0}" />
 												</s:text></td>
 											<td width="16%" class="bluebox" style="text-align: right"><s:text
 													name="payment.format.number">
-													<s:param value="%{bankChargesAmt}" />
+													<s:param
+														value="%{dishonorChequeView.instrumentHeader.instrumentAmount}" />
 												</s:text></td>
 										</tr>
+										<s:set var="totalDebit" value="0" />
+										<s:iterator var="p" value="%{dishonorChequeView.details}"
+											status="s">
+											<tr>
+												<td width="18%" class="bluebox"><s:if
+														test="%{function!=null}">
+														<s:property value="function.name" />
+													</s:if></td>
+												<td width="17%" class="bluebox"><s:property
+														value="glcodeId.glcode" /></td>
+												<td width="19%" class="bluebox"><s:property
+														value="glcodeId.name" /></td>
+												<td width="17%" class="bluebox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{debitAmt}" />
+													</s:text></td>
+												<td width="16%" class="bluebox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{0.0}" />
+													</s:text></td>
+												<s:set var="totalDebit" value="#totalDebit + #p.debitAmt" />
+											</tr>
+										</s:iterator>
 										<tr>
-											<td width="18%" class="bluebox"><s:if test="%{function!=null}"><s:property	value="function.name" /></s:if></td>
-											<td width="17%" class="bluebox"><s:property value="dishonorChequeView.bankchargeGlCodeId.glcode" /></td>
-											<td width="19%" class="bluebox"><s:property value="dishonorChequeView.bankchargeGlCodeId.name" /></td>
-											<td width="17%" class="bluebox" style="text-align: right"><s:text name="payment.format.number"><s:param value="%{bankChargesAmt}" /></s:text></td>
-											<td width="16%" class="bluebox" style="text-align: right"><s:text
+											<td class="greybox" style="text-align: right" colspan="3" />Total
+											</td>
+											<td class="greybox" style="text-align: right"><s:text
 													name="payment.format.number">
-													<s:param value="%{0.0}" />
+													<s:param value="#totalDebit" />
 												</s:text></td>
-
+											<td class="greybox" style="text-align: right"><s:text
+													name="payment.format.number">
+													<s:param
+														value="%{dishonorChequeView.instrumentHeader.instrumentAmount}" />
+												</s:text></td>
 										</tr>
-										<tr>
-									<td class="greybox" style="text-align:right" colspan="3"/>Total</td>
-									<td class="greybox" style="text-align:right"><s:text name="payment.format.number">
-									<s:param	value="%{bankChargesAmt}" />
-									</s:text></td>
-									<td class="greybox" style="text-align:right"><s:text name="payment.format.number">
-									<s:param	value="%{bankChargesAmt}" />
-									</s:text></td>              
-									</tr>
+									</table>
+
+
+									<s:if
+										test="dishonorChequeView.bankChargesAmt != null && dishonorChequeView.bankChargesAmt>0">
+										<table border="1" width="100%" cellspacing="0">
+											<tr>
+												<th colspan="5"><div class="subheadsmallnew">Bank
+														Charges Details</div></th>
+											</tr>
+											<br />
+											<tr>
+												<td width="20%" class="bluebox"><strong>Bank
+														Charges Reason</strong></td>
+												<td width="20%" class="bluebox"><s:hidden
+														name="bankreason" />
+													<s:property value="%{bankreason}" />
+											</tr>
+											<tr>
+												<th colspan="5"><div class="subheadsmallnew">Account
+														Details</div></th>
+											</tr>
+											<tr>
+												<th class="bluebgheadtd" width="18%">Function Name</th>
+												<th class="bluebgheadtd" width="17%">Account&nbsp;Code</th>
+												<th class="bluebgheadtd" width="19%">Account Head</th>
+												<th class="bluebgheadtd" width="17%">Debit&nbsp;Amount(Rs)</th>
+												<th class="bluebgheadtd" width="16%">Credit&nbsp;Amount(Rs)</th>
+											</tr>
+
+											<tr>
+												<td width="18%" class="bluebox"><s:if
+														test="%{function!=null}">
+														<s:property value="function.name" />
+													</s:if></td>
+												<td width="17%" class="bluebox"><s:property
+														value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.glcode" /></td>
+												<td width="19%" class="bluebox"><s:property
+														value="dishonorChequeView.instrumentHeader.bankAccountId.chartofaccounts.name" /></td>
+												<td width="17%" class="bluebox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{0.0}" />
+													</s:text></td>
+												<td width="16%" class="bluebox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{bankChargesAmt}" />
+													</s:text></td>
+											</tr>
+											<tr>
+												<td width="18%" class="bluebox"><s:if
+														test="%{function!=null}">
+														<s:property value="function.name" />
+													</s:if></td>
+												<td width="17%" class="bluebox"><s:property
+														value="dishonorChequeView.bankchargeGlCodeId.glcode" /></td>
+												<td width="19%" class="bluebox"><s:property
+														value="dishonorChequeView.bankchargeGlCodeId.name" /></td>
+												<td width="17%" class="bluebox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{bankChargesAmt}" />
+													</s:text></td>
+												<td width="16%" class="bluebox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{0.0}" />
+													</s:text></td>
+
+											</tr>
+											<tr>
+												<td class="greybox" style="text-align: right" colspan="3" />Total
+												</td>
+												<td class="greybox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{bankChargesAmt}" />
+													</s:text></td>
+												<td class="greybox" style="text-align: right"><s:text
+														name="payment.format.number">
+														<s:param value="%{bankChargesAmt}" />
+													</s:text></td>
+											</tr>
 										</table>
 									</s:if>
 									<s:hidden name="nextLevel" id="nextLevel"

@@ -37,84 +37,94 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 
 <html>
-  <head>
-    <title>
-			<s:text name="grants.search.grants"/>	    	
-	</title>
-  
-  </head>
-  
-  <body>
-	<div class="formmainbox"><div class="subheadnew"><s:text name="grants.search.grants"/></div>
-	
-	<br/><br/>
-	
-	<s:form name="baseRevenueForm" action="baseRevenue" theme="simple" >
+<head>
+<title><s:text name="grants.search.grants" /></title>
 
-    	
-    	<br/><br/>
-    	
-    	<div class="buttonbottom">
-			<s:submit method="search" value="Search" cssClass="buttonsubmit" />
-			<input type="submit" value="Close"
-				onclick="javascript:window.close()" class="button" />
+</head>
+
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="grants.search.grants" />
 		</div>
-		
-		<s:if test="%{grantSearchList.size!=0}">
-		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
-		
-		<tr>
-		
-			<th class="bluebgheadtd"  style="width:2%;text-align:center" align="center">
-				Sl No.
-			</th>
-			<th class="bluebgheadtd" style="width:4%;text-align:center" align="center">
-				Proceeding No.
-			</th>
-			<th class="bluebgheadtd"  style="width:8%;text-align:center" align="center">
-				Grant Type
-			</th>
-		</tr>
-		<c:set var="trclass" value="greybox"/>
-		<s:iterator var="fa" value="grantSearchList" status="f">
-			<tr>
-			
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="#f.index+1" /></td>
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><a href="#" onclick="urlLoad('<s:property value="id"/>');"
-						id="sourceLink" /> <s:property value="proceedingsNo" /> </a>	</td>
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="grantType" /></td>
-				<c:choose>
-					        <c:when test="${trclass=='greybox'}"><c:set var="trclass" value="bluebox"/></c:when>
-					        <c:when test="${trclass=='bluebox'}"><c:set var="trclass" value="greybox"/></c:when>
-			  </c:choose>
-			</tr>
-		</s:iterator>
-		
-		</table>
-		</s:if>
-		<s:if test="%{grantSearchList.size==0}">
-			<div id="msgdiv" style="display: block">
-				<table align="center" class="tablebottom" width="80%">
-					<tr>
-						<th class="bluebgheadtd" colspan="7">
-							No Records Found
-						</td>
-					</tr>
-				</table>
+
+		<br />
+		<br />
+
+		<s:form name="baseRevenueForm" action="baseRevenue" theme="simple">
+
+
+			<br />
+			<br />
+
+			<div class="buttonbottom">
+				<s:submit method="search" value="Search" cssClass="buttonsubmit" />
+				<input type="submit" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
-		</s:if>
-		
-	</s:form>
-	<script>
+
+			<s:if test="%{grantSearchList.size!=0}">
+				<table width="100%" border="0" align="center" cellpadding="0"
+					cellspacing="0" class="tablebottom">
+
+					<tr>
+
+						<th class="bluebgheadtd" style="width: 2%; text-align: center"
+							align="center">Sl No.</th>
+						<th class="bluebgheadtd" style="width: 4%; text-align: center"
+							align="center">Proceeding No.</th>
+						<th class="bluebgheadtd" style="width: 8%; text-align: center"
+							align="center">Grant Type</th>
+					</tr>
+					<c:set var="trclass" value="greybox" />
+					<s:iterator var="fa" value="grantSearchList" status="f">
+						<tr>
+
+							<td class="<c:out value="${trclass}"/>"
+								style="text-align: center" align="center"><s:property
+									value="#f.index+1" /></td>
+							<td class="<c:out value="${trclass}"/>"
+								style="text-align: center" align="center"><a href="#"
+								onclick="urlLoad('<s:property value="id"/>');" id="sourceLink" />
+								<s:property value="proceedingsNo" /> </a></td>
+							<td class="<c:out value="${trclass}"/>"
+								style="text-align: center" align="center"><s:property
+									value="grantType" /></td>
+							<c:choose>
+								<c:when test="${trclass=='greybox'}">
+									<c:set var="trclass" value="bluebox" />
+								</c:when>
+								<c:when test="${trclass=='bluebox'}">
+									<c:set var="trclass" value="greybox" />
+								</c:when>
+							</c:choose>
+						</tr>
+					</s:iterator>
+
+				</table>
+			</s:if>
+			<s:if test="%{grantSearchList.size==0}">
+				<div id="msgdiv" style="display: block">
+					<table align="center" class="tablebottom" width="80%">
+						<tr>
+							<th class="bluebgheadtd" colspan="7">No Records Found
+							</td>
+						</tr>
+					</table>
+				</div>
+			</s:if>
+
+		</s:form>
+		<script>
 	function urlLoad(id){
 		url = "baseRevenue!beforeEdit.action?id="+id;
 		window.open(url,'grantsEdit','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	</script>
-  </body>
+</body>
 </html>

@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.tl.web.actions.domain;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;

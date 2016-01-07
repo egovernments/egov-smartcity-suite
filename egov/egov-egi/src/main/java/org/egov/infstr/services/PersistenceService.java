@@ -95,6 +95,16 @@ public class PersistenceService<T, ID extends Serializable> {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Deprecated
+    public PersistenceService() {
+        //Marked for removal
+    }
+
+    public PersistenceService(final Class<T> type) {
+        this.type = type;
+    }
+
+    @Deprecated
     public void setType(final Class<T> type) {
         this.type = type;
     }
@@ -237,7 +247,7 @@ public class PersistenceService<T, ID extends Serializable> {
     }
 
     @Transactional
-  
+
     public T create(final T entity) {
         validate(entity);
         final Long id = (Long) getSession().save(entity);

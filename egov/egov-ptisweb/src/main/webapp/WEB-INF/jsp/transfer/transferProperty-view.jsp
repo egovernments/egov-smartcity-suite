@@ -366,9 +366,10 @@
 						<tr>
 					</s:if>
 				</table>
+				<br/>
 				<s:if
 					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@TRANSFER_FEE_COLLECTED) && 
+				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
@@ -377,12 +378,9 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</div>
 				</s:if>
-				<s:elseif
-					test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-					model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING) || 
-					(model.receiptNum != '' && model.receiptDate != null)}">  
+				<s:elseif test="%{model.receiptNum != '' && model.receiptDate != null}">  
 					<div id="workflowCommentsDiv" align="center">
-						<table width="100%">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
 								<td class="${approverEvenCSS}" width="13%">Approver
@@ -394,11 +392,12 @@
 								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
 								<td class="${approverEvenCSS}">&nbsp;</td>
 							</tr>
-						</table>
+							</table>
 					</div>
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
+					
 				</s:elseif>
 			</table>
 		</s:push>

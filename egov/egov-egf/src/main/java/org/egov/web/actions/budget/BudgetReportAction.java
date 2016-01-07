@@ -1,46 +1,44 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -48,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -64,6 +61,8 @@ import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -98,31 +97,31 @@ import org.springframework.transaction.annotation.Transactional;
         @Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM,
                 Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.pdf" }),
-        @Result(name = "department-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                Constants.INPUT_STREAM,
-                Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.xls" }),
-        @Result(name = "department-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                Constants.INPUT_STREAM,
-                Constants.CONTENT_TYPE, "text/html" }),
-        @Result(name = "functionwise-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                Constants.INPUT_STREAM,
-                Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-                "no-cache;filename=BudgetReport-functionwise.pdf" }),
-        @Result(name = "functionwise-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                Constants.INPUT_STREAM,
-                Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-                "no-cache;filename=BudgetReport-functionwise.xls" }),
-        @Result(name = "functionwise-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                Constants.INPUT_STREAM,
-                Constants.CONTENT_TYPE, "text/html" }),
-        @Result(name = "functionwise-dept-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {
-                Constants.INPUT_NAME, Constants.INPUT_STREAM,
-                Constants.CONTENT_TYPE, "text/html" }),
-        @Result(name = "printFunctionwise", location = "budgetReport-printFunctionwise.jsp"),
-        @Result(name = "print", location = "budgetReport-print.jsp"),
-        @Result(name = "functionwise", location = "budgetReport-functionwise.jsp"),
-        @Result(name = "atGlance", location = "budgetReport-atGlance.jsp"),
-        @Result(name = "dept", location = "budgetReport-dept.jsp"),
+                @Result(name = "department-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                        Constants.INPUT_STREAM,
+                        Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.xls" }),
+                        @Result(name = "department-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                                Constants.INPUT_STREAM,
+                                Constants.CONTENT_TYPE, "text/html" }),
+                                @Result(name = "functionwise-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                                        Constants.INPUT_STREAM,
+                                        Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
+                                "no-cache;filename=BudgetReport-functionwise.pdf" }),
+                                @Result(name = "functionwise-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                                        Constants.INPUT_STREAM,
+                                        Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
+                                "no-cache;filename=BudgetReport-functionwise.xls" }),
+                                @Result(name = "functionwise-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                                        Constants.INPUT_STREAM,
+                                        Constants.CONTENT_TYPE, "text/html" }),
+                                        @Result(name = "functionwise-dept-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {
+                                                Constants.INPUT_NAME, Constants.INPUT_STREAM,
+                                                Constants.CONTENT_TYPE, "text/html" }),
+                                                @Result(name = "printFunctionwise", location = "budgetReport-printFunctionwise.jsp"),
+                                                @Result(name = "print", location = "budgetReport-print.jsp"),
+                                                @Result(name = "functionwise", location = "budgetReport-functionwise.jsp"),
+                                                @Result(name = "atGlance", location = "budgetReport-atGlance.jsp"),
+                                                @Result(name = "dept", location = "budgetReport-dept.jsp"),
 })
 public class BudgetReportAction extends BaseFormAction {
     private static final String DEPTWISEPATH = "/org/egov/web/actions/budget/departmentWiseBudgetReport.jasper";
@@ -148,14 +147,14 @@ public class BudgetReportAction extends BaseFormAction {
     private static final String TOTALSTRING = "TOTAL";
     private final Map<String, String> coaMap = new HashMap<String, String>();
     private Map<String, String> refNoMap = new HashMap<String, String>();
-    private Map<Object, BigDecimal> reAppropriationMap = new HashMap<Object, BigDecimal>();
+    private final Map<Object, BigDecimal> reAppropriationMap = new HashMap<Object, BigDecimal>();
     private final List<BudgetReportView> reportStoreList = new ArrayList<BudgetReportView>();
     private static Logger LOGGER = Logger.getLogger(BudgetReportAction.class);
     BudgetDetailService budgetDetailService;
     private boolean onSaveOrForward = false;
     protected boolean canViewApprovedAmount = true;// shows both proposed and recommended like fmus
     protected boolean finalApprover = false;// shows only the recommended value like commissioner
-    private List<BudgetDetail> budgetDetailListForBE = new ArrayList<BudgetDetail>();
+    private final List<BudgetDetail> budgetDetailListForBE = new ArrayList<BudgetDetail>();
     private List<BudgetDetail> budgetDetailListForRE = new ArrayList<BudgetDetail>();
     private CFinancialYear financialYearForRE;
     private CFinancialYear financialYearForBE;
@@ -171,7 +170,7 @@ public class BudgetReportAction extends BaseFormAction {
         return departmentBudget;
     }
 
-    public void setDepartmentBudget(boolean departmentBudget) {
+    public void setDepartmentBudget(final boolean departmentBudget) {
         this.departmentBudget = departmentBudget;
     }
 
@@ -179,7 +178,7 @@ public class BudgetReportAction extends BaseFormAction {
         return budgetDetail;
     }
 
-    public void setBudgetDetail(BudgetDetail budgetDetail) {
+    public void setBudgetDetail(final BudgetDetail budgetDetail) {
         this.budgetDetail = budgetDetail;
     }
 
@@ -220,8 +219,9 @@ public class BudgetReportAction extends BaseFormAction {
         addRelatedEntity("financialYear", CFinancialYear.class);
     }
 
+    @Override
     public void prepare() {
-        EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
+        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         super.prepare();
         addDropdownData("departmentList", masterCache.get("egi-department"));
         addDropdownData("functionList", masterCache.get("egi-function"));
@@ -239,36 +239,32 @@ public class BudgetReportAction extends BaseFormAction {
     @Action(value = "/budget/budgetReport-ajaxGenerateFunctionWiseHtml")
     public String ajaxGenerateFunctionWiseHtml() throws IOException {
         if (topBudget != null && topBudget.getId() != null)
-        {
             topBudget = budgetService.find("from Budget where id=?", topBudget.getId());
-        }
         if (departmentBudget)
-        {
             workFlowstateCondn = " and (bd.state.value='END' or bd.state.owner.id=" + getPosition().getId() + ")";
-        }
 
-        Map<String, Object> paramMap = getParamMap();
+        final Map<String, Object> paramMap = getParamMap();
         inputStream = reportHelper.exportHtml(inputStream, path, paramMap, getDataForFunctionwise(), "pt");
         return "functionwise-HTML";
     }
 
     public String ajaxFunctionWiseConsolidated() throws IOException {
-        List<Object> dataForFunctionwiseForConsolidation = getDataForFunctionwiseForConsolidation();
-        Map<String, Object> paramMap = getParamMap();
+        final List<Object> dataForFunctionwiseForConsolidation = getDataForFunctionwiseForConsolidation();
+        final Map<String, Object> paramMap = getParamMap();
         inputStream = reportHelper.exportHtml(inputStream, path, paramMap, dataForFunctionwiseForConsolidation, "pt");
         return "functionwise-HTML";
     }
 
     @Action(value = "/budget/budgetReport-generateFunctionWisePdf")
     public String generateFunctionWisePdf() throws JRException, IOException {
-        Map<String, Object> paramMap = getParamMap();
+        final Map<String, Object> paramMap = getParamMap();
         inputStream = reportHelper.exportPdf(inputStream, path, paramMap, getDataForFunctionwise());
         return "functionwise-PDF";
     }
 
     @Action(value = "/budget/budgetReport-generateFunctionWiseXls")
     public String generateFunctionWiseXls() throws JRException, IOException {
-        Map<String, Object> paramMap = getParamMap();
+        final Map<String, Object> paramMap = getParamMap();
         inputStream = reportHelper.exportXls(inputStream, path, paramMap, getDataForFunctionwise());
         return "functionwise-XLS";
     }
@@ -279,21 +275,21 @@ public class BudgetReportAction extends BaseFormAction {
 
     @Action(value = "/budget/budgetReport-ajaxGenerateAtGlanceHtml")
     public String ajaxGenerateAtGlanceHtml() throws IOException {
-        Map<String, Object> paramMap = getParamMap();
+        final Map<String, Object> paramMap = getParamMap();
         paramMap.put("heading", "BUDGET AT GLANCE ");
         inputStream = reportHelper.exportHtml(inputStream, path, paramMap, getDataForGlance(), "pt");
         return "functionwise-HTML";
     }
 
     public String generateAtGlancePdf() throws JRException, IOException {
-        Map<String, Object> paramMap = getParamMap();
+        final Map<String, Object> paramMap = getParamMap();
         paramMap.put("heading", "BUDGET AT GLANCE ");
         inputStream = reportHelper.exportPdf(inputStream, path, paramMap, getDataForGlance());
         return "functionwise-PDF";
     }
 
     public String generateAtGlanceXls() throws JRException, IOException {
-        Map<String, Object> paramMap = getParamMap();
+        final Map<String, Object> paramMap = getParamMap();
         paramMap.put("heading", "BUDGET AT GLANCE ");
         inputStream = reportHelper.exportXls(inputStream, path, paramMap, getDataForGlance());
         return "functionwise-XLS";
@@ -325,10 +321,10 @@ public class BudgetReportAction extends BaseFormAction {
                                     + " and bd.budget.isbere='RE'   order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
             if (budgetDetailList.isEmpty())
                 budgetDetailList = getPersistenceService()
-                        .findAllBy(
-                                " from BudgetDetail bd where "
-                                        + sql
-                                        + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
+                .findAllBy(
+                        " from BudgetDetail bd where "
+                                + sql
+                                + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
         }
         else {
             budgetDetailList = getPersistenceService()
@@ -373,12 +369,12 @@ public class BudgetReportAction extends BaseFormAction {
         sql = getSqlForFinYearBE(financialYearForBE.getId());
 
         budgetDetailListForBE
-                .addAll(getPersistenceService()
-                        .findAllBy(
-                                " from BudgetDetail bd where "
-                                        + sql
-                                        + workFlowstateCondn
-                                        + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode"));
+        .addAll(getPersistenceService()
+                .findAllBy(
+                        " from BudgetDetail bd where "
+                                + sql
+                                + workFlowstateCondn
+                                + " and bd.budget.isbere='BE'   order by bd.executingDepartment,bd.function,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode"));
     }
 
     @SuppressWarnings("unchecked")
@@ -398,10 +394,10 @@ public class BudgetReportAction extends BaseFormAction {
                                     + "  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
             if (budgetDetailList.isEmpty())
                 budgetDetailList = getPersistenceService()
-                        .findAllBy(
-                                " from BudgetDetail bd where "
-                                        + sql
-                                        + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
+                .findAllBy(
+                        " from BudgetDetail bd where "
+                                + sql
+                                + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
         }
         else {
             budgetDetailList = getPersistenceService()
@@ -413,12 +409,12 @@ public class BudgetReportAction extends BaseFormAction {
                                     + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
             if (budgetDetailList.isEmpty())
                 budgetDetailList = getPersistenceService()
-                        .findAllBy(
-                                " from BudgetDetail bd where "
-                                        + sql
-                                        + " and bd.budget.isbere='BE'  and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
-                                        + finalStatus
-                                        + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
+                .findAllBy(
+                        " from BudgetDetail bd where "
+                                + sql
+                                + " and bd.budget.isbere='BE'  and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
+                                + finalStatus
+                                + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
 
         }
         return budgetDetailList;
@@ -435,27 +431,26 @@ public class BudgetReportAction extends BaseFormAction {
 
         sql = getSqlForFinYear(financialYearForRE.getId());
         budgetDetailListForRE
-                .addAll(getPersistenceService()
-                        .findAllBy(
-                                " from BudgetDetail bd where "
-                                        + sql
-                                        + workFlowstateCondn
-                                        + "  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
+        .addAll(getPersistenceService()
+                .findAllBy(
+                        " from BudgetDetail bd where "
+                                + sql
+                                + workFlowstateCondn
+                                + "  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
         sql = getSqlForFinYearBE(financialYearForBE.getId());
         budgetDetailListForBE
-                .addAll(getPersistenceService()
-                        .findAllBy(
-                                " from BudgetDetail bd where "
-                                        + sql
-                                        + workFlowstateCondn
-                                        + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
+        .addAll(getPersistenceService()
+                .findAllBy(
+                        " from BudgetDetail bd where "
+                                + sql
+                                + workFlowstateCondn
+                                + " and bd.budget.isbere='BE'  order by bd.executingDepartment,bd.function,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode"));
 
     }
 
     private List<Object> getDataForFunctionwise() {
-        if (onSaveOrForward) {
+        if (onSaveOrForward)
             return getDataFunctionWiseForWorkingCopy();
-        }
         List<BudgetDetail> budgetDetailList = null;
         budgetDetailList = getMincodeData();
         budgetDetailList.addAll(getMajorcodeData());
@@ -475,7 +470,7 @@ public class BudgetReportAction extends BaseFormAction {
         getCOA();
         getBudgetReappropriationAmt();
         loadAmountForMajorcodewise(budgetReport.getFinancialYear(), budgetReport.getDepartment(), budgetReport.getFunction());
-        for (BudgetDetail detail : budgetDetailList)
+        for (final BudgetDetail detail : budgetDetailList)
         {
             if (detail.getExecutingDepartment() == null || detail.getFunction() == null)
                 continue;
@@ -524,7 +519,7 @@ public class BudgetReportAction extends BaseFormAction {
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTIONWISE "
                         + BudgetReport.getValueFor(glType).toUpperCase() + " BUDGET SUMMARY", refNoMap.get(BudgetReport
-                        .getValueFor(glType)), null, null, null, "typerow"));
+                                .getValueFor(glType)), null, null, null, "typerow"));
 
                 functionId = null;
                 majorCode = "";
@@ -621,7 +616,7 @@ public class BudgetReportAction extends BaseFormAction {
         String type = "", majorCode = "", glcode = "", glType = "", glName = "", tempMajorCode = "";
         BigDecimal totalAmt = BigDecimal.ZERO;
         BigDecimal totalAppropriationAmt = BigDecimal.ZERO;
-        BigDecimal reAppropriationAmt = BigDecimal.ZERO;
+        final BigDecimal reAppropriationAmt = BigDecimal.ZERO;
         boolean printed = true;
         boolean isFirst = true;
         boolean majorcodewise = false;
@@ -630,7 +625,7 @@ public class BudgetReportAction extends BaseFormAction {
         // getBudgetReappropriationAmt();
         loadAmountForMajorcodewiseConsolidated(budgetReport.getFinancialYear(), budgetReport.getDepartment(),
                 budgetReport.getFunction());
-        for (BudgetDetail detail : budgetDetailList)
+        for (final BudgetDetail detail : budgetDetailList)
         {
             if (detail.getExecutingDepartment() == null || detail.getFunction() == null)
                 continue;
@@ -677,7 +672,7 @@ public class BudgetReportAction extends BaseFormAction {
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTIONWISE "
                         + BudgetReport.getValueFor(glType).toUpperCase() + " BUDGET SUMMARY", refNoMap.get(BudgetReport
-                        .getValueFor(glType)), null, null, null, "typerow"));
+                                .getValueFor(glType)), null, null, null, "typerow"));
 
                 functionId = null;
                 majorCode = "";
@@ -741,7 +736,7 @@ public class BudgetReportAction extends BaseFormAction {
         return topBudget;
     }
 
-    public void setTopBudget(Budget topBudget) {
+    public void setTopBudget(final Budget topBudget) {
         this.topBudget = topBudget;
     }
 
@@ -750,13 +745,13 @@ public class BudgetReportAction extends BaseFormAction {
         try {
             // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
             pos = eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ApplicationRuntimeException("Unable to get Position for the user");
         }
         return pos;
     }
 
-    public void loadAmountForMajorcodewise(final CFinancialYear finyear, Department dept, CFunction function) {
+    public void loadAmountForMajorcodewise(final CFinancialYear finyear, final Department dept, final CFunction function) {
         String finalStatus = getFinalStatus();
         String miscQuery = "";
         String floatingColumn = "sum(bd.approvedAmount)";
@@ -794,16 +789,15 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength
                                 + "),bd.executingDepartment.id,bd.function.id", finyear);
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
-        for (Object[] obj : amountList) {
+        for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-                    && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
+            && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
-                        obj[0] + EMPTYSTRING, ((BigDecimal) obj[1]), reAppropriationAmt, ((BigDecimal) obj[1])
-                                .add(reAppropriationAmt)));
+                        obj[0] + EMPTYSTRING, (BigDecimal) obj[1], reAppropriationAmt, ((BigDecimal) obj[1])
+                        .add(reAppropriationAmt)));
             }
-        }
 
         amountList = getPersistenceService()
                 .findAllBy(
@@ -819,28 +813,28 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength
                                 + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
                                 + majorCodeLength + ")", finyear);
-        for (Object[] obj : amountList) {
+        for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-                    && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
+            && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
-                        obj[0] + EMPTYSTRING, ((BigDecimal) obj[1]), reAppropriationAmt, ((BigDecimal) obj[1])
-                                .add(reAppropriationAmt)));
+                        obj[0] + EMPTYSTRING, (BigDecimal) obj[1], reAppropriationAmt, ((BigDecimal) obj[1])
+                        .add(reAppropriationAmt)));
             }
-        }
     }
 
-    public void loadAmountForMajorcodewiseConsolidated(final CFinancialYear finyear, Department dept, CFunction function) {
-        String finalStatus = getFinalStatus();
+    public void loadAmountForMajorcodewiseConsolidated(final CFinancialYear finyear, final Department dept,
+            final CFunction function) {
+        getFinalStatus();
         String miscQuery = "";
-        String floatingColumn = "sum(bd.approvedAmount)";
+        final String floatingColumn = "sum(bd.approvedAmount)";
 
         if (dept != null && dept.getId() != null)
             miscQuery = miscQuery + " and bd.executingDepartment.id=" + dept.getId();
         if (function != null && function.getId() != null)
             miscQuery = miscQuery + " and bd.function.id=" + function.getId();
-        List<Object[]> amountList = getPersistenceService()
+        final List<Object[]> amountList = getPersistenceService()
                 .findAllBy(
                         "select substr(bd.budgetGroup.minCode.glcode,0,"
                                 + majorCodeLength
@@ -860,16 +854,15 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength
                                 + "),bd.executingDepartment.id,bd.function.id", finyear, pos, topBudget);
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
-        for (Object[] obj : amountList) {
+        for (final Object[] obj : amountList)
             if (obj[0] != null && obj[1] != null && obj[2] != null && obj[3] != null && obj[4] != null
-                    && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
+            && !BigDecimal.ZERO.equals(BigDecimal.valueOf(Double.valueOf(obj[1].toString())))) {
                 reAppropriationAmt = reAppropriationMap.get(obj[5]) == null ? BigDecimal.ZERO : reAppropriationMap.get(obj[5]);
                 reportStoreList.add(new BudgetReportView(Integer.valueOf(obj[2] + EMPTYSTRING), Long
                         .valueOf(obj[3] + EMPTYSTRING), obj[4] + EMPTYSTRING,
-                        obj[0] + EMPTYSTRING, ((BigDecimal) obj[1]), reAppropriationAmt, ((BigDecimal) obj[1])
-                                .add(reAppropriationAmt)));
+                        obj[0] + EMPTYSTRING, (BigDecimal) obj[1], reAppropriationAmt, ((BigDecimal) obj[1])
+                        .add(reAppropriationAmt)));
             }
-        }
 
         /*
          * amountList = getPersistenceService() .findAllBy( "select substr(bd.budgetGroup.majorCode.glcode,0," + majorCodeLength +
@@ -888,13 +881,14 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadAmountForMajorcodewiseForWorkingCopy(final CFinancialYear finyear, Department dept, CFunction function) {
+    public void loadAmountForMajorcodewiseForWorkingCopy(final CFinancialYear finyear, final Department dept,
+            final CFunction function) {
         String miscQuery = "";
-        String floatingColumn = "sum(bd.originalAmount),sum(bd.approvedAmount)";
-        Long finYearForRE = getFinYearForRE();
+        final String floatingColumn = "sum(bd.originalAmount),sum(bd.approvedAmount)";
+        getFinYearForRE();
         miscQuery = getSqlForFinYear(financialYearForRE.getId());
         // find sum for RE
-        List<Object[]> amountListForRE = getPersistenceService()
+        final List<Object[]> amountListForRE = getPersistenceService()
                 .findAllBy(
                         "select substr(bd.budgetGroup.minCode.glcode,0,"
                                 + majorCodeLength
@@ -912,26 +906,26 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength + "),bd.executingDepartment.id,bd.function.id");
 
         amountListForRE
-                .addAll(getPersistenceService()
-                        .findAllBy(
-                                "select substr(bd.budgetGroup.majorCode.glcode,0,"
-                                        + majorCodeLength
-                                        + ") ,"
-                                        + floatingColumn
-                                        + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where "
-                                        + miscQuery
-                                        + workFlowstateCondn
-                                        + "  and bd.budget.isbere='RE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
-                                        + majorCodeLength
-                                        + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.budgetGroup.minCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
-                                        + majorCodeLength + ")"));
+        .addAll(getPersistenceService()
+                .findAllBy(
+                        "select substr(bd.budgetGroup.majorCode.glcode,0,"
+                                + majorCodeLength
+                                + ") ,"
+                                + floatingColumn
+                                + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where "
+                                + miscQuery
+                                + workFlowstateCondn
+                                + "  and bd.budget.isbere='RE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
+                                + majorCodeLength
+                                + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.budgetGroup.minCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
+                                + majorCodeLength + ")"));
         miscQuery = getSqlForFinYearBE(financialYearForBE.getId());
 
         /**
          * order of retrieval 0-majorcode 1-sum(originalamount) 2-sum(approvedamount) 3-department 4-function 5-type 6-glcode/id
          * 7-id
          */
-        List<Object[]> amountListForBE = getPersistenceService()
+        final List<Object[]> amountListForBE = getPersistenceService()
                 .findAllBy(
                         "select substr(bd.budgetGroup.minCode.glcode,0,"
                                 + majorCodeLength
@@ -949,31 +943,31 @@ public class BudgetReportAction extends BaseFormAction {
                                 + "bd.function.id,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode,bd.id order by  substr(bd.budgetGroup.minCode.glcode,0,"
                                 + majorCodeLength + "),bd.executingDepartment.id,bd.function.id");
         amountListForBE
-                .addAll(getPersistenceService()
-                        .findAllBy(
-                                "select substr(bd.budgetGroup.majorCode.glcode,0,"
-                                        + majorCodeLength
-                                        + ") ,"
-                                        + floatingColumn
+        .addAll(getPersistenceService()
+                .findAllBy(
+                        "select substr(bd.budgetGroup.majorCode.glcode,0,"
+                                + majorCodeLength
+                                + ") ,"
+                                + floatingColumn
 
-                                        + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id from BudgetDetail bd where "
-                                        + miscQuery
-                                        + workFlowstateCondn
-                                        + "   and bd.budget.isbere='BE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
-                                        + majorCodeLength
-                                        + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
-                                        + majorCodeLength + ")"));
+                                + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id from BudgetDetail bd where "
+                                + miscQuery
+                                + workFlowstateCondn
+                                + "   and bd.budget.isbere='BE'  group by substr(bd.budgetGroup.majorCode.glcode,0,"
+                                + majorCodeLength
+                                + "),bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode,bd.id order by  substr(bd.budgetGroup.majorCode.glcode,0,"
+                                + majorCodeLength + ")"));
 
         // Merge both and set to budget Report
         // u may require null check here
         // handle un equal be and re major code totals
 
-        outer: for (Object[] re : amountListForRE) {
-            inner: for (Object[] be : amountListForBE) {
+        outer: for (final Object[] re : amountListForRE)
+            inner: for (final Object[] be : amountListForBE)
                 if (re[0].toString().equalsIgnoreCase(be[0].toString()) && re[3].toString().equalsIgnoreCase(be[3].toString())
                         && re[4].toString().equalsIgnoreCase(be[4].toString())
                         && re[6].toString().equalsIgnoreCase(be[6].toString())) {
-                    BudgetReportView v1 = new BudgetReportView();
+                    final BudgetReportView v1 = new BudgetReportView();
                     v1.setDeptId(Integer.valueOf(re[3].toString()));
                     v1.setFunctionId((Long) re[4]);
                     v1.setType(re[5].toString());
@@ -985,9 +979,6 @@ public class BudgetReportAction extends BaseFormAction {
                     reportStoreList.add(v1);
                     break inner;
                 }
-            }
-
-        }
 
     }
 
@@ -996,9 +987,9 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal totalAmt = BigDecimal.ZERO;
         BigDecimal appropriationGrandAmt = BigDecimal.ZERO;
         BigDecimal appropriationTotalAmt = BigDecimal.ZERO;
-        List<Object> majorCodeList = new ArrayList<Object>();
-        Map<String, BudgetReportView> entries = new TreeMap<String, BudgetReportView>();
-        for (BudgetReportView reportStore : reportStoreList) {
+        final List<Object> majorCodeList = new ArrayList<Object>();
+        final Map<String, BudgetReportView> entries = new TreeMap<String, BudgetReportView>();
+        for (final BudgetReportView reportStore : reportStoreList)
             if (deptId.equals(reportStore.getDeptId()) && functionId.equals(reportStore.getFunctionId())
                     && type.equals(reportStore.getType())) {
                 if (entries.get(reportStore.getMajorCode()) == null) {
@@ -1025,14 +1016,12 @@ public class BudgetReportAction extends BaseFormAction {
                 grandAmt = grandAmt.add(reportStore.getTempamount());
                 appropriationGrandAmt = appropriationGrandAmt.add(reportStore.getAppropriationAmount());
             }
-        }
-        for (Entry<String, BudgetReportView> row : entries.entrySet()) {
+        for (final Entry<String, BudgetReportView> row : entries.entrySet())
             majorCodeList.add(row.getValue());
-        }
         if (!totalAmt.equals(BigDecimal.ZERO))
             majorCodeList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING, grandAmt,
                     appropriationGrandAmt, grandAmt
-                            .add(appropriationGrandAmt), TOTALROW));
+                    .add(appropriationGrandAmt), TOTALROW));
         return majorCodeList;
     }
 
@@ -1046,9 +1035,9 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal reRecomTotalAmountLocalGrand = BigDecimal.ZERO;
         BigDecimal beRecomTotalAmountLocalGrand = BigDecimal.ZERO;
 
-        List<Object> majorCodeList = new ArrayList<Object>();
-        Map<String, BudgetReportView> entries = new TreeMap<String, BudgetReportView>();
-        for (BudgetReportView reportStore : reportStoreList) {
+        final List<Object> majorCodeList = new ArrayList<Object>();
+        final Map<String, BudgetReportView> entries = new TreeMap<String, BudgetReportView>();
+        for (final BudgetReportView reportStore : reportStoreList)
             if (deptId.equals(reportStore.getDeptId()) && functionId.equals(reportStore.getFunctionId())
                     && type.equals(reportStore.getType())) {
                 if (entries.get(reportStore.getMajorCode()) == null) {
@@ -1056,7 +1045,7 @@ public class BudgetReportAction extends BaseFormAction {
                     beProposalTotalAmountLocal = BigDecimal.ZERO;
                     reRecomTotalAmountLocal = BigDecimal.ZERO;
                     beRecomTotalAmountLocal = BigDecimal.ZERO;
-                    BudgetReportView v2 = new BudgetReportView();
+                    final BudgetReportView v2 = new BudgetReportView();
                     v2.setNarration("1414");
                     v2.setNarration(reportStore.getMajorCode() + "-" + coaMap.get(reportStore.getMajorCode()));
                     v2.setReference(refNoMap.get(reportStore.getMajorCode()) == null ? EMPTYSTRING : refNoMap.get(
@@ -1090,11 +1079,9 @@ public class BudgetReportAction extends BaseFormAction {
                 // grandAmt = grandAmt.add(reportStore.getTempamount());
 
             }
-        }
-        for (Entry<String, BudgetReportView> row : entries.entrySet()) {
+        for (final Entry<String, BudgetReportView> row : entries.entrySet())
             majorCodeList.add(row.getValue());
-        }
-        BudgetReportView v3 = new BudgetReportView();
+        final BudgetReportView v3 = new BudgetReportView();
         v3.setBeProposalAmount(beProposalTotalAmountLocalGrand);
         v3.setReProposalAmount(reProposalTotalAmountLocalGrand);
         v3.setBeRecomAmount(beRecomTotalAmountLocalGrand);
@@ -1107,11 +1094,10 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     public void getCOA() {
-        List<CChartOfAccounts> coaList = getPersistenceService().findAllBy(
+        final List<CChartOfAccounts> coaList = getPersistenceService().findAllBy(
                 "from CChartOfAccounts where length(glcode)=" + majorCodeLength);
-        for (CChartOfAccounts coa : coaList) {
+        for (final CChartOfAccounts coa : coaList)
             coaMap.put(coa.getGlcode(), coa.getName());
-        }
     }
 
     @Action(value = "/budget/budgetReport-departmentWiseReport")
@@ -1152,7 +1138,7 @@ public class BudgetReportAction extends BaseFormAction {
         return budgetReport;
     }
 
-    public void setBudgetReport(BudgetReport budgetReport) {
+    public void setBudgetReport(final BudgetReport budgetReport) {
         this.budgetReport = budgetReport;
     }
 
@@ -1174,9 +1160,9 @@ public class BudgetReportAction extends BaseFormAction {
                     "report.financialyear.not.selected")));
     }
 
-    protected String getBudgetType(String finalStatus) {
+    protected String getBudgetType(final String finalStatus) {
         String isBeRe = "BE";
-        Budget budget = (Budget) persistenceService
+        final Budget budget = (Budget) persistenceService
                 .find(
                         "from Budget where financialYear.id=? and parent is null and isPrimaryBudget=1 and isActiveBudget=1 and isBeRe='RE' and state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
                                 + finalStatus + "')", budgetReport.getFinancialYear().getId());
@@ -1189,15 +1175,14 @@ public class BudgetReportAction extends BaseFormAction {
         budgetReportList.add(new BudgetReportView("", "", "", null, null, null));
     }
 
-    protected String getQueryForSelectedType(String code) {
+    protected String getQueryForSelectedType(final String code) {
         if (budgetReport.getType() == null)
             return "";
-        if (!"ALL".equalsIgnoreCase(budgetReport.getType())) {
+        if (!"ALL".equalsIgnoreCase(budgetReport.getType()))
             if ("IE".equalsIgnoreCase(budgetReport.getType()))
                 return "and (bd.budgetGroup." + code + ".type='I' or bd.budgetGroup." + code + ".type='E')";
             else
                 return "and bd.budgetGroup." + code + ".type='" + budgetReport.getType() + "'";
-        }
         return "";
     }
 
@@ -1205,9 +1190,7 @@ public class BudgetReportAction extends BaseFormAction {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("finYear", budgetReport.getFinancialYear().getFinYearRange());
         if (onSaveOrForward)
-        {
             paramMap = getReportConfigs(paramMap);
-        }
         if (budgetReport.getType() != null)
             paramMap.put("type", BudgetReport.getValueFor(budgetReport.getType()));
         return paramMap;
@@ -1215,47 +1198,36 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     /**
-	 * 
-	 */
-    private Map<String, Object> getReportConfigs(Map<String, Object> paramMap) {
+     *
+     */
+    private Map<String, Object> getReportConfigs(final Map<String, Object> paramMap) {
         if (financialYearForRE == null)
         {
-            Long finYearForRE = getFinYearForRE();
+            final Long finYearForRE = getFinYearForRE();
             if (finYearForRE == budgetReport.getFinancialYear().getId()) {
-                CFinancialYear finYear = getFinYear("next");
+                final CFinancialYear finYear = getFinYear("next");
                 financialYearForBE = finYear;
-            }
-            else {
+            } else
                 financialYearForBE = budgetReport.getFinancialYear();
-            }
         }
-        List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
+        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                 "budget_toplevel_approver_designation");
-        String value = list.get(0).getValue();
+        final String value = list.get(0).getValue();
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
+        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
                 new Date());
-        Designation designation = empAssignment.getDesignation();
+        final Designation designation = empAssignment.getDesignation();
         if (designation.getName().equalsIgnoreCase(value))
-        {
             finalApprover = true;
-        }
         canViewApprovedAmount = budgetDetailService.canViewApprovedAmount(persistenceService, null);
         if (!canViewApprovedAmount && !finalApprover)
-        {
             path = WORKINGCOPYWITHONLYPROPOSALS;
-
-        } else if (finalApprover)
-        {
+        else if (finalApprover)
             path = WORKINGCOPYFORFINALAPPROVER;
-        } else
-        {
+        else
             path = WORKINGCOPYWITHALLMOUNTS;
-        }
-        if (departmentBudget)// for budget approval
-        {
+        if (departmentBudget)
             path = WORKINGCOPYFORFINALAPPROVER;
-        }
         paramMap.put("financialYearForRE", financialYearForRE.getFinYearRange());
         paramMap.put("financialYearForBE", financialYearForBE.getFinYearRange());
         paramMap.put("heading", " FUNCTIONWISE  BUDGET SUMMARY ");
@@ -1263,14 +1235,13 @@ public class BudgetReportAction extends BaseFormAction {
 
     }
 
-    protected Map<String, String> getReferenceNumber(String appConfigKey) {
-        Map<String, String> referenceNo = new HashMap<String, String>();
-        List<AppConfigValues> appConfigList = (List<AppConfigValues>) persistenceService
+    protected Map<String, String> getReferenceNumber(final String appConfigKey) {
+        final Map<String, String> referenceNo = new HashMap<String, String>();
+        final List<AppConfigValues> appConfigList = persistenceService
                 .findAllBy("from AppConfigValues where key.keyName like '"
                         + appConfigKey + "-%'");
-        for (AppConfigValues appConfigVal : appConfigList) {
+        for (final AppConfigValues appConfigVal : appConfigList)
             referenceNo.put(appConfigVal.getKey().getKeyName().split("-")[1], appConfigVal.getValue());
-        }
         return referenceNo;
     }
 
@@ -1278,23 +1249,22 @@ public class BudgetReportAction extends BaseFormAction {
         return getAppConfigValueFor(Constants.EGF, "budget_final_approval_status");
     }
 
-    protected String getAppConfigValueFor(String module, String key) {
+    protected String getAppConfigValueFor(final String module, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
     }
 
     protected void populateData() {
-        String finalStatus = getFinalStatus();
-        String isBeRe = getBudgetType(finalStatus);
+        final String finalStatus = getFinalStatus();
+        final String isBeRe = getBudgetType(finalStatus);
         String deptQuery = "";
-        if (budgetReport.getDepartment() != null && budgetReport.getDepartment().getId() != null) {
-            deptQuery = " and bd.executingDepartment.id=" + (budgetReport.getDepartment().getId().toString());
-        }
+        if (budgetReport.getDepartment() != null && budgetReport.getDepartment().getId() != null)
+            deptQuery = " and bd.executingDepartment.id=" + budgetReport.getDepartment().getId().toString();
         getBudgetReappropriationAmt();
-        String budgetType = BudgetReport.getValueFor(budgetReport.getType());
+        final String budgetType = BudgetReport.getValueFor(budgetReport.getType());
         if (budgetType != null && !"ALL".equals(budgetReport.getType()))
             budgetReportList.add(new BudgetReportView("", budgetType.toUpperCase() + " BUDGET SUMMARY", "", null, null, null));
         // budgetdetails for all mincode
-        LinkedList<BudgetDetail> budgetDetails = new LinkedList<BudgetDetail>();
+        final LinkedList<BudgetDetail> budgetDetails = new LinkedList<BudgetDetail>();
         fetchBudgetDetails(budgetDetails, deptQuery, finalStatus, isBeRe, "minCode");
         // budgetdetails for all majorcode
         fetchBudgetDetails(budgetDetails, deptQuery, finalStatus, isBeRe, "majorCode");
@@ -1302,16 +1272,16 @@ public class BudgetReportAction extends BaseFormAction {
         addRowsToReport(budgetDetails, isBeRe);
     }
 
-    public Map<String, BigDecimal> getMajorCodeToAmountMap(List<BudgetDetail> budgetDetails) {
-        Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-        for (BudgetDetail entry : budgetDetails) {
+    public Map<String, BigDecimal> getMajorCodeToAmountMap(final List<BudgetDetail> budgetDetails) {
+        final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+        for (final BudgetDetail entry : budgetDetails) {
             String glCode = "";
             if (entry.getBudgetGroup().getMajorCode() == null)
                 glCode = entry.getBudgetGroup().getMinCode().getMajorCode();
             else
                 glCode = entry.getBudgetGroup().getMajorCode().getMajorCode();
-            BigDecimal approvedAmount = entry.getApprovedAmount() == null ? BigDecimal.ZERO : entry.getApprovedAmount();
-            BigDecimal totalAmount = approvedAmount;
+            final BigDecimal approvedAmount = entry.getApprovedAmount() == null ? BigDecimal.ZERO : entry.getApprovedAmount();
+            final BigDecimal totalAmount = approvedAmount;
             if (map.get(glCode) != null)
                 map.put(glCode, map.get(glCode).add(totalAmount));
             else
@@ -1320,93 +1290,82 @@ public class BudgetReportAction extends BaseFormAction {
         return map;
     }
 
-    public String getUniqueMajorCodesAsString(Map<String, BigDecimal> majorCodeToAmountMap) {
+    public String getUniqueMajorCodesAsString(final Map<String, BigDecimal> majorCodeToAmountMap) {
         String result = "";
-        Set<String> uniqueMajorCodes = majorCodeToAmountMap.keySet();
-        for (String row : uniqueMajorCodes) {
+        final Set<String> uniqueMajorCodes = majorCodeToAmountMap.keySet();
+        for (final String row : uniqueMajorCodes)
             if (row != null)
                 result = result.concat("'").concat(row).concat("',");
-        }
         if (result.length() > 0)
             result = result.substring(0, result.length() - 1);
         return result;
     }
 
-    public BigDecimal getMajorCodeTotals(Map<String, BigDecimal> majorCodeToAmountMap) {
+    public BigDecimal getMajorCodeTotals(final Map<String, BigDecimal> majorCodeToAmountMap) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (Entry<String, BigDecimal> entry : majorCodeToAmountMap.entrySet()) {
+        for (final Entry<String, BigDecimal> entry : majorCodeToAmountMap.entrySet())
             if (entry.getValue() != null)
                 sum = sum.add(entry.getValue());
-        }
         return sum;
     }
 
-    public BigDecimal getMajorCodeApproriationTotals(Map<String, BigDecimal> majorCodeToApproriationAmountMap) {
+    public BigDecimal getMajorCodeApproriationTotals(final Map<String, BigDecimal> majorCodeToApproriationAmountMap) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (Entry<String, BigDecimal> entry : majorCodeToApproriationAmountMap.entrySet()) {
+        for (final Entry<String, BigDecimal> entry : majorCodeToApproriationAmountMap.entrySet())
             if (entry.getValue() != null)
                 sum = sum.add(entry.getValue());
-        }
         return sum;
     }
 
-    void populateSummarySection(List<BudgetDetail> budgetDetails, String isBeRe) {
-        Map<String, BigDecimal> majorCodeToAmountMap = getMajorCodeToAmountMap(budgetDetails);
-        Map<String, BigDecimal> majorCodeToAppropriationAmountMap = getMajorCodeToAppropriationAmountMap(budgetDetails);
-        Map<String, String> referenceNo = getReferenceNumber("departmentWiseBudgetReport");
-        String uniqueMajorCodesAsString = getUniqueMajorCodesAsString(majorCodeToAmountMap);
+    void populateSummarySection(final List<BudgetDetail> budgetDetails, final String isBeRe) {
+        final Map<String, BigDecimal> majorCodeToAmountMap = getMajorCodeToAmountMap(budgetDetails);
+        final Map<String, BigDecimal> majorCodeToAppropriationAmountMap = getMajorCodeToAppropriationAmountMap(budgetDetails);
+        final Map<String, String> referenceNo = getReferenceNumber("departmentWiseBudgetReport");
+        final String uniqueMajorCodesAsString = getUniqueMajorCodesAsString(majorCodeToAmountMap);
         if ("".equals(uniqueMajorCodesAsString)) {
             budgetReportList.add(new BudgetReportView("", "No records found", "", null, null, null));
             return;
         }
-        List<CChartOfAccounts> chartOfAccounts = getPersistenceService().findAllBy(
+        final List<CChartOfAccounts> chartOfAccounts = getPersistenceService().findAllBy(
                 "from CChartOfAccounts where glCode in (" + uniqueMajorCodesAsString + ")");
-        for (CChartOfAccounts account : chartOfAccounts) {
-            BigDecimal approved = majorCodeToAmountMap.get(account.getMajorCode());
-            BigDecimal reApp = majorCodeToAppropriationAmountMap.get(account.getMajorCode());
+        for (final CChartOfAccounts account : chartOfAccounts) {
+            final BigDecimal approved = majorCodeToAmountMap.get(account.getMajorCode());
+            final BigDecimal reApp = majorCodeToAppropriationAmountMap.get(account.getMajorCode());
             if ("RE".equalsIgnoreCase(isBeRe) && !getConsiderReAppropriationAsSeperate())
-            {
                 budgetReportList.add(new BudgetReportView("", account.getMajorCode() + "-" + account.getName(), referenceNo
                         .get(account.getMajorCode()), approved.add(reApp),
                         BigDecimal.ZERO, approved.add(reApp)));
-            }
             else
-            {
                 budgetReportList.add(new BudgetReportView("", account.getMajorCode() + "-" + account.getName(), referenceNo
                         .get(account.getMajorCode()), approved,
                         reApp, approved.add(reApp)));
-            }
         }
         if (!chartOfAccounts.isEmpty()) {
-            BigDecimal majorCodeApprovedTotals = getMajorCodeTotals(majorCodeToAmountMap);
-            BigDecimal majorCodeApproriationTotals = getMajorCodeApproriationTotals(majorCodeToAppropriationAmountMap);
+            final BigDecimal majorCodeApprovedTotals = getMajorCodeTotals(majorCodeToAmountMap);
+            final BigDecimal majorCodeApproriationTotals = getMajorCodeApproriationTotals(majorCodeToAppropriationAmountMap);
             if ("RE".equalsIgnoreCase(isBeRe) && !getConsiderReAppropriationAsSeperate())
-            {
                 budgetReportList.add(new BudgetReportView("", "Total", "", majorCodeApprovedTotals
                         .add(majorCodeApproriationTotals), BigDecimal.ZERO,
                         majorCodeApprovedTotals.add(majorCodeApproriationTotals)));
-            }
             else
-            {
                 budgetReportList.add(new BudgetReportView("", "Total", "", majorCodeApprovedTotals, majorCodeApproriationTotals,
                         majorCodeApprovedTotals
-                                .add(majorCodeApproriationTotals)));
-            }
+                        .add(majorCodeApproriationTotals)));
 
         }
         addEmptyRow();
     }
 
-    private Map<String, BigDecimal> getMajorCodeToAppropriationAmountMap(List<BudgetDetail> budgetDetails) {
-        Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-        for (BudgetDetail entry : budgetDetails) {
+    private Map<String, BigDecimal> getMajorCodeToAppropriationAmountMap(final List<BudgetDetail> budgetDetails) {
+        final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+        for (final BudgetDetail entry : budgetDetails) {
             String glCode = "";
             if (entry.getBudgetGroup().getMajorCode() == null)
                 glCode = entry.getBudgetGroup().getMinCode().getMajorCode();
             else
                 glCode = entry.getBudgetGroup().getMajorCode().getMajorCode();
-            BigDecimal reAppAmount = reAppropriationMap.get(entry.getId());
-            BigDecimal totalAmount = reAppAmount == null ? BigDecimal.ZERO : reAppAmount;
+            final BigDecimal reAppAmount = reAppropriationMap.get(entry.getId());
+            final BigDecimal totalAmount = reAppAmount == null ? BigDecimal.ZERO : reAppAmount;
             if (map.get(glCode) != null)
                 map.put(glCode, map.get(glCode).add(totalAmount));
             else
@@ -1418,34 +1377,28 @@ public class BudgetReportAction extends BaseFormAction {
     /*
      * Assumes budgetDetails are sorted by deptId,glCode
      */
-    void addRowsToReport(List<BudgetDetail> budgetDetails, String isBeRe) {
+    void addRowsToReport(final List<BudgetDetail> budgetDetails, final String isBeRe) {
         Integer deptId = 0;
         BudgetReportView row = new BudgetReportView(null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         String glcode = null;
         String glName;
         BigDecimal sum = BigDecimal.ZERO;
-        BigDecimal appropriationSum = BigDecimal.ZERO;
+        final BigDecimal appropriationSum = BigDecimal.ZERO;
         sortByDepartmentName(budgetDetails);
         // not interested in major code details
-        for (BudgetDetail budgetDetail : budgetDetails) {
+        for (final BudgetDetail budgetDetail : budgetDetails) {
             // if(budgetDetail.getBudgetGroup().getMajorCode()!=null){
             // continue;
             // }
             // details for next department have started
             if (budgetDetail.getExecutingDepartment() != null && !budgetDetail.getExecutingDepartment().getId().equals(deptId)) {
                 if (!deptId.equals(0))
-                {
                     if ("RE".equalsIgnoreCase(isBeRe) && !getConsiderReAppropriationAsSeperate())
-                    {
                         budgetReportList.add(new BudgetReportView("", "Total", "", sum.add(appropriationSum), BigDecimal.ZERO,
                                 sum.add(appropriationSum)));
-                    }
                     else
-                    {
                         budgetReportList.add(new BudgetReportView("", "Total", "", sum, appropriationSum, sum
                                 .add(appropriationSum)));
-                    }
-                }
                 sum = BigDecimal.ZERO;
                 addEmptyRow();
                 budgetReportList.add(new BudgetReportView("", budgetDetail.getExecutingDepartment().getName().toUpperCase(), "",
@@ -1460,9 +1413,9 @@ public class BudgetReportAction extends BaseFormAction {
                 row = new BudgetReportView(glcode, glName, "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
                 budgetReportList.add(row);
             }
-            BigDecimal approvedAmount = budgetDetail.getApprovedAmount() == null ? BigDecimal.ZERO : budgetDetail
+            final BigDecimal approvedAmount = budgetDetail.getApprovedAmount() == null ? BigDecimal.ZERO : budgetDetail
                     .getApprovedAmount();
-            BigDecimal reAppAmount = reAppropriationMap.get(budgetDetail.getId());
+            final BigDecimal reAppAmount = reAppropriationMap.get(budgetDetail.getId());
             if ("RE".equalsIgnoreCase(isBeRe) && !getConsiderReAppropriationAsSeperate())
             {
                 row.setAmount(approvedAmount.add(reAppAmount == null ? BigDecimal.ZERO : reAppAmount));
@@ -1479,70 +1432,60 @@ public class BudgetReportAction extends BaseFormAction {
             sum = sum.add(approvedAmount);
         }
         if (!budgetDetails.isEmpty())
-        {
             if ("RE".equalsIgnoreCase(isBeRe) && !getConsiderReAppropriationAsSeperate())
-            {
                 budgetReportList.add(new BudgetReportView("", "Total", "", sum.add(appropriationSum), BigDecimal.ZERO, sum
                         .add(appropriationSum)));
-            }
             else
-            {
                 budgetReportList.add(new BudgetReportView("", "Total", "", sum, appropriationSum, sum.add(appropriationSum)));
-            }
-        }
 
     }
 
-    private void sortByDepartmentName(List<BudgetDetail> budgetDetails) {
-        Collections.sort(budgetDetails, new Comparator<BudgetDetail>() {
-            public int compare(BudgetDetail o1, BudgetDetail o2) {
-                return o1.getExecutingDepartment().getName().toUpperCase()
-                        .compareTo(o2.getExecutingDepartment().getName().toUpperCase());
-            }
-        });
+    private void sortByDepartmentName(final List<BudgetDetail> budgetDetails) {
+        Collections.sort(budgetDetails, (o1, o2) -> o1.getExecutingDepartment().getName().toUpperCase()
+                .compareTo(o2.getExecutingDepartment().getName().toUpperCase()));
     }
 
-    private String getGlName(BudgetDetail budgetDetail) {
-        BudgetGroup budgetGroup = budgetDetail.getBudgetGroup();
+    private String getGlName(final BudgetDetail budgetDetail) {
+        final BudgetGroup budgetGroup = budgetDetail.getBudgetGroup();
         return budgetGroup.getMinCode() == null ? budgetGroup.getMajorCode().getName() : budgetGroup.getMinCode().getName();
     }
 
-    private String getGlCode(BudgetDetail budgetDetail) {
-        BudgetGroup budgetGroup = budgetDetail.getBudgetGroup();
+    private String getGlCode(final BudgetDetail budgetDetail) {
+        final BudgetGroup budgetGroup = budgetDetail.getBudgetGroup();
         return budgetGroup.getMinCode() == null ? budgetGroup.getMajorCode().getGlcode() : budgetGroup.getMinCode().getGlcode();
     }
 
-    void fetchBudgetDetails(List<BudgetDetail> budgetDetails, String deptQuery, String finalStatus, String budgetType, String code) {
-        List<BudgetDetail> results = HibernateUtil
+    void fetchBudgetDetails(final List<BudgetDetail> budgetDetails, final String deptQuery, final String finalStatus,
+            final String budgetType, final String code) {
+        final List<BudgetDetail> results = HibernateUtil
                 .getCurrentSession()
                 .createQuery(
                         " from BudgetDetail bd where bd.budget.financialYear.id=" + budgetReport.getFinancialYear().getId()
-                                + deptQuery + " and bd.budget.isbere='"
-                                + budgetType
-                                + "' and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget'"
-                                + " and value='" + finalStatus + "') "
-                                + getQueryForSelectedType(code) + "  order by bd.executingDepartment.deptName,bd.budgetGroup."
-                                + code + ".glcode").list();
+                        + deptQuery + " and bd.budget.isbere='"
+                        + budgetType
+                        + "' and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget'"
+                        + " and value='" + finalStatus + "') "
+                        + getQueryForSelectedType(code) + "  order by bd.executingDepartment.deptName,bd.budgetGroup."
+                        + code + ".glcode").list();
         budgetDetails.addAll(results);
     }
 
     private void getBudgetReappropriationAmt() {
         final String status = getFinalStatus();
-        List<Object[]> list = getPersistenceService()
+        final List<Object[]> list = getPersistenceService()
                 .findAllBy(
                         "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.state in (from org.egov.infra.workflow.entity.State where type='BudgetReAppropriation' and value='"
                                 + status + "' ) and br.status.description!='Cancelled' group by br.budgetDetail.id");
-        if (!list.isEmpty() && list.size() != 0) {
-            for (Object[] obj : list)
+        if (!list.isEmpty() && list.size() != 0)
+            for (final Object[] obj : list)
                 reAppropriationMap.put(obj[1], (BigDecimal) obj[0]);
-        }
     }
 
     public boolean isOnSaveOrForward() {
         return onSaveOrForward;
     }
 
-    public void setOnSaveOrForward(boolean onSaveOrForward) {
+    public void setOnSaveOrForward(final boolean onSaveOrForward) {
         this.onSaveOrForward = onSaveOrForward;
     }
 
@@ -1550,7 +1493,7 @@ public class BudgetReportAction extends BaseFormAction {
         return budgetDetailService;
     }
 
-    public void setBudgetDetailService(BudgetDetailService budgetDetailService) {
+    public void setBudgetDetailService(final BudgetDetailService budgetDetailService) {
         this.budgetDetailService = budgetDetailService;
     }
 
@@ -1569,8 +1512,6 @@ public class BudgetReportAction extends BaseFormAction {
         BigDecimal beProposalTotalLocal = BigDecimal.ZERO;
         BigDecimal reRecomTotalLocal = BigDecimal.ZERO;
         BigDecimal beRecomTotalLocal = BigDecimal.ZERO;
-        BigDecimal totalAppropriationAmt = BigDecimal.ZERO;
-        BigDecimal reAppropriationAmt = BigDecimal.ZERO;
         boolean printed = true;
         boolean isFirst = true;
         boolean majorcodewise = false;
@@ -1579,18 +1520,16 @@ public class BudgetReportAction extends BaseFormAction {
         getBudgetReappropriationAmt();
         loadAmountForMajorcodewiseForWorkingCopy(budgetReport.getFinancialYear(), budgetReport.getDepartment(),
                 budgetReport.getFunction());
-        for (BudgetDetail detail : budgetDetailListForRE) {
+        for (final BudgetDetail detail : budgetDetailListForRE) {
             BudgetDetail beDetail = new BudgetDetail();
 
-            for (BudgetDetail detail1 : budgetDetailListForBE) {
+            for (final BudgetDetail detail1 : budgetDetailListForBE)
                 if (detail.getExecutingDepartment().getId() == detail1.getExecutingDepartment().getId()
-                        && detail.getFunction().getId() == detail1.getFunction().getId()
-                        && detail.getBudgetGroup().getId() == detail1.getBudgetGroup().getId()) {
+                && detail.getFunction().getId() == detail1.getFunction().getId()
+                && detail.getBudgetGroup().getId() == detail1.getBudgetGroup().getId()) {
                     beDetail = detail1;
                     break;
                 }
-
-            }
             if (detail.getExecutingDepartment() == null || detail.getFunction() == null)
                 continue;
             // reAppropriationAmt =
@@ -1609,8 +1548,8 @@ public class BudgetReportAction extends BaseFormAction {
             tempMajorCode = glcode.substring(0, majorCodeLength);
 
             if (!detail.getExecutingDepartment().getId().equals(deptId)) // for
-                                                                         // dept
-                                                                         // heading
+                // dept
+                // heading
             {
                 if (reProposalTotalLocal.compareTo(BigDecimal.ZERO) != 0 && !isFirst) {
                     budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
@@ -1620,7 +1559,6 @@ public class BudgetReportAction extends BaseFormAction {
                     beProposalTotalLocal = BigDecimal.ZERO;
                     reRecomTotalLocal = BigDecimal.ZERO;
                     beRecomTotalLocal = BigDecimal.ZERO;
-                    totalAppropriationAmt = BigDecimal.ZERO;
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, detail.getExecutingDepartment()
                         .getName(), EMPTYSTRING, null,
@@ -1639,7 +1577,6 @@ public class BudgetReportAction extends BaseFormAction {
                     beProposalTotalLocal = BigDecimal.ZERO;
                     reRecomTotalLocal = BigDecimal.ZERO;
                     beRecomTotalLocal = BigDecimal.ZERO;
-                    totalAppropriationAmt = BigDecimal.ZERO;
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTIONWISE "
                         + BudgetReport.getValueFor(glType).toUpperCase()
@@ -1649,8 +1586,8 @@ public class BudgetReportAction extends BaseFormAction {
                 majorCode = "";
             }
             if (!detail.getFunction().getId().equals(functionId)) // for
-                                                                  // function
-                                                                  // heading
+                // function
+                // heading
             {
                 if (reProposalTotalLocal.compareTo(BigDecimal.ZERO) != 0 && !isFirst) {
                     budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
@@ -1660,7 +1597,6 @@ public class BudgetReportAction extends BaseFormAction {
                     beProposalTotalLocal = BigDecimal.ZERO;
                     reRecomTotalLocal = BigDecimal.ZERO;
                     beRecomTotalLocal = BigDecimal.ZERO;
-                    totalAppropriationAmt = BigDecimal.ZERO;
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTION CENTRE-"
                         + detail.getFunction().getName(), EMPTYSTRING,
@@ -1673,8 +1609,8 @@ public class BudgetReportAction extends BaseFormAction {
                 majorCode = "";
             }
             if (!tempMajorCode.equals(majorCode) && detail.getBudgetGroup().getMajorCode() == null)// majorcodewise
-                                                                                                   // -
-                                                                                                   // heading
+                // -
+                // heading
             {
                 if (printed) {
                     budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
@@ -1684,7 +1620,6 @@ public class BudgetReportAction extends BaseFormAction {
                     beProposalTotalLocal = BigDecimal.ZERO;
                     reRecomTotalLocal = BigDecimal.ZERO;
                     beRecomTotalLocal = BigDecimal.ZERO;
-                    totalAppropriationAmt = BigDecimal.ZERO;
                 }
                 budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, refNoMap.get(tempMajorCode), tempMajorCode
                         + "-" + coaMap.get(tempMajorCode), "",
@@ -1694,21 +1629,18 @@ public class BudgetReportAction extends BaseFormAction {
             // detail
             if (detail.getExecutingDepartment() != null && detail.getFunction() != null
                     && detail.getBudgetGroup().getMajorCode() == null)
-                if (onSaveOrForward && !canViewApprovedAmount) {
+                if (onSaveOrForward && !canViewApprovedAmount)
                     budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getCode(), detail.getFunction()
                             .getCode(), glcode, glName,
                             EMPTYSTRING, detail.getOriginalAmount(), detail.getApprovedAmount(), beDetail.getOriginalAmount(),
                             beDetail.getApprovedAmount(),
                             "detailrow"));
-                }
-                else {
+                else
                     budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getCode(), detail.getFunction()
                             .getCode(), glcode, glName,
                             EMPTYSTRING, detail.getOriginalAmount(), detail.getApprovedAmount(), beDetail.getOriginalAmount(),
                             beDetail.getApprovedAmount(),
                             "detailrow"));
-
-                }
 
             if (detail.getExecutingDepartment() != null)
                 deptId = detail.getExecutingDepartment().getId().intValue();
@@ -1733,13 +1665,13 @@ public class BudgetReportAction extends BaseFormAction {
 
     /**
      * 1.get whole Sum for the function 2.get DepartmentWise sum for the function 3.Get Individual amount
-     * 
-     * 
+     *
+     *
      * @return
      */
 
     private List getDataForGlance() {
-        List<BudgetReportView> budgetAtGlanceList = new ArrayList<BudgetReportView>();
+        final List<BudgetReportView> budgetAtGlanceList = new ArrayList<BudgetReportView>();
         budgetAtGlanceList.addAll(getFunctionwiseSumForGlance());
         budgetAtGlanceList.addAll(getBudgetWiseSumAndDetail());
         return budgetAtGlanceList;
@@ -1747,13 +1679,13 @@ public class BudgetReportAction extends BaseFormAction {
 
     /**
      * get Sum for Each Budget/Department(Budget and Department are same) and details
-     * 
+     *
      */
     private List<BudgetReportView> getBudgetWiseSumAndDetail() {
         // getSumforEachDepartment
 
-        List<BudgetReportView> ReportList = new ArrayList<BudgetReportView>();
-        LinkedHashMap<String, BudgetReportView> function_deptSumMap = new LinkedHashMap<String, BudgetReportView>();
+        final List<BudgetReportView> ReportList = new ArrayList<BudgetReportView>();
+        final LinkedHashMap<String, BudgetReportView> function_deptSumMap = new LinkedHashMap<String, BudgetReportView>();
         // Fetch For RE
         StringBuffer query = new StringBuffer(
                 "select function.name,executingDepartment.deptCode,sum(originalAmount),sum(approvedAmount)  from BudgetDetail bd  where bd.budget.financialYear.id="
@@ -1761,14 +1693,12 @@ public class BudgetReportAction extends BaseFormAction {
         query.append(" and bd.budget.isbere='RE' ");
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null
                 && budgetReport.getFunction().getId() != 0)
-        {
             query.append("  and bd.function.id=" + budgetReport.getFunction().getId());
-        }
         query.append(" group by function.name,executingDepartment.deptCode order by function.name,executingDepartment.deptCode");
         List<Object[]> findAllBy = persistenceService.findAllBy(query.toString());
-        for (Object[] o : findAllBy)
+        for (final Object[] o : findAllBy)
         {
-            BudgetReportView bv = new BudgetReportView();
+            final BudgetReportView bv = new BudgetReportView();
             bv.setNarration((String) o[0]);
             bv.setDeptCode((String) o[1]);
             bv.setFunctionCode("");
@@ -1785,15 +1715,13 @@ public class BudgetReportAction extends BaseFormAction {
         query.append(" and bd.budget.isbere='BE' ");
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null
                 && budgetReport.getFunction().getId() != 0)
-        {
             query.append("  and bd.function.id=" + budgetReport.getFunction().getId());
-        }
         query.append(" group by function.name, executingDepartment.deptCode order by function.name,executingDepartment.deptCode");
         findAllBy = persistenceService.findAllBy(query.toString());
-        for (Object[] o : findAllBy)
+        for (final Object[] o : findAllBy)
         {
             System.out.println(o.length);
-            String key = (String) o[0] + "-" + (String) o[1];
+            final String key = (String) o[0] + "-" + (String) o[1];
             BudgetReportView bv = function_deptSumMap.get(key);
 
             // if RE dont have a function But BE has (only old data)
@@ -1819,23 +1747,20 @@ public class BudgetReportAction extends BaseFormAction {
         query.append(" and bd.budget.isbere='RE' ");
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null
                 && budgetReport.getFunction().getId() != 0)
-        {
             query.append("  and bd.function.id=" + budgetReport.getFunction().getId());
-        }
         query.append("  order by function.name,executingDepartment.deptCode");
-        List<BudgetDetail> details = persistenceService.findAllBy(query.toString());
-        LinkedHashMap<String, List<BudgetReportView>> function_dept_DetailedMap = new LinkedHashMap<String, List<BudgetReportView>>();
-        LinkedHashMap<String, List<BudgetDetail>> function_dept_DetailedBudgetMap = new LinkedHashMap<String, List<BudgetDetail>>();
+        final List<BudgetDetail> details = persistenceService.findAllBy(query.toString());
+        final LinkedHashMap<String, List<BudgetReportView>> function_dept_DetailedMap = new LinkedHashMap<String, List<BudgetReportView>>();
+        final LinkedHashMap<String, List<BudgetDetail>> function_dept_DetailedBudgetMap = new LinkedHashMap<String, List<BudgetDetail>>();
         String key = "";
         String glcode;
-        String glType;
         String glName;
-        for (BudgetDetail detail : details)
+        for (final BudgetDetail detail : details)
         {
             key = detail.getFunction().getName() + "-" + detail.getExecutingDepartment().getCode();
             if (function_dept_DetailedBudgetMap.get(key) == null)
             {
-                List<BudgetDetail> fun_dept_dtlList = new ArrayList<BudgetDetail>();
+                final List<BudgetDetail> fun_dept_dtlList = new ArrayList<BudgetDetail>();
                 function_dept_DetailedBudgetMap.put(key, fun_dept_dtlList);
             }
             function_dept_DetailedBudgetMap.get(key).add(detail);
@@ -1845,31 +1770,28 @@ public class BudgetReportAction extends BaseFormAction {
         query.append(" and bd.budget.isbere='BE' ");
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null
                 && budgetReport.getFunction().getId() != 0)
-        {
             query.append("  and bd.function.id=" + budgetReport.getFunction().getId());
-        }
         query.append(" order by function.name, executingDepartment.deptCode");
-        List<BudgetDetail> beDetails = persistenceService.findAllBy(query.toString());
-        for (BudgetDetail beDetail : beDetails)
+        final List<BudgetDetail> beDetails = persistenceService.findAllBy(query.toString());
+        for (final BudgetDetail beDetail : beDetails)
         {
             key = beDetail.getFunction().getName() + "-" + beDetail.getExecutingDepartment().getCode();
-            for (BudgetDetail reDetail : function_dept_DetailedBudgetMap.get(key))
-            {
+            for (final BudgetDetail reDetail : function_dept_DetailedBudgetMap.get(key))
                 if (reDetail == null)
                 {
                     if (beDetail.getBudgetGroup().getMajorCode() == null) {
                         glcode = getGlCode(beDetail);
-                        glType = beDetail.getBudgetGroup().getMinCode().getType().toString();
+                        beDetail.getBudgetGroup().getMinCode().getType().toString();
                         glName = getGlName(beDetail);
                     }
                     else {
                         glcode = beDetail.getBudgetGroup().getMajorCode().getGlcode();
-                        glType = beDetail.getBudgetGroup().getMajorCode().getType().toString();
+                        beDetail.getBudgetGroup().getMajorCode().getType().toString();
                         glName = beDetail.getBudgetGroup().getMajorCode().getName();
 
                     }
 
-                    BudgetReportView bv = new BudgetReportView();
+                    final BudgetReportView bv = new BudgetReportView();
                     bv.setNarration(glName);
                     bv.setDeptCode(beDetail.getExecutingDepartment().getCode());
                     bv.setGlCode(glcode);
@@ -1886,23 +1808,23 @@ public class BudgetReportAction extends BaseFormAction {
 
                     if (function_dept_DetailedMap.get(key) == null)
                     {
-                        List<BudgetReportView> fun_dept_dtlList = new ArrayList<BudgetReportView>();
+                        final List<BudgetReportView> fun_dept_dtlList = new ArrayList<BudgetReportView>();
                         function_dept_DetailedMap.put(key, fun_dept_dtlList);
                     }
 
                     if (beDetail.getBudgetGroup().getMajorCode() == null) {
                         glcode = getGlCode(beDetail);
-                        glType = beDetail.getBudgetGroup().getMinCode().getType().toString();
+                        beDetail.getBudgetGroup().getMinCode().getType().toString();
                         glName = getGlName(beDetail);
                     }
                     else {
                         glcode = beDetail.getBudgetGroup().getMajorCode().getGlcode();
-                        glType = beDetail.getBudgetGroup().getMajorCode().getType().toString();
+                        beDetail.getBudgetGroup().getMajorCode().getType().toString();
                         glName = beDetail.getBudgetGroup().getMajorCode().getName();
 
                     }
 
-                    BudgetReportView bv = new BudgetReportView();
+                    final BudgetReportView bv = new BudgetReportView();
                     bv.setNarration(glName);
                     bv.setDeptCode(beDetail.getExecutingDepartment().getCode());
                     bv.setGlCode(glcode);
@@ -1914,19 +1836,18 @@ public class BudgetReportAction extends BaseFormAction {
                     function_dept_DetailedMap.get(key).add(bv);
                     break;
                 }
-            }
         }
         // Now add Individual into reportListfu
-        for (String tempKey : function_deptSumMap.keySet())
+        for (final String tempKey : function_deptSumMap.keySet())
         {
 
-            BudgetReportView bvHead = new BudgetReportView();
+            final BudgetReportView bvHead = new BudgetReportView();
             bvHead.setNarration(function_deptSumMap.get(tempKey).getNarration());
             bvHead.setRowStyle("majorcodeheadingrow");
             ReportList.add(bvHead);
             // ReportList.add(function_deptSumMap.get(tempKey));
             ReportList.addAll(function_dept_DetailedMap.get(tempKey));
-            BudgetReportView bvTotal = new BudgetReportView();
+            final BudgetReportView bvTotal = new BudgetReportView();
             bvTotal.setNarration("TOTAL");
             bvTotal.setBeProposalAmount(function_deptSumMap.get(tempKey).getBeProposalAmount());
             bvTotal.setReProposalAmount(function_deptSumMap.get(tempKey).getReProposalAmount());
@@ -1939,12 +1860,12 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     /**
-	 * 
-	 */
+     *
+     */
     @SuppressWarnings("unchecked")
     private List<BudgetReportView> getFunctionwiseSumForGlance() {
 
-        List<BudgetReportView> ReportList = new ArrayList<BudgetReportView>();
+        final List<BudgetReportView> ReportList = new ArrayList<BudgetReportView>();
 
         // Fetch For RE
         StringBuffer query = new StringBuffer(
@@ -1953,14 +1874,12 @@ public class BudgetReportAction extends BaseFormAction {
         query.append(" and bd.budget.isbere='RE' ");
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null
                 && budgetReport.getFunction().getId() != 0)
-        {
             query.append("  and bd.function.id=" + budgetReport.getFunction().getId());
-        }
         query.append(" group by function.name order by function.name");
         List<Object[]> findAllBy = persistenceService.findAllBy(query.toString());
-        for (Object[] o : findAllBy)
+        for (final Object[] o : findAllBy)
         {
-            BudgetReportView bv = new BudgetReportView();
+            final BudgetReportView bv = new BudgetReportView();
             bv.setNarration((String) o[0]);
             bv.setFunctionCode("");
             bv.setReProposalAmount(o[1] != null ? new BigDecimal(o[1].toString()) : BigDecimal.ZERO);
@@ -1975,23 +1894,17 @@ public class BudgetReportAction extends BaseFormAction {
         query.append(" and bd.budget.isbere='BE' ");
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null
                 && budgetReport.getFunction().getId() != 0)
-        {
             query.append("  and bd.function.id=" + budgetReport.getFunction().getId());
-        }
         query.append(" group by function.name");
         findAllBy = persistenceService.findAllBy(query.toString());
-        for (BudgetReportView bv : ReportList)
-        {
-            for (Object[] o : findAllBy)
-            {
+        for (final BudgetReportView bv : ReportList)
+            for (final Object[] o : findAllBy)
                 if (bv.getNarration().equalsIgnoreCase((String) o[0]))
                 {
                     bv.setBeProposalAmount(o[1] != null ? new BigDecimal(o[1].toString()) : BigDecimal.ZERO);
                     bv.setBeRecomAmount(o[2] != null ? new BigDecimal(o[2].toString()) : BigDecimal.ZERO);
                     break;
                 }
-            }
-        }
         return ReportList;
 
     }
@@ -2000,27 +1913,25 @@ public class BudgetReportAction extends BaseFormAction {
      * @param string --- "previous" for previous FinancialYearId --- "next" for next FinancialyearId
      * @return
      */
-    private CFinancialYear getFinYear(String option) {
-        Calendar cal = Calendar.getInstance();
+    private CFinancialYear getFinYear(final String option) {
+        final Calendar cal = Calendar.getInstance();
         CFinancialYear finYear = null;
         if (option.equalsIgnoreCase("previous")) {
             cal.setTime(budgetReport.getFinancialYear().getStartingDate());
             cal.add(Calendar.DATE, -1);
             finYear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.endingDate=?", cal.getTime());
-            if (finYear == null) {
+            if (finYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("next.financial.year.not.defined",
                         "Previous financial year not defined")));
-            }
         }
         else if (option.equalsIgnoreCase("next")) {
 
             cal.setTime(budgetReport.getFinancialYear().getEndingDate());
             cal.add(Calendar.DATE, 1);
             finYear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.startingDate=?", cal.getTime());
-            if (finYear == null) {
+            if (finYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("next.financial.year.not.defined",
                         "Next financial year not defined")));
-            }
         }
 
         return finYear;
@@ -2030,7 +1941,7 @@ public class BudgetReportAction extends BaseFormAction {
      * @param finYearForRE
      * @return
      */
-    private String getSqlForFinYear(Long finYearForRE) {
+    private String getSqlForFinYear(final Long finYearForRE) {
 
         String sql = "";
         sql = " bd.budget.financialYear.id=" + finYearForRE;
@@ -2043,7 +1954,7 @@ public class BudgetReportAction extends BaseFormAction {
         return sql;
     }
 
-    private String getSqlForFinYearBE(Long finYearForRE) {
+    private String getSqlForFinYearBE(final Long finYearForRE) {
 
         String sql = "";
         sql = " bd.budget.financialYear.id=" + finYearForRE;
@@ -2057,20 +1968,20 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     private Long getFinYearForRE() {
-        Long finId = budgetReport.getFinancialYear().getId();
-        Long budgetCount = (Long) persistenceService.find(
+        final Long finId = budgetReport.getFinancialYear().getId();
+        final Long budgetCount = (Long) persistenceService.find(
                 "select count(*) from Budget b where b.financialYear.id=? and b.isbere='RE'", finId);
         if (budgetCount == 0) {
-            Date startingDate = budgetReport.getFinancialYear().getStartingDate();
-            Calendar cal = Calendar.getInstance();
+            final Date startingDate = budgetReport.getFinancialYear().getStartingDate();
+            final Calendar cal = Calendar.getInstance();
             cal.setTime(startingDate);
             cal.add(Calendar.DATE, -1);
-            CFinancialYear prevFinyear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.endingDate=?",
+            final CFinancialYear prevFinyear = (CFinancialYear) persistenceService.find(
+                    "from CFinancialYear c where c.endingDate=?",
                     cal.getTime());
-            if (prevFinyear == null) {
+            if (prevFinyear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("next.financial.year.not.defined",
                         "Next financial year not defined")));
-            }
             else {
                 financialYearForRE = prevFinyear;
                 return prevFinyear.getId();
@@ -2083,12 +1994,12 @@ public class BudgetReportAction extends BaseFormAction {
 
     }
 
-    public void setEisCommonService(EisCommonService eisCommonService) {
+    public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
     }
 
     private boolean getConsiderReAppropriationAsSeperate() {
-        List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
         String appValue = "-1";
         appValue = appList.get(0).getValue();

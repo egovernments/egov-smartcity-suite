@@ -37,94 +37,119 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-	
-		
-		<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+
+
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <title>Contra - Cash Deposit</title>
 
 </head>
 
-	
-<body onload="onloadtask();">
-<s:form action="contraCTB" theme="simple" name="cashDepositForm" >
-<s:push value="model">
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Cash Deposit" />
-			</jsp:include>
-			
-			<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-			</span>
-<div class="formmainbox">
-<div class="formheading"/><div class="subheadnew">Cash Deposit</div>
-<div id="listid" style="display:block"><br/>
-<div align="center">
-<font  style='color: red ; font-weight:bold '> 
-<p class="error-block" id="lblError" ></p></font>
 
-	<%@include file="contraCTB-form.jsp"%>
-     <table border="0" width="100%">
-	    <tr>
-		<td class="bluebox"><s:text name="contra.cashInHand"/>
-		<s:textfield name="contraBean.cashInHand" id="cashInHand" readonly="true" /></td>
-	  </tr>	
-       </table>
-   
-	  <table border="0" width="100%">
-	<tr>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox"><s:text name="reversalVoucherNumber"/><span class="mandatory">*</span></td>
-			<td class="greybox"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td>
-		</s:if>
-			<td class="greybox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
-			<td class="greybox"><s:textfield name="reverseVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('cashDepositForm.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>	
-</table>
-	<div align="center">
-		
-		<table border="0" width="80%" align="center"  class="buttonbottom"><tr></tr>
-			<tr>
-				<td >
-				<s:submit type="submit" cssClass="buttonsubmit" value="Reverse & View"  method="reverseAndView" onclick="return validateReverseInput()"/>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Reverse & Close" method="reverseAndClose" onclick="return validateReverseInput()"/>
-				<s:reset name="button" type="submit" cssClass="buttonsubmit" id="button" value="Cancel"/>
-				<input type="submit" value="Close" onclick="javascript:window.close()" cssClass="buttonsubmit" class="button"/>
-				</td>
-			</tr>
-		</table>
-		
-	</div>
-</div>
-</div>
-</div>
-</div>
-<input type="hidden" id="voucherTypeBean.voucherName" name="voucherTypeBean.voucherName" value="CashToBank"/>
-<input type="hidden" id="voucherTypeBean.voucherType" name="voucherTypeBean.voucherType" value="Contra"/>
-<input type="hidden" id="voucherTypeBean.voucherNumType" name="voucherTypeBean.voucherNumType" value="Contra"/>
-<input type="hidden" id="voucherTypeBean.cgnType" name="voucherTypeBean.cgnType" value="CTB"/>
-<input type="hidden" id="voucherHeader.id" name="voucherHeader.id" value='<s:property value="voucherHeader.id"/>'/>
-<s:hidden name="contraBean.saveMode"  id="saveMode"/>
-<s:hidden name="contraBean.result"  id="result"/>
-<s:hidden name="contraBean.mode"  id="mode"/>
-<s:hidden id="cgn" name="cgn"></s:hidden>
-<s:hidden id="vouchermis.sourcePath" name="vouchermis.sourcePath" value="../contra/contraCTB!loadCTBVoucher.action?vhid="></s:hidden>
-</s:push>
-</s:form>
-<script>
+<body onload="onloadtask();">
+	<s:form action="contraCTB" theme="simple" name="cashDepositForm">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param name="heading" value="Cash Deposit" />
+			</jsp:include>
+
+			<span class="mandatory"> <font
+				style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+					<s:actionmessage /></font>
+			</span>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Cash Deposit</div>
+				<div id="listid" style="display: block">
+					<br />
+					<div align="center">
+						<font style='color: red; font-weight: bold'>
+							<p class="error-block" id="lblError"></p>
+						</font>
+
+						<%@include file="contraCTB-form.jsp"%>
+						<table border="0" width="100%">
+							<tr>
+								<td class="bluebox"><s:text name="contra.cashInHand" /> <s:textfield
+										name="contraBean.cashInHand" id="cashInHand" readonly="true" /></td>
+							</tr>
+						</table>
+
+						<table border="0" width="100%">
+							<tr>
+								<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+									<td class="greybox"><s:text name="reversalVoucherNumber" /><span
+										class="mandatory">*</span></td>
+									<td class="greybox"><s:textfield
+											name="reversalVoucherNumber" id="reversalVoucherNumber" /></td>
+								</s:if>
+								<td class="greybox"><s:text name="reversalVoucherDate" /><span
+									class="mandatory">*</span></td>
+								<td class="greybox"><s:textfield name="reverseVoucherDate"
+										id="reversalVoucherDate"
+										onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+									href="javascript:show_calendar('cashDepositForm.reversalVoucherDate');"
+									style="text-decoration: none">&nbsp;<img tabIndex="-1"
+										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+							</tr>
+						</table>
+						<div align="center">
+
+							<table border="0" width="80%" align="center" class="buttonbottom">
+								<tr></tr>
+								<tr>
+									<td><s:submit type="submit" cssClass="buttonsubmit"
+											value="Reverse & View" method="reverseAndView"
+											onclick="return validateReverseInput()" /> <s:submit
+											type="submit" cssClass="buttonsubmit" value="Reverse & Close"
+											method="reverseAndClose"
+											onclick="return validateReverseInput()" /> <s:reset
+											name="button" type="submit" cssClass="buttonsubmit"
+											id="button" value="Cancel" /> <input type="submit"
+										value="Close" onclick="javascript:window.close()"
+										cssClass="buttonsubmit" class="button" /></td>
+								</tr>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			<input type="hidden" id="voucherTypeBean.voucherName"
+				name="voucherTypeBean.voucherName" value="CashToBank" />
+			<input type="hidden" id="voucherTypeBean.voucherType"
+				name="voucherTypeBean.voucherType" value="Contra" />
+			<input type="hidden" id="voucherTypeBean.voucherNumType"
+				name="voucherTypeBean.voucherNumType" value="Contra" />
+			<input type="hidden" id="voucherTypeBean.cgnType"
+				name="voucherTypeBean.cgnType" value="CTB" />
+			<input type="hidden" id="voucherHeader.id" name="voucherHeader.id"
+				value='<s:property value="voucherHeader.id"/>' />
+			<s:hidden name="contraBean.saveMode" id="saveMode" />
+			<s:hidden name="contraBean.result" id="result" />
+			<s:hidden name="contraBean.mode" id="mode" />
+			<s:hidden id="cgn" name="cgn"></s:hidden>
+			<s:hidden id="vouchermis.sourcePath" name="vouchermis.sourcePath"
+				value="../contra/contraCTB!loadCTBVoucher.action?vhid="></s:hidden>
+		</s:push>
+	</s:form>
+	<script>
 
 function populateAccNum(branch){
 

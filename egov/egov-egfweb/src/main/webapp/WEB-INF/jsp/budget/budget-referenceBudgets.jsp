@@ -37,6 +37,8 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<s:select name="referenceId" listKey="id" listValue="name" id="referenceId" list="referenceBudgetList"  headerKey="-1"  headerValue="----Select----"  value="%{referenceId}"/>
+<s:select name="referenceId" listKey="id" listValue="name"
+	id="referenceId" list="referenceBudgetList" headerKey="-1"
+	headerValue="----Select----" value="%{referenceId}" />

@@ -37,41 +37,41 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <style type="text/css">
 #container iframe {
-width: 100%;
-height: 480px;
-border: none; }
+	width: 100%;
+	height: 480px;
+	border: none;
+}
 
 #container {
-width: 100%;
-height: 100%;
-padding: 0;
-overflow: hidden; }
-
-@media print {
-input#btnPrint {
-display: none;
-}
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	overflow: hidden;
 }
 
 @media print {
-input#printPDF {
-display: none;
-}
+	input#btnPrint {
+		display: none;
+	}
 }
 
 @media print {
-input#printXLS {
-display: none;
+	input#printPDF {
+		display: none;
+	}
 }
+
+@media print {
+	input#printXLS {
+		display: none;
+	}
 }
 </style>
 
 <body>
-<div id="container">
-
-</div> 
+	<div id="container"></div>
 </body>

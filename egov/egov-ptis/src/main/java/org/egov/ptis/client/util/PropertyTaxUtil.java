@@ -1996,7 +1996,7 @@ public class PropertyTaxUtil {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Transaction Mode = " + transMode);
                     srchQryStr = srchQryStr
-                            + "and  EXISTS (select floor.propertyDetail from Floor floor where floor.propertyDetail = cs.property.propertyDetail and floor.propertyUsage = '"
+                            + "and cs.property.propertyDetail in (select floor.propertyDetail from Floor floor where floor.propertyUsage = '"
                             + propTypeCategoryId + "')) ";
                 }
                 if (zoneId != null && !zoneId.equals("") && zoneId != -1)
@@ -2062,7 +2062,6 @@ public class PropertyTaxUtil {
      */
     public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode) {
 
-        final String ZONEWISE = "zone";
         final String WARDWISE = "ward";
         final String BLOCKWISE = "block";
         final String PROPERTY = "property";
@@ -2129,20 +2128,13 @@ public class PropertyTaxUtil {
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
             finalFrmQry = " )as dcbinfo,eg_boundary boundary ";
         }
-        if (mode.equalsIgnoreCase(ZONEWISE)) {
-            innerSelectQry0 = "select distinct pi.zoneid as zone,";
-            innerSelectQry1 = "select zone as zone,";
-            arrearGroupBy = ") as arrear  group by zone ";
-            collGroupBy = ") as collection  group by zone ";
-            if (param != 0)
-                whereQry = " and pi.zoneid = " + param;
-            finalWhereQry = " where dcbinfo.zone=boundary.id ";
-        } else if (mode.equalsIgnoreCase(WARDWISE)) {
+       if (mode.equalsIgnoreCase(WARDWISE)) {
             innerSelectQry0 = "select distinct pi.wardid as ward,";
             innerSelectQry1 = "select ward as ward,";
             arrearGroupBy = ") as arrear group by ward ";
             collGroupBy = ") as collection  group by ward ";
-            whereQry = " and pi.zoneid = " + param;
+            if (param != 0)
+              whereQry = " and pi.WARDID = " + param;
             finalWhereQry = " where dcbinfo.ward=boundary.id ";
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
             innerSelectQry0 = "select distinct pi.blockid as block,";

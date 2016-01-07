@@ -55,10 +55,11 @@ jQuery(document).ready(function() {
 	jQuery('#btnsearch').click(function(e) {
 		dom.get("dcbError").style.display='none';
         dom.get("dcbError").innerHTML='';
-		if(jQuery('#zoneId').val()=="-1"){
+        jQuery('#mode').val("ward");
+		if(jQuery('#wardId').val()=="-1"){
 			dom.get("dcbError").style.display='';
-	        dom.get("dcbError").innerHTML='Please Enter Zone';
-	        dom.get('zoneId').focus();
+	        dom.get("dcbError").innerHTML='Please select ward';
+	        dom.get('wardId').focus();
 			return false;
 		}
 		callAjaxByBoundary();
@@ -106,9 +107,7 @@ function setHiddenValueByLink(obj, param) {
 	if(param.value=='property'){
 		window.open("../view/viewDCBProperty-displayPropInfo.action?propertyId="+jQuery('#boundaryId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 	} else{
-		if(param.value=='zone'){
-			jQuery('#mode').val("ward");
-		} else if(param.value=='ward'){
+	  if(param.value=='ward'){
 			jQuery('#mode').val("block");
 		} else if(param.value=='block'){ 
 			jQuery('#mode').val("property");   
@@ -122,8 +121,8 @@ function callAjaxByBoundary() {
 	var boundary_Id = "";
 	var temp="";
 	modeVal = jQuery('#mode').val(); 
-	if(modeVal=='zone'){
-		boundary_Id = jQuery('#zoneId').val();
+	if(modeVal=='ward'){
+		boundary_Id = jQuery('#wardId').val();
 		temp=modeVal+"~"+boundary_Id;
 		jQuery('#selectedModeBndry').val(temp);
 		jQuery('#report-backbutton').hide();

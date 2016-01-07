@@ -1,38 +1,34 @@
 /*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
- * 
+ *
  * Copyright (C) <2015> eGovernments Foundation
- * 
+ *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
  * complied with:
- * 
+ *
  * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
- * 
+ *
  * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
  * material be marked in reasonable ways as different from the original version.
- * 
+ *
  * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
  * trade names or trademarks of eGovernments Foundation.
- * 
+ *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.masters;
-
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,17 +37,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.EgfAccountcodePurpose;
+import org.egov.commons.Fund;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.commons.EgfAccountcodePurpose;
-import org.egov.commons.Fund;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -60,9 +58,9 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation()
 @Transactional(readOnly = true)
 @Results({
-        @Result(name = FundAction.NEW, location = "fund-" + FundAction.NEW + ".jsp"),
-        @Result(name = "search", location = "fund-search.jsp"),
-        @Result(name = FundAction.EDIT, location = "fund-" + FundAction.EDIT + ".jsp")
+    @Result(name = FundAction.NEW, location = "fund-" + FundAction.NEW + ".jsp"),
+    @Result(name = "search", location = "fund-search.jsp"),
+    @Result(name = FundAction.EDIT, location = "fund-" + FundAction.EDIT + ".jsp")
 })
 public class FundAction extends BaseFormAction {
 
@@ -77,6 +75,7 @@ public class FundAction extends BaseFormAction {
     protected static final Logger LOGGER = Logger.getLogger(FundAction.class);
     private String success = "";
 
+    @Override
     @SkipValidation
     public Object getModel() {
         return fund;
@@ -95,16 +94,15 @@ public class FundAction extends BaseFormAction {
         return NEW;
     }
 
-    private boolean getParentIsNotLeaf(Fund fund) {
+    private boolean getParentIsNotLeaf(final Fund fund) {
         boolean isNotLeaf = false;
 
         if (fund.getFund() != null && fund.getFund().getId() != null) {
 
-            List<Fund> fundList = new ArrayList<Fund>(persistenceService.findAllBy("from Fund where fund.id=?",
+            final List<Fund> fundList = new ArrayList<Fund>(persistenceService.findAllBy("from Fund where fund.id=?",
                     fund.getFund().getId()));
-            if (fundList.size() != 0) {
+            if (fundList.size() != 0)
                 isNotLeaf = true;
-            }
         }
 
         return isNotLeaf;
@@ -114,7 +112,7 @@ public class FundAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/masters/fund-create")
     public String create() {
-        StringBuffer fundNameStr = new StringBuffer();
+        final StringBuffer fundNameStr = new StringBuffer();
         BigDecimal parentLevel = BigDecimal.ZERO;
         Fund parentFund = null;
         try {
@@ -133,15 +131,15 @@ public class FundAction extends BaseFormAction {
                 parentLevel = parentFund.getLlevel().add(BigDecimal.ONE);
             }
             fund.setLlevel(parentLevel);
-            EgfAccountcodePurpose accCodePurpose = (EgfAccountcodePurpose) persistenceService.
+            final EgfAccountcodePurpose accCodePurpose = (EgfAccountcodePurpose) persistenceService.
                     find("From EgfAccountcodePurpose where name = '" + ACC_CODE_PURPOSE + "'");
             fund.setEgfAccountcodePurpose(accCodePurpose);
             fund.setFund(parentFund);
 
-            persistenceService.setType(Fund.class);
+            //persistenceService.setType(Fund.class);
             persistenceService.persist(fund);
             setSuccess("yes");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             setSuccess("no");
             LOGGER.error("Exception occurred in FundAction-create ", e);
 
@@ -156,14 +154,14 @@ public class FundAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/masters/fund-edit")
     public String edit() {
-        StringBuffer fundNameStr = new StringBuffer();
+        final StringBuffer fundNameStr = new StringBuffer();
         BigDecimal parentLevel = BigDecimal.ZERO;
         Fund parentFund = null;
         validatemandatoryFields();
 
         try {
             EgovMasterDataCaching.getInstance().removeFromCache("egi-fund");
-            Fund fundOld = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
+            final Fund fundOld = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
             if (fund.getFund() != null && fund.getFund().getId() != null) {
                 parentFund = (Fund) persistenceService.find("from Fund where id=?",
                         fund.getFund().getId());
@@ -172,15 +170,14 @@ public class FundAction extends BaseFormAction {
 
             // check if the old and the new parent fund are not the same.
             if (fund.getFund() != null && fund.getFund().getId() != null && fundOld.getFund() != null
-                    && fundOld.getFund().getId() != null) {
+                    && fundOld.getFund().getId() != null)
                 if (!fundOld.getFund().getId().equals(fund.getFund().getId())) {
-                    Fund oldParentFund = (Fund) persistenceService.find("from Fund where id=?", fundOld.getFund().getId());
+                    final Fund oldParentFund = (Fund) persistenceService.find("from Fund where id=?", fundOld.getFund().getId());
                     // setting the existing(old) parent fund isNotLeaf value
                     oldParentFund.setIsnotleaf(getParentIsNotLeaf(fundOld));
-                    persistenceService.setType(Fund.class);
+                    //persistenceService.setType(Fund.class);
                     persistenceService.update(oldParentFund);
                 }
-            }
 
             fundNameStr.append(fund.getCode());
             fundOld.setName(fundNameStr.toString());
@@ -191,17 +188,16 @@ public class FundAction extends BaseFormAction {
             fundOld.setLastmodified(new Date());
             fundOld.setModifiedby(getLoggedInUser());
 
-            if (fund.getFund() != null && fund.getFund().getId() != null) {
+            if (fund.getFund() != null && fund.getFund().getId() != null)
                 parentFund.setIsnotleaf(true);
-            }
 
             fundOld.setFund(parentFund);
             setFund(fundOld);
-            persistenceService.setType(Fund.class);
+            //persistenceService.setType(Fund.class);
             persistenceService.persist(fund);
             setSuccess("yes");
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             setSuccess("no");
             LOGGER.error("Exception occurred in FundAction-edit ", e);
 
@@ -221,23 +217,22 @@ public class FundAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/masters/fund-search")
     public String search() {
-        StringBuffer query = new StringBuffer();
+        final StringBuffer query = new StringBuffer();
 
         query.append("From Fund");
-        if (!fund.getCode().equals("") && !fund.getName().equals("")) {
+        if (!fund.getCode().equals("") && !fund.getName().equals(""))
             query.append(" where upper(code) like upper('%" + fund.getCode()
                     + "%') and upper(name) like upper('%" + fund.getName() + "%')");
-        } else {
+        else {
             if (!fund.getCode().isEmpty())
                 query.append(" where upper(code) like upper('%" + fund.getCode() + "%')");
             if (!fund.getName().isEmpty())
                 query.append(" where upper(name) like upper('%" + fund.getName() + "%')");
         }
-        List<Fund> fList = persistenceService.findAllBy(query.toString());
+        final List<Fund> fList = persistenceService.findAllBy(query.toString());
 
-        for (Fund f : fList) {
+        for (final Fund f : fList)
             fundSearchList.add(f);
-        }
         return "search";
     }
 
@@ -252,15 +247,14 @@ public class FundAction extends BaseFormAction {
     public boolean getCheckCode() {
         Fund f = null;
         boolean isDuplicate = false;
-        if (!this.fund.getCode().equals("") && this.fund.getId() != null)
+        if (!fund.getCode().equals("") && fund.getId() != null)
             f = (Fund) persistenceService.find("from Fund where code=? and id!=?",
-                    this.fund.getCode(), this.fund.getId());
-        else if (!this.fund.getCode().equals(""))
+                    fund.getCode(), fund.getId());
+        else if (!fund.getCode().equals(""))
             f = (Fund) persistenceService.find("from Fund where code=?",
-                    this.fund.getCode());
-        if (f != null) {
+                    fund.getCode());
+        if (f != null)
             isDuplicate = true;
-        }
         return isDuplicate;
     }
 
@@ -268,77 +262,65 @@ public class FundAction extends BaseFormAction {
     public boolean getCheckIdentifier() {
         Fund f = null;
         boolean isDuplicate = false;
-        if (!this.fund.getIdentifier().equals("") && this.fund.getId() != null)
+        if (!fund.getIdentifier().equals("") && fund.getId() != null)
             f = (Fund) persistenceService.find("from Fund where identifier=? and id!=?",
-                    this.fund.getIdentifier(), this.fund.getId());
-        else if (!this.fund.getIdentifier().equals(""))
+                    fund.getIdentifier(), fund.getId());
+        else if (!fund.getIdentifier().equals(""))
             f = (Fund) persistenceService.find("from Fund where identifier=?",
-                    this.fund.getIdentifier());
-        if (f != null) {
+                    fund.getIdentifier());
+        if (f != null)
             isDuplicate = true;
-        }
         return isDuplicate;
     }
 
     @SkipValidation
     private BigDecimal getLoggedInUser() {
-        Integer uid = (Integer) getSession().get("com.egov.user.LoginUserId");
-        BigDecimal userId = new BigDecimal(uid.toString());
+        final Integer uid = (Integer) getSession().get("com.egov.user.LoginUserId");
+        final BigDecimal userId = new BigDecimal(uid.toString());
         return userId;
     }
 
     private void validatemandatoryFields() {
-        if (fund.getCode() == null || "".equals(fund.getCode())) {
+        if (fund.getCode() == null || "".equals(fund.getCode()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "fund.code.mandatory", getText("mandatory.fund.code"))));
-        }
 
         if (fund.getCode() != null) {
-            if (getCheckCode()) {
+            if (getCheckCode())
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "Fund.code.unique", getText("Fund.code.unique"))));
-            }
-            if (fund.getCode().contains("-")) {
+            if (fund.getCode().contains("-"))
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "validation.fund.code", getText("validation.fund.code"))));
-            }
         }
-        if (fund.getIdentifier() != null) {
-            if (getCheckIdentifier()) {
+        if (fund.getIdentifier() != null)
+            if (getCheckIdentifier())
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "Fund.identifier.unique", getText("Fund.identifier.unique"))));
-            }
-        }
     }
 
     private void validatemandatoryFields_create() {
-        if (fund.getCode() == null || "".equals(fund.getCode())) {
+        if (fund.getCode() == null || "".equals(fund.getCode()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "fund.code.mandatory", getText("mandatory.fund.code"))));
-        }
-        if (fund.getName() == null || "".equals(fund.getName())) {
+        if (fund.getName() == null || "".equals(fund.getName()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "fund.name.mandatory", getText("mandatory.fund.name"))));
-        }
         if (fund.getCode() != null) {
-            if (getCheckCode()) {
+            if (getCheckCode())
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "Fund.code.unique", getText("Fund.code.unique"))));
-            }
-            if (fund.getCode().contains("-")) {
+            if (fund.getCode().contains("-"))
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "validation.fund.code", getText("validation.fund.code"))));
-            }
         }
-        if (fund.getIdentifier() != null) {
-            if (getCheckIdentifier()) {
+        if (fund.getIdentifier() != null)
+            if (getCheckIdentifier())
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "Fund.identifier.unique", getText("Fund.identifier.unique"))));
-            }
-        }
     }
 
-    public void setClearValues(boolean clearValues) {
+    public void setClearValues(final boolean clearValues) {
         this.clearValues = clearValues;
     }
 
@@ -350,11 +332,11 @@ public class FundAction extends BaseFormAction {
         return fund;
     }
 
-    public void setFund(Fund fund) {
+    public void setFund(final Fund fund) {
         this.fund = fund;
     }
 
-    public void setClose(boolean close) {
+    public void setClose(final boolean close) {
         this.close = close;
     }
 
@@ -366,7 +348,7 @@ public class FundAction extends BaseFormAction {
         return showMode;
     }
 
-    public void setShowMode(String showMode) {
+    public void setShowMode(final String showMode) {
         this.showMode = showMode;
     }
 
@@ -374,7 +356,7 @@ public class FundAction extends BaseFormAction {
         return fundList;
     }
 
-    public void setFundList(List<Fund> fundList) {
+    public void setFundList(final List<Fund> fundList) {
         this.fundList = fundList;
     }
 
@@ -382,7 +364,7 @@ public class FundAction extends BaseFormAction {
         return fundSearchList;
     }
 
-    public void setFundSearchList(List<Fund> fundSearchList) {
+    public void setFundSearchList(final List<Fund> fundSearchList) {
         this.fundSearchList = fundSearchList;
     }
 
@@ -390,7 +372,7 @@ public class FundAction extends BaseFormAction {
         return success;
     }
 
-    public void setSuccess(String success) {
+    public void setSuccess(final String success) {
         this.success = success;
     }
 

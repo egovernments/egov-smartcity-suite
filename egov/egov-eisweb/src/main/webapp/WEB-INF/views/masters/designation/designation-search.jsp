@@ -58,8 +58,7 @@
 						
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.designation.name"></spring:message><small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.designation.name"></spring:message><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="name" 
 	                                         id="desigName" cssClass="form-control" cssErrorClass="form-control error"  required="required">

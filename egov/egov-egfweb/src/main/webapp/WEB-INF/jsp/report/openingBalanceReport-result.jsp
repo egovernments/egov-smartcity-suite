@@ -37,41 +37,56 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-	<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-	</span>
+<span class="mandatory"> <font
+	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+		<s:actionmessage /></font>
+</span>
 <s:if test="%{openingBalanceDisplayList.size!=0}">
-	<display:table name="openingBalanceDisplayList"  id ="currentRowObject" uid="currentRowObject" class="tablebottom" style="width:100%;" cellpadding="0" cellspacing="0" export="true" requestURI="openingBalanceReport!ajaxSearch.action" >
-			<display:caption>
-				<div class="headingsmallbgnew" align="center" style="text-align:center;width:98%;">
+	<display:table name="openingBalanceDisplayList" id="currentRowObject"
+		uid="currentRowObject" class="tablebottom" style="width:100%;"
+		cellpadding="0" cellspacing="0" export="true"
+		requestURI="openingBalanceReport!ajaxSearch.action">
+		<display:caption>
+			<div class="headingsmallbgnew" align="center"
+				style="text-align: center; width: 98%;">
 				<b><s:property value="%{heading}" /></b>
-				</div>
-			</display:caption>	
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Fund" style="width:6%;text-align:center" property="fund" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="GlCode" style="width:6%;text-align:center" property="accCode" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Account Head" style="width:8%;text-align:left" property="accName" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Description" style="width:5%;text-align:left" property="description"/>
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Debit(Rs.)" style="width:6%;text-align:right" property="debit" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Credit(Rs.)" style="width:6%;text-align:right" property="credit"/>
-				<display:caption  media="pdf">
-				<div align="left" style="text-align:left;"> <b><s:property value="%{heading}" /></b></div>
-			   </display:caption>
-			   <display:caption  media="excel">
+			</div>
+		</display:caption>
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Fund" style="width:6%;text-align:center" property="fund" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="GlCode" style="width:6%;text-align:center" property="accCode" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Account Head" style="width:8%;text-align:left"
+			property="accName" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Description" style="width:5%;text-align:left"
+			property="description" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Debit(Rs.)" style="width:6%;text-align:right" property="debit" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Credit(Rs.)" style="width:6%;text-align:right"
+			property="credit" />
+		<display:caption media="pdf">
+			<div align="left" style="text-align: left;">
+				<b><s:property value="%{heading}" /></b>
+			</div>
+		</display:caption>
+		<display:caption media="excel">
 				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						  Opening Balance Report  
 				</display:caption>
-					<display:setProperty name="export.pdf" value="true" />
-					<display:setProperty name="export.pdf.filename" value="Opening Balance Report.pdf" /> 
-					<display:setProperty name="export.excel" value="true" />
-					<display:setProperty name="export.excel.filename" value="Opening Balance Report.xls"/>	
-					<display:setProperty name="export.csv" value="false" />	
-					<display:setProperty name="export.xml" value="false" />							
-</display:table>
-				 	
+		<display:setProperty name="export.pdf" value="true" />
+		<display:setProperty name="export.pdf.filename"
+			value="Opening Balance Report.pdf" />
+		<display:setProperty name="export.excel" value="true" />
+		<display:setProperty name="export.excel.filename"
+			value="Opening Balance Report.xls" />
+		<display:setProperty name="export.csv" value="false" />
+		<display:setProperty name="export.xml" value="false" />
+	</display:table>
+
 </s:if>

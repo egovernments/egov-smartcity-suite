@@ -55,28 +55,33 @@ import org.springframework.stereotype.Service;
 @Service
 public class LicenseNumberGenerator {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+	@Autowired
+	private DBSequenceGenerator dbSequenceGenerator;
 
-    @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+	@Autowired
+	private SequenceNumberGenerator sequenceNumberGenerator;
 
-    public String generateBillNumber(final String installmentYear) {
-        try {
-            final String sequenceName = Constants.LICENSE_BILLNO_SEQ + installmentYear;
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s%06d", "", sequenceNumber);
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating water connection charges bill Number ", e);
-        }
-    }
+	public String generateBillNumber(final String installmentYear) {
+		try {
+			final String sequenceName = Constants.LICENSE_BILLNO_SEQ
+					+ installmentYear;
+			Serializable sequenceNumber;
+			try {
+				sequenceNumber = sequenceNumberGenerator
+						.getNextSequence(sequenceName);
+			} catch (final SQLGrammarException e) {
+				sequenceNumber = dbSequenceGenerator
+						.createAndGetNextSequence(sequenceName);
+			}
+			return String.format("%s%06d", "", sequenceNumber);
+		} catch (final SQLException e) {
+			throw new ApplicationRuntimeException(
+					"Error occurred while generating water connection charges bill Number ",
+					e);
+		}
+	}
 
 }

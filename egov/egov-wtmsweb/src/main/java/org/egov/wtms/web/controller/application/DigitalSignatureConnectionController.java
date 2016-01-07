@@ -61,6 +61,7 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -123,6 +124,9 @@ public class DigitalSignatureConnectionController {
     @Autowired
     private ReportGenerationService reportGenerationService;
     
+    @Autowired
+    private FileStoreMapperRepository fileStoreMapperRepository;
+    
     @RequestMapping(value = "/waterTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
         final String fileStoreIds = request.getParameter("fileStoreId");
@@ -158,9 +162,10 @@ public class DigitalSignatureConnectionController {
     public void downloadSignedWorkOrderConnection(final HttpServletRequest request, final HttpServletResponse response) {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
+        final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
         response.setContentType("application/pdf");  
         response.setContentType("application/octet-stream");
-        response.setHeader("content-disposition", "attachment; filename=\"" + signedFileStoreId + "\"");
+        response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
         try{
             FileInputStream inStream = new FileInputStream(file);
             PrintWriter outStream = response.getWriter();

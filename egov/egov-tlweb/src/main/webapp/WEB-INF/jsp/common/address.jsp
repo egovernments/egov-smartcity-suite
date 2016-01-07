@@ -81,10 +81,10 @@ function getZoneWard(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
     <div class="col-sm-3 add-margin">
-        <div class="input-group">
-         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);" onChange="resetOnPropertyNumChange();" class="form-control"/>
-            <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span>
-        </div>
+        <!-- <div class="input-group"> -->
+         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);callPropertyTaxRest();" onChange="resetOnPropertyNumChange();" class="form-control"/>
+            <!-- <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span> -->
+       <!--  </div> -->
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /><span class="mandatory"></span></label>

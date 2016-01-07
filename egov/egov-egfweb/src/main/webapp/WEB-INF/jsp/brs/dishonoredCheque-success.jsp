@@ -37,15 +37,15 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
 
 <title>Dishonored Cheques</title>
-<body >
-<script>
+<body>
+	<script>
 </script>
- 	<b>Cheques Dishonored successfully</b> 
+	<b>Cheques Dishonored successfully</b>
 </body>
 </html>

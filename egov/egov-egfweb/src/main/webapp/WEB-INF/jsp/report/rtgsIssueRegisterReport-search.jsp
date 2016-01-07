@@ -37,24 +37,60 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-           
 
-<html>  
+
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	</style>
-    <title><s:text name="rtgs.issueregister.report" /></title>
-    
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<style type="text/css">
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+</style>
+<title><s:text name="rtgs.issueregister.report" /></title>
+
 </head>
 <script>
 	function doAfterSubmit(){
@@ -102,84 +138,118 @@
 		   }
 	}
 </script>
-	<body>  
-		<s:form action="rtgsIssueRegisterReport" name="rtgsIssueRegisterReport" theme="simple"  method="post" onsubmit="javascript:doAfterSubmit()">
-			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<font  style='color: red ; font-weight:bold '> 
-			<p class="error-block" id="lblError" ></p></font>
-				<div class="formmainbox">
-					<div class="subheadnew">
-						<s:text name="rtgs.issue.report" />
-					</div>
-				</div>
-			<table align="center" width="100%" cellpadding="0" cellspacing="0">
+<body>
+	<s:form action="rtgsIssueRegisterReport" name="rtgsIssueRegisterReport"
+		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<font style='color: red; font-weight: bold'>
+			<p class="error-block" id="lblError"></p>
+		</font>
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="rtgs.issue.report" />
+			</div>
+		</div>
+		<table align="center" width="100%" cellpadding="0" cellspacing="0">
 			<tr>
-				<td class="bluebox" width="10%"><s:text name="voucher.fund"/><span class="mandatory">*</span></td>
-				<td class="bluebox"><s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onChange="loadBank(this);"  value="%{fundId.id}"/></td>
-				<td class="bluebox" width="10%"><s:text name="voucher.department"/>
-				<td class="bluebox"><s:select name="departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" onChange="alertWhileSelectingDepartment(this);" value="%{departmentId.id}"  /></td>
+				<td class="bluebox" width="10%"><s:text name="voucher.fund" /><span
+					class="mandatory">*</span></td>
+				<td class="bluebox"><s:select name="fundId" id="fundId"
+						list="dropdownData.fundList" listKey="id" listValue="name"
+						headerKey="-1" headerValue="----Choose----"
+						onChange="loadBank(this);" value="%{fundId.id}" /></td>
+				<td class="bluebox" width="10%"><s:text
+						name="voucher.department" />
+				<td class="bluebox"><s:select name="departmentid"
+						id="departmentid" list="dropdownData.departmentList" listKey="id"
+						listValue="deptName" headerKey="-1" headerValue="----Choose----"
+						onChange="alertWhileSelectingDepartment(this);"
+						value="%{departmentId.id}" /></td>
 			</tr>
-				<tr>
-	    <td class="greybox" ><s:text name="report.rtgsassignedfromdate"/>:</td>
-	    <td class="greybox">
-			<s:textfield name="rtgsAssignedFromDate" id="rtgsAssignedFromDate" cssStyle="width:100px" value='%{getFormattedDate(fromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedFromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	    <td class="greybox" ><s:text name="report.rtgsassignedtodate"/>:</td>
-	    <td class="greybox">
-			<s:textfield name="rtgsAssignedToDate" id="rtgsAssignedToDate" cssStyle="width:100px" value='%{getFormattedDate(toDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedToDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	</tr>
-	<tr>
-		<egov:ajaxdropdown id="bank" fields="['Text','Value']" dropdownId="bank" url="voucher/common!ajaxLoadAllBanksByFund.action" />
-		 <td class="bluebox" width="10%"><s:text name="bank"/>:</td>
-				    <td class="bluebox">
-				    <s:select name="bank" id="bank" list="dropdownData.bankList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onclick="validateFund()" onChange="populateBankBranch(this);"/>
-				    </td>
-	   <egov:ajaxdropdown id="bankbranch" fields="['Text','Value']" dropdownId="bankbranch" url="voucher/common!ajaxLoadBankBranchFromBank.action" />
-		<td class="bluebox" width="10%"><s:text name="bankbranch"/>:</td>
-					<td class="bluebox">
-						<s:select  name="bankbranch.id" id="bankbranch" list="dropdownData.bankBranchList" listKey="id" listValue="branchname" headerKey="-1" headerValue="----Choose----" onChange="populateBankAccount(this);"/>
-					</td>
-	</tr>            
-	<tr>
-	<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common!ajaxLoadBankAccFromBranch.action" />
-		<td class="greybox" width="10%"><s:text name="bankaccount"/>:</td>
-					<td class="greybox">
-						<s:select  name="bankaccount.id" id="bankaccount" list="dropdownData.accNumList" listKey="id" listValue="accountnumber" headerKey="-1" headerValue="----Choose----" />
-					</td>
-		<td class="greybox" ><s:text name="report.rtgsnumber"/>:</td>
-		    <td class="greybox">
-	    	<input type="text" name="instrumentnumber" id="instrumentnumber" autocomplete="off" onfocus='autocompleteRTGSNumbers(this);' />
-	    </td>
-	    
-	</tr>
+			<tr>
+				<td class="greybox"><s:text name="report.rtgsassignedfromdate" />:</td>
+				<td class="greybox"><s:textfield name="rtgsAssignedFromDate"
+						id="rtgsAssignedFromDate" cssStyle="width:100px"
+						value='%{getFormattedDate(fromDate)}'
+						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+					href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedFromDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+				</td>
+				<td class="greybox"><s:text name="report.rtgsassignedtodate" />:</td>
+				<td class="greybox"><s:textfield name="rtgsAssignedToDate"
+						id="rtgsAssignedToDate" cssStyle="width:100px"
+						value='%{getFormattedDate(toDate)}'
+						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+					href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedToDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+				</td>
+			</tr>
+			<tr>
+				<egov:ajaxdropdown id="bank" fields="['Text','Value']"
+					dropdownId="bank"
+					url="voucher/common!ajaxLoadAllBanksByFund.action" />
+				<td class="bluebox" width="10%"><s:text name="bank" />:</td>
+				<td class="bluebox"><s:select name="bank" id="bank"
+						list="dropdownData.bankList" listKey="id" listValue="name"
+						headerKey="-1" headerValue="----Choose----"
+						onclick="validateFund()" onChange="populateBankBranch(this);" /></td>
+				<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
+					dropdownId="bankbranch"
+					url="voucher/common!ajaxLoadBankBranchFromBank.action" />
+				<td class="bluebox" width="10%"><s:text name="bankbranch" />:</td>
+				<td class="bluebox"><s:select name="bankbranch.id"
+						id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
+						listValue="branchname" headerKey="-1" headerValue="----Choose----"
+						onChange="populateBankAccount(this);" /></td>
+			</tr>
+			<tr>
+				<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
+					dropdownId="bankaccount"
+					url="voucher/common!ajaxLoadBankAccFromBranch.action" />
+				<td class="greybox" width="10%"><s:text name="bankaccount" />:</td>
+				<td class="greybox"><s:select name="bankaccount.id"
+						id="bankaccount" list="dropdownData.accNumList" listKey="id"
+						listValue="accountnumber" headerKey="-1"
+						headerValue="----Choose----" /></td>
+				<td class="greybox"><s:text name="report.rtgsnumber" />:</td>
+				<td class="greybox"><input type="text" name="instrumentnumber"
+					id="instrumentnumber" autocomplete="off"
+					onfocus='autocompleteRTGSNumbers(this);' /></td>
+
+			</tr>
 			<tr>
 
-			</tr>  	
-			</table>
-			<div  class="buttonbottom">
-				<s:submit method="exportHtml" value="Search"  cssClass="buttonsubmit" onclick="return validateFund()"/>
-				<s:submit method="exportPdf" value="Save As Pdf"  cssClass="buttonsubmit" onclick="return validateFund()"/>
-				<s:submit method="exportXls" value="Save As Xls"  cssClass="buttonsubmit" onclick="return validateFund()"/>
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-				
-			</div>
-			<div id="loading" class="loading" style="width: 700; height: 700;display: none " align="center" >
-				<blink style="color: red">Searching processing, Please wait...</blink>
-			</div> <br>
-	<s:if test="%{searchResult}">
+			</tr>
+		</table>
+		<div class="buttonbottom">
+			<s:submit method="exportHtml" value="Search" cssClass="buttonsubmit"
+				onclick="return validateFund()" />
+			<s:submit method="exportPdf" value="Save As Pdf"
+				cssClass="buttonsubmit" onclick="return validateFund()" />
+			<s:submit method="exportXls" value="Save As Xls"
+				cssClass="buttonsubmit" onclick="return validateFund()" />
+			<input type="button" value="Close"
+				onclick="javascript:window.close()" class="button" />
+
+		</div>
+		<div id="loading" class="loading"
+			style="width: 700; height: 700; display: none" align="center">
+			<blink style="color: red">Searching processing, Please
+				wait...</blink>
+		</div>
+		<br>
+		<s:if test="%{searchResult}">
 			<logic:empty name="rtgsDisplayList">
-					<blink>Nothing found to display.</blink>
+				<blink>Nothing found to display.</blink>
 			</logic:empty>
-	</s:if>	
-<div id="codescontainer"/>
-		</s:form>  
-		
-<script>
+		</s:if>
+		<div id="codescontainer" />
+	</s:form>
+
+	<script>
 
 
 function validateFund(){
@@ -238,6 +308,6 @@ function alertWhileSelectingDepartment(){
 	 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-</script>	
-	</body>  
+</script>
+</body>
 </html>

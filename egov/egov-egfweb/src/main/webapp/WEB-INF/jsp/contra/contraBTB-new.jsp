@@ -39,62 +39,87 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 <head>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script language="javascript"
+	src="../resources/javascript/jsCommonMethods.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 </head>
 <body onload="onLoadTask_new()">
-<s:form  action="contraBTB" theme="simple" name="cbtbform"  >
-<s:push value="model">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Bank to Bank Transfer" name="heading"/>
-</jsp:include>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Create Bank to Bank Transfer</div>
-		<div id="listid" style="display:block">
-		<br/>
-		</div></div>
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
+	<s:form action="contraBTB" theme="simple" name="cbtbform">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Bank Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Create Bank to Bank Transfer</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+			</div>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
 			</span>
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr>
-		<td width="10%" class="bluebox"></td>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-		
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td></s:if>
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="34%"><input type="text" name="voucherDate" id="voucherDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>
-	<%@include file="contraBTB-form.jsp"%>
-	</table>
-	<div class="subheadsmallnew"/></div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>	
-<%@include file="../voucher/SaveButtons.jsp"%>
-<input type="hidden" id=name name="name" value="BankToBank"/>
-<input type="hidden" id="type" name="type" value="Contra"/>
-<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory" value="%{isBankBalanceMandatory()}"/>
-<s:hidden id="startDateForBalanceCheckStr" name="startDateForBalanceCheckStr" value="%{startDateForBalanceCheckStr}" />
-</s:push>
-<s:token/>
-</s:form>
-<SCRIPT type="text/javascript">
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="10%" class="bluebox"></td>
+					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+
+						<td class="bluebox" width="22%"><s:text name="voucher.number" /><span
+							class="mandatory">*</span></td>
+						<td class="bluebox" width="22%"><s:textfield
+								name="voucherNumber" id="voucherNumber" /></td>
+					</s:if>
+					<s:hidden name="id" />
+					<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" width="34%"><input type="text"
+						name="voucherDate" id="voucherDate" maxlength="10"
+						onkeyup="DateFormat(this,this.value,event,false,'3')"
+						value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+						href="javascript:show_calendar('cbtbform.voucherDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+				</tr>
+				<%@include file="contraBTB-form.jsp"%>
+			</table>
+			<div class="subheadsmallnew" /></div>
+			<div class="mandatory" align="left">* Mandatory Fields</div>
+			</div>
+			<%@include file="../voucher/SaveButtons.jsp"%>
+			<input type="hidden" id=name name="name" value="BankToBank" />
+			<input type="hidden" id="type" name="type" value="Contra" />
+			<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory"
+				value="%{isBankBalanceMandatory()}" />
+			<s:hidden id="startDateForBalanceCheckStr"
+				name="startDateForBalanceCheckStr"
+				value="%{startDateForBalanceCheckStr}" />
+		</s:push>
+		<s:token />
+	</s:form>
+	<SCRIPT type="text/javascript">
 function	onLoadTask_new()
 {
 	loadFromDepartment();

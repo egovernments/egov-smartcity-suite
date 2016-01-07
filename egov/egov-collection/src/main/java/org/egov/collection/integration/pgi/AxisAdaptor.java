@@ -61,6 +61,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -72,7 +73,7 @@ import com.sun.jersey.api.representation.Form;
  * The PaymentRequestAdaptor class frames the request object for the payment
  * service.
  */
-
+@Service
 public class AxisAdaptor implements PaymentGatewayAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(AxisAdaptor.class);

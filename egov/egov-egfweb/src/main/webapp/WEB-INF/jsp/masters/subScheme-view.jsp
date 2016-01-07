@@ -37,17 +37,17 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 
 <%@ page language="java"%>
 <html>
-	<head>
-		<title><s:if test="%{showMode=='edit'}">
-				<s:text name="subscheme.modify" />
-			</s:if> <s:else>
-				<s:text name="subScheme.add" />
-			</s:else></title>
-		<script type="text/javascript">
+<head>
+<title><s:if test="%{showMode=='edit'}">
+		<s:text name="subscheme.modify" />
+	</s:if> <s:else>
+		<s:text name="subScheme.add" />
+	</s:else></title>
+<script type="text/javascript">
 		function validate(){
 			if(document.getElementById('name').value == null || document.getElementById('name').value==''){
 				alert("Please enter Name");
@@ -94,37 +94,37 @@
 	}	
 </script>
 
-	</head>
-	<body name="subSchemeView">
+</head>
+<body name="subSchemeView">
 
-		<jsp:include page="../budget/budgetHeader.jsp" />
-		<s:actionmessage theme="simple" />
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:if test="%{showMode=='edit'}">
-					<s:text name="subscheme.modify" />
-				</s:if>
-				<s:else>
-					<s:text name="subScheme.add" />
-				</s:else>
-			</div>
-		
+	<jsp:include page="../budget/budgetHeader.jsp" />
+	<s:actionmessage theme="simple" />
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:if test="%{showMode=='edit'}">
+				<s:text name="subscheme.modify" />
+			</s:if>
+			<s:else>
+				<s:text name="subScheme.add" />
+			</s:else>
+		</div>
+
 		<s:actionerror />
 		<s:fielderror />
-		<s:form name="subSchemeForm" action="subScheme"  theme="simple">
+		<s:form name="subSchemeForm" action="subScheme" theme="simple">
 			<s:hidden name="showMode" />
 			<s:hidden name="id" />
-		    <s:push value="model">
+			<s:push value="model">
 				<%@include file="subScheme-form.jsp"%>
-				
-			</div>	
-				
-				<div class="buttonbottom" style="padding-bottom: 10px;">
-				
-				
-					<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
-				</div>
-		<script>
+	</div>
+
+	<div class="buttonbottom" style="padding-bottom: 10px;">
+
+
+		<input type="button" id="Close" value="Close"
+			onclick="javascript:window.close()" class="button" />
+	</div>
+	<script>
 			<s:if test="%{isactive==true}">
 			    document.getElementById("isActive").checked="checked";
 			</s:if>
@@ -139,13 +139,13 @@
 				disableControls(true);
 			</s:else>
 		</script>
-		<s:hidden  name="createdBy" value="%{createdBy.id}"/>
-	    <s:hidden  name="createdDate" value="%{createdDate}"/>
-		</s:push>
-		<s:token/>
-		</s:form>
-		<script>
+	<s:hidden name="createdBy" value="%{createdBy.id}" />
+	<s:hidden name="createdDate" value="%{createdDate}" />
+	</s:push>
+	<s:token />
+	</s:form>
+	<script>
 
 	</script>
-	</body>
+</body>
 </html>

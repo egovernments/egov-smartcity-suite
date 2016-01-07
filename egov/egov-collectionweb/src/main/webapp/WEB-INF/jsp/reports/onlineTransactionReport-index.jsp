@@ -182,7 +182,7 @@
 			</label>&nbsp; <label> <s:reset type="submit" cssClass="button"
 					value="%{getText('collectionReport.reset')}"
 					onclick="return clearErrors();" />
-			</label>&nbsp; <label> <input type="button" class="button"
+			</label> <label> <input type="button" class="button"
 				id="buttonClose" value="<s:text name='common.buttons.close'/>"
 				onclick="window.close()" />
 			</label>

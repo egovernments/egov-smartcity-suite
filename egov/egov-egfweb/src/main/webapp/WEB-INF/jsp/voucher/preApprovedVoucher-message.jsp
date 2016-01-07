@@ -37,32 +37,36 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-    <title>PJV Approval</title>
+<html>
+<head>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<title>PJV Approval</title>
 </head>
-	<body onload="refreshInbox()">  
-		<s:form action="preApprovedVoucher" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="PJV-Approval" />
-			</jsp:include>
-			<span class="mandatory">
-				<s:actionmessage /> 
-			</span>
-			<br/>
-			<s:hidden id="id" name="id" value="%{voucherHeader.id}"/>
-			<s:if test="%{type == finConstExpendTypeContingency}">
-				<input type="button" class="button" id="print" value="Print Preview" action="expenseJournalVoucherPrint" method="print" onclick="printEJV()"/>
-			</s:if> 
-			<s:else>
-				<input type="button" class="button" id="print" value="Print Preview" action="journalVoucherPrint" method="print" onclick="printJV()"/>
-			</s:else>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
-		</s:form> 
-<script>
+<body onload="refreshInbox()">
+	<s:form action="preApprovedVoucher" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="PJV-Approval" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionmessage />
+		</span>
+		<br />
+		<s:hidden id="id" name="id" value="%{voucherHeader.id}" />
+		<s:if test="%{type == finConstExpendTypeContingency}">
+			<input type="button" class="button" id="print" value="Print Preview"
+				action="expenseJournalVoucherPrint" method="print"
+				onclick="printEJV()" />
+		</s:if>
+		<s:else>
+			<input type="button" class="button" id="print" value="Print Preview"
+				action="journalVoucherPrint" method="print" onclick="printJV()" />
+		</s:else>
+		<input type="button" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</s:form>
+	<script>
 function printEJV(){
 	var id = '<s:property value="voucherHeader.id"/>';
 	window.open("${pageContext.request.contextPath}/report/expenseJournalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
@@ -72,5 +76,5 @@ function printJV(){
 	window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 </script>
-	</body>  
+</body>
 </html>

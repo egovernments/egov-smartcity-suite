@@ -37,36 +37,40 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
 <html>
 <head>
 <title><s:text name="advance.payment.view.title" /></title>
-<script type="text/javascript" src="/EGF/resources/javascript/advancePaymentHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/advancePaymentHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/voucherHelper.js"></script>
 <style>
 @media print {
 	input#printbutton {
-	display: none;
-	}
-}
-@media print {
-	input#closeButton {
-	display: none;
-	}
-}
-@media print {
-	div.commontopyellowbg {
-	display: none;
-	}
-}
-@media print {
-	div.commontopbluebg {
-	display: none;
+		display: none;
 	}
 }
 
+@media print {
+	input#closeButton {
+		display: none;
+	}
+}
+
+@media print {
+	div.commontopyellowbg {
+		display: none;
+	}
+}
+
+@media print {
+	div.commontopbluebg {
+		display: none;
+	}
+}
 </style>
 <script>
 window.history.forward(1);
@@ -126,151 +130,206 @@ function balanceCheck(obj, actionName,actionDescription) {
 
 </script>
 </head>
-<body class="yui-skin-sam" onload="noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
-<div class="error-block" id="advancePayment_error" style="display: none;color:red;"></div>
-<s:if test="%{hasErrors() || hasActionMessages()}"> 
-    <div class="error-block" style="color:red;align:left"> 
-      <s:actionerror/>
-      <s:fielderror/>
-      <s:actionmessage />
-    </div>
-</s:if>
-<s:form  action="advancePayment" theme="css_xhtml" name="advancePaymentViewForm" >
-<jsp:include page="../budget/budgetHeader.jsp">
-	<jsp:param value="Advance Payment View" name="heading"/>
-</jsp:include>
-<s:push value="model">
-<s:if test="%{advanceRequisitionId != null}">
-	<s:hidden name="advanceRequisitionId" value="%{advanceRequisitionId}" id="advanceRequisitionId" />	
-</s:if>
-<s:hidden  name="paymentid" value="%{paymentheader.id}"/>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew"><s:text name="advance.payment.view.title" /></div></div>
-	    <table width="100%" border="0" cellspacing="0" cellpadding="0">          
-          <tr>
-            <td>
- 				<table width="100%"  border="0" cellspacing="0" cellpadding="0">
-	 				<tr><td>&nbsp;</td></tr>	
-					<tr>
-						<td width="10%" class="bluebox"></td>
-						<td class="bluebox"><strong><s:text name="voucher.number"/></strong></td>
-						<td class="bluebox"><s:property value='%{voucherNumber}' /></td>
-						<td class="bluebox"><strong><s:text name="advancepayment.date" /></strong></td>
-						<td class="bluebox"><s:date name="voucherDate" format="dd/MM/yyyy" /></td>						
-					</tr>
-					<tr>
-						<td width="10%" class="greybox"></td>
-						<td class="greybox"><strong><s:text name="arf.arfdate" /></strong></td>
-						<td class="greybox"><s:date name="advanceRequisition.advanceRequisitionDate" format="dd/MM/yyyy" /></td>
-						<td class="greybox"><strong><s:text name="arf.arfnumber" /></strong></td>
-						<td class="greybox">
-						<a href="#" onclick="viewARF('<s:property value='%{advanceRequisition.egAdvanceReqMises.sourcePath}'/>')">
-							<s:property  value="%{advanceRequisition.advanceRequisitionNumber}" />
-						</a>
-						</td> 
-					</tr>	
-					<tr>
-						<td width="10%" class="bluebox"></td>
-						<td class="bluebox"><strong><s:text name="arf.function" /></strong></td>
-						<td class="bluebox"><s:property  value="%{paymentheader.voucherheader.vouchermis.function.name}" /></td>
-						<td class="bluebox"><strong><s:text name="arf.fund" /></strong></td>
-						<td class="bluebox"><s:property  value="%{paymentheader.voucherheader.fundId.Name}" /></td> 
-					</tr>
-					<tr>
-						<td width="10%" class="greybox"></td>
-						<td class="greybox"><strong><s:text name="arf.advance.coa" /></strong></td>
-						<td class="greybox">
-							<s:iterator value="advanceRequisition.egAdvanceReqDetailses" var="detail">
-								<s:property value="#detail.chartofaccounts.glcode" /> - <s:property value="#detail.chartofaccounts.name" />
-							</s:iterator>
-						</td>
-						<td class="greybox"><strong><s:text name="arf.advanceamount" /></strong></td>
-						<td class="greybox"><s:text name="payment.format.number"><s:param name="value" value="advanceRequisition.advanceRequisitionAmount"/></s:text></td> 
-					</tr>
-					<tr>
-						<td width="10%" class="bluebox"></td>
-						<td class="bluebox"><strong><s:text name="arf.contractor" /></strong></td>
-						<td class="bluebox"><s:property  value="%{advanceRequisition.egAdvanceReqMises.payto}" /></td>
-						<td class="bluebox"><strong><s:text name="arf.department" /></strong></td>  
-						<td class="bluebox"> 
-							<s:property  value="%{paymentheader.voucherheader.vouchermis.departmentid.deptName}" />
-						</td>
-					</tr>	
-					<tr>
-						<td width="10%" class="greybox"></td>
-					    <td class="greybox"><strong><s:text name="arf.bankbranch" /></strong></td>
-					    <td class="greybox">
-					    	<s:property value="%{paymentheader.bankaccount.bankbranch.bank.name}" />-<s:property value="%{paymentheader.bankaccount.bankbranch.branchname}" />
-					    </td>
-					    <td class="greybox"><strong><s:text name="arf.bank.accountnumber" /></strong></td>
-						<td class="greybox"><s:property value="%{paymentheader.bankaccount.accountnumber}" />-<s:property value="%{paymentheader.bankaccount.accounttype}" /></td> 
-					 </tr> 
-					<tr id="bankbalanceRow" style="visibility:hidden">
-						<td class="bluebox" width="10%">&nbsp;</td>
-						<td class="bluebox" width="15%"><strong><s:text name="balance.available"/>(Rs)</strong></td>
-						<td class="bluebox" colspan="4"><span id="bankAccountBalance"/></span></td>
-					</tr>
-					
-					<tr>
-						<td width="10%" class="greybox"></td>
-						<td class="greybox"><strong><s:text name="modeofpayment"/></strong></td>
-						<td class="greybox"><s:property value="%{commonBean.modeOfPayment}" /></td>
-						<td class="greybox"><strong><s:text name="payment.amount"/>(Rs)</strong></td>
-						<td class="greybox"><s:text name="payment.format.number"><s:param name="value" value="paymentheader.paymentAmount"/></s:text></td> 
-					</tr>	
-					<tr>
-						<td width="10%" class="bluebox"></td>
-						<td class="bluebox"><strong><s:text name="voucher.narration"/></strong></td>
-						<td class="bluebox" colspan="3"><s:property value="%{paymentheader.voucherheader.description}" /></td>
-					</tr>						
-				</table>   
-            </td> 
-          </tr>    
-         <tr><td colspan="5">&nbsp;</td></tr>
-        
-          <s:if test="%{!hasActionMessages()}">
-	         <tr>         	
-		  		<td> 
-					<s:if test="%{!wfitemstate.equalsIgnoreCase('END')}">
-						<%@include file="../voucher/workflowApproval.jsp"%>
-					</s:if>
-				</td>
-	  		 </tr> 
-	  		 <s:if test="%{showApprove}">
-		  		 <tr>
-					<td class="bluebox" style="text-align: center"><strong><s:text name="arf.wf.label.comments"/></strong>
-						<s:textarea name="comments" id="comments" cols="100" rows="3" onblur="checkLength(this)" value="%{getComments()}"/>
+<body class="yui-skin-sam" onload="noBack();"
+	onpageshow="if(event.persisted) noBack();" onunload="">
+	<div class="error-block" id="advancePayment_error"
+		style="display: none; color: red;"></div>
+	<s:if test="%{hasErrors() || hasActionMessages()}">
+		<div class="error-block" style="color: red; align: left">
+			<s:actionerror />
+			<s:fielderror />
+			<s:actionmessage />
+		</div>
+	</s:if>
+	<s:form action="advancePayment" theme="css_xhtml"
+		name="advancePaymentViewForm">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param value="Advance Payment View" name="heading" />
+		</jsp:include>
+		<s:push value="model">
+			<s:if test="%{advanceRequisitionId != null}">
+				<s:hidden name="advanceRequisitionId"
+					value="%{advanceRequisitionId}" id="advanceRequisitionId" />
+			</s:if>
+			<s:hidden name="paymentid" value="%{paymentheader.id}" />
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">
+					<s:text name="advance.payment.view.title" />
+				</div>
+			</div>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td width="10%" class="bluebox"></td>
+								<td class="bluebox"><strong><s:text
+											name="voucher.number" /></strong></td>
+								<td class="bluebox"><s:property value='%{voucherNumber}' /></td>
+								<td class="bluebox"><strong><s:text
+											name="advancepayment.date" /></strong></td>
+								<td class="bluebox"><s:date name="voucherDate"
+										format="dd/MM/yyyy" /></td>
+							</tr>
+							<tr>
+								<td width="10%" class="greybox"></td>
+								<td class="greybox"><strong><s:text
+											name="arf.arfdate" /></strong></td>
+								<td class="greybox"><s:date
+										name="advanceRequisition.advanceRequisitionDate"
+										format="dd/MM/yyyy" /></td>
+								<td class="greybox"><strong><s:text
+											name="arf.arfnumber" /></strong></td>
+								<td class="greybox"><a href="#"
+									onclick="viewARF('<s:property value='%{advanceRequisition.egAdvanceReqMises.sourcePath}'/>')">
+										<s:property
+											value="%{advanceRequisition.advanceRequisitionNumber}" />
+								</a></td>
+							</tr>
+							<tr>
+								<td width="10%" class="bluebox"></td>
+								<td class="bluebox"><strong><s:text
+											name="arf.function" /></strong></td>
+								<td class="bluebox"><s:property
+										value="%{paymentheader.voucherheader.vouchermis.function.name}" /></td>
+								<td class="bluebox"><strong><s:text
+											name="arf.fund" /></strong></td>
+								<td class="bluebox"><s:property
+										value="%{paymentheader.voucherheader.fundId.Name}" /></td>
+							</tr>
+							<tr>
+								<td width="10%" class="greybox"></td>
+								<td class="greybox"><strong><s:text
+											name="arf.advance.coa" /></strong></td>
+								<td class="greybox"><s:iterator
+										value="advanceRequisition.egAdvanceReqDetailses" var="detail">
+										<s:property value="#detail.chartofaccounts.glcode" /> - <s:property
+											value="#detail.chartofaccounts.name" />
+									</s:iterator></td>
+								<td class="greybox"><strong><s:text
+											name="arf.advanceamount" /></strong></td>
+								<td class="greybox"><s:text name="payment.format.number">
+										<s:param name="value"
+											value="advanceRequisition.advanceRequisitionAmount" />
+									</s:text></td>
+							</tr>
+							<tr>
+								<td width="10%" class="bluebox"></td>
+								<td class="bluebox"><strong><s:text
+											name="arf.contractor" /></strong></td>
+								<td class="bluebox"><s:property
+										value="%{advanceRequisition.egAdvanceReqMises.payto}" /></td>
+								<td class="bluebox"><strong><s:text
+											name="arf.department" /></strong></td>
+								<td class="bluebox"><s:property
+										value="%{paymentheader.voucherheader.vouchermis.departmentid.deptName}" />
+								</td>
+							</tr>
+							<tr>
+								<td width="10%" class="greybox"></td>
+								<td class="greybox"><strong><s:text
+											name="arf.bankbranch" /></strong></td>
+								<td class="greybox"><s:property
+										value="%{paymentheader.bankaccount.bankbranch.bank.name}" />-<s:property
+										value="%{paymentheader.bankaccount.bankbranch.branchname}" />
+								</td>
+								<td class="greybox"><strong><s:text
+											name="arf.bank.accountnumber" /></strong></td>
+								<td class="greybox"><s:property
+										value="%{paymentheader.bankaccount.accountnumber}" />-<s:property
+										value="%{paymentheader.bankaccount.accounttype}" /></td>
+							</tr>
+							<tr id="bankbalanceRow" style="visibility: hidden">
+								<td class="bluebox" width="10%">&nbsp;</td>
+								<td class="bluebox" width="15%"><strong><s:text
+											name="balance.available" />(Rs)</strong></td>
+								<td class="bluebox" colspan="4"><span
+									id="bankAccountBalance" /></span></td>
+							</tr>
+
+							<tr>
+								<td width="10%" class="greybox"></td>
+								<td class="greybox"><strong><s:text
+											name="modeofpayment" /></strong></td>
+								<td class="greybox"><s:property
+										value="%{commonBean.modeOfPayment}" /></td>
+								<td class="greybox"><strong><s:text
+											name="payment.amount" />(Rs)</strong></td>
+								<td class="greybox"><s:text name="payment.format.number">
+										<s:param name="value" value="paymentheader.paymentAmount" />
+									</s:text></td>
+							</tr>
+							<tr>
+								<td width="10%" class="bluebox"></td>
+								<td class="bluebox"><strong><s:text
+											name="voucher.narration" /></strong></td>
+								<td class="bluebox" colspan="3"><s:property
+										value="%{paymentheader.voucherheader.description}" /></td>
+							</tr>
+						</table>
 					</td>
-				</tr>  
-			</s:if>
-		</s:if>
-		</table>
-		<s:if test="%{showApprove}">			
-			<s:if test="%{paymentheader.state.value != 'NEW'}">
-				<s:if test="%{paymentheader.state.id!=null}">
-					<div id="labelAD" align="center">
-					<h5>
-					  <a href="#" onclick="showHistory(<s:property value='paymentheader.state.id'/>); "><s:text name="message.show.history"/></a>
-					  </h5>
-				  	</div>
-				</s:if>
-			</s:if>
-		
-			<table align="center">
-				<tr class="buttonbottom" id="buttondiv" style="align:middle" >
-					<s:hidden  name="actionname" id="actionName" value="%{action}"/>
-					<s:if test="%{!hasActionMessages()}">   
-						<s:iterator value="%{getValidActions()}" var="p"  status="s">
-					 		<td> <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="sendForApproval" onclick="return balanceCheck(this, '%{name}','%{description}')" /> </td> 
-						</s:iterator>
-						<s:if test="%{paymentheader.state.value.contains('Reject')}">
-							<td><s:submit method="cancelPayment" value="Cancel Payment" cssClass="buttonsubmit" onclick="document.getElementById('actionName').value='cancelPayment';"/></td>
-						</s:if>					
-					</s:if>
-					<td><s:submit cssClass="button" id="printPreview" value="Print Preview"  onclick="printVoucher()"/></td>
-					<td><input type="button" value="Close" id="Close" onclick="javascript:window.close()" class="button" /></td>
 				</tr>
-		  </table>	
-		  <script>
+				<tr>
+					<td colspan="5">&nbsp;</td>
+				</tr>
+
+				<s:if test="%{!hasActionMessages()}">
+					<tr>
+						<td><s:if test="%{!wfitemstate.equalsIgnoreCase('END')}">
+								<%@include file="../voucher/workflowApproval.jsp"%>
+							</s:if></td>
+					</tr>
+					<s:if test="%{showApprove}">
+						<tr>
+							<td class="bluebox" style="text-align: center"><strong><s:text
+										name="arf.wf.label.comments" /></strong> <s:textarea name="comments"
+									id="comments" cols="100" rows="3" onblur="checkLength(this)"
+									value="%{getComments()}" /></td>
+						</tr>
+					</s:if>
+				</s:if>
+			</table>
+			<s:if test="%{showApprove}">
+				<s:if test="%{paymentheader.state.value != 'NEW'}">
+					<s:if test="%{paymentheader.state.id!=null}">
+						<div id="labelAD" align="center">
+							<h5>
+								<a href="#"
+									onclick="showHistory(<s:property value='paymentheader.state.id'/>); "><s:text
+										name="message.show.history" /></a>
+							</h5>
+						</div>
+					</s:if>
+				</s:if>
+
+				<table align="center">
+					<tr class="buttonbottom" id="buttondiv" style="align: middle">
+						<s:hidden name="actionname" id="actionName" value="%{action}" />
+						<s:if test="%{!hasActionMessages()}">
+							<s:iterator value="%{getValidActions()}" var="p" status="s">
+								<td><s:submit type="submit" cssClass="buttonsubmit"
+										value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
+										method="sendForApproval"
+										onclick="return balanceCheck(this, '%{name}','%{description}')" />
+								</td>
+							</s:iterator>
+							<s:if test="%{paymentheader.state.value.contains('Reject')}">
+								<td><s:submit method="cancelPayment" value="Cancel Payment"
+										cssClass="buttonsubmit"
+										onclick="document.getElementById('actionName').value='cancelPayment';" /></td>
+							</s:if>
+						</s:if>
+						<td><s:submit cssClass="button" id="printPreview"
+								value="Print Preview" onclick="printVoucher()" /></td>
+						<td><input type="button" value="Close" id="Close"
+							onclick="javascript:window.close()" class="button" /></td>
+					</tr>
+				</table>
+				<script>
 		  <s:if test="%{hasActionMessages()}">   
 			  if(opener && opener.top && opener.top.document.getElementById('inboxframe'))
 				opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
@@ -297,15 +356,20 @@ function balanceCheck(obj, actionName,actionDescription) {
 				</s:if>
 			</s:if>
 		
-		</script>		
-	</s:if>
-	<s:else>
-		<input type="button" value="Close" id="Close" onclick="javascript:window.close()" class="button" />
-	</s:else>
-<div align="right" class="mandatory" style="font-size:11px;padding-right:20px;">* <s:text name="default.message.mandatory" /></div>	
-</div>
-<!-- end of formmainbox -->
-</s:push>
-</s:form>
+		</script>
+			</s:if>
+			<s:else>
+				<input type="button" value="Close" id="Close"
+					onclick="javascript:window.close()" class="button" />
+			</s:else>
+			<div align="right" class="mandatory"
+				style="font-size: 11px; padding-right: 20px;">
+				*
+				<s:text name="default.message.mandatory" />
+			</div>
+			</div>
+			<!-- end of formmainbox -->
+		</s:push>
+	</s:form>
 </body>
 </html>

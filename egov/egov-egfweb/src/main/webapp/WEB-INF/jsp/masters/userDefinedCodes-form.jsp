@@ -38,36 +38,37 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-			    <td class="greybox">&nbsp;</td>
-				<td class="greybox" width="20%"><strong><s:text name="subCodeFor"/><span class="mandatory"></span></strong></td>
-			    <td class="greybox">
-			    	<s:select list="dropdownData.userDefCodeList" id="accEntity.accountdetailtype.id" listKey="id"	listValue="name" 
-			    	name="accEntity.accountdetailtype.id" headerKey=""	headerValue="---- Choose ----" 
-			    	value="accEntity.accountdetailtype.id"></s:select>
-			    </td>
-				<td class="greybox" colspan="2">&nbsp;</td>
-			</tr>
-			<tr>
-			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="20%"><strong><s:text name="userDefCode.code"/><span class="mandatory"></span></strong></td>
-			    <td class="bluebox">
-			    	<s:textfield id="code" name="code" value="%{code}"/>
-			    </td>
-				<td class="bluebox" width="20%"><strong><s:text name="userDefCode.name"/><span class="mandatory"></span></strong></td>
-			    <td class="bluebox">
-			    	<s:textfield id="name" name="name" value="%{name}"/>
-			    </td>
-			</tr>
-			<tr>
-			    <td class="greybox">&nbsp;</td>
-				<td class="greybox" width="20%"><strong><s:text name="userDefCode.Desc"/></strong></td>
-			    <td class="greybox">
-			    	<s:textarea name="narration" id="narration" rows="3" cols="60"/>
-			    </td>
-				<td class="greybox" width="20%"><strong><s:text name="userDefCode.active"/></strong></td>
-			    <td class="greybox">
-			    	<s:checkbox name="isactive" id="isactive"/>
-			    </td>
-			</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="20%"><strong><s:text
+					name="subCodeFor" /><span class="mandatory"></span></strong></td>
+		<td class="greybox"><s:select list="dropdownData.userDefCodeList"
+				id="accEntity.accountdetailtype.id" listKey="id" listValue="name"
+				name="accEntity.accountdetailtype.id" headerKey=""
+				headerValue="---- Choose ----"
+				value="accEntity.accountdetailtype.id"></s:select></td>
+		<td class="greybox" colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="userDefCode.code" /><span class="mandatory"></span></strong></td>
+		<td class="bluebox"><s:textfield id="code" name="code"
+				value="%{code}" /></td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="userDefCode.name" /><span class="mandatory"></span></strong></td>
+		<td class="bluebox"><s:textfield id="name" name="name"
+				value="%{name}" /></td>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="20%"><strong><s:text
+					name="userDefCode.Desc" /></strong></td>
+		<td class="greybox"><s:textarea name="narration" id="narration"
+				rows="3" cols="60" /></td>
+		<td class="greybox" width="20%"><strong><s:text
+					name="userDefCode.active" /></strong></td>
+		<td class="greybox"><s:checkbox name="isactive" id="isactive" />
+		</td>
+	</tr>
 </table>

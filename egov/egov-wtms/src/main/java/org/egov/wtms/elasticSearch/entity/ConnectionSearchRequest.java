@@ -107,7 +107,7 @@ public class ConnectionSearchRequest {
 
     public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(queryStringFilter("clauses.ulbname", ulbName));
+        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(queryStringFilter("searchable.consumername", applicantName));
         andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.locality", locality));

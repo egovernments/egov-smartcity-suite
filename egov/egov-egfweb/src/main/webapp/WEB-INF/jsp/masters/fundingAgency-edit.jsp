@@ -38,17 +38,15 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
 <%@ page language="java"%>
 <html>
-  <head>
-    
-    <title>
-    	<s:text name="fundingagency.funding.agency.modify"/>
-    </title>
-	<script type="text/javascript">
+<head>
+
+<title><s:text name="fundingagency.funding.agency.modify" /></title>
+<script type="text/javascript">
 	function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';
 		var code=document.getElementById('code').value;
@@ -57,52 +55,65 @@
     }
 	</script>
 
-  </head>
-  
-  <body id="body">
-    <div class="formmainbox"><div class="subheadnew"><s:text name="fundingagency.modify.funding.agency"/></div>
-        <div style="color: red">
-		<s:actionerror/>  
-		<s:fielderror />
+</head>
+
+<body id="body">
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="fundingagency.modify.funding.agency" />
+		</div>
+		<div style="color: red">
+			<s:actionerror />
+			<s:fielderror />
 		</div>
 		<div style="color: green">
-		<s:actionmessage theme="simple"/>
+			<s:actionmessage theme="simple" />
 		</div>
-    <br/><br/>
-    <div class="errorstyle" style="display:none" id="codeuniquecode" >
-    	<s:text name="fundingagency.code.already.exists"/>
-    </div>
-    <s:form name="fundingAgencyForm" action="fundingAgency" theme="simple" >
-    <s:token/>
-    <s:push value="model">
-    <s:hidden id="id" name="id"/>
-    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    		<tr>
-				<td class="greybox" width="10%">Code<span class="mandatory">*</span></td>
-			    <td class="greybox" width="30%" colspan=8><s:textfield id="code" name="code"  onblur="checkuniquenesscode();"/></td>
-			    <egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="code" fields="['Value']" url='masters/fundingAgency!codeUniqueCheckCode.action'/>
-			    </tr>
-			    <tr>
-			    <td class="bluebox" width="10%">Name<span class="mandatory">*</span></td>
-			    <td class="bluebox" width="46%"><s:textfield id="name" name="name" /></td>
-			   	<td class="bluebox" width="2%">IsActive</td>
-				<td class="bluebox"><s:checkbox id="isActive" name="isActive" /> </td>
-			 </tr>
-			
-    	</table>
-    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			 <tr>
-				<td class="greybox" width="10%">Remarks</td>
-				<td class="greybox" ><s:textarea  id="remarks" name="remarks" style="width:470px"/></td>				
-			</tr>
-    	
-    	</table>
-    	<br/><br/>
-    	<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<s:submit name="Save" value="Save" method="edit" cssClass="buttonsubmit" />
-			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+		<br />
+		<br />
+		<div class="errorstyle" style="display: none" id="codeuniquecode">
+			<s:text name="fundingagency.code.already.exists" />
 		</div>
-		</s:push>
-    </s:form>
-  </body>
+		<s:form name="fundingAgencyForm" action="fundingAgency" theme="simple">
+			<s:token />
+			<s:push value="model">
+				<s:hidden id="id" name="id" />
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="greybox" width="10%">Code<span class="mandatory">*</span></td>
+						<td class="greybox" width="30%" colspan=8><s:textfield
+								id="code" name="code" onblur="checkuniquenesscode();" /></td>
+						<egov:uniquecheck id="codeuniquecode" name="codeuniquecode"
+							fieldtoreset="code" fields="['Value']"
+							url='masters/fundingAgency!codeUniqueCheckCode.action' />
+					</tr>
+					<tr>
+						<td class="bluebox" width="10%">Name<span class="mandatory">*</span></td>
+						<td class="bluebox" width="46%"><s:textfield id="name"
+								name="name" /></td>
+						<td class="bluebox" width="2%">IsActive</td>
+						<td class="bluebox"><s:checkbox id="isActive" name="isActive" />
+						</td>
+					</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="greybox" width="10%">Remarks</td>
+						<td class="greybox"><s:textarea id="remarks" name="remarks"
+								style="width:470px" /></td>
+					</tr>
+
+				</table>
+				<br />
+				<br />
+				<div class="buttonbottom" style="padding-bottom: 10px;">
+					<s:submit name="Save" value="Save" method="edit"
+						cssClass="buttonsubmit" />
+					<input type="button" id="Close" value="Close"
+						onclick="javascript:window.close()" class="button" />
+				</div>
+			</s:push>
+		</s:form>
+</body>
 </html>

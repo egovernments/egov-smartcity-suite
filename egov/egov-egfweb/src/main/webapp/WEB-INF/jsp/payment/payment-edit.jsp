@@ -41,8 +41,8 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
 <s:if test="%{billSubType == 'TNEB'}">
-<%@ include file='payment-tnebBills.jsp'%>
+	<%@ include file='payment-tnebBills.jsp'%>
 </s:if>
 <s:else>
-<%@ include file='payment-searchbills.jsp'%>
+	<%@ include file='payment-searchbills.jsp'%>
 </s:else>

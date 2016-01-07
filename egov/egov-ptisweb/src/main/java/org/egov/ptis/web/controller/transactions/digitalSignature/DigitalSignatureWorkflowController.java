@@ -56,6 +56,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
+
 import org.apache.commons.io.FileUtils;
 
 import javax.persistence.EntityManager;
@@ -68,6 +70,8 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -141,6 +145,9 @@ public class DigitalSignatureWorkflowController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    @Autowired
+    private FileStoreMapperRepository fileStoreMapperRepository;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -255,10 +262,10 @@ public class DigitalSignatureWorkflowController {
         if (propertyService.isEmployee(state.getCreatedBy()))
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
         else if (!state.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
+            wfInitiator = assignmentService.getAssignmentsForPosition(state.getStateHistory().get(0)
+                    .getOwnerPosition().getId(),new Date()).get(0);
         else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getState().getOwnerPosition().getId());
+            wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),new Date()).get(0); 
         return wfInitiator;
     }
 
@@ -270,9 +277,10 @@ public class DigitalSignatureWorkflowController {
     public void downloadSignedNotice(final HttpServletRequest request, final HttpServletResponse response) {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, PropertyTaxConstants.FILESTORE_MODULE_NAME);
+        final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
         response.setContentType("application/pdf");  
         response.setContentType("application/octet-stream");
-        response.setHeader("content-disposition", "attachment; filename=\"" + signedFileStoreId + "\"");
+        response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
         try{
             FileInputStream inStream = new FileInputStream(file);
             OutputStream outStream = response.getOutputStream();

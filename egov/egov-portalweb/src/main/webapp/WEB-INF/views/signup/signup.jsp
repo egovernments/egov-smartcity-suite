@@ -54,7 +54,6 @@
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		<script src='https://www.google.com/recaptcha/api.js'></script>
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->

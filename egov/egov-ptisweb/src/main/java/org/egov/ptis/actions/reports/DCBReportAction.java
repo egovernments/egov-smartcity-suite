@@ -40,7 +40,7 @@
 package org.egov.ptis.actions.reports;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 import java.util.List;
 import java.util.Map;
@@ -72,8 +72,8 @@ public class DCBReportAction extends BaseFormAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
     public static final String SEARCH = "search";
     private Long zoneId;
-    private Map<Long, String> ZoneBndryMap;
-    List<Boundary> zoneList;
+    private Map<Long, String> wardBndryMap;
+    List<Boundary> wardList;
     private String mode; // stores current mode (ex: zone / ward / block / property)
     private Long boundaryId; // stores selected boundary id
     private String selectedModeBndry; // Used to traverse back. Block -> Ward -> Zone
@@ -88,15 +88,15 @@ public class DCBReportAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
-        setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
-        ZoneBndryMap.put(0l, "All");
+        wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
+        setWardBndryMap(CommonServices.getFormattedBndryMap(wardList));
+        wardBndryMap.put(0l, "All");
     }
 
     @SkipValidation
     @Action(value = "/reports/dCBReport-search")
     public String search() {
-        mode = "zone";
+        mode = "ward";
         return SEARCH;
     }
 
@@ -108,20 +108,20 @@ public class DCBReportAction extends BaseFormAction {
         this.zoneId = zoneId;
     }
 
-    public Map<Long, String> getZoneBndryMap() {
-        return ZoneBndryMap;
+    public Map<Long, String> getWardBndryMap() {
+        return wardBndryMap;
     }
 
-    public void setZoneBndryMap(final Map<Long, String> zoneBndryMap) {
-        ZoneBndryMap = zoneBndryMap;
+    public void setWardBndryMap(Map<Long, String> wardBndryMap) {
+        this.wardBndryMap = wardBndryMap;
     }
 
-    public List<Boundary> getZoneList() {
-        return zoneList;
+    public List<Boundary> getWardList() {
+        return wardList;
     }
 
-    public void setZoneList(final List<Boundary> zoneList) {
-        this.zoneList = zoneList;
+    public void setWardList(List<Boundary> wardList) {
+        this.wardList = wardList;
     }
 
     public String getMode() {

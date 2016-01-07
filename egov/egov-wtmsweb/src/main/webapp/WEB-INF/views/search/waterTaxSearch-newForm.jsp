@@ -122,10 +122,13 @@
 					<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.revenue.ward" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="revenueWard" class="form-control "  id="app-mobno"
-								 />
-							
-				
+						 <select name="revenueWard" id="app-mobno" class="form-control"
+								data-first-option="false">
+								<option value="${ward.name}"></option>
+								  <c:forEach items="${revenueWards}" var="ward">
+                                    <option value="${ward.name}"> ${ward.name} </option>
+                                </c:forEach>
+					     </select>
 						</div>
 						</div>
 						 <div class="form-group">

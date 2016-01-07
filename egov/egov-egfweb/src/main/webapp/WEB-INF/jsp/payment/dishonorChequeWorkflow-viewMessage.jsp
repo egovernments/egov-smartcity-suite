@@ -37,29 +37,32 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-    <title>Dishonor Cheque Workflow</title>
+<html>
+<head>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<title>Dishonor Cheque Workflow</title>
 </head>
-	<body onload="refreshInbox()">  
-		<s:form action="dishonorChequeWorkflow" form="dishonorChequeWorkflowMsgForm" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="dishonor workflow page" />
-			</jsp:include>
-			<span class="mandatory">
-				<s:actionmessage /> 
-			</span>
-			<br/>
-			<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
-			<s:if test="%{mode == 'print'}">
-			<input type="button" class="button" id="print" value="Print Preview" action="journalVoucherPrint" onclick="dishonorChequePrint()"/>
-			</s:if>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
-		</s:form> 
-<script>
+<body onload="refreshInbox()">
+	<s:form action="dishonorChequeWorkflow"
+		form="dishonorChequeWorkflowMsgForm" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="dishonor workflow page" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionmessage />
+		</span>
+		<br />
+		<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
+		<s:if test="%{mode == 'print'}">
+			<input type="button" class="button" id="print" value="Print Preview"
+				action="journalVoucherPrint" onclick="dishonorChequePrint()" />
+		</s:if>
+		<input type="button" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</s:form>
+	<script>
 function dishonorChequePrint(){
 	                           
 		var reversalVhId= '<s:property value="%{paymentVoucher.id}"/>';
@@ -82,5 +85,5 @@ function printJV(){
 	window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 </script>
-	</body>  
+</body>
 </html>

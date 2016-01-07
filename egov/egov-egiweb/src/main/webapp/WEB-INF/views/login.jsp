@@ -66,7 +66,6 @@
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -237,7 +236,7 @@
 									</button>
 								</div>
 								<div class="row">
-									<div class="col-md-12 col-xs-12 text-right"
+									<div class="col-md-12 col-xs-12 text-right add-margin"
 										style="font-size: 12px;">
 										<a href="javascript:void(0);" data-toggle="modal"
 											data-target="#fpassword" data-backdrop="static"><spring:message code="lbl.forgot.pwd"/></a>

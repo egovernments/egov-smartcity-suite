@@ -38,12 +38,12 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <html>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><s:text name="bankreconciliation"/></title>
+<title><s:text name="bankreconciliation" /></title>
 <script type="text/javascript">
 
 
@@ -89,65 +89,88 @@
 </script>
 </head>
 <body>
-<s:form  action="autoReconciliation" theme="css_xhtml" name="arform"  enctype="multipart/form-data" method="post" >
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Auto Bank Reconciliation" name="heading"/>
-</jsp:include>
-<div class="formmainbox">
-<div class="formheading"></div>
-<div class="subheadnew"><s:text name="autobankreconciliation"/></div>
-</div>
-<div align="center">
-<font  style='color: red ;'> <div id="msg"><s:property value="message"/></div>
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
-</span>
-<center>
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-<tr>
-		<td  class="greybox"></td>
-		<td class="greybox"><s:text name="bank"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<egov:ajaxdropdown id="branchId" fields="['Text','Value']" dropdownId="branchId" url="/voucher/common!ajaxLoadBankBranchesByBank.action" />
-		<td class="greybox"><s:select name="bankId" id="bankId" list="dropdownData.bankList" listKey="id" listValue="name" headerKey="" headerValue="----Choose----" onchange="populatebranch(this);"  /></td>
-	 	<td class="greybox"><s:text name="bankbranch"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<egov:ajaxdropdown id="accountId" fields="['Text','Value']" dropdownId="accountId" url="/voucher/common!ajaxLoadBankAccountsByBranch.action" />
-		<td class="greybox"><s:select name="branchId" id="branchId" list="dropdownData.branchList" listKey="id" listValue="branchname" headerKey="" headerValue="----Choose----" onchange="populateaccount(this);"  /></td>
-</tr>
-<tr>
-		<td  class="bluebox"></td>
-		<td class="bluebox"><s:text name="bankaccount"/>
-		<span class="bluebox"><span class="mandatory">*</span></span></td>
-		<td class="bluebox"><s:select name="accountId" id="accountId" list="dropdownData.accountList" listKey="id" listValue="chartofaccounts.glcode+'-'+accountnumber"   headerKey="" headerValue="----Choose----"/></td>
-	 	<td class="bluebox" colspan="2">
-		</td>
-</tr>
-<tr>
-		<td  class="greybox"></td>
-		<td class="greybox"><s:text name="upload"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<td class="greybox"><s:file name="bankStatmentInXls" id="bankStatmentInXls" />
-		</td>
-		<span class="greybox" colspan="2">
-		</td>
-</tr>
+	<s:form action="autoReconciliation" theme="css_xhtml" name="arform"
+		enctype="multipart/form-data" method="post">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param value="Auto Bank Reconciliation" name="heading" />
+		</jsp:include>
+		<div class="formmainbox">
+			<div class="formheading"></div>
+			<div class="subheadnew">
+				<s:text name="autobankreconciliation" />
+			</div>
+		</div>
+		<div align="center">
+			<font style='color: red;'>
+				<div id="msg">
+					<s:property value="message" />
+				</div>
+				<p class="error-block" id="lblError"></p>
+			</font>
+		</div>
+		<span class="mandatory">
+			<div id="Errors">
+				<s:actionerror />
+				<s:fielderror />
+			</div> <s:actionmessage />
+		</span>
+		<center>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="bank" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
+						dropdownId="branchId"
+						url="/voucher/common!ajaxLoadBankBranchesByBank.action" />
+					<td class="greybox"><s:select name="bankId" id="bankId"
+							list="dropdownData.bankList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Choose----"
+							onchange="populatebranch(this);" /></td>
+					<td class="greybox"><s:text name="bankbranch" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
+						dropdownId="accountId"
+						url="/voucher/common!ajaxLoadBankAccountsByBranch.action" />
+					<td class="greybox"><s:select name="branchId" id="branchId"
+							list="dropdownData.branchList" listKey="id"
+							listValue="branchname" headerKey="" headerValue="----Choose----"
+							onchange="populateaccount(this);" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="bankaccount" /> <span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:select name="accountId" id="accountId"
+							list="dropdownData.accountList" listKey="id"
+							listValue="chartofaccounts.glcode+'-'+accountnumber" headerKey=""
+							headerValue="----Choose----" /></td>
+					<td class="bluebox" colspan="2"></td>
+				</tr>
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="upload" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<td class="greybox"><s:file name="bankStatmentInXls"
+							id="bankStatmentInXls" /></td>
+					<span class="greybox" colspan="2">
+						</td>
+				</tr>
 
-</table>
-	
-	<div class="buttonbottom" id="buttondiv" >
-	<table>
-	<tr>
-		<td><s:submit type="submit" cssClass="buttonsubmit" value="Upload"  name="upload" method="upload" onclick="return validate();"/></td>	
-		<td><input type="button" value="Close"  onclick="javascript:window.close()" class="buttonsubmit"/></td>
-	</tr>
-	</table>
-	</div>
-</center>
-</s:form>
+			</table>
+
+			<div class="buttonbottom" id="buttondiv">
+				<table>
+					<tr>
+						<td><s:submit type="submit" cssClass="buttonsubmit"
+								value="Upload" name="upload" method="upload"
+								onclick="return validate();" /></td>
+						<td><input type="button" value="Close"
+							onclick="javascript:window.close()" class="buttonsubmit" /></td>
+					</tr>
+				</table>
+			</div>
+		</center>
+	</s:form>
 </body>
 </html>

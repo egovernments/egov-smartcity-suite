@@ -122,12 +122,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
     @Result(name = "reverse", location = "directBankPayment-reverse.jsp"),
     @Result(name = "view", location = "directBankPayment-view.jsp")
 })
-public class DirectBankPaymentAction extends BasePaymentAction { 
+public class DirectBankPaymentAction extends BasePaymentAction {
     private static final String FAILED_WHILE_REVERSING = "Failed while Reversing";
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final long serialVersionUID = 1L;
-    private CreateVoucher createVoucher ;
+    private CreateVoucher createVoucher;
     private PaymentService paymentService;
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
@@ -256,8 +256,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
                             commonBean.getDocumentId());
                 createMiscBillDetail(billVhId);
-                //paymentheader.start().withOwner(paymentService.getPosition());
-                //sendForApproval();
+                // paymentheader.start().withOwner(paymentService.getPosition());
+                // sendForApproval();
                 addActionMessage(getText("directbankpayment.transaction.success") + voucherHeader.getVoucherNumber());
             } else
                 throw new ValidationException(Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
@@ -265,8 +265,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
             clearMessages();
-            List<ValidationError> errors=new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp",e.getErrors().get(0).getMessage()));
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final NumberFormatException e) {
             LOGGER.error(e.getMessage(), e);
@@ -278,7 +278,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         } finally {
             if (subLedgerlist.size() == 0)
                 subLedgerlist.add(new VoucherDetails());
-          //  loadApproverUser(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+            // loadApproverUser(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         }
         return VIEW;
     }
@@ -468,7 +468,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPayVoucherHeader(voucherHeader);
         miscbillDetail.setBillVoucherHeader(billVhId);
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        persistenceService.setType(Miscbilldetail.class);
+        //persistenceService.setType(Miscbilldetail.class);
         persistenceService.persist(miscbillDetail);
 
     }
@@ -486,7 +486,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPassedamount(commonBean.getAmount());
         miscbillDetail.setPaidamount(commonBean.getAmount());
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        persistenceService.setType(Miscbilldetail.class);
+        //persistenceService.setType(Miscbilldetail.class);
         persistenceService.persist(miscbillDetail);
     }
 
@@ -1120,7 +1120,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class, voucherHeader.getId());
         paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-        persistenceService.setType(CVoucherHeader.class);
+        //persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getText("payment.cancel.success"));
@@ -1251,11 +1251,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         this.scriptService = scriptService;
     }
 
+    @Override
     public CreateVoucher getCreateVoucher() {
         return createVoucher;
     }
 
-    public void setCreateVoucher(CreateVoucher createVoucher) {
+    @Override
+    public void setCreateVoucher(final CreateVoucher createVoucher) {
         this.createVoucher = createVoucher;
     }
 

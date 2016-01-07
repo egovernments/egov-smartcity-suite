@@ -38,46 +38,56 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
 <%@ page language="java"%>
 <html>
-  <head>
-    <title>
-    	<s:text name="bank.modify.new"/>
-    </title>
-    <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="../resources/css/jquery/ui.jqgrid.css" />
-	<script>
+<head>
+<title><s:text name="bank.modify.new" /></title>
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../resources/css/jquery/ui.jqgrid.css" />
+<script>
     var fundJson = "<s:property value='getFundsJSON()'/>";
     var accTypeJson = <s:property value='getAccountTypesJSON()' escape='false'/>;
     var bankAccTypeJson = "<s:property value='getBankAccountTypesJSON()'/>";
 	</script>
-    <style>
-    .EditTable td {
-    	text-align: left;
-    }
-    .center { width: 800px; margin-left: auto; margin-right: auto; }
-    </style>
-  </head>
-  <body>
-  
-    <div class="formmainbox"><div class="subheadnew"><s:text name="bank.modify.new"/></div>
-    <jsp:include page="bank-form.jsp"></jsp:include>
-    </div>
-      	<div class="buttonbottom" > 
-  	<input type="button" id="Search" value="Search" onclick="javascript:window.location.href='bank.action?mode=MODIFY'" class="buttonsubmit"/>
-	
-	<input type="submit" class="button" value="Save"
-							id="saveButton" name="button"
-							onclick="validateFormAndSubmit();" />
-	
-	<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+<style>
+.EditTable td {
+	text-align: left;
+}
+
+.center {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+</head>
+<body>
+
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="bank.modify.new" />
+		</div>
+		<jsp:include page="bank-form.jsp"></jsp:include>
 	</div>
-    <script src="../resources/javascript/jquery/grid.locale-en.js" type="text/javascript"></script>
-	<script src="../resources/javascript/jquery/jquery.jqGrid.min.js" type="text/javascript"></script>
-    <script>
+	<div class="buttonbottom">
+		<input type="button" id="Search" value="Search"
+			onclick="javascript:window.location.href='bank.action?mode=MODIFY'"
+			class="buttonsubmit" /> <input type="submit" class="button"
+			value="Save" id="saveButton" name="button"
+			onclick="validateFormAndSubmit();" /> <input type="button"
+			id="Close" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</div>
+	<script src="../resources/javascript/jquery/grid.locale-en.js"
+		type="text/javascript"></script>
+	<script src="../resources/javascript/jquery/jquery.jqGrid.min.js"
+		type="text/javascript"></script>
+	<script>
     existingCode = '${model.code}';
     existingName = '${model.name}';
 	initializeGrid();
@@ -86,5 +96,5 @@
 		document.bankForm.submit();
 	}
     </script>
-  </body>
+</body>
 </html>

@@ -50,220 +50,229 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @XStreamAlias("unitinfo")
 public abstract class UnitTaxCalculationInfo {
-	@XStreamAsAttribute
-	private Date baseRateEffectiveDate;
+    @XStreamAsAttribute
+    private Date baseRateEffectiveDate;
 
-	@XStreamAsAttribute
-	private String floorNumber;
+    @XStreamAsAttribute
+    private String floorNumber;
 
-	@XStreamAsAttribute
-	private BigDecimal floorArea;
+    @XStreamAsAttribute
+    private BigDecimal floorArea;
 
-	private BigDecimal unitAreaInSqFt;
-	private String unitOccupation;
-	private String unitOccupier;
-	private String unitUsage;
-	private BigDecimal baseRate;
-	private BigDecimal baseRatePerSqMtPerMonth;
-	private BigDecimal mrv;
-	private BigDecimal buildingValue;
-	private BigDecimal siteValue;
-	private BigDecimal grossARV;
-	private BigDecimal depreciation;
-	private BigDecimal netARV;
+    private BigDecimal unitAreaInSqFt;
+    private String unitOccupation;
+    private String unitOccupier;
+    private String unitUsage;
+    private String unitStructure;
+    private BigDecimal baseRate;
+    private BigDecimal baseRatePerSqMtPerMonth;
+    private BigDecimal mrv;
+    private BigDecimal buildingValue;
+    private BigDecimal siteValue;
+    private BigDecimal grossARV;
+    private BigDecimal depreciation;
+    private BigDecimal netARV;
 
-	private Date occpancyDate;
-	private Date effectiveAssessmentDate;
+    private Date occpancyDate;
+    private Date effectiveAssessmentDate;
 
-	@XStreamOmitField
-	private Date propertyCreatedDate;
+    @XStreamOmitField
+    private Date propertyCreatedDate;
 
-	@XStreamAlias("misctaxes")
-	private List<MiscellaneousTax> miscellaneousTaxes = new ArrayList<MiscellaneousTax>();
+    @XStreamAlias("misctaxes")
+    private List<MiscellaneousTax> miscellaneousTaxes = new ArrayList<MiscellaneousTax>();
 
-	private BigDecimal totalTaxPayable;
+    private BigDecimal totalTaxPayable;
 
-	public UnitTaxCalculationInfo() {
-	}
+    public UnitTaxCalculationInfo() {
+    }
 
-	public UnitTaxCalculationInfo(UnitTaxCalculationInfo unit) {
-		this.floorNumber = unit.getFloorNumber();
-		this.unitOccupation = unit.getUnitOccupation();
-		this.unitUsage = unit.getUnitUsage();
-		this.occpancyDate = new Date(unit.getOccpancyDate().getTime());
-		this.effectiveAssessmentDate = unit.getEffectiveAssessmentDate();
-		this.propertyCreatedDate = unit.getPropertyCreatedDate();
-	}
+    public UnitTaxCalculationInfo(UnitTaxCalculationInfo unit) {
+        this.floorNumber = unit.getFloorNumber();
+        this.unitOccupation = unit.getUnitOccupation();
+        this.unitUsage = unit.getUnitUsage();
+        this.occpancyDate = new Date(unit.getOccpancyDate().getTime());
+        this.effectiveAssessmentDate = unit.getEffectiveAssessmentDate();
+        this.propertyCreatedDate = unit.getPropertyCreatedDate();
+    }
 
-	public Date getBaseRateEffectiveDate() {
-		return baseRateEffectiveDate;
-	}
+    public Date getBaseRateEffectiveDate() {
+        return baseRateEffectiveDate;
+    }
 
-	public void setBaseRateEffectiveDate(Date baseRateEffectiveDate) {
-		this.baseRateEffectiveDate = baseRateEffectiveDate;
-	}
+    public void setBaseRateEffectiveDate(Date baseRateEffectiveDate) {
+        this.baseRateEffectiveDate = baseRateEffectiveDate;
+    }
 
-	public String getFloorNumber() {
-		return floorNumber;
-	}
+    public String getFloorNumber() {
+        return floorNumber;
+    }
 
-	public void setFloorNumber(String floorNumber) {
-		this.floorNumber = floorNumber;
-	}
+    public void setFloorNumber(String floorNumber) {
+        this.floorNumber = floorNumber;
+    }
 
-	public BigDecimal getFloorArea() {
-		return floorArea;
-	}
+    public BigDecimal getFloorArea() {
+        return floorArea;
+    }
 
-	public void setFloorArea(BigDecimal floorArea) {
-		this.floorArea = floorArea;
-	}
+    public void setFloorArea(BigDecimal floorArea) {
+        this.floorArea = floorArea;
+    }
 
-	public BigDecimal getUnitAreaInSqFt() {
-		return unitAreaInSqFt;
-	}
+    public BigDecimal getUnitAreaInSqFt() {
+        return unitAreaInSqFt;
+    }
 
-	public void setUnitAreaInSqFt(BigDecimal unitAreaInSqFt) {
-		this.unitAreaInSqFt = unitAreaInSqFt;
-	}
+    public void setUnitAreaInSqFt(BigDecimal unitAreaInSqFt) {
+        this.unitAreaInSqFt = unitAreaInSqFt;
+    }
 
-	public String getUnitOccupation() {
-		return unitOccupation;
-	}
+    public String getUnitOccupation() {
+        return unitOccupation;
+    }
 
-	public void setUnitOccupation(String unitOccupation) {
-		this.unitOccupation = unitOccupation;
-	}
+    public void setUnitOccupation(String unitOccupation) {
+        this.unitOccupation = unitOccupation;
+    }
 
-	public String getUnitOccupier() {
-		return unitOccupier;
-	}
+    public String getUnitOccupier() {
+        return unitOccupier;
+    }
 
-	public void setUnitOccupier(String unitOccupier) {
-		this.unitOccupier = unitOccupier;
-	}
+    public void setUnitOccupier(String unitOccupier) {
+        this.unitOccupier = unitOccupier;
+    }
 
-	public String getUnitUsage() {
-		return unitUsage;
-	}
+    public String getUnitUsage() {
+        return unitUsage;
+    }
 
-	public void setUnitUsage(String unitUsage) {
-		this.unitUsage = unitUsage;
-	}
+    public void setUnitUsage(String unitUsage) {
+        this.unitUsage = unitUsage;
+    }
 
-	public BigDecimal getBaseRate() {
-		return baseRate;
-	}
+    public String getUnitStructure() {
+        return unitStructure;
+    }
 
-	public void setBaseRate(BigDecimal baseRate) {
-		this.baseRate = baseRate;
-	}
+    public void setUnitStructure(String unitStructure) {
+        this.unitStructure = unitStructure;
+    }
 
-	public BigDecimal getBaseRatePerSqMtPerMonth() {
-		return baseRatePerSqMtPerMonth;
-	}
+    public BigDecimal getBaseRate() {
+        return baseRate;
+    }
 
-	public void setBaseRatePerSqMtPerMonth(BigDecimal baseRatePerSqMtPerMonth) {
-		this.baseRatePerSqMtPerMonth = baseRatePerSqMtPerMonth;
-	}
+    public void setBaseRate(BigDecimal baseRate) {
+        this.baseRate = baseRate;
+    }
 
-	public BigDecimal getMrv() {
-		return mrv;
-	}
+    public BigDecimal getBaseRatePerSqMtPerMonth() {
+        return baseRatePerSqMtPerMonth;
+    }
 
-	public void setMrv(BigDecimal mrv) {
-		this.mrv = mrv;
-	}
+    public void setBaseRatePerSqMtPerMonth(BigDecimal baseRatePerSqMtPerMonth) {
+        this.baseRatePerSqMtPerMonth = baseRatePerSqMtPerMonth;
+    }
 
-	public BigDecimal getBuildingValue() {
-		return buildingValue;
-	}
+    public BigDecimal getMrv() {
+        return mrv;
+    }
 
-	public void setBuildingValue(BigDecimal buildingValue) {
-		this.buildingValue = buildingValue;
-	}
+    public void setMrv(BigDecimal mrv) {
+        this.mrv = mrv;
+    }
 
-	public BigDecimal getSiteValue() {
-		return siteValue;
-	}
+    public BigDecimal getBuildingValue() {
+        return buildingValue;
+    }
 
-	public void setSiteValue(BigDecimal siteValue) {
-		this.siteValue = siteValue;
-	}
+    public void setBuildingValue(BigDecimal buildingValue) {
+        this.buildingValue = buildingValue;
+    }
 
-	public BigDecimal getGrossARV() {
-		return grossARV;
-	}
+    public BigDecimal getSiteValue() {
+        return siteValue;
+    }
 
-	public void setGrossARV(BigDecimal grossARV) {
-		this.grossARV = grossARV;
-	}
+    public void setSiteValue(BigDecimal siteValue) {
+        this.siteValue = siteValue;
+    }
 
-	public BigDecimal getDepreciation() {
-		return depreciation;
-	}
+    public BigDecimal getGrossARV() {
+        return grossARV;
+    }
 
-	public void setDepreciation(BigDecimal depreciation) {
-		this.depreciation = depreciation;
-	}
+    public void setGrossARV(BigDecimal grossARV) {
+        this.grossARV = grossARV;
+    }
 
-	public BigDecimal getNetARV() {
-		return netARV;
-	}
+    public BigDecimal getDepreciation() {
+        return depreciation;
+    }
 
-	public void setNetARV(BigDecimal netARV) {
-		this.netARV = netARV;
-	}
+    public void setDepreciation(BigDecimal depreciation) {
+        this.depreciation = depreciation;
+    }
 
-	public Date getOccpancyDate() {
-		return occpancyDate;
-	}
+    public BigDecimal getNetARV() {
+        return netARV;
+    }
 
-	public void setOccpancyDate(Date occpancyDate) {
-		this.occpancyDate = occpancyDate;
-	}
+    public void setNetARV(BigDecimal netARV) {
+        this.netARV = netARV;
+    }
 
-	public Date getEffectiveAssessmentDate() {
-		return effectiveAssessmentDate;
-	}
+    public Date getOccpancyDate() {
+        return occpancyDate;
+    }
 
-	public void setEffectiveAssessmentDate(Date effectiveAssessmentDate) {
-		this.effectiveAssessmentDate = effectiveAssessmentDate;
-	}
+    public void setOccpancyDate(Date occpancyDate) {
+        this.occpancyDate = occpancyDate;
+    }
 
-	public Date getPropertyCreatedDate() {
-		return propertyCreatedDate;
-	}
+    public Date getEffectiveAssessmentDate() {
+        return effectiveAssessmentDate;
+    }
 
-	public void setPropertyCreatedDate(Date propertyCreatedDate) {
-		this.propertyCreatedDate = propertyCreatedDate;
-	}
+    public void setEffectiveAssessmentDate(Date effectiveAssessmentDate) {
+        this.effectiveAssessmentDate = effectiveAssessmentDate;
+    }
 
-	public List<MiscellaneousTax> getMiscellaneousTaxes() {
-		return miscellaneousTaxes;
-	}
+    public Date getPropertyCreatedDate() {
+        return propertyCreatedDate;
+    }
 
-	public void setMiscellaneousTaxes(List<MiscellaneousTax> miscellaneousTaxes) {
-		this.miscellaneousTaxes = miscellaneousTaxes;
-	}
+    public void setPropertyCreatedDate(Date propertyCreatedDate) {
+        this.propertyCreatedDate = propertyCreatedDate;
+    }
 
-	public void addMiscellaneousTaxes(MiscellaneousTax miscellaneousTaxes) {
-		getMiscellaneousTaxes().add(miscellaneousTaxes);
-	}
+    public List<MiscellaneousTax> getMiscellaneousTaxes() {
+        return miscellaneousTaxes;
+    }
 
-	public BigDecimal getTotalTaxPayable() {
-		return totalTaxPayable;
-	}
+    public void setMiscellaneousTaxes(List<MiscellaneousTax> miscellaneousTaxes) {
+        this.miscellaneousTaxes = miscellaneousTaxes;
+    }
 
-	public void setTotalTaxPayable(BigDecimal totalTaxPayable) {
-		this.totalTaxPayable = totalTaxPayable;
-	}
+    public void addMiscellaneousTaxes(MiscellaneousTax miscellaneousTaxes) {
+        getMiscellaneousTaxes().add(miscellaneousTaxes);
+    }
 
-	@Override
-	public int hashCode() {
+    public BigDecimal getTotalTaxPayable() {
+        return totalTaxPayable;
+    }
 
-		int hashCode = this.effectiveAssessmentDate.hashCode() + this.floorNumber.hashCode()
-				+ this.occpancyDate.hashCode() + this.unitOccupation.hashCode() + this.unitUsage.hashCode();
-		return hashCode;
-	}
+    public void setTotalTaxPayable(BigDecimal totalTaxPayable) {
+        this.totalTaxPayable = totalTaxPayable;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int hashCode = this.effectiveAssessmentDate.hashCode() + this.floorNumber.hashCode()
+                + this.occpancyDate.hashCode() + this.unitOccupation.hashCode() + this.unitUsage.hashCode();
+        return hashCode;
+    }
 }

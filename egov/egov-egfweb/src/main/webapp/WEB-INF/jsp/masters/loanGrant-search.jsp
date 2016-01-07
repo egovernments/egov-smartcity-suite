@@ -37,110 +37,170 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
-  <head>
-    <title>
-			<s:text name="masters.loangrant.search.title"/>	    	
-	</title>
-	<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
-  <style type="text/css">
-		#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-		#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-		#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-		#codescontainer ul {padding:5px 0;width:100%;}
-		#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-		#codescontainer li.yui-ac-highlight {background:#ff0;}
-		#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	</style>
-	<script>
+<head>
+<title><s:text name="masters.loangrant.search.title" /></title>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/voucherHelper.js"></script>
+<style type="text/css">
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+</style>
+<script>
 	 function checkuniquenesscode(){
    		return; 	
   }
 	</script>
-  </head>
-  
-  <body>
-	<div class="formmainbox"><div class="subheadnew"><s:text name="masters.loangrant.search.title"/></div>
+</head>
+
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="masters.loangrant.search.title" />
+		</div>
 	</div>
-	<br/><br/>
-	
-	<s:form name="loanGrantSearchForm" action="loanGrant" theme="simple" >
+	<br />
+	<br />
+
+	<s:form name="loanGrantSearchForm" action="loanGrant" theme="simple">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    		<tr>
-		<td class="bluebox"><s:text name="masters.subscheme.search.fund"/>
-		<s:if test="%{defaultFundId==-1}"><span class="mandatory">*</span></s:if></td>
-		<td class="bluebox"><s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onchange="loadChanges(this)"  value="%{fundId.id}"/></td>
-		<s:if test="%{defaultFundId!=-1}">
-		<script>
+			<tr>
+				<td class="bluebox"><s:text
+						name="masters.subscheme.search.fund" /> <s:if
+						test="%{defaultFundId==-1}">
+						<span class="mandatory">*</span>
+					</s:if></td>
+				<td class="bluebox"><s:select name="fundId" id="fundId"
+						list="dropdownData.fundList" listKey="id" listValue="name"
+						headerKey="-1" headerValue="----Choose----"
+						onchange="loadChanges(this)" value="%{fundId.id}" /></td>
+				<s:if test="%{defaultFundId!=-1}">
+					<script>
 		document.getElementById("fundId").value='<s:property value="defaultFundId"/>';
 		</script>
-		</s:if>
-	</tr>
-	<tr>
-    	<td class="greybox"><s:text name="masters.subscheme.search.scheme"/><span class="mandatory">*</span></td>
-		<s:hidden name="schemeId" id="schemeId"/>
-		<td class="greybox"><s:textfield value="%{subScheme.scheme.name}" name="subScheme.scheme.name" id="subScheme.scheme.name" autocomplete='off' onFocus="autocompleteSchemeBy20LG();" onBlur="splitSchemeCode(this)"/></td>
-		<td class="greybox"><s:text name="masters.subscheme.search"/></td>
-		<s:hidden name="subSchemeId" id="subSchemeId"/>
-		<td class="greybox"><s:textfield value="%{subScheme.name}" name="subScheme.name" id="subScheme.name" autocomplete='off'  onFocus="autocompleteSubSchemeBy20LG();"  onBlur="splitSubSchemeCode(this);checkuniquenesscode();" />
-		<egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="subSchemeId" fields="['Value']" url='masters/loanGrant!codeUniqueCheckCode.action'/>
-      </td>
-    </tr>
-    	<s:hidden name="mode"/>
-    	</table>
-    	<div id="codescontainer"></div>
-    	<br/><br/>
-    	
-    	<div class="buttonbottom">
-			<s:submit method="search" value="Search" onclick="return validate()" cssClass="buttonsubmit" />
+				</s:if>
+			</tr>
+			<tr>
+				<td class="greybox"><s:text
+						name="masters.subscheme.search.scheme" /><span class="mandatory">*</span></td>
+				<s:hidden name="schemeId" id="schemeId" />
+				<td class="greybox"><s:textfield
+						value="%{subScheme.scheme.name}" name="subScheme.scheme.name"
+						id="subScheme.scheme.name" autocomplete='off'
+						onFocus="autocompleteSchemeBy20LG();"
+						onBlur="splitSchemeCode(this)" /></td>
+				<td class="greybox"><s:text name="masters.subscheme.search" /></td>
+				<s:hidden name="subSchemeId" id="subSchemeId" />
+				<td class="greybox"><s:textfield value="%{subScheme.name}"
+						name="subScheme.name" id="subScheme.name" autocomplete='off'
+						onFocus="autocompleteSubSchemeBy20LG();"
+						onBlur="splitSubSchemeCode(this);checkuniquenesscode();" /> <egov:uniquecheck
+						id="codeuniquecode" name="codeuniquecode"
+						fieldtoreset="subSchemeId" fields="['Value']"
+						url='masters/loanGrant!codeUniqueCheckCode.action' /></td>
+			</tr>
+			<s:hidden name="mode" />
+		</table>
+		<div id="codescontainer"></div>
+		<br />
+		<br />
+
+		<div class="buttonbottom">
+			<s:submit method="search" value="Search" onclick="return validate()"
+				cssClass="buttonsubmit" />
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>
-		
+
 		<s:if test="%{loanGrantHeaderList.size!=0}">
-		<table width="40%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
-		
-		<tr>
-		
-			<th class="bluebgheadtd"  style="width:2%;text-align:center" align="center">
-				Sl No.
-			</th>
-			<th class="bluebgheadtd" style="width:4%;text-align:center" align="center">
-				Sub Scheme
-			</th>
-		</tr>
-		<c:set var="trclass" value="greybox"/>
-		<s:iterator var="hl" value="loanGrantHeaderList" status="f">
-			<tr>
-			
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><s:property value="#f.index+1" /></td>
-				<td  class="<c:out value="${trclass}"/>"style="text-align:center" align="center"><a href="#" onclick="urlLoad('<s:property value="id"/>');"
-						id="sourceLink" /> <s:property value="subScheme.name" /> </a>	</td>
-			
-				<c:choose>
-					        <c:when test="${trclass=='greybox'}"><c:set var="trclass" value="bluebox"/></c:when>
-					        <c:when test="${trclass=='bluebox'}"><c:set var="trclass" value="greybox"/></c:when>
-			  </c:choose>
-			</tr>
-		</s:iterator>
-		
-		</table>
+			<table width="40%" border="0" align="center" cellpadding="0"
+				cellspacing="0" class="tablebottom">
+
+				<tr>
+
+					<th class="bluebgheadtd" style="width: 2%; text-align: center"
+						align="center">Sl No.</th>
+					<th class="bluebgheadtd" style="width: 4%; text-align: center"
+						align="center">Sub Scheme</th>
+				</tr>
+				<c:set var="trclass" value="greybox" />
+				<s:iterator var="hl" value="loanGrantHeaderList" status="f">
+					<tr>
+
+						<td class="<c:out value="${trclass}"/>" style="text-align: center"
+							align="center"><s:property value="#f.index+1" /></td>
+						<td class="<c:out value="${trclass}"/>" style="text-align: center"
+							align="center"><a href="#"
+							onclick="urlLoad('<s:property value="id"/>');" id="sourceLink" />
+							<s:property value="subScheme.name" /> </a></td>
+
+						<c:choose>
+							<c:when test="${trclass=='greybox'}">
+								<c:set var="trclass" value="bluebox" />
+							</c:when>
+							<c:when test="${trclass=='bluebox'}">
+								<c:set var="trclass" value="greybox" />
+							</c:when>
+						</c:choose>
+					</tr>
+				</s:iterator>
+
+			</table>
 		</s:if>
 		<s:if test="%{loanGrantHeaderList.size==0}">
 			<div id="msgdiv" style="display: block">
 				<table align="center" class="tablebottom" width="80%">
 					<tr>
-						<th class="bluebgheadtd" colspan="7">
-							No Records Found
+						<th class="bluebgheadtd" colspan="7">No Records Found
 						</td>
 					</tr>
 				</table>
 			</div>
 		</s:if>
-		
+
 	</s:form>
 	<script>
    var mode='<s:property value="mode"/>';
@@ -242,5 +302,5 @@ function validate()
 		return true;
 }
 	</script>
-  </body>
+</body>
 </html>

@@ -50,7 +50,6 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
@@ -59,6 +58,7 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 		
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
@@ -118,7 +118,7 @@
 					</div>
 					
 					<div class="navbar-brand">
-						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
+						<h3 class="horizontal-page-title homepage hidden-xs hidden-sm" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
 					</div>
 					
 					<!-- notifications and other links -->

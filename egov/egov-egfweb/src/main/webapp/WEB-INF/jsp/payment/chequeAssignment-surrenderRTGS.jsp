@@ -39,89 +39,117 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<html>  
-<head>  
-	<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css"/>
-    <title><s:text name="surrender.rtgs"/></title>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<title><s:text name="surrender.rtgs" /></title>
 </head>
-	<body>  
-		<s:form action="chequeAssignment" theme="simple" >
-		<s:token/>
-			<jsp:include page="../budget/budgetHeader.jsp">
-				<jsp:param name="heading" value="Surrender RTGS" />
-			</jsp:include>
- 			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox"><div class="subheadnew"></div>
-			<div class="formmainbox"><div class="subheadnew"><s:property value="bank_account_dept"/> </div>
-			<!--<s:hidden name="department" />
-			--><s:hidden name="bankaccount" id="bankaccount"/>
-			<s:hidden name="bank_branch"/>
-			<s:hidden name="fromDate"/>
-			<s:hidden name="toDate"/>
-			<s:hidden name="voucherNumber"/>
-			<s:hidden name="instrumentNumber"/>
-			<table align="center" width="100%" cellpadding="0" cellspacing="0">
-				<tr>  
-				    <th class="bluebgheadtdnew"><s:text name="Sl No."/></th> 
-					<th class="bluebgheadtdnew"><s:text name="chq.assignment.transacton.no"/></th>  
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.rtgs.amount"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.transaction.date"/></th>
-				   	<th class="bluebgheadtdnew"><s:text name="chq.assignment.paymentvoucherno"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.surrender"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.surrendarreason"/></th>
-				</tr> 
-				<s:if test="%{instrumentHeaderList.size()>0 }">
-				<s:iterator var="p" value="instrumentHeaderList" status="stat">  
-		        	<tr>  
-		        		<s:hidden name="instrumentHeaderId" value="%{id}"/>
-		        		<s:hidden name="paymentVoucherNumber" value="%{voucherHeaderId.id}"/>
-		        		<td style="text-align:center" class="blueborderfortdnew"/> <s:property value="#stat.index+1" /> </td>  
-		        		<td style="text-align:center" class="blueborderfortdnew"><s:property value="%{transactionNumber}" /></td>
-	      			  	<td style="text-align:right" class="blueborderfortdnew"><s:text name="format.number" ><s:param value="%{instrumentAmount}"/></s:text></td>
-	      			  	<td style="text-align:center" class="blueborderfortdnew"><s:date name="%{transactionDate}" format="dd/MM/yyyy"/></td>			  	  		
-			  	  		<td style="text-align:center" class="blueborderfortdnew">
-			  	  		<s:iterator var="v" value="instrumentVouchers" status="st"> 
-			  	  		<A href="#" onclick='openDetails(<s:property value="%{voucherHeaderId.id}"/>);' >
-			   	  		<s:property value="%{voucherHeaderId.voucherNumber}"/></A>
-			   	  		</s:iterator>
-			   	  		</td>
-					  	<td style="text-align:center" class="blueborderfortdnew"><s:checkbox name="surrender" value='%{surrender[#stat.index]!=null?true:false}'   fieldValue="%{id}"/></td>
-					  		<td style="text-align:center" class="blueborderfortdnew">
-					  		<s:select name="surrendarReasons" id="surrendarReasons" list="surrendarReasonMap"  headerKey="-1" headerValue="----Choose----" value='%{surrendarReasons[#stat.index]}'  />
-					</tr>
-					</s:iterator>
+<body>
+	<s:form action="chequeAssignment" theme="simple">
+		<s:token />
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Surrender RTGS" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew"></div>
+			<div class="formmainbox">
+				<div class="subheadnew">
+					<s:property value="bank_account_dept" />
+				</div>
+				<!--<s:hidden name="department" />
+			-->
+				<s:hidden name="bankaccount" id="bankaccount" />
+				<s:hidden name="bank_branch" />
+				<s:hidden name="fromDate" />
+				<s:hidden name="toDate" />
+				<s:hidden name="voucherNumber" />
+				<s:hidden name="instrumentNumber" />
+				<table align="center" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
-						<td class="greybox">               
-							<s:text name="chq.issued.department"/><span class="mandatory">*</span>
-							<s:select name="department" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----"  value="%{department}"/>
-						</td>
+						<th class="bluebgheadtdnew"><s:text name="Sl No." /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.transacton.no" /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.rtgs.amount" /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.transaction.date" /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.paymentvoucherno" /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.surrender" /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.surrendarreason" /></th>
 					</tr>
+					<s:if test="%{instrumentHeaderList.size()>0 }">
+						<s:iterator var="p" value="instrumentHeaderList" status="stat">
+							<tr>
+								<s:hidden name="instrumentHeaderId" value="%{id}" />
+								<s:hidden name="paymentVoucherNumber"
+									value="%{voucherHeaderId.id}" />
+								<td style="text-align: center" class="blueborderfortdnew" />
+								<s:property value="#stat.index+1" />
+								</td>
+								<td style="text-align: center" class="blueborderfortdnew"><s:property
+										value="%{transactionNumber}" /></td>
+								<td style="text-align: right" class="blueborderfortdnew"><s:text
+										name="format.number">
+										<s:param value="%{instrumentAmount}" />
+									</s:text></td>
+								<td style="text-align: center" class="blueborderfortdnew"><s:date
+										name="%{transactionDate}" format="dd/MM/yyyy" /></td>
+								<td style="text-align: center" class="blueborderfortdnew">
+									<s:iterator var="v" value="instrumentVouchers" status="st">
+										<A href="#"
+											onclick='openDetails(<s:property value="%{voucherHeaderId.id}"/>);'>
+											<s:property value="%{voucherHeaderId.voucherNumber}" />
+										</A>
+									</s:iterator>
+								</td>
+								<td style="text-align: center" class="blueborderfortdnew"><s:checkbox
+										name="surrender"
+										value='%{surrender[#stat.index]!=null?true:false}'
+										fieldValue="%{id}" /></td>
+								<td style="text-align: center" class="blueborderfortdnew">
+									<s:select name="surrendarReasons" id="surrendarReasons"
+										list="surrendarReasonMap" headerKey="-1"
+										headerValue="----Choose----"
+										value='%{surrendarReasons[#stat.index]}' />
+							</tr>
+						</s:iterator>
+						<tr>
+							<td class="greybox"><s:text name="chq.issued.department" /><span
+								class="mandatory">*</span> <s:select name="department"
+									id="department" list="dropdownData.departmentList" listKey="id"
+									listValue="deptName" headerKey="-1"
+									headerValue="----Choose----" value="%{department}" /></td>
+						</tr>
 					</s:if>
-					
-								
-			</table>
-			<br/>
-			
-			<s:if test="%{instrumentHeaderList.size()>0}">
-				<div  class="buttonbottom">
-				<s:hidden name="button" id="button"/>
-				<s:submit type="submit" cssClass="buttonsubmit" name="Surrender"  value="Surrender"  onclick="return surrenderChq();"  method="save" />
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>  
+
+
+				</table>
+				<br />
+
+				<s:if test="%{instrumentHeaderList.size()>0}">
+					<div class="buttonbottom">
+						<s:hidden name="button" id="button" />
+						<s:submit type="submit" cssClass="buttonsubmit" name="Surrender"
+							value="Surrender" onclick="return surrenderChq();" method="save" />
+						<input type="button" value="Close"
+							onclick="javascript:window.close()" class="button" />
+					</div>
+				</s:if>
+				<s:else>
+					<div class="subheadsmallnew" id="noRecordsDiv">No Records
+						Found</div>
+				</s:else>
 			</div>
-			</s:if>
-			<s:else>
-			<div class="subheadsmallnew" id="noRecordsDiv" >No Records Found</div>
-			</s:else>
-		</div>
-		
-		
-		<s:token/>
-		</s:form>
-		<script>
+
+
+			<s:token />
+	</s:form>
+	<script>
 		function validatechequeno(obj)
 			{
 				if(isNaN(obj.value))
@@ -228,6 +256,6 @@
 				document.getElementById('department').disabled=true;
 		</s:if>	
 	</script>
-	</body>  
-	
+</body>
+
 </html>

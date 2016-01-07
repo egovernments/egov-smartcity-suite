@@ -554,7 +554,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             final BigDecimal receiptAmount = receiptHeader.getAmount();
 
             // Increment total amount
-            totalAmount = totalAmount.add(receiptAmount);
+            totalAmount = totalAmount.add(receiptAmount).setScale(2, BigDecimal.ROUND_HALF_UP);
 
             // Increment instrument type wise amount
             final String instrumentType = receiptHeader.getInstrumentType();
@@ -563,6 +563,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
                 instrumentAmount = receiptAmount;
             else
                 instrumentAmount = instrumentAmount.add(receiptAmount);
+            instrumentAmount = instrumentAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
             instrumentWiseAmounts.put(instrumentType, instrumentAmount);
             receiptHeader.setInstrumentsAsString(receiptHeader.getInstrumentDetailAsString());
         }

@@ -38,12 +38,12 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <html>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><s:text name="bankreconciliation"/></title>
+<title><s:text name="bankreconciliation" /></title>
 <script type="text/javascript">
 
 
@@ -121,78 +121,108 @@
 </script>
 </head>
 <body>
-<s:form  action="autoReconciliation" theme="simple" name="arform">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Auto Bank Reconciliation" name="heading"/>
-</jsp:include>
-<div class="formmainbox">
-<div class="formheading"></div>
-<div class="subheadnew"><s:text name="autobankreconciliation"/></div>
-</div>
-<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
-</span>
-<center>
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-<tr>
-		<td  class="greybox"></td>
-		<td class="greybox"><s:text name="bank"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<egov:ajaxdropdown id="branchId" fields="['Text','Value']" dropdownId="branchId" url="/voucher/common!ajaxLoadBankBranchesByBank.action" />
-		<td class="greybox"><s:select name="bankId" id="bankId" list="dropdownData.bankList" listKey="id" listValue="name" headerKey="" headerValue="----Choose----" onchange="populatebranch(this);" value="%{bankId}" /></td>
-	 	<td class="greybox"><s:text name="bankbranch"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<egov:ajaxdropdown id="accountId" fields="['Text','Value']" dropdownId="accountId" url="/voucher/common!ajaxLoadBankAccountsByBranch.action" />
-		<td class="greybox"><s:select name="branchId" id="branchId" list="dropdownData.branchList" listKey="id" listValue="name" headerKey="" headerValue="----Choose----" onchange="populateaccount(this);"  /></td>
-</tr>
-<tr>
-		<td  class="bluebox"></td>
-		<td class="bluebox"><s:text name="bankaccount"/>
-		<span class="bluebox"><span class="mandatory">*</span></span></td>
-		<td class="bluebox"><s:select name="accountId" id="accountId" list="dropdownData.accountList" listKey="id" listValue="accountnumber"   headerKey="" headerValue="----Choose----"/></td>
-	 	<td class="bluebox"><s:text name="reconciliationdate"/>
-		<span class="bluebox"><span class="mandatory">*</span></span></td>
-		<td class="bluebox"><s:textfield name="reconciliationDate" id="reconciliationDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{asOnDate}"/>
-		<a href="javascript:show_calendar('arform.reconciliationDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
-	
-		</td>
-</tr>
-<tr>
-		<td  class="greybox"></td>
-		<td class="greybox"><s:text name="fromdate"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<td class="greybox"><s:textfield name="fromDate" id="fromDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{fromDate}"/>
-		<a href="javascript:show_calendar('arform.fromDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
-	
-		</td>
-		<td class="greybox"><s:text name="todate"/>
-		<span class="greybox"><span class="mandatory">*</span></span></td>
-		<td class="greybox"><s:textfield name="toDate" id="toDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{toDate}"/>
-		<a href="javascript:show_calendar('arform.toDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
-	
-		</td>
-</tr>
+	<s:form action="autoReconciliation" theme="simple" name="arform">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param value="Auto Bank Reconciliation" name="heading" />
+		</jsp:include>
+		<div class="formmainbox">
+			<div class="formheading"></div>
+			<div class="subheadnew">
+				<s:text name="autobankreconciliation" />
+			</div>
+		</div>
+		<div align="center">
+			<font style='color: red;'>
+				<p class="error-block" id="lblError"></p>
+			</font>
+		</div>
+		<span class="mandatory">
+			<div id="Errors">
+				<s:actionerror />
+				<s:fielderror />
+			</div> <s:actionmessage />
+		</span>
+		<center>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="bank" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
+						dropdownId="branchId"
+						url="/voucher/common!ajaxLoadBankBranchesByBank.action" />
+					<td class="greybox"><s:select name="bankId" id="bankId"
+							list="dropdownData.bankList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Choose----"
+							onchange="populatebranch(this);" value="%{bankId}" /></td>
+					<td class="greybox"><s:text name="bankbranch" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
+						dropdownId="accountId"
+						url="/voucher/common!ajaxLoadBankAccountsByBranch.action" />
+					<td class="greybox"><s:select name="branchId" id="branchId"
+							list="dropdownData.branchList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Choose----"
+							onchange="populateaccount(this);" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="bankaccount" /> <span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:select name="accountId" id="accountId"
+							list="dropdownData.accountList" listKey="id"
+							listValue="accountnumber" headerKey=""
+							headerValue="----Choose----" /></td>
+					<td class="bluebox"><s:text name="reconciliationdate" /> <span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:textfield name="reconciliationDate"
+							id="reconciliationDate"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value="%{asOnDate}" /> <a
+						href="javascript:show_calendar('arform.reconciliationDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
 
-</table>
-	
-	<div class="buttonbottom" id="buttondiv" >
-	<table>
-	<tr>
-		<td><s:submit type="submit" cssClass="buttonsubmit" value="Process"  name="Schedule" method="schedule" onclick="return validate();"/></td>	
-		<td><input type="button" value="Close"  onclick="javascript:window.close()" class="buttonsubmit"/></td>
-	</tr>
-	</table>
-	</div>
-</center>
-</s:form>
+					</td>
+				</tr>
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="fromdate" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value="%{fromDate}" /> <a
+						href="javascript:show_calendar('arform.fromDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+
+					</td>
+					<td class="greybox"><s:text name="todate" /> <span
+						class="greybox"><span class="mandatory">*</span></span></td>
+					<td class="greybox"><s:textfield name="toDate" id="toDate"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value="%{toDate}" /> <a
+						href="javascript:show_calendar('arform.toDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+
+					</td>
+				</tr>
+
+			</table>
+
+			<div class="buttonbottom" id="buttondiv">
+				<table>
+					<tr>
+						<td><s:submit type="submit" cssClass="buttonsubmit"
+								value="Process" name="Schedule" method="schedule"
+								onclick="return validate();" /></td>
+						<td><input type="button" value="Close"
+							onclick="javascript:window.close()" class="buttonsubmit" /></td>
+					</tr>
+				</table>
+			</div>
+		</center>
+	</s:form>
 </body>
 </html>
