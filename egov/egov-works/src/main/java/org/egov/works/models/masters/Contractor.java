@@ -112,6 +112,8 @@ public class Contractor extends BaseModel implements EntityType {
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
     private String pwdApprovalCode;
 
+    private ExemptionForm exemptionForm;
+
     @Valid
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
 
@@ -223,6 +225,14 @@ public class Contractor extends BaseModel implements EntityType {
 
     public List<ContractorDetail> getContractorDetails() {
         return contractorDetails;
+    }
+
+    public ExemptionForm getExemptionForm() {
+        return exemptionForm;
+    }
+
+    public void setExemptionForm(final ExemptionForm exemptionForm) {
+        this.exemptionForm = exemptionForm;
     }
 
     public void setContractorDetails(final List<ContractorDetail> contractorDetails) {

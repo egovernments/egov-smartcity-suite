@@ -39,71 +39,13 @@
 #------------------------------------------------------------------------------- -->
 
 <style type="text/css">
-#yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
+#yui-dt0-bodytable, #yui-dt1-bodytable, #yui-dt2-bodytable {
 	Width: 100%;
 }
 </style>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
-<script>
-function validateLoggedInUser(){
-	var userHasRole = dom.get("hasRoleMapped").value; 
-	if(userHasRole=="true" && dom.get("mode").value!="view"){
-		document.getElementById('isEditEnabled').disabled=false;
-	}
-	else{
-		document.getElementById('isEditEnabled').disabled=true;
-	}
-	enableDisableFields(userHasRole);
-}
-
-function enableDisableFields(userHasRole) {
-	var isChecked = document.getElementById("isEditEnabled");
-	var panNo = document.getElementById("panNumber");
-	var bankId = document.getElementById("bank");
-	var codeIFSC = document.getElementById("ifscCode");
-	var bankAcctNo = document.getElementById("bankAccount");
-		
-	if(dom.get("mode").value=="edit" && userHasRole!="true"){
-		if(isChecked.checked){
-				panNo.disabled = false;
-				bankId.disabled=false;
-				codeIFSC.disabled = false;
-				bankAcctNo.disabled = false;
-		}
-		else{
-			panNo.disabled = true;
-			bankId.disabled=true;
-			codeIFSC.disabled = true;
-			bankAcctNo.disabled = true;
-		}
-	}
-}
-
-function validateAllFields(){
-
-	validateContractorFormAndSubmit();
-	var panNo = document.getElementById("panNumber").value;
-	var bankId = document.getElementById("bank").value;
-	var codeIFSC = document.getElementById("ifscCode").value;
-	var bankAcctNo = document.getElementById("bankAccount").value;
-	var userHasRole = dom.get("hasRoleMapped").value;
-	var isChecked =document.getElementById("isEditEnabled");
-
-	if(userHasRole=="true" && !isChecked.checked){
-		if(panNo=="" || bankId==-1 || codeIFSC=="" || bankAcctNo==""){
-			document.getElementById("contractor_error").innerHTML='<s:text name="contractor.check.allDetails" />';
-			document.getElementById("contractor_error").style.display='';
-			return false;
-		}
-		else
-		{
-			document.getElementById("contractor_error").innerHTML='';
-			document.getElementById("contractor_error").style.display="none";
-		}
-	}
-	return true;
-}
-
+<script src="<egov:url path='resources/js/works.js'/>"
+	type="text/javascript"></script>
+<script type="text/javascript">
 function validateContractorFormAndSubmit() {
     clearMessage('contractor_error')
 	links=document.contractor.getElementsByTagName("span");
@@ -120,11 +62,7 @@ function validateContractorFormAndSubmit() {
     	document.getElementById("contractor_error").innerHTML='<s:text name="contractor.validate_x.message" />';
     	return false;
     }
- /* else {
-    	document.contractor.action='${pageContext.request.contextPath}/masters/contractor!save.action';
-    	document.contractor.submit();
-   	} */ 
-}
+ }
 
 var departmentDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="dropdownData.departmentList" status="status">  
@@ -169,7 +107,7 @@ var dateFormatter = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionContractorDetails[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
 	var id = oColumn.getKey() + oRecord.getId();
 	
-    var markup= "<input type='text' id='"+id+"'   class='selectmultilinewk' size='15' maxlength='10' style=\"width:60px\" name='"+fieldName 
+    var markup= "<input type='text' id='"+id+"'   class='selectmultilinewk' size='15' maxlength='10' style=\"width:100px\" name='"+fieldName 
 	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
 				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	 e2.innerHTML = markup;
@@ -250,156 +188,171 @@ var makeContractorDataTable = function() {
 }
 
 </script>
+<%@ include file="/includes/taglibs.jsp"%>
 <div class="errorstyle" id="contractor_error" style="display: none;"></div>
 <div class="new-page-header">
 	<s:text name="contractor.header" />
 </div>
 
 
-<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+
+<div class="panel panel-primary" data-collapsed="0"
+	style="text-align: left">
 	<div class="panel-heading">
-		<div class="panel-title">
-		</div>
-		
+		<div class="panel-title"></div>
+
 	</div>
 	<div class="panel-body">
-	   
-	  <div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <s:text name="contractor.code" /><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textfield name="code" disabled="%{sDisabled}" id="code" maxlength="50" cssClass="form-control" value = "%{code}" />
-			</div>
-			<label class="col-sm-2 control-label text-right">
-			    <s:text name="contractor.name" /><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textfield name="name" id="name" size="40" maxlength="100" cssClass="form-control" value = "%{name}" />
-			</div>
-		</div>
-		
-		
-		 <div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <s:text name="contractor.correspondenceAddress" />
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textarea name="correspondenceAddress" cols="35" cssClass="form-control" id="correspondenceAddress" value="%{correspondenceAddress}"/>
-			</div>
-			<label class="col-sm-2 control-label text-right">
-			    <s:text name="contractor.paymentAddress" />
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textarea name="paymentAddress" cols="35" cssClass="form-control" id="paymentAddress" value="%{paymentAddress}"/>
-			</div>
-		</div>
-		
-		
+
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   <s:text name="contractor.contactPerson" />
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="contactPerson" id="contactPerson" size="40" maxlength="100" cssClass="form-control" value = "%{contactPerson}" />
+				<s:textfield name="code" disabled="%{sDisabled}" id="code"
+					maxlength="50" cssClass="form-control" value="%{code}" />
 			</div>
-			<label class="col-sm-2 control-label text-right">
-			   <s:text name="contractor.email" />
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.name" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="email" id="email" maxlength="100" cssClass="form-control" value = "%{email}" />
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   <s:text name="contractor.narration" />
-			</label>
-			<div class="col-sm-3 add-margin">
-			   <s:textarea name="narration" cols="35" cssClass="form-control" id="narration" value="%{narration}"/>
+				<s:textfield name="name" id="name" size="40" maxlength="100"
+					cssClass="form-control" value="%{name}" />
 			</div>
 		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   <s:text name="contractor.panNo" />
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textfield name="panNumber" id="panNumber" maxlength="14" cssClass="form-control" value = "%{panNumber}" />
-			</div>
-			<label class="col-sm-2 control-label text-right">
-			  <s:text name="contractor.tinNo" />
-			</label>
-			<div class="col-sm-3 add-margin">
-			  <s:textfield name="tinNumber" id="tinNumber" maxlength="14" cssClass="form-control" value = "%{tinNumber}" />
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   <s:text name="contractor.bank" />
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textfield name="bankAccount" id="bankAccount" maxlength="22" size="24" cssClass="form-control" value = "%{bankAccount}" />
-			</div>
-			<label class="col-sm-2 control-label text-right">
-			  <s:text name="contractor.ifscCode" />
-			</label>
-			<div class="col-sm-3 add-margin">
-			  <s:textfield name="ifscCode" id="ifscCode" maxlength="15" cssClass="form-control" value = "%{ifscCode}" />
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   <s:text name="contractor.bankAccount" />
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textfield name="bankAccount" id="bankAccount" maxlength="22" size="24" cssClass="form-control" value = "%{bankAccount}" />
-			</div>
-			<label class="col-sm-2 control-label text-right">
-			  <s:text name="contractor.pwdApprovalCode" />
-			</label>
-			<div class="col-sm-3 add-margin">
-			  <s:textfield name="pwdApprovalCode" id="pwdApprovalCode" maxlength="50" cssClass="form-control" value = "%{pwdApprovalCode}" />
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   Exempted From
-			</label>
-			<div class="col-sm-3 add-margin">
-			  <s:select 
-			  		cssClass="form-control"
-					headerKey="-1" headerValue="select"
-					list="#{}" 
-					name="yourSearchEngine" />
-			</div>
-		</div>
-		
-</div>
-</div>
 
 
-<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<s:text name="contractor.contDetails" />
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.correspondenceAddress" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="correspondenceAddress" cols="35"
+					cssClass="form-control" id="correspondenceAddress"
+					value="%{correspondenceAddress}" />
+			</div>
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.paymentAddress" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="paymentAddress" cols="35" cssClass="form-control"
+					id="paymentAddress" value="%{paymentAddress}" />
+			</div>
+		</div>
+
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.contactPerson" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="contactPerson" id="contactPerson" size="40"
+					maxlength="100" cssClass="form-control" value="%{contactPerson}" />
+			</div>
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.email" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="email" id="email" maxlength="100"
+					cssClass="form-control" value="%{email}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.narration" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="narration" cols="35" cssClass="form-control"
+					id="narration" value="%{narration}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.panNo" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="panNumber" id="panNumber" maxlength="14"
+					cssClass="form-control" value="%{panNumber}" />
+			</div>
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.tinNo" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="tinNumber" id="tinNumber" maxlength="14"
+					cssClass="form-control" value="%{tinNumber}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.bank" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="select"
+					list="dropdownData.bankList" name="bank" id="bank"
+					cssClass="form-control" listKey="id" listValue="name"
+					value="%{bank.id}" />
+			</div>
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.ifscCode" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="ifscCode" id="ifscCode" maxlength="15"
+					cssClass="form-control" value="%{ifscCode}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.bankAccount" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="bankAccount" id="bankAccount" maxlength="22"
+					size="24" cssClass="form-control" value="%{bankAccount}" />
+			</div>
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="contractor.pwdApprovalCode" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="pwdApprovalCode" id="pwdApprovalCode"
+					maxlength="50" cssClass="form-control" value="%{pwdApprovalCode}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> Exempted
+				From </label>
+			<div class="col-sm-3 add-margin">
+
+				<s:select headerKey="" headerValue="select" list="exmptionMap"
+					name="exemptionForm" id="exemptionForm" cssClass="form-control"
+					value="%{exemptionForm}" />
+			</div>
+
 		</div>
 	</div>
-	<div class="panel-body">
-	
-	   <div class="form-group">
-	   
-	   	   <div class="text-right add-margin">
-	   	       <button class="btn btn-primary" onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">Add Department</button>
-	   	   </div>
-	   
-	   
-	       <div class="yui-skin-sam">
-			<div id="contractorTable"></div>
-	<script>
+
+
+	<div data-collapsed="0" style="text-align: left">
+		<div class="panel-heading">
+			<div class="panel-title">
+				<s:text name="contractor.contDetails" />
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="form-group">
+						<div class="text-right add-margin">
+						<button class="btn btn-primary"
+						onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">Add
+						Contractor Detail</button>
+				</div>
+
+
+				<div class="yui-skin-sam">
+					<div id="contractorTable"></div>
+					<script type="text/javascript">
             makeContractorDataTable();
          <s:iterator id="detailsIterator" value="model.contractorDetails" status="row_status">
 	       <s:if test="#row_status.count == 1">
@@ -433,11 +386,11 @@ var makeContractorDataTable = function() {
 			    				        
 			        var  column = contractorDataTable.getColumn('registrationNumber');  
 			        dom.get(column.getKey()+record.getId()).value = '<s:property value="registrationNumber"/>';
-			      
-			        column = contractorDataTable.getColumn('startDate');
-			        <s:date name="validity.startDate" var="startDateFormat" format="dd/MM/yyyy"/>  
-			        dom.get(column.getKey()+record.getId()).value = '<s:property value='%{startDateFormat}'/>';
-
+			        <s:if test="%{validity.startDate!=null}">	
+				        column = contractorDataTable.getColumn('startDate');
+				        <s:date name="validity.startDate" var="startDateFormat" format="dd/MM/yyyy"/>  
+				        dom.get(column.getKey()+record.getId()).value = '<s:property value='%{startDateFormat}'/>';
+					</s:if>
 			        <s:if test="%{validity.endDate!=null}">				        
 				        column = contractorDataTable.getColumn('endDate');  
 				        <s:date name="validity.endDate" var="endDateFormat" format="dd/MM/yyyy"/>  
@@ -464,14 +417,15 @@ var makeContractorDataTable = function() {
 
 			       </s:iterator>         
        </script>
-  		</div>
-	   
-	   </div>
-	
+				</div>
+
+			</div>
+
+		</div>
 	</div>
 </div>
-
-<script>
+	
+<script type="text/javascript">
 <s:if test="%{mode=='view'}">
 	for(i=0;i<document.contractor.elements.length;i++){
 		document.contractor.elements[i].disabled=true;
@@ -487,4 +441,3 @@ var makeContractorDataTable = function() {
 
 
 </script>
- 
