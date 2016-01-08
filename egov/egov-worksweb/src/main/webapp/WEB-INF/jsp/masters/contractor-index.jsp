@@ -41,11 +41,191 @@
 <html>
 <title><s:text name="contractor.master.title" /></title>
 <body>
-	<s:if test="%{hasActionMessages()}">
-		<div id="msgsDiv" class="alert alert-success text-center">
-			<s:actionmessage theme="simple" />
-		</div>
-	</s:if>
+    
+	
+	
+	<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								
+								<div class="panel-heading">
+									<div class="panel-title text-center no-float">
+										<s:if test="%{hasActionMessages()}">
+											<div id="msgsDiv">
+												<s:actionmessage theme="simple" />
+											</div>
+										</s:if>
+									</div>
+									
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Contractor Code
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											123123
+										</div>
+										<div class="col-xs-3 add-margin">
+											Name
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Correspondence Address
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											Address1
+										</div>
+										<div class="col-xs-3 add-margin">
+											Payment Address 
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											Address2
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Contact Person  
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ
+										</div>
+										<div class="col-xs-3 add-margin">
+											Email 
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ@XYZ.COM
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Narration
+										</div>
+										<div class="col-xs-9 add-margin view-content">
+											-
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											PAN No 
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											BKEPD123SDW
+										</div>
+									
+										<div class="col-xs-3 add-margin">
+											TIN No	
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											123SDe
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Bank
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ Bank
+										</div>
+										<div class="col-xs-3 add-margin">
+											IFSC Code
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											IND12331
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Bank Account Number
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											45906123123
+										</div>
+										<div class="col-xs-3 add-margin">
+											PWD Approval Code
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											-
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 add-margin">
+											Exempted From
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											12/12/2015
+										</div>
+									</div>
+								</div>
+							</div>					
+						</div>
+				</div>
+
+				<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								
+								<div class="panel-heading">
+									<div class="panel-title">
+										Contractor Details
+									</div>
+									
+								</div>
+								<div class="panel-body">
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th>S. No.</th>
+												<th>Department</th>
+												<th>Registration Number</th>
+												<th>Contractor Class</th>
+												<th>Status</th>
+												<th>From Date</th>
+												<th>To Date</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>1</td>
+												<td>XYZ</td>
+												<td>4560</td>
+												<td>-</td>
+												<td>1</td>
+												<td>23/01/2014</td>
+												<td>23/01/2014</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>XYZ</td>
+												<td>4560</td>
+												<td>-</td>
+												<td>1</td>
+												<td>23/01/2014</td>
+												<td>23/01/2014</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>					
+						</div>
+				</div>
+
+				
+
+				<div class="row text-center">
+					<div class="add-margin">
+						<input type="submit" name="VIEW" Class="btn btn-primary" value="VIEW"
+							id="VIEW" onclick="viewData();" /> <input type="submit"
+							name="create" Class="btn btn-primary" value="CREATE" id="CREATE"
+							name="button" onclick="createNew();" /> <input type="submit"
+							name="closeButton" id="closeButton" value="CLOSE"
+							Class="btn btn-default" onclick="window.close();" />
+					</div>
+				</div>
 <script type="text/javascript">
 
 function createNew() {
@@ -58,14 +238,6 @@ function viewData() {
 }
 				
 </script>
-<div align="center">
-	<input type="submit" name="VIEW" Class="btn btn-primary" value="VIEW"
-		id="VIEW" onclick="viewData();" /> <input type="submit"
-		name="create" Class="btn btn-primary" value="CREATE" id="CREATE"
-		name="button" onclick="createNew();" /> <input type="submit"
-		name="closeButton" id="closeButton" value="CLOSE"
-		Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
-</div>
 		
 </body>
 </html>
