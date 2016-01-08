@@ -1242,10 +1242,6 @@ public class CreateVoucher {
                     "Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
                             + fiscalPeriod);
         vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
-        final String cgn = getCgnType(vh.getType()) + cm.getCGNumber();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("cgn------" + cgn);
-        vh.setCgn(cgn);
         final String fundIdentifier = vh.getFundId().getIdentifier().toString();
         final String vType = fundIdentifier + "/" + getCgnType(vh.getType()) + "/CGVN";
         if (LOGGER.isDebugEnabled())

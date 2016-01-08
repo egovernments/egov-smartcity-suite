@@ -855,14 +855,13 @@ public class CollectionObjectFactory {
 
 	public CVoucherHeader createVoucher(String name) {
 		CVoucherHeader voucher = new CVoucherHeader();
-		voucher.setCgn(("CGN" + getRandomNumber()).substring(0, 9));
 		voucher.setName("testVoucher" + name);
 		voucher.setType("testType");
 		voucher.setEffectiveDate(new Date());
 		voucher.setVoucherDate(new Date());
 		voucher.setFiscalPeriodId(1);
 		voucher.setVoucherNumber("testVoucherNumber");
-		voucher.setCgvn("testCGVN" + name + voucher.getCgn());
+		voucher.setCgvn("testCGVN" + name );
 		session.saveOrUpdate(voucher);
 		return voucher;
 	}

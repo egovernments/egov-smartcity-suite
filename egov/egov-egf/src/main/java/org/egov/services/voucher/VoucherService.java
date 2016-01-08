@@ -355,7 +355,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             voucherMap = new HashMap<String, Object>();
             BigDecimal amt = BigDecimal.ZERO;
             voucherMap.put("id", voucherheader.getId());
-            voucherMap.put("cgn", voucherheader.getCgn());
             voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
             voucherMap.put("type", voucherheader.getType());
             voucherMap.put("voucherdate", voucherheader.getVoucherDate());
@@ -473,9 +472,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     public CVoucherHeader updateVoucherHeader(final CVoucherHeader voucherHeader, final String voucherNumType) {
         CVoucherHeader existingVH = null;
         try {
-            if (voucherHeader.getCgn() != null && !voucherHeader.getCgn().isEmpty())
-                existingVH = voucherHeaderDAO.getVoucherHeadersByCGN(voucherHeader.getCgn());
-            else if (voucherHeader.getId() != null && voucherHeader.getId() != -1)
+            if (voucherHeader.getId() != null && voucherHeader.getId() != -1)
                 existingVH = find("from CVoucherHeader where id=?", voucherHeader.getId());
             existingVH = getUpdatedVNumCGVN(existingVH, voucherHeader, voucherNumType);
             // existingVH.setModifiedDate(new Date());
@@ -755,8 +752,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         "Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
                                 + fiscalPeriod);
             voucherHeader.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
-            final String cgn = voucherTypeBean.getCgnType() + cm.getCGNumber();
-            voucherHeader.setCgn(cgn);
 
             // String
             // vType=voucherHeader.getVoucherNumber().substring(0,Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));

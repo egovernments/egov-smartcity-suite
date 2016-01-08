@@ -304,9 +304,9 @@ public class ContraBTBAction extends BaseVoucherAction {
 
         if (oldVoucher.getRefcgNo() != null) {
             voucherHeader2 = oldVoucher;
-            voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where cgn=?", oldVoucher.getRefcgNo());
+            voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where voucherNumber=?", oldVoucher.getVoucherNumber());
         } else {
-            voucherHeader2 = (CVoucherHeader) persistenceService.find("from CVoucherHeader where refcgNo=?", oldVoucher.getCgn());
+            voucherHeader2 = (CVoucherHeader) persistenceService.find("from CVoucherHeader where voucherNumber=?", oldVoucher.getVoucherNumber());
             voucherHeader4 = new CVoucherHeader();
 
         }
@@ -330,7 +330,6 @@ public class ContraBTBAction extends BaseVoucherAction {
             voucherHeader4.setVoucherNumber(voucherHeader2.getVoucherNumber());
             voucherHeader4.setType(voucherHeader2.getType());
             voucherHeader4.setVouchermis(voucherHeader2.getVouchermis());
-            voucherHeader4.setCgn(voucherHeader2.getCgn());
             voucherHeader4.setVoucherDate(voucherDate);
 
             voucherTypeBean
@@ -1031,7 +1030,6 @@ public class ContraBTBAction extends BaseVoucherAction {
             headerDetails.remove(VoucherConstant.FUNDSOURCECODE);
             headerDetails.remove(VoucherConstant.DIVISIONID);
             headerDetails.remove(VoucherConstant.FUNCTIONARYCODE);
-            headerDetails.put("refvoucher", voucherHeader.getCgn());
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, contraBean.getAmount()
                     .toString());
@@ -1648,15 +1646,12 @@ public class ContraBTBAction extends BaseVoucherAction {
     private void prepareForViewModifyReverse() {
         voucherHeader = (CVoucherHeader) persistenceService.find(
                 "from CVoucherHeader where id=?", voucherHeader.getId());
-        if (voucherHeader.getRefcgNo() != null) {
+        if (voucherHeader.getVoucherNumber() != null) {
             voucherHeaderDes = voucherHeader;
             voucherHeader = (CVoucherHeader) persistenceService.find(
-                    "from CVoucherHeader where cgn=?", voucherHeader
-                    .getRefcgNo());
-        } else
-            voucherHeaderDes = (CVoucherHeader) persistenceService.find(
-                    "from CVoucherHeader where refcgNo=?", voucherHeader
-                    .getCgn());
+                    "from CVoucherHeader where voucherNumber=?", voucherHeader
+                    .getVoucherNumber());
+        } 
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("voucherHeader.fundId.id"
