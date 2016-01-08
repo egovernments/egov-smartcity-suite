@@ -61,7 +61,7 @@
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<label class="col-sm-3 control-label">
-									<spring:message code="lbl.rooftype.nature" />
+									<spring:message code="lbl.roofType.name" />
 									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">

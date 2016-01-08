@@ -41,7 +41,6 @@ package org.egov.ptis.master.service;
 
 import java.util.List;
 
-import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +49,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class PropertyWoodTypeService {
+public class WoodTypeService {
 
     private final WoodTypeRepository woodTypeRepository;
 
     @Autowired
-    public PropertyWoodTypeService(final WoodTypeRepository woodTypeRepository) {
+    public WoodTypeService(final WoodTypeRepository woodTypeRepository) {
         this.woodTypeRepository = woodTypeRepository;
     }
 

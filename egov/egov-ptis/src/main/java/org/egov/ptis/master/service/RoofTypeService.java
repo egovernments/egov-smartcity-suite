@@ -49,12 +49,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class PropertyRoofTypeService {
+public class RoofTypeService {
 
     private final RoofTypeRepository roofTypeRepository;
 
     @Autowired
-    public PropertyRoofTypeService(final RoofTypeRepository roofTypeRepository) {
+    public RoofTypeService(final RoofTypeRepository roofTypeRepository) {
         this.roofTypeRepository = roofTypeRepository;
     }
 
