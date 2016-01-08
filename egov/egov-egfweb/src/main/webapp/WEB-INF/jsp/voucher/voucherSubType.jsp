@@ -41,7 +41,7 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
 	<td style="width: 5%"></td>
-	<td class="bluebox">Voucher Sub-Type</td>
+	<td class="bluebox">Voucher Sub-Type<span class="mandatory1">*</span></td>
 	<td class="bluebox"><select name="vType" id="vType"
 		onchange="onChangeVSubType()">
 			<option value="-1">------Choose------</option>
@@ -49,9 +49,9 @@
 			<option value="Works">Works</option>
 			<option value="Purchase">Purchase</option>
 			<option value="Fixed Asset">Fixed Asset</option>
-			<option value="Salary">Salary</option>
+			<!-- <option value="Salary">Salary</option> -->
 			<option value="Expense">Expense</option>
-			<option value="Pension">Pension</option>
+			<!-- <option value="Pension">Pension</option> -->
 	</select></td>
 	<td class="greybox"><s:text name="jv.partyName" />
 		<div id="partyNameDivId" style="display: none">

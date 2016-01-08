@@ -183,6 +183,8 @@ public class SubSchemeAction extends BaseFormAction {
     public String beforeEdit()
     {
         subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+        if (subScheme!=null && subScheme.getIsactive().equalsIgnoreCase("1"))
+            isActive = true;
         return NEW;
     }
 

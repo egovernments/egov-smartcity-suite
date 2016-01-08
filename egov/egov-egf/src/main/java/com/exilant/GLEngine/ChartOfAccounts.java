@@ -42,6 +42,7 @@ package com.exilant.GLEngine;
 
 //import com.exilant.eGov.src.domain.GeneralLedger;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1309,12 +1310,12 @@ public class ChartOfAccounts {
             pst.setLong(0, Long.valueOf(glcodeId));
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("query-->" + query);
-            final List<Object[]> rset = pst.list();
+            final List<Object> rset = pst.list();
             if (rset != null && rset.size() > 0)
             {
-                for (final Object[] element : rset)
-                    if (element[0].toString().equals("0"))
-                        return false;
+                BigInteger value =(BigInteger) rset.get(0); 
+                if (value.toString().equalsIgnoreCase("0"))
+                    return false;
 
             }
             else

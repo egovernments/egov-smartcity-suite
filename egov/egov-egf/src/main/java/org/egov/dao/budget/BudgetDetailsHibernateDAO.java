@@ -1824,7 +1824,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     + coa.getGlcode() + "'  and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadByGlcode detailcode query=====" + query);
-            //persistenceService.setType(BudgetGroup.class);
             List bgList = persistenceService.findAllBy(query);
             if (bgList.isEmpty())
             {
@@ -2639,6 +2638,10 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
     public BudgetDetailsHibernateDAO() {
         super(null, null);
+    }
+
+    public PersistenceService getPersistenceService() {
+        return persistenceService;
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {

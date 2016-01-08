@@ -52,7 +52,7 @@
 	src="/EGF/resources/javascript/calendar.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type"
+	   <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <title>Journal voucher Create</title>
 </head>
@@ -142,7 +142,6 @@
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
 	 </script>
-				<div id="codescontainer"></div>
 				<br />
 				<div id="labelSL" align="center">
 					<table width="80%" border=0 id="labelid">

@@ -56,7 +56,10 @@
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js"></script>
+		<script type="text/javascript" src="/EGF/resources/javascript/autocomplete.js"></script>
+		<link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" type="text/css"/>
+	    <script type="text/javascript" src="/EGF/resources/javascript/autocomplete-debug.js"></script> 
+	    <script type="text/javascript" src="/EGF/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>

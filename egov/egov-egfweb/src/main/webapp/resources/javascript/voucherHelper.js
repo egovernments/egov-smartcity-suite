@@ -703,7 +703,7 @@ var oAutoCompEntityForJV;
 function autocompleteEntities1By20(obj)
 {
   
-	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
+	   oACDS = new YAHOO.widget.DS_XHR(path, [ "~^"]);
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	 //alert(obj.name);
@@ -711,13 +711,16 @@ function autocompleteEntities1By20(obj)
 		   oAutoCompEntityForJV.destroy();
 		   oAutoCompEntityForJV = null;
 	   } 
-	   
+	   var detailTypeName=obj.name.replace('detailCode','detailType.id');
 	   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
-	   oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
+	   oAutoCompEntityForJV.generateRequest = function(sQuery) {
+		    return "/voucher/common-ajaxLoadEntitesBy20.action?startsWith=" + sQuery + "&accountDetailType="+document.getElementById(detailTypeName).value;
+	   }
+	 /*  oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
 		   loadWaitingImage(); 
 		   var detailTypeName=obj.name.replace('detailCode','detailType.id');
 		   return sQuery+"&accountDetailType="+document.getElementById(detailTypeName).value;
-	   } 
+	   } */
 	   oAutoCompEntityForJV.queryDelay = 0.5;
 	   oAutoCompEntityForJV.minQueryLength = 3;
 	   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
@@ -725,14 +728,10 @@ function autocompleteEntities1By20(obj)
 	   oAutoCompEntityForJV.forceSelection = true;
 	   oAutoCompEntityForJV.maxResultsDisplayed = 20;
 	   oAutoCompEntityForJV.useIFrame = true;
-	   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
-		   clearWaitingImage();
-	           var pos = YAHOO.util.Dom.getXY(oTextbox);
-	           pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
-	           oContainer.style.width=300;
-	           YAHOO.util.Dom.setXY(oContainer,pos);
-	           return true;
-	   };
+	   oAutoCompEntityForJV.formatResult = function(oResultData, sQuery, sResultMatch) {
+			var data = oResultData.toString();
+		    return data.split("`~`")[0];
+		};
 
 
 	
@@ -743,11 +742,6 @@ function autocompleteEntities1By20(obj)
 var yuiflag = new Array();
 function autocompletecode(obj,myEvent)
 {
-	//Fix-Me
-	var funObj = document.getElementById('billDetailslist[0].functionDetail');
-	jQuery(funObj).trigger('focus');
-	jQuery(obj).trigger('focus');
-	
 	//alert('autocomplete');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
@@ -788,10 +782,6 @@ function autocompletecode(obj,myEvent)
 
 function autocompletecodeCommon(obj,myEvent)
 {
-	//Fix-Me
-	var accCodeObj = document.getElementById('billDetailsTable[0].debitAmountDetail');
-	jQuery(accCodeObj).trigger('focus');
-	jQuery(obj).trigger('focus');
 	
 	var src = obj;	
 	//alert(obj.scrollHeight);
@@ -859,12 +849,6 @@ var yuiflagFunc = new Array();
 function autocompletecodeFunction(obj,myEvent)
 {
 	
-	//Fix-Me
-	var accCodeObj = document.getElementById('billDetailslist[0].glcodeDetail');
-	jQuery(accCodeObj).trigger('focus');
-	jQuery(obj).trigger('focus');
-	
-	
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	
@@ -904,10 +888,6 @@ function autocompletecodeFunction(obj,myEvent)
 
 function autocompletecodeFunctionHeader(obj,myEvent)
 {
-	//Fix-Me
-	var accCodeObj = document.getElementById('description');
-	jQuery(accCodeObj).trigger('focus');
-	jQuery(obj).trigger('focus');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
@@ -1020,8 +1000,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		}
 		check();
 	}else if (temp!="" &&(accCodeid==null || accCodeid=="")){
-		//alert("Invalid Account Code selected .Please select code from auto complete.");
-		//obj.value="";
+		alert("Invalid Account Code selected .Please select code from auto complete.");
+		obj.value="";
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value="";
 	}
 	var currRow=getRowIndex(obj);
@@ -1086,7 +1066,7 @@ function loadSlFunction(){
 			 accountCodeId = document.getElementById('billDetailslist['+i+'].glcodeIdDetail').value;
 			 accountCode = document.getElementById('billDetailslist['+i+'].glcodeDetail').value;
 		}
-		
+		console.log(slAccountCodes);
 		if(accGridFunc !=''  && slAccountCodes.indexOf(accountCodeId) !=-1){
 			if(functionArray.indexOf(accGridFunc) == -1){
 				functionArray.push(accGridFunc);
@@ -1129,7 +1109,9 @@ function getSlAccountCodes(){
 	var obj = document.getElementById('subLedgerlist[0].glcode.id');
 	for (var j=0; j< obj.options.length;j++ )
 	{
-		slAccountCodeArray.push(obj.options[j].value);
+		console.log("---"+obj.options[j].value+"---");
+		console.log("---"+(obj.options[j].value).trim()+"---");
+		slAccountCodeArray.push((obj.options[j].value).trim());
 		
 	}
 	return slAccountCodeArray;
@@ -1242,6 +1224,7 @@ var onDropdownChange = function(index,obj) {
 		// loadSLFunc(obj,document.getElementById('subLedgerlist['+obj.value+'].functionDetail').value);
 		var subledgerid=document.getElementById('subLedgerlist['+obj.value+'].glcode.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
+		console.log("---"+accountCode+"-------");
 		document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value =accountCode;
 		if(accountCode != '---Select---'){
 			var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+obj.value;
@@ -1906,7 +1889,7 @@ if(temp.trim()!="")
 	{
 	
 		//alert(obj.value+":"+invalidAccountCode); this line will cause problem for mouse selection
-	//	obj.value="";
+		obj.value="";
 		var hiddenfieldname=obj.name;
 		var accountHeadeName=obj.name;
 		var isSubledger=obj.name;
