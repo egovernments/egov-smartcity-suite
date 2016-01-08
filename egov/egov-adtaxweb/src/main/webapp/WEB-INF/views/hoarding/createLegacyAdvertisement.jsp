@@ -42,8 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> 
-			
-				<div class="form-group">
+	<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.category"/>
 								<span class="mandatory"></span></label>
@@ -132,9 +131,9 @@
 								<form:hidden path="advertisement.legacy" id="legacy" value="${advertisement.legacy}" />
 								<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
 								 
-								
-								<%-- <form:hidden path="status" id="status" value="${status}" /> --%>
-								
+								<%-- 
+								<form:hidden path="status" id="status" value="${status.id}" /> 
+								 --%>
 								<form:hidden path="advertisement.penaltyCalculationDate" id="penaltyCalculationDate" value="${advertisement.penaltyCalculationDate}" />
 								
 									<form:input type="text"  cssClass="form-control patternvalidation" 
@@ -360,20 +359,20 @@
 								<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/></div>
 							</div>
 							
-							<c:forEach var="docs" items="${hoardingDocumentTypes}" varStatus="status">	
+							<c:forEach var="docs" items="${hoardingDocumentTypes}" varStatus="status1">	
 								<div class="form-group">
-									<div class="col-sm-1 text-center">${status.index+1}</div>
+									<div class="col-sm-1 text-center">${status1.index+1}</div>
 									<div class="col-sm-5 text-center">${docs.mandatory ? "<span
 									class='mandatory'></span>" : ""}${docs.name}
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="checkbox" ${advertisement.documents[status.index].enclosed ? "checked='checked'" : ""} 
-										name="advertisement.documents[${status.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
+										<input type="checkbox" ${advertisement.documents[status1.index].enclosed ? "checked='checked'" : ""} 
+										name="advertisement.documents[${status1.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="file" name="advertisement.documents[${status.index}].attachments" class="form-control" >
-										<form:errors path="advertisement.documents[${status.index}].attachments" cssClass="add-margin error-msg" />
-										<form:hidden path="advertisement.documents[${status.index}].doctype" value="${docs.id}" /> 
+										<input type="file" name="advertisement.documents[${status1.index}].attachments" class="form-control" >
+										<form:errors path="advertisement.documents[${status1.index}].attachments" cssClass="add-margin error-msg" />
+										<form:hidden path="advertisement.documents[${status1.index}].doctype" value="${docs.id}" /> 
 									</div>
 								</div>
 							</c:forEach> 

@@ -97,8 +97,8 @@ public class AdvertisementPermitDetailService {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
             advertisementPermitDetail.getAdvertisement().setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
         roundOfAllTaxAmount(advertisementPermitDetail);
-        advertisementPermitDetail.setPermissionstartdate(new Date());
-        advertisementPermitDetail.setPermissionenddate(new LocalDate().plusYears(1).toDate());
+    //    advertisementPermitDetail.setPermissionstartdate(new Date());
+    //    advertisementPermitDetail.setPermissionenddate(new LocalDate().plusYears(1).toDate());
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
         if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();

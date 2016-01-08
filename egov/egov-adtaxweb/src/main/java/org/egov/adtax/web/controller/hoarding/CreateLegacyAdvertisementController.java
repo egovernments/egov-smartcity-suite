@@ -69,10 +69,26 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
         {
             advertisementPermitDetail.setAdvertisement(new Advertisement());
         }
-        advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
         advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
         return "hoarding-createLegacy";
+    }
+
+
+    private void validateLegacyHoarding(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
+ 
+      if(advertisementPermitDetail.getAgency()==null && advertisementPermitDetail.getOwnerDetail()==null)
+          resultBinder.rejectValue("agency", "invalid.eitherAgencyOrOwnerDetailRequired");
+     
+      //TODO: PROPERTY ID IS MANDATORY BASED ON MASTER
+      /*if(advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getCategory()!=null)
+          resultBinder.rejectValue("agency", "invalid.eitherAgencyOrOwnerDetailRequired");*/
+    //TODO: FROM DATE AND TO DATE VALIDATION
+      //TODO: AUTOGENERATE PERMIT NUMBER .. ELSE VALIDATE
+      //TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
+      
+      
+    
     }
 
     private void validateLegacyApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
@@ -95,11 +111,13 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
+        validateLegacyHoarding(advertisementPermitDetail,resultBinder);
         validateLegacyApplicationDate(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-createLegacy";
         storeHoardingDocuments(advertisementPermitDetail);
-
+        
+        advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
         if (installmentObj != null && installmentObj.getFromDate() != null)
             try {

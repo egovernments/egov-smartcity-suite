@@ -60,6 +60,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.adtax.entity.enums.AdvertisementPropertyType;
@@ -177,6 +178,7 @@ public class Advertisement extends AbstractAuditable {
     @JoinTable(name = "egadtax_advertisement_docs", joinColumns = @JoinColumn(name = "advertisement"), inverseJoinColumns = @JoinColumn(name = "document"))
     private List<HoardingDocument> documents = new ArrayList<>();
 
+    @Transient 
     private Boolean taxPaidForCurrentYear=false;
     
     @Override
