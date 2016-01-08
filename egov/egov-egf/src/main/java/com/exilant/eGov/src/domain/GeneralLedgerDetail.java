@@ -116,7 +116,7 @@ public class GeneralLedgerDetail {
         pst.setLong(1, Long.valueOf(glId));
         pst.setLong(2, Long.valueOf(detailKeyId));
         pst.setLong(3, Long.valueOf(detailTypeId));
-        pst.setBigDecimal(4, BigDecimal.valueOf(Long.valueOf(detailAmt.split(".00")[0])));
+        pst.setBigDecimal(4, BigDecimal.valueOf(Long.valueOf(detailAmt.replace(".00",""))));
         pst.executeUpdate();
         if (LOGGER.isInfoEnabled())
             LOGGER.info(insertQuery);

@@ -54,6 +54,8 @@
 	src="/EGF/resources/javascript/dateValidation.js"></script>
 	   <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
+	<script type="text/javascript" src="/EGF/resources/javascript/autocomplete-debug.js"></script> 
+	<script type="text/javascript" src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <title>Journal voucher Create</title>
 </head>
 

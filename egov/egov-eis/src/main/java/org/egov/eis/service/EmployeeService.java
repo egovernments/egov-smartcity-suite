@@ -372,9 +372,7 @@ public class EmployeeService implements EntityTypeService {
     @Override
     public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
-        List<EntityType> entities = new ArrayList<EntityType>();
-        entities.addAll(employeeRepository.findByNameLikeOrCodeLike(filterKey, filterKey));
-        return entities;
+        return employeeRepository.findByNameLikeOrCodeLike(filterKey+"%", filterKey+"%");
     }
 
     @Override

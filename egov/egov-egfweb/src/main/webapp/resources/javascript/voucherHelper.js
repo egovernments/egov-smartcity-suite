@@ -703,7 +703,7 @@ var oAutoCompEntityForJV;
 function autocompleteEntities1By20(obj)
 {
   
-	   oACDS = new YAHOO.widget.DS_XHR(path, [ "~^"]);
+	 oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	 //alert(obj.name);
@@ -711,27 +711,28 @@ function autocompleteEntities1By20(obj)
 		   oAutoCompEntityForJV.destroy();
 		   oAutoCompEntityForJV = null;
 	   } 
-	   var detailTypeName=obj.name.replace('detailCode','detailType.id');
+	   
 	   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
-	   oAutoCompEntityForJV.generateRequest = function(sQuery) {
-		    return "/voucher/common-ajaxLoadEntitesBy20.action?startsWith=" + sQuery + "&accountDetailType="+document.getElementById(detailTypeName).value;
-	   }
-	 /*  oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
+	   oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
 		   loadWaitingImage(); 
 		   var detailTypeName=obj.name.replace('detailCode','detailType.id');
 		   return sQuery+"&accountDetailType="+document.getElementById(detailTypeName).value;
-	   } */
+	   } 
 	   oAutoCompEntityForJV.queryDelay = 0.5;
-	   oAutoCompEntityForJV.minQueryLength = 3;
+	   oAutoCompEntityForJV.minQueryLength = 1;
 	   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 	   oAutoCompEntityForJV.useShadow = true;
 	   oAutoCompEntityForJV.forceSelection = true;
-	   oAutoCompEntityForJV.maxResultsDisplayed = 20;
+	   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	   oAutoCompEntityForJV.useIFrame = true;
-	   oAutoCompEntityForJV.formatResult = function(oResultData, sQuery, sResultMatch) {
-			var data = oResultData.toString();
-		    return data.split("`~`")[0];
-		};
+	   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+		   clearWaitingImage();
+	           var pos = YAHOO.util.Dom.getXY(oTextbox);
+	           pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
+	           oContainer.style.width=100;
+	           YAHOO.util.Dom.setXY(oContainer,pos);
+	           return true;
+	   };
 
 
 	
