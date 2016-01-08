@@ -434,13 +434,22 @@ public class AdvertisementDemandService {
     }
     public EgDemand createDemand(AdvertisementPermitDetail advertisementPermitDetail) {
 
-
+    //TODO: Arrears advertisement tax will be captured as separate reason ?
+        
         EgDemand demand = null;
         final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
+        Boolean taxFullyPaidForCurrentYear=false;
         if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement().getDemandId() == null) {
+            
+            if( advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getLegacy()
+                    && advertisementPermitDetail.getAdvertisement().getTaxPaidForCurrentYear())
+            {
+                taxFullyPaidForCurrentYear=true; //Tax and encroachment fee is fully paid. Arrears will not be considered as paid.
+            }
+            
             if (advertisementPermitDetail.getTaxAmount() != null || advertisementPermitDetail.getAdvertisement().getPendingTax()!=null) {
                 
                 if( advertisementPermitDetail.getAdvertisement().getPendingTax()!=null)
@@ -451,14 +460,14 @@ public class AdvertisementDemandService {
                 demandDetailSet.add(createDemandDetails(
                         (taxAmount),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
-                                installment), BigDecimal.ZERO));
+                                installment),(taxFullyPaidForCurrentYear ? advertisementPermitDetail.getTaxAmount(): BigDecimal.ZERO)));
                 totalDemandAmount=  totalDemandAmount.add((taxAmount));
             }
             if (advertisementPermitDetail.getEncroachmentFee() != null) {
                 demandDetailSet.add(createDemandDetails(
                         (advertisementPermitDetail.getEncroachmentFee()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
-                                installment), BigDecimal.ZERO));
+                                installment), (taxFullyPaidForCurrentYear ? advertisementPermitDetail.getEncroachmentFee(): BigDecimal.ZERO)));
                 totalDemandAmount= totalDemandAmount.add((advertisementPermitDetail.getEncroachmentFee()));
             }
             demand = createDemand(demandDetailSet, installment, totalDemandAmount);
@@ -471,7 +480,14 @@ public class AdvertisementDemandService {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal taxAmount = BigDecimal.ZERO;
-
+        Boolean taxFullyPaidForCurrentYear=false;
+        
+        if( advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getLegacy()
+                && advertisementPermitDetail.getAdvertisement().getTaxPaidForCurrentYear())
+        {
+            taxFullyPaidForCurrentYear=true;
+        }
+        
         // Boolean calculateTax=true;
         Boolean enchroachmentFeeAlreadyExistInDemand = false;
 
@@ -500,6 +516,9 @@ public class AdvertisementDemandService {
                     totalDemandAmount = totalDemandAmount.add(taxAmount.subtract(dmdDtl.getAmount()));
                     dmdDtl.setAmount(taxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
+                    if (taxFullyPaidForCurrentYear) {
+                        dmdDtl.setAmtCollected((advertisementPermitDetail.getTaxAmount()!=null?advertisementPermitDetail.getTaxAmount():BigDecimal.ZERO));
+                    }
                 }
                 // Encroachment fee may not mandatory. If already part of demand
                 // then
@@ -517,6 +536,9 @@ public class AdvertisementDemandService {
                         // delete demand detail
                     }
 
+                    if (taxFullyPaidForCurrentYear) {
+                        dmdDtl.setAmtCollected((advertisementPermitDetail.getEncroachmentFee()!=null?advertisementPermitDetail.getEncroachmentFee():BigDecimal.ZERO));
+                    }
                 }
             }
 

@@ -60,7 +60,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.adtax.entity.enums.AdvertisementDuration;
-import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
@@ -70,8 +69,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
 @SequenceGenerator(name = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, sequenceName = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_PERMITDETAILS", columnName = { "applicationNumber", "permissionNumber" }, fields = {
-        "applicationNumber", "permissionNumber" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGADTAX_PERMITDETAILS", columnName = {"permissionNumber"}, fields = {
+         "permissionNumber" }, enableDfltMsg = true)
 public class AdvertisementPermitDetail extends StateAware {
 
     private static final long serialVersionUID = 845357231248646624L;
