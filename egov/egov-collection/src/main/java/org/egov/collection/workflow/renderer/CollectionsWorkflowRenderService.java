@@ -41,8 +41,6 @@
 package org.egov.collection.workflow.renderer;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +58,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CollectionsWorkflowRenderService extends
         DefaultInboxRenderServiceImpl<ReceiptHeader> {
 
-    @Autowired
     private PersistenceService persistenceService;
 
     public CollectionsWorkflowRenderService(PersistenceService<ReceiptHeader, Long> stateAwarePersistenceService) {
@@ -153,6 +150,10 @@ public class CollectionsWorkflowRenderService extends
         arguments[3] = params[1];
         return persistenceService.findAllBy(query.toString(),
                 arguments);
+    }
+
+    public void setPersistenceService(PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 
 }
