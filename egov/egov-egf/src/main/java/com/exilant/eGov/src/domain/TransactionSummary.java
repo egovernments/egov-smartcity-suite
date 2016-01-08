@@ -133,7 +133,7 @@ public class TransactionSummary {
         setId(String.valueOf(PrimaryKeyGenerator
                 .getNextKey("TransactionSummary")));
 
-        final String insertQuery = "INSERT INTO TransactionSummary (id, financialYearId, glcodeid,openingdebitbalance, openingcreditbalance, debitamount,creditamount, accountdetailtypeid, ACCOUNTDETAILKEY, fundId) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        final String insertQuery = "INSERT INTO TransactionSummary (id, financialYearId, glcodeid,openingdebitbalance, openingcreditbalance, accountdetailtypeid, ACCOUNTDETAILKEY, fundId) VALUES (?,?,?,?,?,?,?,?)";
         if (LOGGER.isInfoEnabled())
             LOGGER.info(insertQuery);
         pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
@@ -142,11 +142,9 @@ public class TransactionSummary {
         pstmt.setString(3, glCodeId);
         pstmt.setString(4, openingDebitBalance);
         pstmt.setString(5, openingCreditBalance);
-        pstmt.setString(6, debitAmount);
-        pstmt.setString(7, creditAmount);
-        pstmt.setString(8, accountDetailTypeId);
-        pstmt.setString(9, accountDetailKey);
-        pstmt.setString(10, fundId);
+        pstmt.setString(6, accountDetailTypeId);
+        pstmt.setString(7, accountDetailKey);
+        pstmt.setString(8, fundId);
         pstmt.executeUpdate();
 
     }
@@ -170,10 +168,6 @@ public class TransactionSummary {
             query.append("openingDebitBalance=?,");
         if (openingCreditBalance != null)
             query.append("openingCreditBalance=?,");
-        if (debitAmount != null)
-            query.append("debitAmount=?,");
-        if (creditAmount != null)
-            query.append("creditAmount=?,");
         if (accountDetailTypeId != null)
             query.append("accountDetailTypeId=?,");
         if (accountDetailKey != null)
@@ -194,10 +188,6 @@ public class TransactionSummary {
                 pstmt.setString(i++, openingDebitBalance);
             if (openingCreditBalance != null)
                 pstmt.setString(i++, openingCreditBalance);
-            if (debitAmount != null)
-                pstmt.setString(i++, debitAmount);
-            if (creditAmount != null)
-                pstmt.setString(i++, creditAmount);
             if (accountDetailTypeId != null)
                 pstmt.setString(i++, accountDetailTypeId);
             if (accountDetailKey != null)

@@ -366,13 +366,11 @@ public class SetUp extends AbstractTask {
                 pstBatch.setString(3, resultset.getString("glCodeId"));
                 pstBatch.setDouble(4, opDr);
                 pstBatch.setDouble(5, opCr);
-                pstBatch.setDouble(6, dr);
-                pstBatch.setDouble(7, cr);
-                pstBatch.setString(8, resultset.getString("fundId"));
-                pstBatch.setString(9, resultset.getString("departmentid"));
-                pstBatch.setString(10, userId);
-                pstBatch.setString(11, effectiveDate);
-                pstBatch.setString(12, resultset.getString("functionid"));
+                pstBatch.setString(6, resultset.getString("fundId"));
+                pstBatch.setString(7, resultset.getString("departmentid"));
+                pstBatch.setString(8, userId);
+                pstBatch.setString(9, effectiveDate);
+                pstBatch.setString(10, resultset.getString("functionid"));
                 pstBatch.addBatch();
 
                 LOGGER.debug("Query for insert txnsummary for non-control codes -" + query);
@@ -443,11 +441,9 @@ public class SetUp extends AbstractTask {
                 // pstBatch.clearBatch();
                 txnSumBatch = "INSERT INTO TransactionSummary (id, financialYearId, glcodeid, "
                         +
-                        "openingdebitbalance, openingcreditbalance, debitamount, "
+                        "openingdebitbalance, openingcreditbalance, accountdetailtypeid, ACCOUNTDETAILKEY, fundId,departmentid,lastmodifiedby,lastmodifieddate,functionid) "
                         +
-                        "creditamount, accountdetailtypeid, ACCOUNTDETAILKEY, fundId,departmentid,lastmodifiedby,lastmodifieddate,functionid) "
-                        +
-                        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?)";
+                        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?)";
                 pstBatch = connection.prepareStatement(txnSumBatch);
                 while (resultsetdtl.next()) {
                     LOGGER.debug("Inside the control code loop :Counter : " + counterSL + ".....Glcode :"
@@ -468,15 +464,13 @@ public class SetUp extends AbstractTask {
                     pstBatch.setString(3, resultsetdtl.getString("glCodeId"));
                     pstBatch.setDouble(4, opDr);
                     pstBatch.setDouble(5, opCr);
-                    pstBatch.setDouble(6, dr);
-                    pstBatch.setDouble(7, cr);
-                    pstBatch.setString(8, detailTypeId);
-                    pstBatch.setString(9, detailKeyId);
-                    pstBatch.setString(10, resultsetdtl.getString("fundId"));
-                    pstBatch.setString(11, resultsetdtl.getString("departmentid"));
-                    pstBatch.setString(12, userId);
-                    pstBatch.setString(13, effectiveDate);
-                    pstBatch.setString(14, resultsetdtl.getString("functionid"));
+                    pstBatch.setString(6, detailTypeId);
+                    pstBatch.setString(7, detailKeyId);
+                    pstBatch.setString(8, resultsetdtl.getString("fundId"));
+                    pstBatch.setString(9, resultsetdtl.getString("departmentid"));
+                    pstBatch.setString(10, userId);
+                    pstBatch.setString(11, effectiveDate);
+                    pstBatch.setString(12, resultsetdtl.getString("functionid"));
                     // LOGGER.error("before");
                     pstBatch.addBatch();
                     // LOGGER.error("after");
@@ -686,7 +680,7 @@ public class SetUp extends AbstractTask {
             // taking previous year opening balance for glcodes combination for which there is no txn and OPB in current year.
             final String qry1 = "SELECT id, glCodeId, openingDebitBalance AS \"dr\", "
                     +
-                    "openingCreditBalance AS \"cr\", debitAmount, creditAmount,accountDetailTypeId, "
+                    "openingCreditBalance AS \"cr\", accountDetailTypeId, "
                     +
                     "accountDetailKey, financialYearId, fundId,departmentid,functionid,(openingDebitBalance-openingCreditBalance)as \"balance\" FROM transactionSummary "
                     +
@@ -699,11 +693,9 @@ public class SetUp extends AbstractTask {
 
             query = "INSERT INTO TransactionSummary (id, financialYearId, glcodeid, "
                     +
-                    "openingdebitbalance, openingcreditbalance, debitamount, "
+                    "openingdebitbalance, openingcreditbalance,accountdetailtypeid, ACCOUNTDETAILKEY, fundId,departmentid,lastmodifiedby,lastmodifieddate,functionid) "
                     +
-                    "creditamount, accountdetailtypeid, ACCOUNTDETAILKEY, fundId,departmentid,lastmodifiedby,lastmodifieddate,functionid) "
-                    +
-                    "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?)";
+                    "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?,?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?)";
             pstBatch.clearBatch();
             pstBatch = connection.prepareStatement(query);
             if (LOGGER.isInfoEnabled())
@@ -721,15 +713,13 @@ public class SetUp extends AbstractTask {
                 pstBatch.setString(3, resultset.getString("glCodeId"));
                 pstBatch.setDouble(4, opDr);
                 pstBatch.setDouble(5, opCr);
-                pstBatch.setDouble(6, resultset.getDouble("debitAmount"));
-                pstBatch.setDouble(7, resultset.getDouble("creditAmount"));
-                pstBatch.setString(8, resultset.getString("accountDetailTypeId"));
-                pstBatch.setString(9, resultset.getString("accountDetailKey"));
-                pstBatch.setString(10, resultset.getString("fundId"));
-                pstBatch.setString(11, resultset.getString("departmentid"));
-                pstBatch.setString(12, userId);
-                pstBatch.setString(13, effectiveDate);
-                pstBatch.setString(14, resultset.getString("functionid"));
+                pstBatch.setString(6, resultset.getString("accountDetailTypeId"));
+                pstBatch.setString(7, resultset.getString("accountDetailKey"));
+                pstBatch.setString(8, resultset.getString("fundId"));
+                pstBatch.setString(9, resultset.getString("departmentid"));
+                pstBatch.setString(10, userId);
+                pstBatch.setString(11, effectiveDate);
+                pstBatch.setString(12, resultset.getString("functionid"));
                 pstBatch.addBatch();
 
                 if (counterOPBOnly == 50) {

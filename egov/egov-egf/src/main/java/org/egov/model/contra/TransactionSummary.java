@@ -68,8 +68,6 @@ public class TransactionSummary {
     private CChartOfAccounts glcodeid;
     private BigDecimal openingdebitbalance;
     private BigDecimal openingcreditbalance;
-    private BigDecimal debitamount;
-    private BigDecimal creditamount;
     private Integer accountdetailkey;
     private String narration;
     private User modifiedBy;
@@ -141,22 +139,6 @@ public class TransactionSummary {
 
     public void setOpeningcreditbalance(final BigDecimal openingcreditbalance) {
         this.openingcreditbalance = openingcreditbalance;
-    }
-
-    public BigDecimal getDebitamount() {
-        return debitamount;
-    }
-
-    public void setDebitamount(final BigDecimal debitamount) {
-        this.debitamount = debitamount;
-    }
-
-    public BigDecimal getCreditamount() {
-        return creditamount;
-    }
-
-    public void setCreditamount(final BigDecimal creditamount) {
-        this.creditamount = creditamount;
     }
 
     public Integer getAccountdetailkey() {

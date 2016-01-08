@@ -73,12 +73,6 @@
 		<property name="openingcreditbalance" type="java.math.BigDecimal">
 			<column name="OPENINGCREDITBALANCE" precision="15" not-null="true" />
 		</property>
-		<property name="debitamount" type="java.math.BigDecimal">
-			<column name="DEBITAMOUNT" precision="15" not-null="true" />
-		</property>
-		<property name="creditamount" type="java.math.BigDecimal">
-			<column name="CREDITAMOUNT" precision="15" not-null="true" />
-		</property>
 		<property name="accountdetailkey" type="integer">
 			<column name="ACCOUNTDETAILKEY" />
 		</property>
