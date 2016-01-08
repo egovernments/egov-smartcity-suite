@@ -188,13 +188,10 @@ var makeContractorDataTable = function() {
 }
 
 </script>
-<%@ include file="/includes/taglibs.jsp"%>
 <div class="errorstyle" id="contractor_error" style="display: none;"></div>
 <div class="new-page-header">
-	<s:text name="contractor.header" />
+	<s:text name="contractor.master.title" />
 </div>
-
-
 
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">
@@ -322,8 +319,8 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> Exempted
-				From </label>
+			<label class="col-sm-2 control-label text-right"> 
+			<s:text	name="contractor.exemptionFrom" /></label>
 			<div class="col-sm-3 add-margin">
 
 				<s:select headerKey="" headerValue="select" list="exmptionMap"
@@ -345,8 +342,8 @@ var makeContractorDataTable = function() {
 			<div class="form-group">
 						<div class="text-right add-margin">
 						<button class="btn btn-primary"
-						onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">Add
-						Contractor Detail</button>
+						onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">
+						<s:text name="contractor.addContractorDetail" /></button>
 				</div>
 
 
