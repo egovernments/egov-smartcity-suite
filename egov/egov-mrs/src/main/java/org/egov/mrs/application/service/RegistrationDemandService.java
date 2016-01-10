@@ -49,15 +49,18 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.mrs.application.Constants;
+import org.egov.mrs.domain.enums.FeeType;
+
 
 public class RegistrationDemandService extends DemandService {
 
     @Override
     public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
         final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
-        final Module module = moduleService.getModuleByName("MRS");
+        final Module module = moduleService.getModuleByName(Constants.MODULE_NAME);
         final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
-        final EgDemandReasonMaster demandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode("REG_FEE", module);
+        final EgDemandReasonMaster demandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(FeeType.REGISTRATION.name(), module);
         final EgDemandReason demandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster,
                 installment, module);
         demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));

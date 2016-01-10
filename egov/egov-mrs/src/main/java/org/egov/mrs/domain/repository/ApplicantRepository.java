@@ -49,7 +49,7 @@ import org.springframework.stereotype.Repository;
 public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
     Applicant findById(Long id);
 
-    Applicant findByFirstName(String firstName);
+    Applicant findByNameFirstName(String firstName);
 
     @Override
     List<Applicant> findAll();

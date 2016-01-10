@@ -71,7 +71,7 @@ public class ActService {
         return actRepository.findById(id);
     }
 
-    public List<Act> getAllAct() {
+    public List<Act> getActs() {
         return actRepository.findAll();
     }
 }

@@ -40,5 +40,5 @@
 package org.egov.mrs.domain.enums;
 
 public enum ReligionPractice {
-    BY_BIRTH, BY_ADOPTION
+    Birth, Adoption
 }

@@ -76,7 +76,7 @@ public class ReligionService {
         return religionRepository.findByName(religionName);
     }
 
-    public List<Religion> getAllReligion() {
+    public List<Religion> getReligions() {
         return religionRepository.findAll();
     }
 }

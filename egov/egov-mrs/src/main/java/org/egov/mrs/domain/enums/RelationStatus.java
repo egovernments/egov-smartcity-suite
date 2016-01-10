@@ -40,5 +40,5 @@
 package org.egov.mrs.domain.enums;
 
 public enum RelationStatus {
-    DIVORCED, UNMARRIED, WIDOWER, MARRIED
+    Divorced, Unmarried, Widower, Married
 }

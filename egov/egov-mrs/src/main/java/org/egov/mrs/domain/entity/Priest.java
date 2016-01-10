@@ -39,6 +39,7 @@
 
 package org.egov.mrs.domain.entity;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,41 +47,25 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egmrs_witness")
-@SequenceGenerator(name = Witness.SEQ_WITNESS, sequenceName = Witness.SEQ_WITNESS, allocationSize = 1)
+@Table(name = "egmrs_priest")
+@SequenceGenerator(name = Priest.SEQ_PRIEST, sequenceName = Priest.SEQ_PRIEST, allocationSize = 1)
 public class Priest extends AbstractAuditable {
 
     private static final long serialVersionUID = -3486065393428049965L;
-    private static final String SEQ_PRIEST = "SEQ_EGMRS_PRIEST";
+    public static final String SEQ_PRIEST = "SEQ_EGMRS_PRIEST";
 
     @Id
     @GeneratedValue(generator = SEQ_PRIEST, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 30)
-    private String firstName;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 20)
-    private String middleName;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 20)
-    private String lastName;
+    @Embedded
+    private Name name;
 
     @NotNull
     @SafeHtml
@@ -91,27 +76,8 @@ public class Priest extends AbstractAuditable {
     @Length(min = 30)
     private Integer age;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 150)
-    private String residenceAddress;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 150)
-    private String officeAddress;
-
-    @Pattern(regexp = Constants.MOBILE_NUM)
-    @SafeHtml
-    @Length(max = 15)
-    @Audited
-    private Integer mobileNo;
-
-    @SafeHtml
-    @Audited
-    @Length(max = 128)
-    @Email(regexp = Constants.EMAIL)
-    private String email;
+    @Embedded
+    private Contact contactInfo;
 
     @SafeHtml
     @Length(max = 20)
@@ -125,30 +91,6 @@ public class Priest extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(final String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
     }
 
     public String getReligion() {
@@ -167,44 +109,20 @@ public class Priest extends AbstractAuditable {
         this.age = age;
     }
 
-    public String getResidenceAddress() {
-        return residenceAddress;
-    }
-
-    public void setResidenceAddress(final String residenceAddress) {
-        this.residenceAddress = residenceAddress;
-    }
-
-    public String getOfficeAddress() {
-        return officeAddress;
-    }
-
-    public void setOfficeAddress(final String officeAddress) {
-        this.officeAddress = officeAddress;
-    }
-
-    public Integer getMobileNo() {
-        return mobileNo;
-    }
-
-    public void setMobileNo(final Integer mobileNo) {
-        this.mobileNo = mobileNo;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
-    }
-
     public String getAadhaarNo() {
         return aadhaarNo;
     }
 
     public void setAadhaarNo(final String aadhaarNo) {
         this.aadhaarNo = aadhaarNo;
+    }
+
+    public Contact getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(final Contact contactInfo) {
+        this.contactInfo = contactInfo;
     }
 
 }

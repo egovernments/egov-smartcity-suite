@@ -40,25 +40,37 @@
 package org.egov.mrs.domain.entity;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.masters.entity.Act;
-import org.egov.mrs.masters.entity.Religion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egmrs_religion")
-@SequenceGenerator(name = Religion.SEQ_RELIGION, sequenceName = Religion.SEQ_RELIGION, allocationSize = 1)
+@Table(name = "egmrs_registration")
+@SequenceGenerator(name = Registration.SEQ_REGISTRATION, sequenceName = Registration.SEQ_REGISTRATION, allocationSize = 1)
 public class Registration extends StateAware {
 
     private static final long serialVersionUID = 6743094118312883758L;
@@ -86,25 +98,28 @@ public class Registration extends StateAware {
 
     @NotNull
     @Valid
-    private Applicant husband;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "husband")
+    private Applicant husband = new Applicant();
 
     @NotNull
     @Valid
-    private Applicant wife;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wife")
+    private Applicant wife = new Applicant();
 
     @NotNull
     @Valid
-    private Witness firstWitness;
-
-    @NotNull
-    private Witness secondWitness;
-
-    private Witness thirdWitness;
+    @OneToMany(mappedBy = "registration")
+    private List<Witness> witnesses = new LinkedList<Witness>();
 
     @NotNull
     @Valid
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "priest")
     private Priest priest;
-    private boolean coupleFromSamePlace = Boolean.FALSE;
+
+    private boolean coupleFromSamePlace;
 
     private byte[] memorandumOfMarriage;
     private byte[] courtFeeStamp;
@@ -116,6 +131,26 @@ public class Registration extends StateAware {
 
     @NotNull
     private String feePaid;
+    
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone")
+    private Boundary zone;
+    
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
+    
+    @NotNull
+    @Length(max = 30)
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
+    
+    @Length(max = 256)
+    private String rejectionReason;
+    
+    @Length(max = 256)
+    private String remakrs;
 
     @Override
     public Long getId() {
@@ -183,30 +218,6 @@ public class Registration extends StateAware {
         this.wife = wife;
     }
 
-    public Witness getFirstWitness() {
-        return firstWitness;
-    }
-
-    public void setFirstWitness(final Witness firstWitness) {
-        this.firstWitness = firstWitness;
-    }
-
-    public Witness getSecondWitness() {
-        return secondWitness;
-    }
-
-    public void setSecondWitness(final Witness secondWitness) {
-        this.secondWitness = secondWitness;
-    }
-
-    public Witness getThirdWitness() {
-        return thirdWitness;
-    }
-
-    public void setThirdWitness(final Witness thirdWitness) {
-        this.thirdWitness = thirdWitness;
-    }
-
     public Priest getPriest() {
         return priest;
     }
@@ -246,12 +257,12 @@ public class Registration extends StateAware {
     public void setMarriageCard(final byte[] marriageCard) {
         this.marriageCard = marriageCard;
     }
-    
+
     public boolean isCoupleFromSamePlace() {
         return coupleFromSamePlace;
     }
 
-    public void setCoupleFromSamePlace(boolean coupleFromSamePlace) {
+    public void setCoupleFromSamePlace(final boolean coupleFromSamePlace) {
         this.coupleFromSamePlace = coupleFromSamePlace;
     }
 
@@ -270,6 +281,23 @@ public class Registration extends StateAware {
     public void setFeePaid(final String feePaid) {
         this.feePaid = feePaid;
     }
+
+    public List<Witness> getWitnesses() {
+        return witnesses;
+    }
+
+    public void setWitnesses(final List<Witness> witnesses) {
+        this.witnesses = witnesses;
+    }
+
+    public Boundary getZone() {
+        return zone;
+    }
+
+    public void setZone(Boundary zone) {
+        this.zone = zone;
+    }
+    
 
     @Override
     public String getStateDetails() {

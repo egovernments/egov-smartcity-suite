@@ -39,19 +39,19 @@
 
 package org.egov.mrs.domain.entity;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -67,20 +67,8 @@ public class Witness extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_WITNESS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 30)
-    private String firstName;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 20)
-    private String middleName;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 20)
-    private String lastName;
+    @Embedded
+    private Name name;
 
     @NotNull
     @SafeHtml
@@ -92,34 +80,20 @@ public class Witness extends AbstractAuditable {
     @Length(max = 30)
     private String relationshipWithApplicant;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 150)
-    private String residenceAddress;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 150)
-    private String officeAddress;
-
-    @Pattern(regexp = Constants.MOBILE_NUM)
-    @SafeHtml
-    @Length(max = 15)
-    @Audited
-    private Integer mobileNo;
-
-    @SafeHtml
-    @Audited
-    @Length(max = 128)
-    @Email(regexp = Constants.EMAIL)
-    private String email;
-
     @SafeHtml
     @Length(max = 20)
     private String aadhaarNo;
 
     private byte[] signature;
     private byte[] photo;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registration")
+    private Registration registration;
+
+    @Embedded
+    private Contact contactInfo;
 
     @Override
     public Long getId() {
@@ -131,28 +105,12 @@ public class Witness extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Name getName() {
+        return name;
     }
 
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(final String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
+    public void setName(final Name name) {
+        this.name = name;
     }
 
     public String getOccupation() {
@@ -169,38 +127,6 @@ public class Witness extends AbstractAuditable {
 
     public void setRelationshipWithApplicant(final String relationshipWithApplicant) {
         this.relationshipWithApplicant = relationshipWithApplicant;
-    }
-
-    public String getResidenceAddress() {
-        return residenceAddress;
-    }
-
-    public void setResidenceAddress(final String residenceAddress) {
-        this.residenceAddress = residenceAddress;
-    }
-
-    public String getOfficeAddress() {
-        return officeAddress;
-    }
-
-    public void setOfficeAddress(final String officeAddress) {
-        this.officeAddress = officeAddress;
-    }
-
-    public Integer getMobileNo() {
-        return mobileNo;
-    }
-
-    public void setMobileNo(final Integer mobileNo) {
-        this.mobileNo = mobileNo;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
     }
 
     public String getAadhaarNo() {
@@ -225,5 +151,21 @@ public class Witness extends AbstractAuditable {
 
     public void setPhoto(final byte[] photo) {
         this.photo = photo;
+    }
+
+    public Registration getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(final Registration registration) {
+        this.registration = registration;
+    }
+
+    public Contact getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(final Contact contactInfo) {
+        this.contactInfo = contactInfo;
     }
 }

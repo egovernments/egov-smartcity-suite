@@ -39,24 +39,27 @@
 
 package org.egov.mrs.domain.entity;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
 import org.egov.mrs.domain.enums.RelationStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.masters.entity.Religion;
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -72,27 +75,16 @@ public class Applicant extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 30)
-    private String firstName;
+    @Embedded
+    private Name name;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 20)
-    private String middleName;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 20)
-    private String lastName;
-
-    @NotNull
     @SafeHtml
     @Length(max = 20)
     private String otherName;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "religion")
     private Religion religion;
 
     @NotNull
@@ -100,10 +92,10 @@ public class Applicant extends AbstractAuditable {
     private ReligionPractice religionPractice;
 
     @NotNull
-    @Length(min = 1)
     private Integer ageInYearsAsOnMarriage;
 
     @NotNull
+    @Length(min = 1)
     private Integer ageInMonthsAsOnMarriage;
 
     @NotNull
@@ -112,30 +104,8 @@ public class Applicant extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(max = 150)
-    private String residenceAddress;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 150)
-    private String officeAddress;
-
-    @NotNull
-    @SafeHtml
     @Length(max = 60)
     private String occupation;
-
-    @Pattern(regexp = Constants.MOBILE_NUM)
-    @SafeHtml
-    @Length(max = 15)
-    @Audited
-    private Integer mobileNo;
-
-    @SafeHtml
-    @Audited
-    @Length(max = 128)
-    @Email(regexp = Constants.EMAIL)
-    private String email;
 
     @SafeHtml
     @Length(max = 20)
@@ -143,6 +113,15 @@ public class Applicant extends AbstractAuditable {
 
     private byte[] photo;
     private byte[] signature;
+
+    @NotNull
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "proofsattached")
+    private IdentityProof proofsAttached;
+
+    @Embedded
+    private Contact contactInfo;
 
     @Override
     public Long getId() {
@@ -152,30 +131,6 @@ public class Applicant extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(final String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
     }
 
     public String getOtherName() {
@@ -226,44 +181,12 @@ public class Applicant extends AbstractAuditable {
         this.presentRelation = presentRelation;
     }
 
-    public String getResidenceAddress() {
-        return residenceAddress;
-    }
-
-    public void setResidenceAddress(final String residenceAddress) {
-        this.residenceAddress = residenceAddress;
-    }
-
-    public String getOfficeAddress() {
-        return officeAddress;
-    }
-
-    public void setOfficeAddress(final String officeAddress) {
-        this.officeAddress = officeAddress;
-    }
-
     public String getOccupation() {
         return occupation;
     }
 
     public void setOccupation(final String occupation) {
         this.occupation = occupation;
-    }
-
-    public Integer getMobileNo() {
-        return mobileNo;
-    }
-
-    public void setMobileNo(final Integer mobileNo) {
-        this.mobileNo = mobileNo;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
     }
 
     public String getAadhaarNo() {
@@ -290,4 +213,27 @@ public class Applicant extends AbstractAuditable {
         this.photo = photo;
     }
 
+    public Name getName() {
+        return name;
+    }
+
+    public void setName(final Name name) {
+        this.name = name;
+    }
+
+    public IdentityProof getProofsAttached() {
+        return proofsAttached;
+    }
+
+    public void setProofsAttached(final IdentityProof proofsAttached) {
+        this.proofsAttached = proofsAttached;
+    }
+
+    public Contact getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(final Contact contactInfo) {
+        this.contactInfo = contactInfo;
+    }
 }
