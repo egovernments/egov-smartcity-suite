@@ -280,11 +280,10 @@ function recalculateOverHeadTotalsOnDelete(record){
 		<div class="panel-title">
 		   Overheads
 		   <div class="pull-right">
-		   
-		      <button class="btn btn-primary" onClick='recalculateOverheads();'>
-		       <i class="fa fa-retweet"></i> Recalculate
-		      </button>
-		      		   
+		    <a href="javascript:void(0);" class="btn btn-primary" 
+	   	       onclick="recalculateOverheads();">
+	   	       Recalculate
+	   	    </a>
 		   </div>
 		</div>
 	</div>
