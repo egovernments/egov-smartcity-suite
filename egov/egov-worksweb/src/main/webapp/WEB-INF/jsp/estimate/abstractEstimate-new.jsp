@@ -50,7 +50,7 @@ body
 <body onload="onPageLoad()" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
-jQuery.noConflict();
+var jQuery=jQuery.noConflict();
 
 window.history.forward(1);
 function noBack() {
@@ -220,7 +220,6 @@ function hideOverheadsTab(){
 }
 
 function validateDataBeforeSubmit(abstractEstimateForm) {
-	setupDocNumberBeforeSave();
     return validateHeaderBeforeSubmit(abstractEstimateForm) && validateMultiYearEstimateForm();
 }
 
@@ -265,9 +264,7 @@ function validateCancel() {
 		return true;
 	}
 }
-function viewDocument(){
-	  viewDocumentManager(dom.get("docNumber").value); 
-}
+
 function onSubmit() {
 	action = document.getElementById("workFlowAction").value;
 	return validate(action);
