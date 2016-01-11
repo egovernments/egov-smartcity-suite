@@ -39,11 +39,16 @@
  ******************************************************************************/
 package org.egov.adtax.workflow;
 
-import org.egov.adtax.entity.AdvertisementPermitDetail;;
+import javax.transaction.Transactional;
+
+import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;;
 
 /**
  * The Class ApplicationCommonWorkflow.
  */
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
 
     public ApplicationWorkflowCustomDefaultImpl() {
@@ -51,7 +56,8 @@ public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCus
     }
 
     @Override
-    public void createCommonWorkflowTransition(final AdvertisementPermitDetail advertisementPermitDetail,
+    @Transactional
+    public void createCommonWorkflowTransition(AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
         super.createCommonWorkflowTransition(advertisementPermitDetail, approvalPosition, approvalComent, additionalRule,

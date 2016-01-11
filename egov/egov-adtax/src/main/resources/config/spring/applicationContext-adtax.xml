@@ -49,6 +49,8 @@
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 
     <context:component-scan base-package="org.egov.adtax" />
-
+	
+	<bean id="applicationWorkflowCustomDefaultImpl" class="org.egov.adtax.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype"/>
+	
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>

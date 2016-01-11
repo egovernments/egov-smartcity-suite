@@ -67,5 +67,11 @@ public class AdvertisementTaxConstants {
     public static final String APPLICATION_STATUS_ADTAXAMOUNTPAID="ADTAXAMOUNTPAID";
     public static final String APPLICATION_STATUS_ADTAXPERMITGENERATED="ADTAXPERMITGENERATED";
     
+    public static final String WF_APPROVE_BUTTON="Approve";
+    public static final String WF_REJECT_BUTTON="REJECT";
+    public static final String WF_NEW_STATE="NEW";
+    public static final String WF_REJECT_STATE="Rejected";
+    public static final String WF_END_STATE="END";
+    public static final String NATURE_OF_WORK="CREATEADVERTISEMENT";
     
 }

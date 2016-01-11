@@ -80,9 +80,9 @@
 </div>
 <script>
 //this is to reset the sub combobox upon field error
-var subcategory = '${hoarding.subCategory.id}';
-var adminBoundry = '${hoarding.ward.id}';
-var revenueBoundary = '${hoarding.locality.id}';
+var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
+var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
+var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

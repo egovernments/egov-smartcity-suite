@@ -64,6 +64,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class AdvertisementPermitDetailService {
 
     private final AdvertisementPermitDetailRepository advertisementPermitDetailRepository;
@@ -81,7 +82,7 @@ public class AdvertisementPermitDetailService {
     private AdvertisementDemandService advertisementDemandService;
     
     @Autowired
-    private ApplicationContext context;
+    private ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl;
     
     @Autowired
     public EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -101,7 +102,6 @@ public class AdvertisementPermitDetailService {
     //    advertisementPermitDetail.setPermissionenddate(new LocalDate().plusYears(1).toDate());
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
         if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
-            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         }
@@ -109,16 +109,12 @@ public class AdvertisementPermitDetailService {
     }
 
     @Transactional
-    public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
+    public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) throws HoardingValidationError {
+        final boolean anyDemandPendingForCollection = advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail);
 
-        getCurrentSession().evict(advertisementPermitDetail);
-
-        final AdvertisementPermitDetail actualHoarding = getAdvertisementPermitDetailsByApplicationNumber(advertisementPermitDetail.getApplicationNumber());
-        final boolean anyDemandPendingForCollection = advertisementDemandService
-                .anyDemandPendingForCollection(actualHoarding);
-
-         if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection)
-            throw new HoardingValidationError("agency", "ADTAX.001");
+         /*if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection)
+            throw new HoardingValidationError("agency", "ADTAX.001");*/
         // If demand already collected for the current year, fee updated from
         // UI, do not update demand details. Update only fee details of hoarding.
         // We should not allow user to update demand if any collection happened in
@@ -129,17 +125,23 @@ public class AdvertisementPermitDetailService {
                         || checkEncroachmentFeeChanged(hoarding, actualHoarding) || checkPendingTaxChanged(hoarding,
                             actualHoarding)))
             throw new HoardingValidationError("taxAmount", "ADTAX.002");*/
-        if (!actualHoarding.getStatus().equals(advertisementPermitDetail.getStatus())
+       /* if (!actualHoarding.getStatus().equals(advertisementPermitDetail.getStatus())
                 && advertisementPermitDetail.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection)
-            throw new HoardingValidationError("status", "ADTAX.003");
+            throw new HoardingValidationError("status", "ADTAX.003");*/
 
         // If demand pending for collection, then only update demand details.
         // If demand fully paid and user changed tax details, then no need to
         // update demand details.
         if (anyDemandPendingForCollection)
-            advertisementDemandService.updateDemand(advertisementPermitDetail, actualHoarding.getAdvertisement().getDemandId());
+            advertisementDemandService.updateDemand(advertisementPermitDetail, advertisementPermitDetail.getAdvertisement().getDemandId());
         roundOfAllTaxAmount(advertisementPermitDetail);
-        return advertisementPermitDetailRepository.save(advertisementPermitDetail);
+       // advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        entityManager.merge(advertisementPermitDetail);
+        if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
+                    approvalPosition, approvalComent, additionalRule, workFlowAction);
+        }
+        return advertisementPermitDetail;
     }
 
     private void roundOfAllTaxAmount(final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -185,14 +187,6 @@ public class AdvertisementPermitDetailService {
 
     public AdvertisementPermitDetail findBy(final Long advPermitId) {
         return advertisementPermitDetailRepository.findOne(advPermitId);
-    }
-    
-    public ApplicationWorkflowCustomDefaultImpl getInitialisedWorkFlowBean() {
-        ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = null;
-        if (null != context)
-            applicationWorkflowCustomDefaultImpl = (ApplicationWorkflowCustomDefaultImpl) context
-                    .getBean("applicationWorkflowCustomDefaultImpl");
-        return applicationWorkflowCustomDefaultImpl;
     }
     
     public EgwStatus getStatusByModuleAndCode(String code) {

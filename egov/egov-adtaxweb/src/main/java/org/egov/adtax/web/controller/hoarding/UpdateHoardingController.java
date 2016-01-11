@@ -39,50 +39,70 @@
 package org.egov.adtax.web.controller.hoarding;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
 public class UpdateHoardingController extends HoardingControllerSupport {
 
-    @ModelAttribute("hoarding")
-    public AdvertisementPermitDetail hoarding(@PathVariable final String applicationNumber) {
-        return advertisementPermitDetailService.getAdvertisementPermitDetailsByApplicationNumber(applicationNumber);
+    @ModelAttribute("advertisementPermitDetail")
+    public AdvertisementPermitDetail hoarding(@PathVariable final String id) {
+        return advertisementPermitDetailService.findBy(Long.valueOf(id));
     }
 
-    @RequestMapping(value = "update/{applicationNumber}")
-    public String updateHoarding(@PathVariable final String applicationNumber, final Model model) {
-        final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.getAdvertisementPermitDetailsByApplicationNumber(applicationNumber);
-        
+    @RequestMapping(value = "/update/{id}", method = GET)
+    public String updateHoarding(@PathVariable final String id, final Model model) {
+        final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
-        model.addAttribute("hoarding", advertisementPermitDetail);
+        model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
+        model.addAttribute("additionalRule","CREATEADVERTISEMENT");
+        model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+        model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
+        prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+        model.addAttribute("agency", advertisementPermitDetail.getAgency());
+        model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
         return "hoarding-update";
     }
 
-    @RequestMapping(value = "update/{applicationNumber}", method = POST)
-    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+    @RequestMapping(value = "update/{id}", method = POST)
+    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request, final Model model,
+            @RequestParam String workFlowAction) {
      
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder,redirAttrib);
               
         if (resultBinder.hasErrors())
             return "hoarding-update";
         try {
+            Long approvalPosition = 0l;
+            String approvalComment = "";
+            if (request.getParameter("approvalComent") != null)
+                approvalComment = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            
             updateHoardingDocuments(advertisementPermitDetail);
-            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail);
+            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail,approvalPosition,
+                    approvalComment, "CREATEADVERTISEMENT", workFlowAction);
             redirAttrib.addFlashAttribute("message", "hoarding.update.success");
-            return "redirect:/hoarding/view/" + advertisementPermitDetail.getApplicationNumber();
+            return "redirect:/hoarding/view/" + advertisementPermitDetail.getId();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return "hoarding-update";

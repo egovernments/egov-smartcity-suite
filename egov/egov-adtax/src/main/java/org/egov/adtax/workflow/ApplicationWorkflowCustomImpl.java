@@ -39,11 +39,14 @@
  ******************************************************************************/
 package org.egov.adtax.workflow;
 
-
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.egov.adtax.service.AdvertisementPermitDetailService;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -62,58 +65,74 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationWorkflowCustomImpl.class);
 
-
     @Autowired
     private SecurityUtils securityUtils;
-
 
     @Autowired
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private AdvertisementPermitDetailService advertisementPermitDetailService;
-    
-
-    
-    @Autowired
     private SimpleWorkflowService<AdvertisementPermitDetail> advertisementPermitDetailWorkflowService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
     @Autowired
     public ApplicationWorkflowCustomImpl() {
 
     }
 
     @Override
+    @Transactional
     public void createCommonWorkflowTransition(final AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
-        if(LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        String currState = "";
-        String natureOfwork="CREATEHOARDING";
-         
-            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
-                pos = positionMasterService.getPositionById(approvalPosition);
-            WorkFlowMatrix wfmatrix = null;
-            if (null == advertisementPermitDetail.getState()) {
-                wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                        null, additionalRule, currState, null);
-                advertisementPermitDetail.transition().start().withSenderName(user.getUsername() + "::"+ user.getName()).withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-            } else if ("Approve".equalsIgnoreCase(workFlowAction)) {
-                
-                wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                        null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-               
-                if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    advertisementPermitDetail.transition(true).end().withSenderName(user.getUsername() + "::"+ user.getName())
-                    .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            } 
-        if(LOG.isDebugEnabled())
-            LOG.debug(" WorkFlow Transition Completed  ...");
+        final Assignment wfInitiator = assignmentService
+                .getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
+        if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+            pos = positionMasterService.getPositionById(approvalPosition);
+        WorkFlowMatrix wfmatrix = null;
+        if (null == advertisementPermitDetail.getState()) {
+            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                    null, additionalRule, AdvertisementTaxConstants.WF_NEW_STATE, null);
+            advertisementPermitDetail.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+        } else if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+
+            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+
+            if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
+                advertisementPermitDetail.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
+                        .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+        } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                    null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
+
+            advertisementPermitDetail.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction())
+                    .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+
+        } else {
+            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+            advertisementPermitDetail.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+        }
+        if (LOG.isDebugEnabled())
+            LOG.debug(" WorkFlow Transition Completed ");
     }
-    
+
 }

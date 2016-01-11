@@ -53,6 +53,7 @@ import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
@@ -74,6 +75,9 @@ import com.google.gson.GsonBuilder;
 public class SearchHoardingController extends GenericController {
 
     private final AdvertisementService hoardingService;
+    
+    @Autowired
+    private AdvertisementPermitDetailService advertisementPermitDetailService;
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -130,9 +134,9 @@ public class SearchHoardingController extends GenericController {
                 .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";
     }
 
-    @RequestMapping(value = "view/{hoardingNumber}")
-    public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        model.addAttribute("hoarding", hoardingService.getHoardingByAdvertisementNumber(hoardingNumber));
+    @RequestMapping(value = "view/{id}")
+    public String viewHoarding(@PathVariable final String id, final Model model) {
+        model.addAttribute("advertisementPermitDetail", advertisementPermitDetailService.findBy(Long.valueOf(id)));
         return "hoarding-view";
     }
 

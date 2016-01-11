@@ -22,7 +22,7 @@
 				<div class="panel-heading">
 					<div class="panel-title text-center">
 						<spring:message code="hoarding.create.success" />
-						<span ><spring:message code="msg.sussess.forward" />${approverName}~${nextDesign}</span>
+						<span ><spring:message code="msg.success.forward" />${approverName}~${nextDesign}</span>
 					</div>
 				</div>
 			</div>
