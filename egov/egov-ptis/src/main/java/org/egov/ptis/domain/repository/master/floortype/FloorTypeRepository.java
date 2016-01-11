@@ -37,43 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.ptis.master.service;
+package org.egov.ptis.domain.repository.master.floortype;
 
 import java.util.List;
 
-import org.egov.ptis.domain.entity.property.WallType;
-import org.egov.ptis.domain.repository.master.wallType.WallTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.egov.ptis.domain.entity.property.FloorType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * Service for WallType Master
- */
-@Service
-public class PropertyWallService {
+@Repository
+public interface FloorTypeRepository extends JpaRepository<FloorType, Long> {
 
-    private final WallTypeRepository wallTypeRepository;
+    FloorType findByName(String name);
 
-    @Autowired
-    public PropertyWallService(final WallTypeRepository wallTypeRepository) {
-        this.wallTypeRepository = wallTypeRepository;
-    }
-
-    public WallType create(WallType wallType) {
-        wallTypeRepository.save(wallType);
-        return wallType;
-    }
-
-    public WallType getWallTypeByName(String name) {
-        return wallTypeRepository.findByName(name);
-    }
-
-    public WallType getWallTypeById(Long id) {
-        return wallTypeRepository.findOne(id);
-    }
-
-    public List<WallType> getAllWalls() {
-        return wallTypeRepository.findAll();
-    }
+    List<FloorType> findByNameContainingIgnoreCase(String name);
 
 }

@@ -55,7 +55,7 @@
 
 		<form:form method="post" class="form-horizontal form-groups-bordered"
 			id="floortypeform" modelAttribute="floorType"
-			action="/ptis/floorType/create">
+			action="/ptis/floortype/create">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

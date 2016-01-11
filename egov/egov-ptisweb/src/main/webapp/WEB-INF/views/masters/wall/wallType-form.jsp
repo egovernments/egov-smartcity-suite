@@ -56,7 +56,7 @@
 
 		<form:form method="post" class="form-horizontal form-groups-bordered"
 			id="walltypeform" modelAttribute="wallType"
-			action="/ptis/wallType/create">
+			action="/ptis/walltype/create">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
