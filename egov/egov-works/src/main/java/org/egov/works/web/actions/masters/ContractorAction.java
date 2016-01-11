@@ -53,16 +53,12 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Accountdetailkey;
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -74,16 +70,16 @@ import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-    @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
-    @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
-    @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
-    @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
+        @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
+        @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
+        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
+        @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
+        @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
 })
+
 public class ContractorAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3167651186547987956L;
@@ -104,10 +100,6 @@ public class ContractorAction extends SearchFormAction {
     private List<ContractorDetail> actionContractorDetails = new LinkedList<ContractorDetail>();
     private Long id;
     private String mode;
-    @Autowired
-    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-    @Autowired
-    private RoleService roleService;
 
     @Autowired
     private UserService userService;
@@ -183,7 +175,12 @@ public class ContractorAction extends SearchFormAction {
     public String save() {
         populateContractorDetails(mode);
         contractor = contractorService.persist(contractor);
-        createAccountDetailKey(contractor);
+        if (mode == null || mode.equals(""))
+            contractorService.createAccountDetailKey(contractor);
+
+        // TODO:Fixme - Added temporarily since AccountDetailKey was not persisting. Need to find the fix for this and remove
+        // below line of code
+        contractorService.persist(contractor);
         addActionMessage(getText("contractor.save.success"));
         return INDEX;
 
@@ -208,17 +205,6 @@ public class ContractorAction extends SearchFormAction {
         contractorService.searchContractor(createCriteriaMap());
         return SEARCH;
 
-    }
-
-    @Transactional
-    protected void createAccountDetailKey(final Contractor cont) {
-        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
-        final Accountdetailkey adk = new Accountdetailkey();
-        adk.setGroupid(1);
-        adk.setDetailkey(cont.getId().intValue());
-        adk.setDetailname(accountdetailtype.getAttributename());
-        adk.setAccountdetailtype(accountdetailtype);
-        accountdetailkeyHibernateDAO.create(adk);
     }
 
     protected void populateContractorDetails(final String mode) {

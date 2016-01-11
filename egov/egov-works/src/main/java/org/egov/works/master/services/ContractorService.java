@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.validation.exception.ValidationException;
@@ -62,10 +65,15 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
+
     private final Logger logger = Logger.getLogger(getClass());
+    @Autowired
     private WorksService worksService;
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
@@ -76,6 +84,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public static final Map<String, String> exemptionForm = new LinkedHashMap<String, String>() {
 
         private static final long serialVersionUID = 408579850562980945L;
+
         {
             put(ExemptionForm.INCOME_TAX.toString(), ExemptionForm.INCOME_TAX.toString().replace("_", " "));
             put(ExemptionForm.EARNEST_MONEY_DEPOSIT.toString(), ExemptionForm.EARNEST_MONEY_DEPOSIT.toString().replace("_", " "));
@@ -232,7 +241,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     }
 
     public void searchContractor(final Map<String, Object> criteriaMap) {
-        if(logger.isDebugEnabled())
+        if (logger.isDebugEnabled())
             logger.debug("Inside searchContractor");
         final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
         final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
@@ -261,11 +270,21 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
 
         if (searchDate != null)
             criteria.add(Restrictions.le("detail.validity.startDate", searchDate))
-            .add(Restrictions.or(Restrictions.ge("detail.validity.endDate", searchDate),
-                    Restrictions.isNull("detail.validity.endDate")));
+                    .add(Restrictions.or(Restrictions.ge("detail.validity.endDate", searchDate),
+                            Restrictions.isNull("detail.validity.endDate")));
 
         criteria.addOrder(Order.asc("name"));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         criteria.list();
+    }
+
+    public void createAccountDetailKey(final Contractor cont) {
+        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(cont.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
     }
 }
