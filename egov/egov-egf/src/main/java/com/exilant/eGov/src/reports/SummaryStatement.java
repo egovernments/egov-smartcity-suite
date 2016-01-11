@@ -279,10 +279,10 @@ public class SummaryStatement {
                         + " ORDER BY \"WORKNUMBER\",\"Head Of Account\" ASC ";
 
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
-                pst.setString(1, FinancialYear);
-                pst.setString(2, WORKNUMBER);
-                pst.setString(3, glcodeIDParam);
-                pst.setString(4, sDate);
+                pst.setString(0, FinancialYear);
+                pst.setString(1, WORKNUMBER);
+                pst.setString(2, glcodeIDParam);
+                pst.setString(3, sDate);
                 resultset1 = pst.list();
                 // if(LOGGER.isInfoEnabled()) LOGGER.info("Query2 for Expenses for Beginning of the month---------->"+query1);
                 for (final Object[] element1 : resultset1) {

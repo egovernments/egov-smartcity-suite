@@ -454,8 +454,8 @@ public class JbReport
             final String query = "SELECT id FROM financialYear " +
                     "WHERE startingDate<= ? AND endingDate>= ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pst.setString(0, sDate);
             pst.setString(1, sDate);
-            pst.setString(2, sDate);
 
             // for accross the financial year
             resultset = pst.list();
@@ -564,8 +564,8 @@ public class JbReport
             try {
                 final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pst.setString(0, endDate);
                 pst.setString(1, endDate);
-                pst.setString(2, endDate);
                 rs = pst.list();
                 for (final Object[] element : rs)
                     startDate = element[0].toString();
@@ -581,8 +581,8 @@ public class JbReport
                 final String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" " +
                         "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pst.setString(0, startDate);
                 pst.setString(1, startDate);
-                pst.setString(2, startDate);
                 rs = pst.list();
                 for (final Object[] element : rs)
                     endDate = element[0].toString();

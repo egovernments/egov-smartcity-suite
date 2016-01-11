@@ -409,29 +409,28 @@ public class VoucherHeader {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pst.setString(1, id);
-            pst.setString(2, cgn);
-            pst.setString(3, cgDate);
-            pst.setString(4, name);
-            pst.setString(5, type);
-            pst.setString(6, description);
-            pst.setString(7, effectiveDate);
-            pst.setString(8, voucherNumber.toUpperCase());
-            pst.setString(9, voucherDate);
-            pst.setString(10, departmentId);
-            pst.setString(11, fundId);
-            pst.setString(12, fiscalPeriodId);
-            pst.setString(13, status);
-            pst.setString(14, originalVcId);
-            pst.setString(15, fundSourceId);
-            pst.setString(16, isConfirmed);
-            pst.setString(17, createdby);
-            pst.setString(18, functionId);
-            pst.setString(19, refCgno);
-            pst.setString(20, cgvn);
-            pst.setString(21, moduleId);
-            pst.setString(22, lastModifiedDate);
-
+            pst.setString(0, id);
+            pst.setString(1, cgn);
+            pst.setString(2, cgDate);
+            pst.setString(3, name);
+            pst.setString(4, type);
+            pst.setString(5, description);
+            pst.setString(6, effectiveDate);
+            pst.setString(7, voucherNumber.toUpperCase());
+            pst.setString(8, voucherDate);
+            pst.setString(9, departmentId);
+            pst.setString(10, fundId);
+            pst.setString(11, fiscalPeriodId);
+            pst.setString(12, status);
+            pst.setString(13, originalVcId);
+            pst.setString(14, fundSourceId);
+            pst.setString(15, isConfirmed);
+            pst.setString(16, createdby);
+            pst.setString(17, functionId);
+            pst.setString(18, refCgno);
+            pst.setString(19, cgvn);
+            pst.setString(20, moduleId);
+            pst.setString(21, lastModifiedDate);
             pst.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error("Exception in insert " + e.getMessage(), e);
@@ -584,7 +583,7 @@ public class VoucherHeader {
 
         final String query = "select id from voucherheader where cgvn= ?";
         final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-        pst.setString(1, cgvn);
+        pst.setString(0, cgvn);
         if (LOGGER.isInfoEnabled())
             LOGGER.info(query);
         final List<Object[]> resultset = pst.list();
@@ -620,7 +619,7 @@ public class VoucherHeader {
         vh.update();
 
         // Check if there is any related vouchers
-        ps.setString(1, vid);
+        ps.setString(0, vid);
         rs = ps.list();
         // if(LOGGER.isInfoEnabled()) LOGGER.info("if any related vouchers exist then we need to  that also.");
         for (final Object[] element : rs) {

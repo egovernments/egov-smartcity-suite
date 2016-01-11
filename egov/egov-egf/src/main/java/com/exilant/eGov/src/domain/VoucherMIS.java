@@ -122,20 +122,20 @@ public class VoucherMIS {
             LOGGER.info(insertQuery);
         try {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pst.setString(1, id);
-            pst.setString(2, voucherheaderid);
-            pst.setString(3, divisionId);
-            pst.setString(4, createTimeStamp);
-            pst.setString(5, fundsourceid);
-            pst.setString(6, segmentId);
-            pst.setString(7, subSegmentId);
-            pst.setString(8, departmentId);
-            pst.setString(9, scheme);
-            pst.setString(10, subscheme);
-            pst.setString(11, functionary);
-            pst.setString(12, sourcePath);
-            pst.setString(13, budgetaryAppnumber);
-            pst.setString(14, function);
+            pst.setString(0, id);
+            pst.setString(1, voucherheaderid);
+            pst.setString(2, divisionId);
+            pst.setString(3, createTimeStamp);
+            pst.setString(4, fundsourceid);
+            pst.setString(5, segmentId);
+            pst.setString(6, subSegmentId);
+            pst.setString(7, departmentId);
+            pst.setString(8, scheme);
+            pst.setString(9, subscheme);
+            pst.setString(10, functionary);
+            pst.setString(11, sourcePath);
+            pst.setString(12, budgetaryAppnumber);
+            pst.setString(13, function);
             pst.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());

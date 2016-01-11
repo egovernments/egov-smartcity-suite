@@ -736,7 +736,7 @@ public class ChartOfAccounts {
 
         final String sql = "select FUNCTIONREQD from chartofaccounts where glcode = ?";
         final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-        pst.setString(1, glcode);
+        pst.setString(0, glcode);
         List<Object[]> rs = null;
         rs = pst.list();
         for (final Object[] element : rs)
@@ -1036,7 +1036,7 @@ public class ChartOfAccounts {
             LOGGER.info("VoucherHeaderId----" + VoucherHeaderId);
         final String query = "select id from generalledger where voucherheaderid= ? order by id";
         Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-        pst.setInteger(1, VoucherHeaderId);
+        pst.setInteger(0, VoucherHeaderId);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("select id from generalledger where voucherheaderid=" + VoucherHeaderId + " order by id");
 
@@ -1056,7 +1056,7 @@ public class ChartOfAccounts {
                 final String delremitsql = "delete from eg_remittance_gldtl where gldtlid in (select id from generalledgerdetail where generalledgerid='"
                         + glHeaderId.get(k).toString() + "')";
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(delremitsql);
-                pst.setString(1, glHeaderId.get(k).toString());
+                pst.setString(0, glHeaderId.get(k).toString());
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("deleting remittance Query " + delremitsql);
                 pst.executeUpdate();
@@ -1064,7 +1064,7 @@ public class ChartOfAccounts {
                     LOGGER.info("delete from generalledgerdetail where generalledgerid='" + glHeaderId.get(k).toString() + "'");
                 final String delGenLedDet = "delete from generalledgerdetail where generalledgerid= ?";
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(delGenLedDet);
-                pst.setString(1, glHeaderId.get(k).toString());
+                pst.setString(0, glHeaderId.get(k).toString());
                 final int del = pst.executeUpdate();
                 if (del > 0)
                     if (LOGGER.isInfoEnabled())
@@ -1079,7 +1079,7 @@ public class ChartOfAccounts {
 
                 final String genLed = "DELETE FROM generalledger WHERE voucherheaderid= ?";
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(genLed);
-                pst.setInteger(1, VoucherHeaderId);
+                pst.setInteger(0, VoucherHeaderId);
                 final int del = pst.executeUpdate();
                 if (del > 0)
                     if (LOGGER.isInfoEnabled())
@@ -1184,7 +1184,7 @@ public class ChartOfAccounts {
         try {
             final String str = "select glcode as \"code\" from chartofaccounts,bankaccount where bankaccount.glcodeid=chartofaccounts.id and bankaccount.id= ?";
             final PreparedStatement pst = con.prepareStatement(str);
-            pst.setString(1, detailKey);
+            pst.setString(0, detailKey);
             final ResultSet resultset = pst.executeQuery();
 
             if (resultset.next())
@@ -1202,7 +1202,7 @@ public class ChartOfAccounts {
                 "to_date(?,'dd-mon-yyyy') between startingdate and endingdate";
         try {
             final PreparedStatement pst = con.prepareStatement(sql);
-            pst.setString(1, voucherDate);
+            pst.setString(0, voucherDate);
             final ResultSet rs = pst.executeQuery();
             if (rs.next())
                 fiscalyearid = rs.getString("fiscalperiodID");

@@ -202,7 +202,7 @@ public class TrialBalance
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
-        final String query = " SELECT gl.glcode AS \"glcode\" ,coa.name AS \"accountHead\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM transactionsummary WHERE"
+        final String query = " SELECT gl.glcode AS \"glcode\" ,coa.name AS \"accountHead\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)=NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
                 + " financialyearid=(SELECT id FROM financialyear WHERE startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
@@ -215,7 +215,7 @@ public class TrialBalance
                 + tsFunctionIdCond
                 + tsFieldIdCond
                 + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) FROM"
+                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)=NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
                 + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear  WHERE startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
@@ -249,7 +249,7 @@ public class TrialBalance
                 + functionIdCond
                 + fieldIdCond
                 + " GROUP BY gl.glcode,coa.name,vh.fundid    HAVING (SUM(debitamount)>0 OR SUM(creditamount)>0)    And"
-                + " (SUM(debitamount)+SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM"
+                + " (SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)=NULL then 0 else SUM(OPENINGDEBITBALANCE) end  FROM"
                 + " transactionsummary WHERE  financialyearid=(SELECT id FROM financialyear       WHERE startingdate <='"
                 + endDate
                 + "'"
@@ -262,7 +262,7 @@ public class TrialBalance
                 + tsFunctionIdCond
                 + tsFieldIdCond
                 + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) FROM"
+                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)=NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
                 + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear    WHERE startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
@@ -276,7 +276,7 @@ public class TrialBalance
                 + tsFieldIdCond
                 + "))/COUNT(*) )<>0"
                 + " union"
-                + " SELECT coa.glcode AS \"glcode\" ,coa.name AS \"name\" , fu.id as \"fundId\", SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE))"
+                + " SELECT coa.glcode AS \"glcode\" ,coa.name AS \"name\" , fu.id as \"fundId\", SUM((SELECT case when SUM(OPENINGDEBITBALANCE) = NULL then 0 else SUM(OPENINGDEBITBALANCE) end"
                 + " FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE  startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
@@ -289,7 +289,7 @@ public class TrialBalance
                 + tsfunctionaryCond
                 + tsFunctionIdCond
                 + tsFieldIdCond
-                + ")) - SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) as \"amount\" FROM transactionsummary WHERE"
+                + ")) - SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) = NULL then 0 else SUM(OPENINGCREDITBALANCE) end as \"amount\" FROM transactionsummary WHERE"
                 + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
@@ -334,7 +334,7 @@ public class TrialBalance
                 + fundcondition
                 + ")"
                 + " GROUP BY coa.glcode,coa.name, fu.id"
-                + " HAVING((SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM transactionsummary WHERE"
+                + " HAVING((SUM((SELECT case when SUM(OPENINGDEBITBALANCE) = NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
                 + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
@@ -346,7 +346,7 @@ public class TrialBalance
                 + tsFunctionIdCond
                 + tsFieldIdCond
                 + " )) >0 )"
-                + " OR (SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<='"
+                + " OR (SUM((SELECT  SUM(OPENINGCREDITBALANCE) = NULL then 0 else SUM(OPENINGCREDITBALANCE) FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<='"
                 + endDate
                 + "' AND endingdate>='"
                 + endDate
@@ -903,8 +903,8 @@ public class TrialBalance
             final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" " +
                     "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
             final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pst.setString(0, endDate);
             pst.setString(1, endDate);
-            pst.setString(2, endDate);
             rs = pst.list();
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("query: " + query);

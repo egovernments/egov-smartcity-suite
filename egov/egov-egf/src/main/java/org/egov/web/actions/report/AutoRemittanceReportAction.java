@@ -574,13 +574,13 @@ public class AutoRemittanceReportAction extends BaseFormAction {
 
     public void populateCOCLevelSummaryData()
     {
-        final StringBuffer queryString1 = new StringBuffer("SELECT (SUM(DECODE( glcode," + FinancialConstants.INCOMETAX_CAPITAL +
-                ",rmtAmt,DECODE(GLCODE," + FinancialConstants.INCOMETAX_REVENUE + " ,RMTAMT, NULL)))) AS  incomeTaxRemittedAmt," +
-                " (SUM(DECODE( glcode, " + FinancialConstants.SALESTAX_CAPITAL + " ,rmtAmt," +
-                "  DECODE(GLCODE, " + FinancialConstants.SALESTAX_REVENUE + " ,RMTAMT, NULL) ))) AS  salesTaxRemittedAmt," +
-                " (SUM(DECODE( glcode, " + FinancialConstants.MWGWF_MAINTENANCE + ",rmtAmt," +
-                "  DECODE(GLCODE, " + FinancialConstants.MWGWF_CAPITAL + " ,RMTAMT, NULL)))) AS  mwgwfRemittedAmt," +
-                " (SUM(DECODE(GLCODE," + FinancialConstants.SERVICETAX_REVENUE + " ,RMTAMT, NULL)  ))AS serviceTaxRemittedAmt," +
+        final StringBuffer queryString1 = new StringBuffer("SELECT (SUM(case when  glcode = " + FinancialConstants.INCOMETAX_CAPITAL +
+                "then  rmtAmt  else (case when GLCODE = " + FinancialConstants.INCOMETAX_REVENUE + "  then RMTAMT else NULL end)  end)) AS  incomeTaxRemittedAmt," +
+                " (SUM(case when glcode =  " + FinancialConstants.SALESTAX_CAPITAL + "  then rmtAmt else " +
+                "  (case when GLCODE = " + FinancialConstants.SALESTAX_REVENUE + "  then RMTAMT else NULL end) )) AS  salesTaxRemittedAmt," +
+                " (SUM(case when  glcode = " + FinancialConstants.MWGWF_MAINTENANCE + " THEN rmtAmt else " +
+                "  (case when GLCODE =  " + FinancialConstants.MWGWF_CAPITAL + "  then RMTAMT else  NULL end)end)) AS  mwgwfRemittedAmt," +
+                " (SUM(case when GLCODE = " + FinancialConstants.SERVICETAX_REVENUE + " then RMTAMT else NULL end  ))AS serviceTaxRemittedAmt," +
                 " SUM(rmtamt) AS grandTotal FROM( SELECT * FROM (" +
                 " SELECT remdt.REMITTEDAMT AS rmtAmt,tds.TYPE  AS glcode" +
                 " FROM tds tds, eg_remittance rem, eg_remittance_detail remdt,eg_remittance_gldtl remgltl, voucherheader vh " +
@@ -626,13 +626,13 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         map.put("coaAbstratct", coaAbstract);
 
         final StringBuffer queryString2 = new StringBuffer(" SELECT departmentCode," +
-                " (SUM(DECODE( glcode," + FinancialConstants.INCOMETAX_CAPITAL + ",rmtAmt," +
-                "   DECODE(GLCODE," + FinancialConstants.INCOMETAX_REVENUE + " ,RMTAMT, NULL)))) AS  incomeTaxRemittedAmt," +
-                " (SUM(DECODE( glcode," + FinancialConstants.SALESTAX_CAPITAL + ",rmtAmt," +
-                "  DECODE(GLCODE," + FinancialConstants.SALESTAX_REVENUE + " ,RMTAMT, NULL) ))) AS  salesTaxRemittedAmt," +
-                " (SUM(DECODE( glcode, " + FinancialConstants.MWGWF_MAINTENANCE + ",rmtAmt," +
-                " DECODE(GLCODE, " + FinancialConstants.MWGWF_CAPITAL + " ,RMTAMT, NULL)))) AS  mwgwfRemittedAmt," +
-                " (SUM(DECODE(GLCODE," + FinancialConstants.SERVICETAX_REVENUE + " ,RMTAMT, NULL)  ))AS serviceTaxRemittedAmt, " +
+                " (SUM(case when  glcode = " + FinancialConstants.INCOMETAX_CAPITAL + " then rmtAmt else " +
+                "   (case when GLCODE =" + FinancialConstants.INCOMETAX_REVENUE + " then RMTAMT else NULL end) end)) AS  incomeTaxRemittedAmt," +
+                " (SUM(case when  glcode = " + FinancialConstants.SALESTAX_CAPITAL + " then rmtAmt else " +
+                "  (case when GLCODE=" + FinancialConstants.SALESTAX_REVENUE + "  then RMTAMT else  NULL end) end)) AS  salesTaxRemittedAmt," +
+                " (SUM(case when  glcode= " + FinancialConstants.MWGWF_MAINTENANCE + " then rmtAmt else " +
+                " (case when GLCODE = " + FinancialConstants.MWGWF_CAPITAL + " then RMTAMT else NULL end )end)) AS  mwgwfRemittedAmt," +
+                " (SUM(case when GLCODE=" + FinancialConstants.SERVICETAX_REVENUE + " then RMTAMT else NULL end  ))AS serviceTaxRemittedAmt, " +
                 " SUM(rmtamt) AS departmentTotal FROM(" +
                 "  SELECT * FROM (" +
                 " SELECT dept.DEPT_code  departmentcode, remdt.REMITTEDAMT AS rmtAmt, tds.TYPE  AS glcode" +

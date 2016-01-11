@@ -240,7 +240,7 @@ public class GeneralLedgerReport {
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString);
-                pstmt.setString(1, glCode1);
+                pstmt.setString(0, glCode1);
                 final List<Object[]> res = pstmt.list();
                 String aName = "";
                 for (final Object[] element : res)
@@ -330,7 +330,7 @@ public class GeneralLedgerReport {
                             fundName = element[13].toString();
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
                         pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString1);
-                        pstmt.setString(1, code);
+                        pstmt.setString(0, code);
                         final List<Object[]> res = pstmt.list();
                         String aName = "";
                         for (final Object[] element1 : res)
@@ -858,22 +858,22 @@ public class GeneralLedgerReport {
             return "SELECT  gl.glcode as \"code\",(select ca.type from chartofaccounts ca where glcode=gl.glcode) as \"glType\" ,"
             + " vh.id AS \"vhid\",vh.voucherDate AS \"vDate\",to_char(vh.voucherDate ,'dd-Mon-yyyy') "
             + " AS \"voucherdate\",vh.voucherNumber AS \"vouchernumber\",gl.glCode AS \"glcode\",coa.name||"
-            + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(decode(gldet.detailtypeid,(select id from accountdetailtype where name='Creditor'),"
-            + " (select name from relation where id=gldet.detailkeyid ),(select id from accountdetailtype where name='Employee'),(select emp_firstname from eg_employee"
-            + " where id=gldet.detailkeyid),(select name from accountentitymaster where id=gldet.detailkeyid)))||']'"
-            + " ELSE NULL END) as \"Name\",decode(gl.glcode,'"
+            + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(case gldet.detailtypeid when (select id from accountdetailtype where name='Creditor') "
+            + " then (select name from relation where id=gldet.detailkeyid ) when (select id from accountdetailtype where name='Employee') then (select emp_firstname from eg_employee where id=gldet.detailkeyid)"
+            + " else (select name from accountentitymaster where id=gldet.detailkeyid)  end )||']'"
+            + " ELSE NULL END) as \"Name\",case when gl.glcode = '"
             + glCode1
-            + "',(decode( gl.DEBITAMOUNT,0,(gldet.amount||'.00cr'),"
-            + " (gldet.amount||'.00dr'))),(decode(gl.DEBITAMOUNT,0,(gl.creditamount||'.00cr'),"
-            + " (gl.debitamount||'.00dr')))) as \"amount\",gl.description as \"narration\",vh .type || '-' || vh.name||DECODE"
-            + " (status,1,'(Reversed)',decode(status,2 ,'(Reversal)','')) AS \"type\","
-            + " decode(gl.glcode,'"
+            + "' then (case when gl.DEBITAMOUNT = 0 then (gldet.amount||'.00cr') else "
+            + " (gldet.amount||'.00dr') end) else (case when gl.DEBITAMOUNT = 0 then (gl.creditamount||'.00cr') else "
+            + " (gl.debitamount||'.00dr') end ) end  as \"amount\",gl.description as \"narration\",vh .type || '-' || vh.name||case when "
+            + " status = 1 then '(Reversed)' else (case when status = 2 then '(Reversal)' else '' end ) end AS \"type\","
+            + " case when gl.glcode='"
             + glCode1
-            + "',(decode(gl.debitAMOUNT,0,0,gldet.amount )),"
-            + " (decode(gl.debitAMOUNT,0,0,gl.debitamount)))as \"debitamount\",decode(gl.glcode,'"
+            + "' then (case when gl.debitAMOUNT = 0 then 0 else gldet.amount end ) else "
+            + " (case when gl.debitAMOUNT = 0 then 0 else gl.debitamount end) end as \"debitamount\",case when gl.glcode = '"
             + glCode1
-            + "',"
-            + " (decode(gl.creditAMOUNT,0,0,gldet.amount)),(decode(gl.debitAMOUNT,0,0,gl.creditamount)))as \"creditamount\","
+            + "' then "
+            + " (case when gl.creditAMOUNT = 0 then 0 else gldet.amount end) else (case when gl.debitAMOUNT = 0 then 0 else gl.creditamount end ) end  as \"creditamount\","
             + " f.name as \"fundName\",vh.isconfirmed as \"isconfirmed\",case when (gldet.generalledgerid=gl.id) "
             + " then gldet.detailkeyid else null end as \"DetailKeyId\",vh.type||'-'||vh.name as \"vouchertypename\" " +
             " FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,"
@@ -895,9 +895,9 @@ public class GeneralLedgerReport {
             .
             append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", ")
             .
-            append(" coa.name AS \"name\",decode(gl.debitAmount,0,(case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount)    then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) , (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)    then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end )) AS \"amount\", ")
+            append(" coa.name AS \"name\",case when gl.debitAmount = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount)    then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)    then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ) end AS \"amount\", ")
             .
-            append(" gl.description AS \"narration\", vh.type || '-' || vh.name||DECODE(status,1,'(Reversed)',decode(status,2,'(Reversal)','')) AS \"type\", ")
+            append(" gl.description AS \"narration\", vh.type || '-' || vh.name||case when status = 1 then '(Reversed)' else (case when status = 2 then '(Reversal)' else '' end) end  AS \"type\", ")
             .
             append(" gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\",f.name as \"fundName\",  vh.isconfirmed as \"isconfirmed\",gl.functionid as \"functionid\",vh.type||'-'||vh.name as \"vouchertypename\" ")
             .
@@ -943,9 +943,9 @@ public class GeneralLedgerReport {
             accEntityCondition = "accountDetailTypeid=? AND accountDetailKey=? AND ";
         if (!StringUtils.isEmpty(functionId))
             functionCondition = " functionid=? AND ";
-        final String queryYearOpBal = "SELECT decode(sum(openingDebitBalance),null,0,sum(openingDebitBalance)) AS \"openingDebitBalance\", "
+        final String queryYearOpBal = "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) AS \"openingDebitBalance\", "
                 +
-                "decode(sum(openingCreditBalance),null,0,sum(openingCreditBalance)) AS \"openingCreditBalance\" "
+                "case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) AS \"openingCreditBalance\" "
                 +
                 "FROM transactionSummary WHERE "
                 + fundCondition
@@ -1037,8 +1037,8 @@ public class GeneralLedgerReport {
                     + " gl.CREDITamount>0) AS \"creditAmount\" FROM chartofaccounts coa WHERE 	coa.glcode IN (?)";
 
         } else
-            queryTillDateOpBal = "SELECT decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) AS \"debitAmount\", "
-                    + " decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)) AS \"creditAmount\" "
+            queryTillDateOpBal = "SELECT case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) AS \"debitAmount\", "
+                    + " case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end  AS \"creditAmount\" "
                     + " FROM generalLedger gl, voucherHeader vh "
                     + deptFromCondition
                     + " WHERE vh.id = gl.voucherHeaderId AND "
@@ -1167,8 +1167,8 @@ public class GeneralLedgerReport {
             try {
                 final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pstmt.setString(0, endDate);
                 pstmt.setString(1, endDate);
-                pstmt.setString(2, endDate);
                 rs = pstmt.list();
                 for (final Object[] element : rs)
                     startDate = element[0].toString();
@@ -1184,8 +1184,8 @@ public class GeneralLedgerReport {
                 final String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" " +
                         "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pstmt.setString(0, startDate);
                 pstmt.setString(1, startDate);
-                pstmt.setString(2, startDate);
                 rs = pstmt.list();
                 pstmt = null;
             } catch (final Exception ex) {
@@ -1204,7 +1204,7 @@ public class GeneralLedgerReport {
         {
             final String query = "select glcode as \"glcode\" ,name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, glCode);
+            pst.setString(0, glCode);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 accountName = element[0].toString() + " : " + element[1].toString();
@@ -1226,7 +1226,7 @@ public class GeneralLedgerReport {
         {
             final String query = "select name as \"name\" from fund where id=?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, fundId);
+            pst.setString(0, fundId);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 fundName = element[0].toString();

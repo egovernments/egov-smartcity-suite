@@ -191,9 +191,9 @@ public class AdvanceRegister {
                             + " AND vh.voucherdate <=TO_DATE (TO_DATE ('"
                             + startDate
                             + "') - 1)AND vh.status NOT IN (4)AND gl.creditamount > 0),0) prevcredit,"
-                            + " (SELECT DISTINCT DECODE (adt.tablename ,'accountEntityMaster', (SELECT name FROM accountentitymaster"
-                            + " WHERE id= adk.detailkey ),'relation',(SELECT name FROM relation WHERE id = adk.detailkey ), 'eg_employee',"
-                            + " (SELECT emp_firstname FROM eg_employee WHERE id= adk.detailkey )) FROM accountdetailkey adk,accountdetailtype adt"
+                            + " (SELECT DISTINCT case   adt.tablename  when  'accountEntityMaster' then (SELECT name FROM accountentitymaster"
+                            + " WHERE id= adk.detailkey ) when 'relation' (SELECT name FROM relation WHERE id = adk.detailkey )  when   'eg_employee',"
+                            + " (SELECT emp_firstname FROM eg_employee WHERE id= adk.detailkey ) else '' end  FROM accountdetailkey adk,accountdetailtype adt"
                             + " WHERE adt.id = adk.detailtypeid AND adk.detailtypeid="
                             + paramdetailtypeid
                             + " AND adk.detailkey="
@@ -273,13 +273,13 @@ public class AdvanceRegister {
 
             final StringBuffer basicquery1 = new StringBuffer(
                     "SELECT coa.NAME sltypename,bvh.id AS vhid,adk.detailtypeid AS sltype,adk.detailkey AS slid,bvh.description as \"remarks\","
-                            + " TO_CHAR(bvh.voucherdate) vDate,DECODE (adt.tablename ,'accountEntityMaster',"
-                            + " (SELECT name FROM accountentitymaster WHERE id= adk.detailkey ),'relation',(SELECT name FROM relation WHERE id = adk.detailkey ), "
-                            + " 'eg_employee',(SELECT emp_firstname FROM eg_employee WHERE id= adk.detailkey ))slname,"
-                            + " DECODE(gl.debitamount,0,NULL,CONCAT(bvh.vouchernumber,CONCAT('-',bvh.voucherdate))) AS \"PaymentOrderNumberDate\",null as \"BPVNumberDate\","
-                            + " concat(gl.glcode,concat('-',coa.NAME)) Particulars,DECODE (gl.debitamount,0,NULL,gld.amount) as \"PaymentAmount\","
-                            + " DECODE(gl.creditamount,0,NULL,CONCAT(bvh.vouchernumber,CONCAT('-',bvh.voucherdate))) AS \"RecoveryNumberdate\","
-                            + " DECODE (gl.creditamount,0,NULL,gld.amount) Recoveryamount FROM generalledgerdetail gld,generalledger gl,"
+                            + " TO_CHAR(bvh.voucherdate) vDate, case  adt.tablename  when  'accountEntityMaster' then  "
+                            + " (SELECT name FROM accountentitymaster WHERE id= adk.detailkey ) when 'relation' then  (SELECT name FROM relation WHERE id = adk.detailkey )  "
+                            + " when 'eg_employee' then (SELECT emp_firstname FROM eg_employee WHERE id= adk.detailkey ) else '' end  slname,"
+                            + " case when gl.debitamount = 0  then NULL else CONCAT(bvh.vouchernumber,CONCAT('-',bvh.voucherdate)) end AS \"PaymentOrderNumberDate\",null as \"BPVNumberDate\","
+                            + " concat(gl.glcode,concat('-',coa.NAME)) Particulars,case when gl.debitamount = 0 then NULL else gld.amount end as \"PaymentAmount\","
+                            + " case when gl.creditamount = 0 then NULL else CONCAT(bvh.vouchernumber,CONCAT('-',bvh.voucherdate)) end AS \"RecoveryNumberdate\","
+                            + " case when gl.creditamount = 0 then NULL else gld.amount end Recoveryamount FROM generalledgerdetail gld,generalledger gl,"
                             + " voucherheader bvh left join paymentheader ph ON   ph.voucherheaderid = bvh.ID,"
                             + " voucherheader bvh1 left join otherbilldetail obd ON obd.payvhid = bvh1.ID,chartofaccounts coa,"
                             + " accountdetailkey adk,chartofaccountdetail cod ,accountdetailtype adt WHERE gld.detailtypeid = adk.detailtypeid AND gld.detailkeyid = adk.detailkey"

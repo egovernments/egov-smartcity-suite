@@ -101,7 +101,7 @@ public class ScheduleMaster extends AbstractTask {
         try {
             final String query = "select id from schedulemapping where schedule = ?";
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(1, schNo);
+            pstmt.setString(0, schNo);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
 
@@ -261,9 +261,9 @@ public class ScheduleMaster extends AbstractTask {
                     // query=query+" Receiptscheduleid=null,Receiptoperation=null where Receiptscheduleid="+schMapId;
                     // query = sbuffer.toString();
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                    pstmt.setString(0, null);
                     pstmt.setString(1, null);
-                    pstmt.setString(2, null);
-                    pstmt.setInteger(3, schMapId);
+                    pstmt.setInteger(2, schMapId);
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info(query);
                     pstmt.executeUpdate();
@@ -272,9 +272,9 @@ public class ScheduleMaster extends AbstractTask {
                     final String query = "update chartofaccounts set Paymentscheduleid = ?,Paymentoperation = ? where Paymentscheduleid = ?";
                     // query=query+" Paymentscheduleid=null,Paymentoperation=null where Paymentscheduleid="+schMapId;
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                    pstmt.setString(0, null);
                     pstmt.setString(1, null);
-                    pstmt.setString(2, null);
-                    pstmt.setInteger(3, schMapId);
+                    pstmt.setInteger(2, schMapId);
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info(query);
                     pstmt.executeUpdate();
@@ -283,9 +283,9 @@ public class ScheduleMaster extends AbstractTask {
             else {
                 final String query = "update chartofaccounts set  ScheduleId= ?,Operation= ? where ScheduleId= ?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                pstmt.setString(0, null);
                 pstmt.setString(1, null);
-                pstmt.setString(2, null);
-                pstmt.setInteger(3, schMapId);
+                pstmt.setInteger(2, schMapId);
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info(query);
                 pstmt.executeUpdate();

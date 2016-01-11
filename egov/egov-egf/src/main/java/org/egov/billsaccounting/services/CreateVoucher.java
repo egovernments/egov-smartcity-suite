@@ -2271,7 +2271,7 @@ public class CreateVoucher {
             final String delgl = " delete from generalledger where voucherheaderid=?";
             final String delvh = " delete from voucherdetail where voucherheaderid=?";
             pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(glQry);
-            pstmt1.setFloat(1, vh.getId());
+            pstmt1.setFloat(0, vh.getId());
 
             final List<Object[]> rs = pstmt1.list();
             List<Object[]> rs1 = null;
@@ -2279,27 +2279,27 @@ public class CreateVoucher {
             while (rs != null && rs.size() > 0)
             {
                 pstmt2 = HibernateUtil.getCurrentSession().createSQLQuery(glidQry);
-                pstmt2.setLong(1, Long.parseLong(rs.get(1).toString()));
+                pstmt2.setLong(0, Long.parseLong(rs.get(1).toString()));
                 rs1 = pstmt2.list();
                 while (rs1 != null && rs1.size() > 0)
                 {
                     delete = true;
                     pstmt3 = HibernateUtil.getCurrentSession().createSQLQuery(delQry);
-                    pstmt3.setLong(1, Long.parseLong(rs1.get(1).toString()));
+                    pstmt3.setLong(0, Long.parseLong(rs1.get(1).toString()));
                     pstmt3.executeUpdate();
                 }
                 if (delete) {
                     pstmt4 = HibernateUtil.getCurrentSession().createSQLQuery(delQrr);
-                    pstmt4.setLong(1, Long.parseLong(rs1.get(1).toString()));
+                    pstmt4.setLong(0, Long.parseLong(rs1.get(1).toString()));
                     pstmt4.executeUpdate();
                 }
             }
             pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(delgl);
-            pstmt1.setLong(1, vh.getId());
+            pstmt1.setLong(0, vh.getId());
             pstmt1.executeUpdate();
 
             pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(delvh);
-            pstmt1.setLong(1, vh.getId());
+            pstmt1.setLong(0, vh.getId());
             pstmt1.executeUpdate();
 
         } catch (final Exception e)

@@ -188,7 +188,7 @@ public class SetUp extends AbstractTask {
         try {
             final String query = "update financialYear set TRANSFERCLOSINGBALANCE = 1 where id= ?";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             n = pst.executeUpdate();
             if (n == 1)
                 if (LOGGER.isDebugEnabled())
@@ -207,7 +207,7 @@ public class SetUp extends AbstractTask {
         try {
             final String query = "select TRANSFERCLOSINGBALANCE from financialYear where id= ? and TRANSFERCLOSINGBALANCE=0";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
 
             if (resultset.next())
@@ -227,7 +227,7 @@ public class SetUp extends AbstractTask {
                     "WHERE startingDate > (SELECT endingDate FROM financialYear WHERE id = ?) " +
                     "AND isClosed = 1";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (resultset.next()) {
                 dc.addMessage("exilError", "This Financial Year can not be opened, later is closed");
@@ -322,8 +322,8 @@ public class SetUp extends AbstractTask {
                     " AND coa.type in('A','L') and coa.id not in(select glcodeid from chartofaccountdetail) " +
                     " GROUP BY gl.glcodeId,vh.fundId,mis.departmentid,gl.functionid";
             pst = connection.prepareStatement(clBalQuery);
-            pst.setString(1, sDate);
-            pst.setString(2, eDate);
+            pst.setString(0, sDate);
+            pst.setString(1, eDate);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(clBalQuery);
             resultset = pst.executeQuery();
@@ -341,7 +341,7 @@ public class SetUp extends AbstractTask {
             // from last year
             final String query1 = "DELETE from transactionSummary WHERE financialYearId= ?";
             pst1 = connection.prepareStatement(query1);
-            pst1.setString(1, nextFYId);
+            pst1.setString(0,nextFYId);
             pst1.executeUpdate();
 
             LOGGER.debug("Deleted the existing entries in transactionSummary for financialYearId=" + nextFYId);
@@ -361,16 +361,16 @@ public class SetUp extends AbstractTask {
                 bal = resultset.getDouble("balance");
                 opDr = bal > 0 ? bal : 0;
                 opCr = bal < 0 ? Math.abs(bal) : 0;
-                pstBatch.setString(1, id);
-                pstBatch.setString(2, nextFYId);
-                pstBatch.setString(3, resultset.getString("glCodeId"));
-                pstBatch.setDouble(4, opDr);
-                pstBatch.setDouble(5, opCr);
-                pstBatch.setString(6, resultset.getString("fundId"));
-                pstBatch.setString(7, resultset.getString("departmentid"));
-                pstBatch.setString(8, userId);
-                pstBatch.setString(9, effectiveDate);
-                pstBatch.setString(10, resultset.getString("functionid"));
+                pstBatch.setString(0, id);
+                pstBatch.setString(1, nextFYId);
+                pstBatch.setString(2, resultset.getString("glCodeId"));
+                pstBatch.setDouble(3, opDr);
+                pstBatch.setDouble(4, opCr);
+                pstBatch.setString(5, resultset.getString("fundId"));
+                pstBatch.setString(6, resultset.getString("departmentid"));
+                pstBatch.setString(7, userId);
+                pstBatch.setString(8, effectiveDate);
+                pstBatch.setString(9, resultset.getString("functionid"));
                 pstBatch.addBatch();
 
                 LOGGER.debug("Query for insert txnsummary for non-control codes -" + query);
@@ -416,9 +416,9 @@ public class SetUp extends AbstractTask {
 
                 if (codeAndDetailCondition.trim().length() > 0)
                 {
-                    clBalQuery = "SELECT gl.glcodeId, vh.fundId, mis.departmentid,gl.functionid,gld.detailTypeId, gld.detailKeyId, sum(decode(gl.debitamount,0,0, gld.amount)) AS \"dr\", "
+                    clBalQuery = "SELECT gl.glcodeId, vh.fundId, mis.departmentid,gl.functionid,gld.detailTypeId, gld.detailKeyId, sum(case when gl.debitamount = 0 then 0 else  gld.amountend) AS \"dr\", "
                             +
-                            " sum(decode(gl.debitamount,0,gld.amount,0)) AS \"cr\", sum(decode(gl.debitamount,0,0, gld.amount))-sum(decode(gl.debitamount,0,gld.amount,0)) AS \"balance\" "
+                            " sum(case when gl.debitamount = 0 then gld.amount else 0 end) AS \"cr\", sum(case when gl.debitamount = 0 then 0 else gld.amount end)-sum(case when gl.debitamount = 0 then gld.amount else 0 end) AS \"balance\" "
                             +
                             " FROM voucherHeader vh,vouchermis mis, chartOfAccounts coa, generalledger gl, generalLedgerDetail gld  "
                             +
@@ -432,8 +432,8 @@ public class SetUp extends AbstractTask {
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("clBalQuery  ..." + clBalQuery);
                     pst = connection.prepareStatement(clBalQuery);
-                    pst.setString(1, sDate);
-                    pst.setString(2, eDate);
+                    pst.setString(0, sDate);
+                    pst.setString(1, eDate);
                     resultsetdtl = pst.executeQuery();
                 }
                 String txnSumBatch = "", detailTypeId = "", detailKeyId = "";
@@ -459,18 +459,18 @@ public class SetUp extends AbstractTask {
                     detailKeyId = resultsetdtl.getString("detailKeyId");
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info(txnSumBatch);
-                    pstBatch.setString(1, id);
-                    pstBatch.setString(2, nextFYId);
-                    pstBatch.setString(3, resultsetdtl.getString("glCodeId"));
-                    pstBatch.setDouble(4, opDr);
-                    pstBatch.setDouble(5, opCr);
-                    pstBatch.setString(6, detailTypeId);
-                    pstBatch.setString(7, detailKeyId);
-                    pstBatch.setString(8, resultsetdtl.getString("fundId"));
-                    pstBatch.setString(9, resultsetdtl.getString("departmentid"));
-                    pstBatch.setString(10, userId);
-                    pstBatch.setString(11, effectiveDate);
-                    pstBatch.setString(12, resultsetdtl.getString("functionid"));
+                    pstBatch.setString(0, id);
+                    pstBatch.setString(1, nextFYId);
+                    pstBatch.setString(2, resultsetdtl.getString("glCodeId"));
+                    pstBatch.setDouble(3, opDr);
+                    pstBatch.setDouble(4, opCr);
+                    pstBatch.setString(5, detailTypeId);
+                    pstBatch.setString(6, detailKeyId);
+                    pstBatch.setString(7, resultsetdtl.getString("fundId"));
+                    pstBatch.setString(8, resultsetdtl.getString("departmentid"));
+                    pstBatch.setString(9, userId);
+                    pstBatch.setString(10, effectiveDate);
+                    pstBatch.setString(11, resultsetdtl.getString("functionid"));
                     // LOGGER.error("before");
                     pstBatch.addBatch();
                     // LOGGER.error("after");
@@ -593,14 +593,14 @@ public class SetUp extends AbstractTask {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Transaction summary part for Calculating current year openingBalance+ClosingBalance :" + qryTxns);
             pst = connection.prepareStatement(qryTxns);
-            pst.setString(1, fyId);
-            pst.setString(2, nextFYId);
-            pst.setString(3, fyId);
-            pst.setString(4, nextFYId);
-            pst.setString(5, fyId);
-            pst.setString(6, nextFYId);
-            pst.setString(7, fyId);
-            pst.setString(8, nextFYId);
+            pst.setString(0, fyId);
+            pst.setString(1, nextFYId);
+            pst.setString(2, fyId);
+            pst.setString(3, nextFYId);
+            pst.setString(4, fyId);
+            pst.setString(5, nextFYId);
+            pst.setString(6, fyId);
+            pst.setString(7, nextFYId);
             resultset = pst.executeQuery();
 
             // pstBatch.clearBatch();
@@ -622,9 +622,9 @@ public class SetUp extends AbstractTask {
                 closingBalanceId.add(totalCounterCB, resultset.getInt("clId"));
 
                 // Get the opening balance and then find the net opening debit or credit.
-                pstBatch.setDouble(1, opDr1);
-                pstBatch.setDouble(2, opCr1);
-                pstBatch.setString(3, resultset.getString("opId"));
+                pstBatch.setDouble(0, opDr1);
+                pstBatch.setDouble(1, opCr1);
+                pstBatch.setString(2, resultset.getString("opId"));
                 pstBatch.addBatch();
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Update query for where OPB and CLS balance is there :" + query);
@@ -688,7 +688,7 @@ public class SetUp extends AbstractTask {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("qry1 for OPB for new year ...." + qry1);
             pst = connection.prepareStatement(qry1);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
 
             query = "INSERT INTO TransactionSummary (id, financialYearId, glcodeid, "
@@ -708,18 +708,18 @@ public class SetUp extends AbstractTask {
                 opCr = bal < 0 ? Math.abs(bal) : 0;
                 id = String.valueOf(PrimaryKeyGenerator.getNextKey("transactionSummary"));
 
-                pstBatch.setString(1, id);
-                pstBatch.setString(2, nextFYId);
-                pstBatch.setString(3, resultset.getString("glCodeId"));
-                pstBatch.setDouble(4, opDr);
-                pstBatch.setDouble(5, opCr);
-                pstBatch.setString(6, resultset.getString("accountDetailTypeId"));
-                pstBatch.setString(7, resultset.getString("accountDetailKey"));
-                pstBatch.setString(8, resultset.getString("fundId"));
-                pstBatch.setString(9, resultset.getString("departmentid"));
-                pstBatch.setString(10, userId);
-                pstBatch.setString(11, effectiveDate);
-                pstBatch.setString(12, resultset.getString("functionid"));
+                pstBatch.setString(0, id);
+                pstBatch.setString(1, nextFYId);
+                pstBatch.setString(2, resultset.getString("glCodeId"));
+                pstBatch.setDouble(3, opDr);
+                pstBatch.setDouble(4, opCr);
+                pstBatch.setString(5, resultset.getString("accountDetailTypeId"));
+                pstBatch.setString(6, resultset.getString("accountDetailKey"));
+                pstBatch.setString(7, resultset.getString("fundId"));
+                pstBatch.setString(8, resultset.getString("departmentid"));
+                pstBatch.setString(9, userId);
+                pstBatch.setString(10, effectiveDate);
+                pstBatch.setString(11, resultset.getString("functionid"));
                 pstBatch.addBatch();
 
                 if (counterOPBOnly == 50) {
@@ -764,7 +764,7 @@ public class SetUp extends AbstractTask {
                     +
                     "FROM financialYear WHERE id= ?";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (resultset.next()) {
                 fy.setId(fyId);
@@ -791,7 +791,7 @@ public class SetUp extends AbstractTask {
             final String nxtYearStr = "SELECT id FROM financialYear " +
                     "WHERE startingDate = (SELECT endingDate+1 FROM financialYear WHERE id = ?)";
             pst = connection.prepareStatement(nxtYearStr);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Query for next year :" + nxtYearStr);
             resultset = pst.executeQuery();
@@ -835,7 +835,7 @@ public class SetUp extends AbstractTask {
                     "FROM closedPeriods " +
                     "WHERE id= ?";
             pst = connection.prepareStatement(query1);
-            pst.setString(1, dc.getValue("closedPeriods_id"));
+            pst.setString(0, dc.getValue("closedPeriods_id"));
             resultset = pst.executeQuery();
             if (resultset.next()) {
                 sDate = resultset.getString("startingDate");
@@ -860,7 +860,7 @@ public class SetUp extends AbstractTask {
         try {
             final String query2 = "DELETE from closedPeriods WHERE id= ?";
             pst = connection.prepareStatement(query2);
-            pst.setString(1, dc.getValue("closedPeriods_id"));
+            pst.setString(0, dc.getValue("closedPeriods_id"));
             resultset = pst.executeQuery();
             resultset.close();
             pst.close();
@@ -982,16 +982,16 @@ public class SetUp extends AbstractTask {
                     "OR (startingDate >= ? AND startingDate <= ?) " +
                     "OR (endingDate > ? AND endingDate < ?)";
             pst = connection.prepareStatement(query);
+            pst.setString(0, sDate);
             pst.setString(1, sDate);
-            pst.setString(2, sDate);
+            pst.setString(2, eDate);
             pst.setString(3, eDate);
-            pst.setString(4, eDate);
-            pst.setString(5, sDate);
-            pst.setString(6, eDate);
-            pst.setString(7, sDate);
-            pst.setString(8, eDate);
+            pst.setString(4, sDate);
+            pst.setString(5, eDate);
+            pst.setString(6, sDate);
+            pst.setString(7, eDate);
+            pst.setString(8, sDate);
             pst.setString(9, sDate);
-            pst.setString(10, sDate);
             resultset = pst.executeQuery();
 
             if (resultset.next())
@@ -1012,8 +1012,8 @@ public class SetUp extends AbstractTask {
             final String query = "SELECT id FROM closedPeriods " +
                     "WHERE startingDate = ? AND endingDate = ? AND isClosed=1";
             pst = connection.prepareStatement(query);
-            pst.setString(1, sDate);
-            pst.setString(2, eDate);
+            pst.setString(0, sDate);
+            pst.setString(1, eDate);
             resultset = pst.executeQuery();
             if (resultset.next())
                 hardClosed = true;
@@ -1034,8 +1034,8 @@ public class SetUp extends AbstractTask {
             final String query = "SELECT id AS \"id\" FROM closedPeriods " +
                     "WHERE startingDate = ? AND endingDate = ? AND isClosed=0";
             pst = connection.prepareStatement(query);
-            pst.setString(1, sDate);
-            pst.setString(2, eDate);
+            pst.setString(0, sDate);
+            pst.setString(1, eDate);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("SELECT id AS \"id\" FROM closedPeriods " +
                         "WHERE startingDate = '" + sDate + "' AND endingDate = '" + eDate + "' AND isClosed=0");
@@ -1065,8 +1065,8 @@ public class SetUp extends AbstractTask {
                     "WHERE (endingDate>= ? OR endingDate>= ?) " +
                     "AND isClosed = 1";
             pst = connection.prepareStatement(query);
-            pst.setString(1, sDate);
-            pst.setString(2, eDate);
+            pst.setString(0, sDate);
+            pst.setString(1, eDate);
             resultset = pst.executeQuery();
             if (resultset.next())
                 isPrior = true;
@@ -1105,8 +1105,8 @@ public class SetUp extends AbstractTask {
                     "AND endingDate >= ? " +
                     "AND isActiveForPosting=1";
             pst = connection.prepareStatement(query);
-            pst.setString(1, sDate);
-            pst.setString(2, eDate);
+            pst.setString(0, sDate);
+            pst.setString(1, eDate);
             resultset = pst.executeQuery();
             if (resultset.next())
                 isOpen = true;
@@ -1125,7 +1125,7 @@ public class SetUp extends AbstractTask {
         try {
             final String query = "SELECT id FROM financialYear WHERE isClosed=1 AND id= ?";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (!resultset.next())
                 isOpen = true;
@@ -1166,7 +1166,7 @@ public class SetUp extends AbstractTask {
 
             try {
                 final String excessIE = "SELECT SUM(Income)-SUM(Expense) AS NetAmt,Dep,Func FROM("
-                        + " SELECT DECODE(SUM(gl.creditAmount)-SUM(gl.debitamount),NULL,0,SUM(gl.creditAmount)-SUM(gl.debitamount)) AS Income,0 AS Expense,"
+                        + " SELECT case when SUM(gl.creditAmount)-SUM(gl.debitamount) = NULL then 0 else SUM(gl.creditAmount)-SUM(gl.debitamount) end  AS Income,0 AS Expense,"
                         + " vm.departmentid AS Dep,gl.functionid AS Func"
                         + " FROM chartofaccounts  coa,generalledger gl,voucherHeader vh,vouchermis vm"
                         + " WHERE coa.TYPE = 'I' AND vh.ID =  gl.VOUCHERHEADERID AND  gl.glcode=coa.glcode AND vm.voucherheaderid=vh.id"
@@ -1174,7 +1174,7 @@ public class SetUp extends AbstractTask {
                         + fundCondition
                         + " GROUP BY vm.departmentid, gl.functionid"
                         + " UNION"
-                        + " SELECT 0 AS Income,DECODE(SUM(gl.debitAmount)-SUM(gl.creditamount),NULL,0,SUM(gl.debitAmount)-SUM(gl.creditamount)) AS Expense,"
+                        + " SELECT 0 AS Income,case when SUM(gl.debitAmount)-SUM(gl.creditamount) = NULL then 0 else SUM(gl.debitAmount)-SUM(gl.creditamount) end AS Expense,"
                         + " vm.departmentid AS Dep,gl.functionid AS Func"
                         + " FROM chartofaccounts  coa,generalledger gl,voucherHeader vh ,vouchermis vm"
                         + " WHERE coa.TYPE = 'E' AND vh.ID =  gl.VOUCHERHEADERID AND  gl.glcode=coa.glcode AND vm.voucherheaderid=vh.id"
@@ -1182,16 +1182,16 @@ public class SetUp extends AbstractTask {
                         + fundCondition
                         + " GROUP BY vm.departmentid, gl.functionid"
                         + " UNION"
-                        + " SELECT DECODE(SUM(openingcreditbalance),NULL,0,SUM(openingcreditbalance)) AS Income,"
-                        + " DECODE(SUM(openingdebitbalance),NULL,0,SUM(openingdebitbalance)) AS Expense,departmentid AS Dep,functionid AS Func"
+                        + " SELECT case when SUM(openingcreditbalance) = NULL  then 0 else SUM(openingcreditbalance) end AS Income,"
+                        + " case when SUM(openingdebitbalance) = NULL then 0 else SUM(openingdebitbalance) end AS Expense,departmentid AS Dep,functionid AS Func"
                         + " FROM transactionsummary "
                         + " WHERE fundid="
                         + fundCondition
                         + " AND financialyearid= ? AND glcodeid= ?"
                         + " GROUP BY departmentid,functionid"
                         + " UNION"
-                        + " SELECT DECODE(SUM(openingcreditbalance),NULL,0,SUM(openingcreditbalance)) AS Income,"
-                        + " DECODE(SUM(openingdebitbalance),NULL,0,SUM(openingdebitbalance)) AS Expense,departmentid AS Dep,functionid AS Func"
+                        + " SELECT case when SUM(openingcreditbalance) = NULL then 0 else SUM(openingcreditbalance) end AS Income,"
+                        + " case when SUM(openingdebitbalance) = NULL then 0 else SUM(openingdebitbalance) end  AS Expense,departmentid AS Dep,functionid AS Func"
                         + " FROM transactionsummary "
                         + " WHERE fundid=" + fundCondition + " AND financialyearid= ?AND glcodeid=? "
                         + " GROUP BY departmentid,functionid"
@@ -1201,21 +1201,21 @@ public class SetUp extends AbstractTask {
                 LOGGER.debug("Getting excessIE :" + excessIE);
 
                 pstmt2 = connection.prepareStatement(excessIE);
-                pstmt2.setString(1, sDate);// fromdate
-                pstmt2.setString(2, eDate);// todate
-                pstmt2.setString(3, sDate);// fromdate
-                pstmt2.setString(4, eDate);// todate
-                pstmt2.setString(5, nextFYId);// nextfinancialyear
-                pstmt2.setInt(6, glcodeid);// glcodeid
-                pstmt2.setString(7, currFYId);// currentfinancialyear
-                pstmt2.setInt(8, glcodeid);// glcodeid
+                pstmt2.setString(0, sDate);// fromdate
+                pstmt2.setString(1, eDate);// todate
+                pstmt2.setString(2, sDate);// fromdate
+                pstmt2.setString(3, eDate);// todate
+                pstmt2.setString(4, nextFYId);// nextfinancialyear
+                pstmt2.setInt(5, glcodeid);// glcodeid
+                pstmt2.setString(6, currFYId);// currentfinancialyear
+                pstmt2.setInt(7, glcodeid);// glcodeid
                 rs2 = pstmt2.executeQuery();
 
                 final String deleteExcessIEForNextYear = "Delete from transactionsummary where financialyearid= ? AND glcodeid=? and fundid="
                         + fundCondition;
                 pst = connection.prepareStatement(deleteExcessIEForNextYear);
-                pst.setString(1, nextFYId);// nextfinancialyear
-                pst.setInt(2, glcodeid);// glcodeid
+                pst.setString(0, nextFYId);// nextfinancialyear
+                pst.setInt(1, glcodeid);// glcodeid
                 pst.execute(); // delete if there is any record existing for this code so that one shot we can insert
 
                 LOGGER.debug("Deleted the excessIE record for Financial year :" + nextFYId + " for Fundid" + fundCondition);
@@ -1228,9 +1228,9 @@ public class SetUp extends AbstractTask {
                 {
                     id = String.valueOf(PrimaryKeyGenerator.getNextKey("TransactionSummary"));
                     pst = connection.prepareStatement(query);
-                    pst.setString(1, id);
-                    pst.setString(2, nextFYId);
-                    pst.setInt(3, glcodeid);
+                    pst.setString(0, id);
+                    pst.setString(1, nextFYId);
+                    pst.setInt(2, glcodeid);
                     if (rs2.getDouble("NetAmt") > 0) {
                         opDr = 0;
                         opCr = rs2.getDouble("NetAmt");

@@ -203,10 +203,10 @@ public class RPReport
             cstmt.setFetchSize(1000);
             // This fix is for Phoenix Migration.
             // cstmt.registerOutParameter(1,OracleTypes.CURSOR);
-            cstmt.setString(2, dtformatter.format(sdf.parse(startDate)));
-            cstmt.setString(3, dtformatter.format(sdf.parse(endDate)));
-            cstmt.setString(4, cashCode[0].substring(0, maxCodeLength));
-            cstmt.setInt(5, minorCodeLength);
+            cstmt.setString(1, dtformatter.format(sdf.parse(startDate)));
+            cstmt.setString(2, dtformatter.format(sdf.parse(endDate)));
+            cstmt.setString(3, cashCode[0].substring(0, maxCodeLength));
+            cstmt.setInt(4, minorCodeLength);
             cstmt.executeQuery();
             final ResultSet rs = (ResultSet) cstmt.getObject(1);
             HashMap data = new HashMap();
@@ -300,7 +300,7 @@ public class RPReport
                 try
                 {
                     final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
-                    pst.setString(1, cashOBScheduleId);
+                    pst.setString(0, cashOBScheduleId);
                     final List<Object[]> rs1 = pst.list();
                     for (final Object[] element : rs1) {
                         cashAccCode = element[0].toString();
@@ -421,7 +421,7 @@ public class RPReport
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("rcptQuery-->" + rcptQuery);
                     final Query psmt2 = HibernateUtil.getCurrentSession().createSQLQuery(rcptQuery);
-                    psmt2.setString(1, rcptScheduleId);
+                    psmt2.setString(0, rcptScheduleId);
                     rsRcpt = psmt2.list();
                     for (final Object[] element : rsRcpt)
                         rcptAccountCode = element[0].toString().substring(0, maxCodeLength);
@@ -474,7 +474,7 @@ public class RPReport
                     final Query psmt2 = HibernateUtil.getCurrentSession().createSQLQuery(rcptQuery);
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("rcptQuery-->" + rcptQuery);
-                    psmt2.setString(1, rcptScheduleId);
+                    psmt2.setString(0, rcptScheduleId);
                     rsRcpt = psmt2.list();
                     for (final Object[] element : rsRcpt)
                         rcptAccountCode = element[0].toString().substring(0, maxCodeLength);
@@ -538,7 +538,7 @@ public class RPReport
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("pymntQuery-->" + pymntQuery);
                     psmt = HibernateUtil.getCurrentSession().createSQLQuery(pymntQuery);
-                    psmt.setString(1, pymntScheduleId);
+                    psmt.setString(0, pymntScheduleId);
                     final List<Object[]> rsPymnt = psmt.list();
                     for (final Object[] element : rsPymnt)
                         pymntAccountCode = element[0].toString().substring(0, maxCodeLength);
@@ -546,7 +546,7 @@ public class RPReport
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("remissionQuery-->" + remissionQuery);
                     psmt = HibernateUtil.getCurrentSession().createSQLQuery(remissionQuery);
-                    psmt.setString(1, pymntScheduleId);
+                    psmt.setString(0, pymntScheduleId);
                     final List<Object[]> rsRemission = psmt.list();
                     for (final Object[] element : rsRemission)
                         if (element[0].toString().equals("1"))
@@ -598,7 +598,7 @@ public class RPReport
                     if (LOGGER.isInfoEnabled())
                         LOGGER.info("pymntQuery-->" + pymntQuery);
                     final Query psmt1 = HibernateUtil.getCurrentSession().createSQLQuery(pymntQuery);
-                    psmt1.setString(1, pymntScheduleId);
+                    psmt1.setString(0, pymntScheduleId);
                     final List<Object[]> rsPymnt = psmt1.list();
                     for (final Object[] element : rsPymnt)
                         pymntAccountCode = element[0].toString().substring(0, maxCodeLength);
@@ -905,8 +905,8 @@ public class RPReport
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("getFundList: " + query);
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            psmt.setString(1, fromDate);
-            psmt.setString(2, toDate);
+            psmt.setString(0, fromDate);
+            psmt.setString(1, toDate);
             // psmt.setString(3,fundId);
             final List<Object[]> resultset = psmt.list();
 
@@ -960,9 +960,9 @@ public class RPReport
         final String query = "SELECT glcode as \"glcode\", fundid as \"fundid\", SUM(amount) as \"amount\" FROM (SELECT substr(coa.glcode,1,"
                 + substringVal
                 + ") glcode,ts.fundid fundid ,"
-                + " decode(coa.type,'"
+                + " case when coa.type ='"
                 + type2
-                + "',sum(ts.openingcreditbalance)-sum(ts.openingdebitbalance),sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance)) amount "
+                + "'  then sum(ts.openingcreditbalance)-sum(ts.openingdebitbalance) else sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance) end amount "
                 + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE (coa.TYPE = '"
                 + type1
                 + "' OR coa.TYPE = '"
@@ -1161,8 +1161,8 @@ public class RPReport
         try
         {
             final Query psmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            psmt.setString(1, startDate);
-            psmt.setString(2, endDate);
+            psmt.setString(0, startDate);
+            psmt.setString(1, endDate);
             resultset = psmt.list();
             Double amount = null;
             for (final Object[] element : resultset) {
@@ -1299,7 +1299,7 @@ public class RPReport
         try {
             qry = "select repsubtype from schedulemapping where schedule=?";
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(qry);
-            psmt.setString(1, scheduleNo);
+            psmt.setString(0, scheduleNo);
             resultset = psmt.list();
             for (final Object[] element : resultset)
                 repsubtype = element[0].toString();
@@ -1308,15 +1308,11 @@ public class RPReport
             throw new TaskFailedException();
         }
 
-        sbRcp.append("SELECT DISTINCT sm.id,sm.schedule schedule, sm.schedulename, decode(coa.receiptscheduleid,null,coa.paymentscheduleid, coa.receiptscheduleid) scheduleid,coa.id coaid,coa.glcode glcode,coa.name coaname,repsubtype ");
+        sbRcp.append("SELECT DISTINCT sm.id,sm.schedule schedule, sm.schedulename, case when coa.receiptscheduleid=null then coa.paymentscheduleid else  coa.receiptscheduleid end scheduleid,coa.id coaid,coa.glcode glcode,coa.name coaname,repsubtype ");
         for (int i = 0; i < reqFundId.length; i++)
         {
             sbRcp.append(", ");
-            sbRcp.append(" nvl( round( (SELECT DECODE (sm.repsubtype,");
-            sbRcp.append(" 	   		  		 'ROP', SUM (gl.creditamount), ");
-            sbRcp.append("                     'RNOP', SUM (gl.creditamount), ");
-            sbRcp.append("                     0 ");
-            sbRcp.append("                                ) ");
+            sbRcp.append(" nvl( round( (SELECT case sm.repsubtype when 'ROP' then SUM (gl.creditamount) when  'RNOP' then SUM (gl.creditamount) else 0 end ");
             sbRcp.append("        FROM generalledger gl, ");
             sbRcp.append("                         voucherheader vh ");
             sbRcp.append("                   WHERE vh.ID = gl.voucherheaderid ");
@@ -1339,11 +1335,7 @@ public class RPReport
         }
         sbRcp.append("  , NVL");
         sbRcp.append("                   (ROUND");
-        sbRcp.append("                       ((SELECT DECODE (sm.repsubtype,");
-        sbRcp.append("                                        'ROP', SUM (gl.creditamount),");
-        sbRcp.append("                                        'RNOP', SUM (gl.creditamount),");
-        sbRcp.append("                                        0");
-        sbRcp.append("                                       )");
+        sbRcp.append("                       ((SELECT case sm.repsubtype when 'ROP'then SUM (gl.creditamount)  when 'RNOP' then SUM (gl.creditamount) else 0 end ");
         sbRcp.append("                           FROM generalledger gl, voucherheader vh");
         sbRcp.append("                          WHERE vh.ID = gl.voucherheaderid");
         sbRcp.append("                            AND SUBSTR (gl.glcode, 1, ").append(minorCodeLength).append(") = coa.glcode");
@@ -1374,15 +1366,11 @@ public class RPReport
         .append("%') and sm.schedule='").append(scheduleNo).append("' ");
         sbRcp.append("	        ORDER BY repsubtype DESC, schedule, glcode , coaname ");
         // sb.append(" union ");
-        sbPymt.append("SELECT DISTINCT sm.id,sm.schedule schedule, sm.schedulename, decode(coa.receiptscheduleid,null,coa.paymentscheduleid, coa.receiptscheduleid) scheduleid,coa.id coaid,coa.glcode glcode,coa.name coaname,repsubtype ");
+        sbPymt.append("SELECT DISTINCT sm.id,sm.schedule schedule, sm.schedulename, case when coa.receiptscheduleid=null then coa.paymentscheduleid else coa.receiptscheduleid end scheduleid,coa.id coaid,coa.glcode glcode,coa.name coaname,repsubtype ");
         for (int i = 0; i < reqFundId.length; i++)
         {
             sbPymt.append(", ");
-            sbPymt.append(" nvl( round( (SELECT DECODE (sm.repsubtype,");
-            sbPymt.append(" 	   		  		 'POP', SUM (gl.debitamount), ");
-            sbPymt.append("                     'PNOP', SUM (gl.debitamount), ");
-            sbPymt.append("                     0 ");
-            sbPymt.append("                                ) ");
+            sbPymt.append(" nvl( round( (SELECT  case sm.repsubtype when 'POP'then SUM (gl.debitamount) when 'PNOP' then SUM (gl.debitamount) else 0 end ");
             sbPymt.append("        FROM generalledger gl, ");
             sbPymt.append("                         voucherheader vh ");
             sbPymt.append("                   WHERE vh.ID = gl.voucherheaderid ");
@@ -1405,11 +1393,7 @@ public class RPReport
         }
         sbPymt.append(",NVL");
         sbPymt.append("                   (ROUND");
-        sbPymt.append("                       ((SELECT DECODE (sm.repsubtype,");
-        sbPymt.append("                                        'POP', SUM (gl.debitamount),");
-        sbPymt.append("                                        'PNOP', SUM (gl.debitamount),");
-        sbPymt.append("                                        0");
-        sbPymt.append("                                       )");
+        sbPymt.append("                       ((SELECT case sm.repsubtype when 'POP' then SUM (gl.debitamount) when 'PNOP' then SUM (gl.debitamount) else 0 end ");
         sbPymt.append("                           FROM generalledger gl, voucherheader vh");
         sbPymt.append("                          WHERE vh.ID = gl.voucherheaderid");
         sbPymt.append("                            AND SUBSTR (gl.glcode, 1, ").append(minorCodeLength).append(") = coa.glcode");
@@ -1586,7 +1570,7 @@ public class RPReport
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("getRP" + scheduleNo + "Schedule SQL:" + sql);
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            psmt.setString(1, scheduleNo);
+            psmt.setString(0, scheduleNo);
             resultset = psmt.list();
             final BigDecimal[] fundTotals = new BigDecimal[reqFundId.length];
             BigDecimal totAmt = BigDecimal.ZERO, tempAmt = BigDecimal.ZERO, prevTotAmt = BigDecimal.ZERO;

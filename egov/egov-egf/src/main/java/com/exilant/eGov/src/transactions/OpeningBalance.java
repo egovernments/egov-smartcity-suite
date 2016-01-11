@@ -101,8 +101,8 @@ public class OpeningBalance extends AbstractTask {
             try {
                 final String query = "select glcode as \"glcode\",classification as \"classification\",isactiveforposting as \"isactiveforposting\",type as \"type\" from chartofaccounts where glcode = ? and type= ?";
                 pst = connection.prepareStatement(query);
-                pst.setString(1, gridOpeningBalance[i][1]);
-                pst.setString(2, serviceType);
+                pst.setString(0, gridOpeningBalance[i][1]);
+                pst.setString(1, serviceType);
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(query);
                 resultset = pst.executeQuery();
@@ -192,12 +192,12 @@ public class OpeningBalance extends AbstractTask {
                     " and DEPARTMENTID=?";
 
             pst = connection.prepareStatement(chkEntry);
-            pst.setString(1, gridOpeningBalance[i][0]);
-            pst.setString(2, fundId);
-            pst.setString(3, financialYearId);
-            pst.setString(4, detailTypeId);
-            pst.setString(5, detailKey);
-            pst.setString(6, deptId);
+            pst.setString(0, gridOpeningBalance[i][0]);
+            pst.setString(1, fundId);
+            pst.setString(2, financialYearId);
+            pst.setString(3, detailTypeId);
+            pst.setString(4, detailKey);
+            pst.setString(5, deptId);
             resultset = null;
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("chkEntry  " + chkEntry);
@@ -224,7 +224,7 @@ public class OpeningBalance extends AbstractTask {
                         LOGGER.debug("Need to check bank accounts.");
                     final String queryFundId = "select fundid from bankaccount where glcodeid= ?";
                     pst = connection.prepareStatement(queryFundId);
-                    pst.setString(1, gridOpeningBalance[i][0]);
+                    pst.setString(0, gridOpeningBalance[i][0]);
                     final ResultSet rs = pst.executeQuery();
                     if (rs.next())
                     {
@@ -240,20 +240,20 @@ public class OpeningBalance extends AbstractTask {
                 }
 
                 id = String.valueOf(PrimaryKeyGenerator.getNextKey("TransactionSummary"));
-                pstBatch.setString(1, id);
-                pstBatch.setString(2, financialYearId);
-                pstBatch.setString(3, gridOpeningBalance[i][0]);
-                pstBatch.setString(4, gridOpeningBalance[i][3]);
-                pstBatch.setString(5, gridOpeningBalance[i][4]);
-                pstBatch.setString(6, dr);
-                pstBatch.setString(7, cr);
-                pstBatch.setString(8, detailTypeId);
-                pstBatch.setString(9, detailKey);
-                pstBatch.setString(10, fundId);
-                pstBatch.setString(11, fundSourceId);
-                pstBatch.setString(12, deptId);
-                pstBatch.setString(13, dc.getValue("current_UserID"));
-                pstBatch.setString(14, gridOpeningBalance[i][8]);
+                pstBatch.setString(0, id);
+                pstBatch.setString(1, financialYearId);
+                pstBatch.setString(2, gridOpeningBalance[i][0]);
+                pstBatch.setString(3, gridOpeningBalance[i][3]);
+                pstBatch.setString(4, gridOpeningBalance[i][4]);
+                pstBatch.setString(5, dr);
+                pstBatch.setString(6, cr);
+                pstBatch.setString(7, detailTypeId);
+                pstBatch.setString(8, detailKey);
+                pstBatch.setString(9, fundId);
+                pstBatch.setString(10, fundSourceId);
+                pstBatch.setString(11, deptId);
+                pstBatch.setString(12, dc.getValue("current_UserID"));
+                pstBatch.setString(13, gridOpeningBalance[i][8]);
                 pstBatch.addBatch();
             }
             /** if executeBatch Fails throw exception **/
@@ -314,11 +314,11 @@ public class OpeningBalance extends AbstractTask {
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("updateQuery  " + updateQuery);
-            pstBatch.setString(1, gridOpeningBalance[i][3]);
-            pstBatch.setString(2, gridOpeningBalance[i][4]);
-            pstBatch.setString(3, dc.getValue("current_UserID"));
-            pstBatch.setString(4, gridOpeningBalance[i][8]);
-            pstBatch.setString(5, gridOpeningBalance[i][7]);
+            pstBatch.setString(0, gridOpeningBalance[i][3]);
+            pstBatch.setString(1, gridOpeningBalance[i][4]);
+            pstBatch.setString(2, dc.getValue("current_UserID"));
+            pstBatch.setString(3, gridOpeningBalance[i][8]);
+            pstBatch.setString(4, gridOpeningBalance[i][7]);
             pstBatch.addBatch();
 
             /** if executeBatch Fails throw exception **/
@@ -346,7 +346,7 @@ public class OpeningBalance extends AbstractTask {
             final String query = "SELECT id FROM financialYear " +
                     "WHERE startingDate > (SELECT endingDate FROM financialYear WHERE id = ?)";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (resultset.next())
                 nextYear = true;
@@ -366,7 +366,7 @@ public class OpeningBalance extends AbstractTask {
                     +
                     "FROM financialYear WHERE id= ?";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (resultset.next()) {
                 fy.setId(fyId);
@@ -387,7 +387,7 @@ public class OpeningBalance extends AbstractTask {
         try {
             final String query = "SELECT id FROM financialYear WHERE isClosed=1 AND id= ?";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (!resultset.next())
                 isOpen = true;
@@ -407,7 +407,7 @@ public class OpeningBalance extends AbstractTask {
             final String query = "SELECT id FROM financialYear " +
                     "WHERE startingDate = (SELECT endingDate+1 FROM financialYear WHERE id = ?)";
             pst = connection.prepareStatement(query);
-            pst.setString(1, fyId);
+            pst.setString(0, fyId);
             resultset = pst.executeQuery();
             if (resultset.next())
                 nextFYId = resultset.getString("id");
@@ -449,12 +449,12 @@ public class OpeningBalance extends AbstractTask {
                         " and departmentId=?";
 
                 pst = con.prepareStatement(query);
-                pst.setString(1, glCodeId);
-                pst.setString(2, fundId);
-                pst.setString(3, accountDetailKey);
-                pst.setString(4, accountDetailTypeId);
-                pst.setString(5, fyId);
-                pst.setString(6, deptId);
+                pst.setString(0, glCodeId);
+                pst.setString(1, fundId);
+                pst.setString(2, accountDetailKey);
+                pst.setString(3, accountDetailTypeId);
+                pst.setString(4, fyId);
+                pst.setString(5, deptId);
                 if (accountDetailKey != null
                         && !(accountDetailKey.trim().equalsIgnoreCase("") || accountDetailKey.equalsIgnoreCase("0")))
                     resultset = pst.executeQuery();
@@ -463,10 +463,10 @@ public class OpeningBalance extends AbstractTask {
                         " where glcodeid= ? AND fundId= ? AND financialYearId= ? " + fundsourceCondition +
                         " and departmentid=?";
                 pst = con.prepareStatement(sql);
-                pst.setString(1, glCodeId);
-                pst.setString(2, fundId);
-                pst.setString(3, fyId);
-                pst.setString(4, deptId);
+                pst.setString(0, glCodeId);
+                pst.setString(1, fundId);
+                pst.setString(2, fyId);
+                pst.setString(3, deptId);
                 resultset = pst.executeQuery();
             }
 

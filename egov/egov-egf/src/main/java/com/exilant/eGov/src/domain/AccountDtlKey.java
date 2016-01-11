@@ -118,12 +118,12 @@ public class AccountDtlKey {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pst.setString(1, id);
-            pst.setString(2, groupID);
-            pst.setString(3, glCodeID);
-            pst.setString(4, detailTypeId);
-            pst.setString(5, detailName);
-            pst.setString(6, detailKey);
+            pst.setString(0, id);
+            pst.setString(1, groupID);
+            pst.setString(2, glCodeID);
+            pst.setString(3, detailTypeId);
+            pst.setString(4, detailName);
+            pst.setString(5, detailKey);
             final int ret = pst.executeUpdate();
             // if(LOGGER.isDebugEnabled()) LOGGER.debug(insertQuery);
             if (ret == 1)

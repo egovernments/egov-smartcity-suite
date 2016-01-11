@@ -111,17 +111,17 @@ public class FinancialYear {
                 + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-        pst.setString(1, id);
-        pst.setString(2, financialYear);
-        pst.setString(3, startingDate);
-        pst.setString(4, endingDate);
-        pst.setString(5, isActive);
-        pst.setString(6, created);
-        pst.setString(7, lastModified);
-        pst.setString(8, modifiedBy);
-        pst.setString(9, isActiveForPosting);
-        pst.setString(10, isClosed);
-        pst.setString(11, TransferClosingBalance);
+        pst.setString(0, id);
+        pst.setString(1, financialYear);
+        pst.setString(2, startingDate);
+        pst.setString(3, endingDate);
+        pst.setString(4, isActive);
+        pst.setString(5, created);
+        pst.setString(6, lastModified);
+        pst.setString(7, modifiedBy);
+        pst.setString(8, isActiveForPosting);
+        pst.setString(9, isClosed);
+        pst.setString(10, TransferClosingBalance);
         if (LOGGER.isInfoEnabled())
             LOGGER.info(insertQuery);
         pst.executeUpdate();

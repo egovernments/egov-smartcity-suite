@@ -96,18 +96,18 @@ public class AccountChequeRange {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pst.setString(1, id);
-            pst.setString(2, bankAccountID);
-            pst.setString(3, fromChequeNumber);
-            pst.setString(4, toChequeNumber);
-            pst.setString(5, receivedDate);
-            pst.setString(6, isExhausted);
-            pst.setString(7, nextChqNo);
-            pst.setString(8, isAllottedTo);
-            pst.setString(9, createdBy);
-            pst.setString(10, createdDate);
-            pst.setString(11, lastModifiedBy);
-            pst.setString(12, lastModifiedDate);
+            pst.setString(0, id);
+            pst.setString(1, bankAccountID);
+            pst.setString(2, fromChequeNumber);
+            pst.setString(3, toChequeNumber);
+            pst.setString(4, receivedDate);
+            pst.setString(5, isExhausted);
+            pst.setString(6, nextChqNo);
+            pst.setString(7, isAllottedTo);
+            pst.setString(8, createdBy);
+            pst.setString(9, createdDate);
+            pst.setString(10, lastModifiedBy);
+            pst.setString(11, lastModifiedDate);
             pst.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error("Exception in insert:" + e.getMessage());
