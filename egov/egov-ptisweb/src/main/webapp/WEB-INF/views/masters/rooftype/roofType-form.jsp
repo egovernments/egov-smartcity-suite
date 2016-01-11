@@ -64,7 +64,7 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="Field-1" class="col-sm-3 control-label"><spring:message
-								code="lbl.rooftype.nature" /><span class="mandatory"></span></label>
+								code="lbl.roofType.name" /><span class="mandatory"></span></label>
 
 						<div class="col-sm-6 add-margin">
 							<form:input id="name" name="name" path="name" type="text"
@@ -74,7 +74,7 @@
 						</div> </div>
 						<div class="form-group">
 							<label for="Field-1" class="col-sm-3 control-label"><spring:message
-									code="lbl.rooftype.code" /><span class="mandatory"></span></label>
+									code="lbl.roofType.code" /><span class="mandatory"></span></label>
 							<div class="col-sm-6 add-margin">
 								<form:input id="code" name="code" path="code" type="text"
 									cssClass="form-control is_valid_number" autocomplete="off"
