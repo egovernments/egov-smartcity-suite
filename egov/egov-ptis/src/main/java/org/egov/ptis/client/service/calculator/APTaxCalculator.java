@@ -312,7 +312,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         }
         // calculating Un Authorized Penalty
         if (installment.equals(currInstallment)
-                && (unAuthDeviationPerc != null && !unAuthDeviationPerc.isEmpty() && !"0".equals(unAuthDeviationPerc))) {
+                && !(unAuthDeviationPerc == null || unAuthDeviationPerc.isEmpty() || "0".equals(unAuthDeviationPerc) || "-1"
+                        .equals(unAuthDeviationPerc))) {
             halfYearHeadTax = BigDecimal.ZERO;
             halfYearHeadTax = roundOffToNearestEven(calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable));
             totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
