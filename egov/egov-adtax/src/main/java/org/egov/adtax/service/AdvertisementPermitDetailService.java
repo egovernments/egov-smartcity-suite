@@ -135,8 +135,7 @@ public class AdvertisementPermitDetailService {
         if (anyDemandPendingForCollection)
             advertisementDemandService.updateDemand(advertisementPermitDetail, advertisementPermitDetail.getAdvertisement().getDemandId());
         roundOfAllTaxAmount(advertisementPermitDetail);
-       // advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        entityManager.merge(advertisementPermitDetail);
+        advertisementPermitDetailRepository.save(advertisementPermitDetail);
         if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);

@@ -46,6 +46,7 @@ import javax.validation.Valid;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
+import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.springframework.stereotype.Controller;
@@ -62,7 +63,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UpdateHoardingController extends HoardingControllerSupport {
 
     @ModelAttribute("advertisementPermitDetail")
-    public AdvertisementPermitDetail hoarding(@PathVariable final String id) {
+    public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
         return advertisementPermitDetailService.findBy(Long.valueOf(id));
     }
 
@@ -71,7 +72,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
-        model.addAttribute("additionalRule","CREATEADVERTISEMENT");
+        model.addAttribute("additionalRule",AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
         prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
@@ -100,7 +101,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             
             updateHoardingDocuments(advertisementPermitDetail);
             advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail,approvalPosition,
-                    approvalComment, "CREATEADVERTISEMENT", workFlowAction);
+                    approvalComment, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
             redirAttrib.addFlashAttribute("message", "hoarding.update.success");
             return "redirect:/hoarding/view/" + advertisementPermitDetail.getId();
         } catch (final HoardingValidationError e) {
