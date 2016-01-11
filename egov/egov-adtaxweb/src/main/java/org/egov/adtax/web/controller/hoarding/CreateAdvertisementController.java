@@ -103,8 +103,9 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     @RequestMapping(value = "create", method = GET)
     public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,final Model model) {
         prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
-        model.addAttribute("additionalRule","CREATEHOARDING");
+        model.addAttribute("additionalRule",AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+        model.addAttribute("currentState", "NEW");
         return "hoarding-create";
     }
 

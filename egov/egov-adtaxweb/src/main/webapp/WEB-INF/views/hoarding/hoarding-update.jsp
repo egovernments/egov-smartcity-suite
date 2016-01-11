@@ -66,7 +66,7 @@
 					<div class="tab-pane fade active in" id="hoardingdetails">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.application.no"/>
+								<spring:message code="lbl.advertisement.application.no"/>
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
@@ -93,12 +93,12 @@
                                		<form:errors path="permissionNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.application.number"/>
+								<spring:message code="lbl.advertisement.application.no"/>
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control" path="applicationNumber" id="applicationNumber" required="required" readonly="true"/>
-                               		<form:errors path="applicationNumber" cssClass="error-msg" />
+									<form:input type="text" cssClass="form-control" path="advertisement.advertisementNumber" id="advertisementNumber" required="required" readonly="true"/>
+                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">

@@ -45,6 +45,7 @@ import javax.transaction.Transactional;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -78,6 +79,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private AssignmentService assignmentService;
 
     @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
     public ApplicationWorkflowCustomImpl() {
 
     }
@@ -100,16 +104,20 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         if (null == advertisementPermitDetail.getState()) {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, AdvertisementTaxConstants.WF_NEW_STATE, null);
+            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus()));
             advertisementPermitDetail.transition().start()
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+
         } else if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
 
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-
+            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
             if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
                 advertisementPermitDetail.transition(true).end()
                         .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
@@ -118,7 +126,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
-
+            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus()));
             advertisementPermitDetail.transition(true)
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
@@ -129,11 +138,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         } else {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus()));
             advertisementPermitDetail.transition(true)
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed ");
