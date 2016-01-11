@@ -101,7 +101,7 @@ public class AdvertisementPermitDetailService {
     //    advertisementPermitDetail.setPermissionstartdate(new Date());
     //    advertisementPermitDetail.setPermissionenddate(new LocalDate().plusYears(1).toDate());
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
+        if(approvalPosition != null && approvalPosition > 0 && additionalRule != null && StringUtils.isNotEmpty(workFlowAction)){
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         }
@@ -136,7 +136,7 @@ public class AdvertisementPermitDetailService {
             advertisementDemandService.updateDemand(advertisementPermitDetail, advertisementPermitDetail.getAdvertisement().getDemandId());
         roundOfAllTaxAmount(advertisementPermitDetail);
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        if(null != approvalPosition && null != additionalRule && StringUtils.isNotEmpty(workFlowAction)){
+        if(approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction)){
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         }

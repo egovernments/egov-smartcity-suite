@@ -94,13 +94,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         Position pos = null;
         final Assignment wfInitiator = assignmentService
                 .getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
-        if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+        if (approvalPosition != null && approvalPosition > 0)
             pos = positionMasterService.getPositionById(approvalPosition);
         WorkFlowMatrix wfmatrix = null;
         if (null == advertisementPermitDetail.getState()) {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, AdvertisementTaxConstants.WF_NEW_STATE, null);
-            advertisementPermitDetail.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+            advertisementPermitDetail.transition().start()
+                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
@@ -110,14 +111,16 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
 
             if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
-                advertisementPermitDetail.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                advertisementPermitDetail.transition(true).end()
+                        .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate())
                         .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
         } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
 
-            advertisementPermitDetail.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            advertisementPermitDetail.transition(true)
+                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction())
@@ -126,7 +129,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         } else {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-            advertisementPermitDetail.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            advertisementPermitDetail.transition(true)
+                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
