@@ -85,12 +85,12 @@
 	</div>
 </div>
 
-<c:set value="${husband}" var="applicant" scope="request"></c:set>
+<c:set value="husband" var="applicant" scope="request"></c:set>
 <jsp:include page="applicantinfo.jsp">
 	<jsp:param value="subheading.husband.info" name="header" />
 </jsp:include>
 
-<c:set value="${wife}" var="applicant" scope="request"></c:set>
+<c:set value="wife" var="applicant" scope="request"></c:set>
 <jsp:include page="applicantinfo.jsp">
 	<jsp:param value="subheading.wife.info" name="header" />
 </jsp:include>

@@ -40,6 +40,7 @@
 package org.egov.mrs.domain.entity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -92,10 +93,12 @@ public class Applicant extends AbstractAuditable {
     private ReligionPractice religionPractice;
 
     @NotNull
+    @Column(name = "ageinyears")
     private Integer ageInYearsAsOnMarriage;
 
     @NotNull
     @Length(min = 1)
+    @Column(name = "ageinmonths")
     private Integer ageInMonthsAsOnMarriage;
 
     @NotNull

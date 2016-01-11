@@ -64,37 +64,43 @@
 					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
 					    <li><a data-toggle="tab" href="#checklist">Checklist</a></li>
 					  </ul>
-					
 					  <div class="tab-content">
 					    <div id="applicant-info" class="tab-pane fade in active">
 					    	<jsp:include page="generalinfo.jsp"></jsp:include>
 					    </div>
 					    <div id="witness-info" class="tab-pane fade">
-					    	<c:set value="${witnesses[0]}" var="witness" scope="request"></c:set>
-					    	<jsp:include page="applicantinfo.jsp">
+				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
+					    	<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness1.info" name="header" />
-							</jsp:include>	
-							<c:set value="${witnesses[1]}" var="witness" scope="request"></c:set>
-							<jsp:include page="applicantinfo.jsp">
+							</jsp:include>
+							
+							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
+							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness2.info" name="header" />
 							</jsp:include>
-							<c:set value="${witnesses[2]}" var="witness" scope="request"></c:set>
-							<jsp:include page="applicantinfo.jsp">
+							
+							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
+							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness3.info" name="header" />
-							</jsp:include>						
+							</jsp:include>					
 					    </div>
 					    <div id="checklist" class="tab-pane fade">
-					    	<%-- <jsp:include page="checklists.jsp"></jsp:include> --%>
+					    	<jsp:include page="checklist.jsp"></jsp:include>
 					    </div>
 					  </div>
 					  </div>
 				</div>
 			</div>			
-			
 			<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div> --%>
+			<div class="row">
+				<div class="text-center">					
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.forward"/></button>
+			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+				</div>
+			</div>
 		</form:form>
 		
 	</div>

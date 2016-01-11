@@ -71,8 +71,8 @@ public class IdentityProof extends AbstractPersistable<Long> {
 
     private boolean photograph;
     private boolean deaceasedDeathCertificate;
-    private boolean divorced;
-    private boolean schoolingLeavingCertificate;
+    private boolean divorceCertificate;
+    private boolean schoolLeavingCertificate;
     private boolean birthCertificate;
     private boolean passport;
     private boolean rationCard;
@@ -89,7 +89,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public boolean hasPhotograph() {
+    public boolean getPhotograph() {
         return photograph;
     }
 
@@ -97,7 +97,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.photograph = photograph;
     }
 
-    public boolean hasDeaceasedDeathCertificate() {
+    public boolean getDeaceasedDeathCertificate() {
         return deaceasedDeathCertificate;
     }
 
@@ -105,23 +105,23 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.deaceasedDeathCertificate = deaceasedDeathCertificate;
     }
 
-    public boolean isDivorced() {
-        return divorced;
+    public boolean getDivorceCertificate() {
+        return divorceCertificate;
     }
 
-    public void setDivorceCertificate(final boolean divorced) {
-        this.divorced = divorced;
+    public void setDivorceCertificate(final boolean divorceCertificate) {
+        this.divorceCertificate = divorceCertificate;
     }
 
-    public boolean hasSchoolingLeavingCertificate() {
-        return schoolingLeavingCertificate;
+    public boolean getSchoolLeavingCertificate() {
+        return schoolLeavingCertificate;
     }
 
-    public void setSchoolingLeavingCertificate(final boolean schoolingLeavingCertificate) {
-        this.schoolingLeavingCertificate = schoolingLeavingCertificate;
+    public void setSchoolLeavingCertificate(final boolean schoolLeavingCertificate) {
+        this.schoolLeavingCertificate = schoolLeavingCertificate;
     }
 
-    public boolean hasBirthCertificate() {
+    public boolean getBirthCertificate() {
         return birthCertificate;
     }
 
@@ -129,7 +129,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.birthCertificate = birthCertificate;
     }
 
-    public boolean hasPassport() {
+    public boolean getPassport() {
         return passport;
     }
 
@@ -137,7 +137,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.passport = passport;
     }
 
-    public boolean hasRationCard() {
+    public boolean getRationCard() {
         return rationCard;
     }
 
@@ -145,7 +145,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.rationCard = rationCard;
     }
 
-    public boolean hasMsebBill() {
+    public boolean getMsebBill() {
         return msebBill;
     }
 
@@ -153,7 +153,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
         this.msebBill = msebBill;
     }
 
-    public boolean hasTelephoneBill() {
+    public boolean getTelephoneBill() {
         return telephoneBill;
     }
 

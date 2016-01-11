@@ -52,21 +52,22 @@
 	<div class="col-sm-7">
 	<div class="row">
 	<div class="form-group">
-		<label class="col-sm-6 control-label">
+		<label class="col-sm-5 text-right" style="padding-right: 5px;">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</label>
-		<div class="col-sm-6">
-			<form:input path="param.witness.name.firstName" id="txt-firstName" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" autocomplete="off" required="required"/>
-            <form:errors path="param.witness.name.firstName" cssClass="add-margin error-msg"/>
+		witness: <c:out value="${witness}" />
+		<div class="col-sm-5" style="padding-left: 26px;">
+			<form:input path="${witness}.name.firstName" id="txt-firstName" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="First Name" autocomplete="off" required="required"/>
+            <form:errors path="${witness}.name.firstName" cssClass="add-margin error-msg"/>
 		</div>
+		<div class="col-sm-2"></div>
 	</div>
 	</div>
 	</div>
 	<div class="col-sm-5">
 	<div class="row">
-		<label class="col-sm-6 control-label">
-			<spring:message code="lbl.photo"/><span class="mandatory"></span>
-		</label>		
+		<div class="col-sm-6">
+		</div>		
 		<div class="col-sm-6">
 		</div>
 	</div>
@@ -76,145 +77,62 @@
 	<div class="col-sm-7">
 	<div class="row">
 		<div class="form-group">
-			<label class="col-sm-6 control-label">
-				<spring:message code="lbl.othername"/>
+			<label class="col-sm-5 text-right" style="padding-right: 5px;">
+				<spring:message code="lbl.occupation"/>
 			</label>
-			<div class="col-sm-6">
-				<form:input path="param.witness.otherName" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required"/>
-	            <form:errors path="param.witness.otherName" cssClass="add-margin error-msg"/>
+			<div class="col-sm-5" style="padding-left: 26px;">
+				<form:input path="${witness}.occupation" id="txt-witness-occupation" type="text" class="form-control low-width is_valid_alphanumeric" maxlength="60" placeholder="" autocomplete="off"/>
+	            <form:errors path="${witness}.occupation" cssClass="add-margin error-msg"/>
 			</div>
+			<div class="col-sm-2"></div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="form-group">
-			<label class="col-sm-6 control-label">
+			<label class="col-sm-5 text-right" style="padding-right: 5px;">
 				<spring:message code="lbl.religion"/>
 			</label>
-			<div class="col-sm-6">
-				<form:select path="param.witness.religion.id" id="select-marriageAct" cssClass="form-control" 
-							cssErrorClass="form-control error" required="required">
-	                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-	                 <form:options items="${religions}" itemValue="id" itemLabel="name"/>
-	            </form:select>
-	            <form:errors path="param.witness.religion.id" cssClass="add-margin error-msg"/>
+			<div class="col-sm-5" style="padding-left: 26px;">
+				<form:input path="${witness}.relationshipWithApplicant" id="txt-witness-relationship" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="" autocomplete="off"/>
+	            <form:errors path="${witness}.relationshipWithApplicant" cssClass="add-margin error-msg"/>
 			</div>
+			<div class="col-sm-2"></div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="form-group">
-			<label class="col-sm-6 control-label">
-				<spring:message code="lbl.religiontype"/>
+			<label class="col-sm-5 text-right" style="padding-right: 5px;">
+				<spring:message code="lbl.residence.address"/>
 			</label>
-			<div class="col-sm-6">
-				<form:radiobuttons path="param.witness.religionPractice" items="${religionPractice}"  required="required" name="param.witness.religionPractice" element="span"  />
+			<div class="col-sm-5" style="padding-left: 26px;">
+				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+                <form:errors path="${witness}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 			</div>
+			<div class="col-sm-2"></div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="form-group">
-			<label class="col-sm-6 control-label">
-				<spring:message code="lbl.ageason.marriage"/><span class="mandatory"></span>
+			<label class="col-sm-5 text-right" style="padding-right: 5px;">
+				<spring:message code="lbl.residence.address"/>
 			</label>
-			<div class="col-sm-6">
-				<form:input path="param.witness.ageInYearsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control low-width is_valid_numeric" style="display: inline; width: 203px;" maxlength="2" placeholder="Years" autocomplete="off" required="required"/>
-				<form:input path="param.witness.ageInMonthsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control low-width is_valid_numeric" style="display: inline; width: 203px;" maxlength="2" placeholder="Months" autocomplete="off" required="required"/>
-	            <form:errors path="param.witness.ageInYearsAsOnMarriage" cssClass="add-margin error-msg"/><form:errors path="param.witness.ageInMonthsAsOnMarriage" cssClass="add-margin error-msg"/>
+			<div class="col-sm-5" style="padding-left: 26px;">
+				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+                <form:errors path="${witness}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 			</div>
+			<div class="col-sm-2"></div>
 		</div>
 	</div>
 	</div>
 	<div class="col-sm-5">
 		<div class="row">
-			<div class="col-sm-12 text-center">
-				<img src="/egi/resources/global/images/logo@2x.png" height="90" width="100">
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.applicant.status"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:select path="param.witness.presentRelation" id="select-relationStatus" cssClass="form-control" 
-								cssErrorClass="form-control error" required="required">
-		                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-		                 <form:options items="${relationStatus}" itemValue="id" itemLabel="name"/>
-		            </form:select>
-		            <form:errors path="param.witness.presentRelation" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.occupation"/>
-				</label>
-				<div class="col-sm-6">
-					<form:input path="param.witness.occupation" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required"/>
-	            	<form:errors path="param.witness.occupation" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.phoneno"/>
-				</label>
-				<div class="col-sm-6">
-					<form:textarea path="param.witness.contactInfo.residenceAddress" id="txt-phoneno" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
-                    <form:errors path="param.witness.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.email"/>
-				</label>
-				<div class="col-sm-6">
-					<form:textarea path="param.witness.contactInfo.officeAddress" id="txt-email" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
-                    <form:errors path="param.witness.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:textarea path="param.witness.contactInfo.residenceAddress" id="name" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
-                    <form:errors path="param.witness.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.office.address"/>
-				</label>
-				<div class="col-sm-6">
-					<form:textarea path="param.witness.contactInfo.officeAddress" id="name" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
-                    <form:errors path="param.witness.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
-				</div>
+			<label class="col-sm-5 text-right" style="padding: 25px;">
+				<spring:message code="lbl.photo"/>
+			</label>
+			<div class="col-sm-6">			 	
+				<img class="add-border attach-photo" height="160" width="140">
+				<span></span>
+				<input type="hidden" name="${witness}.photo">
 			</div>
 		</div>
 	</div>

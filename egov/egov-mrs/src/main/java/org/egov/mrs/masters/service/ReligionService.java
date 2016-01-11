@@ -79,4 +79,8 @@ public class ReligionService {
     public List<Religion> getReligions() {
         return religionRepository.findAll();
     }
+
+    public Religion getProxy(final Long id) {
+        return religionRepository.getOne(id);
+    }
 }

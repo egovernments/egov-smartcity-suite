@@ -98,33 +98,33 @@ public class Registration extends StateAware {
 
     @NotNull
     @Valid
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "husband")
     private Applicant husband = new Applicant();
 
     @NotNull
     @Valid
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "wife")
     private Applicant wife = new Applicant();
 
     @NotNull
     @Valid
-    @OneToMany(mappedBy = "registration")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     private List<Witness> witnesses = new LinkedList<Witness>();
 
     @NotNull
     @Valid
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "priest")
     private Priest priest;
 
     private boolean coupleFromSamePlace;
 
-    private byte[] memorandumOfMarriage;
-    private byte[] courtFeeStamp;
-    private byte[] affidavit;
-    private byte[] marriageCard;
+    private boolean memorandumOfMarriage;
+    private boolean courtFeeStamp;
+    private boolean affidavit;
+    private boolean marriageCard;
 
     @NotNull
     private String feeCriteria;
@@ -137,7 +137,7 @@ public class Registration extends StateAware {
     @JoinColumn(name = "zone")
     private Boundary zone;
     
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "demand")
     private EgDemand demand;
     
@@ -226,38 +226,50 @@ public class Registration extends StateAware {
         this.priest = priest;
     }
 
-    public byte[] getMemorandumOfMarriage() {
+    public boolean hasMemorandumOfMarriage() {
         return memorandumOfMarriage;
     }
-
-    public void setMemorandumOfMarriage(final byte[] memorandumOfMarriage) {
+    
+    public boolean getMemorandumOfMarriage() {
+        return memorandumOfMarriage;
+    }
+    
+    public void setMemorandumOfMarriage(boolean memorandumOfMarriage) {
         this.memorandumOfMarriage = memorandumOfMarriage;
     }
-
-    public byte[] getCourtFeeStamp() {
+    
+    public boolean getCourtFeeStamp() {
         return courtFeeStamp;
     }
-
-    public void setCourtFeeStamp(final byte[] courtFeeStamp) {
+    
+    public void setCourtFeeStamp(boolean courtFeeStamp) {
         this.courtFeeStamp = courtFeeStamp;
     }
-
-    public byte[] getAffidavit() {
+    
+    public boolean hasAffidavit() {
         return affidavit;
     }
-
-    public void setAffidavit(final byte[] affidavit) {
+    
+    public boolean getAffidavit() {
+        return affidavit;
+    }
+    
+    public void setAffidavit(boolean affidavit) {
         this.affidavit = affidavit;
     }
-
-    public byte[] getMarriageCard() {
+    
+    public boolean hasMarriageCard() {
         return marriageCard;
     }
-
-    public void setMarriageCard(final byte[] marriageCard) {
+    
+    public boolean getMarriageCard() {
+        return marriageCard;
+    }
+    
+    public void setMarriageCard(boolean marriageCard) {
         this.marriageCard = marriageCard;
     }
-
+    
     public boolean isCoupleFromSamePlace() {
         return coupleFromSamePlace;
     }
@@ -298,7 +310,38 @@ public class Registration extends StateAware {
         this.zone = zone;
     }
     
+    public EgDemand getDemand() {
+        return demand;
+    }
 
+    public void setDemand(EgDemand demand) {
+        this.demand = demand;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(ApplicationStatus status) {
+        this.status = status;
+    }
+    
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+    
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+    
+    public String getRemakrs() {
+        return remakrs;
+    }
+
+    public void setRemakrs(String remakrs) {
+        this.remakrs = remakrs;
+    }
+    
     @Override
     public String getStateDetails() {
         return null;

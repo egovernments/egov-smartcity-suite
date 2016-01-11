@@ -54,8 +54,11 @@ import org.egov.mrs.masters.service.ReligionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Handles the Marriage Registration
@@ -71,10 +74,12 @@ public class CreateRegistrationController {
     private final ReligionService religionService;
     private final BoundaryService boundaryService;
     private final ActService actService;
+    private final RegistrationService registrationService;
 
     @Autowired
     public CreateRegistrationController(final RegistrationService registrationService, final ReligionService religionService,
             final BoundaryService boundaryService, final ActService actService) {
+        this.registrationService = registrationService;
         this.religionService = religionService;
         this.boundaryService = boundaryService;
         this.actService = actService;
@@ -89,6 +94,19 @@ public class CreateRegistrationController {
         model.addAttribute("acts", actService.getActs());
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("relationStatus", Arrays.asList(RelationStatus.values()));
+        return "registration-form";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String register(@ModelAttribute Registration registration, final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+        
+        if (errors.hasErrors())
+            return "registration-form";
+        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
+        registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
+        registrationService.createRegistration(registration);
+        
         return "registration-form";
     }
 

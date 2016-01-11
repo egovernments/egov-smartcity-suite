@@ -53,6 +53,7 @@ $('body').on('click', 'img.attach-photo', function () {
 		fileReader.onload = function(e) {
            var imgData = e.target.result; 
            $(img).prop('src', imgData);
+           $($(img).siblings('input')).val(imgData);
 		}
        
 		fileReader.readAsDataURL(image);
