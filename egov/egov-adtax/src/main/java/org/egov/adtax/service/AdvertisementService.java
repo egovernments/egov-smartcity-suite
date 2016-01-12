@@ -38,7 +38,6 @@
  */
 package org.egov.adtax.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +53,6 @@ import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.adtax.search.contract.HoardingDcbReport;
-import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -69,7 +67,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AdvertisementService {
 
-    private final AdvertisementRepository advertisementRepository;
+    @Autowired
+    private  AdvertisementRepository advertisementRepository;
   
     @PersistenceContext
     private EntityManager entityManager;
@@ -82,11 +81,6 @@ public class AdvertisementService {
     
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-
-    @Autowired
-    public AdvertisementService(final AdvertisementRepository hoardingRepository) {
-        this.advertisementRepository = hoardingRepository;
-    }
 
     @Transactional
     public Advertisement createAdvertisement(final Advertisement hoarding) {
@@ -173,21 +167,6 @@ public class AdvertisementService {
     public Advertisement getHoardingByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
-
-    public List<HoardingSearch> getHoardingSearchResult(final HoardingSearch hoardingSearch) {
-        final List<Advertisement> hoardings = advertisementRepository.fetchAdvertisementLike(hoardingSearch);
-        final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
-        hoardings.forEach(result -> {
-            final HoardingSearch hoardingSearchResult = new HoardingSearch();
-            hoardingSearchResult.setAdvertisementNumber(result.getAdvertisementNumber());
-          //  hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
-            //hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            //hoardingSearchResult.setAgencyName(result.getAgency().getName());
-            hoardingSearchResult.setStatus(result.getStatus());
-            hoardingSearchResults.add(hoardingSearchResult);
-        });
-        return hoardingSearchResults;
-    }
     
 public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoarding) {
      List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
@@ -232,59 +211,7 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoar
     return HoardingDcbReportResults;
 
 }
-    public List<HoardingSearch> getHoardingSearchResult(final Advertisement hoarding, final String searchType) {
-
-        final List<Advertisement> hoardings = advertisementRepository.fetchAdvertisementBySearchParams(hoarding);
-        final HashMap<String, HoardingSearch> agencyWiseHoardingList = new HashMap<String, HoardingSearch>();
-        final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
-
-        hoardings.forEach(result -> {
-            final HoardingSearch hoardingSearchResult = new HoardingSearch();
-            hoardingSearchResult.setAdvertisementNumber(result.getAdvertisementNumber());
-            //hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
-            //hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            //hoardingSearchResult.setAgencyName(result.getAgency().getName());
-            hoardingSearchResult.setStatus(result.getStatus());
-            if (result.getDemandId() != null){
-                if (searchType != null && searchType.equalsIgnoreCase("agency")) {
-                    // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
-                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService.checkPedingAmountByDemand(result.getDemandId(),result.getPenaltyCalculationDate());
-                     //TODO: DO CODE CHANGE
-                     final HoardingSearch hoardingSearchObj = null;//agencyWiseHoardingList.get(result.getAgency().getName());
-                    if (hoardingSearchObj == null) {
-                        hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
-                        hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
-                        hoardingSearchResult.setTotalHoardingInAgency(1);
-                        hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
-              //          agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
-                    } else {
-                        StringBuffer hoardingIds= new StringBuffer();
-                        hoardingSearchObj.setPenaltyAmount(
-                                hoardingSearchObj.getPenaltyAmount().add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
-                        hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount()
-                                .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
-                        hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
-                        
-                        hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~").append(result.getId());
-                           hoardingSearchObj.setHordingIdsSearchedByAgency(hoardingIds.toString()); 
-                        // agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchObj);
-                                   }
-                } else {
-                     
-                    final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService.checkPedingAmountByDemand(result.getDemandId(),result.getPenaltyCalculationDate());
-                    hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
-                    hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
-                    hoardingSearchResults.add(hoardingSearchResult);
-                }
-            }
-        });
-        if (agencyWiseHoardingList.size() > 0)
-            agencyWiseHoardingList.forEach((key, value) -> {
-                hoardingSearchResults.add(value);
-            });
-        return hoardingSearchResults;
-
-    }
+  
 
     public Advertisement findByHoardingNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);

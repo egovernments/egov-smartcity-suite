@@ -38,12 +38,13 @@
  */
 package org.egov.adtax.repository;
 
+import java.util.List;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.adtax.search.contract.HoardingSearch;
 
-@Repository
-public interface AdvertisementPermitDetailRepository extends JpaRepository<AdvertisementPermitDetail, Long>, AdvertisementPermitDetailRepositoryCustom {
+public interface AdvertisementPermitDetailRepositoryCustom {
 
-    AdvertisementPermitDetail findByApplicationNumber(String applicationNumber);
-}
+    List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(HoardingSearch hoarding);
+    List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParams(AdvertisementPermitDetail advertisementPermitDetail);
+ }

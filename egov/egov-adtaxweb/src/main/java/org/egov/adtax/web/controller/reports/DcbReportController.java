@@ -35,9 +35,11 @@ public class DcbReportController extends GenericController {
 
     @RequestMapping(value = "search-for-dcbreport", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "{ \"data\":"
+       /* return "{ \"data\":"
                 + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";
+                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";*/
+        
+        return null;
     }
 
     @RequestMapping(value = "getHoardingDcb/{hoardingNumber}")

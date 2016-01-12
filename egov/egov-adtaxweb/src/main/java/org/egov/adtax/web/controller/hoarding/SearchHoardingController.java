@@ -50,11 +50,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
-import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -74,31 +73,20 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/hoarding")
 public class SearchHoardingController extends GenericController {
 
-    private final AdvertisementService hoardingService;
-    
+   
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
     @Autowired
     private ApplicationProperties applicationProperties;
-
-    private final SubCategoryService subCategoryService;
-
     @Autowired
-    public SearchHoardingController(final AdvertisementService hoardingService, final SubCategoryService subCategoryService) {
-        this.hoardingService = hoardingService;
-        this.subCategoryService = subCategoryService;
-    }
+    private SubCategoryService subCategoryService;
 
+  
     @ModelAttribute
-    public Advertisement hoarding() {
-        return new Advertisement();
+    public AdvertisementPermitDetail advertisementPermitDetail() {
+        return new AdvertisementPermitDetail();
     }
 
-   /* @ModelAttribute("hoardingSearch")
-    public HoardingSearch hoardingSearch() {
-        return new HoardingSearch();
-    }*/
-    
     @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
@@ -110,16 +98,16 @@ public class SearchHoardingController extends GenericController {
     }
 
     @RequestMapping(value = "/search-list", method = GET, produces=APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(@ModelAttribute final Advertisement hoarding, final HttpServletRequest request,
+    public @ResponseBody void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
       //  final String hoardingJSONData = commonSearchResult(hoarding, searchType);
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(hoardingService.getHoardingSearchResult(hoarding, searchType)) + "}", response.getWriter());
+                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, searchType)) + "}", response.getWriter());
       }
 
-    public String commonSearchResult(final Advertisement hoarding, final String searchType) {
-        final List<HoardingSearch> searchResult = hoardingService.getHoardingSearchResult(hoarding, searchType);
+    public String commonSearchResult(final AdvertisementPermitDetail advertisementPermitDetail, final String searchType) {
+        final List<HoardingSearch> searchResult = advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, searchType);
         return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
     } 
 
@@ -131,7 +119,7 @@ public class SearchHoardingController extends GenericController {
     @RequestMapping(value = "search-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchHoarding(@ModelAttribute  HoardingSearch hoardingSearch) {
         return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";
+                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch)) + "}";
     }
 
     @RequestMapping(value = "view/{id}")

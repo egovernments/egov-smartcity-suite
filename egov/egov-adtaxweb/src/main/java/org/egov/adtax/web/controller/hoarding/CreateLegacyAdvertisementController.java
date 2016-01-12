@@ -66,11 +66,10 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
    
     @RequestMapping(value = "createLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
-        if(advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement()==null)
-        {
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() == null) {
             advertisementPermitDetail.setAdvertisement(new Advertisement());
         }
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
         advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
         return "hoarding-createLegacy";
     }
@@ -92,28 +91,26 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
     }
 
     private void validateLegacyApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
-        
-        if(advertisementPermitDetail!=null && advertisementPermitDetail.getApplicationDate()!=null )
-        {
+
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationDate() != null) {
             final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-            if (installmentObj != null && installmentObj.getToDate() != null)
-            {
-                if( advertisementPermitDetail.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate())))
-                {
+            if (installmentObj != null && installmentObj.getToDate() != null) {
+                if (advertisementPermitDetail.getApplicationDate()
+                        .after(DateUtils.endOfDay(installmentObj.getToDate()))) {
                     resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
                 }
             }
-            
         }
-        if(advertisementPermitDetail!=null && advertisementPermitDetail.getPermissionstartdate()!=null && 
-                advertisementPermitDetail.getPermissionenddate()!=null && advertisementPermitDetail.getPermissionstartdate().after(advertisementPermitDetail.getPermissionenddate())
-                )
-        {
+        if (advertisementPermitDetail != null
+                && advertisementPermitDetail.getPermissionstartdate() != null
+                && advertisementPermitDetail.getPermissionenddate() != null
+                && advertisementPermitDetail.getPermissionstartdate().after(
+                        advertisementPermitDetail.getPermissionenddate())) {
             resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
-            
+
         }
-         
-     }
+
+    }
     @RequestMapping(value = "createLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {

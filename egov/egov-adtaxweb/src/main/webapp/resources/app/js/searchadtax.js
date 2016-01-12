@@ -135,7 +135,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 			"columns" : [
-						  { "data" : "hoardingNumber", "title":"Hoarding No."},
+						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
 						  { "data" : "agencyName", "title": "Agency"},
