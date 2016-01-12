@@ -95,7 +95,7 @@ public class Advertisement extends AbstractAuditable {
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    private AdvertisementStructureType type;
+    private AdvertisementStructureType type=AdvertisementStructureType.PERMANENT;
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
