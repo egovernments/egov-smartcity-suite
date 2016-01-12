@@ -1326,7 +1326,6 @@ public class CollectionObjectFactory {
 	public Accountdetailkey createAccountdetailkey(String keyname) {
 		Accountdetailkey accountdetailkey = new Accountdetailkey();
 		accountdetailkey.setAccountdetailtype(createAccountdetailtype("testAccountDetailTypeName"));
-		accountdetailkey.setChartofaccounts(createCOA("10001"));
 		accountdetailkey.setDetailkey(1);
 		accountdetailkey.setDetailname(keyname);
 		accountdetailkey.setGroupid(1);
