@@ -70,7 +70,7 @@ public class Accountdetailtype implements java.io.Serializable {
 
 	private String fullQualifiedName;
 
-	private Accountdetailtype accountdetailtype;
+	//private Accountdetailtype accountdetailtype;
 
 	public Accountdetailtype() {
 		//For hibernate to work
@@ -184,13 +184,13 @@ public class Accountdetailtype implements java.io.Serializable {
 		this.modifiedby = modifiedby;
 	}
 
-	public Accountdetailtype getAccountdetailtype() {
+	/*public Accountdetailtype getAccountdetailtype() {
 		return this.accountdetailtype;
 	}
 
 	public void setAccountdetailtype(Accountdetailtype accountdetailtype) {
 		this.accountdetailtype = accountdetailtype;
-	}
+	}*/
 
 	public String getFullQualifiedName() {
 		return fullQualifiedName;

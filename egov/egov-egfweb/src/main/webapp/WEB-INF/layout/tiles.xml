@@ -135,5 +135,25 @@
 <definition name="openingbalance" template="/WEB-INF/jsp/activity/openingbalance.jsp" />
 
 
+<definition name="transactionsummary-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.transactionsummary.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-new.jsp"/>
+</definition>
+
+<definition name="transactionsummary-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.transactionsummary.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-view.jsp"/>
+</definition>
+
+<definition name="transactionsummary-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.transactionsummary.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-edit.jsp"/>
+</definition>
+
+<definition name="transactionsummary-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.transactionsummary.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-result.jsp"/>
+</definition>
+
 
 </tiles-definitions>

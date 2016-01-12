@@ -43,7 +43,6 @@
 package org.egov.model.contra;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,8 +53,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.Accountdetailtype;
@@ -66,11 +63,8 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 /**
  * @author msahoo
