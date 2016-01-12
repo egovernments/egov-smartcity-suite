@@ -69,8 +69,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
 @SequenceGenerator(name = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, sequenceName = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_PERMITDETAILS", columnName = {"permissionNumber"}, fields = {
-         "permissionNumber" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGADTAX_PERMITDETAILS", columnName = { "applicationNumber", "permissionNumber" }, fields = {
+        "applicationNumber", "permissionNumber" }, enableDfltMsg = true)
 public class AdvertisementPermitDetail extends StateAware {
 
     private static final long serialVersionUID = 845357231248646624L;
@@ -86,8 +86,7 @@ public class AdvertisementPermitDetail extends StateAware {
     @JoinColumn(name = "advertisement", nullable = false)
     private Advertisement advertisement;
 
-    @NotNull
-    @Column(name = "applicationNumber")
+    @Column(name = "applicationNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
     private String applicationNumber;
@@ -116,7 +115,7 @@ public class AdvertisementPermitDetail extends StateAware {
     @ManyToOne
     @JoinColumn(name = "previousapplicationid")
     private AdvertisementPermitDetail previousapplicationid;
-    
+
     private Boolean isActive = false;
 
     // @NotNull
@@ -159,7 +158,7 @@ public class AdvertisementPermitDetail extends StateAware {
 
     @Transient
     private String approvalComent;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -206,7 +205,7 @@ public class AdvertisementPermitDetail extends StateAware {
         return status;
     }
 
-    public void setStatus(EgwStatus status) {
+    public void setStatus(final EgwStatus status) {
         this.status = status;
     }
 
@@ -357,7 +356,7 @@ public class AdvertisementPermitDetail extends StateAware {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -365,7 +364,7 @@ public class AdvertisementPermitDetail extends StateAware {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 

@@ -39,26 +39,24 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
+import org.egov.adtax.utils.AdTaxNumberGenerator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.Session;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,115 +66,115 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdvertisementPermitDetailService {
 
     private final AdvertisementPermitDetailRepository advertisementPermitDetailRepository;
-  
+
     @PersistenceContext
     private EntityManager entityManager;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+
     @Autowired
     protected CollectionIntegrationService collectionIntegrationService;
-    
+
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-    
+
     @Autowired
     private ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl;
-    
+
     @Autowired
-    public EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private AdTaxNumberGenerator adTaxNumberGenerator;
+
+    @Autowired
+    private CityService cityService;
+
     @Autowired
     public AdvertisementPermitDetailService(final AdvertisementPermitDetailRepository advertisementPermitDetailRepository) {
         this.advertisementPermitDetailRepository = advertisementPermitDetailRepository;
     }
 
     @Transactional
-    public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,final Long approvalPosition, final String approvalComent, final String additionalRule,
+    public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
-            advertisementPermitDetail.getAdvertisement().setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
+            advertisementPermitDetail.getAdvertisement()
+                    .setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
         roundOfAllTaxAmount(advertisementPermitDetail);
-    //    advertisementPermitDetail.setPermissionstartdate(new Date());
-    //    advertisementPermitDetail.setPermissionenddate(new LocalDate().plusYears(1).toDate());
+        if (advertisementPermitDetail.getApplicationNumber() == null)
+            advertisementPermitDetail.setApplicationNumber(adTaxNumberGenerator.generateApplicationNumber());
+        if (advertisementPermitDetail.getAdvertisement().getAdvertisementNumber() == null)
+            advertisementPermitDetail.getAdvertisement()
+                    .setAdvertisementNumber(adTaxNumberGenerator.generateAdvertisementNumber());
+        if (advertisementPermitDetail.getAdvertisement().getLegacy() && advertisementPermitDetail.getPermissionNumber() == null)
+            advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        if(approvalPosition != null && approvalPosition > 0 && additionalRule != null && StringUtils.isNotEmpty(workFlowAction)){
+
+        if (approvalPosition != null && approvalPosition > 0 && additionalRule != null
+                && StringUtils.isNotEmpty(workFlowAction))
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
-        }
         return advertisementPermitDetail;
     }
 
     @Transactional
-    public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,final Long approvalPosition, final String approvalComent, final String additionalRule,
+    public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) throws HoardingValidationError {
-        final boolean anyDemandPendingForCollection = advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail);
+        final boolean anyDemandPendingForCollection = advertisementDemandService
+                .anyDemandPendingForCollection(advertisementPermitDetail);
 
-         /*if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection)
-            throw new HoardingValidationError("agency", "ADTAX.001");*/
+        /*
+         * if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection) throw
+         * new HoardingValidationError("agency", "ADTAX.001");
+         */
         // If demand already collected for the current year, fee updated from
         // UI, do not update demand details. Update only fee details of hoarding.
         // We should not allow user to update demand if any collection happened in
         // the current year.
 
-       /* if (advertisementDemandService.collectionDoneForThisYear(actualHoarding) && anyDemandPendingForCollection
-                && (!actualHoarding.getCurrentTaxAmount().equals(hoarding.getCurrentTaxAmount())
-                        || checkEncroachmentFeeChanged(hoarding, actualHoarding) || checkPendingTaxChanged(hoarding,
-                            actualHoarding)))
-            throw new HoardingValidationError("taxAmount", "ADTAX.002");*/
-       /* if (!actualHoarding.getStatus().equals(advertisementPermitDetail.getStatus())
-                && advertisementPermitDetail.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection)
-            throw new HoardingValidationError("status", "ADTAX.003");*/
+        /*
+         * if (advertisementDemandService.collectionDoneForThisYear(actualHoarding) && anyDemandPendingForCollection &&
+         * (!actualHoarding.getCurrentTaxAmount().equals(hoarding.getCurrentTaxAmount()) || checkEncroachmentFeeChanged(hoarding,
+         * actualHoarding) || checkPendingTaxChanged(hoarding, actualHoarding))) throw new HoardingValidationError("taxAmount",
+         * "ADTAX.002");
+         */
+        /*
+         * if (!actualHoarding.getStatus().equals(advertisementPermitDetail.getStatus()) &&
+         * advertisementPermitDetail.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection) throw new
+         * HoardingValidationError("status", "ADTAX.003");
+         */
 
         // If demand pending for collection, then only update demand details.
         // If demand fully paid and user changed tax details, then no need to
         // update demand details.
         if (anyDemandPendingForCollection)
-            advertisementDemandService.updateDemand(advertisementPermitDetail, advertisementPermitDetail.getAdvertisement().getDemandId());
+            advertisementDemandService.updateDemand(advertisementPermitDetail,
+                    advertisementPermitDetail.getAdvertisement().getDemandId());
         roundOfAllTaxAmount(advertisementPermitDetail);
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        if(approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction)){
+        if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
-        }
         return advertisementPermitDetail;
     }
 
     private void roundOfAllTaxAmount(final AdvertisementPermitDetail advertisementPermitDetail) {
-        if(advertisementPermitDetail.getEncroachmentFee()!=null)
-            advertisementPermitDetail.setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
-        
-        if(advertisementPermitDetail.getTaxAmount()!=null)
-            advertisementPermitDetail.setTaxAmount( advertisementPermitDetail.getTaxAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
-            
-        if(advertisementPermitDetail.getAdvertisement().getPendingTax()!=null)
-            advertisementPermitDetail.getAdvertisement().setPendingTax(advertisementPermitDetail.getAdvertisement().getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP)); 
-    }
+        if (advertisementPermitDetail.getEncroachmentFee() != null)
+            advertisementPermitDetail
+                    .setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
 
-    private boolean checkPendingTaxChanged(AdvertisementPermitDetail advertisementPermitDtl, AdvertisementPermitDetail actualadvPermitDtl) {
-        if (actualadvPermitDtl.getAdvertisement().getPendingTax()== null && advertisementPermitDtl.getAdvertisement().getPendingTax() != null)
-            return true;
-        else if (advertisementPermitDtl.getAdvertisement().getPendingTax() == null && actualadvPermitDtl.getAdvertisement().getPendingTax() != null)
-            return true;
-        else if (actualadvPermitDtl.getAdvertisement().getPendingTax() != null && advertisementPermitDtl.getAdvertisement().getPendingTax() != null
-                && !actualadvPermitDtl.getAdvertisement().getPendingTax().equals(advertisementPermitDtl.getAdvertisement().getPendingTax()))
-            return true;
+        if (advertisementPermitDetail.getTaxAmount() != null)
+            advertisementPermitDetail
+                    .setTaxAmount(advertisementPermitDetail.getTaxAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
 
-        return false;
-    }
-
-    private boolean checkEncroachmentFeeChanged(final AdvertisementPermitDetail advPermitDtl, final AdvertisementPermitDetail actualAdvPermtDtl) {
-
-        if (actualAdvPermtDtl.getEncroachmentFee() == null && advPermitDtl.getEncroachmentFee() != null)
-            return true;
-        else if (advPermitDtl.getEncroachmentFee() == null && actualAdvPermtDtl.getEncroachmentFee() != null)
-            return true;
-        else if (actualAdvPermtDtl.getEncroachmentFee() != null && advPermitDtl.getEncroachmentFee() != null
-                && !actualAdvPermtDtl.getEncroachmentFee().equals(advPermitDtl.getEncroachmentFee()))
-            return true;
-
-        return false;
+        if (advertisementPermitDetail.getAdvertisement().getPendingTax() != null)
+            advertisementPermitDetail.getAdvertisement().setPendingTax(
+                    advertisementPermitDetail.getAdvertisement().getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
@@ -187,8 +185,12 @@ public class AdvertisementPermitDetailService {
     public AdvertisementPermitDetail findBy(final Long advPermitId) {
         return advertisementPermitDetailRepository.findOne(advPermitId);
     }
-    
-    public EgwStatus getStatusByModuleAndCode(String code) {
-        return egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,code);
+
+    public EgwStatus getStatusByModuleAndCode(final String code) {
+        return egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, code);
+    }
+
+    public String getCityCode() {
+        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
     }
 }

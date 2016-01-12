@@ -44,6 +44,7 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.utils.AdTaxNumberGenerator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -82,6 +83,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
+    private AdTaxNumberGenerator adTaxNumberGenerator;
+
+    @Autowired
     public ApplicationWorkflowCustomImpl() {
 
     }
@@ -117,7 +121,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
             advertisementPermitDetail.setStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+                            AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
+            advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
             if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
                 advertisementPermitDetail.transition(true).end()
                         .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())

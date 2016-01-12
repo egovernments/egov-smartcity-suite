@@ -45,7 +45,6 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.application.no"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 								<form:hidden path="advertisement.legacy" id="legacy" value="${advertisement.legacy}" />
@@ -55,7 +54,7 @@
 								<form:hidden path="advertisement.penaltyCalculationDate" id="penaltyCalculationDate" value="${advertisement.penaltyCalculationDate}" />
 								
 									<form:input type="text"  cssClass="form-control patternvalidation" 
-                        	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" required="required"/>
+                        	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" />
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -70,20 +69,18 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.permission.no"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" cssClass="form-control patternvalidation" 
-                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" required="required"/>
+                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" />
                                		<form:errors path="permissionNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.hoarding.no"/>
-								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" cssClass="form-control patternvalidation" 
-                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" required="required"/>
+                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
                                		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 								</div>
 							</div>

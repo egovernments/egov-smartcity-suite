@@ -76,7 +76,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGADTAX_ADVERTISEMENT")
 @SequenceGenerator(name = Advertisement.SEQ_ADVERTISEMENT, sequenceName = Advertisement.SEQ_ADVERTISEMENT, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_ADVERTISEMENT", columnName = { "advertisementnumber" }, fields = { "advertisementnumber" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGADTAX_ADVERTISEMENT", columnName = { "advertisementnumber" }, fields = {
+        "advertisementnumber" }, enableDfltMsg = true)
 public class Advertisement extends AbstractAuditable {
 
     private static final long serialVersionUID = 8916477826209092997L;
@@ -87,7 +88,6 @@ public class Advertisement extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_ADVERTISEMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @Column(name = "advertisementnumber", unique = true)
     @SafeHtml
     @Length(max = 25)
@@ -95,7 +95,7 @@ public class Advertisement extends AbstractAuditable {
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    private AdvertisementStructureType type=AdvertisementStructureType.PERMANENT;
+    private AdvertisementStructureType type = AdvertisementStructureType.PERMANENT;
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
@@ -105,12 +105,11 @@ public class Advertisement extends AbstractAuditable {
     @Length(max = 50)
     private String propertyNumber;
 
-    
     @SafeHtml
     @Length(max = 50)
     private String electricityServiceNumber;
 
-    //@NotNull
+    // @NotNull
     @Enumerated(EnumType.ORDINAL)
     private AdvertisementStatus status;
 
@@ -126,7 +125,7 @@ public class Advertisement extends AbstractAuditable {
     private Boolean legacy = false;
     private BigDecimal pendingTax;
     private Date penaltyCalculationDate;
-         
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "class", nullable = false)
@@ -164,8 +163,7 @@ public class Advertisement extends AbstractAuditable {
 
     @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<AdvertisementPermitDetail> advertisementPermitDetail = new HashSet<AdvertisementPermitDetail>(0);
-    
-    
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demandid", nullable = false)
     private EgDemand demandId;
@@ -175,12 +173,12 @@ public class Advertisement extends AbstractAuditable {
     private double latitude;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egadtax_advertisement_docs", joinColumns = @JoinColumn(name = "advertisement"), inverseJoinColumns = @JoinColumn(name = "document"))
+    @JoinTable(name = "egadtax_advertisement_docs", joinColumns = @JoinColumn(name = "advertisement") , inverseJoinColumns = @JoinColumn(name = "document") )
     private List<HoardingDocument> documents = new ArrayList<>();
 
-    @Transient 
-    private Boolean taxPaidForCurrentYear=false;
-    
+    @Transient
+    private Boolean taxPaidForCurrentYear = false;
+
     @Override
     public Long getId() {
         return id;
@@ -195,11 +193,10 @@ public class Advertisement extends AbstractAuditable {
         return pendingTax;
     }
 
-    public void setPendingTax(BigDecimal pendingTax) {
+    public void setPendingTax(final BigDecimal pendingTax) {
         this.pendingTax = pendingTax;
     }
 
-   
     public AdvertisementPropertyType getPropertyType() {
         return propertyType;
     }
@@ -240,8 +237,6 @@ public class Advertisement extends AbstractAuditable {
         this.subCategory = subCategory;
     }
 
-    
-
     public RatesClass getRateClass() {
         return rateClass;
     }
@@ -278,7 +273,7 @@ public class Advertisement extends AbstractAuditable {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 
@@ -286,7 +281,7 @@ public class Advertisement extends AbstractAuditable {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
 
@@ -302,7 +297,7 @@ public class Advertisement extends AbstractAuditable {
         return legacy;
     }
 
-    public void setLegacy(Boolean legacy) {
+    public void setLegacy(final Boolean legacy) {
         this.legacy = legacy;
     }
 
@@ -310,7 +305,7 @@ public class Advertisement extends AbstractAuditable {
         return penaltyCalculationDate;
     }
 
-    public void setPenaltyCalculationDate(Date penaltyCalculationDate) {
+    public void setPenaltyCalculationDate(final Date penaltyCalculationDate) {
         this.penaltyCalculationDate = penaltyCalculationDate;
     }
 
@@ -318,7 +313,7 @@ public class Advertisement extends AbstractAuditable {
         return locality;
     }
 
-    public void setLocality(Boundary locality) {
+    public void setLocality(final Boundary locality) {
         this.locality = locality;
     }
 
@@ -326,7 +321,7 @@ public class Advertisement extends AbstractAuditable {
         return ward;
     }
 
-    public void setWard(Boundary ward) {
+    public void setWard(final Boundary ward) {
         this.ward = ward;
     }
 
@@ -334,7 +329,7 @@ public class Advertisement extends AbstractAuditable {
         return block;
     }
 
-    public void setBlock(Boundary block) {
+    public void setBlock(final Boundary block) {
         this.block = block;
     }
 
@@ -342,7 +337,7 @@ public class Advertisement extends AbstractAuditable {
         return street;
     }
 
-    public void setStreet(Boundary street) {
+    public void setStreet(final Boundary street) {
         this.street = street;
     }
 
@@ -350,7 +345,7 @@ public class Advertisement extends AbstractAuditable {
         return electionWard;
     }
 
-    public void setElectionWard(Boundary electionWard) {
+    public void setElectionWard(final Boundary electionWard) {
         this.electionWard = electionWard;
     }
 
@@ -358,7 +353,7 @@ public class Advertisement extends AbstractAuditable {
         return electricityServiceNumber;
     }
 
-    public void setElectricityServiceNumber(String electricityServiceNumber) {
+    public void setElectricityServiceNumber(final String electricityServiceNumber) {
         this.electricityServiceNumber = electricityServiceNumber;
     }
 
@@ -366,7 +361,7 @@ public class Advertisement extends AbstractAuditable {
         return advertisementNumber;
     }
 
-    public void setAdvertisementNumber(String advertisementNumber) {
+    public void setAdvertisementNumber(final String advertisementNumber) {
         this.advertisementNumber = advertisementNumber;
     }
 
@@ -374,7 +369,7 @@ public class Advertisement extends AbstractAuditable {
         return type;
     }
 
-    public void setType(AdvertisementStructureType type) {
+    public void setType(final AdvertisementStructureType type) {
         this.type = type;
     }
 
@@ -382,7 +377,7 @@ public class Advertisement extends AbstractAuditable {
         return advertisementPermitDetail;
     }
 
-    public void setAdvertisementPermitDetail(Set<AdvertisementPermitDetail> advertisementPermitDetail) {
+    public void setAdvertisementPermitDetail(final Set<AdvertisementPermitDetail> advertisementPermitDetail) {
         this.advertisementPermitDetail = advertisementPermitDetail;
     }
 
@@ -390,7 +385,7 @@ public class Advertisement extends AbstractAuditable {
         return taxPaidForCurrentYear;
     }
 
-    public void setTaxPaidForCurrentYear(Boolean taxPaidForCurrentYear) {
+    public void setTaxPaidForCurrentYear(final Boolean taxPaidForCurrentYear) {
         this.taxPaidForCurrentYear = taxPaidForCurrentYear;
     }
 
