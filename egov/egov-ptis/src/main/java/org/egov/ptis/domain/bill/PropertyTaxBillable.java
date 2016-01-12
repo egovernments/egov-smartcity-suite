@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
@@ -80,7 +81,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +123,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Autowired
     private PenaltyCalculationService  penaltyCalculationService;
     @Autowired
-    private PropertyService propertyService;
+    private InstallmentDao installmentDao;
 
     private Boolean isCallbackForApportion = Boolean.TRUE;
     private LPPenaltyCalcType penaltyCalcType = SIMPLE;
@@ -447,8 +447,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
             PenaltyAndRebate penaltyAndRebate = null;
             EgDemandDetails existingPenaltyDemandDetail = null;
-            final Installment assessmentEffecInstallment = propertyService
-                    .getAssessmentEffectiveInstallment(basicProperty.getAssessmentdate());
+            // Returns the installment in which the assessment date falls
+            final Installment assessmentEffecInstallment = installmentDao.getInsatllmentByModuleForGivenDate(getModule(),
+                    basicProperty.getAssessmentdate());
             
             for (final Map.Entry<Installment, BigDecimal> mapEntry : instWiseDmdMap.entrySet()) {
 
@@ -479,8 +480,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         return installmentPenaltyAndRebate;
     }
-    
-  
   
   private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
           final Date assmentDate, final Installment curInstallment) {
@@ -613,8 +612,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         this.penaltyCalculationService = penaltyCalculationService;
     }
 
-    public void setPropertyService(PropertyService propertyService) {
-        this.propertyService = propertyService;
+    public void setInstallmentDao(InstallmentDao installmentDao) {
+        this.installmentDao = installmentDao;
     }
-   
+
+    public void setModuleDao(ModuleService moduleDao) {
+        this.moduleDao = moduleDao;
+    }
 }

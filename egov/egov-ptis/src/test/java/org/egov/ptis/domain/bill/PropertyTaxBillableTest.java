@@ -40,7 +40,8 @@
 package org.egov.ptis.domain.bill;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -55,9 +56,11 @@ import java.util.TreeMap;
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.builder.entities.ModuleBuilder;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.InstallmentBuilder;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.ptis.builder.entity.property.BasicPropertyBuilder;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.service.PenaltyCalculationService;
@@ -65,7 +68,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -79,7 +81,9 @@ public class PropertyTaxBillableTest {
     @Mock
     private PtDemandDao ptDemandDAO;
     @Mock
-    private PropertyService propertyService;
+    private InstallmentDao installmentDao;
+    @Mock
+    private ModuleService moduleDao;
    
     private PropertyTaxBillable billable= new PropertyTaxBillable(); 
     private Boundary locality;
@@ -112,7 +116,8 @@ public class PropertyTaxBillableTest {
         billable.setBasicProperty(basicProperty);
         billable.setPtDemandDAO(ptDemandDAO);
         billable.setPenaltyCalculationService(penaltyCalculationService);
-        billable.setPropertyService(propertyService);
+        billable.setModuleDao(moduleDao);
+        billable.setInstallmentDao(installmentDao);
     }
     
     private void initBasicProperty(String assessmentEffectiveDate) {
@@ -185,7 +190,7 @@ public class PropertyTaxBillableTest {
      * Penalty Applicable from 4th month onwards. Hence 2months of penalty calculated.
      */
     @Test
-    public void calculatePenalty_for3Months() {
+    public void calculatePenalty_for2Months() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -4);
         Date assessmentDate = cal.getTime();
@@ -195,7 +200,7 @@ public class PropertyTaxBillableTest {
         egDemand.setEgInstallmentMaster(currentInstallment);
         when(ptDemandDAO.getNonHistoryCurrDmdForProperty(Matchers.any())).thenReturn(egDemand);
         when(penaltyCalculationService.getInstallmentDemandAndCollection(Matchers.any(),Matchers.any())).thenReturn(installmentDemandAndCollection);
-        when(propertyService.getAssessmentEffectiveInstallment(Matchers.any())).thenReturn(currentInstallment);
+        when(installmentDao.getInsatllmentByModuleForGivenDate(Matchers.any(),Matchers.any())).thenReturn(currentInstallment);
         when(penaltyCalculationService.isEarlyPayRebateActive()).thenReturn(false);
         
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
@@ -221,7 +226,7 @@ public class PropertyTaxBillableTest {
       
         Installment arrearInstallment = new InstallmentBuilder().withModule(module).withFromDate(fromDate.getTime()).
             withToDate(toDate.getTime()).build(); 
-        when(propertyService.getAssessmentEffectiveInstallment(Matchers.any())).thenReturn(arrearInstallment);
+        when(installmentDao.getInsatllmentByModuleForGivenDate(Matchers.any(),Matchers.any())).thenReturn(arrearInstallment);
         demandMap.put(arrearInstallment,  new BigDecimal(3074));
         collectionMap.put(arrearInstallment,  new BigDecimal(0));
         
