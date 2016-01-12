@@ -722,7 +722,7 @@ public class WaterConnectionDetailsService {
         BigDecimal amountTodisplayInIndex = BigDecimal.ZERO;
         if (waterConnectionDetails.getConnection().getConsumerCode() != null)
             amountTodisplayInIndex = getTotalAmount(waterConnectionDetails);
-        if ((waterConnectionDetails.getLegacy() && null == waterConnectionDetails.getId()) || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)) {
+        if (waterConnectionDetails.getLegacy() && (null == waterConnectionDetails.getId() || (null != waterConnectionDetails.getId() && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))))) {
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
