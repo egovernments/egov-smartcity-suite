@@ -482,7 +482,7 @@ public class RptBillRegisterList {
             addTableToQuery = " , vouchermis vhm ";
             fieldCondition = " AND vhm.VOUCHERHEADERID = vh.id  and vhm.DIVISIONID = " + fieldId + " ";
         }
-        return "SELECT eb.id AS \"billId\",eb.billdate AS \"billDateForSort\",TO_CHAR (eb.billdate, 'dd-Mon-yyyy') AS \"billDate\",ebm.PAYTO AS \"conSupName\", NULL AS \"conSupId\",CONCAT (gl.glcode, CONCAT ('-', ' Cr')) AS \"particulars\",eb.billamount AS \"billAmount\",DECODE(md.approvedby,'null','',md.approvedby) \"approvedBy\", "
+        return "SELECT eb.id AS \"billId\",eb.billdate AS \"billDateForSort\",TO_CHAR (eb.billdate, 'dd-Mon-yyyy') AS \"billDate\",ebm.PAYTO AS \"conSupName\", NULL AS \"conSupId\",CONCAT (gl.glcode, CONCAT ('-', ' Cr')) AS \"particulars\",eb.billamount AS \"billAmount\",case when md.approvedby = 'null' then '' else md.approvedby end \"approvedBy\", "
         + " TO_CHAR (eb.billdate, 'dd-Mon-yyyy') AS \"sanctionedDate\",eb.PASSEDAMOUNT AS \"sanctionedAmount\",CONCAT( CONCAT(cd.CHEQUENUMBER,'/' ), TO_CHAR (vh.voucherdate, 'dd-Mon-yyyy')) AS \"paymentDate\",vh.voucherdate AS \"pymtdateSort\", "
         + " ABS (eb.billamount - eb.passedamount) AS \"disallowedAmount\",ABS (eb.billamount - md.passedamount) AS \"balanceAmount\", md.passedamount AS \"paidAmt\", '' AS \"remarks\" ,vh.VOUCHERNUMBER as \"voucherNo\" "
         + " FROM EG_BILLREGISTER eb,EG_BILLREGISTERMIS ebm ,VOUCHERHEADER vh,OTHERBILLDETAIL obd,MISCBILLDETAIL md , PAYMENTHEADER ph,CHEQUEDETAIL cd,generalledger gl  "
@@ -499,7 +499,7 @@ public class RptBillRegisterList {
         + "' AND eb.id=obd.BILLID  AND obd.PAYVHID = vh.id AND ph.VOUCHERHEADERID =vh.id AND md.ID = ph.MISCBILLDETAILID AND cd.id=ph.CHEQUEID AND gl.VOUCHERHEADERID = vh.id AND gl.CREDITAMOUNT > 0 "
         + " UNION "
         + " SELECT   cbd.billid AS \"billId\", cbd.billdate AS \"billDateForSort\",TO_CHAR (cbd.billdate, 'dd-Mon-yyyy') AS \"billDate\",rel.NAME AS \"conSupName\", rel.ID AS \"conSupId\" ,"
-        + " CONCAT (gl.glcode, CONCAT ('-', ' Cr')) AS \"particulars\", cbd.billamount AS \"billAmount\",DECODE(cbd.approvedby,'null','',cbd.approvedby) AS \"approvedBy\",TO_CHAR (cbd.billdate, 'dd-Mon-yyyy') AS \"sanctionedDate\",cbd.passedamount AS \"sanctionedAmount\","
+        + " CONCAT (gl.glcode, CONCAT ('-', ' Cr')) AS \"particulars\", cbd.billamount AS \"billAmount\",case when cbd.approvedby  = 'null' then '' else cbd.approvedby end  AS \"approvedBy\",TO_CHAR (cbd.billdate, 'dd-Mon-yyyy') AS \"sanctionedDate\",cbd.passedamount AS \"sanctionedAmount\","
         + " CONCAT( CONCAT(cd.CHEQUENUMBER,'/' ), TO_CHAR (vh.voucherdate, 'dd-Mon-yyyy')) AS \"paymentDate\",vh.voucherdate AS \"pymtdateSort\", ABS (cbd.billamount - cbd.passedamount) AS \"disallowedAmount\",ABS (cbd.passedamount - cbd.paidamount) AS \"balanceAmount\",slph.paidamount AS \"paidAmt\", vh.description AS \"remarks\" ,vh.VOUCHERNUMBER as \"voucherNo\""
         + " FROM  CONTRACTORBILLDETAIL cbd,RELATION rel, VOUCHERHEADER vh,SUBLEDGERPAYMENTHEADER slph,CHEQUEDETAIL cd,generalledger gl  "
         + addTableToQuery
@@ -515,7 +515,7 @@ public class RptBillRegisterList {
         + " AND vh.status <> 4 AND slph.voucherheaderid = vh.ID AND slph.contractorbillid = cbd.ID AND cbd.contractorid = rel.ID AND cd.id=slph.CHEQUEID AND gl.VOUCHERHEADERID = vh.id AND gl.CREDITAMOUNT > 0 "
         + " UNION "
         + " SELECT sbd.billid AS \"billId\", sbd.billdate AS \"billDateForSort\",TO_CHAR (sbd.billdate, 'dd-Mon-yyyy') AS \"billDate\",rel.NAME AS \"conSupName\", rel.ID AS \"conSupId\",CONCAT (gl.glcode, CONCAT ('-', ' Cr')) AS \"particulars\", sbd.billamount AS \"billAmount\", "
-        + " DECODE(sbd.approvedby,'null','',sbd.approvedby) AS \"approvedBy\",TO_CHAR (sbd.billdate, 'dd-Mon-yyyy') AS \"sanctionedDate\",sbd.passedamount AS \"sanctionedAmount\",CONCAT( CONCAT(cd.CHEQUENUMBER,'/' ), TO_CHAR (vh.voucherdate, 'dd-Mon-yyyy')) AS \"paymentDate\", vh.voucherdate AS \"pymtdateSort\","
+        + " case when sbd.approvedby = 'null' then '' else sbd.approvedby end AS \"approvedBy\",TO_CHAR (sbd.billdate, 'dd-Mon-yyyy') AS \"sanctionedDate\",sbd.passedamount AS \"sanctionedAmount\",CONCAT( CONCAT(cd.CHEQUENUMBER,'/' ), TO_CHAR (vh.voucherdate, 'dd-Mon-yyyy')) AS \"paymentDate\", vh.voucherdate AS \"pymtdateSort\","
         + " ABS (sbd.billamount - sbd.passedamount) AS \"disallowedAmount\", ABS (sbd.passedamount - sbd.paidamount) AS \"balanceAmount\",slph.paidamount AS \"paidAmt\", vh.description AS \"remarks\" ,vh.VOUCHERNUMBER as \"voucherNo\""
         + " FROM  supplierBILLDETAIL sbd,RELATION rel,VOUCHERHEADER vh,SUBLEDGERPAYMENTHEADER slph,CHEQUEDETAIL cd ,generalledger gl "
         + addTableToQuery
@@ -563,7 +563,7 @@ public class RptBillRegisterList {
         try {
             final String query = "select name from fund where id=?";
             final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(1, fName);
+            pstmt.setString(0, fName);
             rset = pstmt.list();
             for (final Object[] element : rset)
                 fundName = element[0].toString();
@@ -581,7 +581,7 @@ public class RptBillRegisterList {
         try {
             final String query = "SELECT name FROM EG_BOUNDARY WHERE id_bndry =? and ID_BNDRY_TYPE = (SELECT id_bndry_type FROM EG_BOUNDARY_TYPE WHERE LOWER(name)= 'ward' ";
             final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(1, fName);
+            pstmt.setString(0, fName);
             rset = pstmt.list();
             for (final Object[] element : rset)
                 fundName = element[0].toString();
@@ -599,7 +599,7 @@ public class RptBillRegisterList {
         try {
             final String query = "SELECT name  FROM functionaryname  where id = ?";
             final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(1, fName);
+            pstmt.setString(0, fName);
             rset = pstmt.list();
             for (final Object[] element : rset)
                 fundName = element[0].toString();

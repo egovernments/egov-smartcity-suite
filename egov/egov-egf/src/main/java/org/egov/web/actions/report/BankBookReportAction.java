@@ -598,11 +598,11 @@ public class BankBookReportAction extends BaseFormAction {
         final String voucherStatusToExclude = getAppConfigValueFor("finance", "statusexcludeReport");
         final String query1 = "SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,"
                 +
-                " gl.glcode||' - '||decode(gl.debitAmount,0,(case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) , (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)  then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ))"
+                " gl.glcode||' - '||case when gl.debitAmount  = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)  then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ) end"
                 +
-                " AS particulars,decode(gl1.debitAmount,0,gl1.creditamount,gl1.debitAmount) AS amount, DECODE(gl1.debitAmount,0,'Payment','Receipt') AS type,"
+                " AS particulars,case when gl1.debitAmount = 0 then gl1.creditamount else gl1.debitAmount end AS amount, case when gl1.debitAmount = 0 then 'Payment' else 'Receipt' end AS type,"
                 +
-                " DECODE (DECODE(ch.instrumentnumber,NULL,ch.transactionnumber,ch.instrumentnumber) ||' , ' ||TO_CHAR(DECODE(ch.instrumentdate,NULL,ch.transactiondate,ch.instrumentdate),'dd/mm/yyyy'), ' , ' ,NULL,DECODE(ch.instrumentnumber,NULL,ch.transactionnumber,ch.instrumentnumber) ||' , ' ||TO_CHAR(DECODE(ch.instrumentdate,NULL,ch.transactiondate,ch.instrumentdate),'dd/mm/yyyy'))"
+                " case when (case when ch.instrumentnumber=NULL then ch.transactionnumber else ch.instrumentnumber  ||' , ' ||TO_CHAR(case when ch.instrumentdate = NULL THEN ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy'), ' , ')  = NULL then case when ch.instrumentnumber = NULL then ch.transactionnumber else ch.instrumentnumber end ||' , ' ||TO_CHAR(case when ch.instrumentdate = NULL then ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end"
                 +
                 " AS chequeDetail,gl.glcode as glCode,ch.description as instrumentStatus  ";
         queryFrom = " FROM generalLedger gl,generalLedger gl1"

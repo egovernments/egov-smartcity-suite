@@ -42,6 +42,7 @@ package org.egov.ptis.client.service;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
@@ -62,6 +63,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
@@ -71,12 +73,19 @@ import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.bill.PenaltyBill;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.RebatePeriod;
+import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.notice.PtNotice;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Provieds api's for penalty calculation
@@ -84,6 +93,8 @@ import org.slf4j.LoggerFactory;
  * @author nayeem
  *
  */
+@Service
+@Transactional(readOnly = true)
 public class PenaltyCalculationService {
 
 	private Logger LOGGER = LoggerFactory.getLogger(PenaltyCalculationService.class);
@@ -97,6 +108,12 @@ public class PenaltyCalculationService {
 	private Map<Installment, BigDecimal> installmentWiseCollection;	
 	private Map<String, Date> installmentAndLatestCollDate;
 	private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
+	
+	@Autowired
+	private ApplicationContext beanProvider;
+	@Autowired
+	private RebatePeriodService rebatePeriodService;
+
 	
 	public PenaltyCalculationService() {}
 	
@@ -710,7 +727,55 @@ public class PenaltyCalculationService {
 				&& !propertyTaxUtil.between(systemCreatedDate, installment.getFromDate(), installment.getToDate());
 	}
 
-	public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
-		this.propertyTaxUtil = propertyTaxUtil;
-	}
+	 public Map<String, Map<Installment, BigDecimal>>  getInstallmentDemandAndCollection(BasicProperty basicProperty, EgDemand currentDemand) {
+
+	     Map<String, Map<Installment, BigDecimal>> installmentDemandAndCollection = new TreeMap<String, Map<Installment, BigDecimal>>();
+	        Property property = null;
+	            property = basicProperty.getProperty();
+	            final Installment currentInstall = currentDemand.getEgInstallmentMaster();
+	          installmentDemandAndCollection = propertyTaxUtil
+	                    .prepareReasonWiseDenandAndCollection(property, currentInstall);
+	        return installmentDemandAndCollection;
+	    }
+	 
+	 public Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final Property property, EgDemand currentDemand) {
+	        final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
+	        final Installment currentInstall = currentDemand.getEgInstallmentMaster();
+	        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+	                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+	                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+	                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
+	                + "and ptd.egInstallmentMaster = :installment " + "and drm.code = :penaltyReasonCode";
+
+	        final List list = HibernateUtil.getCurrentSession().createQuery(query).setEntity("property", property)
+	                .setEntity("installment", currentInstall)
+	                .setString("penaltyReasonCode", DEMANDRSN_CODE_PENALTY_FINES).list();
+
+	        Ptdemand ptDemand = null;
+
+	        if (list.isEmpty()) {
+	        } else {
+	            ptDemand = (Ptdemand) list.get(0);
+	            for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
+	                installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+	        }
+
+	        return installmentWisePenaltyDemandDetails;
+	    }
+	 
+	  
+	  public boolean isEarlyPayRebateActive() {
+	        boolean value = false;
+	        final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+	        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
+	        if (rebatePeriod != null)
+	            if (rebatePeriod.getRebateDate().compareTo(new Date()) > 0)
+	                value = true;
+	        return value;
+	    }
+	 
+    public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+    }
+
 }

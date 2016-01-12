@@ -216,11 +216,11 @@ public class DayBookList
                         + "particulars"
                         + ",vh.name ||' - '|| vh.TYPE AS "
                         + "type"
-                        + ", decode(vh.description,null,' ',vh.description) AS "
+                        + ", case when vh.description = null then ' ' else vh.description end AS "
                         + "narration"
                         + ", "
                         +
-                        "decode(status,0,decode(vh.isconfirmed,0,'Unconfirmed',1,'Confirmed'),1,'Reversed',2,'Reversal') as \"status\" , debitamount  ,"
+                        "case status when 0 then (case vh.isconfirmed when 0 then 'Unconfirmed' when 1 then 'Confirmed' else '' end ) when 1 then 'Reversed' when 2 then 'Reversal' else '' end as \"status\" , debitamount  ,"
                         +
                         "creditamount,vh.CGN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
                         + " AND ca.GLCODE=gd.GLCODE AND voucherdate between ? AND ? and vh.status not in (4,5) " +
@@ -230,9 +230,9 @@ public class DayBookList
 
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryString);
 
-                pstmt.setString(1, dateStart);
-                pstmt.setString(2, dateEnd);
-                pstmt.setLong(3, fundId);
+                pstmt.setString(0, dateStart);
+                pstmt.setString(1, dateEnd);
+                pstmt.setLong(2, fundId);
                 rs = pstmt.list();
             }
             else {
@@ -244,11 +244,11 @@ public class DayBookList
                         + "particulars"
                         + ",vh.name ||' - '|| vh.TYPE AS "
                         + "type"
-                        + ", decode(vh.description,null,' ',vh.description) AS "
+                        + ", case when vh.description = null then ' ' else vh.description end AS "
                         + "narration"
                         + ", "
                         +
-                        "decode(status,0,decode(vh.isconfirmed,0,'Unconfirmed',1,'Confirmed'),1,'Reversed',2,'Reversal') as \"status\" , debitamount  ,"
+                        "case status when 0 then (case vh.isconfirmed when 0 then 'Unconfirmed' when 1 then 'Confirmed' else '' end) when 1 then 'Reversed' when 2 then 'Reversal' else '' end as \"status\" , debitamount  ,"
                         +
                         "creditamount,vh.CGN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
                         + " AND ca.GLCODE=gd.GLCODE AND voucherdate between ? AND ?  and vh.status not in (4,5) " +
@@ -257,8 +257,8 @@ public class DayBookList
                     LOGGER.debug("queryString :" + queryString);
 
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryString);
-                pstmt.setString(1, dateStart);
-                pstmt.setString(2, dateEnd);
+                pstmt.setString(0, dateStart);
+                pstmt.setString(1, dateEnd);
                 rs = pstmt.list();
             }
         } catch (final Exception e)

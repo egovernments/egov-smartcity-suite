@@ -126,7 +126,7 @@ public class AccountDtlKeyAdd extends AbstractTask {
                         attrName = "organizationStructure_id";
                     qryString = "Select ID, attributeName from AccountDetailType where attributename = ?";
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
-                    pstmt.setString(1, attrName);
+                    pstmt.setString(0, attrName);
 
                 } // end of orgstructure
                 // } // end of orgstructure
@@ -137,11 +137,11 @@ public class AccountDtlKeyAdd extends AbstractTask {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + qryString);
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
-                    pstmt.setString(1, str);
+                    pstmt.setString(0, str);
                 } else {
                     qryString = "Select ID, attributeName from AccountDetailType where tablename= ? ";
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
-                    pstmt.setString(1, tName);
+                    pstmt.setString(0, tName);
                 }
 
                 rst = pstmt.list();
@@ -157,11 +157,11 @@ public class AccountDtlKeyAdd extends AbstractTask {
                     // if(LOGGER.isDebugEnabled()) LOGGER.debug("*****************"+fYear+"*********");
                     qryString = "Select ID from " + tName + " Where financialYear=?";
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
-                    pstmt.setString(1, fYear);
+                    pstmt.setString(0, fYear);
                 } else {
                     qryString = "Select ID from " + tName + " where code= ? ";
                     pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
-                    pstmt.setString(1, code);
+                    pstmt.setString(0, code);
                 }
                 rs = pstmt.list();
                 for (final Object[] element : rst) {
@@ -177,10 +177,10 @@ public class AccountDtlKeyAdd extends AbstractTask {
                     LOGGER.debug("*********Before prepare Statement*****" + qry);
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qry);
                 if (attrName == "")
-                    pstmt.setString(1, dtlKey);
+                    pstmt.setString(0, dtlKey);
                 else {
-                    pstmt.setString(1, dtlKey);
-                    pstmt.setString(2, attrName);
+                    pstmt.setString(0, dtlKey);
+                    pstmt.setString(1, attrName);
                 }
                 rs = pstmt.list();
                 for (final Object[] element : rst) {

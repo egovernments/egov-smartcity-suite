@@ -42,7 +42,7 @@
    <AccountCode>
    
    	 <!-- Mention the Maximum length of glcode  -->
-         <glcodeMaxLength>9</glcodeMaxLength>
+         <glcodeMaxLength>7</glcodeMaxLength>
          
          <!-- Mention the difference between the sub-minorcode and posting code in zeroes (6-4=2 i.e 00)  -->
          <zerofill>00</zerofill>

@@ -149,6 +149,7 @@
      <bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO" scope="prototype">
         <property name="budgetService" ref="budgetService"/>
         <property name="appConfigValuesService" ref="appConfigValuesService"/>
+        <property name="persistenceService" ref="persistenceService"/>
     </bean>
     <bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService"  scope="prototype">
        <constructor-arg ref="budgetDetailConfig"/>

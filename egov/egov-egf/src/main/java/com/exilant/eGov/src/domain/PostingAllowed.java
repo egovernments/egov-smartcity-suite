@@ -88,9 +88,9 @@ public class PostingAllowed {
                 + "VALUES (?, ?, ?)";
 
         final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-        pstmt.setString(1, postingAllowed);
+        pstmt.setString(0, postingAllowed);
         pstmt.setString(1, fiscalPeriodId);
-        pstmt.setString(1, glCodeId);
+        pstmt.setString(2, glCodeId);
         pstmt.executeUpdate();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(insertQuery);

@@ -158,6 +158,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
     @Result(name = "accountcodes", location = "common-accountcodes.jsp"),
     @Result(name = "instrument", location = "common-instrument.jsp"),
     @Result(name = "desg", location = "common-desg.jsp"),
+    @Result(name = "COA", location = "common-COA.jsp"),
     @Result(name = "schemeBy20", location = "common-schemeBy20.jsp")
 })
 public class CommonAction extends BaseFormAction {
@@ -231,6 +232,8 @@ public class CommonAction extends BaseFormAction {
     private List<CChartOfAccounts> glCodesList;
     private List<CFunction> functionCodesList;
     private List<Accountdetailtype> subLedgerTypeList;
+	private List<CChartOfAccounts> coaList;
+	private StringBuffer result;
 
     public String getSerialNo() {
         return serialNo;
@@ -3302,6 +3305,57 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Completed ajaxLoadBranchAccountNumbers.");
         return "AJAX_RESULT";
     }
+    
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxloadcoa")
+    public String ajaxLoadCOA() {
+    String query="";
+   
+   
+    if(glCode==null)
+	{
+	 
+    	coaList = (List<CChartOfAccounts>) persistenceService.findAllBy("from CChartOfAccounts  where parentId is null order by id asc");
+    	
+    	//query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM  chartOfAccounts where parentId is null order by id asc";
+	}
+	else
+	{
+		 coaList =(List<CChartOfAccounts>) persistenceService.findAllBy("from CChartOfAccounts where parentId=? ",Long.valueOf(glCode ));	
+		//query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM  chartOfAccounts where parentId ="+glCode+" order by id asc";
+	}
+    result = new StringBuffer();
+	StringBuffer type=new StringBuffer();
+	StringBuffer chartOfAccounts_ID=new StringBuffer();
+	StringBuffer chartOfAccounts_name=new StringBuffer();
+	StringBuffer chartOfAccounts_parentId = new StringBuffer();
+	StringBuffer chartOfAccounts_glCode = new StringBuffer();
+	int i=0;
+	for(CChartOfAccounts cc:coaList)
+	{
+		if(i>0)
+		{
+			type.append("+");
+			chartOfAccounts_ID.append("+");
+			chartOfAccounts_name.append("+");
+			chartOfAccounts_parentId.append("+");
+			chartOfAccounts_glCode.append("+");
+			
+		}
+		i++;
+		type.append("null");
+		chartOfAccounts_ID.append(cc.getId());
+		chartOfAccounts_name.append(cc.getName());
+		chartOfAccounts_parentId.append(cc.getParentId());
+		chartOfAccounts_glCode.append(cc.getGlcode());
+		
+	}
+	result.append(type.toString()+"^"+chartOfAccounts_ID.toString()+"^"+chartOfAccounts_name+"^"+
+	chartOfAccounts_parentId.toString()+"^"+chartOfAccounts_glCode.toString()+"^");
+    return "COA";
+    }
+    
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxLoadGLreportCodes")
@@ -3806,5 +3860,21 @@ public class CommonAction extends BaseFormAction {
     public void setAppConfigValuesService(final AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
     }
+
+	public List<CChartOfAccounts> getCoaList() {
+		return coaList;
+	}
+
+	public void setCoaList(List<CChartOfAccounts> coaList) {
+		this.coaList = coaList;
+	}
+
+	public StringBuffer getResult() {
+		return result;
+	}
+
+	public void setResult(StringBuffer result) {
+		this.result = result;
+	}
 
 }

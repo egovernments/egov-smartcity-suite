@@ -112,8 +112,8 @@ public class SchemeUtilizationReport
             // This fix is for Phoenix Migration.
             // cstmt.registerOutParameter(1,OracleTypes.CURSOR);
 
-            cstmt.setInt(2, pschemeid);
-            cstmt.setString(3, formatter.format(sdf.parse(startDate)));
+            cstmt.setInt(1, pschemeid);
+            cstmt.setString(2, formatter.format(sdf.parse(startDate)));
             // cstmt.setString(4,formatter.format(sdf.parse(endDate)));
 
             cstmt.setInt(4, majorCodeLength);

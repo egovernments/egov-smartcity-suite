@@ -490,9 +490,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer miscQuery = getMiscQuery(mandatoryFields, "vmis", "gl", "vh");
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,decode(c1.glcode,null,-1,to_number(c1.glcode)) "
+        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'9999999999') end "
                 +
-                "as mincode,decode(c2.glcode,null,999999999,c2.glcode) as maxcode,decode(c3.glcode,null,-1,to_number(c3.glcode)) as majorcode "
+                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end   as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
                 +
                 "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
                 +
@@ -582,9 +582,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,decode(c1.glcode,null,-1,to_number(c1.glcode)) "
+        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
                 +
-                "as mincode,decode(c2.glcode,null,999999999,c2.glcode) as maxcode,decode(c3.glcode,null,-1,to_number(c3.glcode)) as majorcode "
+                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
                 +
                 "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
                 +
@@ -679,9 +679,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,decode(c1.glcode,null,-1,to_number(c1.glcode)) "
+        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
                 +
-                "as mincode,decode(c2.glcode,null,999999999,c2.glcode) as maxcode,decode(c3.glcode,null,-1,to_number(c3.glcode)) as majorcode "
+                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
                 +
                 "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
                 +
@@ -780,7 +780,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         /*
          * query = query.append(
          * "SELECT substr(gl.glcode,1,3), SUM(gl.debitAmount)-SUM(gl.creditAmount) FROM egf_budgetdetail bd, vouchermis vmis," +
-         * " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, DECODE(c1.glcode,NULL,-1,to_number(c1.glcode)) AS mincode, DECODE(c2.glcode,NULL,999999999,c2.glcode) AS maxcode, DECODE(c3.glcode,NULL,-1,to_number(c3.glcode)) AS majorcode"
+         * " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode) end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode) end  AS majorcode"
          * +
          * " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
          * + " egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, eg_wf_states wf" +
@@ -797,7 +797,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
          * query.append(
          * "SELECT substr(gl.glcode,1,3), SUM(gl.creditAmount)-SUM(gl.debitAmount) FROM egf_budgetdetail bd, generalledger gl, voucherheader vh, vouchermis vmis,"
          * +
-         * " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, DECODE(c1.glcode,NULL,-1,to_number(c1.glcode)) AS mincode, DECODE(c2.glcode,NULL,999999999,c2.glcode)     AS maxcode, DECODE(c3.glcode,NULL,-1,to_number(c3.glcode)) AS majorcode"
+         * " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode) end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end     AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode) end  AS majorcode"
          * +
          * " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
          * + " egf_budget b, financialyear f, fiscalperiod p, eg_wf_states wf" +
@@ -1581,7 +1581,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + condition
                         + " FROM egf_budgetdetail bd, vouchermis vmis,"
                         +
-                        " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, DECODE(c1.glcode,NULL,-1,to_number(c1.glcode)) AS mincode, DECODE(c2.glcode,NULL,999999999,c2.glcode) AS maxcode, DECODE(c3.glcode,NULL,-1,to_number(c3.glcode)) AS majorcode"
+                        " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end  AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  AS majorcode"
                         +
                         " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
                         +
@@ -1840,7 +1840,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + condition
                         + " FROM egf_budgetdetail bd, vouchermis vmis,"
                         +
-                        " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, DECODE(c1.glcode,NULL,-1,to_number(c1.glcode)) AS mincode, DECODE(c2.glcode,NULL,999999999,c2.glcode) AS maxcode, DECODE(c3.glcode,NULL,-1,to_number(c3.glcode)) AS majorcode"
+                        " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  AS majorcode"
                         +
                         " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
                         +
@@ -2037,7 +2037,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer miscQuery = getMiscQuery(mandatoryFields, "bmis", "bdetail", "bmis");
         StringBuffer query = new StringBuffer();
         query = query
-                .append("select bd.id,SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount))-SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount)) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                .append("select bd.id,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2057,7 +2057,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " union "
                         +
-                        "select bd.id,SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount))-SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount)) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2082,9 +2082,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
-        .append(" (select bg1.id as id,bg1.accounttype as accounttype,decode(c1.glcode,null,-1,to_number(c1.glcode)) "
+        .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
                 +
-                "as mincode,decode(c2.glcode,null,999999999,c2.glcode) as maxcode,decode(c3.glcode,null,-1,to_number(c3.glcode)) as majorcode "
+                "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
                 +
                 "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
                 +
@@ -2140,7 +2140,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         query = query
                 .append("select bud,sum(amt) from ("
                         +
-                        "select bd.id as bud,SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount))-SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount)) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2160,7 +2160,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " union "
                         +
-                        "select bd.id as bud,SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount))-SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount)) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2180,7 +2180,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " union "
                         +
-                        "select bd.id as bud,SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount))-SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount)) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2200,7 +2200,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " union "
                         +
-                        "select bd.id as bud,SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount))-SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount)) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2230,7 +2230,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         query = query
                 .append("select bud,sum(amt) from ("
                         +
-                        "select bd.id as bud,SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount))-SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount)) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +
@@ -2250,7 +2250,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " union "
                         +
-                        "select bd.id as bud,SUM(decode(bdetail.creditAmount,null,0,bdetail.creditAmount))-SUM(decode(bdetail.debitAmount,null,0,bdetail.debitAmount)) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         +
                         "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         +

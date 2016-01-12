@@ -106,21 +106,21 @@ public class BillRegisterBean
             final String insertQuery = "INSERT INTO EG_BILLREGISTER (ID, BILLNUMBER, BILLDATE, BILLAMOUNT,FIELDID,WORKSDETAILID,BILLSTATUS, NARRATION,PASSEDAMOUNT,BILLTYPE,EXPENDITURETYPE,ADVANCEADJUSTED,CREATEDBY,CREATEDDATE,StatusId)"
                     + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            psmt.setString(1, id);
-            psmt.setString(2, billNumber);
-            psmt.setDate(3, billDatee);
-            psmt.setDouble(4, billAmount);
-            psmt.setString(5, fieldId);
-            psmt.setString(6, worksDetailId);
-            psmt.setString(7, billStatus);
-            psmt.setString(8, billNarration);
-            psmt.setDouble(9, passedAmount);
-            psmt.setString(10, billType);
-            psmt.setString(11, expenditureType);
-            psmt.setDouble(12, advanceAdjusted);
-            psmt.setInteger(13, createdby);
-            psmt.setDate(14, getTodayDate());
-            psmt.setString(15, billStatusId);
+            psmt.setString(0, id);
+            psmt.setString(1, billNumber);
+            psmt.setDate(2, billDatee);
+            psmt.setDouble(3, billAmount);
+            psmt.setString(4, fieldId);
+            psmt.setString(5, worksDetailId);
+            psmt.setString(6, billStatus);
+            psmt.setString(7, billNarration);
+            psmt.setDouble(8, passedAmount);
+            psmt.setString(9, billType);
+            psmt.setString(10, expenditureType);
+            psmt.setDouble(11, advanceAdjusted);
+            psmt.setInteger(12, createdby);
+            psmt.setDate(13, getTodayDate());
+            psmt.setString(14, billStatusId);
             psmt.executeUpdate();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("INSERT QUERY IS:" + insertQuery);
@@ -147,8 +147,8 @@ public class BillRegisterBean
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(updateQuery);
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-            psmt.setString(1, status);
-            psmt.setString(2, id);
+            psmt.setString(0, status);
+            psmt.setString(1, id);
             psmt.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error("Exception in updatestatus" + e);
@@ -175,20 +175,20 @@ public class BillRegisterBean
         try {
 
             psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-            psmt.setString(1, billNumber);
-            psmt.setString(2, billDate);
-            psmt.setDouble(3, billAmount);
-            psmt.setString(4, fieldId);
-            psmt.setString(5, worksDetailId);
-            psmt.setString(6, billStatus);
-            psmt.setString(7, billNarration);
-            psmt.setDouble(8, passedAmount);
-            psmt.setString(9, billType);
-            psmt.setString(10, expenditureType);
-            psmt.setDouble(11, advanceAdjusted);
-            psmt.setInteger(12, lastModifiedBy);
-            psmt.setDate(13, getTodayDate());
-            psmt.setString(14, id);
+            psmt.setString(0, billNumber);
+            psmt.setString(1, billDate);
+            psmt.setDouble(2, billAmount);
+            psmt.setString(3, fieldId);
+            psmt.setString(4, worksDetailId);
+            psmt.setString(5, billStatus);
+            psmt.setString(6, billNarration);
+            psmt.setDouble(7, passedAmount);
+            psmt.setString(8, billType);
+            psmt.setString(9, expenditureType);
+            psmt.setDouble(10, advanceAdjusted);
+            psmt.setInteger(11, lastModifiedBy);
+            psmt.setDate(12, getTodayDate());
+            psmt.setString(13, id);
 
             psmt.executeUpdate();
             if (LOGGER.isDebugEnabled())
@@ -217,25 +217,23 @@ public class BillRegisterBean
                         + "lastModifiedBy=?, createdDate=?,lastModifiedDate= to_date(?,'dd-Mon-yyyy HH24:MI:SS'), StatusId=?"
                         + "where id =?";
                 psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery1);
-                psmt.setInteger(1, createdby);
-                psmt.setDouble(2, billAmount);
-                psmt.setString(3, billDate);
-                psmt.setString(4, billNarration);
-                psmt.setString(5, billNumber);
-                psmt.setDouble(6, advanceAdjusted);
-                psmt.setString(7, billType);
-                psmt.setString(8, expenditureType);
-                psmt.setDouble(9, passedAmount);
-                psmt.setString(10, billStatus);
-                psmt.setString(11, worksDetailId);
-                psmt.setString(12, fieldId);
-                psmt.setInteger(13, lastModifiedBy);
-                psmt.setString(14, createdDate);
-                psmt.setString(15, lastModifiedDate);
-                psmt.setString(16, billStatusId);
-
-                psmt.setString(17, id);
-
+                psmt.setInteger(0, createdby);
+                psmt.setDouble(1, billAmount);
+                psmt.setString(2, billDate);
+                psmt.setString(3, billNarration);
+                psmt.setString(4, billNumber);
+                psmt.setDouble(5, advanceAdjusted);
+                psmt.setString(6, billType);
+                psmt.setString(7, expenditureType);
+                psmt.setDouble(8, passedAmount);
+                psmt.setString(9, billStatus);
+                psmt.setString(10, worksDetailId);
+                psmt.setString(11, fieldId);
+                psmt.setInteger(12, lastModifiedBy);
+                psmt.setString(13, createdDate);
+                psmt.setString(14, lastModifiedDate);
+                psmt.setString(15, billStatusId);
+                psmt.setString(16, id);
                 psmt.executeUpdate();
 
             }

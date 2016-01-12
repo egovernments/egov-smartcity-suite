@@ -359,7 +359,7 @@ public class GeneralLedgerReportList {
                             fundName = resultset1.getString(14);
                         final String str = "select name as \"glname\" from chartofaccounts where glcode=?";
                         pstmt = connection.prepareStatement(str);
-                        pstmt.setString(1, code);
+                        pstmt.setString(0, code);
                         final ResultSet res = pstmt.executeQuery();
                         String aName = "";
                         if (res.next()) {
@@ -471,8 +471,8 @@ public class GeneralLedgerReportList {
                         try {
                             final String strQry = "select distinct chequenumber,payto from chequedetail c,voucherheader v where v.id=c.voucherheaderid and v.status<>4 and v.vouchernumber= ? and v.voucherdate= ? ";
                             pstmt1 = connection.prepareStatement(strQry);
-                            pstmt1.setString(1, vcNum);
-                            pstmt1.setString(2, vcDate);
+                            pstmt1.setString(0, vcNum);
+                            pstmt1.setString(1, vcDate);
                             r1 = pstmt1.executeQuery();
 
                             while (r1.next())
@@ -651,8 +651,8 @@ public class GeneralLedgerReportList {
                          final String cheqInHandQry = "select distinct chequenumber,payto from chequedetail c,voucherheader v where v.id=c.voucherheaderid and v.vouchernumber=? and v.voucherdate=? ";
                          try {
                              pstmt2 = connection.prepareStatement(cheqInHandQry);
-                             pstmt2.setString(1, vcNum);
-                             pstmt2.setString(2, vcDate);
+                             pstmt2.setString(0, vcNum);
+                             pstmt2.setString(1, vcDate);
 
                              r2 = pstmt2.executeQuery();
                              // String temp="";
@@ -870,9 +870,9 @@ public class GeneralLedgerReportList {
         +
         "vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", "
         +
-        "coa.name AS \"name\",decode(gl.debitAmount,0,(case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount)    then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) , (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)    then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end )) AS \"amount\", "
+        "coa.name AS \"name\",case when gl.debitAmount = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount)    then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else  (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)    then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ) end AS \"amount\", "
         +
-        "gl.description AS \"narration\", vh.type || '-' || vh.name||DECODE(status,1,'(Reversed)',decode(status,2,'(Reversal)','')) AS \"type\", "
+        "gl.description AS \"narration\", vh.type || '-' || vh.name||case when status = 1 then '(Reversed)' else (case when status = 2 then '(Reversal)' else '' end) end AS \"type\", "
         +
         "gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\",f.name as \"fundName\",  vh.isconfirmed as \"isconfirmed\"  "
         +
@@ -930,8 +930,8 @@ public class GeneralLedgerReportList {
             // for accross the financial year
             final String finYearQry = "SELECT id FROM financialYear WHERE startingDate<= ? AND endingDate>= ?";
             pstmt = connection.prepareStatement(finYearQry);
+            pstmt.setString(0, sDate);
             pstmt.setString(1, sDate);
-            pstmt.setString(2, sDate);
             resultset = pstmt.executeQuery();
             if (resultset.next())
                 fyId = resultset.getString("id");
@@ -963,9 +963,9 @@ public class GeneralLedgerReportList {
         if (!fundSourceId.equalsIgnoreCase(""))
             fundSourceCondition = "fundSourceId = " + fundSourceId + " AND ";
 
-        final String queryYearOpBal = "SELECT decode(sum(openingDebitBalance),null,0,sum(openingDebitBalance)) AS \"openingDebitBalance\", "
+        final String queryYearOpBal = "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) end  AS \"openingDebitBalance\", "
                 +
-                "decode(sum(openingCreditBalance),null,0,sum(openingCreditBalance)) AS \"openingCreditBalance\" "
+                "case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) end  AS \"openingCreditBalance\" "
                 +
                 "FROM transactionSummary WHERE "
                 + fundCondition
@@ -1001,8 +1001,8 @@ public class GeneralLedgerReportList {
             String queryTillDateOpBal = "";
             // if(showRev.equalsIgnoreCase("on")){
 
-            queryTillDateOpBal = "SELECT decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) AS \"debitAmount\", " +
-                    "decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)) AS \"creditAmount\" " +
+            queryTillDateOpBal = "SELECT case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) AS \"debitAmount\", " +
+                    "case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end AS \"creditAmount\" " +
                     "FROM generalLedger gl, voucherHeader vh " +
                     "WHERE vh.id = gl.voucherHeaderId " +
                     "AND gl.glCode in('" + glCode + "') " + fundCondition + fundSourceCondition + effTime +
@@ -1040,7 +1040,7 @@ public class GeneralLedgerReportList {
         try {
             PreparedStatement pstmt = null;
             pstmt = connection.prepareStatement(finQry);
-            pstmt.setString(1, fyId);
+            pstmt.setString(0, fyId);
             resultset = pstmt.executeQuery();
             if (resultset.next())
                 startDate = resultset.getString("startingDate");
@@ -1120,8 +1120,8 @@ public class GeneralLedgerReportList {
             try {
                 final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pstmt = connection.prepareStatement(query);
+                pstmt.setString(0, formendDate);
                 pstmt.setString(1, formendDate);
-                pstmt.setString(2, formendDate);
                 rs = pstmt.executeQuery();
                 if (rs.next())
                     formstartDate = rs.getString("startingDate");
@@ -1175,7 +1175,7 @@ public class GeneralLedgerReportList {
         final String minQry = "select glcode from chartofaccounts where glcode like ? || '%' and classification = 4 order by glcode asc";
         try {
             pstmt = connection.prepareStatement(minQry);
-            pstmt.setString(1, minGlCode);
+            pstmt.setString(0, minGlCode);
             final ResultSet rset = pstmt.executeQuery();
             if (rset.next())
                 minCode = rset.getString(1);
@@ -1196,7 +1196,7 @@ public class GeneralLedgerReportList {
         final String strQry = "select glcode from chartofaccounts where glcode like ? || '%' and classification = 4 order by glcode desc";
         try {
             pstmt = connection.prepareStatement(strQry);
-            pstmt.setString(1, maxGlCode);
+            pstmt.setString(0, maxGlCode);
             final ResultSet rset = pstmt.executeQuery();
             if (rset.next())
                 maxCode = rset.getString(1);
@@ -1220,7 +1220,7 @@ public class GeneralLedgerReportList {
                 final String queryCgn = "select CGN from VOUCHERHEADER where VOUCHERNUMBER= ? and voucherdate=to_date('" + vdate
                         + "','dd-Mon-yyyy')";
                 pstmt = connection.prepareStatement(queryCgn);
-                pstmt.setString(1, vhn);
+                pstmt.setString(0, vhn);
                 rsCgn = pstmt.executeQuery();
                 rsCgn.next();
                 cgn = rsCgn.getString("CGN");

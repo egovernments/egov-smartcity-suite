@@ -39,16 +39,13 @@
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -62,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.impl.client.NoopUserTokenHandler;
+import org.apache.commons.lang.StringUtils;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -75,7 +72,6 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -98,6 +94,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -183,7 +180,7 @@ public class PropertyTransferService {
 
     @Autowired
     private PropertyService propertyService;
-    
+
     @Autowired
     private NoticeService noticeService;
 
@@ -355,19 +352,30 @@ public class PropertyTransferService {
             noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
             noticeBean.setRegDocNo(propertyMutation.getDeedNo());
             noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
-            final ReportRequest reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_NOTICE, noticeBean, reportParams);
+            noticeBean.setAssessmentNo(propertyMutation.getBasicProperty().getUpicNo());
+            if (propertyMutation.getBasicProperty().getAddress() != null) {
+                PropertyAddress address = propertyMutation.getBasicProperty().getAddress();
+                if (StringUtils.isNotBlank(address.getHouseNoBldgApt()))
+                    noticeBean.setDoorNo(address.getHouseNoBldgApt());
+                else
+                    noticeBean.setDoorNo("N/A");
+            }
+
+            final ReportRequest reportInput = new ReportRequest(
+                    PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_NOTICE, noticeBean, reportParams);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
                 if (notice == null) {
                     String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_MUTATION_CERTIFICATE);
-                    noticeService.saveNotice(propertyMutation.getApplicationNo(), noticeNo, NOTICE_TYPE_MUTATION_CERTIFICATE,
-                            basicProperty, new ByteArrayInputStream(reportOutput.getReportOutputData()));
+                    noticeService.saveNotice(propertyMutation.getApplicationNo(), noticeNo,
+                            NOTICE_TYPE_MUTATION_CERTIFICATE, basicProperty,
+                            new ByteArrayInputStream(reportOutput.getReportOutputData()));
                 } else {
                     noticeService.updateNotice(notice, new ByteArrayInputStream(reportOutput.getReportOutputData()));
                 }
                 noticeService.getSession().flush();
-            } 
+            }
         }
         return reportOutput;
     }

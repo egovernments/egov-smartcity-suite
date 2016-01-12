@@ -435,7 +435,6 @@ public class BankStatementEntriesAction extends DispatchAction {
         voucherHeader.setName("Bank Entry");
         voucherHeader.setType(voucherType);
         voucherHeader.setCgvn(cgvn);
-        voucherHeader.setCgn(cgnNo);
         voucherHeader.setDescription(narration);
         final HashMap<String, Object> headerDetails = createHeaderAndMisDetails(voucherHeader, departmentId, fundId,
                 fundSourceId,

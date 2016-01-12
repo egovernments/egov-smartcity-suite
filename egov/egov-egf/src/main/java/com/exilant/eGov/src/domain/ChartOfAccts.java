@@ -261,24 +261,23 @@ public class ChartOfAccts {
                 LOGGER.debug(insertQuery);
 
             HibernateUtil.getCurrentSession().createSQLQuery(insertQuery)
-            .setInteger(1, Integer.parseInt(id))
-            .setString(2, removeSingleQuotes(glCode))
-            .setString(3, removeSingleQuotes(name))
-            .setString(4, removeSingleQuotes(description))
-            .setString(5, removeSingleQuotes(isActiveForPosting))
-            .setString(6, removeSingleQuotes(parentId))
-            .setString(7, removeSingleQuotes(lastModified))
-            .setString(8, removeSingleQuotes(modifiedBy))
-            .setString(9, removeSingleQuotes(created))
-            .setString(10, removeSingleQuotes(purposeid))
-            .setString(11, removeSingleQuotes(functionreqd))
-            .setString(12, removeSingleQuotes(operation))
-            .setString(13, removeSingleQuotes(type))
-            .setString(14, removeSingleQuotes(classification))
-            .setString(15, removeSingleQuotes(classname))
-            .setString(16, removeSingleQuotes(budgetCheckReqd))
-            .setString(17, removeSingleQuotes(getMajorCode(glCode))).executeUpdate();
-
+            .setInteger(0, Integer.parseInt(id))
+            .setString(1, removeSingleQuotes(glCode))
+            .setString(2, removeSingleQuotes(name))
+            .setString(3, removeSingleQuotes(description))
+            .setString(4, removeSingleQuotes(isActiveForPosting))
+            .setString(5, removeSingleQuotes(parentId))
+            .setString(6, removeSingleQuotes(lastModified))
+            .setString(7, removeSingleQuotes(modifiedBy))
+            .setString(8, removeSingleQuotes(created))
+            .setString(9, removeSingleQuotes(purposeid))
+            .setString(10, removeSingleQuotes(functionreqd))
+            .setString(11, removeSingleQuotes(operation))
+            .setString(12, removeSingleQuotes(type))
+            .setString(13, removeSingleQuotes(classification))
+            .setString(14, removeSingleQuotes(classname))
+            .setString(15, removeSingleQuotes(budgetCheckReqd))
+            .setString(16, removeSingleQuotes(getMajorCode(glCode))).executeUpdate();
         } catch (final HibernateException e) {
             LOGGER.error("Exception occured while getting the data  " + e.getMessage(), new HibernateException(e.getMessage()));
         } catch (final Exception e) {

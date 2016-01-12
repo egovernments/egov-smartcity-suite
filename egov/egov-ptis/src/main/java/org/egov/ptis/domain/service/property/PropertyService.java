@@ -2294,7 +2294,7 @@ public class PropertyService {
             user = assignmentService.getAssignmentsForPosition(
                     position.getId(), new Date()).get(0).getEmployee();
         }
-    	Map<String, String> ownerMap = new HashMap<String, String>();
+        Map<String, String> ownerMap = new HashMap<String, String>();
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
@@ -2651,16 +2651,6 @@ public class PropertyService {
 
     }
 
-    /**
-     * Returns the installment in which the assessment date falls
-     * 
-     * @param assessmentDate
-     * @return
-     */
-    public Installment getAssessmentEffectiveInstallment(final Date assessmentDate) {
-        return installmentDao.getInsatllmentByModuleForGivenDate(moduleDao.getModuleByName(PTMODULENAME),
-                assessmentDate);
-    }
 
     /**
      * @param fromDemand

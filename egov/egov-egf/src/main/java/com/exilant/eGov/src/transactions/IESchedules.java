@@ -82,7 +82,7 @@ public class IESchedules extends AbstractTask {
     private void printSchedules(final DataCollection dc) throws TaskFailedException {
         final String tableTime = dc.getValue("tableToDrop");
         final String mainTable = "coaie" + tableTime;
-        final String report = "SELECT scheduleglCode AS \"glcode\", decode(operation,'L','Less: ',' ') || schedulename AS \"name\", 'Schedule ' || schschedule || ': ' || summaryname || '[Code No ' || summaryglcode || ']' AS \"schTitle\", DECODE(schschedule,NULL,'-',schschedule) AS \"schedule\", curYearAmount AS \"curyearamount\", preyearamount AS \"preyearamount\", operation AS \"operation\", TYPE AS \"type\" FROM "
+        final String report = "SELECT scheduleglCode AS \"glcode\", case when operation = 'L' then 'Less: ' else ' ' end  || schedulename AS \"name\", 'Schedule ' || schschedule || ': ' || summaryname || '[Code No ' || summaryglcode || ']' AS \"schTitle\", case when schschedule = NULL then '-' else schschedule AS \"schedule\", curYearAmount AS \"curyearamount\", preyearamount AS \"preyearamount\", operation AS \"operation\", TYPE AS \"type\" FROM "
                 + mainTable
                 + " WHERE TYPE = 'I' OR TYPE = 'E' ORDER BY scheduleglCode, TYPE, operation";
         PreparedStatement pst = null;

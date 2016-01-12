@@ -96,9 +96,9 @@ public class ChartOfAccountDetail {
             final String insertQuery = "INSERT INTO ChartOfAccountDetail (id, glCodeId, detailTypeId)"
                     + "VALUES( ?, ?, ?)";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pst.setString(1, id);
-            pst.setString(2, glCodeId);
-            pst.setString(3, detailTypeId);
+            pst.setString(0, id);
+            pst.setString(1, glCodeId);
+            pst.setString(2, detailTypeId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
             pst.executeUpdate();
@@ -120,9 +120,9 @@ public class ChartOfAccountDetail {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(updateQuery);
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-                pst.setString(1, glCodeId);
-                pst.setString(2, detailTypeId);
-                pst.setString(3, id);
+                pst.setString(0, glCodeId);
+                pst.setString(1, detailTypeId);
+                pst.setString(2, id);
                 pst.executeUpdate();
             } catch (final Exception e) {
                 LOGGER.error("Exp in update:" + e.getMessage(), e);

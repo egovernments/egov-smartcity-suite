@@ -297,7 +297,7 @@ public class TrialBalanceAction extends BaseFormAction {
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
-        final String query = " SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM transactionsummary WHERE"
+        final String query = " SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE) = NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
                 + " financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
                 + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid"
                 + fundcondition
@@ -306,7 +306,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + tsFunctionIdCond
                 + tsFieldIdCond
                 + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) FROM"
+                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) = NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
                 + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear  WHERE startingdate<=:toDate AND endingdate>=:toDate)"
                 + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid"
                 + fundcondition
@@ -330,7 +330,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + functionIdCond
                 + fieldIdCond
                 + " GROUP BY gl.glcode,coa.name,vh.fundid    HAVING (SUM(debitamount)>0 OR SUM(creditamount)>0)    And"
-                + " (SUM(debitamount)+SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM"
+                + " (SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)=NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM"
                 + " transactionsummary WHERE  financialyearid=(SELECT id FROM financialyear       WHERE startingdate <=:toDate"
                 + " AND endingdate >=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) "
                 + fundcondition
@@ -339,7 +339,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + tsFunctionIdCond
                 + tsFieldIdCond
                 + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) FROM"
+                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)=NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
                 + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear    WHERE startingdate<=:toDate AND endingdate>=:toDate) "
                 + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode)  "
                 + fundcondition
@@ -349,7 +349,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + tsFieldIdCond
                 + "))/COUNT(*) )<>0"
                 + " union"
-                + " SELECT coa.glcode AS \"accCode\" ,coa.name AS \"accName\" , fu.id as \"fundId\", SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE))"
+                + " SELECT coa.glcode AS \"accCode\" ,coa.name AS \"accName\" , fu.id as \"fundId\", SUM((SELECT case when SUM(OPENINGDEBITBALANCE) = NULL then 0 else SUM(OPENINGDEBITBALANCE) end "
                 + " FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE  startingdate<=:toDate AND endingdate>=:toDate)"
                 + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) AND fundid= (select id from fund where id=fu.id)"
                 + " "
@@ -358,7 +358,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + tsfunctionaryCond
                 + tsFunctionIdCond
                 + tsFieldIdCond
-                + ")) - SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) as \"amount\" FROM transactionsummary WHERE"
+                + ")) - SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)=NULL then 0 else SUM(OPENINGCREDITBALANCE) end as \"amount\" FROM transactionsummary WHERE"
                 + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts"
                 + " WHERE glcode=coa.glcode)AND fundid= (select id from fund where id=fu.id)"
                 + fundcondition
@@ -389,7 +389,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + fundcondition
                 + ")"
                 + " GROUP BY coa.glcode,coa.name, fu.id"
-                + " HAVING((SUM((SELECT DECODE(SUM(OPENINGDEBITBALANCE),NULL,0,SUM(OPENINGDEBITBALANCE)) FROM transactionsummary WHERE"
+                + " HAVING((SUM((SELECT case when SUM(OPENINGDEBITBALANCE)=NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
                 + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) "
                 + fundcondition
                 + tsDeptCond
@@ -397,7 +397,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 + tsFunctionIdCond
                 + tsFieldIdCond
                 + " )) >0 )"
-                + " OR (SUM((SELECT  DECODE(SUM(OPENINGCREDITBALANCE),NULL,0,SUM(OPENINGCREDITBALANCE)) FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
+                + " OR (SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)=NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
                 + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode)     "
                 + fundcondition
                 + tsDeptCond

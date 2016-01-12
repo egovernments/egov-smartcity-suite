@@ -377,7 +377,7 @@ public class GlReverser {
         List<Object[]> rset = null;
         try {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, cgNo);
+            pst.setString(0, cgNo);
             rset = pst.list();
             for (final Object[] element : rset)
                 if (element[0].toString().equals("1"))

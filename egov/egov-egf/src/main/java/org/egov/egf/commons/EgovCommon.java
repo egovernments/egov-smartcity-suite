@@ -225,9 +225,9 @@ public class EgovCommon {
             final StringBuffer opBalncQuery1 = new StringBuffer(300);
             opBalncQuery1
             .append(
-                    "SELECT decode(sum(openingdebitbalance),null,0,sum(openingdebitbalance))-")
+                    "SELECT case when sum(openingdebitbalance) = null then  0  else sum(openingdebitbalance) end  -")
                     .append(
-                            " decode(sum(openingcreditbalance),null,0,sum(openingcreditbalance)) as openingBalance from TransactionSummary")
+                            "  case when sum(openingcreditbalance) = null then 0 else sum(openingcreditbalance) end as openingBalance from TransactionSummary")
                             .append(
                                     " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
@@ -245,7 +245,7 @@ public class EgovCommon {
             final StringBuffer opBalncQuery2 = new StringBuffer(300);
             opBalncQuery2
             .append(
-                    "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+                    "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE gl.voucherHeaderId.id=vh.id and gl.glcode='")
                             .append(cashInHandCode)
@@ -354,7 +354,7 @@ public class EgovCommon {
             final StringBuffer paymentQuery = new StringBuffer(400);
             paymentQuery
             .append(
-                    "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+                    "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end  )")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh,Paymentheader ph WHERE gl.voucherHeaderId.id=vh.id and ph.voucherheader.id=vh.id and gl.glcodeId=? ")
                             .append(
@@ -406,8 +406,8 @@ public class EgovCommon {
             // query to fetch vouchers for which no cheque has been assigned
             paymentQuery = paymentQuery
                     .append(
-                            "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),"
-                                    + "null,0,sum(gl.creditAmount))) as amount FROM  GeneralLedger gl ,voucherheader vh, "
+                            "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end   -  case when sum(gl.creditAmount) = "
+                                    + "null then 0 else sum(gl.creditAmount) ) as amount FROM  GeneralLedger gl ,voucherheader vh, "
                                     + " Paymentheader ph ,eg_wf_states es ,egf_instrumentvoucher iv right outer join voucherheader vh1 on "
                                     + "vh1.id =iv.VOUCHERHEADERID WHERE gl.voucherHeaderId=vh.id and "
                                     + "ph.voucherheaderid=vh.id and gl.glcodeId="
@@ -419,8 +419,8 @@ public class EgovCommon {
                                     // query to fetch vouchers for which cheque has been
                                     // assigned and surrendered
                                     .append(
-                                            "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),"
-                                                    + "null,0,sum(gl.creditAmount))) as amount FROM  GeneralLedger gl ,voucherheader vh, "
+                                            "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount) = "
+                                                    + "null then 0 else sum(gl.creditAmount) ) as amount FROM  GeneralLedger gl ,voucherheader vh, "
                                                     + " Paymentheader ph ,eg_wf_states es ,egf_instrumentvoucher iv,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader "
                                                     + "ih1, (select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,"
                                                     + "bankaccountid,instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
@@ -850,7 +850,7 @@ public class EgovCommon {
 
                 final String bndQry = "SELECT glcode AS chequeinhand,id FROM CHARTOFACCOUNTS where id = (SELECT chequeinhand FROM CODEMAPPING WHERE EG_BOUNDARYID=?)";
                 final PreparedStatement pstmt = connection.prepareStatement(bndQry);
-                pstmt.setLong(1, boundaryId);
+                pstmt.setLong(0, boundaryId);
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Cheque In hand account code query =" + bndQry);
                 ResultSet resultSet = pstmt.executeQuery();
@@ -864,7 +864,7 @@ public class EgovCommon {
                 final String sqlQuery2 = "SELECT glcode AS cashinhand,id FROM CHARTOFACCOUNTS where id = (SELECT cashinhand FROM CODEMAPPING WHERE EG_BOUNDARYID=?)";
                 final PreparedStatement pstmt1 = connection
                         .prepareStatement(sqlQuery2);
-                pstmt1.setLong(1, boundaryId);
+                pstmt1.setLong(0, boundaryId);
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Cheque In hand account code query =" + sqlQuery2);
                 resultSet = pstmt1.executeQuery();
@@ -1055,9 +1055,9 @@ public class EgovCommon {
 
         opBalncQuery
         .append(
-                "SELECT decode(sum(openingdebitbalance),null,0,sum(openingdebitbalance))-")
+                "SELECT case when sum(openingdebitbalance) = null then  0  else sum(openingdebitbalance) end -")
                 .append(
-                        " decode(sum(openingcreditbalance),null,0,sum(openingcreditbalance)) as openingBalance from TransactionSummary")
+                        "  case when sum(openingcreditbalance) = null then 0 else sum(openingcreditbalance) end  as openingBalance from TransactionSummary")
                         .append(
                                 " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
                                 .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
@@ -1175,7 +1175,7 @@ public class EgovCommon {
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
-            .append("SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+            .append("SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
             .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
             .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
             .append(fundCond + deptCond)
@@ -1267,7 +1267,7 @@ public class EgovCommon {
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
-            .append("SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+            .append("SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
             .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
             .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
             .append(fundCond + deptCond)
@@ -1416,9 +1416,9 @@ public class EgovCommon {
         final StringBuffer opBalncQuery = new StringBuffer(300);
         opBalncQuery
         .append(
-                "SELECT decode(sum(openingdebitbalance),null,0,sum(openingdebitbalance))-")
+                "SELECT case when sum(openingdebitbalance) = null then  0  else sum(openingdebitbalance) end -")
                 .append(
-                        " decode(sum(openingcreditbalance),null,0,sum(openingcreditbalance)) as openingBalance from TransactionSummary")
+                        "  case when sum(openingcreditbalance) = null then 0 else sum(openingcreditbalance) end  as openingBalance from TransactionSummary")
                         .append(
                                 " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
                                 .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
@@ -1586,7 +1586,7 @@ public class EgovCommon {
 
             query
             .append(
-                    "SELECT (decode(sum(egd.debitamount),null,0,sum(egd.debitamount)) - decode(sum(egd.creditamount),null,0,sum(egd.creditamount)))")
+                    "SELECT (case when sum(egd.debitamount) = null then 0 else sum(egd.debitamount) end - case when sum(egd.creditamount) = null THEN 0 else sum(egd.creditamount) end)")
                     .append(
                             "as amount FROM EgBillregister egb, EgBilldetails egd,EgBillregistermis egmis ");
             query
@@ -1602,7 +1602,7 @@ public class EgovCommon {
         } else {
             query
             .append(
-                    "SELECT (decode(sum(egp.debitAmount),null,0,sum(egp.debitAmount)) - decode(sum(egp.creditAmount),null,0,sum(egp.creditAmount)))")
+                    "SELECT (case when sum(egp.debitAmount) = null then 0 else sum(egp.debitAmount) - case when sum(egp.creditAmount) = null then 0 else sum(egp.creditAmount))")
                     .append(
                             "as amount FROM EgBillregister egb, EgBilldetails egd,EgBillregistermis egmis,EgBillPayeedetails egp");
             query
@@ -1848,7 +1848,7 @@ public class EgovCommon {
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
             .append(
-                    "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount)))")
+                    "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE  gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
                             .append(

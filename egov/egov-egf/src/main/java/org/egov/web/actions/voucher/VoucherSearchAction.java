@@ -283,7 +283,6 @@ public class VoucherSearchAction extends BaseFormAction
                 voucherMap = new HashMap<String, Object>();
                 final BigDecimal amt = BigDecimal.ZERO;
                 voucherMap.put("id", voucherheader.getId());
-                voucherMap.put("cgn", voucherheader.getCgn());
                 voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
                 voucherMap.put("type", voucherheader.getType());
                 voucherMap.put("name", voucherheader.getName());
@@ -323,7 +322,6 @@ public class VoucherSearchAction extends BaseFormAction
                 if (ismodifyJv) {
                     voucherMap = new HashMap<String, Object>();
                     voucherMap.put("id", voucherheader.getId());
-                    voucherMap.put("cgn", voucherheader.getCgn());
                     voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
                     voucherMap.put("type", voucherheader.getType());
                     voucherMap.put("name", voucherheader.getName());
