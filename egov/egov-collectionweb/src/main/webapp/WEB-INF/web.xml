@@ -194,7 +194,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
@@ -222,6 +222,22 @@
 		<servlet-name>reportViewer</servlet-name>
 		<url-pattern>/reportViewer</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+        <servlet-name>collectionweb</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/collectionweb-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>collectionweb</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 	<!-- Filter Mapping Ends -->
 	
 	<jsp-config>
@@ -249,6 +265,18 @@
 			<taglib-uri>/WEB-INF/struts-dojo-tags.tld</taglib-uri>
 			<taglib-location>/WEB-INF/taglib/struts-dojo-tags.tld</taglib-location>
 		</taglib>
+		<taglib>
+            <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/tiles-jsp.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://www.springframework.org/tags</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/spring.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://www.springframework.org/tags/form</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/spring-form.tld</taglib-location>
+        </taglib>
 		<jsp-property-group>
     		<url-pattern>*.jsp</url-pattern>
     		<page-encoding>UTF-8</page-encoding>
