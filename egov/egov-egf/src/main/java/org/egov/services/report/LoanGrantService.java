@@ -335,7 +335,7 @@ public class LoanGrantService extends PersistenceService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getGrantAmountBy for" + agencyId);
         final StringBuffer gaSql = new StringBuffer();
-        gaSql.append("select fa.name as agencyName, sum( decode(lgd.grantamount,null,0,lgd.grantamount))*100000 as grantAmount");
+        gaSql.append("select fa.name as agencyName, sum( case when lgd.grantamount = null THEN 0 else lgd.grantamount end)*100000 as grantAmount");
         gaSql.append(" from egf_loangrantheader lg, egf_loangrantdetail lgd, egf_fundingagency fa");
         if (subSchemeId == null)
             gaSql.append(", sub_scheme ss,scheme s");
@@ -455,7 +455,7 @@ public class LoanGrantService extends PersistenceService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getLoanAmountBy for" + agencyId);
         final StringBuffer loanSql = new StringBuffer(256);
-        loanSql.append("select fa.name as agencyName, sum( decode(lgd.loanamount,null,0,lgd.loanamount))*100000 as loanAmount");
+        loanSql.append("select fa.name as agencyName, sum( case when lgd.loanamount  = null then 0 else lgd.loanamount)*100000 as loanAmount");
         loanSql.append(" from egf_loangrantheader lg, egf_loangrantdetail lgd, egf_fundingagency fa,sub_scheme ss,scheme s");
         loanSql.append(" where lg.id= lgd.headerid and lgd.agencyid=fa.id ");
         loanSql.append(" and lgd.agencyid=" + agencyId);

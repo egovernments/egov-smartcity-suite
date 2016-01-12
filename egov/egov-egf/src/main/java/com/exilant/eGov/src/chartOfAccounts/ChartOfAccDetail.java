@@ -102,7 +102,7 @@ public class ChartOfAccDetail extends AbstractTask {
                 LOGGER.debug("glcode>>>>>>>   " + hs);
             final String sql = "select b.id_role from eg_user a,eg_roles b,eg_userrole c where a.id_user=c.id_user and b.id_role=c.id_role and a.id_user= ?";
             final PreparedStatement pst = connection.prepareStatement(sql);
-            pst.setString(1, dc.getValue("egUser_id"));
+            pst.setString(0, dc.getValue("egUser_id"));
             final ResultSet rset = pst.executeQuery();
             if (rset.next())
                 roleId = Integer.parseInt(rset.getString(1));
@@ -188,7 +188,7 @@ public class ChartOfAccDetail extends AbstractTask {
                             + dc.getValue(CHARTOFACCGLCODE) + "%'";
                     final String query = "UPDATE chartofaccounts SET functionreqd=1 where glcode LIKE ?";
                     final PreparedStatement pst = conn.prepareStatement(query);
-                    pst.setString(1, chartofaccGlcode);
+                    pst.setString(0, chartofaccGlcode);
                     final int i = pst.executeUpdate();
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("number of rows updated " + i);
@@ -210,10 +210,10 @@ public class ChartOfAccDetail extends AbstractTask {
                 String glCode = "";
                 final String sql = "select glcode as \"code\" from chartofaccounts where id= ?";
                 PreparedStatement pst = conn.prepareStatement(sql);
-                pst.setString(1, dc.getValue(CHARTOFACCID));
+                pst.setString(0, dc.getValue(CHARTOFACCID));
                 ResultSet rs = null;
                 pst = conn.prepareCall(sql);
-                pst.setString(1, dc.getValue(CHARTOFACCID));
+                pst.setString(0, dc.getValue(CHARTOFACCID));
                 rs = pst.executeQuery();
                 if (rs.next())
                     glCode = rs.getString("code");
@@ -222,7 +222,7 @@ public class ChartOfAccDetail extends AbstractTask {
                 chart.update();
                 final String delsql = "DELETE FROM chartofaccountdetail WHERE glcodeid= ?";
                 pst = conn.prepareStatement(delsql);
-                pst.setString(1, dc.getValue(CHARTOFACCID));
+                pst.setString(0, dc.getValue(CHARTOFACCID));
                 pst.execute();
                 pst.close();
                 final String str1 = dc.getValue(CHARTOFACCTYPE);
@@ -236,7 +236,7 @@ public class ChartOfAccDetail extends AbstractTask {
 
                 final String query = "UPDATE chartofaccounts SET functionreqd=0 where glcode LIKE ?";
                 pst = conn.prepareStatement(query);
-                pst.setString(1, glCode + "%");
+                pst.setString(0, glCode + "%");
                 pst.executeUpdate();
                 pst.close();
                 final String str2 = dc.getValue("chartOfAccounts_funcReqd");

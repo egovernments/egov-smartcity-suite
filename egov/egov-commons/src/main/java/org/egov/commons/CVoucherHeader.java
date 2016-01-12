@@ -68,7 +68,6 @@ public class CVoucherHeader extends StateAware {
     @GeneratedValue(generator = SEQ_VOUCHERHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String cgn;
     private String name;
     private String type;
     private String description;
@@ -105,19 +104,6 @@ public class CVoucherHeader extends StateAware {
         this.id = id;
     }
 
-    /**
-     * @return Returns the cgn.
-     */
-    public String getCgn() {
-        return cgn;
-    }
-
-    /**
-     * @param cgn The cgn to set.
-     */
-    public void setCgn(final String cgn) {
-        this.cgn = cgn;
-    }
 
     /**
      * @return Returns the name.
@@ -337,7 +323,6 @@ public class CVoucherHeader extends StateAware {
 
     public void reset() {
 
-        cgn = null;
         name = null;
         type = null;
         description = null;

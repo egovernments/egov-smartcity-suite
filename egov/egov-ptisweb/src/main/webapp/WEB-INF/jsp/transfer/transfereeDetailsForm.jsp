@@ -76,7 +76,8 @@
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select name="transfereeInfos[0].gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        	<s:select id="transfereeInfos[0].gender" name="transfereeInfos[0].gender" value="%{transfereeInfos[0].gender}"
+								        	  headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].emailId" maxlength="64" size="20" id="emailId"  value="" 
@@ -121,7 +122,8 @@
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select name="transfereeInfos[%{#status.index}].gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        	<s:select id="transfereeInfos[%{#status.index}].gender" name="transfereeInfos[%{#status.index}].gender" value="%{transfereeInfos[#status.index].gender}"
+								        	 headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								      
 								        <td class="blueborderfortd" align="center">

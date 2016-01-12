@@ -41,12 +41,12 @@
 $(document).ready(function() {
 				$('#create').click(function() {
 					$('#wallTypeForm').attr('method', 'get');
-					$('#wallTypeForm').attr('action', '/ptis/wallType/create');
+					$('#wallTypeForm').attr('action', '/ptis/walltype/create');
 					$('#wallTypeForm').submit();
 				});
 				$('#view').click(function() {
 							$('#wallTypeForm').attr('method', 'get');
-							$('#wallTypeForm').attr('action','/ptis/wallType/view/' + $('#name').val());
+							$('#wallTypeForm').attr('action','/ptis/walltype/view/' + $('#name').val());
 			    });
 
 });

@@ -323,10 +323,10 @@ public class CancelVoucherAction extends BaseFormAction {
                 "			, vh.lastModifiedDate=:modifiedDate   where vh.id=:vhId";
         final String cancelVhByCGNQuery = "Update CVoucherHeader vh set vh.status=" + FinancialConstants.CANCELLEDVOUCHERSTATUS
                 + ",vh.lastModifiedBy.id=:modifiedby " +
-                "			, vh.lastModifiedDate=:modifiedDate where vh.cgn=:CGN";
+                "			, vh.lastModifiedDate=:modifiedDate where vh.vouchernumber=:vhNum";
         final String cancelVhByRefCGNQuery = "Update CVoucherHeader vh set vh.status=" + FinancialConstants.CANCELLEDVOUCHERSTATUS
                 + ",vh.lastModifiedBy.id=:modifiedby " +
-                "			, vh.lastModifiedDate=:modifiedDate where vh.refcgNo=:REFCGN";
+                "			, vh.lastModifiedDate=:modifiedDate where vh.vouchernumber=:vhNum";
         final Session session = HibernateUtil.getCurrentSession();
         for (int i = 0; i < selectedVhs.length; i++) {
             voucherObj = (CVoucherHeader) persistenceService.find("from CVoucherHeader vh where vh.id=?", selectedVhs[i]);
@@ -368,24 +368,13 @@ public class CancelVoucherAction extends BaseFormAction {
                 query.setDate("modifiedDate", modifiedDate);
                 query.executeUpdate();
                 if (FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND.equalsIgnoreCase(voucherObj.getName())) {
-                    String refcgNo = "";
-                    if (voucherObj.getRefcgNo() != null) {
-                        refcgNo = voucherObj.getRefcgNo();
+                    String vhNum = "";
+                        vhNum = voucherObj.getVoucherNumber();
                         final Query queryFnd = session.createQuery(cancelVhByCGNQuery);
-                        queryFnd.setString("CGN", refcgNo);
+                        queryFnd.setString("vhNum", vhNum);
                         queryFnd.setLong("modifiedby", loggedInUser);
                         queryFnd.setDate("modifiedDate", modifiedDate);
                         queryFnd.executeUpdate();
-                    }
-                    else {
-                        refcgNo = voucherObj.getCgn();
-                        final Query queryFnd = session.createQuery(cancelVhByRefCGNQuery);
-
-                        queryFnd.setLong("modifiedby", loggedInUser);
-                        queryFnd.setDate("modifiedDate", modifiedDate);
-                        queryFnd.setString("REFCGN", refcgNo);
-                        queryFnd.executeUpdate();
-                    }
                 }
                 continue;
             }

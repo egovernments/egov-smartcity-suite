@@ -44,7 +44,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.domain.entity.property.FloorType;
-import org.egov.ptis.master.service.PropertyFloorService;
+import org.egov.ptis.master.service.FloorTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,14 +60,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 
 @Controller
-@RequestMapping(value = "/floorType")
+@RequestMapping(value = "/floortype")
 public class CreateAndViewFloorTypeController {
 
-    private final PropertyFloorService propertyFloorService;
+    private final FloorTypeService floorTypeService;
 
     @Autowired
-    public CreateAndViewFloorTypeController(final PropertyFloorService propertyFloorService) {
-        this.propertyFloorService = propertyFloorService;
+    public CreateAndViewFloorTypeController(final FloorTypeService floorTypeService) {
+        this.floorTypeService = floorTypeService;
     }
 
     @ModelAttribute
@@ -75,9 +75,9 @@ public class CreateAndViewFloorTypeController {
         return new FloorType();
     }
 
-    @ModelAttribute(value = "floorTypes")
+    @ModelAttribute(value = "floortypes")
     public List<FloorType> listFloorTypes() {
-        return propertyFloorService.getAllFloors();
+        return floorTypeService.getAllFloors();
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -94,7 +94,7 @@ public class CreateAndViewFloorTypeController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable Long id, Model model) {
 
-        FloorType floorType = propertyFloorService.getFloorTypeById(id);
+        FloorType floorType = floorTypeService.getFloorTypeById(id);
         model.addAttribute("floorType", floorType);
         return "floorType-view";
     }
@@ -105,9 +105,9 @@ public class CreateAndViewFloorTypeController {
 
         if (errors.hasErrors())
             return "floorType-main";
-        propertyFloorService.create(floorType);
+        floorTypeService.create(floorType);
         redirectAttributes.addFlashAttribute("message", "msg.floortype.create.success");
-        return "redirect:/floorType/create";
+        return "redirect:/floortype/create";
 
     }
 

@@ -481,19 +481,18 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 					Loading...
 				</div>
 			</div>
+			<div class="formmainbox">
+				<div class="formheading">
+					<div class="subheadnew">
+						<s:text name="contingent.bill" />
+					</div>
+				</div>
 			<div class="tabber" id="main" align="left">
-				<div class="tabbertab" id=maintab>
+				<div class="tabbertab" id="maintab">
 					<h2>Header</h2>
 					<jsp:include page="../budget/budgetHeader.jsp">
 						<jsp:param value="Contingent Bill" name="heading" />
 					</jsp:include>
-					<div class="formmaininbox">
-						<div class="formheading">
-							<div class="subheadnew">
-								<s:text name="contingent.bill" />
-							</div>
-						</div>
-					</div>
 					<center>
 						<span class="mandatory1">
 							<div id="Errors">
@@ -526,7 +525,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 						<%@include file="contingentBill-form.jsp"%>
 					</table>
 				</div>
-				<div class="tabbertab" id="checkList">
+				<div class="tabbertab" id="checkList" >
 					<h2>Check List</h2>
 					<div class="yui-skin-sam" align="center">
 						<div id="checkListTable"></div>
@@ -590,6 +589,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 						</table>
 					</div>
 				</div>
+			</div>
 			</div>
 		</s:push>
 		<s:token />

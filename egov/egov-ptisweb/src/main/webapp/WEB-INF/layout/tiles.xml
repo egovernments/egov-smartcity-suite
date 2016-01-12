@@ -226,4 +226,34 @@
     	<put-attribute name="body" value="/WEB-INF/views/masters/wall/wallType-view.jsp"/>
     </definition>
     
+    <definition name="roofType-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.roofTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rooftype/roofType-search.jsp"/>
+    </definition>
+    
+    <definition name="roofType-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.roofTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rooftype/roofType-form.jsp"/>
+    </definition>
+    
+     <definition name="roofType-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.roofTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rooftype/roofType-view.jsp"/>
+    </definition>
+    
+    <definition name="woodType-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.woodTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/woodtype/woodType-search.jsp"/>
+    </definition>
+    
+    <definition name="woodType-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.woodTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/woodtype/woodType-form.jsp"/>
+    </definition>
+    
+     <definition name="woodType-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.woodTypeMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/woodtype/woodType-view.jsp"/>
+    </definition>
+    
 </tiles-definitions>

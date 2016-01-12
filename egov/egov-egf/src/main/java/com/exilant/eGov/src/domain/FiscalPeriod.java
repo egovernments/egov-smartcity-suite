@@ -113,18 +113,18 @@ public class FiscalPeriod {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("before : " + insertQuery);
         final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-        pst.setString(1, id);
-        pst.setString(2, type);
-        pst.setString(3, name);
-        pst.setString(4, startingDate);
-        pst.setString(5, endingDate);
-        pst.setString(6, parentId);
-        pst.setString(7, isActiveForPosting);
-        pst.setString(8, isActive);
-        pst.setString(9, modifiedBy);
-        pst.setString(10, lastModified);
-        pst.setString(11, created);
-        pst.setString(12, financialYearId);
+        pst.setString(0, id);
+        pst.setString(1, type);
+        pst.setString(2, name);
+        pst.setString(3, startingDate);
+        pst.setString(4, endingDate);
+        pst.setString(5, parentId);
+        pst.setString(6, isActiveForPosting);
+        pst.setString(7, isActive);
+        pst.setString(8, modifiedBy);
+        pst.setString(9, lastModified);
+        pst.setString(10, created);
+        pst.setString(11, financialYearId);
         pst.executeUpdate();
     }
 

@@ -171,7 +171,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private static final String TRACK_MLS_CHECK = "trackMlsCheckForBillCreation";
     private static final String STATUTORY_DEDUCTION_AMOUNT = "statutoryDeductionAmount";
     private static final String PARTY_TYPE_CONTRACTOR = "Contractor";
-    private RecoveryService recoveryService = new RecoveryService();
+    private RecoveryService recoveryService ;
     private String subPartyType;
     private String typeOfWork;
     private BigDecimal grossAmount;

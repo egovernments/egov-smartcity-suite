@@ -119,16 +119,16 @@ public class ScheduleMapping {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pstmt.setString(1, id);
-            pstmt.setString(2, reportType);
-            pstmt.setString(3, schedule);
-            pstmt.setString(4, scheduleName);
-            pstmt.setString(5, createdBy);
-            pstmt.setString(6, createdDate);
-            pstmt.setString(7, lastModifiedBy);
-            pstmt.setString(8, lastModifiedDate);
-            pstmt.setString(9, repSubType);
-            pstmt.setString(10, isRemission);
+            pstmt.setString(0, id);
+            pstmt.setString(1, reportType);
+            pstmt.setString(2, schedule);
+            pstmt.setString(3, scheduleName);
+            pstmt.setString(4, createdBy);
+            pstmt.setString(5, createdDate);
+            pstmt.setString(6, lastModifiedBy);
+            pstmt.setString(7, lastModifiedDate);
+            pstmt.setString(8, repSubType);
+            pstmt.setString(9, isRemission);
             pstmt.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error("ERROR" + e.getMessage(), e);

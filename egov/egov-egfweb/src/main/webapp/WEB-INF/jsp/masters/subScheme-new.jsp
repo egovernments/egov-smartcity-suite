@@ -160,7 +160,7 @@
 								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 						</td>
 						<td class="bluebox"><strong>Is Active</strong></td>
-						<td class="bluebox"><s:checkbox name="isActive" /></td>
+						<td class="bluebox"><s:checkbox name="isActive" value="%{isActive}" /></td>
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>

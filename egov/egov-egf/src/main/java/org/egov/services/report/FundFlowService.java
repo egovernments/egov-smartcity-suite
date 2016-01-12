@@ -260,9 +260,9 @@ public class FundFlowService extends PersistenceService {
         allAccounts
         .append("select ba.id as bankAccountId, ba.accountnumber as accountNumber, coa.glcode as glcode,b.code as bankName ,fd.name as fundName, "
                 +
-                " decode(ba.narration,null,0,decode(instr(ba.narration,'"
+                " case when ba.narration = null then 0 else (case when instr(ba.narration,'"
                 + FinancialConstants.BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION
-                + "',1),1,1,0 )) as walkinPaymentAccount "
+                + "',1)  = 1 then 1 else 0 end ) end as walkinPaymentAccount "
                 +
                 " from Chartofaccounts  coa, fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
                 +
@@ -291,7 +291,7 @@ public class FundFlowService extends PersistenceService {
         final String voucherDate = sqlformat.format(asPerDate);
         StringBuffer temp = new StringBuffer(1000);
         temp = temp
-                .append(" SELECT gl.glcodeid as codeId, ba.accountnumber as accountNumber, b.name as bankName,round(SUM(DECODE(gl.debitamount,NULL,0,gl.debitamount))/100000,2) AS btbReceipt FROM"
+                .append(" SELECT gl.glcodeid as codeId, ba.accountnumber as accountNumber, b.name as bankName,round(SUM(case when gl.debitamount = NULL then 0 else gl.debitamount end)/100000,2) AS btbReceipt FROM"
                         +
                         " contrajournalvoucher CV  , voucherheader vh ,  generalledger gl, bankaccount ba, bankbranch bb,bank b WHERE ");
         if (fundId != null && fundId != -1)
@@ -321,7 +321,7 @@ public class FundFlowService extends PersistenceService {
         final String voucherDate = sqlformat.format(asPerDate);
         StringBuffer qry = new StringBuffer(1000);
         qry = qry
-                .append(" SELECT gl.glcodeid as codeId, ba.accountnumber as accountNumber, b.name as bankName, round(SUM(DECODE(gl.creditamount,NULL,0,gl.creditamount))/100000,2) AS btbPayment FROM"
+                .append(" SELECT gl.glcodeid as codeId, ba.accountnumber as accountNumber, b.name as bankName, round(SUM(case when gl.creditamount = NULL then 0 else gl.creditamount end)/100000,2) AS btbPayment FROM"
                         +
                         " contrajournalvoucher CV  , voucherheader vh ,  generalledger gl, bankaccount ba, bankbranch bb,bank b WHERE ");
         if (fundId != null && fundId != -1)
@@ -362,7 +362,7 @@ public class FundFlowService extends PersistenceService {
         final String voucherDate = sqlformat.format(asPerDate);
         StringBuffer qry = new StringBuffer(1000);
         qry = qry
-                .append(" SELECT gl.glcodeid as codeId, ba.accountnumber as accountNumber, b.name as bankName, round(SUM(DECODE(gl.creditamount,NULL,0,gl.creditamount))/100000,2) AS btbPayment FROM"
+                .append(" SELECT gl.glcodeid as codeId, ba.accountnumber as accountNumber, b.name as bankName, round(SUM(case when gl.creditamount = NULL then 0 else gl.creditamount end)/100000,2) AS btbPayment FROM"
                         +
                         " contrajournalvoucher CV  , voucherheader vh ,  generalledger gl, bankaccount ba, bankbranch bb,bank b WHERE  ");
         if (fundId != null && fundId != -1)
@@ -453,7 +453,7 @@ public class FundFlowService extends PersistenceService {
     private BigDecimal getContraPayment(final Long bankaccountId, final Date asPerDate, final Long accountGlcodeId) {
         final StringBuffer qry = new StringBuffer(100);
         if (accountGlcodeId != null)
-            qry.append(" select decode(SUM(DECODE(gl.creditamount,NULL,0,gl.creditamount)),null,0,SUM(DECODE(gl.creditamount,NULL,0,gl.creditamount))) as payment from "
+            qry.append(" select case when SUM(case when gl.creditamount = NULL then 0 else gl.creditamount end) = null then 0 else SUM(case when gl.creditamount = NULL then 0 else gl.creditamount end) end as payment from "
                     +
                     "  voucherheader vh, generalledger gl where vh.id=gl.voucherheaderid and gl.glcodeId="
                     + accountGlcodeId
@@ -468,7 +468,7 @@ public class FundFlowService extends PersistenceService {
                     +
                     " and vh.voucherdate='" + sqlformat.format(asPerDate) + "'   and vh.status =0");
         else
-            qry.append(" select decode(SUM(DECODE(gl.creditamount,NULL,0,gl.creditamount)),null,0,SUM(DECODE(gl.creditamount,NULL,0,gl.creditamount))) as payment from BankAccount  acc,"
+            qry.append(" select case when SUM(case when gl.creditamount = NULL then 0 else gl.creditamount end) = null then 0 else SUM(case when gl.creditamount = NULL then 0 else gl.creditamount end) end as payment from BankAccount  acc,"
                     +
                     " voucherheader vh, generalledger gl where vh.id=gl.voucherheaderid and acc.glcodeId= gl.glcodeId "
                     +
@@ -500,7 +500,7 @@ public class FundFlowService extends PersistenceService {
     private BigDecimal getContraReceipt(final Long bankaccountId, final Date asPerDate, final Long accountGlcodeId) {
         final StringBuffer qry = new StringBuffer(100);
         if (accountGlcodeId != null)
-            qry.append(" select Decode(SUM(DECODE(gl.debitamount,NULL,0,gl.debitamount)),null,0,SUM(DECODE(gl.debitamount,NULL,0,gl.debitamount))) as receipt from "
+            qry.append(" select case when SUM(case when gl.debitamount = NULL then 0 else gl.debitamount end) = null then 0 else SUM(case when gl.debitamount = NULL then 0 else gl.debitamount end) end as receipt from "
                     +
                     " voucherheader vh, generalledger gl where vh.id=gl.voucherheaderid and gl.glcodeId="
                     + accountGlcodeId
@@ -515,7 +515,7 @@ public class FundFlowService extends PersistenceService {
                     +
                     " and vh.voucherdate='" + sqlformat.format(asPerDate) + "'  and vh.status =0");
         else
-            qry.append(" select Decode(SUM(DECODE(gl.debitamount,NULL,0,gl.debitamount)),null,0,SUM(DECODE(gl.debitamount,NULL,0,gl.debitamount))) as receipt from BankAccount acc,"
+            qry.append(" select case when SUM(case when gl.debitamount = NULL then 0 else gl.debitamount end) = null then 0 else SUM(case when gl.debitamount = NULL then 0 else gl.debitamount end) end as receipt from BankAccount acc,"
                     +
                     " voucherheader vh, generalledger gl where vh.id=gl.voucherheaderid and acc.glcodeid= gl.glcodeid "
                     +
@@ -565,7 +565,7 @@ public class FundFlowService extends PersistenceService {
         outstandingPaymentQryStr =
                 outstandingPaymentQryStr
                 .
-                append("SELECT Decode(SUM(Decode(ph.paymentamount,null,0,ph.paymentamount)),null,0,SUM(Decode(ph.paymentamount,null,0,ph.paymentamount))) AS concurranceBPV"
+                append("SELECT case when SUM(case when ph.paymentamount = null then 0 else ph.paymentamount end ) = null then 0 else SUM(case when ph.paymentamount = null then 0 else ph.paymentamount) end AS concurranceBPV"
                         +
                         " FROM voucherheader vh right join  paymentheader ph on vh.id=ph.voucherheaderid,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
                         +

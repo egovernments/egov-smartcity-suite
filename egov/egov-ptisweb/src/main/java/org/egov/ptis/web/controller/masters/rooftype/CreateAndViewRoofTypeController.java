@@ -44,7 +44,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.domain.entity.property.RoofType;
-import org.egov.ptis.master.service.PropertyRoofTypeService;
+import org.egov.ptis.master.service.RoofTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,18 +56,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controller for Roof Type Master
+ * Controller for Create and View Roof Type
  */
 
 @Controller
 @RequestMapping(value = "/rooftype")
 public class CreateAndViewRoofTypeController {
 
-    private final PropertyRoofTypeService propertyRoofService;
+    private final RoofTypeService roofTypeService;
 
     @Autowired
-    public CreateAndViewRoofTypeController(final PropertyRoofTypeService propertyRoofService) {
-        this.propertyRoofService = propertyRoofService;
+    public CreateAndViewRoofTypeController(final RoofTypeService roofTypeService) {
+        this.roofTypeService = roofTypeService;
     }
 
     @ModelAttribute
@@ -77,22 +77,22 @@ public class CreateAndViewRoofTypeController {
 
     @ModelAttribute(value = "roofTypes")
     public List<RoofType> listRoofTypes() {
-        return propertyRoofService.getAllRoofTypes();
+        return roofTypeService.getAllRoofTypes();
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showRoofTypes(final Model model) {
+    public String showRoofTypes() {
         return "roofType-search";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(final Model model) {
+    public String create() {
         return "roofType-form";
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable Long id, Model model) {
-        RoofType roofType = propertyRoofService.getRoofTypeById(id);
+        RoofType roofType = roofTypeService.getRoofTypeById(id);
         model.addAttribute("roofType", roofType);
         return "roofType-view";
 
@@ -100,12 +100,12 @@ public class CreateAndViewRoofTypeController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute final RoofType roofType, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request) {
 
         if (errors.hasErrors())
             return "roofType-search";
 
-        propertyRoofService.createRoof(roofType);
+        roofTypeService.createRoof(roofType);
         redirectAttributes.addFlashAttribute("message", "msg.rooftype.create.success");
 
         return "redirect:/rooftype/create";

@@ -211,7 +211,7 @@ $(document).ready(function(){
 			hodInput = hodInput+'<input type="hidden" id="hodIds'+index+'" value="'+hoddept+'"/>';
 		}
 		var del="";
-		  del='<span class="parallel-actions"><i id="delete_row" class="fa fa-remove"></i></span>';
+		  del='<span class="add-padding"><i id="delete_row" class="fa fa-remove"></i></span>';
 		var text = 
 					'<tr>'+
 						'<td>'+
@@ -250,7 +250,7 @@ $(document).ready(function(){
 							'value="'+grade+'"/>'+hodInput+
 						'</td>'+	
 						'<td>'+	
-							'<span class="parallel-actions"><i id="edit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
+							'<span class="add-padding"><i id="edit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
 						'</td>'+	
 					'</tr>';	
 		
@@ -424,7 +424,7 @@ $(document).ready(function(){
 	}
 	function jurdctnaddRow(index) {
 		var del="";
-			del='<span class="parallel-actions"><i id="jurdctndelete_row" class="fa fa-remove"></i></span>';
+			del='<span class="add-padding"><i id="jurdctndelete_row" class="fa fa-remove"></i></span>';
 		var text = 
 					'<tr>'+
 						'<td>'+
@@ -438,7 +438,7 @@ $(document).ready(function(){
 							'<input type="text" id="table_boundary'+index+'" class="form-control" readonly="readonly" style="text-align:center"/>'+
 						'</td>'+	
 						'<td>'+	
-							'<span class="parallel-actions"><i id="jurdctnedit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
+							'<span class="add-padding"><i id="jurdctnedit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
 						'</td>'+	
 					'</tr>';	
 		$("#jurisdictionTable").append(text);

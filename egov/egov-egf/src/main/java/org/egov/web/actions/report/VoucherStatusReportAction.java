@@ -263,7 +263,6 @@ public class VoucherStatusReportAction extends BaseFormAction
             BigDecimal amt = BigDecimal.ZERO;
             voucherHeaderId = voucherheader.getId();
             voucherMap.put("id", voucherHeaderId);
-            voucherMap.put("cgn", voucherheader.getCgn());
             voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
             voucherMap.put("type", voucherheader.getType());
             voucherMap.put("name", voucherheader.getName());

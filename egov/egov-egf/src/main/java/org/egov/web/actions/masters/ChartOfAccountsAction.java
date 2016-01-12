@@ -87,6 +87,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Autowired
     @Qualifier("chartOfAccountsService")
     private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
+    @Autowired
+    @Qualifier("chartOfAccountDetailService")
+    private PersistenceService<CChartOfAccountDetail, Long> chartOfAccountDetailService;
     CChartOfAccounts model = new CChartOfAccounts();
     List<String> accountDetailTypeList = new ArrayList<String>();
     List<Accountdetailtype> accountDetailType = new ArrayList<Accountdetailtype>();
@@ -249,7 +252,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     accountDetail = row.getName();
                     if (next == null || next.getDetailTypeId().getId().equals(row.getId())) {
                         iterator.remove();
-                        persistenceService.delete(persistenceService.findById(next.getId(), false));
+                        chartOfAccountDetailService.delete(chartOfAccountDetailService.findById(next.getId(), false));
                         HibernateUtil.getCurrentSession().flush();
                     }
                 }

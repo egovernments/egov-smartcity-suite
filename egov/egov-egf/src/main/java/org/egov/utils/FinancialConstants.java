@@ -133,7 +133,13 @@ public interface FinancialConstants {
 
     public static final String ModulesForBillAcctModify = EGovConfig.getProperty(APPLCONFIGNAME,
             "MODULESFORBILLSACCOUNTINGMODIFY", "", "general");
-
+	public static final String CATEGORFORGLCODE = "AccountCode";
+    
+    //COA GLCODE Details
+    
+    public static final String GLCODEMAXLENGTH = EGovConfig.getProperty(APPLCONFIGNAME, "glcodeMaxLength", "", CATEGORFORGLCODE);
+    
+    
     // Instrument or Cheque related
     public static final String INSTRUMENT_DEPOSITED_STATUS = "Deposited";
     public static final String INSTRUMENT_CREATED_STATUS = "New";

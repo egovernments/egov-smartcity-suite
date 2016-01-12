@@ -98,21 +98,21 @@ public class CloseBalance extends AbstractTask {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("fiscalPeriodId : " + fiscalPeriodId);
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("glCode : " + glCode);
 
-        final String selectQuery = "SELECT decode(gl.glCode, gl.glCode, gl.glCodeId) AS glCodeId, "
-                + "decode(fp.name, fp.name, fp.id) AS fiscalPeriodId,sum(gl.debitAmount) AS OpeningDebitBalance, sum(gl.creditAmount) AS OpeningCreditBalance, "
-                + "0 AS debitAmount, 0 AS creditAmount,decode(adt.name, adt.name, adt.id) AS accountDetailTypeId, "
+        final String selectQuery = "SELECT case when gl.glCode = gl.glCode then gl.glCodeId end  AS glCodeId, "
+                + "case when fp.name =  fp.name then fp.id end AS fiscalPeriodId,sum(gl.debitAmount) AS OpeningDebitBalance, sum(gl.creditAmount) AS OpeningCreditBalance, "
+                + "0 AS debitAmount, 0 AS creditAmount,case when adt.name = adt.name  then adt.id end AS accountDetailTypeId, "
                 + "adk.detailKey AS accountDetailKey FROM generalLedger gl, voucherDetail vd, voucherHeader vh, "
                 + "fiscalPeriod fp, financialYear fy,	accountDetailType adt, accountDetailKey  adk "
                 + "WHERE gl.glCode= ? AND fy.id= ? AND fp.id= ? AND gl.voucherLineId = vd.id AND vd.voucherHeaderId = vh.id "
                 + "AND vh.fiscalPeriodId = fp.id AND fp.financialYearId = fy.id AND adk.detailTypeId = adt.id AND adk.glCodeId = gl.glCodeId	"
-                + "GROUP BY decode(gl.glCode, gl.glCode, gl.glCodeId), decode(fp.name, fp.name, fp.id), decode(adt.name, adt.name, adt.id), adk.detailKey";
+                + "GROUP BY case when gl.glCode = gl.glCode then gl.glCodeId end, case when fp.name = fp.name then fp.id end, case when adt.name = adt.name then adt.id, adk.detailKey";
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(selectQuery);
         pstmt = connection.prepareStatement(selectQuery);
-        pstmt.setString(1, glCode);
-        pstmt.setString(2, financialYearId);
-        pstmt.setString(3, fiscalPeriodId);
+        pstmt.setString(0, glCode);
+        pstmt.setString(1, financialYearId);
+        pstmt.setString(2, fiscalPeriodId);
         resultset = pstmt.executeQuery();
 
         /*
@@ -140,7 +140,7 @@ public class CloseBalance extends AbstractTask {
         final PostingAllowed pa = new PostingAllowed();
         pstmt = connection
                 .prepareStatement("SELECT id FROM chartOfAccounts WHERE glCode=?");
-        pstmt.setString(1, dc.getValue("chartOfAccounts_glCode"));
+        pstmt.setString(0, dc.getValue("chartOfAccounts_glCode"));
         resultset = pstmt.executeQuery();
         /* resultset = statement.executeQuery(); */
         resultset.next();
@@ -151,8 +151,8 @@ public class CloseBalance extends AbstractTask {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("check for balance already closed");
         final String sqlString = "SELECT * FROM transactionSummary WHERE glCodeId=? AND fiscalPeriodId= ?";
         pstmt = connection.prepareStatement(sqlString);
-        pstmt.setInt(1, glCodeId);
-        pstmt.setString(2, fiscalPeriodId);
+        pstmt.setInt(0, glCodeId);
+        pstmt.setString(1, fiscalPeriodId);
         resultset = pstmt.executeQuery();
         /* resultset = statement.executeQuery(); */
         if (resultset.next()) {

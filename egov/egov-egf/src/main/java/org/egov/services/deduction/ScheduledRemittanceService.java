@@ -1133,7 +1133,7 @@ public class ScheduledRemittanceService {
                         + gjvBankAccountId
                         + " as bankAccountId,  "
                         +
-                        " egr.GLDTLAMT- (SELECT DECODE(SUM(egd.REMITTEDAMT),NULL,0,SUM(egd.REMITTEDAMT))    "
+                        " egr.GLDTLAMT- (SELECT case when SUM(egd.REMITTEDAMT) = NULL then 0 else SUM(egd.REMITTEDAMT) end     "
                         +
                         " FROM EG_REMITTANCE_GLDTL egr1,     eg_remittance_detail egd,     eg_remittance eg,     voucherheader vh   WHERE vh.status!    =4  "
                         +
@@ -1158,7 +1158,7 @@ public class ScheduledRemittanceService {
                         +
                         " AND vh.moduleid is null"
                         +
-                        " AND egr.GLDTLAMT-   (SELECT DECODE(SUM(egd.REMITTEDAMT),NULL,0,SUM(egd.REMITTEDAMT))   FROM EG_REMITTANCE_GLDTL egr1,  "
+                        " AND egr.GLDTLAMT-   (SELECT case when SUM(egd.REMITTEDAMT) = NULL then 0 else SUM(egd.REMITTEDAMT) end   FROM EG_REMITTANCE_GLDTL egr1,  "
                         +
                         " eg_remittance_detail egd,     eg_remittance eg,     voucherheader vh   WHERE vh.status !=4  "
                         +
@@ -1206,7 +1206,7 @@ public class ScheduledRemittanceService {
                         +
                         " gld.DETAILKEYID   AS detailkeyId,   egr.ID   AS remittanceGldtlId,ih.bankaccountid as bankAccountId,  "
                         +
-                        " egr.GLDTLAMT- (SELECT DECODE(SUM(egd.REMITTEDAMT),NULL,0,SUM(egd.REMITTEDAMT))    "
+                        " egr.GLDTLAMT- (SELECT case when SUM(egd.REMITTEDAMT) = NULL then 0 else SUM(egd.REMITTEDAMT) end    "
                         +
                         " FROM EG_REMITTANCE_GLDTL egr1,     eg_remittance_detail egd,     eg_remittance eg,     voucherheader vh   WHERE vh.status!    =4  "
                         +
@@ -1237,7 +1237,7 @@ public class ScheduledRemittanceService {
                         " ) AND mis.departmentid  =  "
                         + deptId
                         +
-                        " AND egr.GLDTLAMT-   (SELECT DECODE(SUM(egd.REMITTEDAMT),NULL,0,SUM(egd.REMITTEDAMT))   FROM EG_REMITTANCE_GLDTL egr1,  "
+                        " AND egr.GLDTLAMT-   (SELECT case when SUM(egd.REMITTEDAMT) = NULL then 0 else SUM(egd.REMITTEDAMT) end   FROM EG_REMITTANCE_GLDTL egr1,  "
                         +
                         " eg_remittance_detail egd,     eg_remittance eg,     voucherheader vh   WHERE vh.status !=4  "
                         +
@@ -1291,7 +1291,7 @@ public class ScheduledRemittanceService {
                         + receiptBankAccountId
                         + " as bankAccountId, "
                         +
-                        " egr.GLDTLAMT- (SELECT DECODE(SUM(egd.REMITTEDAMT),NULL,0,SUM(egd.REMITTEDAMT))    "
+                        " egr.GLDTLAMT- (SELECT case when SUM(egd.REMITTEDAMT) = NULL then 0 else SUM(egd.REMITTEDAMT) end    "
                         +
                         " FROM EG_REMITTANCE_GLDTL egr1,     eg_remittance_detail egd,     eg_remittance eg,     voucherheader vh   WHERE vh.status!    =4  "
                         +
@@ -1324,7 +1324,7 @@ public class ScheduledRemittanceService {
                         " ) AND mis.departmentid  =  "
                         + deptId
                         +
-                        " AND egr.GLDTLAMT-   (SELECT DECODE(SUM(egd.REMITTEDAMT),NULL,0,SUM(egd.REMITTEDAMT))   FROM EG_REMITTANCE_GLDTL egr1,  "
+                        " AND egr.GLDTLAMT-   (SELECT case when SUM(egd.REMITTEDAMT) = NULL then 0 else SUM(egd.REMITTEDAMT) end   FROM EG_REMITTANCE_GLDTL egr1,  "
                         +
                         " eg_remittance_detail egd,     eg_remittance eg,     voucherheader vh   WHERE vh.status !=4  "
                         +

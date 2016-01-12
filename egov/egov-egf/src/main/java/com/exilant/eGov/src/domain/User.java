@@ -109,7 +109,7 @@ public class User {
         String role = "";
         try {
             final Query ps = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            ps.setString(1, userName);
+            ps.setString(0, userName);
             final List<Object[]> rs = ps.list();
             for (final Object[] element : rs)
                 role = element[0].toString();
@@ -125,7 +125,7 @@ public class User {
         int userId = 0;
         try {
             final Query ps = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            ps.setString(1, userName);
+            ps.setString(0, userName);
             final List<Object[]> rs = ps.list();
             for (final Object[] element : rs)
                 userId = Integer.parseInt(element[0].toString());

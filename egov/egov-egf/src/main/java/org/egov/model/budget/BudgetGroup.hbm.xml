@@ -58,8 +58,8 @@
 			</type>   
 		</property>
 		<property name="budgetingType" column="BUDGETINGTYPE" >
-			<type name="org.egov.infstr.models.EnumUserType">       
-				<param name="enumClassName">org.egov.utils.BudgetingType</param>     
+			<type name="org.hibernate.type.EnumType">       
+				<param name="enumClass">org.egov.utils.BudgetingType</param>     
 			</type>   
 		</property>
 		<property name="isActive" column="ISACTIVE" />

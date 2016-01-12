@@ -43,7 +43,17 @@
 package org.egov.model.contra;
 
 import java.math.BigDecimal;
-import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
@@ -53,37 +63,78 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * @author msahoo
  *
  */
-public class TransactionSummary {
-    private Integer id;
+@Entity
+@Table(name = "TRANSACTIONSUMMARY")
+@SequenceGenerator(name = TransactionSummary.SEQ_TRANSACTIONSUMMARY, sequenceName = TransactionSummary.SEQ_TRANSACTIONSUMMARY, allocationSize = 1)
+public class TransactionSummary extends AbstractAuditable{
+	
+	private static final long serialVersionUID = -4555037259173138199L;
+    public static final String SEQ_TRANSACTIONSUMMARY = "SEQ_TRANSACTIONSUMMARY";
+    
+    @Id
+    @GeneratedValue(generator = SEQ_TRANSACTIONSUMMARY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name = "ACCOUNTDETAILTYPEID")
     private Accountdetailtype accountdetailtype;
+    
+    @ManyToOne
+    @JoinColumn(name = "FINANCIALYEARID", nullable = false)
     private CFinancialYear financialyear;
+    
+    @ManyToOne
+    @JoinColumn(name = "FUNDSOURCEID")
     private Fundsource fundsource;
+    
+    @ManyToOne
+    @JoinColumn(name = "FUNDID")
     private Fund fund;
+    
+    @ManyToOne
+    @JoinColumn(name = "GLCODEID")
     private CChartOfAccounts glcodeid;
+    
+    @NotNull
+    @Column(precision = 13, scale = 2)
     private BigDecimal openingdebitbalance;
+    
+    @NotNull
+    @Column(precision = 13, scale = 2)
     private BigDecimal openingcreditbalance;
-    private BigDecimal debitamount;
-    private BigDecimal creditamount;
+    
     private Integer accountdetailkey;
+    
+    @Length(max = 300)
     private String narration;
-    private User modifiedBy;
-    private Date modifiedDate;
+    
+    @ManyToOne
+    @JoinColumn(name="DEPARTMENTID")
     private Department departmentid;
+    
+    @ManyToOne
+    @JoinColumn(name="FUNCTIONARYID")
     private Functionary functionaryid;
+    
+    @ManyToOne
+    @JoinColumn(name="FUNCTIONID")
     private CFunction functionid;
+    
+    @Column(precision = 22, scale = 0)
     private Integer divisionid;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(final Integer id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -143,22 +194,6 @@ public class TransactionSummary {
         this.openingcreditbalance = openingcreditbalance;
     }
 
-    public BigDecimal getDebitamount() {
-        return debitamount;
-    }
-
-    public void setDebitamount(final BigDecimal debitamount) {
-        this.debitamount = debitamount;
-    }
-
-    public BigDecimal getCreditamount() {
-        return creditamount;
-    }
-
-    public void setCreditamount(final BigDecimal creditamount) {
-        this.creditamount = creditamount;
-    }
-
     public Integer getAccountdetailkey() {
         return accountdetailkey;
     }
@@ -173,26 +208,6 @@ public class TransactionSummary {
 
     public void setNarration(final String narration) {
         this.narration = narration;
-    }
-
-    public User getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(final User modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
-
-    public void setModifiedDate(final Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-
-    public Functionary getFunctionaryid() {
-        return functionaryid;
     }
 
     public void setFunctionaryid(final Functionary functionaryid) {

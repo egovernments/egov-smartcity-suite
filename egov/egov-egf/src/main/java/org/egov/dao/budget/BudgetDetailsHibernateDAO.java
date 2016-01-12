@@ -1824,7 +1824,6 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                     + coa.getGlcode() + "'  and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadByGlcode detailcode query=====" + query);
-            //persistenceService.setType(BudgetGroup.class);
             List bgList = persistenceService.findAllBy(query);
             if (bgList.isEmpty())
             {
@@ -2268,7 +2267,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
                 query = query + " and  br.billdate>=? ";
 
             query = query + " and bd.glcodeid='" + glcodeid + "'";
-            query1 = "select sum(decode(bd.debitamount,null,0,bd.debitamount)-decode(bd.creditamount,null,0,bd.creditamount))  "
+            query1 = "select sum(case when bd.debitamount = null then 0 ELSE bd.debitamount end -case when bd.creditamount = null then 0 else bd.creditamount end)  "
                     +
                     " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  "
                     +
@@ -2316,7 +2315,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
     private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate, final Date asondate)
             throws ValidationException {
 
-        final String newQuery = "select sum(decode(bd.debitamount,null,0,bd.debitamount)-decode(bd.creditamount,null,0,bd.creditamount))  "
+        final String newQuery = "select sum(case when bd.debitamount = null then 0 else bd.debitamount end - case when bd.creditamount = null then 0 else bd.creditamount end )  "
                 +
                 " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  "
                 +
@@ -2639,6 +2638,10 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 
     public BudgetDetailsHibernateDAO() {
         super(null, null);
+    }
+
+    public PersistenceService getPersistenceService() {
+        return persistenceService;
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {

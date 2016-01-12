@@ -37,50 +37,29 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ page import=" org.egov.lib.rrbac.services.RbacManager,
-		org.egov.lib.rrbac.services.RbacManagerHome,
-		org.egov.infstr.utils.ServiceLocator,
-		org.egov.infstr.utils.HibernateUtil,
-		 org.egov.lib.rrbac.model.Action;"
-%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
 <head>
 <title>eGovernance</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
+<body>
 
 <%
 System.out.println("actionid|||||||||||||||||||||||||||||||||||||||||||||||||="+request.getParameter("actionid"));
 	String actionId=request.getParameter("actionid");
-	if(actionId==null)
-	{
-		try
-		{
-			ServiceLocator serviceloc = ServiceLocator.getInstance();
-			RbacManagerHome rbacMangrHome=null;
-			RbacManager rbacManager=null;
-			rbacMangrHome=(RbacManagerHome)serviceloc.getLocalHome("RbacManagerHome");
-			rbacManager=rbacMangrHome.create();
-			Action actobj= rbacManager.getActionByURL("/eGov_COA.jsp?window=left");
-			actionId = actobj.getId().toString();
-			System.out.println("actobj========="+actobj.getId());
-		}catch(Exception e){actionId="553";}
-	}
+			/* Action actobj= rbacManager.getActionByURL("/eGov_COA.jsp?window=left");
+			actionId = actobj.getId().toString(); */
 	if(actionId!=null)
 		session.setAttribute("actionid",actionId);
 		
 		
 %>
 
-<frameset id="mainFrameset" rows="100%,*" cols="300,*" framespacing="0" border="0" frameborder="NO">
-		<frame src="commonyui/egov/ChartOfaccountsMenuTree.jsp?eGovAppName=ChartOfAccounts&actionid=<%=actionId%>" name="leftFrame" id="leftFrame" scrolling="AUTO" >
-		<frame src="index.jsp" name="mainFrame">
-	</frameset>
+<iframe src="/EGF/commonyui/egov/ChartOfaccountsMenuTree.jsp?eGovAppName=ChartOfAccounts&actionid=<%=actionId%>" name="leftFrame" id="leftFrame" width="100%"  height="100%" scrolling="AUTO" />
 
-
-<noframes>
-
-<body >
-</body></noframes>
+<noframes></noframes>
+</body>
+</body>
 </html>

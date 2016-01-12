@@ -159,6 +159,7 @@ public class CurrentViewDcbController {
             cancelRcpt= populateCancelledReceiptsOnly(dCBReport.getReceipts());
             model.addAttribute("activeRcpts", activeRcpts);
             model.addAttribute("cancelRcpt", cancelRcpt);
+            model.addAttribute("totalRcptAmt", calculateReceiptTotal(activeRcpts));
             model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal(cancelRcpt));
             model.addAttribute("applicationTypeCode", waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("dcbReport", dCBReport);

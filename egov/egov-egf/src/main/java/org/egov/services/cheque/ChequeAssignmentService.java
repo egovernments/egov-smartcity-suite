@@ -358,7 +358,7 @@ public class ChequeAssignmentService  extends PersistenceService<Paymentheader, 
         final Map<Long, List<Object[]>> billVHIdAndGLDListForDebtitSideCCMap = new HashMap<Long, List<Object[]>>();
         final String strQuery = "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate ,0 as detailtypeid ,0 as detailkeyid ,"
                 +
-                " misbill.paidto as paidTo,decode(sum(misbill.paidamount),null,0,sum(misbill.paidamount)) as paidAmount,sysdate as chequeDate, misbill.billvhid as billVHId "
+                " misbill.paidto as paidTo,case when sum(misbill.paidamount)=null then 0 else sum(misbill.paidamount) end   as paidAmount,sysdate as chequeDate, misbill.billvhid as billVHId "
                 +
                 " from Paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh on (vh.id=iv.VOUCHERHEADERID) ,vouchermis vmis, Miscbilldetail misbill, generalledger gl ,voucherheader billvh, eg_billregister br,eg_billregistermis billmis "
                 +
@@ -541,7 +541,7 @@ public class ChequeAssignmentService  extends PersistenceService<Paymentheader, 
         List<ChequeAssignment> billChequeAssignmentList = null;
         final String strQuery = " select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate ,0 as detailtypeid ,0 as detailkeyid ,"
                 +
-                " misbill.paidto as paidTo,decode(sum(misbill.paidamount),null,0,sum(misbill.paidamount)) as paidAmount,sysdate as chequeDate,misbill.billvhid as billVHId "
+                " misbill.paidto as paidTo,case when sum(misbill.paidamount)=null then 0 else sum(misbill.paidamount) end as paidAmount,sysdate as chequeDate,misbill.billvhid as billVHId "
                 +
                 " from Paymentheader ph, voucherheader vh ,vouchermis vmis, Miscbilldetail misbill , generalledger gl,voucherheader billvh, eg_billregister br,eg_billregistermis billmis  "
                 +
@@ -795,7 +795,7 @@ public class ChequeAssignmentService  extends PersistenceService<Paymentheader, 
         List<Object[]> generalLedgerDetailListForDebtitSideCC = new ArrayList<Object[]>();
         final String strQuery = " select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate ,0 as detailtypeid ,0 as detailkeyid ,"
                 +
-                " misbill.paidto as paidTo,decode(sum(misbill.paidamount),null,0,sum(misbill.paidamount)) as paidAmount,sysdate as chequeDate,misbill.billvhid as billVHId  "
+                " misbill.paidto as paidTo,case when sum(misbill.paidamount)=null then 0 else sum(misbill.paidamount) end as paidAmount,sysdate as chequeDate,misbill.billvhid as billVHId  "
                 +
                 " from Paymentheader ph, voucherheader vh ,vouchermis vmis, Miscbilldetail misbill , generalledger gl,voucherheader billvh, eg_billregister br,eg_billregistermis billmis   "
                 +

@@ -43,13 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
@@ -71,7 +64,7 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="Field-1" class="col-sm-3 control-label"><spring:message
-								code="lbl.rooftype.nature" /><span class="mandatory"></span></label>
+								code="lbl.roofType.name" /><span class="mandatory"></span></label>
 
 						<div class="col-sm-6 add-margin">
 							<form:input id="name" name="name" path="name" type="text"
@@ -81,7 +74,7 @@
 						</div> </div>
 						<div class="form-group">
 							<label for="Field-1" class="col-sm-3 control-label"><spring:message
-									code="lbl.rooftype.code" /><span class="mandatory"></span></label>
+									code="lbl.roofType.code" /><span class="mandatory"></span></label>
 							<div class="col-sm-6 add-margin">
 								<form:input id="code" name="code" path="code" type="text"
 									cssClass="form-control is_valid_number" autocomplete="off"
@@ -97,7 +90,10 @@
 				<div class="row">
 					<div class="text-center">
 						<button type="submit" class="btn btn-primary add-margin">
-							<spring:message code="lbl.button.add" />
+							<spring:message code="lbl.button.create" />
+						</button>
+						<button type="reset" class="btn btn-default">
+							<spring:message code="lbl.reset" />
 						</button>
 						<a href="javascript:void(0)" class="btn btn-default"
 							onclick="self.close()"><spring:message code="lbl.close" /></a>

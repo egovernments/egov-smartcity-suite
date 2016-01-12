@@ -44,7 +44,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.domain.entity.property.WoodType;
-import org.egov.ptis.master.service.PropertyWoodTypeService;
+import org.egov.ptis.master.service.WoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,18 +56,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controller for Wood Type Master
+ * Controller for Create and View Wood Type
  */
 
 @Controller
 @RequestMapping(value = "/woodtype")
 public class CreateAndViewWoodTypeController {
 
-    private final PropertyWoodTypeService propertyWoodService;
+    private final WoodTypeService woodTypeService;
 
     @Autowired
-    public CreateAndViewWoodTypeController(final PropertyWoodTypeService propertyWoodService) {
-        this.propertyWoodService = propertyWoodService;
+    public CreateAndViewWoodTypeController(final WoodTypeService woodTypeService) {
+        this.woodTypeService = woodTypeService;
     }
 
     @ModelAttribute
@@ -77,24 +77,23 @@ public class CreateAndViewWoodTypeController {
 
     @ModelAttribute(value = "woodTypes")
     public List<WoodType> listWoodTypes() {
-        return propertyWoodService.getAllWoodTypes();
+        return woodTypeService.getAllWoodTypes();
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showWoodTypes(final Model model) {
+    public String showWoodTypes() {
         return "woodType-search";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(final Model model) {
-        model.addAttribute("woodtype", WoodTypeModel());
+    public String create() {
         return "woodType-form";
     }
 
     @RequestMapping(value = "/view/{name}", method = RequestMethod.GET)
     public String view(@PathVariable String name, Model model) {
 
-        WoodType woodType = propertyWoodService.getWoodTypeByName(name);
+        WoodType woodType = woodTypeService.getWoodTypeByName(name);
         model.addAttribute("woodType", woodType);
 
         return "woodType-view";
@@ -103,12 +102,12 @@ public class CreateAndViewWoodTypeController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute final WoodType woodType, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request) {
 
         if (errors.hasErrors())
             return "woodType-search";
 
-        propertyWoodService.createWood(woodType);
+        woodTypeService.createWood(woodType);
         redirectAttributes.addFlashAttribute("message", "msg.woodtype.create.success");
 
         return "redirect:/woodtype/create";

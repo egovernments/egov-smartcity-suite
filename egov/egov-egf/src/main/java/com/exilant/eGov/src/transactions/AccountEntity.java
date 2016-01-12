@@ -126,10 +126,10 @@ public class AccountEntity extends AbstractTask {
                 if (!filter.equalsIgnoreCase(""))
                     query = query + filter;
                 pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, glCodeId);
-                pstmt.setString(2, fundId);
-                pstmt.setString(3, fyId);
-                pstmt.setString(4, departmentId);
+                pstmt.setString(0, glCodeId);
+                pstmt.setString(1, fundId);
+                pstmt.setString(2, fyId);
+                pstmt.setString(3, departmentId);
             }
             else {
                 query = "SELECT id, openingDebitBalance AS \"dr\", openingCreditBalance AS \"cr\" , accountdetailkey AS \"accDetailKey\" , narration as \"txnNarration\" "
@@ -138,11 +138,11 @@ public class AccountEntity extends AbstractTask {
                 if (!filter.equalsIgnoreCase(""))
                     query = query + filter;
                 pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, glCodeId);
-                pstmt.setString(2, fundId);
-                pstmt.setString(3, fundSourceId);
-                pstmt.setString(4, fyId);
-                pstmt.setString(5, departmentId);
+                pstmt.setString(0, glCodeId);
+                pstmt.setString(1, fundId);
+                pstmt.setString(2, fundSourceId);
+                pstmt.setString(3, fyId);
+                pstmt.setString(4, departmentId);
             }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Execute get data ::::" + query);
@@ -175,7 +175,7 @@ public class AccountEntity extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("SELECT detailTypeId FROM chartOfAccountDetail WHERE glCodeId=" + glCodeId);
             pstmt = connection.prepareStatement(dtlQry);
-            pstmt.setString(1, glCodeId);
+            pstmt.setString(0, glCodeId);
             resultset = pstmt.executeQuery();
             if (resultset.next())
                 accEntityId = resultset.getString(1);
@@ -195,13 +195,13 @@ public class AccountEntity extends AbstractTask {
         try {
             if (tablName.equalsIgnoreCase("accountentitymaster")) {
                 pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, tablName);
-                pstmt.setString(2, accEntityId);
+                pstmt.setString(0, tablName);
+                pstmt.setString(1, accEntityId);
                 resultset = pstmt.executeQuery();
             }
             else {
                 pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, tablName);
+                pstmt.setString(0, tablName);
                 resultset = pstmt.executeQuery();
             }
             while (resultset.next())
@@ -228,7 +228,7 @@ public class AccountEntity extends AbstractTask {
         final String tabQry = "SELECT tableName FROM accountdetailtype WHERE id = ?";
         try {
             pstmt = connection.prepareStatement(tabQry);
-            pstmt.setString(1, accEntityId);
+            pstmt.setString(0, accEntityId);
             resultset = pstmt.executeQuery();
             if (resultset.next())
                 tableName = resultset.getString("tableName");
