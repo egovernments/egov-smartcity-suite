@@ -149,12 +149,12 @@ public class EgRemittanceGldtl
                 "VALUES (?,?,?, to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?,?)";
 
         pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-        pstmt.setString(1, id);
-        pstmt.setString(2, gldtlId);
-        pstmt.setString(3, gldtlAmt);
-        pstmt.setString(4, lastModifiedDate);
-        pstmt.setString(5, remittedAmt);
-        pstmt.setString(6, tdsId);
+        pstmt.setString(0, id);
+        pstmt.setString(1, gldtlId);
+        pstmt.setString(2, gldtlAmt);
+        pstmt.setString(3, lastModifiedDate);
+        pstmt.setString(4, remittedAmt);
+        pstmt.setString(5, tdsId);
         /*
          * pstmt.executeQuery(); pstmt.close();
          */

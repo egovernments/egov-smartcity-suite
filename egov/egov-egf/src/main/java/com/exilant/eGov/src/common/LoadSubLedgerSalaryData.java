@@ -91,7 +91,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, cgn);
+            pst.setString(0, cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
                 mmonth = element[0].toString();
@@ -114,7 +114,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, cgn);
+            pst.setString(0, cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
                 dc.addValue("subLedgerPaymentHeader_paidBy", element[0].toString());
@@ -130,7 +130,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, dc.getValue("subLedgerPaymentHeader_paidBy"));
+            pst.setString(0, dc.getValue("subLedgerPaymentHeader_paidBy"));
             rset = pst.list();
             for (final Object[] element : rset) {
                 dc.addValue("subLedgerPaymentHeader_paidBy", element[0].toString());
@@ -145,7 +145,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, dc.getValue("accId"));
+            pst.setString(0, dc.getValue("accId"));
             rset = pst.list();
             for (final Object[] element : rset)
                 dc.addValue("subLedgerPaymentHeader_bankId", element[0].toString());
@@ -157,7 +157,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, cgn);
+            pst.setString(0, cgn);
             rset = pst.list();
             for (final Object[] element : rset)
                 noOfRec = Integer.parseInt(element[0].toString());
@@ -178,7 +178,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(sql);
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-                pst.setString(1, cgn);
+                pst.setString(0, cgn);
                 rset = pst.list();
 
                 for (final Object[] element : rset) {
@@ -221,8 +221,8 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+            pst.setString(0, cgn);
             pst.setString(1, cgn);
-            pst.setString(2, cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
                 dc.addValue("voucherHeader_cgn", element[0].toString());

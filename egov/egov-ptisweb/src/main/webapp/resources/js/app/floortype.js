@@ -40,11 +40,11 @@
 $(document).ready(function() {
 			$('#create').click(function() {
 				$('#floorTypeForm').attr('method', 'get');
-				$('#floorTypeForm').attr('action', '/ptis/floorType/create');
+				$('#floorTypeForm').attr('action', '/ptis/floortype/create');
 				$('#floorTypeForm').submit();
 			});
 			$('#view').click(function() {
 						$('#floorTypeForm').attr('method', 'get');
-						$('#floorTypeForm').attr('action','/ptis/floorType/view/' + $('#name').val());
+						$('#floorTypeForm').attr('action','/ptis/floortype/view/' + $('#name').val());
 			});
 });

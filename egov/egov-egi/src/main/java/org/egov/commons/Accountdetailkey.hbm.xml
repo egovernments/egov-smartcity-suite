@@ -50,7 +50,6 @@
 	</generator>
         </id>
         <many-to-one name="accountdetailtype" class="org.egov.commons.Accountdetailtype" column="DETAILTYPEID"/>
-        <many-to-one name="chartofaccounts" class="org.egov.commons.CChartOfAccounts" column="GLCODEID"/>
         <property name="groupid" column="GROUPID" 	/>
         <property name="detailname" column="DETAILNAME" 	/>
         <property name="detailkey" column="DETAILKEY" />       

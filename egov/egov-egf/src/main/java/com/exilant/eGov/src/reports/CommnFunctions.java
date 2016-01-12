@@ -98,7 +98,7 @@ public class CommnFunctions
                 LOGGER.info("getFundList: " + query);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(1, fundId);
+                pstmt.setString(0, fundId);
             resultset = pstmt.list();
             int resSize = 0, i = 0;
             resSize = resultset.size();
@@ -146,7 +146,7 @@ public class CommnFunctions
         final String query = "SELECT substr(coa.glcode,0,"
                 + substringVal
                 + ") as \"glcode\",ts.fundid as \"fundid\" ,"
-                + " decode(coa.type,?,sum(ts.openingcreditbalance)-sum(ts.openingdebitbalance),sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance)) as \"amount\" "
+                + " case when coa.type = ? then sum(ts.openingcreditbalance)-sum(ts.openingdebitbalance) else sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance) end as \"amount\" "
                 + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE (coa.TYPE = ? OR coa.TYPE = ?) and coa.id = ts.glcodeid "
                 + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
                 + fundCondition + " and f.id=ts.fundid and f.isactive=1 and f.isnotleaf!=1 "
@@ -218,7 +218,7 @@ public class CommnFunctions
         if (fundid != null && !fundid.equals(""))
             fundCondition = " and vh.fundid= ?";
 
-        final String query1 = "SELECT SUBSTR(coa.GLCODE,1,2)as \"glCode\",vh.fundid as \"fundId\",decode(sum(gl.debitamount)-sum(gl.creditAmount),null,0,sum(gl.debitamount)-sum(gl.creditAmount))"
+        final String query1 = "SELECT SUBSTR(coa.GLCODE,1,2)as \"glCode\",vh.fundid as \"fundId\",case when sum(gl.debitamount)-sum(gl.creditAmount) = null then 0 else sum(gl.debitamount)-sum(gl.creditAmount)"
                 + "as \"amount\" FROM chartofaccounts  coa,generalledger gl,"
                 + " voucherHeader vh WHERE coa.TYPE = ? and vh.ID =  gl.VOUCHERHEADERID AND  gl.glcode=coa.glcode "
                 + " AND vh.VOUCHERDATE >= ? AND vh.VOUCHERDATE <= ?" + fundCondition + "  " + effFilter;
@@ -452,7 +452,7 @@ public class CommnFunctions
         try
         {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setInteger(1, finYearId);
+            pstmt.setInteger(0, finYearId);
             resultset = pstmt.list();
             for (final Object[] element : resultset)
                 startDate = element[0].toString();
@@ -479,7 +479,7 @@ public class CommnFunctions
         try
         {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setInteger(1, finYearId);
+            pstmt.setInteger(0, finYearId);
             resultset = pstmt.list();
             for (final Object[] element : resultset)
                 endDate = element[0].toString();
@@ -532,8 +532,8 @@ public class CommnFunctions
                     "WHERE startingDate<=? AND endingDate>=?";
             // for accross the financial year
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            pstmt.setString(0, sDate);
             pstmt.setString(1, sDate);
-            pstmt.setString(2, sDate);
             resultset = pstmt.list();
             for (final Object[] element : resultset)
                 fyId = element[0].toString();

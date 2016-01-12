@@ -111,7 +111,7 @@ public class FiscalPeriodMod extends AbstractTask {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("fid : " +fid);
         final String query = "select fiscalperiodid from voucherheader where fiscalperiodid in (select fp.id from fiscalperiod fp,financialyear fy where fy.id=fp.financialyearid and fy.id=?)";
         final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-        pstmt.setString(1, finId);
+        pstmt.setString(0, finId);
         resultSet = pstmt.list();
         for (final Object[] element : resultSet) {
             dc.addMessage("userFailure", " Cannot Modify this financial year "
@@ -170,7 +170,7 @@ public class FiscalPeriodMod extends AbstractTask {
             if (element[1].equalsIgnoreCase("")) {
                 final String fisGrid = element[0];
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(delQuery);
-                pstmt.setString(1, fisGrid);
+                pstmt.setString(0, fisGrid);
                 pstmt.executeUpdate();
             } else {
                 FP.setName(element[1]);

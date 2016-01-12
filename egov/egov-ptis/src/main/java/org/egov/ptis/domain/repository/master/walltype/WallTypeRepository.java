@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.ptis.domain.repository.master.wallType;
+package org.egov.ptis.domain.repository.master.walltype;
 
 import java.util.List;
 

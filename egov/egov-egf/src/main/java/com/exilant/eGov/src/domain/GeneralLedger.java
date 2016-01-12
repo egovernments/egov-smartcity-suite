@@ -253,11 +253,11 @@ public class GeneralLedger {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (CreditAmount)--> " + selQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
-            pst.setInteger(1, FUND);
-            pst.setInteger(2, ACCOUNTDETAILTYPE);
-            pst.setInteger(3, ACCOUNTDETAILKEY);
-            pst.setInteger(4, status);
-            pst.setString(5, vDate);
+            pst.setInteger(0, FUND);
+            pst.setInteger(1, ACCOUNTDETAILTYPE);
+            pst.setInteger(2, ACCOUNTDETAILKEY);
+            pst.setInteger(3, status);
+            pst.setString(4, vDate);
             rs = pst.list();
             for (final Object[] element : rs)
                 hmA.put(element[0].toString(), new BigDecimal(element[1].toString()));
@@ -271,11 +271,11 @@ public class GeneralLedger {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
-            pst.setInteger(1, FUND);
-            pst.setInteger(2, ACCOUNTDETAILTYPE);
-            pst.setInteger(3, ACCOUNTDETAILKEY);
-            pst.setInteger(4, status);
-            pst.setString(5, vDate);
+            pst.setInteger(0, FUND);
+            pst.setInteger(1, ACCOUNTDETAILTYPE);
+            pst.setInteger(2, ACCOUNTDETAILKEY);
+            pst.setInteger(3, status);
+            pst.setString(4, vDate);
             rs = pst.list();
             for (final Object[] elementB : rs)
                 hmB.put(elementB[0].toString(), new BigDecimal(elementB[1].toString()));
@@ -348,11 +348,11 @@ public class GeneralLedger {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (CreditAmount)--> " + selQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
-            pst.setInteger(1, FUND);
-            pst.setInteger(2, ACCOUNTDETAILTYPE);
-            pst.setInteger(3, ACCOUNTDETAILKEY);
-            pst.setInteger(4, status);
-            pst.setString(5, vDate);
+            pst.setInteger(0, FUND);
+            pst.setInteger(1, ACCOUNTDETAILTYPE);
+            pst.setInteger(2, ACCOUNTDETAILKEY);
+            pst.setInteger(3, status);
+            pst.setString(4, vDate);
             rs = pst.list();
             for (final Object[] element : rs)
                 hmA.put(element[0].toString(), new BigDecimal(element[1].toString()));
@@ -366,11 +366,11 @@ public class GeneralLedger {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
-            pst.setInteger(1, FUND);
-            pst.setInteger(2, ACCOUNTDETAILTYPE);
-            pst.setInteger(3, ACCOUNTDETAILKEY);
-            pst.setInteger(4, status);
-            pst.setString(5, vDate);
+            pst.setInteger(0, FUND);
+            pst.setInteger(1, ACCOUNTDETAILTYPE);
+            pst.setInteger(2, ACCOUNTDETAILKEY);
+            pst.setInteger(3, status);
+            pst.setString(4, vDate);
             rs = pst.list();
             for (final Object[] element : rs)
                 hmB.put(element[0].toString(), new BigDecimal(element[1].toString()));

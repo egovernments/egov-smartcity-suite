@@ -116,11 +116,11 @@ public class RPService extends ScheduleService {
         final String SelConditionQuery = getConditionalQuery(finId, statement);
 
         if (statement.getCurrencyInAmount().equals(new BigDecimal(1))) {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(gl.creditamount),SUM(gl.debitamount))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(gl.creditamount) else SUM(gl.debitamount) end  AS amount";
             amountG = "SUM(gl.creditamount)  AS amount";
         } else {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
-                    + ",0)),SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0)))  AS amount";
+            amountNG = "case when rpm.transaction_type  = 'R' then SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
+                    + ",0)) else SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0)) end  AS amount";
             amountG = "SUM(round(gl.creditamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
         }
 
@@ -209,11 +209,11 @@ public class RPService extends ScheduleService {
         final String SelConditionQuery = getConditionalQuery(finId, statement);
 
         if (statement.getCurrencyInAmount().equals(new BigDecimal(1))) {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(gl.creditamount),SUM(gl.debitamount))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(gl.creditamount) else SUM(gl.debitamount) end  AS amount";
             amountG = "SUM(gl.creditamount)  AS amount";
         } else {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
-                    + ",0)),SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0)))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
+                    + ",0))  else SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
             amountG = "SUM(round(gl.creditamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
         }
 
@@ -450,11 +450,11 @@ public class RPService extends ScheduleService {
         dateCondition = getDateRangeQuery(finId, statement);
 
         if (statement.getCurrencyInAmount().equals(new BigDecimal(1))) {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(gl.creditamount),SUM(gl.debitamount))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(gl.creditamount) else SUM(gl.debitamount) end   AS amount";
             amountG = "SUM(gl.creditamount)  AS amount";
         } else {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
-                    + ",0)),SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0)))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
+                    + ",0)) else SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
             amountG = "SUM(round(gl.creditamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
         }
 
@@ -615,11 +615,11 @@ public class RPService extends ScheduleService {
         dateCondition = getDateRangeQuery(finId, statement);
 
         if (statement.getCurrencyInAmount().equals(new BigDecimal(1))) {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(gl.creditamount),SUM(gl.debitamount))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(gl.creditamount) else SUM(gl.debitamount) end  AS amount";
             amountG = "SUM(gl.creditamount)  AS amount";
         } else {
-            amountNG = "decode(rpm.transaction_type,'R',SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
-                    + ",0)),SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0)))  AS amount";
+            amountNG = "case when rpm.transaction_type = 'R' then SUM(round(gl.creditamount/" + statement.getCurrencyInAmount()
+                    + ",0)) else SUM(round(gl.debitamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
             amountG = "SUM(round(gl.creditamount/" + statement.getCurrencyInAmount() + ",0))  AS amount";
         }
 

@@ -68,7 +68,7 @@ public class DataValidator {
             Query pstmt = null;
             final String strQry = "select dept_name from eg_department where id_dept= ?";
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(strQry);
-            pstmt.setString(1, deptId);
+            pstmt.setString(0, deptId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -84,7 +84,7 @@ public class DataValidator {
         Query pstmt = null;
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
-            pstmt.setString(1, funcId);
+            pstmt.setString(0, funcId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -99,7 +99,7 @@ public class DataValidator {
         final String str = "select dept_name from eg_department where dept_name=?";
         try {
             final Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
-            pstmt.setString(1, deptName);
+            pstmt.setString(0, deptName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -115,7 +115,7 @@ public class DataValidator {
         final String str = "select name from function where name= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
-            pstmt.setString(1, funcName);
+            pstmt.setString(0, funcName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -132,7 +132,7 @@ public class DataValidator {
         final String valQry = "select name from organizationStructure where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, orgId);
+            pstmt.setString(0, orgId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -151,7 +151,7 @@ public class DataValidator {
         try {
             // Statement statement=connection.createStatement();
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, taxCode);
+            pstmt.setString(0, taxCode);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -168,7 +168,7 @@ public class DataValidator {
         final String valQry = "select id from bankAccount  where branchId= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, branchId);
+            pstmt.setString(0, branchId);
             final List<Object[]> rset = pstmt.list();
             // " where branchId="+branchId+" and accountNumber='"+accNumber+"'");
             if (rset == null || rset.size() == 0)
@@ -185,7 +185,7 @@ public class DataValidator {
         final String valQry = "select id from bankAccount  where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, id);
+            pstmt.setString(0, id);
             final List<Object[]> rset = pstmt.list();
             // " where branchId="+branchId+" and accountNumber='"+accNumber+"'");
             if (rset == null || rset.size() == 0)
@@ -202,7 +202,7 @@ public class DataValidator {
         final String valQry = "select name from bank where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, bankId);
+            pstmt.setString(0, bankId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -218,7 +218,7 @@ public class DataValidator {
         final String valQry = "select name from fund where  name= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, fundName);
+            pstmt.setString(0, fundName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -234,7 +234,7 @@ public class DataValidator {
         final String valQry = "select name from fund where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(valQry);
-            pstmt.setString(1, fundId);
+            pstmt.setString(0, fundId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -251,7 +251,7 @@ public class DataValidator {
         final String fndSrc = "select name from fundsource where name=?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(fndSrc);
-            pstmt.setString(1, fundSourceName);
+            pstmt.setString(0, fundSourceName);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -267,7 +267,7 @@ public class DataValidator {
         final String srtQry = "select name from fundsource where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
-            pstmt.setString(1, fundSourceId);
+            pstmt.setString(0, fundSourceId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -283,7 +283,7 @@ public class DataValidator {
         final String srtQry = "select name from supplier where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
-            pstmt.setString(1, supplierId);
+            pstmt.setString(0, supplierId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -299,7 +299,7 @@ public class DataValidator {
         final String srtQry = "select name from contractor where id= ?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
-            pstmt.setString(1, contractorId);
+            pstmt.setString(0, contractorId);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;
@@ -316,8 +316,8 @@ public class DataValidator {
         final String srtQry = "select name from billCollector  where id=? and type=?";
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(srtQry);
-            pstmt.setString(1, id);
-            pstmt.setString(2, type);
+            pstmt.setString(0, id);
+            pstmt.setString(1, type);
             final List<Object[]> rset = pstmt.list();
             if (rset == null || rset.size() == 0)
                 return false;

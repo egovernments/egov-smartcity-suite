@@ -118,16 +118,16 @@ public class BankEntries {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pstmt.setString(1, id);
-            pstmt.setInteger(2, bankAccountId);
-            pstmt.setString(3, refNo);
-            pstmt.setString(4, type);
-            pstmt.setString(5, txnDate);
-            pstmt.setString(6, txnAmount);
-            pstmt.setString(7, glcodeId);
-            pstmt.setString(8, voucherheaderId);
-            pstmt.setString(9, remarks);
-            pstmt.setLong(10, instrumentHeaderId);
+            pstmt.setString(0, id);
+            pstmt.setInteger(1, bankAccountId);
+            pstmt.setString(2, refNo);
+            pstmt.setString(3, type);
+            pstmt.setString(4, txnDate);
+            pstmt.setString(5, txnAmount);
+            pstmt.setString(6, glcodeId);
+            pstmt.setString(7, voucherheaderId);
+            pstmt.setString(8, remarks);
+            pstmt.setLong(9, instrumentHeaderId);
             pstmt.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -204,7 +204,7 @@ public class BankEntries {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(updateQuery);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-            pstmt.setString(1, cgNum);
+            pstmt.setString(0, cgNum);
             pstmt.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error("Exp in reverse:" + e.getMessage(), e);
@@ -228,7 +228,7 @@ public class BankEntries {
         BrsEntries brs;
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(1, bankAccId);
+            pstmt.setString(0, bankAccId);
             rs = pstmt.list();
 
             for (final Object[] element : rs) {

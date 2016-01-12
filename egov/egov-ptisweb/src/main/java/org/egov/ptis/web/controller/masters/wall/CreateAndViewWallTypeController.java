@@ -43,7 +43,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import org.egov.ptis.domain.entity.property.WallType;
-import org.egov.ptis.master.service.PropertyWallService;
+import org.egov.ptis.master.service.WallTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,14 +59,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 
 @Controller
-@RequestMapping(value = "/wallType")
+@RequestMapping(value = "/walltype")
 public class CreateAndViewWallTypeController {
 
-    private final PropertyWallService propertyWallService;
+    private final WallTypeService wallTypeService;
 
     @Autowired
-    public CreateAndViewWallTypeController(final PropertyWallService propertyWallService) {
-        this.propertyWallService = propertyWallService;
+    public CreateAndViewWallTypeController(final WallTypeService wallTypeService) {
+        this.wallTypeService = wallTypeService;
     }
 
     @ModelAttribute
@@ -76,7 +76,7 @@ public class CreateAndViewWallTypeController {
 
     @ModelAttribute(value = "wallTypes")
     public List<WallType> listWallTypes() {
-        return propertyWallService.getAllWalls();
+        return wallTypeService.getAllWalls();
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -95,15 +95,15 @@ public class CreateAndViewWallTypeController {
 
         if (errors.hasErrors())
             return "wallType-main";
-        propertyWallService.create(wallType);
+        wallTypeService.create(wallType);
 
         redirectAttributes.addFlashAttribute("message", "msg.walltype.create.success");
-        return "redirect:/wallType/create";
+        return "redirect:/walltype/create";
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable Long id, Model model) {
-        WallType wallType = propertyWallService.getWallTypeById(id);
+        WallType wallType = wallTypeService.getWallTypeById(id);
 
         model.addAttribute("wallType", wallType);
         return "wallType-view";

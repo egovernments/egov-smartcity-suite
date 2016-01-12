@@ -214,8 +214,8 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String executeString = "select * from ? where 1=1 ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(executeString);
-            pst.setString(1, tableName);
-            pst.setString(2, condition);
+            pst.setString(0, tableName);
+            pst.setString(1, condition);
             resultset = pst.list();
             if (resultset == null || resultset.size() == 0)
                 noMatch = true;
@@ -265,9 +265,9 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("validating scheme" + qry);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(qry);
+            pst.setString(0, vDate);
             pst.setString(1, vDate);
-            pst.setString(2, vDate);
-            pst.setString(3, sid);
+            pst.setString(2, sid);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 return;
@@ -293,9 +293,9 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("validating subscheme" + qry);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(qry);
+            pst.setString(0, vDate);
             pst.setString(1, vDate);
-            pst.setString(2, vDate);
-            pst.setString(3, ssid);
+            pst.setString(2, ssid);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 return;
@@ -347,7 +347,7 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> rset = null;
         try {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.parseInt(fund));
+            pst.setInteger(0, Integer.parseInt(fund));
             rset = pst.list();
             for (final Object[] element : rset)
                 fType = element[0].toString();
@@ -376,7 +376,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             // String query = FUNDIDNSQL+fund;
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pstmt.setInteger(1, Integer.valueOf(fund));
+            pstmt.setInteger(0, Integer.valueOf(fund));
             rset = pstmt.list();
 
             for (final Object[] element : rset)
@@ -409,7 +409,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             // String query = FUNDIDNSQL+"?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.valueOf(fund));
+            pst.setInteger(0, Integer.valueOf(fund));
             rs = pst.list();
             for (final Object[] element : rs)
                 fType = element[0].toString();
@@ -438,7 +438,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             // String query = FUNDIDNSQL+fund;
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.valueOf(fund));
+            pst.setInteger(0, Integer.valueOf(fund));
             rs = pst.list();
             for (final Object[] element : rs)
                 fType = element[0].toString();
@@ -466,7 +466,7 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> rs = null;
         try {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.valueOf(fund));
+            pst.setInteger(0, Integer.valueOf(fund));
             rs = pst.list();
             for (final Object[] element : rs)
                 fType = element[0].toString();
@@ -514,7 +514,7 @@ public class EGovernCommon extends AbstractTask {
         Query pst = null;
         List<Object[]> rs = null;
         pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-        pst.setInteger(1, Integer.valueOf(fund));
+        pst.setInteger(0, Integer.valueOf(fund));
         rs = pst.list();
         for (final Object[] element : rs)
             fType = element[0].toString();
@@ -538,7 +538,7 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> rs = null;
         try {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.valueOf(fund));
+            pst.setInteger(0, Integer.valueOf(fund));
             rs = pst.list();
             for (final Object[] element : rs)
                 fType = element[0].toString();
@@ -564,7 +564,7 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> rs = null;
         try {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.valueOf(fund));
+            pst.setInteger(0, Integer.valueOf(fund));
             rs = pst.list();
             for (final Object[] element : rs)
                 fType = element[0].toString();
@@ -715,8 +715,8 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, BankAccId);
-            pst.setString(2, Chequeno);
+            pst.setString(0, BankAccId);
+            pst.setString(1, Chequeno);
             rs = pst.list();
             for (final Object[] element : rs) {
                 datacol.addMessage(EXILRPERROR, "duplicate Cheque number");
@@ -752,10 +752,10 @@ public class EGovernCommon extends AbstractTask {
                     +
                     "  UNION SELECT egsc.id FROM EG_SURRENDERED_CHEQUES egsc,voucherheader vh WHERE egsc.BANKACCOUNTID = ? AND egsc.chequenumber=? AND vh.id=egsc.vhid AND vh.status<>4 ";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, BankAccId);
-            pst.setString(2, Chequeno);
-            pst.setString(3, BankAccId);
-            pst.setString(4, Chequeno);
+            pst.setString(0, BankAccId);
+            pst.setString(1, Chequeno);
+            pst.setString(2, BankAccId);
+            pst.setString(3, Chequeno);
             rs = pst.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Query:::" + sql);
@@ -785,11 +785,11 @@ public class EGovernCommon extends AbstractTask {
         Query pst = null;
         List<Object[]> rs = null;
         try {
-            final String query = "SELECT id FROM EGF_ACCOUNT_CHEQUES WHERE BANKACCOUNTID = ? AND fromchequenumber<=TO_NUMBER(?) and TO_NUMBER(?)<= tochequenumber";
+            final String query = "SELECT id FROM EGF_ACCOUNT_CHEQUES WHERE BANKACCOUNTID = ? AND fromchequenumber<=TO_NUMBER(?,'999999') and TO_NUMBER(?,'999999')<= tochequenumber";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, BankAccId);
+            pst.setString(0, BankAccId);
+            pst.setString(1, Chequeno);
             pst.setString(2, Chequeno);
-            pst.setString(3, Chequeno);
             rs = pst.list();
             for (final Object[] element : rs)
                 isWithinRange = true;
@@ -815,11 +815,11 @@ public class EGovernCommon extends AbstractTask {
         Query pst = null;
         List<Object[]> rs = null;
         try {
-            final String query = "SELECT id FROM EGF_ACCOUNT_CHEQUES WHERE BANKACCOUNTID = ? AND fromchequenumber<=TO_NUMBER(?) and TO_NUMBER(?)<= tochequenumber";
+            final String query = "SELECT id FROM EGF_ACCOUNT_CHEQUES WHERE BANKACCOUNTID = ? AND fromchequenumber<=TO_NUMBER(?,'999999') and TO_NUMBER(?,'999999')<= tochequenumber";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, BankAccId);
+            pst.setString(0, BankAccId);
+            pst.setString(1, Chequeno);
             pst.setString(2, Chequeno);
-            pst.setString(3, Chequeno);
             rs = pst.list();
             for (final Object[] element : rs)
                 isWithinRange = true;
@@ -982,16 +982,16 @@ public class EGovernCommon extends AbstractTask {
             final SimpleDateFormat formatter = dtFormat;
             vcDate = formatter.format(sdf.parse(vcDate));
 
-            final String str = "SELECT decode(sum(openingDebitBalance),null,0,sum(openingDebitBalance))- decode(sum(openingCreditBalance),null,0,sum(openingCreditBalance)) AS \"openingBalance\" "
+            final String str = "SELECT case when sum(openingDebitBalance)=null then 0 else sum(openingDebitBalance) end - case when sum(openingCreditBalance)= null then 0 else sum(openingCreditBalance) end AS \"openingBalance\" "
                     +
                     "FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <=?" +
                     "AND endingDate >=?)  AND glCodeId =(select glcodeid from bankaccount where id=?)";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getAccountBalance(EGovernCommon.java): " + str);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pst.setString(0, vcDate);
             pst.setString(1, vcDate);
-            pst.setString(2, vcDate);
-            pst.setString(3, bankAccountId);
+            pst.setString(2, bankAccountId);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 opeAvailable = new BigDecimal(element[0].toString());
@@ -1001,7 +1001,7 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("opening balance  " + opeAvailable);
 
-            final String str1 = "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount))) + "
+            final String str1 = "SELECT ((case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end ) - (case when sum(gl.creditAmount) = null  then 0 else sum(gl.creditAmount) end)) + "
                     + opeAvailable
                     +
                     " as \"totalAmount\" FROM   generalLedger gl, voucherHeader vh WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id= ?) AND  "
@@ -1011,10 +1011,10 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Curr Yr Bal: " + str1);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
-            pst.setString(1, bankAccountId);
+            pst.setString(0, bankAccountId);
+            pst.setString(1, vcDate);
             pst.setString(2, vcDate);
             pst.setString(3, vcDate);
-            pst.setString(4, vcDate);
             resultset1 = pst.list();
             for (final Object[] element : resultset1) {
                 totalAvailable = new BigDecimal(element[0].toString());
@@ -1045,16 +1045,16 @@ public class EGovernCommon extends AbstractTask {
             final SimpleDateFormat formatter = dtFormat;
             final String vcDate = formatter.format(VoucherDate);
 
-            final String str = "SELECT decode(sum(openingDebitBalance),null,0,sum(openingDebitBalance))- decode(sum(openingCreditBalance),null,0,sum(openingCreditBalance)) AS \"openingBalance\" "
+            final String str = "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) end-  case when sum(openingCreditBalance) = null  then 0 else sum(openingCreditBalance) end AS \"openingBalance\" "
                     +
                     "FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <=?" +
                     "AND endingDate >= ?)  AND glCodeId =(select glcodeid from bankaccount where id=?)";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getAccountBalance(EGovernCommon.java): " + str);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pst.setString(0, vcDate);
             pst.setString(1, vcDate);
-            pst.setString(2, vcDate);
-            pst.setString(3, bankAccountId);
+            pst.setString(2, bankAccountId);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 opeAvailable = new BigDecimal(element[0].toString());
@@ -1066,7 +1066,7 @@ public class EGovernCommon extends AbstractTask {
                 LOGGER.debug("opening balance  " + opeAvailable);
             // resultset.close();
 
-            final String str1 = "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount))) + "
+            final String str1 = "SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end) - (case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end) + "
                     + opeAvailable
                     +
                     " as \"totalAmount\" FROM   generalLedger gl, voucherHeader vh WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id=?) AND  "
@@ -1076,10 +1076,10 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Curr Yr Bal: " + str1);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
-            pst.setString(1, bankAccountId);
+            pst.setString(0, bankAccountId);
+            pst.setString(1, vcDate);
             pst.setString(2, vcDate);
             pst.setString(3, vcDate);
-            pst.setString(4, vcDate);
             resultset1 = pst.list();
             for (final Object[] element : resultset1) {
                 totalAvailable = new BigDecimal(element[0].toString());
@@ -1113,16 +1113,16 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> resultset = null;
         List<Object[]> resultset1 = null;
         try {
-            final String str = "SELECT decode(sum(openingDebitBalance),null,0,sum(openingDebitBalance))- decode(sum(openingCreditBalance),null,0,sum(openingCreditBalance)) AS \"openingBalance\" "
+            final String str = "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) end - case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) end AS \"openingBalance\" "
                     +
                     "FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <=?" +
                     "AND endingDate >=?)  AND glCodeId =(select glcodeid from bankaccount where id=?)";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getAccountBalance(EGovernCommon.java): " + str);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pst.setString(0, recDate);
             pst.setString(1, recDate);
-            pst.setString(2, recDate);
-            pst.setString(3, bankAccountId);
+            pst.setString(2, bankAccountId);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 opeAvailable = new BigDecimal(element[0].toString());
@@ -1133,7 +1133,7 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("opening balance  " + opeAvailable);
 
-            final String str1 = "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount))) + "
+            final String str1 = "SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end ) + "
                     + opeAvailable
                     +
                     " as \"totalAmount\" FROM   generalLedger gl, voucherHeader vh WHERE vh.id = gl.voucherHeaderId and gl.glCodeid = (select glcodeid from bankaccount where id=?) AND  "
@@ -1143,10 +1143,10 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Curr Yr Bal: " + str1);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
-            pst.setString(1, bankAccountId);
+            pst.setString(0, bankAccountId);
+            pst.setString(1, recDate);
             pst.setString(2, recDate);
             pst.setString(3, recDate);
-            pst.setString(4, recDate);
             resultset1 = pst.list();
             for (final Object[] element : resultset1) {
                 totalAvailable = new BigDecimal(element[0].toString());
@@ -1190,17 +1190,17 @@ public class EGovernCommon extends AbstractTask {
             final SimpleDateFormat formatter = dtFormat;
             vcDateFmt = formatter.format(sdf.parse(vcDate));
 
-            final String str = "SELECT decode(sum(openingDebitBalance),null,0,sum(openingDebitBalance))- decode(sum(openingCreditBalance),null,0,sum(openingCreditBalance)) AS \"openingBalance\" "
+            final String str = "SELECT case when sum(openingDebitBalance) = null  then 0 else sum(openingDebitBalance) end - case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) end AS \"openingBalance\" "
                     +
                     "FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <=?" +
                     " AND endingDate >=?)  AND glCodeId =? and fundid=?";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(str);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
+            pst.setString(0, vcDateFmt);
             pst.setString(1, vcDateFmt);
-            pst.setString(2, vcDateFmt);
-            pst.setString(3, cashIdValue);
-            pst.setString(4, fundId);
+            pst.setString(2, cashIdValue);
+            pst.setString(3, fundId);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 opeAvailable = new BigDecimal(element[0].toString());
@@ -1209,7 +1209,7 @@ public class EGovernCommon extends AbstractTask {
                     LOGGER.debug("Else resultset in getCashAccountBalance...");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("opening balance  " + opeAvailable);
-            final String str1 = "SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount))) ? "
+            final String str1 = "SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end  - case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end) ? "
                     +
                     " as \"totalAmount\" FROM   generalLedger gl, voucherHeader vh WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid =? AND  "
                     +
@@ -1218,12 +1218,12 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(str1);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
-            pst.setBigDecimal(1, opeAvailable);
-            pst.setString(2, cashIdValue);
+            pst.setBigDecimal(0, opeAvailable);
+            pst.setString(1, cashIdValue);
+            pst.setString(2, vcDateFmt);
             pst.setString(3, vcDateFmt);
             pst.setString(4, vcDateFmt);
-            pst.setString(5, vcDateFmt);
-            pst.setString(6, fundId);
+            pst.setString(5, fundId);
             resultset = pst.list();
             for (final Object[] element : resultset) {
                 totalAvailable = new BigDecimal(element[0].toString());
@@ -1275,7 +1275,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String query = "select fundid from voucherheader where id= ?";
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pstmt.setString(1, datacol.getValue("voucherHeader_id"));
+            pstmt.setString(0, datacol.getValue("voucherHeader_id"));
             rs = pstmt.list();
             for (final Object[] element : rs)
                 retVal = element[0].toString();
@@ -1343,7 +1343,7 @@ public class EGovernCommon extends AbstractTask {
         {
             final String query = "select startingdate as \"startDate\" from financialyear where id = ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, finId);
+            pst.setString(0, finId);
             resultset = pst.list();
             for (final Object[] element : resultset)
                 startDate = element[0].toString();
@@ -1387,7 +1387,7 @@ public class EGovernCommon extends AbstractTask {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setInteger(1, voucherId);
+            pst.setInteger(0, voucherId);
             rs = pst.list();
             for (final Object[] element : rs)
                 oldAmt = new BigDecimal(element[1].toString());
@@ -1494,7 +1494,7 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pst.setString(1, finYear);
+            pst.setString(0, finYear);
             rs = pst.list();
             for (final Object[] element : rs)
                 finyearid = element[0].toString();
@@ -1512,7 +1512,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String qryDetailType = "Select detailtypeid from chartofaccountdetail where glcodeid=(select id from chartofaccounts where glcode= ?)";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(qryDetailType);
-            pst.setString(1, glCode);
+            pst.setString(0, glCode);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("  qryDetailType  " + qryDetailType);
             rs = pst.list();
@@ -1532,7 +1532,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String qryDetailType = "Select detailtypeid from chartofaccountdetail where glcodeid= ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(qryDetailType);
-            pst.setString(1, glCodeid);
+            pst.setString(0, glCodeid);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("  qryDetailType  " + qryDetailType);
             rs = pst.list();
@@ -1569,7 +1569,7 @@ public class EGovernCommon extends AbstractTask {
              vh.update();
 
              // Check if there is any related vouchers
-             ps.setString(1, voucherHeaderId);
+             ps.setString(0, voucherHeaderId);
              rs = ps.list();
              for (final Object[] element : rs) {
                  // egfRecordStatus egfstatusRef= new egfRecordStatus();
@@ -1632,7 +1632,7 @@ public class EGovernCommon extends AbstractTask {
         {
             final String query = "select type as \"recType\",cgn as \"cgn\",name as \"name\",vouchernumber as \"voucherNum\",status as \"status\",fundid as \"fundid\",lastmodifieddate as \"lastModDate\",createdby as \"createdby\" from voucherheader where id= ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, vhId);
+            pst.setString(0, vhId);
             resultset = pst.list();
             for (final Object[] element : resultset) {
                 vhrHdr.setId(vhId);
@@ -1749,7 +1749,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String query = "select name from chartofaccounts where glcode= ?";
             final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, code);
+            pst.setString(0, code);
             final List<Object[]> rset = pst.list();
             for (final Object[] element : rset)
                 name = element[0].toString();
@@ -1773,7 +1773,7 @@ public class EGovernCommon extends AbstractTask {
         try {
             final String query = "select name from chartofaccounts where id= ?";
             final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, codeid);
+            pst.setString(0, codeid);
             final List<Object[]> rset = pst.list();
             for (final Object[] element : rset)
                 name = element[0].toString();
@@ -1962,7 +1962,7 @@ public class EGovernCommon extends AbstractTask {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, billCollectorId);
+            pst.setString(0, billCollectorId);
             rs = pst.list();
             for (final Object[] element : rs)
                 name = element[0].toString();
@@ -2070,7 +2070,7 @@ public class EGovernCommon extends AbstractTask {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setInteger(1, fundId);
+            pst.setInteger(0, fundId);
             rs = pst.list();
             LabelValueBean obj = null;
             if (rs != null)
@@ -2107,8 +2107,8 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("statement" + sql);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-            pstmt.setString(1, moduleType.toUpperCase());
-            pstmt.setString(2, description.toUpperCase());
+            pstmt.setString(0, moduleType.toUpperCase());
+            pstmt.setString(1, description.toUpperCase());
             rs = pstmt.list();
             for (final Object[] element : rs)
                 statusId = element[0].toString();
@@ -2138,7 +2138,7 @@ public class EGovernCommon extends AbstractTask {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(FUNDIDNSQL);
-            pst.setInteger(1, Integer.valueOf(fundId));
+            pst.setInteger(0, Integer.valueOf(fundId));
             rs = pst.list();
             for (final Object[] element : rs)
                 fType = element[0].toString();
@@ -2185,20 +2185,20 @@ public class EGovernCommon extends AbstractTask {
             pstmt7 = HibernateUtil.getCurrentSession().createSQLQuery("Delete from voucherheader where id=?");
 
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery("Select id from voucherheader where cgn=?");
-            pstmt.setString(1, cgn);
+            pstmt.setString(0, cgn);
             final List<Object[]> rs = pstmt.list();
             for (final Object[] element : rs)
                 vhid = Integer.parseInt(element[0].toString());
             if (rs == null || rs.size() == 0)
                 throw new TaskFailedException("Cannot find the journal voucher");
 
-            pstmt1.setInteger(1, vhid);
-            pstmt2.setInteger(1, vhid);
-            pstmt3.setInteger(1, vhid);
-            pstmt4.setInteger(1, vhid);
-            pstmt5.setInteger(1, vhid);
-            pstmt6.setInteger(1, vhid);
-            pstmt7.setInteger(1, vhid);
+            pstmt1.setInteger(0, vhid);
+            pstmt2.setInteger(0, vhid);
+            pstmt3.setInteger(0, vhid);
+            pstmt4.setInteger(0, vhid);
+            pstmt5.setInteger(0, vhid);
+            pstmt6.setInteger(0, vhid);
+            pstmt7.setInteger(0, vhid);
 
             pstmt1.executeUpdate();
             pstmt2.executeUpdate();

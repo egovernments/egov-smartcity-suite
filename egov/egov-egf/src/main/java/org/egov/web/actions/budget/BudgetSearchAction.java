@@ -502,12 +502,12 @@ public class BudgetSearchAction extends BaseFormAction {
     private void populateActualData(final CFinancialYear financialYear) {
         String fromDate = Constants.DDMMYYYYFORMAT1.format(financialYear.getStartingDate());
         final List<Object[]> result = budgetDetailService.fetchActualsForFYDate(fromDate,
-                "decode(b.as_on_date,null,sysdate,b.as_on_date)", mandatoryFields);
+                "case when b.as_on_date = null then current_date else b.as_on_date end", mandatoryFields);
         for (final Object[] row : result)
             budgetDetailIdsAndAmount.put(row[0].toString(), row[1].toString());
         fromDate = Constants.DDMMYYYYFORMAT1.format(subtractYear(financialYear.getStartingDate()));
         final List<Object[]> previousYearResult = budgetDetailService.fetchActualsForFYDate(fromDate,
-                "decode(b.as_on_date,null,sysdate+numtoyminterval(-1,'year'),b.as_on_date+numtoyminterval(-1,'year'))",
+                "case when b.as_on_date = null then current_date+numtoyminterval(-1,'year') else b.as_on_date+numtoyminterval(-1,'year') end",
                 mandatoryFields);
         for (final Object[] row : previousYearResult)
             previousYearBudgetDetailIdsAndAmount.put(row[0].toString(), row[1].toString());

@@ -42,23 +42,26 @@ package org.egov.ptis.master.service;
 import java.util.List;
 
 import org.egov.ptis.domain.entity.property.FloorType;
-import org.egov.ptis.domain.repository.master.floorType.FloorTypeRepository;
+import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for FloorType Master
  */
 @Service
-public class PropertyFloorService {
+@Transactional(readOnly=true)
+public class FloorTypeService {
 
     private final FloorTypeRepository floorTypeRepository;
 
     @Autowired
-    public PropertyFloorService(final FloorTypeRepository floorTypeRepository) {
+    public FloorTypeService(final FloorTypeRepository floorTypeRepository) {
         this.floorTypeRepository = floorTypeRepository;
     }
-
+    
+    @Transactional
     public FloorType create(FloorType floorType) {
         floorTypeRepository.save(floorType);
         return floorType;

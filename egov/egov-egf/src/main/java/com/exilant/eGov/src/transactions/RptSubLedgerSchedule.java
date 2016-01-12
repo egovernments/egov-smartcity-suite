@@ -179,7 +179,7 @@ public class RptSubLedgerSchedule
         {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Inside the First April block");
-            query = "SELECT decode(a1.detkeyid,null,a3.detkeyid,a1.detkeyid) as slid,nvl(a3.OpgCreditBal,0) as OpgCreditBal,nvl(a3.OpgDebitBal,0)  as OpgDebitBal,0 as PrevDebit, "
+            query = "SELECT case when a1.detkeyid = null then a3.detkeyid ELSE a1.detkeyid end as slid,nvl(a3.OpgCreditBal,0) as OpgCreditBal,nvl(a3.OpgDebitBal,0)  as OpgDebitBal,0 as PrevDebit, "
                     + " 0 as PrevCredit,nvl(a1.Credit,0) as Credit,nvl(a1.Debit,0) as Debit "
                     + " FROM ( select detkeyid,sum(Debit)as Debit,sum(Credit)as Credit FROM ("
                     + " SELECT gld.detailkeyid AS detkeyid, SUM (gld.amount)  AS Debit , 0 AS Credit "
@@ -241,7 +241,7 @@ public class RptSubLedgerSchedule
         {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Inside the Else block");
-            query = "SELECT decode(a1.detkeyid,null,a3.detkeyid,a1.detkeyid) as slid,nvl(a3.OpgCreditBal,0) as OpgCreditBal,nvl(a3.OpgDebitBal,0)  as OpgDebitBal,nvl(a2.PrevDebit,0) as PrevDebit, "
+            query = "SELECT case when a1.detkeyid = null then a3.detkeyid else a1.detkeyid end as slid,nvl(a3.OpgCreditBal,0) as OpgCreditBal,nvl(a3.OpgDebitBal,0)  as OpgDebitBal,nvl(a2.PrevDebit,0) as PrevDebit, "
                     + "nvl(a2.PrevCredit,0) as PrevCredit,nvl(a1.Credit,0) as Credit,nvl(a1.Debit,0) as Debit"
                     + " FROM  (select detkeyid,sum(Debit)as Debit,sum(Credit)as Credit FROM("
                     + " SELECT gld.detailkeyid AS detkeyid,SUM (gld.amount)  AS Debit , 0 AS Credit "
@@ -487,7 +487,7 @@ public class RptSubLedgerSchedule
         try {
             final String query = "select name from chartofaccounts where glCode= ?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, glCode);
+            pst.setString(0, glCode);
             final List<Object[]> rset = pst.list();
             for (final Object[] element : rset)
                 accName = element[0].toString();

@@ -763,7 +763,7 @@ public class InstrumentService {
         final AccountCheques accountCheques = (AccountCheques) persistenceService
                 .find(
                         "select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
-                                + " ac.bankAccountId.id=? and cd.allotedTo.id=? and to_number(?) between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=? ",
+                                + " ac.bankAccountId.id=? and cd.allotedTo.id=? and to_number(?,'999999') between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=? ",
                                 bankAccountId, departmentId, chequeNumber, serialNo);
         if (accountCheques == null)
             return false;

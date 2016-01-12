@@ -207,21 +207,21 @@ public class BankReconciliation {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-            pst.setString(1, id);
-            pst.setString(2, bankAccountId);
-            pst.setString(3, voucherHeaderId);
-            pst.setString(4, isReconciled);
-            pst.setString(5, chequeDate);
-            pst.setString(6, chequeNumber);
-            pst.setString(7, amount);
-            pst.setString(8, reconciliationDate);
-            pst.setString(9, transactionDate);
-            pst.setString(10, transactionBalance);
-            pst.setString(11, transactionType);
-            pst.setString(12, isReversed);
-            pst.setString(13, type);
-            pst.setString(14, recChequeDate);
-            pst.setString(15, isDishonored);
+            pst.setString(0, id);
+            pst.setString(1, bankAccountId);
+            pst.setString(2, voucherHeaderId);
+            pst.setString(3, isReconciled);
+            pst.setString(4, chequeDate);
+            pst.setString(5, chequeNumber);
+            pst.setString(6, amount);
+            pst.setString(7, reconciliationDate);
+            pst.setString(8, transactionDate);
+            pst.setString(9, transactionBalance);
+            pst.setString(10, transactionType);
+            pst.setString(11, isReversed);
+            pst.setString(12, type);
+            pst.setString(13, recChequeDate);
+            pst.setString(14, isDishonored);
             pst.executeUpdate();
         } catch (final Exception e) {
             throw taskExc;
@@ -240,7 +240,7 @@ public class BankReconciliation {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(updateQuery);
                 pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-                pst.setString(1, id);
+                pst.setString(0, id);
                 pst.executeUpdate();
             } catch (final Exception e) {
                 throw taskExc;
@@ -275,7 +275,7 @@ public class BankReconciliation {
         }
         final String voucherExcludeStatuses = getExcludeStatuses();
         final String query = "SELECT  ih.instrumentNumber  as \"chequeNumber\","
-                + "  rec.id as \"recid\",ih.id as \"instrumentHeaderId\",  decode(ih.ispaycheque, '0', 'Receipt',decode(ih.ispaycheque, '1', 'Payment')  ) as \"type\","
+                + "  rec.id as \"recid\",ih.id as \"instrumentHeaderId\",  case when ih.ispaycheque = '0' then 'Receipt' else (case when ih.ispaycheque = '1' then  'Payment' else '' end) end  as \"type\","
                 + "  ih.instrumentDate as \"chequedate\",ih.instrumentAmount as \"chequeamount\"  FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
                 + "VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id =?"
                 + "  "
@@ -286,8 +286,8 @@ public class BankReconciliation {
                 + ") AND( (ih.ispaycheque=0 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque=1 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
                 + " AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id  and io.instrumentHeaderId=ih.id and ih.instrumentnumber is  not null UNION ALL "
 
-                + "SELECT  decode(ih.transactionnumber, null, 'Direct', ih.transactionnumber) as \"chequeNumber\",  rec.id as \"recid\",ih.id as \"instrumentHeaderId\", "
-                + " decode(ih.ispaycheque, '0', 'Receipt',decode(ih.ispaycheque, '1', 'Payment') ) as \"type\", "
+                + "SELECT  case when ih.transactionnumber = null then 'Direct' else ih.transactionnumber end as \"chequeNumber\",  rec.id as \"recid\",ih.id as \"instrumentHeaderId\", "
+                + " case when ih.ispaycheque  ='0' then 'Receipt' else ( case when ih.ispaycheque = '1' then 'Payment' else '' end) end as \"type\", "
                 + "  "
                 + " ih.transactiondate as \"chequedate\",ih.instrumentAmount as \"chequeamount\" "
                 + " FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id =?"
@@ -315,10 +315,10 @@ public class BankReconciliation {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, bankAccId);
-            pst.setString(2, asOnDate);
-            pst.setString(3, bankAccId);
-            pst.setString(4, asOnDate);
+            pst.setString(0, bankAccId);
+            pst.setString(1, asOnDate);
+            pst.setString(2, bankAccId);
+            pst.setString(3, asOnDate);
             rs = pst.list();
             BrsDetails brs;
             for (final Object[] element : rs) {
@@ -337,7 +337,7 @@ public class BankReconciliation {
                 // brs.setVoucherNumber(rs.getString("vouchernumber"));
                 // brs.setCgnum(rs.getString("cgnumber"));
                 brs.setInstrumentHeaderId(element[2].toString());
-                vouchersPS.setLong(1, Long.valueOf(brs.getInstrumentHeaderId()));
+                vouchersPS.setLong(0, Long.valueOf(brs.getInstrumentHeaderId()));
                 vouchersRS = vouchersPS.list();
                 brs.setVoucherNumbers(new ArrayList<String>());
                 brs.setVoucherHeaderIds(new ArrayList<Long>());
@@ -396,31 +396,31 @@ public class BankReconciliation {
     public String getUnReconciledDrCr(final String bankAccId, final String recDate, final Connection con) throws Exception
     {
 
-        final String instrumentsForBrsEntryTotal = "decode(br.voucherHeaderId,null,ih.instrumentAmount,0)";
+        final String instrumentsForBrsEntryTotal = "case when br.voucherHeaderId = null then ih.instrumentAmount else 0 end ";
         getExcludeStatuses();
 
-        final String totalQuery = "SELECT (sum(decode(ih.ispaycheque, '1',ih.instrumentAmount ,0)))  AS \"brs_creditTotal\", "
-                + " (sum(decode(ih.ispaycheque, '0',ih.instrumentAmount,0)) ) AS \"brs_debitTotal\" "
+        final String totalQuery = "SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end))  AS \"brs_creditTotal\", "
+                + " (sum(case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end)) AS \"brs_debitTotal\" "
                 + " FROM egf_instrumentheader ih 	WHERE   ih.bankAccountId =? "
                 + " AND IH.INSTRUMENTDATE >= TO_DATE(?,'DD-MON-YYYY')"
                 + " AND IH.INSTRUMENTDATE <= TO_DATE(?,'DD-MON-YYYY') "
                 + " AND  ( (ih.ispaycheque=0 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque=1 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
                 + " and ih.instrumentnumber is not null";
 
-        final String otherTotalQuery = " SELECT (sum(decode(ih.ispaycheque, '1',ih.instrumentAmount,0)))  AS \"brs_creditTotalOthers\", "
-                + " (sum(decode(ih.ispaycheque, '0',ih.instrumentAmount,0)) ) AS \"brs_debitTotalOthers\" "
+        final String otherTotalQuery = " SELECT (sum(case when ih.ispaycheque = '1'  then ih.instrumentAmount else 0 end))  AS \"brs_creditTotalOthers\", "
+                + " (sum(case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end)) AS \"brs_debitTotalOthers\" "
                 + " FROM  egf_instrumentheader ih	WHERE   ih.bankAccountId =?"
                 + " AND IH.INSTRUMENTDATE >= TO_DATE(?,'DD-MON-YYYY')"
                 + " AND IH.transactiondate <= TO_DATE(? ,'DD-MON-YYYY') "
                 + " AND ( (ih.ispaycheque=0 and ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque=1 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
                 + " AND ih.transactionnumber is not null";
 
-        final String brsEntryQuery = " SELECT (sum(decode(ih.ispaycheque, '1',"
+        final String brsEntryQuery = " SELECT (sum( case when ih.ispaycheque = '1' then "
                 + instrumentsForBrsEntryTotal
-                + ",0)))  AS \"brs_creditTotalBrsEntry\", "
-                + " (sum(decode(ih.ispaycheque, '0',"
+                + " else 0 end))  AS \"brs_creditTotalBrsEntry\", "
+                + " (sum(case when ih.ispaycheque = '0' then  "
                 + instrumentsForBrsEntryTotal
-                + ",0)) ) AS \"brs_debitTotalBrsEntry\" "
+                + " else 0 end) ) AS \"brs_debitTotalBrsEntry\" "
                 + " FROM egf_instrumentheader ih, bankentries br	WHERE   ih.bankAccountId = ?"
                 + " AND IH.transactiondate >= TO_DATE(? ,'DD-MON-YYYY') "
                 + " AND IH.transactiondate <= TO_DATE(? ,'DD-MON-YYYY') "
@@ -447,8 +447,8 @@ public class BankReconciliation {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(totalQuery);
-            pst.setString(1, bankAccId);
-            pst.setString(2, recDate);
+            pst.setString(0, bankAccId);
+            pst.setString(1, recDate);
 
             rs = pst.list();
 
@@ -458,8 +458,8 @@ public class BankReconciliation {
 
             }
             pst = HibernateUtil.getCurrentSession().createSQLQuery(otherTotalQuery);
-            pst.setString(1, bankAccId);
-            pst.setString(2, recDate);
+            pst.setString(0, bankAccId);
+            pst.setString(1, recDate);
             rs = pst.list();
             for (final Object[] element : rs) {
                 creditOthertotal = element[0].toString();
@@ -468,8 +468,8 @@ public class BankReconciliation {
             }
 
             pst = HibernateUtil.getCurrentSession().createSQLQuery(brsEntryQuery);
-            pst.setString(1, bankAccId);
-            pst.setString(2, recDate);
+            pst.setString(0, bankAccId);
+            pst.setString(1, recDate);
             rs = pst.list();
             for (final Object[] element : rs) {
                 creditTotalBrsEntry = element[0].toString();
@@ -499,11 +499,11 @@ public class BankReconciliation {
     public String getUnReconciledDrCr(final Integer bankAccId, final Date fromDate, final Date toDate) throws Exception
     {
 
-        final String instrumentsForBrsEntryTotal = "decode(br.voucherHeaderId,null,ih.instrumentAmount,0)";
+        final String instrumentsForBrsEntryTotal = "case when br.voucherHeaderId = null then ih.instrumentAmount else 0 end ";
         getExcludeStatuses();
 
-        final String totalQuery = "SELECT (sum(decode(ih.ispaycheque, '1',ih.instrumentAmount ,0)))  AS \"brs_creditTotal\", "
-                + " (sum(decode(ih.ispaycheque, '0',ih.instrumentAmount,0)) ) AS \"brs_debitTotal\" "
+        final String totalQuery = "SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end))  AS \"brs_creditTotal\", "
+                + " (sum(case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end) ) AS \"brs_debitTotal\" "
                 + " FROM egf_instrumentheader ih 	WHERE   ih.bankAccountId =:bankAccountId "
                 + " AND IH.INSTRUMENTDATE >= :fromDate"
                 + " AND IH.INSTRUMENTDATE <= :toDate"
@@ -511,20 +511,20 @@ public class BankReconciliation {
                 + " and ih.instrumentnumber is not null";
         // see u might need to exclude brs entries here
 
-        final String otherTotalQuery = " SELECT (sum(decode(ih.ispaycheque, '1',ih.instrumentAmount,0)))  AS \"brs_creditTotalOthers\", "
-                + " (sum(decode(ih.ispaycheque, '0',ih.instrumentAmount,0)) ) AS \"brs_debitTotalOthers\" "
+        final String otherTotalQuery = " SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end))  AS \"brs_creditTotalOthers\", "
+                + " (case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end) ) AS \"brs_debitTotalOthers\" "
                 + " FROM  egf_instrumentheader ih	WHERE   ih.bankAccountId =:bankAccountId"
                 + " AND IH.transactiondate >= :fromDate"
                 + " AND IH.transactiondate <= :toDate  "
                 + " AND ( (ih.ispaycheque=0 and ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque=1 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
                 + " AND ih.transactionnumber is not null";
 
-        final String brsEntryQuery = " SELECT (sum(decode(ih.ispaycheque, '1',"
+        final String brsEntryQuery = " SELECT (sum(case when ih.ispaycheque = '1' then "
                 + instrumentsForBrsEntryTotal
-                + ",0)))  AS \"brs_creditTotalBrsEntry\", "
-                + " (sum(decode(ih.ispaycheque, '0',"
+                + "else 0 end ))  AS \"brs_creditTotalBrsEntry\", "
+                + " (sum(case when ih.ispaycheque = '0' then "
                 + instrumentsForBrsEntryTotal
-                + ",0)) ) AS \"brs_debitTotalBrsEntry\" "
+                + " else 0 end)) ) AS \"brs_debitTotalBrsEntry\" "
                 + " FROM egf_instrumentheader ih, bankentries br	WHERE   ih.bankAccountId = :bankAccountId"
                 + " AND IH.transactiondate >= :fromDate  "
                 + " AND IH.transactiondate <= :toDate "
@@ -620,18 +620,18 @@ public class BankReconciliation {
     public String getUnRecDrCrAndBankEntries(final String bankAccId, final String recDate) throws Exception
     {
 
-        final String query = "SELECT (sum(decode(rec.transactionType, 'Cr',decode(rec.type, 'C', rec.amount,0),0)))+ "
-                + " (sum(decode(rec.transactionType, 'Cr',decode(rec.type, 'O', rec.amount,0),0)))+ "
-                + " (sum(decode(rec.transactionType, 'Cr',decode(rec.type, 'D', rec.amount,0),0)))   AS \"brs_creditTotal\", "
-                + " (sum(decode(rec.transactionType, 'Dr',decode(rec.type, 'R', rec.amount,0),0)))+ "
-                + " sum((select decode(sum(decode(be.type,'R',be.txnamount,0)),null,0,sum(decode(be.type,'R',be.txnamount,0))) from bankentries be,bankaccount bank where bank.id =?  AND "
+        final String query = "SELECT (sum(case when rec.transactionType = 'Cr' then (case when  rec.type = 'C' then  rec.amount else 0 end) else 0 end ))+ "
+                + " (sum(case when rec.transactionType = 'Cr' then (case when rec.type = 'O' then rec.amount else 0 end)  else 0 end))+ "
+                + " (sum(case when rec.transactionType = 'Cr'then (case whenrec.type = 'D' then  rec.amount else 0 end ) else 0 end ))   AS \"brs_creditTotal\", "
+                + " (sum(case when rec.transactionType = 'Dr' then (case when rec.type = 'R' then rec.amount else 0 end ) else 0 end ))+ "
+                + " sum((select case when (sum(case when be.type = 'R' then be.txnamount else 0 end )) = null then 0 else sum((case when be.type = 'R' then be.txnamount else 0 end )) end  from bankentries be,bankaccount bank where bank.id =?  AND "
                 + " be.bankAccountId = bank.id and be.txndate<= to_date(? || ' 23:59:59','DD-MON-YYYY HH24:MI:SS') "
                 + " and be.voucherheaderid is null))/COUNT(*) AS \"brs_creditTotalOthers\", "
-                + " (sum(decode(rec.transactionType, 'Dr',decode(rec.type, 'C', rec.amount,0),0)) )+ "
-                + " (sum(decode(rec.transactionType, 'Dr',decode(rec.type, 'O', rec.amount,0),0)))+ "
-                + " (sum(decode(rec.transactionType, 'Dr',decode(rec.type, 'D', rec.amount,0),0)))  AS \"brs_debitTotal\", "
-                + " (sum(decode(rec.transactionType, 'Cr',decode(rec.type, 'P', rec.amount,0),0)))+ "
-                + " sum((select decode(sum(decode(be.type,'P',be.txnamount,0)),null,0,sum(decode(be.type,'P',be.txnamount,0))) from bankentries be,bankaccount bank where bank.id =?  AND "
+                + " (sum( case when rec.transactionType = 'Dr' then (case when rec.type = 'C' then  rec.amount else 0 end ) else 0 end ))+ "
+                + " (sum(case when rec.transactionType = 'Dr' then ( case when rec.type = 'O' then  rec.amount else 0 end ) else 0 end ))+ "
+                + " (sum(case when rec.transactionType = 'Dr' then ( case when rec.type = 'D' then  rec.amount else 0 end ) else 0 end ))  AS \"brs_debitTotal\", "
+                + " (sum(case when rec.transactionType = 'Cr'then ( case when  rec.type = 'P' then  rec.amount else 0 end ) else 0 end ))+ "
+                + " sum((select case when  sum(case when be.type  = 'P'  then be.txnamount else 0 end) = null  then 0 else sum(case when be.type = 'P' then be.txnamount else 0 end) end  from bankentries be,bankaccount bank where bank.id =?  AND "
                 + " be.bankAccountId = bank.id and be.txndate<= to_date(?  || ' 23:59:59','DD-MON-YYYY HH24:MI:SS') "
                 + " and be.voucherheaderid is null))/COUNT(*) AS \"brs_debitTotalOthers\" "
                 + " FROM bankReconciliation rec, bankAccount bank,voucherheader vh WHERE rec.bankAccountId = bank.id AND bank.id =? "
@@ -650,15 +650,15 @@ public class BankReconciliation {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, bankAccId);
-            pst.setString(2, recDate);
-            pst.setString(3, bankAccId);
-            pst.setString(4, recDate);
-            pst.setString(5, bankAccId);
-            pst.setString(6, recDate);
-            pst.setString(7, bankAccId);
+            pst.setString(0, bankAccId);
+            pst.setString(1, recDate);
+            pst.setString(2, bankAccId);
+            pst.setString(3, recDate);
+            pst.setString(4, bankAccId);
+            pst.setString(5, recDate);
+            pst.setString(6, bankAccId);
+            pst.setString(7, recDate);
             pst.setString(8, recDate);
-            pst.setString(9, recDate);
             rs = pst.list();
             for (final Object[] element : rs)
                 unReconciledDrCr = (element[0].toString() != null ? element[0].toString() : "0") + "/"
@@ -677,9 +677,9 @@ public class BankReconciliation {
     public ArrayList getUnReconciledCheques(final String bankAccId, final String recDate) throws Exception
     {
         final String voucherExcludeStatuses = getExcludeStatuses();
-        final String query = "select decode(ih.instrumentNumber,null,'Direct',ih.instrumentNumber) as \"chequeNumber\", "
+        final String query = "select case when ih.instrumentNumber  = null then 'Direct' else ih.instrumentNumber end as \"chequeNumber\", "
                 +
-                "ih.instrumentDate as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\" , decode(rec.transactionType, 'Cr', 'P','R')  as \"type\" "
+                "ih.instrumentDate as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\" , case when rec.transactionType = 'Cr' then 'P' else 'R' end  as \"type\" "
                 +
                 "FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
                 + "VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id =?"
@@ -688,9 +688,9 @@ public class BankReconciliation {
                 + voucherExcludeStatuses
                 + ") AND ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque=1 and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
                 + " AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.instrumentNumber is not null union  "
-                + "select decode(ih.transactionnumber,null,'Direct',ih.transactionnumber) as \"chequeNumber\", "
+                + "select case when ih.transactionnumber = null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", "
                 +
-                "ih.transactiondate as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", decode(rec.transactionType, 'Cr', 'P','R')   as \"type\" "
+                "ih.transactiondate as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", case when rec.transactionType = 'Cr' then 'P' else 'R' end   as \"type\" "
                 +
                 "FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
                 + "VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id =?"
@@ -721,10 +721,10 @@ public class BankReconciliation {
         try
         {
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(1, bankAccId);
-            pst.setString(2, recDate);
-            pst.setString(3, bankAccId);
-            pst.setString(4, recDate);
+            pst.setString(0, bankAccId);
+            pst.setString(1, recDate);
+            pst.setString(2, bankAccId);
+            pst.setString(3, recDate);
 
             rs = pst.list();
             BrsDetails brs;
@@ -759,10 +759,10 @@ public class BankReconciliation {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(updateQuery);
             pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
-            pst.setString(1, recDate);
-            pst.setString(2, recChqDate);
-            pst.setInteger(3, payinVHeadId);
-            pst.setString(4, chqNumber);
+            pst.setString(0, recDate);
+            pst.setString(1, recChqDate);
+            pst.setInteger(2, payinVHeadId);
+            pst.setString(3, chqNumber);
             pst.executeUpdate();
         } catch (final Exception e)
         {

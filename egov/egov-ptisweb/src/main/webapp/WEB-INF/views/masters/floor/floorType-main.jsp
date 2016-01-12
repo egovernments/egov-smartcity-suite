@@ -68,7 +68,7 @@
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${floorTypes}" itemValue="id"
+								<form:options items="${floortypes}" itemValue="id"
 									itemLabel="name" />
 							</form:select>
 							<form:errors path="name" cssClass="error-msg" />

@@ -348,9 +348,9 @@ public class FunctionwiseIEService
     ParseException
     {
 
-        final String sql = "SELECT fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name),DECODE('"
+        final String sql = "SELECT fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name),case '"
                 + reportSearch.getIncExp()
-                + "','I',(SUM(gl.creditamount)-SUM(gl.debitamount)),'E', (SUM(gl.debitamount)-SUM(gl.creditamount))) AS amt " +
+                + "' when  'I' then (SUM(gl.creditamount)-SUM(gl.debitamount)) when 'E' then (SUM(gl.debitamount)-SUM(gl.creditamount)) else 0 end AS amt " +
                 " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis " +
                 " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
                 + reportSearch.getMajorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
