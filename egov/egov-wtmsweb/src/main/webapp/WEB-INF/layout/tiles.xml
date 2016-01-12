@@ -202,5 +202,13 @@
         <put-attribute name="page-title" value="title.dailyCollectionReport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dailyWTCollection-search.jsp"/>
     </definition>
+    <definition name="category-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master.jsp"/>
+    </definition>
+     <definition name="category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
+    </definition>
      
 </tiles-definitions>

@@ -59,13 +59,10 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
 
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType ")
+    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
 
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType=:propertyType and PC.categorytype.name != 'BPL' ")
+    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.categorytype.name != 'BPL' ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
-    
-    @Query("select PC from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType in (select PT.id from PropertyType PT where PT.code =:propertyType) and PC.categorytype.code =:categoryCode ")
-    PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(@Param("propertyType") String propertyType,@Param("categoryCode") String categoryCode);
 
 }

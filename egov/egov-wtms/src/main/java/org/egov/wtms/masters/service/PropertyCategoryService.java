@@ -37,69 +37,44 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.entity;
+package org.egov.wtms.masters.service;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.util.List;
 
-@Entity
-@Table(name = "egwtr_property_category")
-@SequenceGenerator(name = PropertyCategory.SEQ_PROPERTY_CATEGORY, sequenceName = PropertyCategory.SEQ_PROPERTY_CATEGORY, allocationSize = 1)
-public class PropertyCategory extends AbstractPersistable<Long> {
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.PropertyCategory;
+import org.egov.wtms.masters.repository.PropertyCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    private static final long serialVersionUID = 8604331107634946265L;
-    public static final String SEQ_PROPERTY_CATEGORY = "SEQ_EGWTR_PROPERTY_CATEGORY";
+@Service
+@Transactional(readOnly = true)
+public class PropertyCategoryService {
 
-    @Id
-    @GeneratedValue(generator = SEQ_PROPERTY_CATEGORY, strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private final PropertyCategoryRepository propertyCategoryRepository;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "categorytype")
-    private ConnectionCategory categorytype;
-    
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "propertytype")
-    private PropertyType propertyType;
+    @Autowired
+    public PropertyCategoryService(final PropertyCategoryRepository propertyCategoryRepository) {
+        this.propertyCategoryRepository = propertyCategoryRepository;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    protected void setId(final Long id) {
-        this.id = id;
     }
     
-    public PropertyType getPropertyType() {
-        return propertyType;
+    @Transactional
+    public PropertyCategory createPropertyCategory(final PropertyCategory propertyCategory) {
+        return propertyCategoryRepository.save(propertyCategory);
     }
 
-    public void setPropertyType(PropertyType propertyType) {
-        this.propertyType = propertyType;
+    @Transactional
+    public void updatePropertyCategory(final PropertyCategory propertyCategory) {
+        propertyCategoryRepository.save(propertyCategory);
     }
-
-   
-
-    public ConnectionCategory getCategorytype() {
-        return categorytype;
-    }
-
-    public void setCategorytype(final ConnectionCategory categorytype) {
-        this.categorytype = categorytype;
+    
+    public PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(final String propertyType,
+            final String categoryType) {
+       
+            return propertyCategoryRepository.getAllCategoryTypesByPropertyTypeAndCategory(propertyType,categoryType);
     }
 
 }
