@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-12-11T12:58:45 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-01-13T13:24:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="097af81c-f4bf-4e72-9596-ed5b89f2e492">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="org.egov.infstr.utils.*"/>
 	<import value="java.math.*"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -23,6 +23,9 @@
 	</field>
 	<field name="crAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Credit Amount]]></fieldDescription>
+	</field>
+	<field name="creditAmountToBePaid" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Actual credit amount to be paid]]></fieldDescription>
 	</field>
 	<field name="drAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Debit Amount]]></fieldDescription>
@@ -54,6 +57,9 @@
 	</variable>
 	<variable name="currentInst" class="java.lang.String">
 		<variableExpression><![CDATA[($F{description}.substring($F{description}.indexOf('-')+1,$F{description}.indexOf('#')).trim().equals($F{description}.substring($F{description}.indexOf('#')+1,$F{description}.length()).trim())) ? ($F{description}.substring(0, $F{description}.indexOf('#'))) : $V{currentInst}]]></variableExpression>
+	</variable>
+	<variable name="totalamounttobepaid" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{creditAmountToBePaid}]]></variableExpression>
 	</variable>
 	<filterExpression><![CDATA[$F{isRevenueAccount} == false && ($F{crAmount} > 0 || $F{drAmount} > 0)]]></filterExpression>
 	<group name="REPORT_GROUP">
@@ -150,6 +156,22 @@
 					</textElement>
 					<text><![CDATA[Total:]]></text>
 				</staticText>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="20" uuid="c14a930f-67ea-4747-bc66-e3bc2e7178d6">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(($V{totalamounttobepaid}-$V{totalAmount})>0?"(Partially)":"")]]></textFieldExpression>
+				</textField>
 			</band>
 			<band height="20">
 				<textField isStretchWithOverflow="true">
