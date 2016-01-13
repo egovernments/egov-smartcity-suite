@@ -177,6 +177,11 @@
 											class="mandatory set-mandatory"></span>
 									</div>
 								</div>
+								<div class="form-group display-hide" id="counter-section">
+									<div class="signin-leftpadding">
+										<select class="form-control"><option>select counter</option></select>
+									</div>
+								</div>
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">

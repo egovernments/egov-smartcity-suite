@@ -59,4 +59,11 @@ $(document).ready(function()
 			$('.search-error-msg').removeClass('display-hide');
 		}
 	});
+	
+	$('#j_username').blur(function(){
+		//ajax call to load counter
+		
+		//To enable counter dropdown 
+		//$('#counter-section').removeClass('display-hide');
+	});
 });
