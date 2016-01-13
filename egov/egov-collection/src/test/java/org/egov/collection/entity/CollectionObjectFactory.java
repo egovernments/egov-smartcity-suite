@@ -997,7 +997,7 @@ public class CollectionObjectFactory {
 		Functionary functionary = new Functionary();
 		functionary.setCode(BigDecimal.valueOf(10102));
 		functionary.setCreatetimestamp(new Date());
-		functionary.setIsactive(1);
+		functionary.setIsactive(true);
 		functionary.setName("Test Functionary");
 		functionary.setUpdatetimestamp(new Date());
 		return functionary;
@@ -1452,7 +1452,7 @@ public class CollectionObjectFactory {
 		Functionary functionary = new Functionary();
 		functionary.setCode(BigDecimal.valueOf(10102));
 		functionary.setCreatetimestamp(new Date());
-		functionary.setIsactive(1);
+		functionary.setIsactive(true);
 		functionary.setName("Test Functionary");
 		functionary.setUpdatetimestamp(new Date());
 		session.saveOrUpdate(functionary);
