@@ -84,7 +84,7 @@ $(document).ready(function()
 				$('#approvalPosition').empty();
 				$('#approvalPosition').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
-					$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
+					$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));
 				});
 				
 			}, 
@@ -93,6 +93,14 @@ $(document).ready(function()
 			}
 		});
 	});
+	
+	$('#approvalPosition').change(function(){
+		var approvername=$('#approvalPosition option:selected').text().split('/')[0];
+		var nextDesignation=$('#approvalPosition option:selected').text().split('/')[1];
+		$('#approverName').val(approvername);
+		$('#nextDesignation').val(nextDesignation);
+	});
+	
 	
 });
 

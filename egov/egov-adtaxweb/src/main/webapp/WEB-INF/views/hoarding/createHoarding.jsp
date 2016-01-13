@@ -67,16 +67,16 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+								<%-- <label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.hoarding.permission.no"/>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" cssClass="form-control patternvalidation" 
                         	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" />
                                		<form:errors path="permissionNumber" cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.hoarding.no"/>
+								</div> --%>
+								<label class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.advertisement.number"/>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" cssClass="form-control patternvalidation" 

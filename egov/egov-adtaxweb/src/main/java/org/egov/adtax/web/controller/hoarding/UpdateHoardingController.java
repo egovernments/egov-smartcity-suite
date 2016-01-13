@@ -38,8 +38,8 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -48,7 +48,9 @@ import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -72,7 +74,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
-        model.addAttribute("additionalRule",AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
         prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
@@ -82,11 +84,13 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "update/{id}", method = POST)
-    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request, final Model model,
+    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
+            final Model model,
             @RequestParam String workFlowAction) {
-     
-        validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder,redirAttrib);
-              
+
+        validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
+
         if (resultBinder.hasErrors())
             return "hoarding-update";
         try {
@@ -98,12 +102,23 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-            
+
             updateHoardingDocuments(advertisementPermitDetail);
-            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail,approvalPosition,
+            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
                     approvalComment, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
-            redirAttrib.addFlashAttribute("message", "hoarding.update.success");
-            return "redirect:/hoarding/view/" + advertisementPermitDetail.getId();
+            if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction))
+                redirAttrib.addFlashAttribute("message", "msg.success.approved");
+            else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+                final Assignment wfInitiator = advertisementPermitDetailService.getWfInitiator(advertisementPermitDetail);
+                if (EgovThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId()))
+                    redirAttrib.addFlashAttribute("message", "msg.success.cancelled");
+                else {
+                    redirAttrib.addFlashAttribute("message", "msg.success.reject");
+                    redirAttrib.addFlashAttribute("approverName", wfInitiator.getEmployee().getName());
+                    redirAttrib.addFlashAttribute("nextDesign", wfInitiator.getDesignation().getName());
+                }
+            }
+            return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return "hoarding-update";

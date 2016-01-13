@@ -71,7 +71,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
-   
 
     /*
      * @ModelAttribute public Hoarding hoarding() { return new Hoarding(); }
@@ -101,65 +100,74 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "create", method = GET)
-    public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,final Model model) {
+    public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+            final Model model) {
         prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
-        model.addAttribute("additionalRule",AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", "NEW");
         return "hoarding-create";
     }
 
-    
     @RequestMapping(value = "create", method = POST)
-    public String createAdvertisement(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder,
-            final RedirectAttributes redirAttrib,final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
+    public String createAdvertisement(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder,
+            final RedirectAttributes redirAttrib, final HttpServletRequest request, final Model model,
+            @RequestParam String workFlowAction) {
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateApplicationDate(advertisementPermitDetail, resultBinder);
         if (advertisementPermitDetail.getState() == null)
-            advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
+            advertisementPermitDetail.setStatus(advertisementPermitDetailService
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
         if (resultBinder.hasErrors())
             return "hoarding-create";
-        
+
         storeHoardingDocuments(advertisementPermitDetail);
-        
+
         Long approvalPosition = 0l;
         String approvalComment = "";
+        String approverName = "";
+        String nextDesignation = "";
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("approverName") != null)
+            approverName = request.getParameter("approverName");
+        if (request.getParameter("nextDesignation") != null)
+            nextDesignation = request.getParameter("nextDesignation");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition, approvalComment, "CREATEADVERTISEMENT", workFlowAction);
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
+                approvalComment, "CREATEADVERTISEMENT", workFlowAction);
         redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
-        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
+        redirAttrib.addFlashAttribute("message", "msg.success.forward");
+        redirAttrib.addFlashAttribute("approverName", approverName);
+        redirAttrib.addFlashAttribute("nextDesign", nextDesignation);
         return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
     }
-    
-    private void validateApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
-       if(advertisementPermitDetail!=null && advertisementPermitDetail.getApplicationDate()!=null )
-       {
-           final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-           if (installmentObj != null && installmentObj.getFromDate() != null)
-           {
-               if( advertisementPermitDetail.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate()))||
-                       advertisementPermitDetail.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
-               {
-                   resultBinder.rejectValue("applicationDate", "invalid.applicationDate");
-               }
-           }
-           
-       }
-        
+
+    private void validateApplicationDate(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder) {
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationDate() != null) {
+            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
+            if (installmentObj != null && installmentObj.getFromDate() != null)
+                if (advertisementPermitDetail.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate())) ||
+                        advertisementPermitDetail.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
+                    resultBinder.rejectValue("applicationDate", "invalid.applicationDate");
+
+        }
+
     }
-  
 
     @RequestMapping(value = "/success/{id}", method = GET)
-    public ModelAndView successView(@PathVariable("id") final String id, @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
-        return new ModelAndView("hoarding/hoarding-success", "hoarding", advertisementPermitDetailService.findBy(Long.valueOf(id)));
+    public ModelAndView successView(@PathVariable("id") final String id,
+            @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
+        return new ModelAndView("hoarding/hoarding-success", "hoarding",
+                advertisementPermitDetailService.findBy(Long.valueOf(id)));
 
     }
-  
+
 }

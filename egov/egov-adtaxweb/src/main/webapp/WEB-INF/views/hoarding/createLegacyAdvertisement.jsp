@@ -150,25 +150,35 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.advertisement.permission.no"/>
-									</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control patternvalidation" 
-                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" />
-                               		<form:errors path="permissionNumber" cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label text-right">
-								<spring:message code="lbl.advertisement.no"/>
-								
-								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control patternvalidation" 
-                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
-                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
-								</div>
+							<c:choose>
+								<c:when test="${advertisement.legacy == 'true'}">
+									<label class="col-sm-3 control-label text-right">
+									<spring:message code="lbl.advertisement.permission.no"/>
+										</label>
+									<div class="col-sm-3 add-margin">
+										<form:input type="text" cssClass="form-control patternvalidation" 
+	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" />
+	                               		<form:errors path="permissionNumber" cssClass="error-msg" />
+									</div>
+									<label class="col-sm-2 control-label text-right">
+									<spring:message code="lbl.advertisement.no"/></label>
+									<div class="col-sm-3 add-margin">
+										<form:input type="text" cssClass="form-control patternvalidation" 
+	                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
+	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
+									</div>
+								</c:when>
+								<c:otherwise>
+									<label class="col-sm-3 control-label text-right">
+									<spring:message code="lbl.advertisement.no"/></label>
+									<div class="col-sm-3 add-margin">
+										<form:input type="text" cssClass="form-control patternvalidation" 
+	                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
+	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
+									</div>
+								</c:otherwise>
+							</c:choose>
 							</div>
-							
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.advertisement.agency"/>
@@ -224,9 +234,9 @@
                                		<form:errors path="permissionenddate" cssClass="error-msg" />
 								</div>
 							</div>
-						<div class="form-group">
+							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.advertisement.duration"/> 	<span class="mandatory"></span>
+									<spring:message code="lbl.advertisement.duration"/> <span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error" required="required">
@@ -235,8 +245,8 @@
 									</form:select>
 									<form:errors path="advertisementDuration" cssClass="error-msg" />
 								</div>
-						</div>		
-						<jsp:include page="hoarding-location.jsp"></jsp:include>
+							</div>		
+							<jsp:include page="hoarding-location.jsp"></jsp:include>
 						
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
@@ -312,7 +322,8 @@
                                		
 								</div>
 							</div>
-								<div class="form-group">
+						<c:if test="${advertisement.legacy == 'true'}">
+							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.advertisement.currentYearTax.paid"/>
 								<span class="mandatory"></span></label>
@@ -335,10 +346,10 @@
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="advertisement.pendingTax" id="pendingTax" required="required"/>
-									
                                		<form:errors path="advertisement.pendingTax" cssClass="error-msg" />
 								</div>
 							</div>
+						</c:if>
 					</div>
 					
 					<div class="panel-heading custom_form_panel_heading">

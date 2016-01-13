@@ -44,6 +44,7 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.utils.AdTaxNumberGenerator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -52,6 +53,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -124,23 +126,45 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
                             AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
             advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
+            advertisementPermitDetail.transition(true)
+                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+        } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            if (EgovThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())) {
+                advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+                                AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED));
+                advertisementPermitDetail.transition(true).end()
+                        .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
+                        .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+                advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.CANCELLED);
+            } else {
+                wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                        null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
+                advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus()));
+                advertisementPermitDetail.transition(true)
+                        .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                        .withComments(approvalComent)
+                        .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+            }
+
+        } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus()));
+            advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
             if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
                 advertisementPermitDetail.transition(true).end()
                         .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate())
                         .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-        } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
-            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus()));
-            advertisementPermitDetail.transition(true)
-                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent)
-                    .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction())
-                    .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-
         } else {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
