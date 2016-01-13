@@ -48,7 +48,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.lib.security.terminal.model.Location;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -94,7 +94,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * The counter id for which the receipt list is to be submitted/approved.
      */
-    private Integer counterId = Integer.valueOf(-1);
+    private Long counterId = -1l;
 
     /**
      * The user name for which the receipt list is to be submitted/approved.
@@ -178,7 +178,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
-            setCounterId(Integer.valueOf(params[4]));
+            setCounterId(Long.valueOf(params[4]));
             setReceiptDate(params[3]);
         }
         this.inboxItemDetails = inboxItemDetails;
@@ -248,7 +248,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * @return the counter id
      */
-    public Integer getCounterId() {
+    public Long getCounterId() {
         return counterId;
     }
 
@@ -256,7 +256,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param counterId
      *            the counter id to be set
      */
-    public void setCounterId(final Integer counterId) {
+    public void setCounterId(final Long counterId) {
         this.counterId = counterId;
     }
 
@@ -457,7 +457,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     public String listApprove() {
         if (counterId == null)
             // By default show receipts from all counters
-            counterId = -1;
+            counterId = -1l;
         if (userName == null)
             // By default show receipts created by all users
             userName = CollectionConstants.ALL;

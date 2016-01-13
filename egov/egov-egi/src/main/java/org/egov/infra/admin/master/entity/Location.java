@@ -37,41 +37,77 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.persistence.validator.annotation;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.egov.infra.admin.master.entity;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.validator.UniqueCheckValidator;
+@Entity
+@Table(name = "eg_location")
+@Cacheable
+@SequenceGenerator(name = Location.SEQ_LOCATION, sequenceName = Location.SEQ_LOCATION, allocationSize = 1)
+@Unique(fields = {"name"}, enableDfltMsg = true)
+public class Location extends AbstractPersistable<Long> {
 
-@Target({ TYPE })
-@Retention(RUNTIME)
-@Documented
-@Constraint(validatedBy = UniqueCheckValidator.class)
-public @interface Unique {
-    String[] fields() default {};
+    public static final String SEQ_LOCATION = "SEQ_EG_LOCATION";
+    private static final long serialVersionUID = 3457753550380426649L;
+    @Id
+    @GeneratedValue(generator = Location.SEQ_LOCATION, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
 
-    String id() default "id";
+    @NotNull
+    @Length(min = 2, max = 50)
+    private String name;
 
-    String tableName() default "";
+    @Length(max = 100)
+    private String description;
 
-    String[] columnName() default {};
+    private boolean active;
 
-    String message() default "{validator.unique}";
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-    boolean enableDfltMsg() default false;
+    @Override
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
-    boolean isSuperclass() default false;
-    
-    Class<?>[] groups() default {};
+    public String getName() {
+        return this.name;
+    }
 
-    Class<? extends Payload>[] payload() default {};
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

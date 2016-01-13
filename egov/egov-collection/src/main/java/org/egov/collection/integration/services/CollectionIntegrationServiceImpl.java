@@ -77,7 +77,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;

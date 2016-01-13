@@ -45,7 +45,7 @@ import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.security.terminal.model.Location;
+import org.egov.infra.admin.master.entity.Location;
 
 public interface BillReceiptInfo {
 

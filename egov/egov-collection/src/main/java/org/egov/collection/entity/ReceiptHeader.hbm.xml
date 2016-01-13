@@ -130,7 +130,7 @@
 		</set>
 
 		<many-to-one name="location"
-			class="org.egov.lib.security.terminal.model.Location" fetch="select">
+					 class="org.egov.infra.admin.master.entity.Location" fetch="select">
 			<column name="location" precision="22" scale="0" />
 		</many-to-one>
 

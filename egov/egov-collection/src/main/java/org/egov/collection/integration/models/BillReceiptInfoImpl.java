@@ -54,7 +54,7 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.EgwStatus;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.security.terminal.model.Location;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.instrument.InstrumentHeader;
 
 /**

@@ -83,7 +83,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.security.terminal.model.Location;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
