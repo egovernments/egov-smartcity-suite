@@ -168,7 +168,7 @@
 						<td class="bluebox"><s:text name="journalBook.department" /></td>
 						<td class="bluebox"><s:select name="dept_name" id="dept_name"
 								list="dropdownData.departmentList" listKey="id"
-								listValue="deptName" headerKey="" headerValue="----Choose----" /></td>
+								listValue="name" headerKey="" headerValue="----Choose----" /></td>
 					</tr>
 
 				</table>

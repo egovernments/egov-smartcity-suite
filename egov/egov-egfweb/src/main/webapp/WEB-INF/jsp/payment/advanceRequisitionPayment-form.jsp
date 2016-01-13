@@ -330,7 +330,7 @@ function validateUser(name,value){
 																	name="voucher.department" /><span class="mandatory">*</span></td>
 															<td class="greybox"><s:select name="departmentid"
 																	id="departmentid" list="dropdownData.departmentList"
-																	listKey="id" listValue="deptName" headerKey="-1"
+																	listKey="id" listValue="name" headerKey="-1"
 																	headerValue="----Choose----" value="%{departmentId}"
 																	onchange="populateUser()" /></td>
 															<td class="greybox">Approver Designation<span

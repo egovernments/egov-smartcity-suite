@@ -53,10 +53,8 @@
 <body onload="activeModeOfPayment()">
 	<s:form action="voucherStatusReport" name="voucherStatusReport"
 		theme="simple">
-		<!--	<jsp:include page="../budget/budgetHeader.jsp">
-	        		<jsp:param name="heading" value="Voucher Search" />
-				</jsp:include>		-->
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 
 		<div class="formmainbox">
@@ -68,6 +66,7 @@
 			<tr>
 				<jsp:include page="../voucher/voucher-filter.jsp" />
 			</tr>
+			<br/><br/>
 			<tr>
 				<td class="greybox"><s:text name="voucher.type" /></td>
 				<td class="greybox"><s:select name="type" id="type"
@@ -77,7 +76,9 @@
 				<td class="greybox"><s:text name="voucher.name" /></td>
 				<td class="greybox"><s:select name="name" id="name"
 						list="%{nameMap}" headerKey="-1" headerValue="----Choose----" /></td>
+						
 			</tr>
+			
 			<tr id="modeofpayment">
 				<td class="bluebox"><s:text name="voucher.modeOfPayment" /></td>
 				<td class="bluebox"><s:select name="modeOfPayment"
@@ -88,7 +89,7 @@
 			</tr>
 			<tr>
 				<td class="greybox"><s:text name="voucher.fromdate" /><span
-					class="mandatory">*</span></td>
+					class="mandatory1">*</span></td>
 				<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 				<td class="greybox"><s:textfield name="fromDate" id="fromDate"
 						maxlength="20"
@@ -98,27 +99,28 @@
 					style="text-decoration: none">&nbsp;<img
 						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
 				<td class="greybox"><s:text name="voucher.todate" /><span
-					class="mandatory">*</span></td>
+					class="mandatory1">*</span></td>
+					<%-- <s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" /> --%>
 				<td class="greybox"><s:textfield name="toDate" id="toDate"
 						maxlength="20"
 						onkeyup="DateFormat(this,this.value,event,false,'3')"
-						value="%{toDate}" /><a
+						value="%{tempToDate}" /><a
 					href="javascript:show_calendar('forms[0].toDate');"
 					style="text-decoration: none">&nbsp;<img
 						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
-				<td class="bluebox"><s:text name="voucher.status" /></td>
-				<td class="bluebox"><s:select name="status" id="status"
+				<td class="greybox"><s:text name="voucher.status" /></td>
+				<td class="greybox"><s:select name="status" id="status"
 						list="%{statusMap}" headerKey="-1" headerValue="----Choose----"
 						value="%{status}" /></td>
-				<td class="bluebox"></td>
-				<td class="bluebox"></td>
+				<td class="greybox"></td>
+				<td class="greybox"></td>
 			</tr>
 		</table>
 		<div class="buttonbottom">
-			<s:submit method="search" value="Search" cssClass="buttonsubmit" />
-			<s:submit method="beforeSearch" value="Cancel" cssClass="button" />
+			<s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="return validateSearch();"/>
+			<s:submit method="beforeSearch" value="Reset" cssClass="button"  onclick="return resetAndSubmit();"/>
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />
 
@@ -138,7 +140,7 @@
 							</display:column>
 							<display:column title="Department Name"
 								style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.deptName}" />
+								<s:property value="%{#attr.currentRowObject.name}" />
 							</display:column>
 							<display:column title="Voucher Number" style="text-align:center;">
 								<s:property value="%{#attr.currentRowObject.vouchernumber}" />
@@ -171,9 +173,9 @@
 					<td>
 						<div id="exportButton" class="buttonbottom">
 							<s:submit method="generatePdf" value="Save As Pdf"
-								cssClass="buttonsubmit" id="generatePdf" />
+								cssClass="buttonsubmit" id="generatePdf" onclick="return generatePdfsubmit();"/>
 							<s:submit method="generateXls" value="Save As Xls"
-								cssClass="buttonsubmit" id="generateXls" />
+								cssClass="buttonsubmit" id="generateXls" onclick="return generateXlsSubmit();"/>
 						</div>
 
 					</td>
@@ -227,6 +229,29 @@
 			}
 		}
 		
+		function validateSearch()
+		{
+
+			document.forms[0].action='${pageContext.request.contextPath}/report/voucherStatusReport-search.action';
+			document.forms[0].submit();
+		}
+
+		function resetAndSubmit()
+		{
+
+			document.forms[0].action='${pageContext.request.contextPath}/report/voucherStatusReport-beforeSearch.action';
+			document.forms[0].submit();
+		}
+		function generatePdfsubmit()
+		{
+			document.forms[0].action='${pageContext.request.contextPath}/report/voucherStatusReport-generatePdf.action';
+			document.forms[0].submit();
+		}
+		function generateXlsSubmit()
+		{
+			document.forms[0].action='${pageContext.request.contextPath}/report/voucherStatusReport-generateXls.action';
+			document.forms[0].submit();
+		}
 		
 		</script>
 

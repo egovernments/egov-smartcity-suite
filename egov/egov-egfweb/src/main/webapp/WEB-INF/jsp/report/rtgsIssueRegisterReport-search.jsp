@@ -163,7 +163,7 @@
 						name="voucher.department" />
 				<td class="bluebox"><s:select name="departmentid"
 						id="departmentid" list="dropdownData.departmentList" listKey="id"
-						listValue="deptName" headerKey="-1" headerValue="----Choose----"
+						listValue="name" headerKey="-1" headerValue="----Choose----"
 						onChange="alertWhileSelectingDepartment(this);"
 						value="%{departmentId.id}" /></td>
 			</tr>

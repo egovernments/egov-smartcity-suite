@@ -59,6 +59,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.chartOfAccounts.CodeValidator;
@@ -66,7 +67,7 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.ExilPrecision;
 import com.exilant.eGov.src.transactions.OpBal;
 import com.exilant.exility.common.TaskFailedException;
-
+@Service
 public class GeneralLedgerReport {
     Query pstmt = null;
     List<Object[]> resultset = null;
@@ -83,9 +84,10 @@ public class GeneralLedgerReport {
     DecimalFormat dft = new DecimalFormat("##############0.00");
     EGovernCommon egc = new EGovernCommon();
     CommnFunctions cmnFun = new CommnFunctions();
-
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private ReportEngine engine;
 
     public GeneralLedgerReport() {
     }
@@ -181,16 +183,17 @@ public class GeneralLedgerReport {
             throw taskExc;
         }
         final CodeValidator cv = CodeValidator.getInstance();
-        if (!cv.isValidCode(glCode1))
+      /*  if (!cv.isValidCode(glCode1))
         {
             LOGGER.error(glCode1 + " Not Valid");
             throw taskExc;
-        }
+        }*/
         double txnDrSum = 0, txnCrSum = 0, openingBalance = 0, closingBalance = 0;
 
         // String query = getQuery(glCode1,fundId, fundSourceId, startDate, endDate);
 
-        final ReportEngine engine = new ReportEngine();
+       // engine = new ReportEngine();
+       // engine.setAppConfigValuesService(appConfigValuesService); 
         final ReportEngineBean reBean = engine.populateReportEngineBean(reportBean);
         engineQry = engine.getVouchersListQuery(reBean);
 
@@ -210,7 +213,9 @@ public class GeneralLedgerReport {
                 throw taskExc;
             }
 
-            resultset1 = pstmt.list();
+             List list = pstmt.list();
+             resultset1=list;
+             Object[] array = list.toArray();
             final ArrayList data = new ArrayList();
             String accCode = "", vcNum = "", vcDate = "", narration = "", vcTypeName = "", voucherHeaderId = "";
             StringBuffer detail = new StringBuffer();
@@ -231,6 +236,7 @@ public class GeneralLedgerReport {
             {        // Will consider the startdate of report as the end date of the opening balance.
                 // Actually it considers 1 date less than startdate or you can say
                 // opb<startdate
+            	startDate = sdf.format(formatter1.parse(startDate));
                 final OpBal opbal = getOpeningBalance(glCode1, fundId, fundSourceId, fyId, accEntityId, accEntityKey, startDate,
                         functionId, deptId);
                 final String arr[] = new String[15];
@@ -240,11 +246,11 @@ public class GeneralLedgerReport {
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString);
-                pstmt.setString(0, glCode1);
-                final List<Object[]> res = pstmt.list();
+                pstmt.setString(1, glCode1);
+                final List res = pstmt.list();
                 String aName = "";
-                for (final Object[] element : res)
-                    aName = element[0].toString();
+                if(res!=null)
+                	aName = res.get(0).toString();
                 arr[1] = "";
                 arr[2] = arr[3] = arr[6] = arr[7] = arr[10] = arr[11] = arr[12] = arr[13] = "";
                 arr[14] = "";
@@ -296,7 +302,13 @@ public class GeneralLedgerReport {
                     LOGGER.info(" inside resultset");
                 try {
                     code = element[0].toString();
-                    isconfirmed = element[14].toString();
+                    if(element[14]==null)
+                    {
+                    isconfirmed = "";
+                    }else
+                    {
+                    	 isconfirmed = element[14].toString();
+                    }
                     // 9 is the dummy value used in the query
                     // To display X in Y are unconfirmed
                     if (isconfirmed != null && !isconfirmed.equalsIgnoreCase("") && !isconfirmed.equalsIgnoreCase("9"))
@@ -321,6 +333,7 @@ public class GeneralLedgerReport {
                     {
                         // glType=resultset1.getString("glType");
                         final String arr[] = new String[15];
+                        startDate = sdf.format(formatter1.parse(startDate));
                         final OpBal opbal = getOpeningBalance(code, fundId, fundSourceId, fyId, accEntityId, accEntityKey,
                                 startDate,
                                 functionId, deptId);
@@ -331,10 +344,10 @@ public class GeneralLedgerReport {
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
                         pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString1);
                         pstmt.setString(0, code);
-                        final List<Object[]> res = pstmt.list();
+                        final List res = pstmt.list();
                         String aName = "";
-                        for (final Object[] element1 : res)
-                            aName = element1[0].toString();
+                        if(res!=null)
+                            aName = res.get(0).toString();
 
                         arr[1] = "";
                         arr[2] = arr[3] = arr[6] = arr[7] = arr[10] = arr[11] = arr[12] = arr[13] = "";
@@ -615,7 +628,7 @@ public class GeneralLedgerReport {
                             final String vhId1 = element[2].toString();
                             if (LOGGER.isInfoEnabled())
                                 LOGGER.info("vhId1:::" + vhId1);
-                            cgn = cashbook.getCGN(vhId1);
+                            cgn = "";
                             // type = resultset1.getString("type");
                             txnDebit = Double.parseDouble(element[11].toString());
                             previousDebit = txnDebit;
@@ -858,22 +871,18 @@ public class GeneralLedgerReport {
             return "SELECT  gl.glcode as \"code\",(select ca.type from chartofaccounts ca where glcode=gl.glcode) as \"glType\" ,"
             + " vh.id AS \"vhid\",vh.voucherDate AS \"vDate\",to_char(vh.voucherDate ,'dd-Mon-yyyy') "
             + " AS \"voucherdate\",vh.voucherNumber AS \"vouchernumber\",gl.glCode AS \"glcode\",coa.name||"
-            + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(case gldet.detailtypeid when (select id from accountdetailtype where name='Creditor') "
-            + " then (select name from relation where id=gldet.detailkeyid ) when (select id from accountdetailtype where name='Employee') then (select emp_firstname from eg_employee where id=gldet.detailkeyid)"
-            + " else (select name from accountentitymaster where id=gldet.detailkeyid)  end )||']'"
-            + " ELSE NULL END) as \"Name\",case when gl.glcode = '"
-            + glCode1
-            + "' then (case when gl.DEBITAMOUNT = 0 then (gldet.amount||'.00cr') else "
-            + " (gldet.amount||'.00dr') end) else (case when gl.DEBITAMOUNT = 0 then (gl.creditamount||'.00cr') else "
-            + " (gl.debitamount||'.00dr') end ) end  as \"amount\",gl.description as \"narration\",vh .type || '-' || vh.name||case when "
-            + " status = 1 then '(Reversed)' else (case when status = 2 then '(Reversal)' else '' end ) end AS \"type\","
-            + " case when gl.glcode='"
-            + glCode1
-            + "' then (case when gl.debitAMOUNT = 0 then 0 else gldet.amount end ) else "
-            + " (case when gl.debitAMOUNT = 0 then 0 else gl.debitamount end) end as \"debitamount\",case when gl.glcode = '"
-            + glCode1
-            + "' then "
-            + " (case when gl.creditAMOUNT = 0 then 0 else gldet.amount end) else (case when gl.debitAMOUNT = 0 then 0 else gl.creditamount end ) end  as \"creditamount\","
+            + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Creditor') "+
+"THEN (select name from relation where id=gldet.detailkeyid ) "+
+"ELSE (CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Employee') "+
+"THEN (select emp_firstname from eg_employeewhere id=gldet.detailkeyid) "+
+"ELSE (select name from accountentitymaster where id=gldet.detailkeyid) END) END)||']'"
+            + " ELSE NULL END) as \"Name\",CASE WHEN gl.glcode = 'glCode1' THEN (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gldet.amount||'.00cr') ELSE (gldet.amount||'.00dr') END)"
+ +"ELSE (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gl.creditamount||'.00cr') ELSE (gl.debitamount||'.00dr') END) END"
++" as \"amount\",gl.description as \"narration\",vh .type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END"
++ " AS \"type\","
+            + " CASE WHEN gl.glcode = 'glCode1' THEN (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.debitamount END) END"
+            + "as \"debitamount\",CASE WHEN gl.glcode = 'glCode1' THEN (CASE WHEN gl.creditAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.creditamount END) END"
+            + "as \"creditamount\","
             + " f.name as \"fundName\",vh.isconfirmed as \"isconfirmed\",case when (gldet.generalledgerid=gl.id) "
             + " then gldet.detailkeyid else null end as \"DetailKeyId\",vh.type||'-'||vh.name as \"vouchertypename\" " +
             " FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,"
@@ -895,9 +904,10 @@ public class GeneralLedgerReport {
             .
             append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", ")
             .
-            append(" coa.name AS \"name\",case when gl.debitAmount = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount)    then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)    then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ) end AS \"amount\", ")
+            append(" coa.name AS \"name\",CASE WHEN gl.debitAmount = 0 THEN (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) ELSE (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount) then gl.debitamount||'.00dr' else  gl.debitamount||'dr' end ) END"
+            		+ " AS \"amount\", ")
             .
-            append(" gl.description AS \"narration\", vh.type || '-' || vh.name||case when status = 1 then '(Reversed)' else (case when status = 2 then '(Reversal)' else '' end) end  AS \"type\", ")
+            append(" gl.description AS \"narration\", vh.type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\", ")
             .
             append(" gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\",f.name as \"fundName\",  vh.isconfirmed as \"isconfirmed\",gl.functionid as \"functionid\",vh.type||'-'||vh.name as \"vouchertypename\" ")
             .
@@ -943,9 +953,9 @@ public class GeneralLedgerReport {
             accEntityCondition = "accountDetailTypeid=? AND accountDetailKey=? AND ";
         if (!StringUtils.isEmpty(functionId))
             functionCondition = " functionid=? AND ";
-        final String queryYearOpBal = "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) AS \"openingDebitBalance\", "
+        final String queryYearOpBal = "SELECT CASE WHEN sum(openingDebitBalance) = null THEN 0 ELSE sum(openingDebitBalance) END AS \"openingDebitBalance\", "
                 +
-                "case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) AS \"openingCreditBalance\" "
+                "CASE WHEN sum(openingCreditBalance) = null THEN 0 ELSE sum(openingCreditBalance) END AS \"openingCreditBalance\" "
                 +
                 "FROM transactionSummary WHERE "
                 + fundCondition
@@ -957,27 +967,28 @@ public class GeneralLedgerReport {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("**********************: OPBAL: " + queryYearOpBal);
         try {
-            int i = 1;
+            int i = 0;
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryYearOpBal);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(i++, fundId);
+                pstmt.setLong(i++, Long.valueOf(fundId));
             if (!fundSourceId.equalsIgnoreCase(""))
-                pstmt.setString(i++, fundSourceId);
+                pstmt.setLong(i++, Long.valueOf(fundSourceId));
             if (!StringUtils.isEmpty(functionId))
-                pstmt.setString(i++, functionId);
+            	  pstmt.setLong(i++, Long.valueOf(functionId));
             if (!accEntityId.equalsIgnoreCase("")) {
-                pstmt.setString(i++, accEntityId);
-                pstmt.setString(i++, accEntityKey);
+            	  pstmt.setLong(i++, Long.valueOf(accEntityId));
+            	  pstmt.setLong(i++, Long.valueOf(accEntityKey));
             }
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pstmt.setString(i++, deptId);
-            pstmt.setString(i++, fyId);
+            	 pstmt.setLong(i++, Long.valueOf(deptId));
+            pstmt.setLong(i++, Long.valueOf(fyId));
             pstmt.setString(i++, glCode);
             resultset = null;
-            resultset = pstmt.list();
+ List list = pstmt.list();
+ resultset=list;
             for (final Object[] element : resultset) {
-                opDebit = Double.parseDouble(element[0].toString());
-                opCredit = Double.parseDouble(element[1].toString());
+                opDebit = Double.parseDouble(element[0]!=null?element[0].toString():"0");
+                opCredit = Double.parseDouble(element[1]!=null?element[1].toString():"0");
             }
 
         } catch (final Exception ex) {
@@ -996,7 +1007,7 @@ public class GeneralLedgerReport {
         String queryTillDateOpBal = "";
         String defaultStatusExclude = null;
         final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
         if (null != listAppConfVal)
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
@@ -1037,8 +1048,8 @@ public class GeneralLedgerReport {
                     + " gl.CREDITamount>0) AS \"creditAmount\" FROM chartofaccounts coa WHERE 	coa.glcode IN (?)";
 
         } else
-            queryTillDateOpBal = "SELECT case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) AS \"debitAmount\", "
-                    + " case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end  AS \"creditAmount\" "
+            queryTillDateOpBal = "SELECT CASE WHEN sum(gl.debitAmount) = null THEN 0 ELSE sum(gl.debitAmount) END AS \"debitAmount\", "
+                    + " CASE WHEN sum(gl.creditAmount) = null THEN 0 ELSE sum(gl.creditAmount) END AS \"creditAmount\" "
                     + " FROM generalLedger gl, voucherHeader vh "
                     + deptFromCondition
                     + " WHERE vh.id = gl.voucherHeaderId AND "
@@ -1048,40 +1059,40 @@ public class GeneralLedgerReport {
                     + fundCondition
                     + fundSourceCondition
                     + functionCondition
-                    + " AND vh.voucherDate >= to_date(?,'dd/mm/yyyy') AND vh.voucherDate <to_date(?,'dd/mm/yyyy') AND vh.status not in ("
+                    + " AND vh.voucherDate >= to_date(?,'dd/MM/YYYY') AND vh.voucherDate <to_date(?,'dd/MM/YYYY') AND vh.status not in ("
                     + defaultStatusExclude + ")";
         if (LOGGER.isInfoEnabled())
             LOGGER.info("***********: OPBAL: " + queryTillDateOpBal);
         try {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryTillDateOpBal);
-            int i = 1;
+            int i = 0;
             if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase(""))
             {
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, fundId);
+                    pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, fundSourceId);
+                	pstmt.setLong(i++, Long.parseLong(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setString(i++, functionId);
+                	pstmt.setLong(i++, Long.parseLong(functionId));
                 if (!accEntityId.equalsIgnoreCase("")) {
-                    pstmt.setString(i++, accEntityId);
-                    pstmt.setString(i++, accEntityKey);
+                	pstmt.setLong(i++, Long.parseLong(accEntityId));
+                	pstmt.setLong(i++, Long.parseLong(accEntityKey));
                 }
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, deptId);
+                	pstmt.setLong(i++, Long.parseLong(deptId));
                 pstmt.setString(i++, startDate);
                 pstmt.setString(i++, tillDate);
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, deptId);
+                	pstmt.setLong(i++, Long.parseLong(deptId));
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, fundId);
+                	pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, fundSourceId);
+                	pstmt.setLong(i++, Long.parseLong(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setString(i++, functionId);
+                	pstmt.setLong(i++, Long.parseLong(functionId));
                 if (!accEntityId.equalsIgnoreCase("")) {
-                    pstmt.setString(i++, accEntityId);
-                    pstmt.setString(i++, accEntityKey);
+                	pstmt.setLong(i++, Long.parseLong(accEntityId));
+                	pstmt.setLong(i++, Long.parseLong(accEntityKey));
                 }
                 pstmt.setString(i++, startDate);
                 pstmt.setString(i++, tillDate);
@@ -1091,22 +1102,22 @@ public class GeneralLedgerReport {
             {
                 pstmt.setString(i++, glCode);
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, deptId);
+                	pstmt.setLong(i++, Long.parseLong(deptId));
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, fundId);
+                	pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setString(i++, fundSourceId);
+                	pstmt.setLong(i++, Long.parseLong(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setString(i++, functionId);
+                	pstmt.setLong(i++, Long.parseLong(functionId));
                 pstmt.setString(i++, startDate);
                 pstmt.setString(i++, tillDate);
             }
             resultset = null;
             resultset = pstmt.list();
             for (final Object[] element : resultset) {
-                if (element[0].toString() != null)
+                if (element[0] != null)
                     opDebit = opDebit + Double.parseDouble(element[0].toString());
-                if (element[1].toString() != null)
+                if (element[1] != null)
                     opCredit = opCredit + Double.parseDouble(element[1].toString());
             }
         } catch (final Exception ex) {
@@ -1167,8 +1178,8 @@ public class GeneralLedgerReport {
             try {
                 final String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                pstmt.setString(0, endDate);
                 pstmt.setString(1, endDate);
+                pstmt.setString(2, endDate);
                 rs = pstmt.list();
                 for (final Object[] element : rs)
                     startDate = element[0].toString();
@@ -1184,8 +1195,8 @@ public class GeneralLedgerReport {
                 final String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" " +
                         "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-                pstmt.setString(0, startDate);
                 pstmt.setString(1, startDate);
+                pstmt.setString(2, startDate);
                 rs = pstmt.list();
                 pstmt = null;
             } catch (final Exception ex) {
@@ -1205,9 +1216,12 @@ public class GeneralLedgerReport {
             final String query = "select glcode as \"glcode\" ,name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pst.setString(0, glCode);
-            resultset = pst.list();
-            for (final Object[] element : resultset)
-                accountName = element[0].toString() + " : " + element[1].toString();
+      List list = pst.list();
+      System.err.println(000);
+      Object[] objects = list.toArray();
+      System.err.println(111);
+      accountName=objects[0].toString();
+            
         } catch (final Exception e)
         {
             LOGGER.error("Exp in getAccountName:" + e.getMessage(), e);
@@ -1224,12 +1238,15 @@ public class GeneralLedgerReport {
         List<Object[]> resultset = null;
         try
         {
-            final String query = "select name as \"name\" from fund where id=?";
+            final String query = "select name  as \"name\" from fund where id=?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setString(0, fundId);
-            resultset = pst.list();
-            for (final Object[] element : resultset)
-                fundName = element[0].toString();
+            pst.setLong(0, Long.valueOf(fundId));
+             List list = pst.list();
+            System.err.println(000);
+           Object[] objects = list.toArray();
+           System.err.println(111);
+           fundName=objects[0].toString();
+          
         } catch (final Exception e)
         {
             LOGGER.error("Exp in getFundName" + e.getMessage(), e);
@@ -1283,4 +1300,7 @@ public class GeneralLedgerReport {
         }
 
     }
+
+	
+    
 }

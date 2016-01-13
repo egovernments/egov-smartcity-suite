@@ -68,7 +68,7 @@
 				name="budgetdetail.executingDepartment" /></td>
 		<td width="22%" class="greybox"><s:select
 				list="dropdownData.executingDepartmentList" listKey="id"
-				listValue="deptName" name="budgetDetail.executingDepartment.id"
+				listValue="name" name="budgetDetail.executingDepartment.id"
 				headerKey="0" headerValue="--- Select ---"
 				value="budgetDetail.executingDepartment.id"
 				id="budgetReAppropriation_executingDepartment"></s:select></td>

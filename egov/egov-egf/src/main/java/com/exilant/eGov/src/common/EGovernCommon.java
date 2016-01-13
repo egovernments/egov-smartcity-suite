@@ -2064,7 +2064,7 @@ public class EGovernCommon extends AbstractTask {
         List<Object[]> rs = null;
         String query = null;
         final List schemeList = new ArrayList();
-        query = "select id, name from scheme where fundid= ? order by name";
+        query = "select id, name from scheme where fundid= ? order by deptName";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query:" + query);
         try

@@ -447,15 +447,16 @@ public class CommnFunctions
 
     public String getStartDate(final int finYearId) throws TaskFailedException
     {
-        String startDate = "";
+        String startDate = "" ;
         final String query = "SELECT TO_CHAR(startingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
         try
         {
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pstmt.setInteger(0, finYearId);
-            resultset = pstmt.list();
-            for (final Object[] element : resultset)
-                startDate = element[0].toString();
+
+            List list = pstmt.list();
+            if(list!=null)
+            	startDate = list.get(0).toString();
 
         } catch (final Exception sql)
         {
@@ -529,14 +530,15 @@ public class CommnFunctions
         String fyId = "";
         try {
             final String query = "SELECT id FROM financialYear " +
-                    "WHERE startingDate<=? AND endingDate>=?";
+                    "WHERE to_char(startingDate,'dd-MMM-yyyy')<=? AND to_char(endingDate,'dd-MMM-yyyy')>=?";
             // for accross the financial year
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pstmt.setString(0, sDate);
             pstmt.setString(1, sDate);
-            resultset = pstmt.list();
-            for (final Object[] element : resultset)
-                fyId = element[0].toString();
+
+           List list = pstmt.list();
+           fyId=   list.toArray()[0].toString();
+
         } catch (final Exception ex) {
             fyId = "";
             if (LOGGER.isDebugEnabled())

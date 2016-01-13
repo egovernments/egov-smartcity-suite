@@ -81,6 +81,7 @@ import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -88,6 +89,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=VoucherStatusReport.pdf" }),
+                @Result(name = "search", location = "voucherStatusReport-search.jsp"),
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                         "application/xls", "contentDisposition", "no-cache;filename=VoucherStatusReport.xls" })
 })
@@ -120,8 +122,11 @@ public class VoucherStatusReportAction extends BaseFormAction
     private String countQry;
     private String modeOfPayment;
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-    List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
+    
+private FinancialYearDAO financialYearDAO;
+    
+
+	List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
 
     @Override
@@ -176,7 +181,7 @@ public class VoucherStatusReportAction extends BaseFormAction
     private void loadDropDowns() {
 
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+            addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         if (headerFields.contains("functionary"))
             addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
         if (headerFields.contains("fund"))
@@ -353,7 +358,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         if (!modeOfPayment.equals("-1"))
             sql = sql + " and upper(ph.type) ='" + getModeOfPayment() + "'";
         countQry = "select count(*) " + sql;
-        sql = "select vh " + sql + " order by vh.vouchermis.departmentid.deptName , vh.voucherNumber";
+        sql = "select vh " + sql + " order by vh.vouchermis.departmentid.name , vh.voucherNumber";
         final Query query = HibernateUtil.getCurrentSession().createQuery(sql);
         return query;
     }
@@ -538,13 +543,15 @@ public class VoucherStatusReportAction extends BaseFormAction
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
-
+    @SkipValidation
+    @Action(value = "/report/voucherStatusReport-generatePdf")
     public String generatePdf() throws Exception {
         populateData();
         inputStream = reportHelper.exportPdf(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "PDF";
     }
-
+    @SkipValidation
+    @Action(value = "/report/voucherStatusReport-generateXls")
     public String generateXls() throws Exception {
         populateData();
         inputStream = reportHelper.exportXls(inputStream, JASPERPATH, getParamMap(), voucherReportList);
@@ -555,11 +562,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         return paramMap;
     }
 
-    public InputStream getInputStream() {
-        return inputStream;
-    }
-
-    public void setPagedResults(final EgovPaginatedList pagedResults) {
+	public void setPagedResults(final EgovPaginatedList pagedResults) {
         this.pagedResults = pagedResults;
     }
 
@@ -631,4 +634,21 @@ public class VoucherStatusReportAction extends BaseFormAction
         this.modeOfPayment = modeOfPayment;
     }
 
+    public FinancialYearDAO getFinancialYearDAO() {
+		return financialYearDAO;
+	}
+
+	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+		this.financialYearDAO = financialYearDAO;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+	
+	
 }

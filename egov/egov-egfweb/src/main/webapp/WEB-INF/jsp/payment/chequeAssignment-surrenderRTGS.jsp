@@ -122,7 +122,7 @@
 							<td class="greybox"><s:text name="chq.issued.department" /><span
 								class="mandatory">*</span> <s:select name="department"
 									id="department" list="dropdownData.departmentList" listKey="id"
-									listValue="deptName" headerKey="-1"
+									listValue="name" headerKey="-1"
 									headerValue="----Choose----" value="%{department}" /></td>
 						</tr>
 					</s:if>

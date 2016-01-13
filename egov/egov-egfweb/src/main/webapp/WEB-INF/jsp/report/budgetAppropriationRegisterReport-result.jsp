@@ -80,7 +80,7 @@ function disableTheFiels() {
 					</s:if></td>
 				<td class="bluebox"><s:select
 						list="dropdownData.executingDepartmentList" listKey="id"
-						listValue="deptName" name="department.id" headerKey="0"
+						listValue="name" name="department.id" headerKey="0"
 						headerValue="--- Select ---" value="department.id" id="department"></s:select></td>
 				<td class="bluebox"><s:text name="report.budged.head" /><span
 					class="mandatory">*</span></td>

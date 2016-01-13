@@ -66,7 +66,7 @@
 	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('scheme')}">
 		<egov:ajaxdropdown id="schemeid" fields="['Text','Value']"
-			dropdownId="schemeid" url="voucher/common!ajaxLoadSchemes.action" />
+			dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
 		<td class="greybox"><s:text name="voucher.scheme" /> <s:if
 				test="%{isFieldMandatory('scheme')}">
 				<span class="mandatory1">*</span>
@@ -112,6 +112,7 @@
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="----Choose----" value="%{vouchermis.departmentid.id}" /></td>
 	</s:if>
+
 </tr>
 <tr>
 	<td style="width: 5%"></td>

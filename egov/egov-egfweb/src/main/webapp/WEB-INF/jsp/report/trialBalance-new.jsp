@@ -203,7 +203,7 @@ var toDateStr="";
 					<td class="bluebox"><s:text name="voucher.department" />
 					<td class="bluebox"><s:select name="departmentId"
 							id="departmentid" list="dropdownData.departmentList" listKey="id"
-							listValue="deptName" headerKey="" headerValue="----Choose----"
+							listValue="name" headerKey="" headerValue="----Choose----"
 							value="departmentId" /></td>
 				</tr>
 				<tr>

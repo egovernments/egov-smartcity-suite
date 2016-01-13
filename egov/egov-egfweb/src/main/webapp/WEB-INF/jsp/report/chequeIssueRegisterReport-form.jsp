@@ -152,7 +152,7 @@ function viewVoucher(vid){
 					<td class="bluebox"><s:text name="report.department" /></td>
 					<td width="22%" class="bluebox"><s:select
 							list="dropdownData.executingDepartmentList" listKey="id"
-							listValue="deptName" name="department.id" headerKey="0"
+							listValue="name" name="department.id" headerKey="0"
 							headerValue="--- Select ---" value="department.id"
 							id="department"></s:select></td>
 				</tr>

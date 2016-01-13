@@ -106,7 +106,7 @@
 					<td class="greybox"><s:text name="department" />
 					<td class="greybox"><s:select name="dept" id="dept"
 							list="dropdownData.departmentList" listKey="id"
-							listValue="deptName" headerKey="" headerValue="----Choose----"
+							listValue="name" headerKey="" headerValue="----Choose----"
 							onChange="loadDrawingOfficer(this);" /></td>
 
 					</td>

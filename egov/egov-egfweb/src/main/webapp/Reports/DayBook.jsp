@@ -67,8 +67,8 @@ var flag='0', tbNames, tbIds;
 var rptType;
 var rptTitle='', rptStartDate, rptEndDate, rptGLCode='', rptAccName='', detail='',accCode_1='',accCode_2='',snapShotDateTime,forRevEntry;
 var rptfundId='';
-//onLoad
-/*
+onLoad
+
 function callme(val,val1)
 {
 	var mode="view";
@@ -133,7 +133,7 @@ function callme(val,val1)
 		break;
 	}
 
-}*/
+}
 function onBodyLoad()
 {
 	
@@ -300,6 +300,7 @@ function buttonPrint()
 		
 		<tr id="row2" name="row2">
 		<td colspan="6" align="middle"><!-- Buttons Start Here -->
+		<br/><br/>
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td align="right">
