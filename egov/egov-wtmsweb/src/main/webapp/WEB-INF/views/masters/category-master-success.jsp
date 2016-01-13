@@ -64,7 +64,7 @@
 											<spring:message code="lbl.category"/> 
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${propertyCategory.categorytype.name}"/>
+											<c:out value="${propertyCategory.connectionCategory.name}"/>
 										</div>
 										
 										<div class="col-md-3 col-xs-6 add-margin">

@@ -41,8 +41,11 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
+import org.egov.wtms.masters.entity.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -59,10 +62,15 @@ public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCa
 
     List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
 
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType ")
+    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyType(@Param("propertyType") Long propertyType);
+    
+    
 
-    @Query("select PC.categorytype from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.categorytype.name != 'BPL' ")
+    @Query("select PC.connectionCategory from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id=:propertyType and PC.connectionCategory.name != 'BPL' ")
     List<ConnectionCategory> getAllCategoryTypesByPropertyTypeNotInBPL(@Param("propertyType") Long propertyType);
+    //findAllByApplicationTypeOrderByApplicationNumberAsc
+
+    
 
 }

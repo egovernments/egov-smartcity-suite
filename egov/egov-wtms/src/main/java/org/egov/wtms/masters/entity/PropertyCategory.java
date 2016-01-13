@@ -67,8 +67,8 @@ public class PropertyCategory extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "categorytype")
-    private ConnectionCategory categorytype;
-    
+    private ConnectionCategory connectionCategory;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "propertytype")
@@ -92,14 +92,12 @@ public class PropertyCategory extends AbstractPersistable<Long> {
         this.propertyType = propertyType;
     }
 
-   
-
-    public ConnectionCategory getCategorytype() {
-        return categorytype;
+    public ConnectionCategory getConnectionCategory() {
+        return connectionCategory;
     }
 
-    public void setCategorytype(final ConnectionCategory categorytype) {
-        this.categorytype = categorytype;
+    public void setConnectionCategory(ConnectionCategory connectionCategory) {
+        this.connectionCategory = connectionCategory;
     }
 
 }

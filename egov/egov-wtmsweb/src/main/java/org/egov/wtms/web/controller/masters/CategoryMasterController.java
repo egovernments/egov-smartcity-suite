@@ -99,10 +99,10 @@ public class CategoryMasterController {
         if (resultBinder.hasErrors())
             return "category-master";
         ConnectionCategory category = new ConnectionCategory();
-        category =  propertyCategory.getCategorytype();
+        category =  propertyCategory.getConnectionCategory();
         category.setActive(true);
         category.setCode(category.getName().toUpperCase());
-        connectionCategoryService.createConnectionCategory(propertyCategory.getCategorytype());
+        connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
         propertyCategoryService.createPropertyCategory(propertyCategory);
         redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
         model.addAttribute("message", "Category Master Data created successfully");

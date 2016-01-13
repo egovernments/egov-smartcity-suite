@@ -74,7 +74,7 @@ public class PropertyCategoryService {
     public PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(final String propertyType,
             final String categoryType) {
        
-            return propertyCategoryRepository.getAllCategoryTypesByPropertyTypeAndCategory(propertyType,categoryType);
+            return propertyCategoryRepository.findByPropertyType_codeAndConnectionCategory_code(propertyType,categoryType);
     }
 
 }

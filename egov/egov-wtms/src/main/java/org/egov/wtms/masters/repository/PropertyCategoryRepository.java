@@ -42,16 +42,15 @@ package org.egov.wtms.masters.repository;
 
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
+
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PropertyCategoryRepository extends JpaRepository<PropertyCategory, Long> {
     
-    @Query("select PC from org.egov.wtms.masters.entity.PropertyCategory PC where PC.propertyType.id in (select PT.id from PropertyType PT where PT.code =:propertyType) and PC.categorytype.code =:categoryCode ")
-    PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(@Param("propertyType") String propertyType,@Param("categoryCode") String categoryCode);
-
+   
+    PropertyCategory findByPropertyType_codeAndConnectionCategory_code(String propertyType,String categoryCode);
     
 }
 
