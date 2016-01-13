@@ -41,6 +41,7 @@
 package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.Location;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.LocationRepository;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -48,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,21 +71,25 @@ public class LocationService {
     }
 
     public List<Location> getActiveLocations() {
-        return this.locationRepository.findByActiveTrue();
+        return locationRepository.findByActiveTrue();
     }
 
     public Location getLocation(Long id) {
-        return this.locationRepository.getOne(id);
+        return locationRepository.getOne(id);
     }
 
     public List<Location> getLocationRequiredByUserName(String username) {
-        User user = userService.getUserByUsername(username);
+        User user = this.userService.getUserByUsername(username);
         boolean userRequiredLocation = false;
         if (user != null) {
-            userRequiredLocation = user.getRoles().parallelStream().
-                    filter(role -> applicationProperties.getProperty("location.user.role").contains(role.getName()))
-                    .findFirst().isPresent();
+            List<String> configuredUserRoles = Arrays.asList(this.applicationProperties.getProperty("location.user.role").split(","));
+            for (Role role : user.getRoles()) {
+                if (configuredUserRoles.contains(role.getName())) {
+                    userRequiredLocation = true;
+                    break;
+                }
+            }
         }
-        return userRequiredLocation ? getActiveLocations() : Collections.emptyList();
+        return userRequiredLocation ? this.getActiveLocations() : Collections.emptyList();
     }
 }
