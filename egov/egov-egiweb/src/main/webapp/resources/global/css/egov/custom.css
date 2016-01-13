@@ -210,6 +210,12 @@ strong {
   line-height: 1.42857143;
   outline: none;
 }
+.page-container.horizontal-menu header.navbar ul.nav > li a.profile-name {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 120px;
+  text-overflow: ellipsis;
+}
 .page-container.horizontal-menu header.navbar ul.nav > li.menu-responsive {
   border-left: 1px solid #5a3e1b;
   border-right: 1px solid #5a3e1b;
