@@ -24,8 +24,8 @@
 	<query name="getChartofAccountByInstrumentType">
     <![CDATA[select c from CChartOfAccounts c,InstrumentAccountCodes iac,InstrumentType it where iac.accountCode.id=c.id and iac.instrumentType.id=it.id and it.type=?]]></query>
 
-	<query name="getLocationByUser">
-    <![CDATA[select l from Location l,UserCounterMap ucm,User uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.username=?]]></query>
+	<!-- query name="getLocationByUser"-->
+    <!-- [CDATA[select l from Location l,UserCounterMap ucm,User uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.username=?]]></query-->
 
 	<query name="getReceiptHeaderById">
 	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id=?]]></query>

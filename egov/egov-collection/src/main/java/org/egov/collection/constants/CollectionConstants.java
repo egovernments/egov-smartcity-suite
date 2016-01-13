@@ -174,7 +174,7 @@ public final class CollectionConstants {
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
     public static final String QUERY_CREATEDBYUSERS_OF_RECEIPTS = "CREATEDBYUSERS_OF_RECEIPTS";
-    public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
+    //public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
     public static final String QUERY_SERVICES_BY_TYPE = "getServicesByType";
     public static final String QUERY_COLLECTION_SERVICS = "getCollectionServices";
     public static final String QUERY_FUNCTIONARY_BY_CODE = "getFunctionaryByCode";
