@@ -185,7 +185,7 @@ public class PaymentAction extends BasePaymentAction {
     private CFunction cFunctionobj;
     private String rtgsDefaultMode;
     private Date rtgsModeRestrictionDateForCJV;
-    private String paymentRestrictionDateForCJV;
+ //   private String paymentRestrictionDateForCJV;
     private String billSubType;
     private String region;
     private String month;
@@ -256,13 +256,8 @@ public class PaymentAction extends BasePaymentAction {
                             billregister.getEgBillregistermis().getFund()));
         }
 
-        paymentRestrictionDateForCJV = paymentService.getAppConfDateValForCJVPaymentModeRTGS();
-        try {
-            rtgsModeRestrictionDateForCJV = formatter.parse(paymentRestrictionDateForCJV);
-        } catch (final ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    
+       
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
         addDropdownData("regionsList", VoucherHelper.TNEB_REGIONS);
@@ -336,9 +331,7 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeSearch...");
 
-        // Get App config value
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
-
+      
         // if(validateUser("deptcheck"))
         voucherHeader.getVouchermis().setDepartmentid(paymentService.getAssignment().getDepartment());
         if (LOGGER.isDebugEnabled())
@@ -369,8 +362,6 @@ public class PaymentAction extends BasePaymentAction {
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_BANKBRANCH);
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_BANKACCOUNT);
 
-        // Get App config value
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
         for (final String key : propartyAppConfigKeysList) {
             String value = null;
             try {
@@ -418,7 +409,7 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting search...");
         // Get App config value
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
+        
         final StringBuffer sql = new StringBuffer();
         if (!"".equals(billNumber))
             sql.append(" and bill.billnumber = '" + billNumber + "' ");
@@ -1496,7 +1487,7 @@ public class PaymentAction extends BasePaymentAction {
          * addFieldError("balance",getMessage("insufficient.bank.balance")); }
          */
         int i = 0;
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
+
         boolean selectedContractorPay = false;
         for (final PaymentBean bean : billList)
         {
@@ -2133,14 +2124,6 @@ public class PaymentAction extends BasePaymentAction {
 
     public void setRtgsModeRestrictionDateForCJV(final Date rtgsModeRestrictionDateForCJV) {
         this.rtgsModeRestrictionDateForCJV = rtgsModeRestrictionDateForCJV;
-    }
-
-    public String getPaymentRestrictionDateForCJV() {
-        return paymentRestrictionDateForCJV;
-    }
-
-    public void setPaymentRestrictionDateForCJV(String paymentRestrictionDateForCJV) {
-        paymentRestrictionDateForCJV = paymentRestrictionDateForCJV;
     }
 
     public String getBillSubType() {

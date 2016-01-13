@@ -52,7 +52,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -126,14 +125,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         addDropdownData("approvaldepartmentList", Collections.EMPTY_LIST);
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
-        final AppConfigValues appConfigValues = (AppConfigValues) persistenceService
-                .find("from AppConfigValues where key in "
-                        +
-                        "(select id from AppConfig where key_name='WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN' and module.name='EGF' )");
-        if (appConfigValues == null)
-            throw new ValidationException("Error", "WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN is not defined");
-        else
-            setWorksVoucherRestrictedDate(appConfigValues.getValue());
         setOneFunctionCenterValue();
     }
 

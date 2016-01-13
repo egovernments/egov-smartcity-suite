@@ -852,31 +852,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             LOGGER.debug("Completed getGlcodeIds.");
     }
 
-    public String getAppConfValForCJVPaymentModeRTGS()
-    {
-        String value = "";
-        final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
-                "CJV_PAYMENT_MODE_AS_RTGS");
-        if (appConfig == null || appConfig.isEmpty())
-            throw new ApplicationRuntimeException("CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
-        for (final AppConfigValues app : appConfig)
-            value = app.getValue();
-        return value;
-    }
-
-    public String getAppConfDateValForCJVPaymentModeRTGS()
-    {
-        String value = "";
-        final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
-                "DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS");
-        if (appConfig == null || appConfig.isEmpty())
-            throw new ApplicationRuntimeException("DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
-        for (final AppConfigValues app : appConfig)
-            value = app.getValue();
-        return value;
-    }
-
-    private List<CChartOfAccounts> populateGlCodeIds(final String appConfigKey) throws ApplicationException {
+      private List<CChartOfAccounts> populateGlCodeIds(final String appConfigKey) throws ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting populateGlCodeIds...");
         final List<CChartOfAccounts> glCodeList = new ArrayList<CChartOfAccounts>();

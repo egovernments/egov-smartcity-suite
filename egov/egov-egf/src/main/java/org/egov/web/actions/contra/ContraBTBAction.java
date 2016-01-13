@@ -162,14 +162,6 @@ public class ContraBTBAction extends BaseVoucherAction {
     private CVoucherHeader voucherHeader2;
     private CVoucherHeader voucherHeaderDes;
     private CVoucherHeader voucherHeader4;
-    private Date startDateForBalanceCheck = null;
-    String startDateForBalanceCheckStr = null;
-
-    // private Date startDateForBalanceChk=null;
-
-    public String getStartDateForBalanceCheckStr() {
-        return startDateForBalanceCheckStr;
-    }
 
     @Override
     public void prepare() {
@@ -181,12 +173,6 @@ public class ContraBTBAction extends BaseVoucherAction {
                 .findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=1 order by coa.glcode ");
         addDropdownData("interFundList", glCodeList);
         LoadAjaxedDropDowns();
-        final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
-                "BANKBALANCE_CHECK_DATE");
-        if (appConfig == null || appConfig.isEmpty())
-            throw new ValidationException("", "BANKBALANCE_CHECK_DATE is not defined in AppConfig");
-        startDateForBalanceCheckStr = appConfig.get(0).getValue();
-        setStartDateForBalanceCheckStr(appConfig.get(0).getValue());
     }
 
     @SkipValidation
@@ -824,24 +810,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             else
                 try {
                     contraBean.setAmount(new BigDecimal(getAmount()));
-                    try {
-                        startDateForBalanceCheck = new SimpleDateFormat("dd-MMM-yyyy").parse(startDateForBalanceCheckStr);
-                        // setStartDateForBalanceCheck(startDateForBalanceCheck);
-                    } catch (final ParseException e) {
-                        throw new ValidationException("", "Error while converting startDateForBalanceCheck ");
-                    }
-                    if (startDateForBalanceCheck != null) {
-                        final int isAppConfigDateGreater = voucherDate.compareTo(startDateForBalanceCheck);
-
-                        if (isAppConfigDateGreater >= 0)
-                            if (new BigDecimal(contraBean.getFromBankBalance())
-                            .compareTo(contraBean.getAmount()) == -1
-                            && isBankBalanceMandatory())
-                                addActionError(getText(
-                                        "contra.insufficient.bankbalance",
-                                        new String[] { ""
-                                                + contraBean.getFromBankBalance() }));
-                    }
+                    
                     /*
                      * if Voucherdate is of previous years dont check bank balance else{ if (new
                      * BigDecimal(contraBean.getFromBankBalance()).compareTo(contraBean.getAmount()) == -1) {
@@ -1839,17 +1808,4 @@ public class ContraBTBAction extends BaseVoucherAction {
     public void setFromAccnumnar(final String fromAccnumnar) {
         this.fromAccnumnar = fromAccnumnar;
     }
-
-    public Date getStartDateForBalanceCheck() {
-        return startDateForBalanceCheck;
-    }
-
-    public void setStartDateForBalanceCheck(final Date startDateForBalanceCheck) {
-        this.startDateForBalanceCheck = startDateForBalanceCheck;
-    }
-
-    public void setStartDateForBalanceCheckStr(final String startDateForBalanceCheckStr) {
-        this.startDateForBalanceCheckStr = startDateForBalanceCheckStr;
-    }
-
 }
