@@ -178,8 +178,11 @@
 									</div>
 								</div>
 								<div class="form-group display-hide" id="counter-section">
-									<div class="signin-leftpadding">
-										<select class="form-control"><option>select counter</option></select>
+									<div class="input-group">
+										<div class="input-group-addon style-label">
+											<i class="entypo-location theme-color style-color"></i>
+										</div>
+										<select class="form-control style-form" name="locationId" id="locationId"></select>
 									</div>
 								</div>
 								<c:if test="${param.error}">
@@ -236,7 +239,7 @@
 								</c:if>
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
-										class="btn btn-custom btn-block btn-login signin-submit">
+										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
 										<i class="entypo-login"></i><spring:message code="lbl.login"/>
 									</button>
 								</div>
@@ -325,6 +328,7 @@
 		</div>
 		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
 		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
 		<script src="/egi/resources/js/app/login.js" type="text/javascript"></script>
 	</body>
 </html>
