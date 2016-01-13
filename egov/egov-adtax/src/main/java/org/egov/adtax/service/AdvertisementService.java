@@ -213,7 +213,7 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoar
 }
   
 
-    public Advertisement findByHoardingNumber(final String hoardingNumber) {
+    public Advertisement findByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
     public Advertisement findBy(final Long hoardingId) {

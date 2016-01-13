@@ -75,4 +75,16 @@ public class AdvertisementTaxConstants {
     public static final String NATURE_OF_WORK = "CREATEADVERTISEMENT";
     public static final String CREATE_ADDITIONAL_RULE = "CREATEADVERTISEMENT";
     public static final String COLON_CONCATE = "::";
+    public static final String ADVERTISEMENT_COLLECTION_TYPE= "Advertisement";
+    public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Advertisement Number -";
+    
+    public static final String STRING_DEPARTMENT_CODE = "REV";
+    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
+    public static final String DEFAULT_FUND_SRC_CODE = "01";
+    public static final String DEFAULT_FUND_CODE = "01";
+    public static final String FEECOLLECTION = "Fee Collection";
+    public static final String BILL_TYPE_AUTO = "AUTO";
+    public static final String WARD = "Ward";
+    public static final String ADDRESSTYPEASOWNER = "OWNER";
+    
 }

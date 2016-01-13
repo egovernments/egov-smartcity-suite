@@ -125,7 +125,7 @@ $(document).ready(function(){
 			$('#adtax_search thead tr').remove();
 		}
 		
-		if(radioBtnVal=='hoarding'){
+		if(radioBtnVal=='Advertisement'){
 		//oTable.fnClearTable();
 			prevdatatable = oTable.dataTable({
 			"sPaginationType": "bootstrap",

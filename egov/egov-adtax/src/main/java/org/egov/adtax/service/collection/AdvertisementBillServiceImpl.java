@@ -39,6 +39,7 @@
  */
 package org.egov.adtax.service.collection;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -170,7 +171,12 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     @Override
     public String getBillXML(final Billable billObj) {
         String collectXML;
-        collectXML = URLEncoder.encode(super.getBillXML(billObj));
+        try {
+            collectXML = URLEncoder.encode(super.getBillXML(billObj),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
         return collectXML;
     }
 

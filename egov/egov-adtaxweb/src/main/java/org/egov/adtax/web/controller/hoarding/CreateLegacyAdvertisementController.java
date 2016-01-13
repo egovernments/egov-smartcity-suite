@@ -121,7 +121,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
         if (resultBinder.hasErrors())
             return "hoarding-createLegacy";
         storeHoardingDocuments(advertisementPermitDetail);
-        
+        advertisementPermitDetail.setIsActive(Boolean.TRUE);
         advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
         if (installmentObj != null && installmentObj.getFromDate() != null)

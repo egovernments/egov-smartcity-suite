@@ -56,7 +56,7 @@
                               <input type="radio" name="searchType" value="agency" checked><spring:message code="lbl.radio.agency"/>
                             </label>
                             <label class="radio-inline">
-                              <input type="radio" name="searchType" value="hoarding"><spring:message code="lbl.radio.hoarding"/>
+                              <input type="radio" name="searchType" value="Advertisement"><spring:message code="lbl.radio.hoarding"/>
                             </label>
                         </div>
                     </div>

@@ -179,6 +179,16 @@ public class Advertisement extends AbstractAuditable {
     @Transient
     private Boolean taxPaidForCurrentYear = false;
 
+    public AdvertisementPermitDetail getActiveAdvertisementPermit() {
+        AdvertisementPermitDetail advPermitDtl = null;
+        for (final AdvertisementPermitDetail advPermitDetail : getAdvertisementPermitDetail()){
+            if (advPermitDetail.getIsActive())
+                advPermitDtl = advPermitDetail;
+        }
+        return advPermitDtl;
+    }
+    
+    
     @Override
     public Long getId() {
         return id;

@@ -73,18 +73,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AgencyWiseBillable extends AbstractBillable implements Billable {
     private static final Logger LOGGER = Logger.getLogger(AgencyWiseBillable.class);
-    public static final String collectionTypeHoarding = "hoarding";
     public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Agency Name-";
-    private static final String STRING_DEPARTMENT_CODE = "REV";
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    public static final String DEFAULT_FUND_SRC_CODE = "01";
-    public static final String DEFAULT_FUND_CODE = "01";
-
-    private static final String ADMINISTRATION_HIERARCHY_TYPE = "ADMINISTRATION";
     private static final String CITY_BOUNDARY_TYPE = "City";
-
-    public static final String FEECOLLECTION = "AgencyWise Fee Collection";
-    public static final String AUTO = "AUTO";
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
@@ -137,7 +127,7 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public EgBillType getBillType() {
-        return egBillDAO.getBillTypeByCode(AUTO);
+        return egBillDAO.getBillTypeByCode(AdvertisementTaxConstants.BILL_TYPE_AUTO);
 
     }
 
@@ -150,13 +140,13 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     public Long getBoundaryNum() {
         final Boundary boundary = getBoundaryAsCity();
         if (boundary != null)
-            return boundary.getId();
+            return boundary.getBoundaryNum();
         return null;
     }
 
     private Boundary getBoundaryAsCity() {
         HierarchyType hType = null;
-        hType = hierarchyTypeService.getHierarchyTypeByName(ADMINISTRATION_HIERARCHY_TYPE);
+        hType = hierarchyTypeService.getHierarchyTypeByName(AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
 
         List<Boundary> locationList = null;
         if (hType != null) {
@@ -182,22 +172,22 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getDepartmentCode() {
-        return STRING_DEPARTMENT_CODE;
+        return AdvertisementTaxConstants.STRING_DEPARTMENT_CODE;
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+        return new BigDecimal(AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE);
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+        return AdvertisementTaxConstants.DEFAULT_FUND_CODE;
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUNCTIONARY_CODE;
+        return AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE;
     }
 
     @Override
@@ -258,7 +248,7 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getDisplayMessage() {
-        return FEECOLLECTION;
+        return AdvertisementTaxConstants.FEECOLLECTION;
     }
 
     @Override
