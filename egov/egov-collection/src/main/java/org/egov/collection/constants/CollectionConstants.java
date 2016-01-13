@@ -263,7 +263,7 @@ public final class CollectionConstants {
     public static final String SESSION_VAR_LOGIN_USER_NAME = "com.egov.user.LoginUserName";
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     public static final String SUPER_USER_NAME = "egovernments";
-    public static final String SESSION_VAR_LOGIN_USER_COUNTERID = "counterId";
+    public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
     public static final String CITIZEN_USER_NAME = "9999999999";
 

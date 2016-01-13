@@ -219,7 +219,7 @@ public class CollectionsUtil {
         Location location = null;
         try {
             location = this.getLocationById(Integer.valueOf((String) sessionMap
-                    .get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID)));
+                    .get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID)));
             if (location == null)
                 throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
                         + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
