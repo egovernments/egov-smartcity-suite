@@ -406,8 +406,8 @@ function onloadtask(){
 		document.getElementById('voucherTypeBean.billNum').readOnly=true;
 		document.getElementById('billDate').readOnly=true;
 	}
-	document.getElementById('vouchermis.function').style.display="none";
-	document.getElementById('functionnametext').style.display="none";
+	//document.getElementById('vouchermis.function').style.display="none";
+	//document.getElementById('functionnametext').style.display="none";
 	var message = '<s:property value="message"/>';
 	if(message != null && message != '')
 		showMessage(message);
