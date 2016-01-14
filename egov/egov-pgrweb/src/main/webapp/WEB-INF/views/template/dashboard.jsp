@@ -79,6 +79,7 @@
 			});
 			var citylat = parseFloat("${sessionScope.citylat}");
 			var citylng = parseFloat("${sessionScope.citylng}");
+			console.log(citylat, citylng);
 		</script>		
     </head>
     <body data-spy="scroll">
