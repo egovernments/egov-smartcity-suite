@@ -61,7 +61,7 @@
 			<div class="subheadnew">
 				<s:text name="voucher.title" />
 			</div>
-		</div>
+	
 		<table align="center" width="100%" cellpadding="0" cellspacing="0">
 			<tr>
 				<jsp:include page="../voucher/voucher-filter.jsp" />
@@ -254,7 +254,7 @@
 		}
 		
 		</script>
-
+  </div>
 	</s:form>
 
 </body>

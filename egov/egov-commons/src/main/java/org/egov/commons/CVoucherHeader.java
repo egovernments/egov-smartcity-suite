@@ -75,7 +75,7 @@ public class CVoucherHeader extends StateAware {
     private Date effectiveDate;
     private String voucherNumber;
     private Date voucherDate;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "fundId")
     private Fund fundId;
     private Integer fiscalPeriodId;
@@ -89,11 +89,9 @@ public class CVoucherHeader extends StateAware {
     private String voucherSubType;
     @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "generalLedger", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "voucherHeaderId"))
-    private Set<CGeneralLedger> genenralLedger = new HashSet<CGeneralLedger>(0);
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
+    private Set<CGeneralLedger> generalLedger;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid" , targetEntity=Vouchermis.class)
     private Vouchermis vouchermis;
 
     public Long getId() {
@@ -310,7 +308,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     public Set<CGeneralLedger> getGeneralledger() {
-        return genenralLedger;
+        return generalLedger;
     }
 
     public Vouchermis getVouchermis() {
@@ -343,7 +341,7 @@ public class CVoucherHeader extends StateAware {
 
     public BigDecimal getTotalAmount() {
         BigDecimal amount = BigDecimal.ZERO;
-        for (final CGeneralLedger detail : genenralLedger)
+        for (final CGeneralLedger detail : generalLedger)
             amount = amount.add(new BigDecimal(detail.getDebitAmount()));
         return amount;
     }

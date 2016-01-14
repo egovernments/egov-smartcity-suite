@@ -161,8 +161,6 @@ private FinancialYearDAO financialYearDAO;
     @Override
     public void prepare()
     {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         getHeaderFields();
         loadDropDowns();
