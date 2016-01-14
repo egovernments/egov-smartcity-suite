@@ -112,8 +112,9 @@ public interface BillingIntegrationService {
     public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid);
 
     /**
-     * Collection system invokes billing to frame up the additional message to be printed in receipt
+     * Collection system will invoke billing system to frame up the additional message to be printed in receipt
      * @param billReceiptInfo
+     * @return Message to be printed in receipt
      */
     public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo);
 }

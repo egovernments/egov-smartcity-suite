@@ -85,8 +85,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      */
     private final String receiptURL;
 
-    private final String additionalMessage;
-    
+    private final String additionalInfo;
+
     /**
      * Creates bill receipt information object for given receipt header
      *
@@ -95,7 +95,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     public BillReceiptInfoImpl(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
-        this.additionalMessage = null;
+        additionalInfo = null;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
@@ -120,14 +120,15 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     }
 
     /**
-     * Creates bill receipt information object for given receipt header
+     * Creates bill receipt information object for given receipt header 
+     * and additional message
      *
      * @param receiptHeader the receipt header object
      */
-    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalMessage) {
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalInfo) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
-        this.additionalMessage = additionalMessage;
+        this.additionalInfo = additionalInfo;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
@@ -155,7 +156,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
             final ReceiptHeader receiptHeaderRefObj) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
-        additionalMessage = null;
+        additionalInfo = null;
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
             accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
@@ -413,7 +414,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         Boolean legacy = Boolean.FALSE;
         for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
             if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
-                    && (!receiptAccountInfo.getDescription().contains("#") ||
+            && (!receiptAccountInfo.getDescription().contains("#") ||
                     receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
@@ -421,9 +422,13 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         return legacy;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getAdditionalInfo()
+     */
     @Override
     public String getAdditionalInfo() {
-        return this.additionalMessage;
+        return additionalInfo;
     }
 
 }
