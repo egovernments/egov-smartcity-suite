@@ -1358,11 +1358,11 @@ strong {
 }
 .page-container .main-content .yui-skin-sam .yui-dt th {
   color: #fff;
-  background: #84B1AD;
-  border-right: 1px solid #84B1AD;
+  background: #6b4f2c;
+  border-right: 1px solid #5a3e1b;
 }
 .page-container .main-content .yui-skin-sam .yui-dt td {
-  border-right: 1px solid #84B1AD;
+  border-right: 1px solid #E9E9E9;
 }
 .page-container .main-content .yui-skin-sam .yui-ac-input {
   position: relative;

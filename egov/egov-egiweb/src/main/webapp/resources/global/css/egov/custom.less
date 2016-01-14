@@ -72,7 +72,7 @@ body {
 	font-size: 10px;
 	
 		div {
-			background-color: #fff;
+			background-color: @whitecolor;
 			height: 100%;
 			width: 6px;
 			display: inline-block;
@@ -109,7 +109,7 @@ body {
 	
 	.spinner-text
 	{
-		color:#fff;
+		color:@whitecolor;
 	}
 	
 	@keyframes stretchdelay {
@@ -1094,7 +1094,7 @@ b, label, strong{
             a {
                 padding: 0.65em 0 0.5em;
                 background: #f2f2f2;
-                color: #6b4f2c;
+                color: @basecolor;
                 line-height: 1;
                 -webkit-transition: color 0.2s;
                 transition: color 0.2s;
@@ -1496,12 +1496,12 @@ b, label, strong{
         
         .yui-skin-sam .yui-dt th {
           color:@whitecolor;
-          background: #84B1AD;
-          border-right: 1px solid #84B1AD;
+          background: @basecolor;
+          border-right: 1px solid @separation;
         }
 
         .yui-skin-sam .yui-dt td {
-          border-right: 1px solid #84B1AD;
+          border-right: 1px solid #E9E9E9;
         }
         
         .yui-skin-sam .yui-ac-input {
@@ -1763,7 +1763,7 @@ b, label, strong{
 
         .map-tool-class {
             cursor: pointer;
-            color: #fff;
+            color: @whitecolor;
             width: 20px;
             padding: 4px;
         }
@@ -1894,7 +1894,7 @@ table.dataTable thead th.sorting:after, table.dataTable th.sorting_asc:after, ta
 
 table.dataTable#official_inbox thead th.sorting:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting:after {
     content: "\f0dc";
-    color: #fff;
+    color: @whitecolor;
     .font-size(0.8em);
     padding-top: 0.12em;
 }
