@@ -57,8 +57,12 @@ body
 	}
 	</script>
 	<body>
+		<div class="new-page-header">
+			Search Schedule Of Rate
+		</div>
+		
 		<s:if test="%{hasErrors()}">
-       		 <div class="errorstyle">
+       		 <div class="alert alert-danger">
           		<s:actionerror/>
           		<s:fielderror/>
         	</div>
@@ -69,9 +73,7 @@ body
         	</div>
     	</s:if>
     	
-    	<div class="new-page-header">
-			Search Schedule Of Rate
-		</div>
+    	
 			
 		<s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate-searchSorDetails.action" theme="simple" cssClass="form-horizontal form-groups-bordered">			
 			

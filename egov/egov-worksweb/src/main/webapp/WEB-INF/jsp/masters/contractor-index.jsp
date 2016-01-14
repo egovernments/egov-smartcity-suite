@@ -218,11 +218,11 @@
 
 				<div class="row text-center">
 					<div class="add-margin">
-						<input type="submit" name="VIEW" Class="btn btn-primary" value="VIEW"
+						<input type="submit" name="VIEW" Class="btn btn-primary" value="View"
 							id="VIEW" onclick="viewData();" /> <input type="submit"
-							name="create" Class="btn btn-primary" value="CREATE" id="CREATE"
+							name="create" Class="btn btn-primary" value="Create" id="CREATE"
 							name="button" onclick="createNew();" /> <input type="submit"
-							name="closeButton" id="closeButton" value="CLOSE"
+							name="closeButton" id="closeButton" value="Close"
 							Class="btn btn-default" onclick="window.close();" />
 					</div>
 				</div>

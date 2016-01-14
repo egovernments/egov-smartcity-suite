@@ -188,7 +188,7 @@ var makeContractorDataTable = function() {
 }
 
 </script>
-<div class="errorstyle" id="contractor_error" style="display: none;"></div>
+<div class="errorstyle" id="contractor_error" class="alert alert-danger" style="display: none;"></div>
 <div class="new-page-header">
 	<s:text name="contractor.master.title" />
 </div>

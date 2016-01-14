@@ -37,45 +37,48 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<div class="errorstyle" id="approver_error" style="display:none;"></div>
-	<div id="workflowDetials">	      
-	   <table width="100%" border="0" cellspacing="0" cellpadding="0" >
-		<tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-                <div class="headplacer"><s:text name="workflow.header" />:</div></td>
-                </tr>
-	  	 <tr>
-	  	 	<td class="greyboxwk" id="deptLabel"><s:text name="workflow.approver.department"/></td>
-			<td class="greybox2wk"><s:select name="workflowDepartmentId" id="departmentid" list="dropdownData.executingDepartmentList" listKey="id" listValue="deptName" headerKey="-1" 
-			headerValue="%{getText('estimate.default.select')}"  value="%{workflowDepartmentId}"  onchange= "populateDesignation()"/>
-			<egov:ajaxdropdown id="designationId"fields="['Text','Value']" dropdownId="designationId" url="workflow/ajaxWorkflow!getDesgByDeptAndType.action" />
-			</td>
-			<td class="greyboxwk"><span class="mandatory">*</span><s:text name="workflow.approver.designation"/></td>
-			<td class="greybox2wk"><s:select name="workflowDesignationId" id="designationId" list="{}"
-			 listKey="designationId" listValue="designationName" headerKey="-1" headerValue="%{getText('estimate.default.select')}"  value="%{workflowDesignationId}" onchange= "populateUser()" />
-			<egov:ajaxdropdown id="approverUserId"fields="['Text','Value']" dropdownId="approverUserId" url="workflow/ajaxWorkflow!getWorkFlowUsers.action" />
-			</td>
-		</tr>
-		<tr>		 
-			 <td class="whiteboxwk" width="13%"><span class="mandatory">*</span><s:text name="workflow.approver"/></td>
-			  <td class="whitebox2wk" width="33%" colspan="3"><s:select id="approverUserId"  name="workflowApproverUserId" list="{}" headerKey="-1" 
-			  headerValue="%{getText('estimate.default.select')}" listKey="id" listValue="firstName" value="%{workflowApproverUserId}"  />
-			 </td>
-		</tr>
-		</table>
-		</div>
-		<tr  align="center">
-            		<td>
-            		<div id="approverCommentsRow" style="display:none;">
-		          <table id="commentsTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-			      <tr>
-		               <td width="11%" class="greyboxwk"><s:text name="workflow.approver.comments" />:</td>
-		               <td width="53%" class="greybox2wk" colspan="3"><s:textarea name="workflowapproverComments" cols="80" cssClass="selectwk" id="approverComments" value="%{approverComments}"/></td>
-		             </tr>
-				  </table>
-          			</div>
-          		</td>
-          	</tr>
+<div class="alert alert-danger" id="approver_error" style="display:none;"></div>
+
+	
+	
+
+	<div id="workflowDetials" class="panel panel-primary" data-collapsed="0" style="text-align:left">
+			<div class="panel-heading">
+				<div class="panel-title"><s:text name="workflow.header" /></div>
+			</div>
+			<div class="panel-body no-margin-bottom">
+				<div class="row show-row" id="approverDetailHeading">
+				<div class="show-row form-group">
+					<label class="col-sm-2 control-label text-right"><s:text name="workflow.approver.department"/><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<s:select name="workflowDepartmentId" cssClass="form-control" id="departmentid" list="dropdownData.executingDepartmentList" listKey="id" listValue="deptName" headerKey="-1" 
+						headerValue="%{getText('estimate.default.select')}"  value="%{workflowDepartmentId}"  onchange= "populateDesignation()"/>
+						<egov:ajaxdropdown id="designationId"fields="['Text','Value']" dropdownId="designationId" url="workflow/ajaxWorkflow!getDesgByDeptAndType.action" />
+					</div>
+					<label class="col-sm-2 control-label text-right"><s:text name="workflow.approver.designation"/><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<s:select name="workflowDesignationId" cssClass="form-control" id="designationId" list="{}"
+						 listKey="designationId" listValue="designationName" headerKey="-1" headerValue="%{getText('estimate.default.select')}"  value="%{workflowDesignationId}" onchange= "populateUser()" />
+						<egov:ajaxdropdown id="approverUserId"fields="['Text','Value']" dropdownId="approverUserId" url="workflow/ajaxWorkflow!getWorkFlowUsers.action" />					
+					</div>
+				</div>
+				<div class="show-row form-group">
+					<label class="col-sm-2 control-label text-right"><s:text name="workflow.approver"/><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<s:select id="approverUserId" cssClass="form-control" name="workflowApproverUserId" list="{}" headerKey="-1" 
+			  			headerValue="%{getText('estimate.default.select')}" listKey="id" listValue="firstName" value="%{workflowApproverUserId}"  />		
+					</div> 
+				</div>
+				</div>
+				
+				<div class="row" id="approverCommentsRow" style="display:none;">
+					<label class="col-sm-2 control-label text-right"><s:text name="workflow.approver.comments" /></label>
+					<div class="col-sm-8 add-margin">
+						<s:textarea name="workflowapproverComments" cols="80" cssClass="form-control" id="approverComments" value="%{approverComments}"/>
+					</div>
+				</div>
+			</div>
+	</div>
 
 <script>
 function populateDesignation(){	

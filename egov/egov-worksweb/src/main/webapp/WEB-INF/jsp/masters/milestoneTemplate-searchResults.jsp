@@ -57,11 +57,17 @@ window.close();
 
 <div>
      <s:if test="%{searchResult.fullListSize != 0}">
+     	<div class="row report-section">
+				<div class="col-md-12 table-header text-left">
+				  <s:text name="title.search.result" />
+				</div>
+				
+				<div class="col-md-12 report-table-container">
      	 <s:hidden name="selectedCode" id="selectedCode" />
  	     <display:table name="searchResult" pagesize="30"
 			uid="currentRow" cellpadding="0" cellspacing="0"
 			requestURI=""
-			style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
+			class="table table-hover">
 			<s:if test="%{sourcepage.equals('searchForMilestone')}">
 				<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
 						<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.code}'/>" onClick="setTemplateCode(this);" />
@@ -127,22 +133,24 @@ window.close();
 	   <div class="buttonholderwk">
   			<br/>
 	   		<s:if test="%{sourcepage.equals('searchForMilestone')}">
-	    		<input type="button" class="buttonadd"
+	    		<input type="button" class="btn btn-primary"
 					value="Select Template" id="addButton"
 					name="selectTemplateButton" onclick="selectTemplate()"
 					align="center" />
 	     	</s:if>
 	   </div> 
+	  </div>
+	 </div>
 	 </s:if> 
 	 <s:elseif test="%{searchResult.fullListSize == 0}">
-		  <div>
-			<table width="100%" border="0" cellpadding="0" 	cellspacing="0">
-				<tr>
-				   <td align="center">
-					 <font color="red"><s:text name="search.result.no.recorod" /></font>
-				   </td>
-			    </tr>
-			</table>
-		  </div>
+		  <div class="row report-section">
+			<div class="col-md-12 table-header text-left">
+			  <s:text name="title.search.result" />
+			</div>
+			
+			<div class="col-md-12 text-center report-table-container">
+			   <div class="alert alert-warning no-margin"><s:text name="label.no.records.found"/></div>
+			</div>
+		 </div>
 	</s:elseif>   
  </div>

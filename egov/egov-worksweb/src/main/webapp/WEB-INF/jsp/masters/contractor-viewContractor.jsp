@@ -62,200 +62,135 @@
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
-		<s:form action="/masters/contractor-viewResult.action" theme="simple" name="contractor" >
-			<div class="navibarshadowwk">
+    	
+    	<div class="new-page-header">
+			Search Contractor
+		</div>
+    	
+		<s:form action="/masters/contractor-viewResult.action" theme="simple" name="contractor" cssClass="form-horizontal form-groups-bordered">
+			
+					
+		<div class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			<div class="panel-heading">
+				<div class="panel-title"><s:text name='title.search.criteria' /></div>
 			</div>
-			<div class="formmainbox">
-			<div class="insidecontent">
-			<div class="rbroundbox2">
-			<div class="rbtop2"><div></div></div>
-			<div class="rbcontent2">
-			<table id="formTable" width="100%" border="0" cellspacing="0"
-				cellpadding="0">
-				<tr>
-					<td>
-						&nbsp;
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<table id="contractorViewSearchTable" width="100%" border="0"
-							cellspacing="0" cellpadding="0">
-							<tr>
-								<td colspan="4">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="4" class="headingwk">
-									<div class="arrowiconwk">
-										<img src="/egi/resources/erp2/images/arrow.gif" />
-									</div>
-									<div class="headplacer">
-										<s:text name='title.search.criteria' />
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td width="11%" class="whiteboxwk">
-									<s:text name="contractor.name" />:
-								</td>
-								<td width="21%" class="whitebox2wk">
-									<s:textfield name="contractorName" id="contractorName" cssClass="selectboldwk"/>
-								</td>
-								<td width="11%" class="whiteboxwk">
-									<s:text name="contractor.code" />:
-								</td>
-								<td width="21%" class="whitebox2wk">
-									<s:textfield name="contractorCode" id="contractorCode" cssClass="selectboldwk"/>
-								</td>
-							</tr>
-							<tr>
-								<td width="11%" class="greyboxwk">
-									<s:text name="contractor.department" />:
-								</td>
-								<td width="21%" class="greybox2wk">
-									<s:select id="status" name="departmentId" cssClass="selectwk"
-										list="%{dropdownData.departmentList}" listKey="id" listValue="name" 
-										headerKey="" headerValue="--- Select ---" />	
-								</td>
-								<td width="15%" class="greyboxwk">
-									<s:text name="contractor.status" />:
-								</td>
-								<td width="53%" class="greybox2wk">
-									<s:select id="status" name="statusId" cssClass="selectwk"
-										list="%{dropdownData.statusList}" listKey="id" listValue="description" 
-										headerKey="" headerValue="--- Select ---" />									
-								</td>
-							</tr>
-							<tr>
-								<td width="11%" class="whiteboxwk">
-									<s:text name="contractor.grade" />:
-								</td>
-								<td width="21%" colspan="3" class="whitebox2wk">
-									<s:select id="status" name="gradeId" cssClass="selectwk"
-										list="%{dropdownData.gradeList}" listKey="id" listValue="grade" 
-										headerKey="" headerValue="--- Select ---" />	
-								</td>
-								<!-- td width="11%" class="whiteboxwk">
-									label
-								</td>
-								<td width="21%" class="whitebox2wk">
-									value
-								</td-->
-							</tr>
-							<tr>
-								<td>
-									&nbsp;
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-									<div class="buttonholdersearch">
-										<input type="submit" class="buttonadd" value="Search" id="searchButton" 
-											onClick="validate()" />
-										<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="button"
-											onclick="window.close();" />
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-								<div>
-									<table width="100%" border="0" cellspacing="0" cellpadding="0" id="contractorViewSearchInnerTable">
-										<tr>
-											<td colspan="7" class="headingwk">
-												<div class="arrowiconwk">
-													<img
-														src="/egi/resources/erp2/images/arrow.gif" />
-												</div>
-												<div class="headplacer">
-													<s:text name="title.search.result" />
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<s:if test="%{searchResult.fullListSize != 0}">
-													<display:table name="searchResult" pagesize="30"
-														uid="currentRow" cellpadding="0" cellspacing="0"
-														requestURI="" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
-														
-														<display:column headerClass="pagetableth"
-															class="pagetabletd" title="Sl.No"
-															style="width:4%;text-align:right">
-															<s:property
-																value="#attr.currentRow_rowNum + (page-1)*pageSize" />
-														</display:column>
-
-														<display:column headerClass="pagetableth"
-															class="pagetabletd" title="Name"
-															style="width:15%;text-align:left" property="name" />
-
-														<display:column headerClass="pagetableth"
-															class="pagetabletd" title="Code"
-															style="width:15%;text-align:left" property="code" />
-
-														<display:column headerClass="pagetableth"
-															class="pagetabletd" title="View/Edit"
-															style="width:15%;text-align:left">
-															<table width="40" border="0" cellpadding="0" cellspacing="2">
-																<tr>
-																	<td width="20">
-																		<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-																			<s:text name="sor.edit" />
-																		</a>
-																	</td>
-																	<td width="20">
-																		<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-																			<img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" /></a>																						
-																	</td>
-																	<td>&#47;</td>
-																	<td width="20">
-																		<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view"><s:text name="sor.view" />
-																		</a>
-																	</td>
-																	<td width="20">
-																		<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-																			<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
-																		</a>
-																	</td>
-																</tr>
-															</table>
-
-														</display:column>
-
-													</display:table>
-												</s:if>
-												<s:elseif test="%{searchResult.fullListSize == 0}">
-													<div>
-														<table width="100%" border="0" cellpadding="0" cellspacing="0">
-															<tr>
-																<td align="center">
-																	<font color="red"><s:text name="label.no.records.found"/></font>
-																</td>
-															</tr>
-														</table>
-													</div>
-												</s:elseif>
-											</td>
-										</tr>
-									</table>
-								</div>
-								</td>
-							</tr>
-							
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4" class="shadowwk"></td>
-				</tr>
+			
+			<div class="panel-body">
+			
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> 
+					   <s:text name="contractor.name" />
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:textfield name="contractorName" id="contractorName" cssClass="form-control"/>
+					</div>
+					<label class="col-sm-2 control-label text-right"> 
+							<s:text name="contractor.code" />
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:textfield name="contractorCode" id="contractorCode" cssClass="form-control"/>
+					</div>
+				</div>
 				
-			</table>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> 
+					   <s:text name="contractor.department" />
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:select id="status" name="departmentId" cssClass="form-control"
+										list="%{dropdownData.departmentList}" listKey="id" listValue="name" 
+										headerKey="" headerValue="--- Select ---" />
+					</div>
+					<label class="col-sm-2 control-label text-right"> 
+						<s:text name="contractor.status" />
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:select id="status" name="statusId" cssClass="form-control"
+										list="%{dropdownData.statusList}" listKey="id" listValue="description" 
+										headerKey="" headerValue="--- Select ---" />
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> 
+					   <s:text name="contractor.grade" />
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:select id="status" name="gradeId" cssClass="form-control"
+										list="%{dropdownData.gradeList}" listKey="id" listValue="grade" 
+										headerKey="" headerValue="--- Select ---" />
+					</div>
+				</div>
+				
 			</div>
-			<div class="rbbot2"><div></div></div>
+		</div>
+			
+		<div class="row">
+			<div class="col-xs-12 text-center buttonholdersearch">
+				<input type="submit" class="btn btn-primary" value="Search" id="searchButton" onClick="validate()" />&nbsp;
+				<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 			</div>
+		</div>
+		
+		
+		<s:if test="%{searchResult.fullListSize != 0}">
+		<div class="row report-section">
+				<div class="col-md-12 table-header text-left">
+				  <s:text name="title.search.result" />
+				</div>
+				
+				<div class="col-md-12 report-table-container">
+					<display:table name="searchResult" pagesize="30"
+					uid="currentRow" cellpadding="0" cellspacing="0"
+					requestURI="" class="table table-hover">
+					
+					<display:column headerClass="pagetableth"
+						class="pagetabletd" title="Sl.No"
+						style="width:4%;text-align:right">
+						<s:property
+							value="#attr.currentRow_rowNum + (page-1)*pageSize" />
+					</display:column>
+		
+					<display:column headerClass="pagetableth"
+						class="pagetabletd" title="Name"
+						style="width:15%;text-align:left" property="name" />
+		
+					<display:column headerClass="pagetableth"
+						class="pagetabletd" title="Code"
+						style="width:15%;text-align:left" property="code" />
+		
+					<display:column headerClass="pagetableth"
+						class="pagetabletd" title="View/Edit"
+						style="width:15%;text-align:left">
+						
+									<a class="btn btn-default" href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+										<s:text name="sor.edit" />
+									</a>
+								
+									<a class="btn btn-default" href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view"><s:text name="sor.view" />
+									</a>
+								
+							
+					</display:column>
+		
+				</display:table>
 			</div>
+		</div>
+		</s:if>
+		<s:elseif test="%{searchResult.fullListSize == 0}">
+			<div class="row report-section">
+				<div class="col-md-12 table-header text-left">
+				  <s:text name="title.search.result" />
+				</div>
+				
+				<div class="col-md-12 text-center report-table-container">
+				   <div class="alert alert-warning no-margin"><s:text name="label.no.records.found"/></div>
+				</div>
 			</div>
+		</s:elseif>
+		
+			
 		</s:form>
 		<script type="text/javascript">
 			

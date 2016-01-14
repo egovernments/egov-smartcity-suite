@@ -171,9 +171,12 @@ function validate(obj,text){
 }
 
 </script>
-<div id="milestonetemplateerror" class="errorstyle" style="display:none;"></div>
+<div class="new-page-header">
+    Create Milestone Template
+</div>
+<div id="milestonetemplateerror" class="alert alert-danger" style="display:none;"></div>
     <s:if test="%{hasErrors()}">
-        <div id="errorstyle" class="errorstyle" >
+        <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
           <s:fielderror/>
         </div>
@@ -184,7 +187,7 @@ function validate(obj,text){
         	
         </div>
     </s:if>
-    <s:form theme="simple" name="milestoneTemplateForm" >
+    <s:form theme="simple" name="milestoneTemplateForm" cssClass="form-horizontal form-groups-bordered">
     <s:token/>
 <s:push value="model">
 
@@ -198,35 +201,26 @@ function validate(obj,text){
 </s:else>
 <s:hidden name="sourcepage" value="%{sourcepage}" id="sourcepage"/>
 <s:hidden name="scriptName" id="scriptName" value="MilestoneTemplate"></s:hidden>
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	  <div class="rbcontent2">
-	 <%@ include file='milestoneTemplate-header.jsp'%>
-	 <%@ include file='milestoneTemplateActivity.jsp'%>
-	 <div id="manual_workflow">
+
+<%@ include file='milestoneTemplate-header.jsp'%>
+<%@ include file='milestoneTemplateActivity.jsp'%>
+<div id="manual_workflow">
 		<%@ include file="../workflow/workflow.jsp"%> 	 
 	</div>
-	<div align="right" class="mandatory" style="font-size:11px;padding-right:20px;">* <s:text name="message.mandatory" /></div>
-		<div class="rbbot2"><div></div></div>
-    </div>     
-</div>
-  </div>
- 
-</div>
-	<div class="buttonholderwk">
-		
-	  <p>
-		<input type="hidden" name="actionName" id="actionName" />
+
+ <div class="row">
+		<div class="col-xs-12 text-center buttonholdersearch">
+			
+			<input type="hidden" name="actionName" id="actionName" />
 		<s:if test="%{mode=='modify' && (model.egwStatus.code=='APPROVED' || model.egwStatus.code=='NEW')}">
 			<!-- egov authorization tag-->
 			<egov-authz:authorize actionName="createMilestoneTemplate">
-				<s:submit type="submit" cssClass="buttonfinal"
-					value="SAVE" id="save" name="save"
+				<s:submit type="submit" cssClass="btn btn-primary"
+					value="Save" id="save" name="save"
 					method="save"
 					onclick="document.milestoneTemplateForm.actionName.value='save';return validate('noncancel','save');" />
-				<s:submit type="submit" cssClass="buttonfinal"
-					value="SAVE & SUBMIT" id="submit_for_approval" name="submit_for_approval"
+				<s:submit type="submit" cssClass="btn btn-primary"
+					value="Save & Submit" id="submit_for_approval" name="submit_for_approval"
 					method="save"
 					onclick="document.milestoneTemplateForm.actionName.value='submit_for_approval';return validate('noncancel','submit_for_approval');" />
 			</egov-authz:authorize>
@@ -235,36 +229,36 @@ function validate(obj,text){
 				<s:iterator value="%{validActions}">
 					<s:if test="%{description!=''}">
 						<s:if test="%{description=='CANCEL'}">
-							<s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" 
+							<s:submit type="submit" cssClass="btn btn-primary" value="%{description}" id="%{name}" 
 								name="%{name}" method="cancel" 
 								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('cancel','%{name}');"/>
 						</s:if>								
 						<s:elseif test="%{description=='REJECT'}">
-							<s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" 
+							<s:submit type="submit" cssClass="btn btn-primary" value="%{description}" id="%{name}" 
 								name="%{name}" method="reject" 
 								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('reject','%{name}');"/>
 						</s:elseif>								
 						<s:else>
-							<s:submit type="submit" cssClass="buttonfinal"
+							<s:submit type="submit" cssClass="btn btn-primary"
 								value="%{description}" id="%{name}" name="%{name}"
 								method="save"
 								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('noncancel','%{name}');" />
 						</s:else>
 				 	</s:if>
 				</s:iterator>
-		</s:elseif>
- 		<s:if test="%{mode=='view' && sourcepage=='search' && model.egwStatus.code=='APPROVED'}">
- 			<egov-authz:authorize actionName="createMilestoneTemplate">
-				<input type="button" class="buttonfinal" value="MODIFY" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
-			</egov-authz:authorize>
-		</s:if>  	
-		<s:if test="%{model.id==null}" >
-			<input type="button" class="buttonfinal" value="CLEAR" id="clear" name="clear" onclick="this.form.reset();">&nbsp;
-		</s:if>
-		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" />
-	  </p>
+			</s:elseif>
+	 		<s:if test="%{mode=='view' && sourcepage=='search' && model.egwStatus.code=='APPROVED'}">
+	 			<egov-authz:authorize actionName="createMilestoneTemplate">
+					<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
+				</egov-authz:authorize>
+			</s:if>  	
+			<s:if test="%{model.id==null}" >
+				<input type="button" class="btn btn-default" value="Clear" id="clear" name="clear" onclick="this.form.reset();">&nbsp;
+			</s:if>
+			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 		
-</div> 
+		</div>
+ </div>
 
 </s:push>
 </s:form>

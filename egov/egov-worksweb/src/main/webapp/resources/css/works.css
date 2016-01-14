@@ -1250,5 +1250,8 @@ td.pagetabletdAmount{
 	padding-right: 3px;
 }
 
+.yui-dt table {
+    width: 100%;
+}
 
 	

@@ -96,12 +96,18 @@ function validateEstimateTemplateFormAndSubmit() {
 }
 
 </script>
-<div id="estimatetemplateerror" class="errorstyle" style="display:none;"></div>
-<div id="templatecodeerror" class="errorstyle" style="display:none;">
+
+<div class="new-page-header">
+	Create Estimate Template
+</div>
+		
+
+<div id="estimatetemplateerror" class="alert alert-danger" style="display:none;"></div>
+<div id="templatecodeerror" class="alert alert-danger" style="display:none;">
 <s:text name="estimateTemplate.code.isunique"/>
 </div>
     <s:if test="%{hasErrors()}">
-        <div id="errorstyle" class="errorstyle" >
+        <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
           <s:fielderror/>
         </div>
@@ -112,49 +118,39 @@ function validateEstimateTemplateFormAndSubmit() {
         	
         </div>
     </s:if>
-    <s:form theme="simple" name="estimateTemplateForm" >
-    <s:token/>
-<s:push value="model">
+    <s:form theme="simple" name="estimateTemplateForm" cssClass="form-horizontal form-groups-bordered">
+	    <s:token/>
+	<s:push value="model">
 
+	<s:if test="%{model.id!=null}">
+		<s:hidden name="id" value="%{id}" id="id"/>
+	    <s:hidden name="mode" value="%{mode}" id="mode"/>
+	</s:if> 
+	<s:else>
+	    <s:hidden name="id" value="%{null}" id="mode" />
+	</s:else>
 	
-<s:if test="%{model.id!=null}">
-	<s:hidden name="id" value="%{id}" id="id"/>
-    <s:hidden name="mode" value="%{mode}" id="mode"/>
-</s:if> 
-<s:else>
-    <s:hidden name="id" value="%{null}" id="mode" />
-</s:else>
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	  <div class="rbcontent2"><div class="datewk">
-	 <%@ include file='estimateTemplate-header.jsp'%>
+	<%@ include file='estimateTemplate-header.jsp'%>
 	<%@ include file='estimateTemplate-sor.jsp'%>
 	<%@ include file='estimateTemplate-nonSor.jsp'%>
-	  <div class="rbbot2"><div></div></div>
-      </div>     
 	
-</div>
-  </div>
-</div>
-<div class="buttonholderwk">
-		
-	  <p>
-	    <s:if test="%{mode!='view'}">
-			<input type="submit" class="buttonfinal" value="SAVE" id="saveButton" name="button" onclick="return validateEstimateTemplateFormAndSubmit()"/>&nbsp;
-		</s:if>
-		<egov-authz:authorize actionName="editEstimateTemplate">
-		<s:if test="%{mode=='view'}">
-			<input type="button" class="buttonfinal" value="MODIFY" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
-		</s:if>
-		</egov-authz:authorize>
-		<s:if test="%{model.id==null}" >
-			<input type="button" class="buttonfinal" value="CLEAR" id="button" name="clear" onclick="this.form.reset();">&nbsp;
-		</s:if>
-		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" />
-	  </p>
-		
-</div>
+	<div class="row">
+		<div class="col-xs-12 text-center buttonholdersearch">
+			<s:if test="%{mode!='view'}">
+			<input type="submit" class="btn btn-primary" value="Save" id="saveButton" name="button" onclick="return validateEstimateTemplateFormAndSubmit()"/>&nbsp;
+			</s:if>
+			<egov-authz:authorize actionName="editEstimateTemplate">
+			<s:if test="%{mode=='view'}">
+				<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
+			</s:if>
+			</egov-authz:authorize>
+			<s:if test="%{model.id==null}" >
+				<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();">&nbsp;
+			</s:if>
+			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
+		</div>
+	</div>
+	
 </s:push>
 </s:form>
 </body>
