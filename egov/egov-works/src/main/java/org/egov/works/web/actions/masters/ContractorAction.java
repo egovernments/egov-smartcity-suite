@@ -69,27 +69,29 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-        @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
-        @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
-        @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
-        @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
+    @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
+    @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
+    @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
+    @Result(name = ContractorAction.SUCCESS, location = "contractor-success.jsp"),
+    @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp"),
+    @Result(name = ContractorAction.VIEW, location = "contractor-view.jsp")
 })
-
 public class ContractorAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3167651186547987956L;
 
     private static final Logger logger = Logger.getLogger(ContractorAction.class);
 
-    public static final String VIEW_CONTRACTOR = "viewContractor";
+    public static final String SEARCH_CONTRACTOR = "searchContractor";
     public static final String SEARCH = "search";
-    public static final String INDEX = "index";
+    public static final String SUCCESS = "success";
     public static final String EDIT = "edit";
+    public static final String VIEW = "view";
     @Autowired
     private ContractorService contractorService;
     private Contractor contractor = new Contractor();
@@ -143,24 +145,27 @@ public class ContractorAction extends SearchFormAction {
 
     public String list() {
         contractorList = contractorService.getAllContractors();
-        return INDEX;
+        return SUCCESS;
     }
 
     @Action(value = "/masters/contractor-edit")
     public String edit() {
         contractor = contractorService.findById(contractor.getId(), false);
-        return EDIT;
+        if (mode.equals("edit"))
+            return EDIT;
+        else
+            return VIEW;
     }
 
     @Override
     @Action(value = "/masters/contractor-search")
     public String search() {
-        return VIEW_CONTRACTOR;
+        return SEARCH_CONTRACTOR;
     }
 
-    @Action(value = "/masters/contractor-viewContractor")
-    public String viewContractor() {
-        return VIEW_CONTRACTOR;
+    @Action(value = "/masters/contractor-searchContractor")
+    public String searchContractor() {
+        return SEARCH_CONTRACTOR;
     }
 
     @Action(value = "/masters/contractor-viewResult")
@@ -168,7 +173,7 @@ public class ContractorAction extends SearchFormAction {
         setPageSize(WorksConstants.PAGE_SIZE);
         contractorList = contractorService.getContractorListForCriterias(createCriteriaMap());
         super.search();
-        return VIEW_CONTRACTOR;
+        return SEARCH_CONTRACTOR;
     }
 
     @Action(value = "/masters/contractor-save")
@@ -181,8 +186,11 @@ public class ContractorAction extends SearchFormAction {
         // TODO:Fixme - Added temporarily since AccountDetailKey was not persisting. Need to find the fix for this and remove
         // below line of code
         contractorService.persist(contractor);
-        addActionMessage(getText("contractor.save.success"));
-        return INDEX;
+        if (StringUtils.isBlank(mode))
+            addActionMessage(getText("contractor.save.success"));
+        else
+            addActionMessage(getText("contractor.modified.success"));
+        return SUCCESS;
 
     }
 
@@ -215,9 +223,9 @@ public class ContractorAction extends SearchFormAction {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus((EgwStatus) egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade().getId() == null)
-                    contractorDetail.setGrade(null);
+                    contractorDetail.setGrade(null); 
                 else
-                    contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
+                    contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
                 if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
@@ -234,7 +242,7 @@ public class ContractorAction extends SearchFormAction {
                 if (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                    contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
+                    contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
                 if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);

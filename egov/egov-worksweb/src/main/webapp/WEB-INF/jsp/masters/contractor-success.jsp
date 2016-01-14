@@ -37,64 +37,43 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%>
 <%@ include file="/includes/taglibs.jsp"%>
-
-<style type="text/css">
-.yui-dt table {
-	width: 100%;
-}
-
-.yui-dt-col-Add {
-	width: 5%;
-}
-
-.yui-dt-col-Delete {
-	width: 5%;
-}
-
-body {
-	font-size: 14px;
-	font-family: regular;
-}
-</style>
-
 <html>
 <head>
-<title><s:text name="contractor.header" /></title>
+<title><s:text name="contractor.list" /></title>
+<style type="text/css">
+ul {
+	list-style-type: none;
+}
+</style>
 </head>
 <body>
-	<s:if test="%{hasErrors()}">
-		<div class="errorstyle">
-			<s:actionerror />
-			<s:fielderror />
-		</div>
-	</s:if>
-	<s:if test="%{hasActionMessages()}">
-		<div class="messagestyle">
-			<s:actionmessage theme="simple" />
-		</div>
-	</s:if>
-	<s:form action="contractor-save" theme="simple" name="contractor"
-		cssClass="form-horizontal form-groups-bordered">
-<s:hidden name="model.id" />
-<s:hidden name="mode" id="mode" />
-		<%@ include file='contractor-form.jsp'%>
-		<p class="text-center">
-			<s:if test="%{model.id!=null && mode != 'view'}">
-				<s:submit type="submit" cssClass="btn btn-primary" value="Modify"
-					id="saveButton" name="button" method="save" />&nbsp;
-		</s:if>
-			<s:if test="%{model.id==null}">
-				<s:submit type="submit" cssClass="btn btn-primary" value="Save"
-					id="saveButton" name="button" method="save" />&nbsp;
 
-				<input type="button" class="btn btn-default" value="Clear"
-					id="button" name="clear" onclick="this.form.reset();">&nbsp;
-		</s:if>
-			<input type="button" class="btn btn-default" value="Close"
-				id="closeButton" name="closeButton" onclick="window.close();" />
-		</p>
-	</s:form>
+<s:if test="%{hasActionMessages()}">
+<div id="msgsDiv" class="new-page-header">
+	<s:actionmessage theme="simple" />
+</div>
+</s:if>
+
+<%@ include file='contractor-commonView.jsp' %>
+
+<div class="row text-center">
+	<div class="add-margin">
+		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
+		<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNew();" />
+		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+	</div>
+</div>
+
+<script type="text/javascript">
+function createNew() {
+	window.location = '${pageContext.request.contextPath}/masters/contractor-newform.action';
+}
+function modifyData() {
+	window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=edit&id='+<s:property value="%{model.id}"/>;
+}
+</script>
 
 </body>
 </html>

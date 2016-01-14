@@ -43,8 +43,7 @@
 	Width: 100%;
 }
 </style>
-<script src="<egov:url path='resources/js/works.js'/>"
-	type="text/javascript"></script>
+
 <script type="text/javascript">
 function validateContractorFormAndSubmit() {
     clearMessage('contractor_error')
@@ -95,8 +94,6 @@ function createTextBoxFormatter(size,maxlength) {
 	
        markup="<input type='text' id='"+id+"'  class='selectmultilinewk' size='"+size+"' maxlength='"+maxlength+"' name='"+fieldName+ "'/>";
 	   el.innerHTML = markup; 
-   
-	  
 	}
 	return textboxFormatter;	
 }
@@ -192,12 +189,10 @@ var makeContractorDataTable = function() {
 <div class="new-page-header">
 	<s:text name="contractor.master.title" />
 </div>
-
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">
 	<div class="panel-heading">
 		<div class="panel-title"></div>
-
 	</div>
 	<div class="panel-body">
 
@@ -218,7 +213,6 @@ var makeContractorDataTable = function() {
 			</div>
 		</div>
 
-
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"> <s:text
 					name="contractor.correspondenceAddress" />
@@ -236,7 +230,6 @@ var makeContractorDataTable = function() {
 					id="paymentAddress" value="%{paymentAddress}" />
 			</div>
 		</div>
-
 
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"> <s:text
@@ -327,11 +320,8 @@ var makeContractorDataTable = function() {
 					name="exemptionForm" id="exemptionForm" cssClass="form-control"
 					value="%{exemptionForm}" />
 			</div>
-
 		</div>
 	</div>
-
-
 	<div data-collapsed="0" style="text-align: left">
 		<div class="panel-heading">
 			<div class="panel-title">
@@ -340,16 +330,15 @@ var makeContractorDataTable = function() {
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
-						<div class="text-right add-margin">
-						<button class="btn btn-primary"
-						onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">
-						<s:text name="contractor.addContractorDetail" /></button>
+				<div class="text-right add-margin">
+				<button class="btn btn-primary"
+				onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">
+				<s:text name="contractor.addContractorDetail" /></button>
 				</div>
 
-
-				<div class="yui-skin-sam">
-					<div id="contractorTable"></div>
-					<script type="text/javascript">
+			<div class="yui-skin-sam">
+				<div id="contractorTable"></div>
+<script type="text/javascript">
             makeContractorDataTable();
          <s:iterator id="detailsIterator" value="model.contractorDetails" status="row_status">
 	       <s:if test="#row_status.count == 1">
@@ -413,11 +402,9 @@ var makeContractorDataTable = function() {
 			        }
 
 			       </s:iterator>         
-       </script>
+</script>
 				</div>
-
 			</div>
-
 		</div>
 	</div>
 </div>
@@ -435,6 +422,4 @@ var makeContractorDataTable = function() {
 	links[i].onclick=function(){return false;};
 	}
 </s:if>
-
-
 </script>

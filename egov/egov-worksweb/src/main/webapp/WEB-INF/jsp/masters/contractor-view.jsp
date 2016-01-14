@@ -37,64 +37,18 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp"%>
-
-<style type="text/css">
-.yui-dt table {
-	width: 100%;
-}
-
-.yui-dt-col-Add {
-	width: 5%;
-}
-
-.yui-dt-col-Delete {
-	width: 5%;
-}
-
-body {
-	font-size: 14px;
-	font-family: regular;
-}
-</style>
-
 <html>
-<head>
-<title><s:text name="contractor.header" /></title>
-</head>
 <body>
-	<s:if test="%{hasErrors()}">
-		<div class="errorstyle">
-			<s:actionerror />
-			<s:fielderror />
-		</div>
-	</s:if>
-	<s:if test="%{hasActionMessages()}">
-		<div class="messagestyle">
-			<s:actionmessage theme="simple" />
-		</div>
-	</s:if>
-	<s:form action="contractor-save" theme="simple" name="contractor"
-		cssClass="form-horizontal form-groups-bordered">
-<s:hidden name="model.id" />
-<s:hidden name="mode" id="mode" />
-		<%@ include file='contractor-form.jsp'%>
-		<p class="text-center">
-			<s:if test="%{model.id!=null && mode != 'view'}">
-				<s:submit type="submit" cssClass="btn btn-primary" value="Modify"
-					id="saveButton" name="button" method="save" />&nbsp;
-		</s:if>
-			<s:if test="%{model.id==null}">
-				<s:submit type="submit" cssClass="btn btn-primary" value="Save"
-					id="saveButton" name="button" method="save" />&nbsp;
+<%@ include file="/includes/taglibs.jsp"%>
+<div class="new-page-header"><s:text  name="contractor.viewConractor.view" /></div>
 
-				<input type="button" class="btn btn-default" value="Clear"
-					id="button" name="clear" onclick="this.form.reset();">&nbsp;
-		</s:if>
-			<input type="button" class="btn btn-default" value="Close"
-				id="closeButton" name="closeButton" onclick="window.close();" />
-		</p>
-	</s:form>
+<%@ include file='contractor-commonView.jsp'%>
+
+<div class="row text-center">
+	<div class="add-margin">
+		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+	</div>
+</div>
 
 </body>
 </html>
