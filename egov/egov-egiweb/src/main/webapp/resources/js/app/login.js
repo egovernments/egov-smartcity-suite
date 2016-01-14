@@ -111,5 +111,11 @@ $(document).ready(function()
 		
 	});
 	
+	if(navigator.cookieEnabled){
+		
+	}else{
+		$('#cookieornoscript').modal('show', {backdrop: 'static'});
+	}
+	
 	
 });

@@ -103,6 +103,11 @@
 			</header>
 			<div class="main-content">
 				<div class="row top-space">
+				    <div class="text-center error-msg">
+					<noscript>
+					    	You don't have javascript enabled.  Make sure Javascript is enabled.
+					</noscript>
+					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
 							<a href="/portal/citizen/register" target="_blank">
@@ -322,6 +327,18 @@
 									data-dismiss="modal"><spring:message code="lbl.close"/></button>
 							</div>
 						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="cookieornoscript" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Enable Cookies</h4>
+					</div>
+					<div class="modal-body">
+						Oops! Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
 					</div>
 				</div>
 			</div>
