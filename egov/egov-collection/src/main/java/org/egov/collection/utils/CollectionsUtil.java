@@ -218,7 +218,7 @@ public class CollectionsUtil {
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
         try {
-            location = this.getLocationById(Integer.valueOf((String) sessionMap
+            location = this.getLocationById(Long.valueOf((String) sessionMap
                     .get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID)));
             if (location == null)
                 throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
@@ -232,7 +232,7 @@ public class CollectionsUtil {
         return location;
     }
 
-    public Location getLocationById(final Integer locationId) {
+    public Location getLocationById(final Long locationId) {
         return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_GET_LOCATIONBYID, locationId);
     }
 
