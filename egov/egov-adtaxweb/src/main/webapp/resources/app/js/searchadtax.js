@@ -185,7 +185,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
-		      { "data" : "hoardingNumber", "title":"Hoarding No."},
+		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "applicationFromDate", "title": "Application Date"},
 			  { "data" : "agencyName", "title": "Agency"},
@@ -207,7 +207,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
-		      { "data" : "hoardingNumber", "title":"Hoarding No."},
+		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},

@@ -61,8 +61,7 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
     @Override
     public List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(final HoardingSearch hoardingSearch) {
         final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(AdvertisementPermitDetail.class, "permit");
-        hoardingCriteria.createAlias("permit.advertisement", "advertisement").
-           createAlias("permit.location", "location").createAlias("permit.ward", "ward");
+        hoardingCriteria.createAlias("permit.advertisement", "advertisement");
         
         if (hoardingSearch.getAgency() != null)
             hoardingCriteria.add(Restrictions.eq("agency.id", hoardingSearch.getAgency()));
