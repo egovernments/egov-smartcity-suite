@@ -185,7 +185,7 @@ public class DayBookList
 
         } catch (final Exception ex) {
             LOGGER.error("Exception " + ex, ex);
-            throw new TaskFailedException("Date Should be within the today's date");
+            throw new TaskFailedException("Date Should be within today's date");
         }
 
     }
@@ -221,8 +221,7 @@ public class DayBookList
                         + "type"
                         + ", "
                       +  " CASE WHEN vh.description = null THEN ' ' ELSE vh.description END AS narration, " 
-+" CASE  WHEN status=0 THEN ( CASE WHEN vh.isconfirmed=0 THEN 'Unconfirmed'  "
-+" ELSE ( case WHEN vh.isconfirmed=1 THEN 'Confirmed' else ' '  END ) END) "
++" CASE  WHEN status=0 THEN ( 'Approved') "
 +" ELSE ( case WHEN status=1 THEN 'Reversed' else (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as \"status\" , debitamount  , "
                         +
                         "creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
@@ -242,7 +241,7 @@ public class DayBookList
                 
                 //rs=pstmt.list();
             }
-            else {
+/*            else {
                 final String queryString = "SELECT voucherdate as vdate, TO_CHAR(voucherdate, 'dd-Mon-yyyy')  AS "
                         + " voucherdate"
                         + ", vouchernumber , gd.glcode AS "
@@ -272,10 +271,10 @@ public class DayBookList
                 List list = pstmt.list();
                 rs=list;
                 Object[] array = list.toArray();
-            }
+            }*/
         } catch (final Exception e)
         {
-            LOGGER.error("Eror:" + e.getMessage(), e);
+            LOGGER.error("Error in Day book report:" + e.getMessage(), e);
             throw taskexp;
         }
         try
@@ -343,19 +342,16 @@ public class DayBookList
                 
                 
                 
-                if (!isconfirmed.equalsIgnoreCase(""))
-                {
+                
                     final String vn1 = element[2].toString();
                     if (!vn1.equalsIgnoreCase(vn2))
                     {
                         vn2 = vn1;
                         totalCount = totalCount + 1;
-                        if (isconfirmed.equalsIgnoreCase("0"))
-                            isConfirmedCount = isConfirmedCount + 1;
                     }
-                }
+               
                 reportBean.setTotalCount(Integer.toString(totalCount));
-                reportBean.setIsConfirmedCount(Integer.toString(isConfirmedCount));
+
                 links.add(dBook);
 
             }   // While loop

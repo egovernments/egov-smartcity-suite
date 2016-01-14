@@ -134,28 +134,28 @@
 				<div style="color: red">
 					<s:actionmessage />
 				</div>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 
 					<tr>
 						<td class="bluebox"><s:text name="dayBook.startDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="bluebox"><s:textfield name="startDate"
 								id="startDate" cssStyle="width:100px" value='%{startDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 							href="javascript:show_calendar('dayBookForm.startDate');"
-							style="text-decoration: none"><img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							style="text-decoration: none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
 						<td class="bluebox"><s:text name="dayBook.endDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory"></span></td>
 						<td class="bluebox"><s:textfield name="endDate" id="endDate"
 								cssStyle="width:100px" value='%{endDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 							href="javascript:show_calendar('dayBookForm.endDate');"
 							style="text-decoration: none"><img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
 					</tr>
 					<tr>
-						<td class="greybox"><s:text name="dayBook.fund" /></td>
+						<td class="greybox"><s:text name="dayBook.fund" /><span
+							class="mandatory"></span></td>
 						<td class="greybox"><s:select name="fundId" id="fundId"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="0" headerValue="----Choose----" /></td>
@@ -172,7 +172,7 @@
 						<tr>
 							<td><input type="button" value="Search" class="buttonsubmit"
 								onclick="return validate()" /></td>
-							<td><input type="button" id="Close" value="Close"
+							<td>&nbsp;&nbsp;<input type="button" id="Close" value="Close"
 								onclick="javascript:window.close()" class="button" /></td>
 						</tr>
 					</table>

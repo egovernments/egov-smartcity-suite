@@ -54,10 +54,9 @@
 				style="text-align: center; width: 98%;">
 				<b><s:property value="%{heading}" /></b>
 				<div align="left" style="text-align: left; width: 98%;">
-					<s:property value="%{dayBookReport.isConfirmedCount}" />
-					in
+					Total Vouchers
 					<s:property value="%{dayBookReport.totalCount}" />
-					are unconfirmed
+					
 				</div>
 			</div>
 		</display:caption>
@@ -87,23 +86,17 @@
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Status" style="width:6%;text-align:center" property="status" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="GlCode" style="width:6%;text-align:center" property="glcode" />
+			title="GL Code" style="width:6%;text-align:center" property="glcode" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Particulars" style="width:5%;text-align:center"
+			title="Particulars" style="width:10%;text-align:center"
 			property="particulars" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Debit Amount(Rs.)" style="width:8%;text-align:right"
+			title="Debit Amount(Rs.)" style="width:5%;text-align:right"
 			property="debitamount" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Credit Amount(Rs.)" style="width:8%;text-align:right"
+			title="Credit Amount(Rs.)" style="width:5%;text-align:right"
 			property="creditamount" />
 		<display:caption media="pdf">
-			<div align="left" style="text-align: left;">
-				<b> <s:property value="%{heading}" /> (<s:property
-						value="%{dayBookReport.isConfirmedCount}" /> in <s:property
-						value="%{dayBookReport.totalCount}" /> are unconfirmed)
-				</b>
-			</div>
 		</display:caption>
 		<display:caption media="excel">
 				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
