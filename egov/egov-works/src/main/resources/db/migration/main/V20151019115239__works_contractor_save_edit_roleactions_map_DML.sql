@@ -17,6 +17,4 @@ Insert into ACCOUNTDETAILTYPE (ID,NAME,DESCRIPTION,TABLENAME,COLUMNNAME,ATTRIBUT
 Insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksEditContractor','/masters/contractor-edit.action',null,(select id from EG_MODULE where name = 'WorksContractorMaster'),1,'WorksEditContractor','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
 Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksEditContractor' and contextroot = 'egworks'));
 
--- CHANGED search by viewContractor into EG_ACTION---
-update eg_action set url = '/masters/contractor-viewContractor.action' where id =1555;
 
