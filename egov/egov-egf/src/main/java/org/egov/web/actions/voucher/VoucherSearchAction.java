@@ -281,7 +281,7 @@ public class VoucherSearchAction extends BaseFormAction
             for (final CVoucherHeader voucherheader : list)
             {
                 voucherMap = new HashMap<String, Object>();
-                final BigDecimal amt = BigDecimal.ZERO;
+                final BigDecimal amt = voucherheader.getTotalAmount();
                 voucherMap.put("id", voucherheader.getId());
                 voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
                 voucherMap.put("type", voucherheader.getType());

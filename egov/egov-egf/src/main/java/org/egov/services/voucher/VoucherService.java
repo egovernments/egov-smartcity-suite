@@ -1037,6 +1037,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherService | createBillForVoucherSubType | Start");
         final EgBillregister egBillregister = new EgBillregister();
+        //Fix it for basic financial type also
         try {
             egBillregister.setBillstatus("APPROVED");
             EgwStatus egwstatus = null;

@@ -466,17 +466,22 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("start purchase bill");
         if (expType == null || expType.equals("-1") || expType.equals("Purchase"))
         {
-            egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SALBILL", "Approved");
+            egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved");
             final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("PURCHBILL", "Passed");
-            final String supplierBillSql = mainquery + " and bill.status in (?,?) " + sql.toString()
+            String statusCheck="";
+            if(egwStatus==null)
+            {
+            	statusCheck=" and bill.status in ("+egwStatus1.getId()+") ";
+            }else
+            	statusCheck=" and bill.status in ("+egwStatus.getId()+","+egwStatus1.getId()+") ";
+            
+            final String supplierBillSql = mainquery + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            final String supplierBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString()
+            final String supplierBillSql1 = mainquery1 + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            supplierBillList = getPersistenceService().findPageBy(supplierBillSql, 1, 500, "Purchase", egwStatus, egwStatus1)
-                    .getList();
+            supplierBillList = getPersistenceService().findPageBy(supplierBillSql, 1, 500, "Purchase").getList();
             if (supplierBillList != null)
-                supplierBillList.addAll(getPersistenceService().findPageBy(supplierBillSql1, 1, 500, "Purchase", egwStatus,
-                        egwStatus1).getList());
+                supplierBillList.addAll(getPersistenceService().findPageBy(supplierBillSql1, 1, 500, "Purchase").getList());
             else
                 supplierBillList = getPersistenceService()
                 .findPageBy(supplierBillSql1, 1, 500, "Purchase", egwStatus, egwStatus1).getList();
@@ -494,21 +499,26 @@ public class PaymentAction extends BasePaymentAction {
         {
             // right not we dont know, the EGW-Status for works bill, passed from external system
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("WORKSBILL", "Passed");
-            final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for
+             EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for
             // external
             // systems
-            final String contractorBillSql = mainquery + " and bill.status in (?,?) " + sql.toString()
+             String statusCheck="";
+            if(egwStatus1==null)
+            {
+            	statusCheck=" and bill.status in ("+egwStatus.getId()+") ";
+            }else
+            	statusCheck=" and bill.status in ("+egwStatus.getId()+","+egwStatus1.getId()+") ";
+            
+            final String contractorBillSql = mainquery + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            final String contractorBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString()
+            final String contractorBillSql1 = mainquery1 + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works", egwStatus, egwStatus1)
+            contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works")
                     .getList();
             if (contractorBillList != null)
-                contractorBillList.addAll(getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works", egwStatus,
-                        egwStatus1).getList());
+                contractorBillList.addAll(getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList());
             else
-                contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works", egwStatus,
-                        egwStatus1).getList();
+                contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contractorBillList);
             contractorBillList.clear();
             contractorBillList.addAll(tempBillList);
