@@ -53,8 +53,8 @@ import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.EgwStatus;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.Location;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.model.instrument.InstrumentHeader;
 
 /**
@@ -85,6 +85,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      */
     private final String receiptURL;
 
+    private final String additionalMessage;
+    
     /**
      * Creates bill receipt information object for given receipt header
      *
@@ -93,6 +95,39 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     public BillReceiptInfoImpl(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
+        this.additionalMessage = null;
+
+        // Populate set of account info objects using receipt details
+        for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
+
+        // Populate set of instrument headers that belong to this receipt
+        for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
+            instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
+        final String receiptStatus = receiptHeader.getStatus().getCode();
+
+        if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
+            event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
+            // find all bounced instruments of this receipt
+            findBouncedInstruments();
+        } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
+                || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
+                || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
+            event = BillingIntegrationService.EVENT_RECEIPT_CREATED;
+        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equals(receiptStatus))
+            event = BillingIntegrationService.EVENT_RECEIPT_CANCELLED;
+
+    }
+
+    /**
+     * Creates bill receipt information object for given receipt header
+     *
+     * @param receiptHeader the receipt header object
+     */
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalMessage) {
+        this.receiptHeader = receiptHeader;
+        receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
+        this.additionalMessage = additionalMessage;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
@@ -120,7 +155,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
             final ReceiptHeader receiptHeaderRefObj) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
-
+        additionalMessage = null;
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
             accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail));
@@ -368,7 +403,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     public Date getManualReceiptDate() {
         return receiptHeader.getManualreceiptdate() == null ? null : receiptHeader.getManualreceiptdate();
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getLegacy()
@@ -376,14 +411,19 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     @Override
     public Boolean getLegacy() {
         Boolean legacy = Boolean.FALSE;
-        for (ReceiptAccountInfo receiptAccountInfo : getAccountDetails()) {
-            if (receiptAccountInfo.getDescription() !=null && !"".equals(receiptAccountInfo.getDescription())
-            		&& (!receiptAccountInfo.getDescription().contains("#") ||
-            				receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE) )) {
+        for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
+            if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
+                    && (!receiptAccountInfo.getDescription().contains("#") ||
+                    receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
             }
-        }
         return legacy;
     }
+
+    @Override
+    public String getAdditionalInfo() {
+        return this.additionalMessage;
+    }
+
 }

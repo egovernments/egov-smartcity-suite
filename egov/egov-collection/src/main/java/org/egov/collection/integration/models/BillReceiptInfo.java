@@ -158,4 +158,10 @@ public interface BillReceiptInfo {
      * @return legacy check for billing system
      */
     public abstract Boolean getLegacy();
+    
+    /**
+     * 
+     * @return Any additional information to be printed in receipt
+     */
+    public abstract String getAdditionalInfo();
 }

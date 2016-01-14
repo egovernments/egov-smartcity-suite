@@ -692,5 +692,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 	 public void setLicenseUtils(final LicenseUtils licenseUtils) {
 		 this.licenseUtils = licenseUtils;
 	 }
+	 @Override
+	    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo) {
+	        // TODO Auto-generated method stub
+	        return null;
+	    }
 
 }

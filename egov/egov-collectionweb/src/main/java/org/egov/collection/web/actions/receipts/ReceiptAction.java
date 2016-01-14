@@ -370,7 +370,7 @@ public class ReceiptAction extends BaseFormAction {
         final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
         ajaxBankRemittanceAction.setServiceName(getServiceName());
         ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
-        
+
         if (populate) {
             ajaxBankRemittanceAction.setFundName(getFundName());
             ajaxBankRemittanceAction.bankBranchList();
@@ -626,9 +626,9 @@ public class ReceiptAction extends BaseFormAction {
 
             // initialise receipt info,persist receipts,create vouchers & update
             // billing system
-            try{
-            populateAndPersistReceipts();
-            }catch(ApplicationRuntimeException e){
+            try {
+                populateAndPersistReceipts();
+            } catch (final ApplicationRuntimeException e) {
                 return NEW;
             }
 
@@ -876,7 +876,7 @@ public class ReceiptAction extends BaseFormAction {
                 collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
             LOGGER.info("Updated billing system ");
         }
-        
+
         // Start work flow for all newly created receipts This might internally
         // create vouchers also based on configuration
         receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
@@ -986,11 +986,11 @@ public class ReceiptAction extends BaseFormAction {
             else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
-            if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null){
+            if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null) {
                 addActionError("Bank is not exist");
                 throw new ApplicationRuntimeException("Bank is not exist");
 
-            }else if(instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
+            } else if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
                 instrumentHeader.setBankId((Bank) bankDAO.findById(
                         Integer.valueOf(instrumentHeader.getBankId().getId()), false));
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
@@ -1893,7 +1893,7 @@ public class ReceiptAction extends BaseFormAction {
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
     }
-    
+
     public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
         this.serviceCategoryService = serviceCategoryService;
     }
