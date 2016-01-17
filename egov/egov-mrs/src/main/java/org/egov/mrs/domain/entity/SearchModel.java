@@ -37,8 +37,61 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.enums;
+package org.egov.mrs.domain.entity;
 
-public enum ApplicationStatus {
-    Created, Approved, Rejected, Registered
+import java.util.Date;
+
+/**
+ * Model used in Search Registration
+ *
+ * @author NPathan
+ *
+ */
+public class SearchModel {
+
+    private String registrationNo;
+    private Date dateOfMarriage;
+    private String husbandName;
+    private String wifeName;
+    private Date registrationDate;
+
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    public void setRegistrationNo(final String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    public Date getDateOfMarriage() {
+        return dateOfMarriage;
+    }
+
+    public void setDateOfMarriage(final Date dateOfMarriage) {
+        this.dateOfMarriage = dateOfMarriage;
+    }
+
+    public String getHusbandName() {
+        return husbandName;
+    }
+
+    public void setHusbandName(final String husbandName) {
+        this.husbandName = husbandName;
+    }
+
+    public String getWifeName() {
+        return wifeName;
+    }
+
+    public void setWifeName(final String wifeName) {
+        this.wifeName = wifeName;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(final Date registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 }

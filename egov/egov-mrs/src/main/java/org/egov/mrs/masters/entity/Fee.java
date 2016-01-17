@@ -76,6 +76,9 @@ public class Fee extends AbstractAuditable {
 
     @NotNull
     private Double fees;
+    
+    private Integer fromDays;
+    private Integer toDays;
 
     @Override
     public Long getId() {
@@ -102,4 +105,66 @@ public class Fee extends AbstractAuditable {
     public void setFees(final Double fees) {
         this.fees = fees;
     }
+    
+    public Integer getFromDays() {
+        return fromDays;
+    }
+
+    public void setFromDays(Integer fromDays) {
+        this.fromDays = fromDays;
+    }
+
+    public Integer getToDays() {
+        return toDays;
+    }
+    
+    public void setToDays(Integer toDays) {
+        this.toDays = toDays;
+    }
+    
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (criteria == null ? 0 : criteria.hashCode());
+        result = prime * result + (fees == null ? 0 : fees.hashCode());
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        
+        if (!super.equals(obj))
+            return false;
+        
+        if (getClass() != obj.getClass())
+            return false;
+        
+        final Fee other = (Fee) obj;
+
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        
+        if (criteria == null) {
+            if (other.criteria != null)
+                return false;
+        } else if (!criteria.equals(other.criteria))
+            return false;
+        
+        if (fees == null) {
+            if (other.fees != null)
+                return false;
+        } else if (!fees.equals(other.fees))
+            return false;
+        
+        return true;
+    }
+
 }

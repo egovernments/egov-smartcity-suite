@@ -91,7 +91,7 @@
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 
-		<form:form role="form" action="/mrs/application/registration/register"
+		<form:form role="form" action="/mrs/application/registration/workflow"
 			modelAttribute="registration" id="form-registration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -100,6 +100,7 @@
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="title.registration" />
+						<input type="hidden" name="id" value="${registration.id}" />
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
@@ -107,42 +108,51 @@
 					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
 					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
 					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
+					    <li><a data-toggle="tab" href="#checklist">Checklist</a></li>
 					  </ul>
 					  <div class="tab-content">
 					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="generalinfo.jsp"></jsp:include>
+					    	<jsp:include page="viewgeneralinfo.jsp"></jsp:include>
 					    </div>
 					    <div id="witness-info" class="tab-pane fade">
-				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
-					    	<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness1.info" name="header" />
-							</jsp:include>
-							
-							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness2.info" name="header" />
-							</jsp:include>
-							
-							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness3.info" name="header" />
-							</jsp:include>	
-							<jsp:include page="priestinfo.jsp"></jsp:include>				
+					    	<c:forEach items="${registration.witnesses}" varStatus="loop" var="w">
+						    	<jsp:include page="viewwitnessinfo.jsp">
+									<jsp:param value="subheading.witness1.info" name="header" />
+									<jsp:param value="${loop.index}" name="index" />
+									<jsp:param value="${w.id}" name="witnessId" />
+					    			<jsp:param value="${w.name.firstName}" name="firstName" />
+					    			<jsp:param value="${w.name.middleName}" name="middleName" />
+					    			<jsp:param value="${w.name.lastName}" name="lastName" />
+					    			<jsp:param value="${w.occupation}" name="occupation" />
+					    			<jsp:param value="${w.age}" name="age" />
+					    			<jsp:param value="${w.contactInfo.residenceAddress}" name="residenceAddress" />
+					    			<jsp:param value="${w.contactInfo.officeAddress}" name="officeAddress" />
+								</jsp:include>
+					    	</c:forEach>					    	
+							<jsp:include page="viewpriestinfo.jsp"></jsp:include>
 					    </div>
-					    <div id="checklist-info" class="tab-pane fade">
-					    	<jsp:include page="checklist.jsp"></jsp:include>
+					    <div id="checklist" class="tab-pane fade">
+					    	<jsp:include page="viewchecklist.jsp"></jsp:include>
 					    </div>
 					  </div>
 					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
 					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
 					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
+					    <li><a data-toggle="tab" href="#checklist">Checklist</a></li>
 					  </ul>
 					  </div>
 				</div>
-			</div>			
-			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
+			</div>	
+			<%-- <div class="row">
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
+				<div class="col-sm-8 add-margin">
+					<form:textarea class="form-control" path="rejectionReason"  id="rejectionReason" name="rejectionReason" />
+				</div>
+			</div> --%>		
+			<c:set value="${registration.currentState.value}" var="stateValue"></c:set>
+			<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected'}">
+				<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
+			</c:if>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 			</div>

@@ -51,8 +51,9 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.enums.FeeType;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class RegistrationDemandService extends DemandService {
 
     @Override

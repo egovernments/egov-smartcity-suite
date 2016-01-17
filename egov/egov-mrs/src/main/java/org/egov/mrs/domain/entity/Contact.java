@@ -56,7 +56,7 @@ public class Contact {
     @SafeHtml
     @Length(max = 15)
     @Audited
-    private Integer mobileNo;
+    private String mobileNo;
 
     @SafeHtml
     @Audited
@@ -74,11 +74,11 @@ public class Contact {
     @Length(max = 256)
     private String officeAddress;
 
-    public Integer getMobileNo() {
+    public String getMobileNo() {
         return mobileNo;
     }
 
-    public void setMobileNo(final Integer mobileNo) {
+    public void setMobileNo(final String mobileNo) {
         this.mobileNo = mobileNo;
     }
 

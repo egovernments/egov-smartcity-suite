@@ -58,20 +58,24 @@ public class ActService {
     }
 
     @Transactional
-    public void createAct(final Act act) {
+    public void create(final Act act) {
         actRepository.save(act);
     }
 
     @Transactional
-    public Act updateAct(final Act act) {
+    public Act update(final Act act) {
         return actRepository.saveAndFlush(act);
     }
 
-    public Act getActById(final Long id) {
+    public Act getAct(final Long id) {
         return actRepository.findById(id);
     }
 
     public List<Act> getActs() {
         return actRepository.findAll();
+    }
+    
+    public Act getProxy(final Long id) {
+        return actRepository.getOne(id);
     }
 }

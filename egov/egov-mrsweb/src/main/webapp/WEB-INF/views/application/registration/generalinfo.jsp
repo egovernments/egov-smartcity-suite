@@ -45,8 +45,26 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
+<div class="subheadsmallnew">
+	<spring:message code="subheading.general.info"/>
+</div>
 <div class="row">
-	<span class="bold"><spring:message code="subheading.general.info"/></span>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.application.no"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="applicationNo" id="txt-applicationNo" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="applicationNo" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.application.date"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="applicationDate" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="applicationDate" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
 </div>
 <div class="row">
 	<div class="form-group">
@@ -57,9 +75,17 @@
 			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="dateOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
-	</div>
-	<div class="col-sm-6">
-		
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.zone"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:select path="zone.id" id="select-marriageAct" cssClass="form-control" 
+						cssErrorClass="form-control error" required="required">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${zones}" itemValue="id" itemLabel="name"/>
+             </form:select>
+            <form:errors path="zone.id" cssClass="add-margin error-msg"/>
+		</div>
 	</div>
 </div>
 <div class="row">

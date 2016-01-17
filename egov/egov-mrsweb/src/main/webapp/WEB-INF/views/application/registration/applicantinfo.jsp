@@ -45,8 +45,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<span class="bold"><spring:message code="${param.header}"/></span>
+<div class="subheadsmallnew">
+	<spring:message code="${param.header}"/>
 </div>
 <div class="row">
 	<div class="col-sm-7">
@@ -55,10 +55,13 @@
 		<label class="col-sm-5 text-right" style="padding-right: 5px;">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</label>
-		applicant: <c:out value="${applicant}" />
 		<div class="col-sm-5" style="padding-left: 26px;">
-			<form:input path="${applicant}.name.firstName" id="txt-firstName" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" autocomplete="off" required="required"/>
+			<form:input path="${applicant}.name.firstName" id="txt-firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" autocomplete="off" required="required" style="width: 33%" placeholder="First Name" />
+			<form:input path="${applicant}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" required="required" style="width: 33%" placeholder="Middle Name"/>
+			<form:input path="${applicant}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" required="required" style="width: 30%" placeholder="Last Name"/>
             <form:errors path="${applicant}.name.firstName" cssClass="add-margin error-msg"/>
+            <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
+            <form:errors path="${applicant}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-2"></div>
 	</div>
@@ -109,7 +112,7 @@
 				<spring:message code="lbl.religiontype"/>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:radiobuttons path="${applicant}.religionPractice" items="${religionPractice}" name="religionPractice" element="span"  />
+				<form:radiobuttons path="${applicant}.religionPractice" items="${religionPractice}" name="religionPractice" element="span" />
 			</div>
 			<div class="col-sm-2"></div>
 		</div>
@@ -120,8 +123,8 @@
 				<spring:message code="lbl.ageason.marriage"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${applicant}.ageInYearsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control low-width is_valid_numeric" style="display: inline; width: 203px;" maxlength="2" placeholder="Years" autocomplete="off"/>
-				<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control low-width is_valid_numeric" style="display: inline; width: 203px;" maxlength="2" placeholder="Months" autocomplete="off"/>
+				<form:input path="${applicant}.ageInYearsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" />
+				<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Months" autocomplete="off" />
 	            <form:errors path="${applicant}.ageInYearsAsOnMarriage" cssClass="add-margin error-msg"/>
 	            <form:errors path="${applicant}.ageInMonthsAsOnMarriage" cssClass="add-margin error-msg"/>
 			</div>
@@ -164,10 +167,10 @@
 		<div class="row">
 			<div class="form-group">
 				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.occupation"/>
+					<spring:message code="lbl.occupation"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:input path="${applicant}.occupation" id="txt-occupation" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off"/>
+					<form:input path="${applicant}.occupation" id="txt-occupation" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required"/>
 	            	<form:errors path="${applicant}.occupation" cssClass="add-margin error-msg"/>
 				</div>
 			</div>
@@ -179,10 +182,10 @@
 		<div class="row">
 			<div class="form-group">
 				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.residence.address"/>
+					<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                     <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 				</div>
 			</div>
@@ -192,10 +195,10 @@
 		<div class="row">
 			<div class="form-group">
 				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.office.address"/>
+					<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                     <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 				</div>
 			</div>
@@ -220,10 +223,10 @@
 		<div class="row">
 			<div class="form-group">
 				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.office.address"/>
+					<spring:message code="lbl.email"/>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.email" id="name" type="text" class="form-control low-width" maxlength="128" placeholder="" autocomplete="off" />
+					<form:input path="${applicant}.contactInfo.email" id="name" type="text" class="form-control low-width" maxlength="128" placeholder="" autocomplete="off" />
                     <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
 				</div>
 			</div>

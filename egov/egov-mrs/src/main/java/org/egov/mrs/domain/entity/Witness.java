@@ -79,6 +79,10 @@ public class Witness extends AbstractAuditable {
     @SafeHtml
     @Length(max = 30)
     private String relationshipWithApplicant;
+    
+    @NotNull
+    @Length(min = 25)
+    private Integer age;
 
     @SafeHtml
     @Length(max = 20)
@@ -127,6 +131,14 @@ public class Witness extends AbstractAuditable {
 
     public void setRelationshipWithApplicant(final String relationshipWithApplicant) {
         this.relationshipWithApplicant = relationshipWithApplicant;
+    }
+    
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getAadhaarNo() {

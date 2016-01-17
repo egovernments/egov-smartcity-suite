@@ -62,3 +62,36 @@ $('body').on('click', 'img.attach-photo', function () {
 	
 	$(inputPhoto).trigger('click');
 });
+
+$(document).ready( function () {
+	$('.nav-tabs-top a[data-toggle="tab"]').on('click', function(){
+	    $('.nav-tabs-bottom li.active').removeClass('active')
+	    var tabRef = '#'+ $(this).prop('href').split('#')[1];	   
+	    $('.nav-tabs-bottom a[href="'+tabRef+'"]').parent().addClass('active');
+	})
+
+	$('.nav-tabs-bottom a[data-toggle="tab"]').on('click', function(){
+	    $('.nav-tabs-top li.active').removeClass('active')
+	    var tabRef = '#'+ $(this).prop('href').split('#')[1];	    
+	    $('.nav-tabs-top a[href="'+tabRef+'"]').parent().addClass('active');
+	})
+	
+	// Showing the respective tab when mandatory data is not filled in
+	$('div.tab-content input').bind('invalid', function(e) {
+	    if (!e.target.validity.valid) {
+	    	var elem = $(e.target).parents( "div[id$='-info']" )[0];
+	    	
+	    	$('.nav-tabs-top li.active').removeClass('active')
+	    	$('.nav-tabs-bottom li.active').removeClass('active')    	
+	    	
+	    	if (elem != undefined || elem != null) {
+	    		$('.nav-tabs-top a[href="#'+elem.id+'"]').parent().addClass('active');
+	        	$('.nav-tabs-bottom a[href="#'+elem.id+'"]').parent().addClass('active');
+	        	$('div[id$="-info"].active').removeClass('in active');
+	        	$('div#' + elem.id).addClass('in active');	
+	    	}
+	    } 
+	});
+
+	$("input[id$='religionPractice1'").prop("checked", true);
+})

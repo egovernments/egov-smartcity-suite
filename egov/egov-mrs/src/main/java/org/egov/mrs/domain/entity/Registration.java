@@ -57,8 +57,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -82,6 +84,9 @@ public class Registration extends StateAware {
 
     @NotNull
     private String applicationNo;
+    
+    @NotNull
+    private Date applicationDate;
 
     private String registrationNo;
 
@@ -89,6 +94,8 @@ public class Registration extends StateAware {
     private Date dateOfMarriage;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "marriageact")
     private Act marriageAct;
 
     @NotNull
@@ -98,22 +105,22 @@ public class Registration extends StateAware {
 
     @NotNull
     @Valid
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "husband")
     private Applicant husband = new Applicant();
 
     @NotNull
     @Valid
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "wife")
     private Applicant wife = new Applicant();
 
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
+    @Size(max = 3)
     private List<Witness> witnesses = new LinkedList<Witness>();
 
-    @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "priest")
@@ -130,7 +137,7 @@ public class Registration extends StateAware {
     private String feeCriteria;
 
     @NotNull
-    private String feePaid;
+    private Double feePaid;
     
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
@@ -150,7 +157,13 @@ public class Registration extends StateAware {
     private String rejectionReason;
     
     @Length(max = 256)
-    private String remakrs;
+    private String remarks;
+    
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
 
     @Override
     public Long getId() {
@@ -286,11 +299,11 @@ public class Registration extends StateAware {
         this.feeCriteria = feeCriteria;
     }
 
-    public String getFeePaid() {
+    public Double getFeePaid() {
         return feePaid;
     }
 
-    public void setFeePaid(final String feePaid) {
+    public void setFeePaid(final Double feePaid) {
         this.feePaid = feePaid;
     }
 
@@ -334,16 +347,44 @@ public class Registration extends StateAware {
         this.rejectionReason = rejectionReason;
     }
     
-    public String getRemakrs() {
-        return remakrs;
+    public String getRemarks() {
+        return remarks;
     }
 
-    public void setRemakrs(String remakrs) {
-        this.remakrs = remakrs;
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
     }
     
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+    
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+    
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
     @Override
     public String getStateDetails() {
-        return null;
+        return "Marriage registration application no : " + this.applicationNo;
+    }
+    
+    public boolean isFeeCollected() {
+        return this.demand.getBaseDemand().compareTo(this.demand.getAmtCollected()) == 0 ? true : false;
     }
 }

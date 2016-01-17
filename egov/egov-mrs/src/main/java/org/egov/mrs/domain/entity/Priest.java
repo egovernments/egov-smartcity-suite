@@ -41,14 +41,18 @@ package org.egov.mrs.domain.entity;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.masters.entity.Religion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -68,9 +72,9 @@ public class Priest extends AbstractAuditable {
     private Name name;
 
     @NotNull
-    @SafeHtml
-    @Length(max = 15)
-    private String religion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "religion")
+    private Religion religion;
 
     @NotNull
     @Length(min = 30)
@@ -93,11 +97,11 @@ public class Priest extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getReligion() {
+    public Religion getReligion() {
         return religion;
     }
 
-    public void setReligion(final String religion) {
+    public void setReligion(final Religion religion) {
         this.religion = religion;
     }
 
@@ -125,4 +129,11 @@ public class Priest extends AbstractAuditable {
         this.contactInfo = contactInfo;
     }
 
+    public Name getName() {
+        return name;
+    }
+    
+    public void setName(Name name) {
+        this.name = name;
+    }
 }

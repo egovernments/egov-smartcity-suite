@@ -37,8 +37,32 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.enums;
+package org.egov.mrs.web.controller.application.registration;
 
-public enum ApplicationStatus {
-    Created, Approved, Rejected, Registered
+import org.egov.mrs.domain.entity.SearchModel;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+/**
+ * Handles the Registration search
+ * 
+ * @author nayeem
+ *
+ */
+@Controller
+@RequestMapping(value = "/application/registration")
+public class SearchRegistrationController {
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String showSearch(@ModelAttribute final SearchModel searchModel) {
+        return "registration-search";
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public String search(@ModelAttribute final SearchModel searchModel) {
+        return "registration-search";
+    }
+
 }

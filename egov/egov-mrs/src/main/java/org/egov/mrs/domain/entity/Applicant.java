@@ -103,6 +103,7 @@ public class Applicant extends AbstractAuditable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "relationstatus")
     private RelationStatus presentRelation;
 
     @NotNull

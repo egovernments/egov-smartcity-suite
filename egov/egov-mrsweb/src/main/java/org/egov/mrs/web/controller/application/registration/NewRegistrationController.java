@@ -43,9 +43,15 @@ import static org.egov.mrs.application.Constants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.Constants.REVENUE_HIERARCHY_TYPE;
 
 import java.util.Arrays;
+import java.util.Base64;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.Witness;
 import org.egov.mrs.domain.enums.RelationStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.domain.service.RegistrationService;
@@ -56,8 +62,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -69,7 +77,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application/registration")
-public class CreateRegistrationController {
+public class NewRegistrationController extends GenericWorkFlowController {
 
     private final ReligionService religionService;
     private final BoundaryService boundaryService;
@@ -77,7 +85,7 @@ public class CreateRegistrationController {
     private final RegistrationService registrationService;
 
     @Autowired
-    public CreateRegistrationController(final RegistrationService registrationService, final ReligionService religionService,
+    public NewRegistrationController(final RegistrationService registrationService, final ReligionService religionService,
             final BoundaryService boundaryService, final ActService actService) {
         this.registrationService = registrationService;
         this.religionService = religionService;
@@ -86,28 +94,89 @@ public class CreateRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String showRegistration(final Model model) {
-        model.addAttribute("registration", new Registration());
+    public String showRegistration(@ModelAttribute final Registration registration, final Model model) {
         model.addAttribute("zones",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
         model.addAttribute("religions", religionService.getReligions());
         model.addAttribute("acts", actService.getActs());
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("relationStatus", Arrays.asList(RelationStatus.values()));
+
+        prepareWorkflow(model, registration, new WorkflowContainer());
+
         return "registration-form";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@ModelAttribute Registration registration, final BindingResult errors,
+    public String register(@ModelAttribute final Registration registration,
+            @ModelAttribute final WorkflowContainer workflowContainer,
+            final HttpServletRequest request,
+            final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
-        
+
         if (errors.hasErrors())
             return "registration-form";
-        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
-        registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
-        registrationService.createRegistration(registration);
-        
-        return "registration-form";
+
+        obtainWorkflowParameters(workflowContainer, request);
+        registrationService.createRegistration(registration, workflowContainer);
+
+        return "registration-ack";
+    }
+
+    @RequestMapping(value = "/{registrationId}", method = RequestMethod.GET)
+    public String viewRegistration(@PathVariable final Long registrationId, final Model model) {
+        final Registration registration = registrationService.get(registrationId);
+        model.addAttribute("registration", registration);
+        model.addAttribute("husbandPhoto", Base64.getEncoder().encodeToString(registration.getHusband().getPhoto()));
+        model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
+
+        int i = 0;
+        for (Witness witness : registration.getWitnesses()) {
+            model.addAttribute("witness" + (i++) + "Photo", Base64.getEncoder().encodeToString(witness.getPhoto()));
+        }
+
+        prepareWorkflow(model, registration, new WorkflowContainer());
+        return "registration-view";
+    }
+
+    @RequestMapping(value = "/workflow", method = RequestMethod.POST)
+    public String handleWorkflowAction(@RequestParam final Long id, @RequestParam final String workFlowAction,
+            @ModelAttribute final WorkflowContainer workflowContainer,
+            final HttpServletRequest request,
+            final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+
+        if (errors.hasErrors())
+            return "registration-view";
+
+        obtainWorkflowParameters(workflowContainer, request);
+
+        if (workFlowAction.equalsIgnoreCase("forward"))
+            redirectAttributes.addFlashAttribute("registration",
+                    registrationService.forwardRegistration(id, workflowContainer));
+        else if (workFlowAction.equalsIgnoreCase("approve"))
+            redirectAttributes.addFlashAttribute("registration",
+                    registrationService.approveRegistration(id, workflowContainer));
+        else
+            redirectAttributes.addFlashAttribute("registration",
+                    registrationService.rejectRegistration(id, workflowContainer));
+
+        return "registration-ack";
+    }
+
+    /**
+     * Obtains the workflow paramaters from the HttpServletRequest
+     *
+     * @param workflowContainer
+     * @param request
+     */
+    private void obtainWorkflowParameters(final WorkflowContainer workflowContainer, final HttpServletRequest request) {
+        if (request.getParameter("approvalComent") != null)
+            workflowContainer.setApproverComments(request.getParameter("approvalComent"));
+        if (request.getParameter("workFlowAction") != null)
+            workflowContainer.setWorkFlowAction(request.getParameter("workFlowAction"));
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
     }
 
 }

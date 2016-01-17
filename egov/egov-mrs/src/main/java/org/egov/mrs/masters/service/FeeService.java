@@ -39,6 +39,10 @@
 
 package org.egov.mrs.masters.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.mrs.masters.entity.Fee;
@@ -59,21 +63,33 @@ public class FeeService {
     }
 
     @Transactional
-    public void createFee(final Fee fee) {
+    public void create(final Fee fee) {
         feeRepository.save(fee);
     }
 
     @Transactional
-    public Fee updateFee(final Fee fee) {
+    public Fee update(final Fee fee) {
         return feeRepository.saveAndFlush(fee);
     }
 
-    public Fee getFeeById(final Long id) {
+    public Fee getFee(final Long id) {
         return feeRepository.findById(id);
     }
 
     public List<Fee> getAllFee() {
         return feeRepository.findAll();
+    }
+    
+    public Fee getFeeForDays(Long days) {
+        return feeRepository.findByToDaysLessThanEqual(days);
+    }
+    
+    public Fee getFeeForDate(Date date) {
+        Long daysAfterMarriage = ChronoUnit.DAYS.between(
+                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                LocalDateTime.now());
+        
+        return getFeeForDays(daysAfterMarriage);
     }
 
 }

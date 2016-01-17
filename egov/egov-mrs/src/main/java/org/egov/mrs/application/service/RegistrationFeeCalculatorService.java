@@ -39,21 +39,38 @@
 
 package org.egov.mrs.application.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.masters.service.FeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RegistrationFeeCalculatorService implements FeeCalculator {
+    
+    private FeeService feeService;
+    
+    @Autowired
+    public RegistrationFeeCalculatorService(final FeeService feeService) {
+        this.feeService = feeService;
+    }
 
     @Override
     public Double calculateFee(final Date date) {
-        return null;
+        Long daysAfterMarriage = ChronoUnit.DAYS.between(
+                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                LocalDateTime.now());
+        
+        return feeService.getFeeForDays(daysAfterMarriage).getFees();
     }
 
     @Override
     public String getFeeType() {
-        return null;
+        return FeeType.REGISTRATION.name();
     }
 
 }

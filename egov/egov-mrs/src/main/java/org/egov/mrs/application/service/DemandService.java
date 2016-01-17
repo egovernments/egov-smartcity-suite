@@ -50,6 +50,7 @@ import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.mrs.application.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -82,6 +83,8 @@ public abstract class DemandService {
         egDemand.setCreateDate(new Date());
         egDemand.setModifiedDate(new Date());
         egDemand.setIsHistory("N");
+        egDemand.setEgInstallmentMaster(installmentDAO
+                .getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(Constants.MODULE_NAME), new Date()));
         return egDemandDAO.create(egDemand);
     }
 

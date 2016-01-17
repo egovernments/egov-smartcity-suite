@@ -70,4 +70,18 @@
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-form.jsp"/>
     </definition> 	
     
+    <definition name="registration-ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-ack.jsp"/>
+    </definition>
+    
+    <definition name="registration-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-view.jsp"/>
+    </definition>
+    
+    <definition name="registration-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search.jsp"/>
+    </definition>
 </tiles-definitions>

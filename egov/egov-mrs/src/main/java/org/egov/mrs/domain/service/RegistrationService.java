@@ -39,8 +39,22 @@
 
 package org.egov.mrs.domain.service;
 
+import java.math.BigDecimal;
+
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.mrs.application.service.RegistrationDemandService;
+import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.repository.RegistrationRepository;
+import org.egov.mrs.masters.entity.Fee;
+import org.egov.mrs.masters.service.ActService;
+import org.egov.mrs.masters.service.FeeService;
+import org.egov.mrs.masters.service.ReligionService;
+import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +64,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegistrationService {
 
     private final RegistrationRepository registrationRepository;
+    
+    @Autowired
+    private ReligionService religionService;
+    
+    @Autowired
+    private ActService actService;
+    
+    @Autowired
+    private FeeService feeService;
+    
+    @Autowired
+    private RegistrationDemandService registrationDemandService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
+    
+    @Autowired
+    private RegistrationWorkflowService workflowService;
+    
+    @Autowired
+    private MarriageRegistrationNoGenerator registrationNoGenerator;
 
     @Autowired
     public RegistrationService(final RegistrationRepository registrationRepository) {
@@ -57,12 +95,74 @@ public class RegistrationService {
     }
 
     @Transactional
-    public void createRegistration(final Registration registration) {
+    public void create(final Registration registration) {
         registrationRepository.save(registration);
     }
 
     @Transactional
-    public Registration updateRegistration(final Registration registraion) {
+    public Registration update(final Registration registraion) {
         return registrationRepository.saveAndFlush(registraion);
     }
+    
+    public Registration get(Long id) {
+        return registrationRepository.findById(id);
+    }
+
+    @Transactional
+    public void createRegistration(final Registration registration, WorkflowContainer workflowContainer) {
+        
+        if (StringUtils.isBlank(registration.getApplicationNo()))
+            registration.setApplicationNo(applicationNumberGenerator.generate());
+        
+        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
+        registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
+        registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
+        registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
+        //final Fee fee = feeService.getFeeForDate(registration.getDateOfMarriage());
+        final Fee fee = feeService.getFee(1L);
+        registration.setFeeCriteria(fee.getCriteria());
+        registration.setFeePaid(fee.getFees());
+        registration.setDemand(registrationDemandService.createDemand(new BigDecimal(fee.getFees())));
+        registration.setStatus(ApplicationStatus.Created);
+
+        if (registration.getPriest().getReligion().getId() != null)
+            registration.getPriest().setReligion(religionService.getProxy(registration.getPriest().getReligion().getId()));
+        else
+            registration.setPriest(null);
+
+        registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
+        
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+
+        create(registration);
+    }
+    
+    @Transactional
+    public Registration forwardRegistration(Long id, WorkflowContainer workflowContainer) {
+        Registration registration = get(id);
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        return update(registration);
+    }
+    
+    @Transactional
+    public Registration approveRegistration(Long id, WorkflowContainer workflowContainer) {
+        Registration registration = get(id);
+        registration.setStatus(ApplicationStatus.Approved);
+        registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        
+        return update(registration);
+    }
+    
+    @Transactional
+    public Registration rejectRegistration(Long id, WorkflowContainer workflowContainer) {
+        Registration registration = get(id);
+        // Capture the reason for rejection
+        registration.setStatus(ApplicationStatus.Rejected);
+        registration.setRejectionReason(workflowContainer.getApproverComments());
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        
+        return update(registration);
+    }
+
 }

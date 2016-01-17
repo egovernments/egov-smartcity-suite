@@ -55,10 +55,13 @@
 		<label class="col-sm-5 text-right" style="padding-right: 5px;">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</label>
-		witness: <c:out value="${witness}" />
 		<div class="col-sm-5" style="padding-left: 26px;">
-			<form:input path="${witness}.name.firstName" id="txt-firstName" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="First Name" autocomplete="off" required="required"/>
+			<form:input path="${witness}.name.firstName" id="txt-firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" placeholder="First Name" autocomplete="off" required="required" style="width: 33%"/>
+			<form:input path="${witness}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" placeholder="Middle Name" autocomplete="off" required="required" style="width: 30%" />
+			<form:input path="${witness}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" placeholder="Last Name" autocomplete="off" required="required" style="width: 30%" />
             <form:errors path="${witness}.name.firstName" cssClass="add-margin error-msg"/>
+            <form:errors path="${witness}.name.middleName" cssClass="add-margin error-msg"/>
+            <form:errors path="${witness}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-2"></div>
 	</div>
@@ -81,7 +84,7 @@
 				<spring:message code="lbl.occupation"/>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${witness}.occupation" id="txt-witness-occupation" type="text" class="form-control low-width is_valid_alphanumeric" maxlength="60" placeholder="" autocomplete="off"/>
+				<form:input path="${witness}.occupation" id="txt-witness-occupation" type="text" class="form-control low-width is_valid_alphanumeric" maxlength="60" placeholder="" autocomplete="off" />
 	            <form:errors path="${witness}.occupation" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -90,10 +93,10 @@
 	<div class="row">
 		<div class="form-group">
 			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.religion"/>
+				<spring:message code="lbl.relationship.applicant"/>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${witness}.relationshipWithApplicant" id="txt-witness-relationship" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="" autocomplete="off"/>
+				<form:input path="${witness}.relationshipWithApplicant" id="txt-witness-relationship" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="" autocomplete="off" />
 	            <form:errors path="${witness}.relationshipWithApplicant" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -102,10 +105,22 @@
 	<div class="row">
 		<div class="form-group">
 			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.residence.address"/>
+				<spring:message code="lbl.age"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+				<form:input path="${witness}.age" id="txt-witness-age" type="text" class="form-control low-width" data-pattern="number" maxlength="30" placeholder="" autocomplete="off"  required="required"/>
+	            <form:errors path="${witness}.age" cssClass="add-margin error-msg"/>
+			</div>
+			<div class="col-sm-2"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-group">
+			<label class="col-sm-5 text-right" style="padding-right: 5px;">
+				<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-5" style="padding-left: 26px;">
+				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
                 <form:errors path="${witness}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -114,10 +129,10 @@
 	<div class="row">
 		<div class="form-group">
 			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.residence.address"/>
+				<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
                 <form:errors path="${witness}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>

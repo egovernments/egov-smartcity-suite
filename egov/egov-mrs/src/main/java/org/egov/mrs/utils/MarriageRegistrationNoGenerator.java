@@ -23,31 +23,40 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.masters.repository;
+package org.egov.mrs.utils;
 
-import org.egov.mrs.masters.entity.Fee;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-@Repository
-public interface FeeRepository extends JpaRepository<Fee, Long> {
-    Fee findById(Long id);
+import org.egov.infstr.utils.SequenceNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    Fee findByCriteria(String criteria);
-    
-    Fee findByToDaysLessThanEqual(Long days);
+@Service
+public class MarriageRegistrationNoGenerator {
+
+    private static final String SEQ_REGISTRATIONNO = "SEQ_EGMRS_REGISTRATIONNO";
+
+    @Autowired
+    private SequenceNumberGenerator sequenceNoGenerator;
+
+    public String generateRegistrationNo() {
+        return new SimpleDateFormat("ddMMyyyy").format(new Date())
+                .concat(sequenceNoGenerator.getNextNumberWithFormat("EGMRS_REGISTRATIONNO", 3, '0').getFormattedNumber());
+    }
+
 }
