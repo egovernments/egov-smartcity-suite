@@ -50,9 +50,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.service.integration.LicenseBill;
-import org.egov.tl.domain.service.integration.LicenseBillService;
+import org.egov.tl.entity.License;
+import org.egov.tl.service.integration.LicenseBill;
+import org.egov.tl.service.integration.LicenseBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")

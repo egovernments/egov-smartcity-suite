@@ -54,10 +54,9 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.tl.domain.entity.LicenseCategory;
-import org.egov.tl.domain.service.masters.LicenseCategoryService;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.service.masters.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = LicenseCategoryAction.NEW, location = "licenseCategory-new.jsp"),

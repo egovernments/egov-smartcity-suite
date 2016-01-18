@@ -55,11 +55,11 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.tl.domain.entity.LicenseStatus;
-import org.egov.tl.domain.entity.TradeLicense;
-import org.egov.tl.domain.entity.WorkflowBean;
-import org.egov.tl.domain.service.BaseLicenseService;
-import org.egov.tl.domain.service.TradeService;
+import org.egov.tl.entity.LicenseStatus;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.service.BaseLicenseService;
+import org.egov.tl.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,7 +191,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         tradeLicense.generateNocNumber(runningNumber);
         // this.service().endWorkFlowForLicense(tradeLicense);
         final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                .find("from org.egov.tl.domain.entity.LicenseStatus where code='ACT'");
+                .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
         tradeLicense.setStatus(activeStatus);
         persistenceService.update(tradeLicense);
         LOGGER.debug("Exiting from the generate NOC method:<<<<<<<<<<>>>>>>>>>>>>>:");

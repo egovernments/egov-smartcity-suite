@@ -138,7 +138,7 @@
    <bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
    </bean>
 
-	 <bean id="TLCollectionsInterface" class="org.egov.tl.domain.service.integration.LicenseBillService" scope="prototype" >
+	 <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" >
 			<property name="licenseUtils" ref="licenseUtils" />
 	</bean>
 	

@@ -45,7 +45,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
 	
 	<bean id="TradeLicensePersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.tl.domain.entity.TradeLicense" />
+        <property name="type" value="org.egov.tl.entity.TradeLicense" />
     </bean>
         
     <bean id="TradeLicenseInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
@@ -53,7 +53,7 @@
     </bean>
     
     <bean id="LicenseTransferPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.tl.domain.entity.transfer.LicenseTransfer" />
+        <property name="type" value="org.egov.tl.entity.transfer.LicenseTransfer" />
     </bean>
         
     <bean id="LicenseTransferInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
@@ -61,7 +61,7 @@
     </bean>
     
     <bean id="LicenseObjectionPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.tl.domain.entity.objection.LicenseObjection" />
+        <property name="type" value="org.egov.tl.entity.objection.LicenseObjection" />
     </bean>
         
     <bean id="LicenseObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">

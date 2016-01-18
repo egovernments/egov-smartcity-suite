@@ -49,20 +49,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.tl.domain.entity.FeeMatrix;
-import org.egov.tl.domain.entity.FeeMatrixDetail;
-import org.egov.tl.domain.entity.FeeType;
-import org.egov.tl.domain.entity.LicenseAppType;
-import org.egov.tl.domain.entity.LicenseCategory;
-import org.egov.tl.domain.entity.NatureOfBusiness;
-import org.egov.tl.domain.entity.UnitOfMeasurement;
-import org.egov.tl.domain.service.FeeMatrixService;
-import org.egov.tl.domain.service.FeeTypeService;
+import org.egov.tl.entity.FeeMatrix;
+import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.FeeMatrixService;
+import org.egov.tl.service.FeeTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -107,7 +103,7 @@ public class FeeMatrixController {
 		model.addAttribute(
 				"natureOfBusinesss",
 				persistenceService
-						.findAllBy("select n from org.egov.tl.domain.entity.NatureOfBusiness n order by name asc"));
+						.findAllBy("select n from org.egov.tl.entity.NatureOfBusiness n order by name asc"));
 		model.addAttribute("financialYears",
 				financialYearDAO
 						.getAllActiveFinancialYearList());

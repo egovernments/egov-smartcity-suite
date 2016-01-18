@@ -43,11 +43,10 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.entity.TradeLicense;
-import org.egov.tl.domain.service.BaseLicenseService;
-import org.egov.tl.domain.service.TradeService;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.BaseLicenseService;
+import org.egov.tl.service.TradeService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 

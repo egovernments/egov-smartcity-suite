@@ -39,7 +39,6 @@
  */
 package org.egov.tl.web.actions.domain;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,8 +60,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.tl.domain.entity.LicenseSubCategory;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

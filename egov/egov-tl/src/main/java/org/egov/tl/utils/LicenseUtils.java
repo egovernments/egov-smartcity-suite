@@ -85,10 +85,10 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.entity.LicenseStatus;
-import org.egov.tl.domain.entity.LicenseStatusValues;
-import org.egov.tl.domain.entity.LicenseSubCategory;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseStatus;
+import org.egov.tl.entity.LicenseStatusValues;
+import org.egov.tl.entity.LicenseSubCategory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -382,7 +382,7 @@ public class LicenseUtils {
 	public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {
 		return persistenceService
 				.findAllBy(
-						"from org.egov.tl.domain.entity.LicenseSubCategory where licenseType.name=?",
+						"from org.egov.tl.entity.LicenseSubCategory where licenseType.name=?",
 						simpleName);
 	}
 
@@ -410,7 +410,7 @@ public class LicenseUtils {
 			final String subType) {
 		return persistenceService
 				.findAllBy(
-						"from org.egov.tl.domain.entity.LicenseSubCategory where licenseSubType.code=?",
+						"from org.egov.tl.entity.LicenseSubCategory where licenseSubType.code=?",
 						subType);
 	}
 
@@ -422,13 +422,13 @@ public class LicenseUtils {
 	 */
 	public LicenseStatus getLicenseStatusbyCode(final String statusCode) {
 		return (LicenseStatus) persistenceService
-				.find("FROM org.egov.tl.domain.entity.LicenseStatus where statusCode=?",
+				.find("FROM org.egov.tl.entity.LicenseStatus where statusCode=?",
 						statusCode);
 	}
 
 	public LicenseStatusValues getCurrentStatus(final License license) {
 		return (LicenseStatusValues) persistenceService
-				.find("from org.egov.tl.domain.entity.LicenseStatusValues  where license.id=? and active=true",
+				.find("from org.egov.tl.entity.LicenseStatusValues  where license.id=? and active=true",
 						license.getId());
 	}
 
@@ -797,7 +797,7 @@ public class LicenseUtils {
 		License license = null;
 		final Query query = getSession()
 				.createQuery(
-						"from org.egov.tl.domain.entity.License lic where lic.contractorCode is not null and lic.contractorCode=:contrCode and lic.tradeName.licenseType.module.moduleName =:moduleName");
+						"from org.egov.tl.entity.License lic where lic.contractorCode is not null and lic.contractorCode=:contrCode and lic.tradeName.licenseType.module.moduleName =:moduleName");
 		query.setString("contrCode", contractorCode);
 		query.setString("moduleName", moduleName);
 		final List licenseList = query.list();

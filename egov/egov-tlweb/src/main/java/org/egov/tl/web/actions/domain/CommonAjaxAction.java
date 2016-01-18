@@ -39,7 +39,6 @@
  */
 package org.egov.tl.web.actions.domain;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -58,10 +57,10 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
-import org.egov.tl.domain.entity.FeeMatrixDetail;
-import org.egov.tl.domain.entity.LicenseSubCategory;
-import org.egov.tl.domain.service.FeeMatrixDetailService;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.FeeMatrixDetailService;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -204,7 +203,7 @@ public class CommonAjaxAction extends BaseFormAction {
     
     @Action(value="/domain/commonAjax-ajaxPopulateSubCategory")  
     public String ajaxPopulateSubCategory() {
-    subCategoryList = licenseSubCategoryService.findAllBy("select s from org.egov.tl.domain.entity.LicenseSubCategory s  where s.category.id ="+categoryId);
+    subCategoryList = licenseSubCategoryService.findAllBy("select s from org.egov.tl.entity.LicenseSubCategory s  where s.category.id ="+categoryId);
     return "subcategory";       
     }
     

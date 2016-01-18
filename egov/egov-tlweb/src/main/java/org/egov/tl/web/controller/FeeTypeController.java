@@ -42,8 +42,8 @@ package org.egov.tl.web.controller;
 
 import javax.validation.Valid;
 
-import org.egov.tl.domain.entity.FeeType;
-import org.egov.tl.domain.service.FeeTypeService;
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.service.FeeTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

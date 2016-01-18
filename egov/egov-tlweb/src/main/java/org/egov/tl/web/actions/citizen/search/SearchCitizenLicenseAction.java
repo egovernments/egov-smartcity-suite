@@ -59,7 +59,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.services.Page;
-import org.egov.tl.domain.entity.TradeLicense;
+import org.egov.tl.entity.TradeLicense;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
