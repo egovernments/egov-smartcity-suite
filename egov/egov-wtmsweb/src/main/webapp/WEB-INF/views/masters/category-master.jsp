@@ -72,8 +72,8 @@
 				<div class="col-sm-3 add-margin"  id="categorydiv">
 					<form:input cssClass="form-control patternvalidation"
 						data-pattern="alphabetwithspace" maxlength="25" id="categoryName"
-						path="categorytype.name" required="required" />
-					<form:errors path="categorytype.name"
+						path="connectionCategory.name" required="required" />
+					<form:errors path="connectionCategory.name"
 						cssClass="add-margin error-msg" />
 				</div>
 

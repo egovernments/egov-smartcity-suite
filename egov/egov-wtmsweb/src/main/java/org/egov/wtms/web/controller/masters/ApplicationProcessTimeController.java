@@ -88,10 +88,24 @@ public class ApplicationProcessTimeController {
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "application-process-time-master";
+       // applicationType, category
+        ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
+        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(applicationProcessTime.getApplicationType(),applicationProcessTime.getCategory());
+        if (applicationprocessTime==null){
+            
         applicationProcessTime.setActive(true);
         applicationProcessTimeService.createApplicationProcessTime(applicationProcessTime);
         redirectAttrs.addFlashAttribute("applicationProcessTime", applicationProcessTime);
         model.addAttribute("message", "Application Process Time Master Data created successfully");
+        }
+        else
+        {
+        applicationprocessTime.setProcessingTime(applicationProcessTime.getProcessingTime());
+        applicationProcessTimeService.updateApplicationProcessTime(applicationprocessTime);
+        redirectAttrs.addFlashAttribute("applicationProcessTime", applicationprocessTime);
+        model.addAttribute("message", "Application Process Time Master Data updated successfully");
+            
+        }
         return "application-process-time-success";
     }
 }
