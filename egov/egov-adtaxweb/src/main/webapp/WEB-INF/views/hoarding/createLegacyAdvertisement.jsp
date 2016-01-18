@@ -128,7 +128,7 @@
 								<spring:message code="lbl.advertisement.application.no"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-								<form:hidden path="advertisement.legacy" id="legacy" value="${advertisement.legacy}" />
+								<form:hidden path="advertisement.legacy" id="legacy" value="${advertisementPermitDetail.advertisement.legacy}" />
 								<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
 								 
 								<%-- 
@@ -151,7 +151,7 @@
 							</div>
 							<div class="form-group">
 							<c:choose>
-								<c:when test="${advertisement.legacy == 'true'}">
+								<c:when test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
 									<label class="col-sm-3 control-label text-right">
 									<spring:message code="lbl.advertisement.permission.no"/>
 										</label>
@@ -322,7 +322,7 @@
                                		
 								</div>
 							</div>
-						<c:if test="${advertisement.legacy == 'true'}">
+						<c:if test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.advertisement.currentYearTax.paid"/>
