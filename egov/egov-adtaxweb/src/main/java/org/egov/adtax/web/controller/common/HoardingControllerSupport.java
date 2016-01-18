@@ -51,6 +51,7 @@ import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementRateService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.HoardingDocumentTypeService;
 import org.egov.adtax.service.RatesClassService;
@@ -72,6 +73,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public class HoardingControllerSupport extends GenericWorkFlowController{
     protected @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
+    protected @Autowired AdvertisementService advertisementService;
     protected @Autowired SubCategoryService subCategoryService;
     protected @Autowired FileStoreUtils fileStoreUtils;
     protected @Autowired BoundaryService boundaryService;

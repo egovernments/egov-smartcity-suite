@@ -119,7 +119,7 @@ public class SearchHoardingController extends GenericController {
     @RequestMapping(value = "search-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchHoarding(@ModelAttribute  HoardingSearch hoardingSearch) {
         return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch)) + "}";
+                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch,"searchLegacyRecord")) + "}";
     }
 
     @RequestMapping(value = "view/{id}")

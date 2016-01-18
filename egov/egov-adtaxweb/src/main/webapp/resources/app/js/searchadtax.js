@@ -224,12 +224,12 @@ $(document).ready(function(){
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("update/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("updateLegacy/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("view/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("viewLegacy/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#adtax_search").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {

@@ -245,8 +245,9 @@ public class AdvertisementDemandService {
                 AdvertisementTaxConstants.YEARLY);
 
     }
-
-    public Installment getNextInstallment(final Date curentInstalmentEndate) {
+ 
+    
+ public Installment getNextInstallment(final Date curentInstalmentEndate) {
         return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), curentInstalmentEndate,
                 AdvertisementTaxConstants.YEARLY);
@@ -449,7 +450,6 @@ public class AdvertisementDemandService {
         final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
-        BigDecimal taxAmount = BigDecimal.ZERO;
         Boolean taxFullyPaidForCurrentYear=false;
         if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement().getDemandId() == null) {
             
@@ -461,16 +461,20 @@ public class AdvertisementDemandService {
             
             if (advertisementPermitDetail.getTaxAmount() != null || advertisementPermitDetail.getAdvertisement().getPendingTax()!=null) {
                 
-                if( advertisementPermitDetail.getAdvertisement().getPendingTax()!=null)
-                    taxAmount=taxAmount.add( advertisementPermitDetail.getAdvertisement().getPendingTax());
-                if( advertisementPermitDetail.getTaxAmount()!=null)
-                    taxAmount=taxAmount.add(advertisementPermitDetail.getTaxAmount());
-                
-                demandDetailSet.add(createDemandDetails(
-                        (taxAmount),
+                if( advertisementPermitDetail.getAdvertisement().getPendingTax()!=null){
+                    demandDetailSet.add(createDemandDetails(
+                            ( advertisementPermitDetail.getAdvertisement().getPendingTax()),
+                            getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX,
+                                    installment),(taxFullyPaidForCurrentYear ? advertisementPermitDetail.getAdvertisement().getPendingTax(): BigDecimal.ZERO)));
+                    totalDemandAmount=  totalDemandAmount.add( advertisementPermitDetail.getAdvertisement().getPendingTax());
+                }
+                if( advertisementPermitDetail.getTaxAmount()!=null){
+                   demandDetailSet.add(createDemandDetails(
+                        (advertisementPermitDetail.getTaxAmount()),
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
                                 installment),(taxFullyPaidForCurrentYear ? advertisementPermitDetail.getTaxAmount(): BigDecimal.ZERO)));
-                totalDemandAmount=  totalDemandAmount.add((taxAmount));
+                totalDemandAmount=  totalDemandAmount.add((advertisementPermitDetail.getTaxAmount()));
+                }
             }
             if (advertisementPermitDetail.getEncroachmentFee() != null) {
                 demandDetailSet.add(createDemandDetails(
@@ -488,7 +492,7 @@ public class AdvertisementDemandService {
     public EgDemand updateDemand(AdvertisementPermitDetail advertisementPermitDetail, EgDemand demand) {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
-        BigDecimal taxAmount = BigDecimal.ZERO;
+        
         Boolean taxFullyPaidForCurrentYear=false;
         
         if( advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getLegacy()
@@ -505,28 +509,41 @@ public class AdvertisementDemandService {
             demand = createDemand(advertisementPermitDetail);
         } else {
             EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(
-                    AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, installment);
+                    AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX, installment);
             EgDemandReason encroachmentFeeReason = getDemandReasonByCodeAndInstallment(
                     AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, installment);
-
+            EgDemandReason taxReason = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, installment);
+           /* 
             if (advertisementPermitDetail.getTaxAmount() != null || advertisementPermitDetail.getAdvertisement().getPendingTax() != null) {
 
                 if (advertisementPermitDetail.getAdvertisement().getPendingTax() != null)
                     taxAmount = taxAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax());
+                
                 if (advertisementPermitDetail.getTaxAmount() != null)
                     taxAmount = taxAmount.add(advertisementPermitDetail.getTaxAmount());
 
-            }
+            }*/
             for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
                 // Assumption: tax amount is mandatory.
-                if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()
-                        && taxAmount.compareTo(BigDecimal.ZERO) > 0) {
+                if (dmdDtl.getEgDemandReason().getId() == taxReason.getId()
+                        && advertisementPermitDetail.getTaxAmount().compareTo(BigDecimal.ZERO) > 0) {
                     // TODO: Also check whether fully collected ?
-                    totalDemandAmount = totalDemandAmount.add(taxAmount.subtract(dmdDtl.getAmount()));
-                    dmdDtl.setAmount(taxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+                    totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getTaxAmount().subtract(dmdDtl.getAmount()));
+                    dmdDtl.setAmount(advertisementPermitDetail.getTaxAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
 
                     if (taxFullyPaidForCurrentYear) {
-                        dmdDtl.setAmtCollected((advertisementPermitDetail.getTaxAmount()!=null?advertisementPermitDetail.getTaxAmount():BigDecimal.ZERO));
+                        dmdDtl.setAmtCollected((advertisementPermitDetail.getTaxAmount()!=null?(dmdDtl.getAmtCollected()!=null?dmdDtl.getAmtCollected():BigDecimal.ZERO).add(advertisementPermitDetail.getTaxAmount()):BigDecimal.ZERO));
+                    }
+                }
+                if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()
+                        && advertisementPermitDetail.getAdvertisement().getPendingTax()!=null && advertisementPermitDetail.getAdvertisement().getPendingTax().compareTo(BigDecimal.ZERO) > 0) {
+                    // TODO: Also check whether fully collected ?
+                    totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax().subtract(dmdDtl.getAmount()));
+                    dmdDtl.setAmount(advertisementPermitDetail.getAdvertisement().getPendingTax().setScale(0, BigDecimal.ROUND_HALF_UP));
+
+                    if (taxFullyPaidForCurrentYear) {
+                        dmdDtl.setAmtCollected((advertisementPermitDetail.getAdvertisement().getPendingTax()!=null?(dmdDtl.getAmtCollected()!=null?dmdDtl.getAmtCollected():BigDecimal.ZERO).add(advertisementPermitDetail.getAdvertisement().getPendingTax()):BigDecimal.ZERO));
                     }
                 }
                 // Encroachment fee may not mandatory. If already part of demand
@@ -538,6 +555,10 @@ public class AdvertisementDemandService {
                         totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee().subtract(
                                 dmdDtl.getAmount()));
                         dmdDtl.setAmount(advertisementPermitDetail.getEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
+                        
+                        if (taxFullyPaidForCurrentYear) {
+                            dmdDtl.setAmtCollected((advertisementPermitDetail.getEncroachmentFee()!=null?advertisementPermitDetail.getEncroachmentFee():BigDecimal.ZERO));
+                        }
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
@@ -545,9 +566,7 @@ public class AdvertisementDemandService {
                         // delete demand detail
                     }
 
-                    if (taxFullyPaidForCurrentYear) {
-                        dmdDtl.setAmtCollected((advertisementPermitDetail.getEncroachmentFee()!=null?advertisementPermitDetail.getEncroachmentFee():BigDecimal.ZERO));
-                    }
+                   
                 }
             }
 
@@ -558,6 +577,7 @@ public class AdvertisementDemandService {
                         getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
                                 installment), BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+                //TODO: CHECK WHETHER FULLY PAID IN LEGACY HANDLED.
             }
             demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
@@ -565,7 +585,7 @@ public class AdvertisementDemandService {
         return demand;
 
     }
-
+    //TODO: CODE REVEIEW PENDING.
     public EgDemand generateNextYearDemandForAdvertisement(final AdvertisementPermitDetail advertisementPermitDetail) {
         final Installment installment = getCurrentInstallment();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -575,7 +595,7 @@ public class AdvertisementDemandService {
         try {
             nextDate = formatter.parse(ddd[0]);
         } catch (final ParseException e) {
-
+            throw new RuntimeException(e.getMessage());
         }
         final Installment nextInstallment = getNextInstallment(nextDate);
         BigDecimal totalDemandAmount = BigDecimal.ZERO;

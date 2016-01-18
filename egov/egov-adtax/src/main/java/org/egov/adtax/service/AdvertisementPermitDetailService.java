@@ -261,12 +261,10 @@ public class AdvertisementPermitDetailService {
         return hoardingSearchResults;
 
     }
-
     public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch) {
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailLike(hoardingSearch);
+                .searchAdvertisementPermitDetailLike(hoardingSearch,null);
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
-        final HashMap<String, HoardingSearch> agencyWiseHoardingList = new HashMap<String, HoardingSearch>();
         advPermitDtl.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
             hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
@@ -278,10 +276,9 @@ public class AdvertisementPermitDetailService {
         });
         return hoardingSearchResults;
     }
-    
-    public List<HoardingSearch> getAdvertisementApprovedSearchResult(final AdvertisementPermitDetail advPermitDetail) {
+    public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch,String hoardingType) {
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailBySearchParamsAndStatusApproved(advPermitDetail);
+                .searchAdvertisementPermitDetailLike(hoardingSearch,hoardingType);
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
         advPermitDtl.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();

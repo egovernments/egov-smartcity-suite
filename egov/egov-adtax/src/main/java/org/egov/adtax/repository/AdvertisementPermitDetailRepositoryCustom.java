@@ -45,7 +45,7 @@ import org.egov.adtax.search.contract.HoardingSearch;
 
 public interface AdvertisementPermitDetailRepositoryCustom {
 
-    List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(HoardingSearch hoarding);
+    List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(HoardingSearch hoarding,String hoardingType);
     List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParams(AdvertisementPermitDetail advertisementPermitDetail);
     List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParamsAndStatusApproved(AdvertisementPermitDetail advertisementPermitDetail);
 

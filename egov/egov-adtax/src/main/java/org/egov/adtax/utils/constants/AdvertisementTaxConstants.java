@@ -46,6 +46,7 @@ public class AdvertisementTaxConstants {
     public static final String MONTHLY = "Monthly";
     public static final String DEMANDREASON_ADVERTISEMENTTAX = "Advertisemnt_Tax";
     public static final String DEMANDREASON_ENCROCHMENTFEE = "Enchroachmnt_Fee";
+    public static final String DEMANDREASON_ARREAR_ADVERTISEMENTTAX = "Arrear_Adv_Tax";
     public static final String SERVICE_CODE = "ADTAX";
     public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
     public static final String PENALTYCALCULATIONREQUIRED = "Penalty Calculation required";

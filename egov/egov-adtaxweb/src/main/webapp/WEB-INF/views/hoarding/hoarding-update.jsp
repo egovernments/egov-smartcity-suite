@@ -327,7 +327,7 @@
                                		<form:errors path="encroachmentFee" cssClass="error-msg" />
 								</div>
 							</div>
-						<c:if test="${advertisement.legacy==true}" >	
+						<c:if test="${advertisementPermitDetail.advertisement.legacy=='true'}" >	
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.pendingtax"/>

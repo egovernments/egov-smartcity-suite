@@ -60,10 +60,14 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
     private EntityManager entityManager;
 
     @Override
-    public List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(final HoardingSearch hoardingSearch) {
+    public List<AdvertisementPermitDetail> searchAdvertisementPermitDetailLike(final HoardingSearch hoardingSearch,String hoardingType) {
         final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(AdvertisementPermitDetail.class, "permit");
         hoardingCriteria.createAlias("permit.advertisement", "advertisement");
         
+        if(hoardingType!=null && hoardingType.equalsIgnoreCase("searchLegacyRecord"))
+        {
+            hoardingCriteria.add(Restrictions.eq("advertisement.legacy",Boolean.TRUE));
+        }
         if (hoardingSearch.getAgency() != null)
             hoardingCriteria.add(Restrictions.eq("agency.id", hoardingSearch.getAgency()));
         if (isNotBlank(hoardingSearch.getAdvertisementNumber()))
@@ -177,5 +181,4 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
         return hoardingCriteria.list();
     
     }
-
 }

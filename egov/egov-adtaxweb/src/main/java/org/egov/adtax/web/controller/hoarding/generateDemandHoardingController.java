@@ -112,7 +112,7 @@ public class generateDemandHoardingController extends GenericController {
                                 .setDateFormat(applicationProperties.defaultDatePattern())
                                 .create()
                                 .toJson(advertisementPermitDetailService
-                                        .getAdvertisementApprovedSearchResult(advertisementPermitDetail)) + "}",
+                                        .getAdvertisementSearchResult(advertisementPermitDetail,null)) + "}",
                 response.getWriter());
     }
 
