@@ -41,7 +41,7 @@
 function goToPath(){
 	if(dom.get("department").options[dom.get("department").selectedIndex].value>0){
 	window.open("${pageContext.request.contextPath}/estimate/searchEstimate.action?execDept="+
-	dom.get("department").options[dom.get("department").selectedIndex].value+"&source=wp"+"&wpdate="+dom.get("packageDate").value,"",
+	dom.get("department").options[dom.get("department").selectedIndex].value+"&source=wp"+"&wpdate="+dom.get("wpDate").value,"",
 	 			"height=600,width=900,scrollbars=yes,left=0,top=0,status=yes");
 	}
 	else

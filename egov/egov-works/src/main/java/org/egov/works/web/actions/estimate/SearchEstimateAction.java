@@ -809,14 +809,14 @@ public class SearchEstimateAction extends SearchFormAction {
                             .getState().getOwnerPosition().getId());
                     addFieldError("result not found",
                             "Work package is already created for the Estimate with Work Package No " + wp.getWpNumber()
-                                    + " dated on " + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy")
+                                    + " dated on " + DateUtils.getFormattedDate(wp.getWpDate(), "dd/MM/yyyy")
                                     + " and " + "it is drafts of " + assignment.getEmployee().getName());
                 } else
                     addFieldError(
                             "result not found",
                             "Work package is already created for the Estimate with Work Package No: "
                                     + wp.getWpNumber() + " dated on "
-                                    + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy") + " and it is in "
+                                    + DateUtils.getFormattedDate(wp.getWpDate(), "dd/MM/yyyy") + " and it is in "
                                     + wp.getEgwStatus().getDescription() + " status");
             } else
                 addFieldError("result not found", "No results found for search parameters");

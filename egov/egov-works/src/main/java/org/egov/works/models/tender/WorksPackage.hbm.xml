@@ -52,7 +52,7 @@
 		<property name="wpNumber" type="string">
 			<column name="WP_NUMBER" />
 		</property>	
-		<property name="packageDate" type="date">
+		<property name="wpDate" type="date">
 			<column name="WP_DATE" not-null="true"/>
 		</property>
 		<property name="name" type="string">

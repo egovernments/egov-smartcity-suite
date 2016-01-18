@@ -55,11 +55,15 @@ import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = AjaxWorksPackageAction.ESTIMATE_LIST, location = "ajaxWorksPackage-estList.jsp")
+        @Result(name = AjaxWorksPackageAction.ESTIMATE_LIST, location = "ajaxWorksPackage-estList.jsp"),
+        @Result(name = AjaxWorksPackageAction.TENDERFILENUMBERUNIQUECHECK, location = "ajaxWorksPackage-tenderFileNumberUniqueCheck.jsp"),
+        @Result(name = AjaxWorksPackageAction.TENDER_RESPONSE_CHECK, location = "ajaxWorksPackage-tenderResponseCheck.jsp"),
+        @Result(name = AjaxWorksPackageAction.WP_NUMBER_SEARCH_RESULTS, location = "ajaxWorksPackage-wpNoSearchResults.jsp"),
+        @Result(name = AjaxWorksPackageAction.TENDER_FILE_NUMBER_SEARCH_RESULTS, location = "ajaxWorksPackage-tenderFileNoSearchResults.jsp"),
+        @Result(name = AjaxWorksPackageAction.ESTIMATE_NUMBER_SEARCH_RESULTS, location = "ajaxWorksPackage-estimateNoSearchResults.jsp")
 })
 public class AjaxWorksPackageAction extends BaseFormAction {
 
@@ -73,22 +77,21 @@ public class AjaxWorksPackageAction extends BaseFormAction {
 
     private WorksPackage worksPackage = new WorksPackage();
 
-    private static final String TENDERFILENUMBERUNIQUECHECK = "tenderFileNumberUniqueCheck";
+    public static final String TENDERFILENUMBERUNIQUECHECK = "tenderFileNumberUniqueCheck";
     private Long id;
     private String tenderFileNumber;
     private WorksPackageService workspackageService;
-    private static final String TENDER_RESPONSE_CHECK = "tenderResponseCheck";
+    public static final String TENDER_RESPONSE_CHECK = "tenderResponseCheck";
     private boolean tenderResponseCheck;
     private String tenderNegotiationNo;
     private String query = "";
     private List<WorksPackage> wpList = new LinkedList<WorksPackage>();
-    private static final String WP_NUMBER_SEARCH_RESULTS = "wpNoSearchResults";
-    private static final String TENDER_FILE_NUMBER_SEARCH_RESULTS = "tenderFileNoSearchResults";
+    public static final String WP_NUMBER_SEARCH_RESULTS = "wpNoSearchResults";
+    public static final String TENDER_FILE_NUMBER_SEARCH_RESULTS = "tenderFileNoSearchResults";
     private String mode;
     private List<String> estimateNumberSearchList = new LinkedList<String>();
-    private static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
+    public static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
 
-    
     @Action(value = "/tender/ajaxWorksPackage-estimateList")
     public String estimateList() {
         if (StringUtils.isNotBlank(estId)) {
@@ -98,6 +101,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         return ESTIMATE_LIST;
     }
 
+    @Action(value = "/tender/ajaxWorksPackage-tenderFileNumberUniqueCheck")
     public String tenderFileNumberUniqueCheck() {
         return TENDERFILENUMBERUNIQUECHECK;
     }
@@ -121,6 +125,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         return tenderFileNoexistsOrNot;
     }
 
+    @Action(value = "/tender/ajaxWorksPackage-isTRPresentForWPCheck")
     public String isTRPresentForWPCheck() {
         tenderResponseCheck = false;
         tenderNegotiationNo = "";
@@ -137,6 +142,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         return TENDER_RESPONSE_CHECK;
     }
 
+    @Action(value = "/tender/ajaxWorksPackage-searchWorksPackageNumber")
     public String searchWorksPackageNumber() {
         String strquery = "";
         final ArrayList<Object> params = new ArrayList<Object>();
@@ -156,6 +162,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         return WP_NUMBER_SEARCH_RESULTS;
     }
 
+    @Action(value = "/tender/ajaxWorksPackage-searchTenderFileNumber")
     public String searchTenderFileNumber() {
         String strquery = "";
         final ArrayList<Object> params = new ArrayList<Object>();
@@ -168,6 +175,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         return TENDER_FILE_NUMBER_SEARCH_RESULTS;
     }
 
+    @Action(value = "/tender/ajaxWorksPackage-searchEstimateNumber")
     public String searchEstimateNumber() {
         String strquery = "";
         final ArrayList<Object> params = new ArrayList<Object>();
