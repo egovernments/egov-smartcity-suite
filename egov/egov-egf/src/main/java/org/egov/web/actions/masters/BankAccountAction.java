@@ -61,7 +61,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.model.masters.AccountCodePurpose;
-import org.egov.utils.Constants;
 
 import com.google.gson.GsonBuilder;
 
@@ -216,55 +215,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
         sendAJAXResponse(constructJqGridResponse(jsonString));
     }
 
-    public String prepareBankAccCode(final String accID, final String code)
-            throws Exception {
-        String glCode = "";
-        Long glcode;
-        Long tempCode = 0L;
-        glCode = (String) persistenceService
-                .find("select glcode from CChartOfAccounts where glcode = (select glcode from CChartOfAccounts where id=?) order by glcode desc",
-                        Long.parseLong(accID));
-        final String subminorvalue = EGovConfig.getProperty("egf_config.xml",
-                "subminorvalue", "", "AccountCode");
-        glCode = glCode.substring(0, Integer.parseInt(subminorvalue));
-        glCode = (String) persistenceService.find(
-                "select glcode from CChartOfAccounts where glcode like ? || '%' order by glcode desc", glCode);
-        final String zero = EGovConfig.getProperty("egf_config.xml", "zerofill", "",
-                "AccountCode");
-        if (glCode.length() == Integer.parseInt(code)) {
-            glcode = Long.parseLong(glCode);
-            tempCode = glcode + 1;
-        } else {
-            glCode = glCode + zero;
-            glcode = Long.parseLong(glCode);
-            tempCode = glcode + 1;
-        }
-        glCode = Long.toString(tempCode);
-        return glCode;
-    }
-
     String getAppConfigValueFor(final String module, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
-    }
-
-    public String postInChartOfAccounts(final String glCode, final String parentId,
-            final String accNumber) throws Exception {
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
-        int majorCodeLength = 0;
-        majorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
-        final CChartOfAccounts chart = new CChartOfAccounts();
-        chart.setGlcode(glCode);
-        chart.setName(bankBranch.getBank().getName() + " "
-                + bankBranch.getBranchname() + " "
-                + accNumber);
-        chart.setParentId(Long.parseLong(parentId));
-        chart.setType('A');
-        chart.setMyClass(Long.parseLong("5")); // This is the leaf level number.
-        chart.setClassification(Long.parseLong("4"));
-        chart.setIsActiveForPosting(true);
-        chart.setMajorCode(chart.getGlcode().substring(0, majorCodeLength));
-        chartOfAccountsService.persist(chart);
-        return String.valueOf(chart.getId());
     }
 
     public void setMode(final String mode) {
