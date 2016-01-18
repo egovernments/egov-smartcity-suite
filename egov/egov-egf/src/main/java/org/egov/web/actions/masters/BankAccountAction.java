@@ -60,9 +60,8 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
+import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.gson.GsonBuilder;
 
@@ -70,7 +69,7 @@ import com.google.gson.GsonBuilder;
 public class BankAccountAction extends JQueryGridActionSupport {
     private static final long serialVersionUID = 1L;
     private String mode;
-    private String newGLCode = "", coaID = "";
+    private String newGLCode = "", coaID = "", glCode = "";
     private Integer bankBranchId;
     private PersistenceService<Bankaccount, Integer> bankAccountService;
     private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
@@ -107,14 +106,13 @@ public class BankAccountAction extends JQueryGridActionSupport {
         bankAccount.setBankbranch(bankBranch);
         bankAccount.setCurrentbalance(BigDecimal.ZERO);
         try {
-            if (!request.getParameter("accounttype").equalsIgnoreCase("")) {
-                newGLCode = prepareBankAccCode(request.getParameter("accounttype").split("#")[0], code);
-                coaID = postInChartOfAccounts(newGLCode, request.getParameter("accounttype").split("#")[0],
-                        request.getParameter("accountnumber"));
+            if (!request.getParameter("glcode").equalsIgnoreCase("")) {
+                glCode = request.getParameter("glcode");
+                validateGlCode(glCode);
             }
         } catch (final Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            sendAJAXResponse(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         if (coaID != null && coaID.length() > 0) {
             final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService.getSession().load(
@@ -123,6 +121,39 @@ public class BankAccountAction extends JQueryGridActionSupport {
         }
         populateBankAccountDetail(bankAccount);
         bankAccountService.persist(bankAccount);
+    }
+
+    private void validateGlCode(String glCode) {
+        CChartOfAccounts COA = chartOfAccountsService.find("select coa from CChartOfAccounts coa where coa.glcode = ?", glCode);
+        Bankaccount account = null;
+        AccountCodePurpose purpose = null;
+        if (COA == null)
+            throw new ApplicationRuntimeException("Given glcode does not exist");
+        else if (!COA.getIsActiveForPosting())
+            throw new ApplicationRuntimeException("Given glcode is not active for posting");
+        else if (COA.getChartOfAccountDetails() != null && !COA.getChartOfAccountDetails().isEmpty())
+            throw new ApplicationRuntimeException("Given glcode should not be a control code");
+        else if (COA.getType() != null && !COA.getType().equals('A')) {
+            throw new ApplicationRuntimeException("Given glcode should be of type Assets");
+        } else if (COA.getPurposeId() != null) {
+            purpose = (AccountCodePurpose) persistenceService.find(
+                    "select purpose from AccountCodePurpose purpose where purpose.id = ?", COA.getPurposeId());
+            if (purpose != null && !purpose.getName().contains("Bank Account Codes"))
+                throw new ApplicationRuntimeException("Given glcode should be of purpose Bank Account Codes");
+        } else if (COA != null) {
+            account = bankAccountService.find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?", glCode);
+            if (account != null)
+                throw new ApplicationRuntimeException("Given glcode is already mapped to another bank account - "
+                        + account.getAccountnumber());
+        } else {
+            List glList = (List) persistenceService
+                    .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
+                            glCode);
+            if (glList != null && glList.isEmpty())
+                throw new ApplicationRuntimeException("Transaction already exist for given glcode");
+
+        }
+
     }
 
     private void editBankAccount() {
