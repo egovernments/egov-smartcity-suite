@@ -266,6 +266,7 @@ public class AdvertisementPermitDetailService {
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
                 .searchAdvertisementPermitDetailLike(hoardingSearch);
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
+        final HashMap<String, HoardingSearch> agencyWiseHoardingList = new HashMap<String, HoardingSearch>();
         advPermitDtl.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
             hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
@@ -273,6 +274,23 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
             hoardingSearchResult.setAgencyName(result.getAgency().getName());
             hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
+            hoardingSearchResults.add(hoardingSearchResult);
+        });
+        return hoardingSearchResults;
+    }
+    
+    public List<HoardingSearch> getAdvertisementApprovedSearchResult(final AdvertisementPermitDetail advPermitDetail) {
+        final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
+                .searchAdvertisementPermitDetailBySearchParamsAndStatusApproved(advPermitDetail);
+        final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
+        advPermitDtl.forEach(result -> {
+            final HoardingSearch hoardingSearchResult = new HoardingSearch();
+            hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
+            hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
+            hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
+            hoardingSearchResult.setAgencyName(result.getAgency().getName());
+            hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
+            hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
             hoardingSearchResults.add(hoardingSearchResult);
         });
         return hoardingSearchResults;

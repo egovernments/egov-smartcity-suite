@@ -46,6 +46,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.enums.AdvertisementStructureType;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
@@ -148,6 +149,31 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
         if ( advertisementPermitDetail.getAdvertisement().getRevenueInspector()!=null)
             hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id", advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
      }
+        return hoardingCriteria.list();
+    
+    }
+    @Override
+    public List<AdvertisementPermitDetail> searchAdvertisementPermitDetailBySearchParamsAndStatusApproved(final AdvertisementPermitDetail advertisementPermitDetail) {
+
+          final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(AdvertisementPermitDetail.class, "permit")
+                  .createAlias("permit.advertisement", "advertisement")
+                  .createAlias("permit.status","statuscode");
+          hoardingCriteria.add(Restrictions.eq("advertisement.type",AdvertisementStructureType.PERMANENT));      
+          hoardingCriteria.add(Restrictions.eq("statuscode.code", "APPROVED"));
+
+          if(advertisementPermitDetail.getAdvertisement()!=null ){    
+        if ( advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getAdvertisementNumber()!=null
+                && !advertisementPermitDetail.getAdvertisement().getAdvertisementNumber().isEmpty())
+            hoardingCriteria.add(Restrictions.eq("advertisement.advertisementNumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber()));
+        if ( advertisementPermitDetail.getAdvertisement().getLocality()!=null)
+            hoardingCriteria.add(Restrictions.eq("advertisement.locality.id", advertisementPermitDetail.getAdvertisement().getLocality().getId()));
+        if ( advertisementPermitDetail.getAdvertisement().getWard()!=null)
+            hoardingCriteria.add(Restrictions.eq("advertisement.ward.id", advertisementPermitDetail.getAdvertisement().getWard().getId()));
+        if ( advertisementPermitDetail.getAdvertisement().getCategory()!=null)
+            hoardingCriteria.add(Restrictions.eq("advertisement.category.id", advertisementPermitDetail.getAdvertisement().getCategory().getId()));
+        if ( advertisementPermitDetail.getAdvertisement().getSubCategory()!=null)
+            hoardingCriteria.add(Restrictions.eq("advertisement.subCategory.id", advertisementPermitDetail.getAdvertisement().getSubCategory().getId()));
+        }
         return hoardingCriteria.list();
     
     }
