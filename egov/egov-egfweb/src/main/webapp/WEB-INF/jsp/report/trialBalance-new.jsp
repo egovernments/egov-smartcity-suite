@@ -55,18 +55,31 @@ var toDateStr="";
 		
 		var reportType = document.getElementById('reportType').value;
 		//alert(reportType);
-		
+		var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear();
+today = dd+'/'+mm+'/'+yyyy;
+
+
 				if (reportType == 'daterange') {
 			if (document.getElementById('fromDate').value == '') {
 				alert('Please select From Date');
 				return false;
-			} else if (document.getElementById('toDate').value == '') {
+			}  if (document.getElementById('toDate').value == '') {
 				alert('Please select To Date');
 				return false;
-			} else if (document.getElementById('fundId').value == '') {
+			}  if (document.getElementById('fundId').value == '') {
 				alert('Please select Fund');
 				return false;
-			} else if( compareDate(formatDate6(document.getElementById('fromDate').value),formatDate6(document.getElementById('toDate').value)) == -1 ){
+			}  if(document.getElementById('toDate').value >today ) 
+				{
+
+				alert("To date cannot be greater than current date");
+				return false;
+				}
+ 
+			 if( compareDate(formatDate6(document.getElementById('fromDate').value),formatDate6(document.getElementById('toDate').value)) == -1 ){
 				alert('Start Date cannot be greater than End Date');
 				document.getElementById('fromDate').value='';
 				document.getElementById('toDate').value='';
@@ -81,10 +94,13 @@ var toDateStr="";
 			document.getElementById('fromDate').value='';
 			      
 		}
-		if(exportValue=='html'){
+		 if(exportValue=='html'){
 				doAfterSubmit();
-		}
+		} 
 
+		//doAfterSubmit();
+		document.forms[0].action='${pageContext.request.contextPath}/report/trialBalance-search.action';
+		document.forms[0].submit();
 		
    return true;
 	}
@@ -139,7 +155,7 @@ var toDateStr="";
 			functionId="";
 			}                   
 		
-		window.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		window.open('/EGF/report/generalLedgerReport-ajaxSearch.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	}
 </script>
 </head>
@@ -171,7 +187,7 @@ var toDateStr="";
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
 					<td class="greybox"><div id="fromDatelbl">
 							<s:text name="fromdate" />
-							<span class="greybox"><span class="mandatory">*</span></span>
+							<span class="greybox"><span class="mandatory1">*</span></span>
 						</div></td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -182,7 +198,7 @@ var toDateStr="";
 					</td>
 					<td class="greybox"><div id="toDatelbl">
 							<s:text name="todate" />
-							<span class="greybox"><span class="mandatory">*</span></span>
+							<span class="greybox"><span class="mandatory1">*</span></span>
 						</div></td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -195,7 +211,7 @@ var toDateStr="";
 				<tr>
 					<td class="bluebox"><div id="fundlbl">
 							<s:text name="voucher.fund" />
-							<span id="fundStar" class="mandatory">*</span>
+							<span id="fundStar" class="mandatory1">*</span>
 						</div>
 					<td class="bluebox"><s:select name="fundId" id="fundId"
 							list="dropdownData.fundList" listKey="id" listValue="name"
