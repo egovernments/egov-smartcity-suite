@@ -96,14 +96,14 @@ public class ApplicationProcessTimeController {
         applicationProcessTime.setActive(true);
         applicationProcessTimeService.createApplicationProcessTime(applicationProcessTime);
         redirectAttrs.addFlashAttribute("applicationProcessTime", applicationProcessTime);
-        model.addAttribute("message", "Application Process Time Master Data created successfully");
+        model.addAttribute("message", "Application Process Time Data created successfully");
         }
         else
         {
         applicationprocessTime.setProcessingTime(applicationProcessTime.getProcessingTime());
         applicationProcessTimeService.updateApplicationProcessTime(applicationprocessTime);
         redirectAttrs.addFlashAttribute("applicationProcessTime", applicationprocessTime);
-        model.addAttribute("message", "Application Process Time Master Data updated successfully");
+        model.addAttribute("message", "Application Process Time Data updated successfully");
             
         }
         return "application-process-time-success";

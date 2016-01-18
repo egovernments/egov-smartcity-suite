@@ -40,10 +40,10 @@
 package org.egov.wtms.masters.repository;
 
 
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
+import org.egov.wtms.masters.entity.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,6 +51,8 @@ public interface PropertyCategoryRepository extends JpaRepository<PropertyCatego
     
    
     PropertyCategory findByPropertyType_codeAndConnectionCategory_code(String propertyType,String categoryCode);
+    
+    PropertyCategory findByPropertyTypeAndConnectionCategory(PropertyType propertyType,ConnectionCategory connectionCategory);
     
 }
 

@@ -77,14 +77,14 @@ function applicationprocesstimecombination()
 }
 function overwriteprocesstime(res)
 {
-	var r=confirm("With entered combination , Processing time is  present as "+res+ " , Do you want to overwrite it?")
+	var r=confirm("With entered combination,Processing time is present as "+res+ ",Do you want to overwrite it?")
 	if (r ==true){	
-		console.log('came as true');
+
 		document.forms[0].submit();
 	}
 	else
 	{
-		console.log('came as false');
+
 	    return false;
 	}
 }

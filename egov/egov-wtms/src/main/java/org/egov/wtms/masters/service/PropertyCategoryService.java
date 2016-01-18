@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
+import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.repository.PropertyCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,11 @@ public class PropertyCategoryService {
             final String categoryType) {
        
             return propertyCategoryRepository.findByPropertyType_codeAndConnectionCategory_code(propertyType,categoryType);
+    }
+    
+    public PropertyCategory getByPropertyTypeAndCategory(final PropertyType propertyType,final ConnectionCategory connectionCategory) {
+       
+            return propertyCategoryRepository.findByPropertyTypeAndConnectionCategory(propertyType,connectionCategory);
     }
 
 }

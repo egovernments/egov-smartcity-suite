@@ -98,6 +98,13 @@ public class CategoryMasterController {
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "category-master";
+        PropertyCategory propertycategory = new PropertyCategory();
+        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(propertyCategory.getPropertyType(),connectionCategoryService.findByName(propertyCategory.getConnectionCategory().getName()));
+        if (propertycategory!=null){
+            redirectAttrs.addFlashAttribute("propertyCategory", propertycategory);
+            model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
+        }
+        else{
         ConnectionCategory category = new ConnectionCategory();
         category =  propertyCategory.getConnectionCategory();
         category.setActive(true);
@@ -105,7 +112,8 @@ public class CategoryMasterController {
         connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
         propertyCategoryService.createPropertyCategory(propertyCategory);
         redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
-        model.addAttribute("message", "Category Master Data created successfully");
+        model.addAttribute("message", "Category Data created successfully");
+        }
         return "category-master-success";
     }
 }
