@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.admin;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.util.Collections;
@@ -59,6 +60,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -82,8 +84,12 @@ public class UnitRateAction extends BaseFormAction {
     private Long structureClassId;
     private String ackMessage;
     private String mode = "";
+    private String roleName;
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     List<BoundaryCategory> bndryCatList;
 
@@ -110,6 +116,10 @@ public class UnitRateAction extends BaseFormAction {
         addDropdownData("ZoneList", zoneList);
         addDropdownData("UsageList", usageList);
         addDropdownData("StructureClassificationList", structureClassificationList);
+        
+        final Long userId = (Long) session().get(SESSIONLOGINID);
+        if (userId != null)
+            setRoleName(propertyTaxUtil.getRolesForUserId(userId));
     }
 
     @SkipValidation
@@ -322,6 +332,14 @@ public class UnitRateAction extends BaseFormAction {
 
     public void setBndryCatList(List<BoundaryCategory> bndryCatList) {
         this.bndryCatList = bndryCatList;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
 }

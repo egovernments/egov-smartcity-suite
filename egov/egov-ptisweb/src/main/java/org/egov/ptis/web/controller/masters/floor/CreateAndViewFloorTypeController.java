@@ -43,6 +43,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.master.service.FloorTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateAndViewFloorTypeController {
 
     private final FloorTypeService floorTypeService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public CreateAndViewFloorTypeController(final FloorTypeService floorTypeService) {
@@ -82,6 +86,8 @@ public class CreateAndViewFloorTypeController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showFloorTypes(final Model model) {
+        String roleName = floorTypeService.getRolesForUserId(securityUtils.getCurrentUser().getId());
+        model.addAttribute("roleName",roleName);
         return "floorType-main";
     }
 

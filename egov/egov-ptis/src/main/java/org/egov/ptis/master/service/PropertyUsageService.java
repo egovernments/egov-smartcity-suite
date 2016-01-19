@@ -39,8 +39,12 @@
  */
 package org.egov.ptis.master.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -51,12 +55,14 @@ import org.springframework.stereotype.Service;
  * Service for PropertyUsage
  * 
  * @author nayeem
- *
  */
 @Service
 public class PropertyUsageService {
 
     private final PropertyUsageDAO propertyUsageHibernateDAO;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
@@ -80,8 +86,19 @@ public class PropertyUsageService {
     public List<PropertyUsage> getAllActivePropertyUsages() {
         return propertyUsageHibernateDAO.getAllActivePropertyUsage();
     }
-    
+
     public PropertyUsage findById(Long id) {
         return propertyUsageHibernateDAO.findById(id, false);
+    }
+
+    public String getRolesForUserId(final Long userId) {
+        String roleName;
+        final List<String> roleNameList = new ArrayList<String>();
+        final User user = userService.getUserById(userId);
+        for (final Role role : user.getRoles()) {
+            roleName = role.getName() != null ? role.getName() : "";
+            roleNameList.add(roleName);
+        }
+        return roleNameList.toString().toUpperCase();
     }
 }

@@ -237,17 +237,21 @@ function makeReadyOnly() {
         	<font size="2"><div align="right" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
 		    <div class="buttonbottom" align="center">	
 		    <s:if test="%{mode =='new'}">
+		    <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_PTADMINISTRATOR.toUpperCase())}">
 		    	<s:submit value="Add" name="Add"
 						id='Add' cssClass="buttonsubmit"  onclick="return validateData('add');" />  
 			
 				<s:submit value="Edit" name="Edit"
 						id='Edit' cssClass="buttonsubmit" onclick="return validateData('edit');" /> 
+			</s:if>
 				<s:submit value="View" name="view"
 						id='view' cssClass="buttonsubmit" onclick="return validateData('view');" />  
 						</s:if>
 					<s:elseif test="%{mode == 'edit'}">
+					<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_PTADMINISTRATOR.toUpperCase())}">
 						<s:submit value="Update" name="Update"
 						id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 
+					</s:if>
 						</s:elseif> 
 				<input type="button" name="button2" id="button2" value="Close"  class="button" onclick="window.close();" />
 			</div>
