@@ -163,7 +163,7 @@ function check()
 	}
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
-	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-save.action';
 	document.forms[0].submit();
 	return true;
 }

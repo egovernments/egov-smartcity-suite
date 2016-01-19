@@ -249,10 +249,8 @@
 	<bean id="eGovernCommon" class="com.exilant.eGov.src.common.EGovernCommon" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
-	<bean id="chartOfAccounts" class="com.exilant.GLEngine.ChartOfAccounts">
-		<property name="chartOfAccountDetailService" ref="chartOfAccountDetailService"/>
-		<property name="voucherHeaderService" ref="voucherHeaderService"/>
-	</bean>
+	<bean id="chartOfAccounts" class="com.exilant.GLEngine.ChartOfAccounts"/>
+		
 
 	<bean id="sharedFundSourceService" class="org.egov.commons.service.SharedFundSourceService">
 		<constructor-arg index="0" value="org.egov.commons.SharedFundSource" />

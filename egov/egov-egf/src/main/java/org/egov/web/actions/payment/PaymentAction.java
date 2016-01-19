@@ -900,31 +900,34 @@ public class PaymentAction extends BasePaymentAction {
             billregister.getEgBillregistermis().setFunction(cFunctionobj);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");
-            paymentheader = paymentService.createPayment(parameters, billList, billregister);
+	            paymentheader = paymentService.createPayment(parameters, billList, billregister);
             paymentheader.getVoucherheader().getVouchermis()
-            .setSourcePath("/EGF/payment/payment!view.action?" + PAYMENTID + "=" + paymentheader.getId());
-            getPaymentBills();
+            .setSourcePath("/EGF/payment/payment-view.action?" + PAYMENTID + "=" + paymentheader.getId());
+            paymentService.getPaymentBills(paymentheader);
             paymentheader.start().withOwner(paymentService.getPosition());
             sendForApproval();
             addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                     .getVoucherNumber() }));
-            loadApproverUser(voucherHeader.getType());
+            //loadApproverUser(voucherHeader.getType());
         } catch (final ValidationException e) {
-            loadApproverUser(voucherHeader.getType());
+           // loadApproverUser(voucherHeader.getType());
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage());
-            loadApproverUser(voucherHeader.getType());
+            
+            //loadApproverUser(voucherHeader.getType());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
+        	e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createPayment.");
+        wfitemstate="END";
         return VIEW;
     }
 
@@ -935,14 +938,17 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting sendForApproval...");
         paymentheader = getPayment();
+    //dont validate in create
+        /*
         if (paymentheader != null && paymentheader.getState() != null)
             if (!validateOwner(paymentheader.getState())) {
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", "Invalid Access"));
                 throw new ValidationException(errors);
-            }
+            }*/
         getPaymentBills();
-        if (LOGGER.isDebugEnabled())
+        //uncoment below like while implementing workflow //venky
+        /*if (LOGGER.isDebugEnabled())
             LOGGER.debug("Paymentheader==" + paymentheader.getId() + ", actionname=" + parameters.get(ACTIONNAME)[0]);
         action = parameters.get(ACTIONNAME)[0];
 
@@ -978,6 +984,10 @@ public class PaymentAction extends BasePaymentAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed sendForApproval.");
+        */
+        
+        
+        
         return VIEW;
     }
 
@@ -1022,7 +1032,8 @@ public class PaymentAction extends BasePaymentAction {
              * LOGGER.debug("Starting validate owner"); if(!validateOwner(paymentheader.getState())){ List<ValidationError>
              * errors=new ArrayList<ValidationError>(); errors.add(new ValidationError("exp","Invalid Access")); throw new
              * ValidationException(errors); } }
-             */loadApproverUser(voucherHeader.getType());
+             */
+        	//loadApproverUser(voucherHeader.getType());
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("defaultDept in vew : " + getDefaultDept());

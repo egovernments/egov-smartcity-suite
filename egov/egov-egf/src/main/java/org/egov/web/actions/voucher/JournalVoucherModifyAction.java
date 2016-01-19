@@ -128,12 +128,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         setOneFunctionCenterValue();
     }
 
-    public void setChartOfAccounts() {
-        engine.setVoucherHeaderService(chartOfAccounts.getVoucherHeaderService());
-        ChartOfAccounts.setChartOfAccountDetailService(ChartOfAccounts.getChartOfAccountDetailService());
-        engine.setBudgetDetailsDAO(chartOfAccounts.getBudgetDetailsDAO());
-
-    }
+   
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/journalVoucherModify-beforeModify")
@@ -299,12 +294,12 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
                 final List<Transaxtion> transactions = voucherService.postInTransaction(billDetailslist, subLedgerlist,
                         voucherHeader);
-                engine = ChartOfAccounts.getInstance();
-                setChartOfAccounts();
+               
+               
                 Transaxtion txnList[] = new Transaxtion[transactions.size()];
                 txnList = transactions.toArray(txnList);
                 final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-                if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+                if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 {
                     final List<ValidationError> errors = new ArrayList<ValidationError>();
                     errors.add(new ValidationError("exp", "Engine Validation failed"));
