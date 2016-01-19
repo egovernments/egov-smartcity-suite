@@ -60,7 +60,7 @@ public @interface Unique {
 
     String id() default "id";
 
-    String tableName();
+    String tableName() default "";
 
     String[] columnName() default {};
 

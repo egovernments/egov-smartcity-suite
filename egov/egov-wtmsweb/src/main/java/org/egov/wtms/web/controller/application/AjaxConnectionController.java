@@ -40,6 +40,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
@@ -50,6 +51,8 @@ import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.masters.service.ApplicationProcessTimeService;
+import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
@@ -80,6 +83,9 @@ public class AjaxConnectionController {
 
     @Autowired
     private UsageTypeService usageTypeService;
+    
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -98,6 +104,11 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
+    
+    @Autowired
+    private ApplicationProcessTimeService applicationProcessTimeService;
+    
+    
 
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
@@ -208,5 +219,16 @@ public class AjaxConnectionController {
             return 0;
         else
             return waterRatesDetails.getMonthlyRate();
+    }
+    
+    @RequestMapping(value = "/ajax-getapplicationprocesstime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double getApplicationProcessTime(@RequestParam final Long applicationType ,@RequestParam final Long categoryType) {
+        
+        ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
+        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(applicationTypeService.findBy(applicationType),connectionCategoryService.findBy(categoryType));
+        if (applicationprocessTime == null)
+            return 0;
+        else
+            return applicationprocessTime.getProcessingTime();
     }
 }

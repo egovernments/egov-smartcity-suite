@@ -111,7 +111,7 @@
 			</s:if></td>
 		<td class="greybox"><s:select name="contraBean.toDepartment"
 				id="contraBean.toDepartment" list="dropdownData.departmentList"
-				listKey="id" listValue="deptName" headerKey=""
+				listKey="id" listValue="name" headerKey=""
 				headerValue="----Choose----"
 				value="voucherHeader.vouchermis.departmentid.id"
 				onChange="populateApproverDept(this);" /></td>

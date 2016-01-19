@@ -41,6 +41,7 @@ package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class DayBookList
     private static TaskFailedException taskexp;
     protected static final Logger LOGGER = Logger.getLogger(DayBookList.class);
     private Query pstmt = null;
+    //VoucherHeader voucherheader=new VoucherHeader();
 
     public DayBookList() {
     }
@@ -183,13 +185,14 @@ public class DayBookList
 
         } catch (final Exception ex) {
             LOGGER.error("Exception " + ex, ex);
-            throw new TaskFailedException("Date Should be within the today's date");
+            throw new TaskFailedException("Date Should be within today's date");
         }
 
     }
 
     public LinkedList getDayBookList(final DayBookReportBean reportBean) throws TaskFailedException
     {
+    	SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
         List<Object[]> rs = null;
         String dateStart = "";
         String dateEnd = "";
@@ -216,13 +219,12 @@ public class DayBookList
                         + "particulars"
                         + ",vh.name ||' - '|| vh.TYPE AS "
                         + "type"
-                        + ", case when vh.description = null then ' ' else vh.description end AS "
-                        + "narration"
                         + ", "
+                      +  " CASE WHEN vh.description = null THEN ' ' ELSE vh.description END AS narration, " 
++" CASE  WHEN status=0 THEN ( 'Approved') "
++" ELSE ( case WHEN status=1 THEN 'Reversed' else (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as \"status\" , debitamount  , "
                         +
-                        "case status when 0 then (case vh.isconfirmed when 0 then 'Unconfirmed' when 1 then 'Confirmed' else '' end ) when 1 then 'Reversed' when 2 then 'Reversal' else '' end as \"status\" , debitamount  ,"
-                        +
-                        "creditamount,vh.CGN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
+                        "creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
                         + " AND ca.GLCODE=gd.GLCODE AND voucherdate between ? AND ? and vh.status not in (4,5) " +
                         " and vh.fundid = ? ORDER BY vdate,vouchernumber";
                 if (LOGGER.isDebugEnabled())
@@ -230,12 +232,16 @@ public class DayBookList
 
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryString);
 
-                pstmt.setString(0, dateStart);
-                pstmt.setString(1, dateEnd);
-                pstmt.setLong(2, fundId);
-                rs = pstmt.list();
+                pstmt.setDate(0, new java.sql.Date(sdf.parse(reportBean.getStartDate()).getTime()));
+                pstmt.setDate(1, new java.sql.Date(sdf.parse(reportBean.getEndDate()).getTime()));
+                pstmt.setLong(2,fundId.longValue());
+                List list = pstmt.list();
+                rs=list;
+                Object[] array = list.toArray();
+                
+                //rs=pstmt.list();
             }
-            else {
+/*            else {
                 final String queryString = "SELECT voucherdate as vdate, TO_CHAR(voucherdate, 'dd-Mon-yyyy')  AS "
                         + " voucherdate"
                         + ", vouchernumber , gd.glcode AS "
@@ -244,26 +250,31 @@ public class DayBookList
                         + "particulars"
                         + ",vh.name ||' - '|| vh.TYPE AS "
                         + "type"
-                        + ", case when vh.description = null then ' ' else vh.description end AS "
+                        + ", CASE WHEN vh.description = null THEN ' ' ELSE vh.description END AS "
                         + "narration"
                         + ", "
                         +
-                        "case status when 0 then (case vh.isconfirmed when 0 then 'Unconfirmed' when 1 then 'Confirmed' else '' end) when 1 then 'Reversed' when 2 then 'Reversal' else '' end as \"status\" , debitamount  ,"
+                        " CASE WHEN vh.description = null THEN ' ' ELSE vh.description END AS narration,  "
++" CASE  WHEN status=0 THEN ( CASE WHEN vh.isconfirmed=0 THEN 'Unconfirmed'  "
++" ELSE ( case WHEN vh.isconfirmed=1 THEN 'Confirmed' else ' '  END ) END) "
++" ELSE ( case WHEN status=1 THEN 'Reversed' else (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as \"status\" , debitamount  , "
                         +
-                        "creditamount,vh.CGN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
+                        "creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID"
                         + " AND ca.GLCODE=gd.GLCODE AND voucherdate between ? AND ?  and vh.status not in (4,5) " +
                         "ORDER BY vdate,vouchernumber";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("queryString :" + queryString);
 
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryString);
-                pstmt.setString(0, dateStart);
-                pstmt.setString(1, dateEnd);
-                rs = pstmt.list();
-            }
+                pstmt.setDate(0, new java.sql.Date(sdf.parse(reportBean.getStartDate()).getTime()));
+                pstmt.setDate(1, new java.sql.Date(sdf.parse(reportBean.getEndDate()).getTime()));
+                List list = pstmt.list();
+                rs=list;
+                Object[] array = list.toArray();
+            }*/
         } catch (final Exception e)
         {
-            LOGGER.error("Eror:" + e.getMessage(), e);
+            LOGGER.error("Error in Day book report:" + e.getMessage(), e);
             throw taskexp;
         }
         try
@@ -327,20 +338,20 @@ public class DayBookList
                 crTotal += Double.parseDouble(element[9].toString());
                 dBook.setCgn(element[10].toString());
                 dBook.setVhId(element[12].toString());
-                isconfirmed = element[11].toString() == null ? "" : element[11].toString();
-                if (!isconfirmed.equalsIgnoreCase(""))
-                {
+               isconfirmed = element[11] == null ? "" : element[11].toString();
+                
+                
+                
+                
                     final String vn1 = element[2].toString();
                     if (!vn1.equalsIgnoreCase(vn2))
                     {
                         vn2 = vn1;
                         totalCount = totalCount + 1;
-                        if (isconfirmed.equalsIgnoreCase("0"))
-                            isConfirmedCount = isConfirmedCount + 1;
                     }
-                }
+               
                 reportBean.setTotalCount(Integer.toString(totalCount));
-                reportBean.setIsConfirmedCount(Integer.toString(isConfirmedCount));
+
                 links.add(dBook);
 
             }   // While loop

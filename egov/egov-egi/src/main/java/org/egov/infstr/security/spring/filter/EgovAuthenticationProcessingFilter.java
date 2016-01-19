@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -74,12 +75,10 @@ public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenti
             final FilterChain filterChain, final Authentication authResult) throws IOException, ServletException {
         // Add information to session variables
         final String location = request.getParameter(SecurityConstants.LOCATION_FIELD);
-        final String counter = request.getParameter(SecurityConstants.COUNTER_FIELD);
         final HttpSession session = request.getSession();
-        if (org.apache.commons.lang.StringUtils.isNotBlank(location))
+        if (StringUtils.isNotBlank(location))
             session.setAttribute(SecurityConstants.LOCATION_FIELD, location);
-        if (org.apache.commons.lang.StringUtils.isNotBlank(counter))
-            session.setAttribute(SecurityConstants.COUNTER_FIELD, counter);
+
         if (authResult != null) {
             final SecureUser principal = (SecureUser) authResult.getPrincipal();
             session.setAttribute("userid", principal.getUserId());

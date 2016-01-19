@@ -101,7 +101,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
-        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("financialYearList", persistenceService.findAllBy("from CFinancialYear order by finYearRange desc "));
 
         if (LOGGER.isDebugEnabled())

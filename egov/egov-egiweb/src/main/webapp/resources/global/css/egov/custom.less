@@ -64,6 +64,73 @@ body {
         height: auto;
     }
     
+    .spinner {
+	margin: 0px auto;
+	width: 50px;
+	height: 30px;
+	text-align: center;
+	font-size: 10px;
+	
+		div {
+			background-color: @whitecolor;
+			height: 100%;
+			width: 6px;
+			display: inline-block;
+			-webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+			animation: stretchdelay 1.2s infinite ease-in-out;
+		}
+		
+		.rect2 {
+			-webkit-animation-delay: -1.1s;
+			animation-delay: -1.1s;
+		}
+		
+		.rect3 {
+			-webkit-animation-delay: -1.0s;
+			animation-delay: -1.0s;
+		}
+		
+		.rect4 {
+			-webkit-animation-delay: -0.9s;
+			animation-delay: -0.9s;
+		}
+		
+		.rect5 {
+			-webkit-animation-delay: -0.8s;
+			animation-delay: -0.8s;
+		}
+		
+	}
+	
+	.spinner-margin
+	{
+		margin-top:250px;
+	}
+	
+	.spinner-text
+	{
+		color:@whitecolor;
+	}
+	
+	@keyframes stretchdelay {
+		0% { 
+			transform: scaleY(0.4);
+			-webkit-transform: scaleY(0.4);
+		}  
+		40% { 
+			transform: scaleY(0.4);
+			-webkit-transform: scaleY(0.4);
+		}
+		100% { 
+			transform: scaleY(0.4);
+			-webkit-transform: scaleY(0.4);
+		}
+		20% { 
+			transform: scaleY(1.0);
+			-webkit-transform: scaleY(1.0);
+		}
+	}
+    
 }
 
 ::-webkit-input-placeholder {
@@ -248,6 +315,10 @@ b, label, strong{
             outline: none;
         }
         
+        a.profile-name{
+        	white-space: nowrap;overflow: hidden;width:120px;text-overflow: ellipsis;
+        }
+        
     }
     
     ul.nav > li.menu-responsive {
@@ -324,6 +395,7 @@ b, label, strong{
                         padding: 0 5px;
                     }
                 }
+                
             }
         }
     }
@@ -1022,7 +1094,7 @@ b, label, strong{
             a {
                 padding: 0.65em 0 0.5em;
                 background: #f2f2f2;
-                color: #6b4f2c;
+                color: @basecolor;
                 line-height: 1;
                 -webkit-transition: color 0.2s;
                 transition: color 0.2s;
@@ -1424,12 +1496,12 @@ b, label, strong{
         
         .yui-skin-sam .yui-dt th {
           color:@whitecolor;
-          background: #84B1AD;
-          border-right: 1px solid #84B1AD;
+          background: @basecolor;
+          border-right: 1px solid @separation;
         }
 
         .yui-skin-sam .yui-dt td {
-          border-right: 1px solid #84B1AD;
+          border-right: 1px solid #E9E9E9;
         }
         
         .yui-skin-sam .yui-ac-input {
@@ -1691,7 +1763,7 @@ b, label, strong{
 
         .map-tool-class {
             cursor: pointer;
-            color: #fff;
+            color: @whitecolor;
             width: 20px;
             padding: 4px;
         }
@@ -1822,7 +1894,7 @@ table.dataTable thead th.sorting:after, table.dataTable th.sorting_asc:after, ta
 
 table.dataTable#official_inbox thead th.sorting:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting:after {
     content: "\f0dc";
-    color: #fff;
+    color: @whitecolor;
     .font-size(0.8em);
     padding-top: 0.12em;
 }

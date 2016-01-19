@@ -311,13 +311,14 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             }
         }
         // calculating Un Authorized Penalty
-        if (installment.equals(currInstallment)
-                && !(unAuthDeviationPerc == null || unAuthDeviationPerc.isEmpty() || "0".equals(unAuthDeviationPerc) || "-1"
-                        .equals(unAuthDeviationPerc))) {
-            halfYearHeadTax = BigDecimal.ZERO;
-            halfYearHeadTax = roundOffToNearestEven(calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable));
-            totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
-            createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
+        if(!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
+	        if (!(unAuthDeviationPerc == null || unAuthDeviationPerc.isEmpty() || "0".equals(unAuthDeviationPerc) || "-1"
+	                        .equals(unAuthDeviationPerc))) {
+	            halfYearHeadTax = BigDecimal.ZERO;
+	            halfYearHeadTax = roundOffToNearestEven(calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable));
+	            totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
+	            createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
+	        }
         }
         // calculating Public Service Charges
         if (isPrimaryServiceChrApplicable) {
@@ -415,7 +416,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setNetARV(unitTaxCalculationInfo.getCapitalValue());
 
         calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
-                .getPropertyTypeMaster().getCode(), null);
+        		.getPropertyTypeMaster().getCode(), null);
 
         return unitTaxCalculationInfo;
     }

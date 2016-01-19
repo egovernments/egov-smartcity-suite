@@ -77,7 +77,7 @@
 						class="greybox"></span></td>
 					<td class="greybox" align="center"><s:select name="deptId"
 							id="deptId" list="dropdownData.deptList" listKey="id"
-							listValue="deptName" headerKey="-1" headerValue="----Choose----" />
+							listValue="name" headerKey="-1" headerValue="----Choose----" />
 					</td>
 				</tr>
 			</table>

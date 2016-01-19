@@ -199,7 +199,7 @@
 							class="mandatory">*</span> <s:select
 								name="vouchermis.departmentid" id="departmentid"
 								list="dropdownData.departmentList" listKey="id"
-								listValue="deptName" headerKey="-1" headerValue="----Choose----"
+								listValue="name" headerKey="-1" headerValue="----Choose----"
 								value="%{voucherHeader.vouchermis.departmentid.id}" /></td>
 
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">

@@ -53,6 +53,8 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -81,6 +83,7 @@ public class ComplaintTypeCategory extends AbstractPersistable<Long> {
     private String description;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     @JsonIgnore
     private List<ComplaintType> complaintTypes;
 

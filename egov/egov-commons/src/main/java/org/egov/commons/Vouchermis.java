@@ -41,6 +41,7 @@ package org.egov.commons;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -64,32 +65,32 @@ public class Vouchermis implements java.io.Serializable {
     @Id
     @GeneratedValue(generator = SEQ_VOUCHERMIS, strategy = GenerationType.SEQUENCE)
 	private Long id;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "fundsourceid")
 	private Fundsource fundsource;
 
 	private Integer billnumber;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "divisionid")
 	private Boundary divisionid;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "departmentid")
 	private Department departmentid;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "schemeid") 
 	private Scheme schemeid;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "subschemeid")
 	private SubScheme subschemeid;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "functionaryid")
 	private Functionary functionary;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "voucherheaderid",nullable = true)
 	private CVoucherHeader voucherheaderid;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "functionid")
 	private CFunction function;
 	private String sourcePath;

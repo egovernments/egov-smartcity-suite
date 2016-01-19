@@ -39,8 +39,12 @@
  */
 package org.egov.ptis.master.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +56,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class WoodTypeService {
 
     private final WoodTypeRepository woodTypeRepository;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public WoodTypeService(final WoodTypeRepository woodTypeRepository) {
@@ -73,5 +80,16 @@ public class WoodTypeService {
 
     public List<WoodType> getAllWoodTypes() {
         return woodTypeRepository.findAll();
+    }
+    
+    public String getRolesForUserId(final Long userId) {
+        String roleName;
+        final List<String> roleNameList = new ArrayList<String>();
+        final User user = userService.getUserById(userId);
+        for (final Role role : user.getRoles()) {
+            roleName = role.getName() != null ? role.getName() : "";
+            roleNameList.add(roleName);
+        }
+        return roleNameList.toString().toUpperCase();
     }
 }

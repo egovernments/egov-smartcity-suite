@@ -110,7 +110,7 @@
 							</s:if></td>
 						<td class="greybox"><s:select name="department"
 								id="department" list="dropdownData.departmentList" listKey="id"
-								listValue="deptName" headerKey="" headerValue="----Choose----"
+								listValue="name" headerKey="" headerValue="----Choose----"
 								value="%{department}" />
 						<td>
 					</s:if>

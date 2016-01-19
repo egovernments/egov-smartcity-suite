@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.tl.entity.transfer.LicenseTransfer" table="EGTL_LICENSETRANSFER">
+		<id name="id" type="java.lang.Long">
+			<column name="id" />
+			<generator class="native">
+				<param name="sequence">SEQ_EGTL_LICENSETRANSFER</param>
+			</generator>
+		</id>
+		<property name="oldApplicantName" type="string" />
+		<property name="oldApplicationNumber" type="string" />
+		<property name="oldApplicationDate" type="date" />
+		<property name="oldNameOfEstablishment" type="string" />
+		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="license" column="ID_LICENSE" class="org.egov.tl.entity.License" cascade="all" />
+		<many-to-one name="oldAddress" column="ID_ADDRESS" class="org.egov.infra.persistence.entity.Address" cascade="all"
+			unique="true" />
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		<property name="oldPhoneNumber" type="string" />
+		<property name="oldHomePhoneNumber" column="OLDHOME_PHONENUMBER" type="string" />
+		<property name="oldMobileNumber" column="OLDMOBILE_PHONENUMBER" type="string" />
+		<property name="oldEmailId" column="OLDEMAIL_ID" type="string" />
+		<property name="oldUid" column="OLDUNIQUEID" type="string" />
+		<property name="approved" type="boolean" />
+		
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATEDDATE" not-null="true" />
+		</property>
+		<property name="lastModifiedDate" type="java.util.Date">
+			<column name="LASTMODIFIEDDATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"
+			fetch="select" />
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" not-null="true"
+			fetch="select" />
+		<bag name="documents" table="egtl_licensetransfer_docs" cascade="all" order-by="document">
+			<key>
+				<column name="transfer" not-null="true"/>
+			</key>
+			<many-to-many class="org.egov.tl.entity.LicenseDocument" column="document"/>
+		</bag>
+	</class>
+</hibernate-mapping>

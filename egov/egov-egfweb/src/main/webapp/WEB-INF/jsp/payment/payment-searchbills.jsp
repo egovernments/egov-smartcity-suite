@@ -163,6 +163,8 @@ function check()
 	}
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
+	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-save.action';
+	document.forms[0].submit();
 	return true;
 }
 function loadBank(obj){}
@@ -1087,7 +1089,7 @@ function checkContingentForSameMisAttribs(obj,len)
 				</tr>
 				<tr>
 					<td class="buttonbottomnew" align="center"><br>
-					<input type="submit" class="buttonsubmit" value="Generate Payment"
+					<input type="button" class="buttonsubmit" value="Generate Payment"
 						id="generatePayment" onclick="return check();" /></td>
 				</tr>
 			</table>

@@ -72,7 +72,7 @@
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/yahoo/yahoo-min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/dom/dom-min.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/autocomplete/autocomplete-min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/js/autocomplete.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/event/event-min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/animation/animation-min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>

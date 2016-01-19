@@ -155,7 +155,7 @@
 				<td class="bluebox" width="25%"><s:select
 						name="departmentList" id="departmentList"
 						list="dropdownData.departmentList" listKey="id"
-						listValue="deptName" multiple="true" size="6" required="true" /></td>
+						listValue="name" multiple="true" size="6" required="true" /></td>
 
 			</tr>
 

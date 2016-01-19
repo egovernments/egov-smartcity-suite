@@ -103,7 +103,7 @@
 							name="voucher.department" /></td>
 					<td class="greybox"><s:select name="vouchermis.departmentid"
 							id="vouchermis.departmentid" list="dropdownData.departmentList"
-							listKey="id" listValue="deptName" headerKey="-1"
+							listKey="id" listValue="name" headerKey="-1"
 							headerValue="----Choose----"
 							value="voucherHeader.vouchermis.departmentid.id" /></td>
 				</tr>

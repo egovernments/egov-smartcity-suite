@@ -105,4 +105,9 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid) {
         return new ArrayList<ReceiptDetail>(0);
     }
+
+    @Override
+    public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
+        return null;
+    }
 }

@@ -39,8 +39,12 @@
  ******************************************************************************/
 package org.egov.ptis.master.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +59,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class FloorTypeService {
 
     private final FloorTypeRepository floorTypeRepository;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public FloorTypeService(final FloorTypeRepository floorTypeRepository) {
@@ -77,6 +84,17 @@ public class FloorTypeService {
 
     public List<FloorType> getAllFloors() {
         return floorTypeRepository.findAll();
+    }
+    
+    public String getRolesForUserId(final Long userId) {
+        String roleName;
+        final List<String> roleNameList = new ArrayList<String>();
+        final User user = userService.getUserById(userId);
+        for (final Role role : user.getRoles()) {
+            roleName = role.getName() != null ? role.getName() : "";
+            roleNameList.add(roleName);
+        }
+        return roleNameList.toString().toUpperCase();
     }
 
 }

@@ -115,7 +115,8 @@ public class DayBookReportAction extends BaseFormAction {
 
     @Validations(requiredFields = {
             @RequiredFieldValidator(fieldName = "startDate", message = "", key = FinancialConstants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED) })
+            @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED),
+            @RequiredFieldValidator(fieldName = "fundId", message = "", key = FinancialConstants.REQUIRED),})
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @Action(value = "/report/dayBookReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {

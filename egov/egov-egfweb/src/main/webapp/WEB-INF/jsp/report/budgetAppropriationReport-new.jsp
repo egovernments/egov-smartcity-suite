@@ -155,7 +155,7 @@ th.bluebgheadtd {
 					<td class="bluebox" width="8%"><s:select
 							name="budgetDetail.executingDepartment" id="department"
 							list="dropdownData.departmentList" listKey="id"
-							listValue="deptName" headerKey="" headerValue="----Select----"
+							listValue="name" headerKey="" headerValue="----Select----"
 							value="budgetDetail.executingDepartment.id" /></td>
 
 				</tr>

@@ -136,7 +136,7 @@ function validateDates(){
 					<td class="greybox"><s:text name="department" />:</td>
 					<td class="greybox"><s:select name="department.id"
 							id="department" list="dropdownData.departmentList" listKey="id"
-							listValue="deptName" headerKey="-1" headerValue="----Choose----" /></td>
+							listValue="name" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
 				</tr>
 			</table>

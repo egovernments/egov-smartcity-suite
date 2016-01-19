@@ -241,7 +241,7 @@ function setTotalAmount()
 								class="mandatory">*</span> <s:select
 									name="vouchermis.departmentid" id="departmentid"
 									list="dropdownData.departmentList" listKey="id"
-									listValue="deptName" headerKey="-1"
+									listValue="name" headerKey="-1"
 									headerValue="----Choose----"
 									value="%{voucherHeader.vouchermis.departmentid.id}" /></td>
 							<td class="greybox"><s:text

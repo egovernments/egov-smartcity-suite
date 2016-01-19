@@ -151,7 +151,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
-            if (balance.compareTo(BigDecimal.ZERO) == 1) {
+            if (balance.compareTo(BigDecimal.ZERO) == 1 || !balance.equals(BigDecimal.valueOf(0.0))) {
 
                 reason = demandDetail.getEgDemandReason();
                 installment = reason.getEgInstallmentMaster();
@@ -205,7 +205,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final EgDemandDetails penDmdDtls = getPenaltyDmdDtls(billable, installment);
         EgDemandDetails insertPenDmdDetail = null;
 
-        final boolean thereIsPenalty = penalty != null && !penalty.equals(BigDecimal.ZERO) ? true : false;
+        final boolean thereIsPenalty = penalty != null && !(penalty.equals(BigDecimal.ZERO) || penalty.equals(BigDecimal.valueOf(0.0))) ? true : false;
         final DateTime installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
         // Checking whether to impose penalty or not

@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.tl.web.actions.masters;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,12 +54,11 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.tl.domain.entity.LicenseCategory;
-import org.egov.tl.domain.entity.LicenseSubCategory;
-import org.egov.tl.domain.service.masters.LicenseCategoryService;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = LicenseSubCategoryAction.NEW, location = "licenseSubCategory-new.jsp"),
@@ -63,9 +102,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.domain.entity.LicenseSubCategory order by id")));
+			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.entity.LicenseSubCategory order by id")));
 		if (getId() != null){
-			subCategory = licenseSubCategoryService.find("from org.egov.tl.domain.entity.LicenseSubCategory where id=?", getId());
+			subCategory = licenseSubCategoryService.find("from org.egov.tl.entity.LicenseSubCategory where id=?", getId());
 			setCategoryId(subCategory.getCategory().getId());
 		}
 	}

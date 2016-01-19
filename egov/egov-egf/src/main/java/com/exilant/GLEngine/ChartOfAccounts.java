@@ -58,22 +58,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.BudgetDetail;
+import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -83,6 +86,8 @@ import org.hibernate.type.BooleanType;
 import org.hibernate.type.IntegerType;
 import org.infinispan.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.ClosedPeriods;
@@ -100,8 +105,12 @@ import com.exilant.exility.dataservice.DataExtractor;
 /**
  * @@org.jboss.cache.aop.InstanceOfAopMarker
  */
+@Transactional(readOnly=true) 
+//@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) this should be singleton only
+@Service()
 public class ChartOfAccounts {
-    static ChartOfAccounts singletonInstance;
+    
+	static ChartOfAccounts singletonInstance;
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccounts.class);
 
     private static final String ROOTNODE = "/COA";
@@ -110,47 +119,27 @@ public class ChartOfAccounts {
     private static final String ACCOUNTDETAILTYPENODE = "AccountDetailType";
     private static final String EXP = "Exp=";
     private static final String EXILRPERROR = "exilRPError";
-    private static PersistenceService<CChartOfAccountDetail, Integer> chartOfAccountDetailService;
-    private PersistenceService<CVoucherHeader, Long> voucherHeaderService;
-
+    @Autowired
+    private  ChartOfAccountDetailService chartOfAccountDetailService;
+    @Autowired
+    @Qualifier("voucherService")
+    private VoucherService voucherService;
     private static Cache<Object, Object> cache;
     @Autowired
     private BudgetDetailsHibernateDAO budgetDetailsDAO;
-        static
-        {
-                singletonInstance = new ChartOfAccounts();
-                try
-                {
-                        // TODO Commenting reading cache from infinispan temporarily and building cachemanager through code
-                        // cache=(TreeCacheMBean)MBeanProxyExt.create(TreeCacheMBean.class, "jboss.cache:service=TreeCache", server);
-                        LOGGER.debug("Inside static method ");
-
-                        LOGGER.debug("Got EgovMasterDataCaching ");
-                        cache = EgovMasterDataCaching.getInstance().getCACHE_MANAGER().getCache();
-                        LOGGER.debug("Cache = " + cache);
-                        if (cache == null)
-                                loadAccountData();
-                        LOGGER.debug("loadAccountData is done");
-                } catch (final Exception e)
-                {
-                        LOGGER.debug("Exception in instantiating cache.....");
-                        LOGGER.error(EXP + e.getMessage(), e);
-                        throw new ApplicationRuntimeException(e.getMessage());
-                }
-        }
-
+    
+    @Autowired
+    EntityManager entityManager;
+       
     public ChartOfAccounts() {
-
+    	 cache = EgovMasterDataCaching.getInstance().getCACHE_MANAGER().getCache();
     }
 
+    @Deprecated
     public static ChartOfAccounts getInstance() throws TaskFailedException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getInstancw called");
-        if (getGlAccountCodes() == null || getGlAccountIds() == null || getAccountDetailType() == null) {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("getInstancw called");
-            loadAccountData();
-        }
+       
         return singletonInstance;
     }
 
@@ -229,7 +218,7 @@ public class ChartOfAccounts {
         }
     }
 
-    static void loadAccountData() throws TaskFailedException {
+     void loadAccountData() throws TaskFailedException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("loadAccountData called");
         /*
@@ -327,7 +316,7 @@ public class ChartOfAccounts {
     // }
     // }
 
-    private static synchronized void loadParameters(final HashMap glAccountCodes, final HashMap glAccountIds)
+    private  synchronized void loadParameters(final HashMap glAccountCodes, final HashMap glAccountIds)
             throws TaskFailedException {
         final List<CChartOfAccountDetail> chList = chartOfAccountDetailService.findAllBy("from CChartOfAccountDetail");
         for (final CChartOfAccountDetail chartOfAccountDetail : chList) {
@@ -662,7 +651,7 @@ public class ChartOfAccounts {
          * SequenceGenerator(new SessionFactory()); budgetDetailsDAO.setSequenceGenerator(sequenceGenerator);
          */
     }
-
+    @Transactional(readOnly=true)
     private boolean checkBudget(final Transaxtion txnList[]) throws Exception, ValidationException
     {
         Map<String, Object> paramMap = null;
@@ -671,8 +660,10 @@ public class ChartOfAccounts {
         CVoucherHeader voucherHeader = null;
         for (final Transaxtion element : txnList) {
             txnObj = element;
-            voucherHeader = voucherHeaderService.find("from CVoucherHeader where id = ?",
-                    Long.valueOf(txnObj.voucherHeaderId));
+            voucherHeader=(CVoucherHeader)voucherService.getSession().get(CVoucherHeader.class, Long.valueOf(txnObj.voucherHeaderId));
+           
+            //this code is not working in JPA so added above line 		
+           // voucherHeader = voucherService.find("from CVoucherHeader where id = ?", Long.valueOf(txnObj.voucherHeaderId));
             paramMap = new HashMap<String, Object>();
             if (txnObj.getDrAmount() == null || txnObj.getDrAmount().equals(""))
                 paramMap.put("debitAmt", null);
@@ -727,6 +718,8 @@ public class ChartOfAccounts {
             LOGGER.error(e.getMessage(), e);
             throw new TaskFailedException(e.getMessage());
         }
+        System.out.println(entityManager.getFlushMode());
+        entityManager.flush();
         if (!postInGL(txnList))
             return false;
         return true;
@@ -896,7 +889,7 @@ public class ChartOfAccounts {
         }
         return true;
     }
-
+    @Transactional
     private boolean postInGL(final Transaxtion txnList[]) throws Exception {
         final GeneralLedger gLedger = new GeneralLedger();
         final GeneralLedgerDetail gLedgerDet = new GeneralLedgerDetail();
@@ -963,19 +956,8 @@ public class ChartOfAccounts {
                     try {
                         // post the defaults set for details
                         final GLParameter glPrm = (GLParameter) glParamList.get(a);
-                        /*
-                         * if(!glPrm.getDetailKey().equalsIgnoreCase("0")&&glPrm.getDetailKey().length()>0){
-                         * gLedgerDet.setGLId(String.valueOf(gLedger.getId()));
-                         * gLedgerDet.setDetailTypeId(String.valueOf(glPrm.getDetailId()));
-                         * gLedgerDet.setDetailKeyId(glPrm.getDetailKey()); if(LOGGER.isInfoEnabled())
-                         * LOGGER.info("glPrm.getDetailAmt() in glParam:"+glPrm.getDetailAmt());
-                         * gLedgerDet.setDetailAmt(glPrm.getDetailAmt()); gLedgerDet.insert(con); try {
-                         * if(validRecoveryGlcode(gLedger.getglCodeId(),con) && Double.parseDouble(gLedger.getcreditAmount())>0) {
-                         * egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
-                         * egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt()); if(glPrm.getTdsId()!=null)
-                         * egRemitGldtl.setTdsId(glPrm.getTdsId()); egRemitGldtl.insert(con); } } catch(Exception e) {
-                         * LOGGER.error("Error while inserting to eg_remittance_gldtl "+e); return false; } }else
-                         */{ // Post the details sent apart from defaults
+                      
+                       { // Post the details sent apart from defaults
                             for (int z = 0; z < txnPrm.size(); z++)
                             {
                                 final TransaxtionParameter tParam = (TransaxtionParameter) txnPrm.get(z);
@@ -1333,29 +1315,5 @@ public class ChartOfAccounts {
         cache = cacheInstance;
     }
 
-    public PersistenceService<CVoucherHeader, Long> getVoucherHeaderService() {
-        return voucherHeaderService;
-    }
-
-    public void setVoucherHeaderService(PersistenceService<CVoucherHeader, Long> voucherHeaderService) {
-        this.voucherHeaderService = voucherHeaderService;
-    }
-
-    public static PersistenceService<CChartOfAccountDetail, Integer> getChartOfAccountDetailService() {
-        return chartOfAccountDetailService;
-    }
-
-    public static void setChartOfAccountDetailService(
-            final PersistenceService<CChartOfAccountDetail, Integer> chartOfAccountDetailService) {
-        ChartOfAccounts.chartOfAccountDetailService = chartOfAccountDetailService;
-    }
-
-    public BudgetDetailsHibernateDAO getBudgetDetailsDAO() {
-        return budgetDetailsDAO;
-    }
-
-    public void setBudgetDetailsDAO(final BudgetDetailsHibernateDAO budgetDetailsDAO) {
-        this.budgetDetailsDAO = budgetDetailsDAO;
-    }
-
+   
 }

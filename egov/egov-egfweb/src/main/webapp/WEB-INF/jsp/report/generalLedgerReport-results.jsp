@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<span class="mandatory"> <font
+<span class="mandatory1"> <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
 </span>
@@ -48,24 +48,24 @@
 	<display:table name="generalLedgerDisplayList" id="currentRowObject"
 		uid="currentRowObject" class="tablebottom" style="width:100%;"
 		cellpadding="0" cellspacing="0" export="true"
-		requestURI="generalLedgerReport!ajaxSearch.action">
+		requestURI="generalLedgerReport-ajaxSearch.action">
 		<display:caption>
 			<div class="headingsmallbgnew" align="center"
-				style="text-align: center; width: 98%;">
+				style="text-align: center; width: 100%;">
 				<s:property value="%{heading}" />
 			</div>
-			<div align="left" style="text-align: left; width: 98%;">
-				<s:property value="%{generalLedgerReport.isConfirmedCount}" />
+			<div align="left" style="text-align: left; width: 100%;">
+				<s:property value="%{generalLedgerReportBean.isConfirmedCount}" />
 				in
-				<s:property value="%{generalLedgerReport.totalCount}" />
+				<s:property value="%{generalLedgerReportBean.totalCount}" />
 				are unconfirmed
 			</div>
 			<table width="100%" border="1" cellspacing="0" cellpadding="0">
 				<tr>
-					<td class="bluebgheadtd" colspan="4"><s:text
-							name="generalLedger.debit" /></td>
-					<td class="bluebgheadtd" colspan="4"><s:text
-							name="generalLedger.credit" /></td>
+					<th class="bluebgheadtd" ><s:text
+							name="generalLedger.debit" /></th>
+					<th class="bluebgheadtd" ><s:text
+							name="generalLedger.credit" /></th>
 				</tr>
 			</table>
 		</display:caption>

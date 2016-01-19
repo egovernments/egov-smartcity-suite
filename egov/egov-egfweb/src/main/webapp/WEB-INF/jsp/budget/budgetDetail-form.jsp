@@ -161,7 +161,7 @@
 				</s:if></td>
 			<td width="15%" class="bluebox"><s:select
 					list="dropdownData.executingDepartmentList" listKey="id"
-					listValue="deptName" name="executingDepartment" headerKey="0"
+					listValue="name" name="executingDepartment" headerKey="0"
 					headerValue="--- Select ---"
 					onchange="updateGrid('executingDepartment.id',document.getElementById('budgetDetail_executingDepartment').selectedIndex);updateApproverDepartment(this)"
 					value="executingDepartment.id"

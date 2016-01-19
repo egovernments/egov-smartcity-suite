@@ -121,13 +121,15 @@ public class OpeningBalance
         try {
             OpeningBalanceBean ob = null;
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            int i = 1;
-            pstmt.setString(i++, finYear);
+            int i = 0;
+            pstmt.setLong(i++, Long.valueOf(finYear));
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(i++, fundId);
+                pstmt.setLong(i++, Long.valueOf(fundId));
             if (!deptId.equalsIgnoreCase(""))
                 pstmt.setString(i++, deptId);
-            resultset = pstmt.list();
+            List<Object[]> list= pstmt.list();
+            resultset =list;
+            
             for (final Object[] element : resultset) {
                 if (!checkFund.equalsIgnoreCase(element[0].toString())
                         && !checkFund.equalsIgnoreCase("")) {

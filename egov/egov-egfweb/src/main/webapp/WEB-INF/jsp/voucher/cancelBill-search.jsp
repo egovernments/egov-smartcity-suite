@@ -123,7 +123,7 @@ function validateCancel()
 					<td class="greybox"><s:text name="voucher.department" /></td>
 					<td class="greybox"><s:select name="deptImpl.id"
 							id="deptImpl.id" list="dropdownData.DepartmentList" listKey="id"
-							listValue="deptName" headerKey="-1" headerValue="----Choose----"
+							listValue="name" headerKey="-1" headerValue="----Choose----"
 							value="%{deptImpl.id}" /></td>
 					<td class="greybox"></td>
 					<td class="greybox"></td>

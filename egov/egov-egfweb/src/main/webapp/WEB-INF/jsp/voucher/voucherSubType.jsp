@@ -147,5 +147,10 @@ function onChangeVSubType(){
 		document.getElementById('partyNameDivId').style.display='inline';
 	}
 	
-}      
+}    
+
+function isSpecialChar(Obj)
+{
+  return true;
+  }
 </script>

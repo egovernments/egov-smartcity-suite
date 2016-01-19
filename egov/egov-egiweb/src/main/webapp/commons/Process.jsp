@@ -220,10 +220,6 @@ try {
 				}	
 			}
 		});
-	} else if(type.equalsIgnoreCase("getCounterByEnteringCode")){//TESTED
-		final String counterName=SecurityUtils.checkSQLInjection(request.getParameter("code"));
-		final String query="select ca.name || '`--`' || ca.id  as \"code\" from eg_location ca where ca.name=? and ca.isactive=1";
-		result = executeWithParam(query,counterName);
 	} else if(type.equalsIgnoreCase("getAllUserNames")) {//TESTED
 		final java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
 		final String includeRolesList = EGovConfig.getProperty("INCLUDE_ROLES","","IP-BASED-LOGIN");
@@ -262,10 +258,6 @@ try {
 				}	
 			}
 		});
-	} else if(type.equalsIgnoreCase("getAllCounters")) {//TESTED
-		final String locationId = SecurityUtils.checkSQLInjection(request.getParameter("id"));
-		final String query="select l.name|| '`--`' ||l.id as \"code\" from eg_location l where l.locationid=? and l.isactive=1";
-		result = executeWithParam(query,locationId);
 	} else if(type.equalsIgnoreCase("getAllBoundary")){//TESTED
 		final String btypeId= SecurityUtils.checkSQLInjection(request.getParameter("btypeId"));
 		final String query="SELECT  ID_BNDRY,NAME    FROM EG_BOUNDARY b  WHERE b.IS_HISTORY='N' and b.ID_BNDRY_TYPE=? ORDER BY ID_BNDRY";
@@ -319,17 +311,6 @@ try {
 	    	String cgn = SecurityUtils.checkSQLInjection(request.getParameter("cgn"));
 	    	result = executeWithParam(query+" union "+queryedit,cgn);
        	}
-	} else if (type.equalsIgnoreCase("checkUserCounterMapping")) {//TESTED
-		String fDate = SecurityUtils.checkSQLInjection(request.getParameter("fDate"));
-		String tDate = SecurityUtils.checkSQLInjection(request.getParameter("tDate"));
-		String userId = SecurityUtils.checkSQLInjection(request.getParameter("userId"));
-		String counterId = SecurityUtils.checkSQLInjection(request.getParameter("counterId"));
-		
-		String query="SELECT  id  AS \"code\"  FROM EG_USERCOUNTER_MAP b  WHERE b.USERID=? and  "+
-					"((b.TODATE IS NULL and b.FROMDATE <= TO_DATE(?,'DD/MM/YYYY')) OR (b.FROMDATE<= TO_DATE(?,'DD/MM/YYYY') AND b.TODATE>=TO_DATE(?,'DD/MM/YYYY'))) and b.counterid=? ORDER BY b.id";
-		
-		result = dataExist(query,userId,fDate,fDate,tDate,counterId);
-		
 	} else if(type.equalsIgnoreCase("checkJurisdictionDates")){//TESTED
 		String fDate = SecurityUtils.checkSQLInjection(request.getParameter("fDate"));
 		String tDate = SecurityUtils.checkSQLInjection(request.getParameter("tDate"));

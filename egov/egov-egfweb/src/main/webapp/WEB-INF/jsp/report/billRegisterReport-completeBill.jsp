@@ -120,7 +120,7 @@
 		<div class="buttonbottom">
 			<s:submit method="billSearch" value="Search" cssClass="buttonsubmit"
 				onclick="return validate();" />
-			<s:submit method="searchform" value="Cancel" cssClass="button" />
+			<s:submit method="searchform" value="Reset" cssClass="button" onclick="return resetAndSubmit();"/>
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />
 
@@ -273,8 +273,21 @@
 					return false;
 				 }
 			</s:if>
+		
+
+			document.forms[0].action='${pageContext.request.contextPath}/report/billRegisterReport-billSearch.action';
+			document.forms[0].submit();	
 			return  true;
 }
+
+		function resetAndSubmit()
+		{
+
+			document.forms[0].action='${pageContext.request.contextPath}/report/billRegisterReport-searchform.action';
+			document.forms[0].submit();	
+		
+
+		}
 
 	</script>
 </body>

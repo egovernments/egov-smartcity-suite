@@ -254,7 +254,7 @@ public class CollectionCommon {
                         CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
                         CollectionConstants.INSTRUMENTTYPE_ONLINE));
             newReceiptDetail.setDramount(debitAmount);
-            newReceiptDetail.setCramount(BigDecimal.valueOf(0));
+            newReceiptDetail.setCramount(BigDecimal.ZERO);
             newReceiptDetail.setReceiptHeader(receiptHeader);
         }
 
@@ -320,8 +320,8 @@ public class CollectionCommon {
                         collDetails.getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
                         collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),
                         billPayee.getPayeeName(), billPayee.getPayeeAddress());
-                
-                if(collDetails.getTransactionReferenceNumber() != null) {
+
+                if (collDetails.getTransactionReferenceNumber() != null) {
                     receiptHeader.setManualreceiptnumber(collDetails.getTransactionReferenceNumber());
                     receiptHeader.setManualreceiptdate(new Date());
                 }
@@ -393,7 +393,7 @@ public class CollectionCommon {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
 
         final String templateName = getReceiptTemplateName(receiptType, serviceCode);
-        System.out.print(" template name : " + templateName);
+        LOGGER.info(" template name : " + templateName);
         final Map reportParams = new HashMap<String, Object>();
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
 
@@ -405,10 +405,15 @@ public class CollectionCommon {
                 receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj));
             }
         } else
-            for (final ReceiptHeader receiptHeader : receipts)
-                receiptList.add(new BillReceiptInfoImpl(receiptHeader));
-
-        ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
+            for (final ReceiptHeader receiptHeader : receipts) {
+                final String additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                        new BillReceiptInfoImpl(receiptHeader));
+                if (additionalMessage != null)
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage));
+                else
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader));
+            }
+        final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened

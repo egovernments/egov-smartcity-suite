@@ -44,7 +44,6 @@ public interface SecurityConstants {
 	public static final String[] SQL_INJ_BLK_LIST = { "--", ";--", ";", "/*", "*/", "*", "@@", "@", "char", "nchar", "varchar", "nvarchar", "grant", "all", "union", "permissions", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
 			"end", "exec", "execute", "fetch", "insert", "kill", "join", "inner", "outer", "open", "select", "sys", "sysobjects", "syscolumns", "table", "update" };
 	public static final String LOCATION_FIELD = "locationId";
-	public static final String COUNTER_FIELD = "counterId";
 	public static final String IPADDR_FIELD = "ipAddress";
 	public static final String LOGINTYPE = "loginType";
 	public static final String PWD_FIELD = "j_password";

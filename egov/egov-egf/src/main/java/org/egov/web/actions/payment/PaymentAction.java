@@ -185,7 +185,7 @@ public class PaymentAction extends BasePaymentAction {
     private CFunction cFunctionobj;
     private String rtgsDefaultMode;
     private Date rtgsModeRestrictionDateForCJV;
-    private String paymentRestrictionDateForCJV;
+ //   private String paymentRestrictionDateForCJV;
     private String billSubType;
     private String region;
     private String month;
@@ -256,13 +256,8 @@ public class PaymentAction extends BasePaymentAction {
                             billregister.getEgBillregistermis().getFund()));
         }
 
-        paymentRestrictionDateForCJV = paymentService.getAppConfDateValForCJVPaymentModeRTGS();
-        try {
-            rtgsModeRestrictionDateForCJV = formatter.parse(paymentRestrictionDateForCJV);
-        } catch (final ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    
+       
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
         addDropdownData("regionsList", VoucherHelper.TNEB_REGIONS);
@@ -336,9 +331,7 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeSearch...");
 
-        // Get App config value
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
-
+      
         // if(validateUser("deptcheck"))
         voucherHeader.getVouchermis().setDepartmentid(paymentService.getAssignment().getDepartment());
         if (LOGGER.isDebugEnabled())
@@ -369,8 +362,6 @@ public class PaymentAction extends BasePaymentAction {
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_BANKBRANCH);
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_BANKACCOUNT);
 
-        // Get App config value
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
         for (final String key : propartyAppConfigKeysList) {
             String value = null;
             try {
@@ -418,7 +409,7 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting search...");
         // Get App config value
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
+        
         final StringBuffer sql = new StringBuffer();
         if (!"".equals(billNumber))
             sql.append(" and bill.billnumber = '" + billNumber + "' ");
@@ -475,17 +466,22 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("start purchase bill");
         if (expType == null || expType.equals("-1") || expType.equals("Purchase"))
         {
-            egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SALBILL", "Approved");
+            egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved");
             final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("PURCHBILL", "Passed");
-            final String supplierBillSql = mainquery + " and bill.status in (?,?) " + sql.toString()
+            String statusCheck="";
+            if(egwStatus==null)
+            {
+            	statusCheck=" and bill.status in ("+egwStatus1.getId()+") ";
+            }else
+            	statusCheck=" and bill.status in ("+egwStatus.getId()+","+egwStatus1.getId()+") ";
+            
+            final String supplierBillSql = mainquery + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            final String supplierBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString()
+            final String supplierBillSql1 = mainquery1 + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            supplierBillList = getPersistenceService().findPageBy(supplierBillSql, 1, 500, "Purchase", egwStatus, egwStatus1)
-                    .getList();
+            supplierBillList = getPersistenceService().findPageBy(supplierBillSql, 1, 500, "Purchase").getList();
             if (supplierBillList != null)
-                supplierBillList.addAll(getPersistenceService().findPageBy(supplierBillSql1, 1, 500, "Purchase", egwStatus,
-                        egwStatus1).getList());
+                supplierBillList.addAll(getPersistenceService().findPageBy(supplierBillSql1, 1, 500, "Purchase").getList());
             else
                 supplierBillList = getPersistenceService()
                 .findPageBy(supplierBillSql1, 1, 500, "Purchase", egwStatus, egwStatus1).getList();
@@ -503,21 +499,26 @@ public class PaymentAction extends BasePaymentAction {
         {
             // right not we dont know, the EGW-Status for works bill, passed from external system
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("WORKSBILL", "Passed");
-            final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for
+             EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for
             // external
             // systems
-            final String contractorBillSql = mainquery + " and bill.status in (?,?) " + sql.toString()
+             String statusCheck="";
+            if(egwStatus1==null)
+            {
+            	statusCheck=" and bill.status in ("+egwStatus.getId()+") ";
+            }else
+            	statusCheck=" and bill.status in ("+egwStatus.getId()+","+egwStatus1.getId()+") ";
+            
+            final String contractorBillSql = mainquery + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            final String contractorBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString()
+            final String contractorBillSql1 = mainquery1 + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works", egwStatus, egwStatus1)
+            contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works")
                     .getList();
             if (contractorBillList != null)
-                contractorBillList.addAll(getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works", egwStatus,
-                        egwStatus1).getList());
+                contractorBillList.addAll(getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList());
             else
-                contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works", egwStatus,
-                        egwStatus1).getList();
+                contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contractorBillList);
             contractorBillList.clear();
             contractorBillList.addAll(tempBillList);
@@ -899,31 +900,34 @@ public class PaymentAction extends BasePaymentAction {
             billregister.getEgBillregistermis().setFunction(cFunctionobj);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");
-            paymentheader = paymentService.createPayment(parameters, billList, billregister);
+	            paymentheader = paymentService.createPayment(parameters, billList, billregister);
             paymentheader.getVoucherheader().getVouchermis()
-            .setSourcePath("/EGF/payment/payment!view.action?" + PAYMENTID + "=" + paymentheader.getId());
-            getPaymentBills();
+            .setSourcePath("/EGF/payment/payment-view.action?" + PAYMENTID + "=" + paymentheader.getId());
+            paymentService.getPaymentBills(paymentheader);
             paymentheader.start().withOwner(paymentService.getPosition());
             sendForApproval();
             addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                     .getVoucherNumber() }));
-            loadApproverUser(voucherHeader.getType());
+            //loadApproverUser(voucherHeader.getType());
         } catch (final ValidationException e) {
-            loadApproverUser(voucherHeader.getType());
+           // loadApproverUser(voucherHeader.getType());
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage());
-            loadApproverUser(voucherHeader.getType());
+            
+            //loadApproverUser(voucherHeader.getType());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
+        	e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createPayment.");
+        wfitemstate="END";
         return VIEW;
     }
 
@@ -934,14 +938,17 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting sendForApproval...");
         paymentheader = getPayment();
+    //dont validate in create
+        /*
         if (paymentheader != null && paymentheader.getState() != null)
             if (!validateOwner(paymentheader.getState())) {
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", "Invalid Access"));
                 throw new ValidationException(errors);
-            }
+            }*/
         getPaymentBills();
-        if (LOGGER.isDebugEnabled())
+        //uncoment below like while implementing workflow //venky
+        /*if (LOGGER.isDebugEnabled())
             LOGGER.debug("Paymentheader==" + paymentheader.getId() + ", actionname=" + parameters.get(ACTIONNAME)[0]);
         action = parameters.get(ACTIONNAME)[0];
 
@@ -977,6 +984,10 @@ public class PaymentAction extends BasePaymentAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed sendForApproval.");
+        */
+        
+        
+        
         return VIEW;
     }
 
@@ -1021,7 +1032,8 @@ public class PaymentAction extends BasePaymentAction {
              * LOGGER.debug("Starting validate owner"); if(!validateOwner(paymentheader.getState())){ List<ValidationError>
              * errors=new ArrayList<ValidationError>(); errors.add(new ValidationError("exp","Invalid Access")); throw new
              * ValidationException(errors); } }
-             */loadApproverUser(voucherHeader.getType());
+             */
+        	//loadApproverUser(voucherHeader.getType());
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("defaultDept in vew : " + getDefaultDept());
@@ -1496,7 +1508,7 @@ public class PaymentAction extends BasePaymentAction {
          * addFieldError("balance",getMessage("insufficient.bank.balance")); }
          */
         int i = 0;
-        rtgsDefaultMode = paymentService.getAppConfValForCJVPaymentModeRTGS();
+
         boolean selectedContractorPay = false;
         for (final PaymentBean bean : billList)
         {
@@ -2133,14 +2145,6 @@ public class PaymentAction extends BasePaymentAction {
 
     public void setRtgsModeRestrictionDateForCJV(final Date rtgsModeRestrictionDateForCJV) {
         this.rtgsModeRestrictionDateForCJV = rtgsModeRestrictionDateForCJV;
-    }
-
-    public String getPaymentRestrictionDateForCJV() {
-        return paymentRestrictionDateForCJV;
-    }
-
-    public void setPaymentRestrictionDateForCJV(String paymentRestrictionDateForCJV) {
-        paymentRestrictionDateForCJV = paymentRestrictionDateForCJV;
     }
 
     public String getBillSubType() {

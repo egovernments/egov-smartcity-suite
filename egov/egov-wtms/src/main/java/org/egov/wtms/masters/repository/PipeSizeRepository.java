@@ -55,7 +55,7 @@ public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
 
     List<PipeSize> findByActiveTrueOrderBySizeInInchAsc();
 
-    @Query("select PS.pipesize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType=:propertyType ")
+    @Query("select PS.pipesize from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType.id=:propertyType ")
     List<PipeSize> getAllPipeSizesByPropertyType(@Param("propertyType") Long propertyType);
     
     @Query("select PS from org.egov.wtms.masters.entity.PropertyPipeSize PS where PS.propertyType in(select PT.id from PropertyType PT where PT.code =:propertyType) and PS.pipesize.code=:pipesizecode")

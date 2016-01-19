@@ -3372,7 +3372,7 @@ public class CommonAction extends BaseFormAction {
                             " ca.glcode not in(select glcode from CChartOfAccounts where glcode like '47%' and glcode not like '471%' and glcode !='4741')"
                             +
                             " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
-                            " and ca.isActiveForPosting=1 and ca.classification=4  and ca.glcode like ?", glCode + "%");
+                            " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?", glCode + "%");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadGLreportCodes.");
         return "glCodes";
