@@ -127,12 +127,24 @@ public class AdvertisementPermitDetailService {
     }
 
     @Transactional
+    public AdvertisementPermitDetail updateAdvertisementPermitDetailForLegacy(final AdvertisementPermitDetail advertisementPermitDetail
+          ) throws HoardingValidationError {
+
+        advertisementDemandService.updateDemandForLegacyEntry(advertisementPermitDetail, advertisementPermitDetail
+                .getAdvertisement().getDemandId());
+        
+        roundOfAllTaxAmount(advertisementPermitDetail);
+        
+        advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        return advertisementPermitDetail;
+    }
+    @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) throws HoardingValidationError {
         final boolean anyDemandPendingForCollection = advertisementDemandService
                 .anyDemandPendingForCollection(advertisementPermitDetail);
-
+    
         /*
          * if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection) throw
          * new HoardingValidationError("agency", "ADTAX.001");

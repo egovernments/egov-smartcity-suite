@@ -134,9 +134,7 @@
 								<%-- 
 								<form:hidden path="status" id="status" value="${status.id}" /> 
 								 --%>
-								<form:hidden path="advertisement.penaltyCalculationDate" id="penaltyCalculationDate" value="${advertisement.penaltyCalculationDate}" />
-								
-									<form:input type="text"  cssClass="form-control patternvalidation" 
+										<form:input type="text"  cssClass="form-control patternvalidation" 
                         	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" />
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
@@ -184,7 +182,7 @@
 								<spring:message code="lbl.advertisement.agency"/>
 							</label>
 								<div class="col-sm-3 add-margin">
-									<input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off" value="${hoarding.agency.name}">
+									<input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off" value="${advertisementPermitDetail.agency.name}">
 									<form:hidden path="agency" id="agencyId" value="${advertisementPermitDetail.agency.id}" />
 									<form:errors path="agency" cssClass="error-msg" />
 								</div>
@@ -192,7 +190,7 @@
 								<spring:message code="lbl.advertisement.adv"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="advertiser" cols="5" rows="2" class="form-control patternvalidation"  data-pattern="alphanumericwithspace"  minlength="5" maxlength="125"/>
+									<form:textarea path="advertiser" id="advertiser" cols="5" rows="2" class="form-control patternvalidation"  data-pattern="alphanumericwithspace"  minlength="5" maxlength="125"/>
                                		<form:errors path="advertiser" cssClass="error-msg" /> 
 								</div>
 							</div>
@@ -351,43 +349,4 @@
 							</div>
 						</c:if>
 					</div>
-					
-					<div class="panel-heading custom_form_panel_heading">
-								<div class="panel-title">
-								<spring:message code="lbl.advertisement.documents"/>
-								</div>
-							</div>
-					<div  id="hoardingattachments">
-					
-						<c:choose>
-							<c:when test="${not empty hoardingDocumentTypes}">
-							<form:hidden path="advertisement.latitude" id="latitude"/> 
-							<form:hidden path="advertisement.longitude" id="longitude" /> 
-							<div class="col-sm-12 view-content header-color hidden-xs">
-								<div class="col-sm-1 table-div-column"><spring:message code="lbl.srl.no"/></div>
-								<div class="col-sm-5 table-div-column"><spring:message code="lbl.documentname"/></div>
-								<div class="col-sm-3 table-div-column"><spring:message code="lbl.enclosed"/></div>
-								<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/></div>
-							</div>
-							
-							<c:forEach var="docs" items="${hoardingDocumentTypes}" varStatus="status1">	
-								<div class="form-group">
-									<div class="col-sm-1 text-center">${status1.index+1}</div>
-									<div class="col-sm-5 text-center">${docs.mandatory ? "<span
-									class='mandatory'></span>" : ""}${docs.name}
-									</div>
-									<div class="col-sm-3 text-center">
-										<input type="checkbox" ${advertisement.documents[status1.index].enclosed ? "checked='checked'" : ""} 
-										name="advertisement.documents[${status1.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
-									</div>
-									<div class="col-sm-3 text-center">
-										<input type="file" name="advertisement.documents[${status1.index}].attachments" class="form-control" >
-										<form:errors path="advertisement.documents[${status1.index}].attachments" cssClass="add-margin error-msg" />
-										<form:hidden path="advertisement.documents[${status1.index}].doctype" value="${docs.id}" /> 
-									</div>
-								</div>
-							</c:forEach> 
-							</c:when>
-						</c:choose>
-					</div>
-			
+						

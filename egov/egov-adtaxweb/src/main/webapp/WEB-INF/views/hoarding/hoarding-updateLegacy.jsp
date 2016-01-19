@@ -53,23 +53,20 @@
 				<ul class="nav nav-tabs" id="settingstab">
 					<li class="active"><a data-toggle="tab"
 						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.advertisement.details"/></a></li>
-					<%-- <li class=""><a data-toggle="tab" href="#hoardingattachments"
-						data-tabidx="1" aria-expanded="false"><spring:message code="lbl.advertisement.enclosure"/></a></li> --%>
 				</ul>
 			</div>
 			<div class="panel-body custom-form">
 				<div class="tab-content">
 					<div class="tab-pane fade active in" id="hoardingdetails">
 							<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
-							<jsp:include page="document-create.jsp"></jsp:include>
+							<jsp:include page="document-update.jsp"></jsp:include>
 			</div>
 			</div>
 
 		</div>					
 		<div class="text-center">
 			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+			<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 		</div>
 	</form:form>
 	</div>
@@ -79,6 +76,12 @@
 var subcategory = '${advertisement.subCategory.id}';
 var adminBoundry = '${advertisement.ward.id}';
 var revenueBoundary = '${advertisement.locality.id}';
+$(window).load(function(){
+  	document.getElementById("applicationNumber").readOnly=true;
+	document.getElementById("applicationDate").readOnly=true;
+	document.getElementById("permissionNumber").readOnly=true;
+	document.getElementById("advertisementnumber").readOnly=true;
+});
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/legacyAdvertisement.js'/>"></script>

@@ -47,7 +47,6 @@ import javax.validation.Valid;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
-import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,51 +54,50 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hoarding")
 public class UpdateLegacyAdvertisementController extends HoardingControllerSupport {
 
-    @ModelAttribute("advertisement")
-    public Advertisement advertisement(@PathVariable final String id) {
-        return advertisementService.findBy(Long.valueOf(id));
-    }
-
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
-        return advertisementPermitDetailService.findBy(Long.valueOf(id));
+        Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
+        if (advertisement != null) {
+            return advertisement.getActiveAdvertisementPermit();
+        }
+        return null;
     }
 
     @RequestMapping(value = "/updateLegacy/{id}", method = GET)
-    public String updateHoarding(@PathVariable final String id, final Model model) {  
+    public String updateHoarding(@PathVariable final String id, final Model model) {
         final Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
+
+        // TODO: Check whether amount already collected for this record ? any
+        // renewal process started ?
+        // TOD0: AMOUNT ALREADY COLLECTED OR NOT ?
         model.addAttribute("advertisementPermitDetail", advertisement.getActiveAdvertisementPermit());
         model.addAttribute("advertisementDocuments", advertisement.getDocuments());
-        return "hoarding-update"; 
+        return "hoarding-updateLegacy";
     }
 
-    @RequestMapping(value = "updateLegacy/{id}", method = POST)
+    @RequestMapping(value = "/updateLegacy/{id}", method = POST)
     public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
-            final Model model,
-            @RequestParam String workFlowAction) {
+            final Model model) {
 
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
 
         if (resultBinder.hasErrors())
-            return "hoarding-update";
+            return "hoarding-updateLegacy";
         try {
-            
             updateHoardingDocuments(advertisementPermitDetail);
-            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, null,
-                    null, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
-            
+            advertisementPermitDetailService.updateAdvertisementPermitDetailForLegacy(advertisementPermitDetail);
+            redirAttrib.addFlashAttribute("message", "hoarding.update.success");
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
-            return "hoarding-update";
+            return "hoarding-updateLegacy";
         }
     }
 }

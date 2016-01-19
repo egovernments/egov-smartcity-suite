@@ -82,8 +82,7 @@ public class AdvertisementDemandService {
     @Autowired
     private DemandGenericDao demandGenericDao;
 
-    
-    @Autowired
+     @Autowired
     private ModuleService moduleService;
 
     @PersistenceContext
@@ -436,7 +435,7 @@ public class AdvertisementDemandService {
             demand, Arrays.asList(demandReason));
  
     }
-
+   
     public List<BillReceipt> getBilReceiptsByDemand(EgDemand demand) {
         List<BillReceipt> billReceiptList = new ArrayList<BillReceipt>();
         billReceiptList = demandGenericDao.getBillReceipts(demand);
@@ -493,14 +492,6 @@ public class AdvertisementDemandService {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         
-        Boolean taxFullyPaidForCurrentYear=false;
-        
-        if( advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getLegacy()
-                && advertisementPermitDetail.getAdvertisement().getTaxPaidForCurrentYear())
-        {
-            taxFullyPaidForCurrentYear=true;
-        }
-        
         // Boolean calculateTax=true;
         Boolean enchroachmentFeeAlreadyExistInDemand = false;
 
@@ -531,10 +522,6 @@ public class AdvertisementDemandService {
                     // TODO: Also check whether fully collected ?
                     totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getTaxAmount().subtract(dmdDtl.getAmount()));
                     dmdDtl.setAmount(advertisementPermitDetail.getTaxAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
-
-                    if (taxFullyPaidForCurrentYear) {
-                        dmdDtl.setAmtCollected((advertisementPermitDetail.getTaxAmount()!=null?(dmdDtl.getAmtCollected()!=null?dmdDtl.getAmtCollected():BigDecimal.ZERO).add(advertisementPermitDetail.getTaxAmount()):BigDecimal.ZERO));
-                    }
                 }
                 if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()
                         && advertisementPermitDetail.getAdvertisement().getPendingTax()!=null && advertisementPermitDetail.getAdvertisement().getPendingTax().compareTo(BigDecimal.ZERO) > 0) {
@@ -542,9 +529,7 @@ public class AdvertisementDemandService {
                     totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax().subtract(dmdDtl.getAmount()));
                     dmdDtl.setAmount(advertisementPermitDetail.getAdvertisement().getPendingTax().setScale(0, BigDecimal.ROUND_HALF_UP));
 
-                    if (taxFullyPaidForCurrentYear) {
-                        dmdDtl.setAmtCollected((advertisementPermitDetail.getAdvertisement().getPendingTax()!=null?(dmdDtl.getAmtCollected()!=null?dmdDtl.getAmtCollected():BigDecimal.ZERO).add(advertisementPermitDetail.getAdvertisement().getPendingTax()):BigDecimal.ZERO));
-                    }
+                
                 }
                 // Encroachment fee may not mandatory. If already part of demand
                 // then
@@ -555,10 +540,7 @@ public class AdvertisementDemandService {
                         totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee().subtract(
                                 dmdDtl.getAmount()));
                         dmdDtl.setAmount(advertisementPermitDetail.getEncroachmentFee().setScale(0, BigDecimal.ROUND_HALF_UP));
-                        
-                        if (taxFullyPaidForCurrentYear) {
-                            dmdDtl.setAmtCollected((advertisementPermitDetail.getEncroachmentFee()!=null?advertisementPermitDetail.getEncroachmentFee():BigDecimal.ZERO));
-                        }
+                       
                         // update encroachment fee..
                     } else {
                         totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
@@ -579,6 +561,133 @@ public class AdvertisementDemandService {
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
                 //TODO: CHECK WHETHER FULLY PAID IN LEGACY HANDLED.
             }
+            demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+
+        }
+        return demand;
+
+    }
+
+    public EgDemand updateDemandForLegacyEntry(AdvertisementPermitDetail advertisementPermitDetail, EgDemand demand) {
+        final Installment installment = getCurrentInstallment();
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+
+        Boolean taxFullyPaidForCurrentYear = false;
+ 
+        if (advertisementPermitDetail.getAdvertisement() != null
+                && advertisementPermitDetail.getAdvertisement().getLegacy()
+                && advertisementPermitDetail.getAdvertisement().getTaxPaidForCurrentYear()) {
+            taxFullyPaidForCurrentYear = true;
+        }
+
+        Boolean enchroachmentFeeAlreadyExistInDemand = false;
+        Boolean arrearsTaxalreadyExistInDemand = false;
+        Boolean taxalreadyExistInDemand = false;
+        List <EgDemandDetails> deleteDmdDtl= new ArrayList<EgDemandDetails>();
+        if (demand == null) {
+            demand = createDemand(advertisementPermitDetail);
+        } else {
+            EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX, installment);
+            EgDemandReason encroachmentFeeReason = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE, installment);
+            EgDemandReason taxReason = getDemandReasonByCodeAndInstallment(
+                    AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, installment);
+
+            for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+                if (dmdDtl.getEgDemandReason().getId() == taxReason.getId()) {
+                    taxalreadyExistInDemand = true;
+                    if (advertisementPermitDetail.getTaxAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+                        totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getTaxAmount().subtract(
+                                dmdDtl.getAmount()));
+                        dmdDtl.setAmount(advertisementPermitDetail.getTaxAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
+
+                        if (taxFullyPaidForCurrentYear) {
+                            dmdDtl.setAmtCollected((advertisementPermitDetail.getTaxAmount() != null ? (advertisementPermitDetail
+                                    .getTaxAmount()) : BigDecimal.ZERO));
+                        } else
+                            dmdDtl.setAmtCollected(BigDecimal.ZERO);
+                    } else {
+                        totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
+                        deleteDmdDtl.add(dmdDtl);
+                      //  demand.removeEgDemandDetails(dmdDtl);
+                    }
+                }
+                else if (dmdDtl.getEgDemandReason().getId() == pendingTaxReason.getId()) {
+                    arrearsTaxalreadyExistInDemand = true;
+                    if (advertisementPermitDetail.getAdvertisement().getPendingTax() != null
+                            && advertisementPermitDetail.getAdvertisement().getPendingTax().compareTo(BigDecimal.ZERO) > 0) {
+
+                        totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getAdvertisement()
+                                .getPendingTax().subtract(dmdDtl.getAmount()));
+                        dmdDtl.setAmount(advertisementPermitDetail.getAdvertisement().getPendingTax()
+                                .setScale(0, BigDecimal.ROUND_HALF_UP));
+
+                     /*   if (taxFullyPaidForCurrentYear) {
+                            dmdDtl.setAmtCollected((advertisementPermitDetail.getAdvertisement().getPendingTax() != null ? (advertisementPermitDetail
+                                    .getAdvertisement().getPendingTax()) : BigDecimal.ZERO));
+                        } else*/
+                            dmdDtl.setAmtCollected(BigDecimal.ZERO);
+                    } else {
+                        totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
+                        deleteDmdDtl.add(dmdDtl);
+                    }
+                }
+                  else if (dmdDtl.getEgDemandReason().getId() == encroachmentFeeReason.getId()) {
+                    enchroachmentFeeAlreadyExistInDemand = true;
+                    if (advertisementPermitDetail.getEncroachmentFee() != null
+                            && advertisementPermitDetail.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+                        totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee()
+                                .subtract(dmdDtl.getAmount()));
+                        dmdDtl.setAmount(advertisementPermitDetail.getEncroachmentFee().setScale(0,
+                                BigDecimal.ROUND_HALF_UP));
+
+                        if (taxFullyPaidForCurrentYear) {
+                            dmdDtl.setAmtCollected((advertisementPermitDetail.getEncroachmentFee() != null ? (advertisementPermitDetail
+                                    .getEncroachmentFee()) : BigDecimal.ZERO));
+                        } else
+                            dmdDtl.setAmtCollected(BigDecimal.ZERO);
+
+                        // update encroachment fee..     // Encroachment fee may not mandatory. If already part of demand
+                     } else {
+                        totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount());
+                        deleteDmdDtl.add(dmdDtl);
+                        // delete demand detail
+                    }
+
+                }
+            }
+
+            for (EgDemandDetails dmdDtls : deleteDmdDtl)  
+            {
+                demand.removeEgDemandDetails(dmdDtls);
+            }
+                
+            if (!enchroachmentFeeAlreadyExistInDemand && advertisementPermitDetail.getEncroachmentFee() != null
+                    && advertisementPermitDetail.getEncroachmentFee().compareTo(BigDecimal.ZERO) > 0) {
+                demand.addEgDemandDetails(createDemandDetails(
+                        (advertisementPermitDetail.getEncroachmentFee()),
+                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE,
+                                installment), taxFullyPaidForCurrentYear?advertisementPermitDetail.getEncroachmentFee():BigDecimal.ZERO));
+                totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+             }
+            if (!arrearsTaxalreadyExistInDemand && advertisementPermitDetail.getAdvertisement().getPendingTax() != null
+                    && advertisementPermitDetail.getAdvertisement().getPendingTax().compareTo(BigDecimal.ZERO) > 0) {
+                demand.addEgDemandDetails(createDemandDetails(
+                        (advertisementPermitDetail.getAdvertisement().getPendingTax()),
+                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX,
+                                installment),  BigDecimal.ZERO));
+                totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax());
+              }
+            if (!taxalreadyExistInDemand && advertisementPermitDetail.getTaxAmount() != null
+                    && advertisementPermitDetail.getTaxAmount().compareTo(BigDecimal.ZERO) > 0) {
+                demand.addEgDemandDetails(createDemandDetails(
+                        (advertisementPermitDetail.getTaxAmount()),
+                        getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX,
+                                installment), taxFullyPaidForCurrentYear?advertisementPermitDetail.getTaxAmount(): BigDecimal.ZERO));
+                totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getTaxAmount());
+             }
             demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         }
