@@ -123,8 +123,9 @@
 <body>
 	<s:form name="dayBookForm" id="dayBookForm" action="dayBookReport"
 		theme="css_xhtml" validate="true">
-		<s:push value="dayBookReport">
+		
 			<div class="formmainbox">
+			<s:push value="dayBookReport">
 				<div class="subheadnew">
 					<s:text name="dayBook.search.title" />
 				</div>
@@ -137,23 +138,25 @@
 				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 
 					<tr>
+						<td style="width: 5%"></td>
 						<td class="bluebox"><s:text name="dayBook.startDate" /><span
 							class="mandatory"></span></td>
 						<td class="bluebox"><s:textfield name="startDate"
-								id="startDate" cssStyle="width:100px" value='%{startDate}'
+								id="startDate" maxlength="20" value='%{startDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 							href="javascript:show_calendar('dayBookForm.startDate');"
-							style="text-decoration: none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
+							style="text-decoration: none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
 						<td class="bluebox"><s:text name="dayBook.endDate" /><span
 							class="mandatory"></span></td>
 						<td class="bluebox"><s:textfield name="endDate" id="endDate"
-								cssStyle="width:100px" value='%{endDate}'
+								 value='%{endDate}' maxlength="20"
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 							href="javascript:show_calendar('dayBookForm.endDate');"
-							style="text-decoration: none"><img
+							style="text-decoration: none">&nbsp;<img
 								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
 					</tr>
 					<tr>
+						<td style="width: 5%"></td>
 						<td class="greybox"><s:text name="dayBook.fund" /><span
 							class="mandatory"></span></td>
 						<td class="greybox"><s:select name="fundId" id="fundId"
@@ -178,7 +181,7 @@
 					</table>
 				</div>
 		</s:push>
-		</div>
+		
 		<span class="mandatory">
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="dayBookReport-result.jsp" />
@@ -186,6 +189,7 @@
 
 		</span>
 		<div id="codescontainer" />
+		</div>
 	</s:form>
 </body>
 </html>
