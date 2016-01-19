@@ -158,7 +158,7 @@
 							class="mandatory"></span></td>
 						<td class="greybox"><s:select name="fundId" id="fundId"
 								list="dropdownData.fundList" listKey="id" listValue="name"
-								headerKey="0" headerValue="----Choose----" /></td>
+								headerKey="" headerValue="----Choose----" /></td>
 						<td class="greybox"></td>
 						<td class="greybox"></td>
 					</tr>

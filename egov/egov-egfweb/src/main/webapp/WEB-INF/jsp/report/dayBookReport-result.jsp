@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<span class="mandatory"> <font
+<span class="mandatory1"> <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
 </span>
