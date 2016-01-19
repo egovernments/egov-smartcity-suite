@@ -83,6 +83,7 @@ public class ApplicationCoreFilter implements Filter {
         EgovThreadLocals.setServletContext(request.getServletContext());
         EgovThreadLocals.setCityCode((String) session.getAttribute("cityCode"));
         EgovThreadLocals.setCityName((String) session.getAttribute("cityname"));
+        EgovThreadLocals.setMunicipalityName((String) session.getAttribute("citymunicipalityname"));
         if (session.getAttribute("userid") != null)
             EgovThreadLocals.setUserId((Long) session.getAttribute("userid"));
     }
