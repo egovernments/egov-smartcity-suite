@@ -356,7 +356,7 @@ private FinancialYearDAO financialYearDAO;
         if (!modeOfPayment.equals("-1"))
             sql = sql + " and upper(ph.type) ='" + getModeOfPayment() + "'";
         countQry = "select count(*) " + sql;
-        sql = "select vh " + sql + " order by vh.vouchermis.departmentid.name , vh.voucherNumber";
+        sql = "select vh " + sql + " order by vh.vouchermis.departmentid.name ,vh.voucherDate, vh.voucherNumber";
         final Query query = HibernateUtil.getCurrentSession().createQuery(sql);
         return query;
     }
