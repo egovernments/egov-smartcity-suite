@@ -37,10 +37,10 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-		<SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript">
 		var selectedname;
 		var childName;
 		//var extendCount=0;
@@ -688,36 +688,34 @@ if(obj.checked){
  }
 }
 </SCRIPT>
-		<div id="labelAD" align="center">
-			<h1>
-				<s:text name="fixeddeposit.modify" />
-			</h1>
-		</div>
-		<br></br>
+<div id="labelAD" align="center">
+	<h1>
+		<s:text name="fixeddeposit.modify" />
+	</h1>
+</div>
+<br></br>
 
-		<div class="formmainbox">
-			
-		</div>
-		<div style="color: red">
-			<s:actionerror/>  
-			<s:fielderror />
-		</div>
-		<div style="color: green">
-			<s:actionmessage theme="simple"/>
-		</div>
-		
-		<br></br>
-		<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
-			<div id="fdTablediv"></div>
-		</div>
-		<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
-			<div id="childTablediv"></div>
-		</div>
+<div class="formmainbox"></div>
+<div style="color: red">
+	<s:actionerror />
+	<s:fielderror />
+</div>
+<div style="color: green">
+	<s:actionmessage theme="simple" />
+</div>
 
-		<script type="text/javascript">
+<br></br>
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="fdTablediv"></div>
+</div>
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="childTablediv"></div>
+</div>
+
+<script type="text/javascript">
      		makeFDTable('fdTablediv');
      		document.getElementById('fdTablediv').getElementsByTagName('table')[0].width="80%";
      		 
      	</script>
-			
+
 

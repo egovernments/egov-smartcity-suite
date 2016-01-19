@@ -92,12 +92,11 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     @Autowired
     private PtDemandDao ptDemandDAO;
 
-    PropertyImpl propertyModel = new PropertyImpl();
-
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
             String workFlowAction, Long approverPosition, String additionalRule) throws TaxCalculatorExeption {
         Date propCompletionDate = null;
+        PropertyImpl propertyModel;
         BasicProperty basicProperty = oldProperty.getBasicProperty();
         PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND);
         propertyModel = (PropertyImpl) newProperty;

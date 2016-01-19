@@ -86,7 +86,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -101,9 +100,12 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
 
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterTaxExternalService {
 
     @Autowired
@@ -254,7 +256,7 @@ public class WaterTaxExternalService {
             if (loopInstallment.equals(installment))
             {
 
-                if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                     arrearDetails.setPenalty(demand.subtract(collection));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                     arrearDetails.setChqBouncePenalty(demand.subtract(collection));
@@ -271,7 +273,7 @@ public class WaterTaxExternalService {
                 arrearDetails = new RestPropertyTaxDetails();
                 arrearDetails.setInstallment(installment);
                 total = BigDecimal.ZERO;
-                if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                     arrearDetails.setPenalty(demand.subtract(collection));
                 else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                     arrearDetails.setChqBouncePenalty(demand.subtract(collection));
@@ -356,13 +358,15 @@ public class WaterTaxExternalService {
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
 
+        new WaterTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
+        
         for (final EgBillDetails billDet : bill.getEgBillDetails())
             for (final ReceiptDetail rd : receiptDetails)
                 // FIX ME
                 if (billDet.getGlcode().equals(rd.getAccounthead().getGlcode())
                         && billDet.getDescription().equals(rd.getDescription())) {
                     final BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
-                            billDet.getOrderNo(), rd.getCramountToBePaid(), rd.getDramount(),
+                            billDet.getOrderNo(),rd.getCramount(), rd.getDramount(),
                             billDet.getFunctionCode(), billDet.getDescription(), null);
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
@@ -501,7 +505,7 @@ public class WaterTaxExternalService {
         bill.setLastDate(billObj.getBillLastDueDate());
         bill.setModule(billObj.getModule());
         bill.setOverrideAccountHeadsAllowed(billObj.getOverrideAccountHeadsAllowed());
-        bill.setPartPaymentAllowed(billObj.getPartPaymentAllowed());
+        bill.setPartPaymentAllowed(Boolean.TRUE);
         bill.setServiceCode(billObj.getServiceCode());
         bill.setIs_Cancelled("N");
         bill.setIs_History("N");
@@ -527,7 +531,7 @@ public class WaterTaxExternalService {
         }
 
         bill.setConsumerId(billObj.getConsumerId());
-        bill.setCallBackForApportion(billObj.isCallbackForApportion());
+        bill.setCallBackForApportion(Boolean.TRUE);
         egBillDAO.create(bill);
         return bill;
     };

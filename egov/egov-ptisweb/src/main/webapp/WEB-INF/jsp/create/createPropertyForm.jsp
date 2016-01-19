@@ -209,7 +209,7 @@
     <tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
-		<td class="greybox"><s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
+		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
 				id="deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
 		</td>

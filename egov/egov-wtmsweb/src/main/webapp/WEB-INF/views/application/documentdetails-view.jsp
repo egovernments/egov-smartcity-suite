@@ -43,7 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <table class="table table-bordered">
-<c:if test="${!applicationDocList.isEmpty()}">
+<c:if test="${not empty applicationDocList}">
 	<thead>
 		<tr>
 			<th><spring:message code="lbl.slno" /></th>
@@ -57,7 +57,7 @@
 	</thead>
 	</c:if>
 	<c:choose>
-		<c:when test="${!applicationDocList.isEmpty()}">
+		<c:when test="${not empty applicationDocList}">
 			<c:forEach items="${applicationDocList}" var="docs" varStatus="serialNo">
 				<tbody>
 					<tr>

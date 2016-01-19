@@ -45,20 +45,12 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -98,6 +90,7 @@
                             </c:if>
 								<form:hidden path="locale" value="en_IN"/>
 								<input type="hidden" value="" id="removedJurisdictionIds" name ="removedJurisdictionIds"/>
+								<input type="hidden" value="" id="removedassignIds" name ="removedassignIds"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
@@ -249,7 +242,7 @@
 									  	</div>
 								    </div>
 								    <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.new.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -265,7 +258,7 @@
 								     
 									<c:if test="${ empty image}">
                                     <div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align" id="upload-section">
+										<div class="col-sm-3 col-xs-12 text-center" id="upload-section">
 											<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.signature"/></a>
 											<input type="file" id="file1" name="file" data-id="1" class="filechange inline btn" style="display:none;"/>
 										</div>
@@ -288,7 +281,7 @@
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<form:radiobutton path="active" id="isactive_no" value="true"/>
+											<form:radiobutton path="active" id="isactive_no" value="false"/>
 											<label>No</label>
 										</div>
 
@@ -481,7 +474,7 @@
 										</div>
 									</div>
 
-									<div class="row form-group">
+									<div class="panel-heading custom_form_panel_heading">
 										<table id="assignmentTable" class="table table-bordered">
 										<thead>
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">
@@ -498,6 +491,9 @@
 											<c:forEach var="assign" items="${employee.assignments}" varStatus="status">
 												<tr>
 													<td>
+													    <input type="hidden" id="table_assignid${status.index}"
+													    name="assignments[${status.index}].id"
+													    value="${assign.id}"/>
 														<fmt:formatDate value="${assign.fromDate}" var="fromDate"
 															pattern="dd/MM/yyyy" />
 														<fmt:formatDate value="${assign.toDate}" var="toDate"
@@ -515,7 +511,7 @@
 													<td>
 														<input type="hidden" id="assignments[${status.index}].primary"
 															name="assignments[${status.index}].primary"
-															value="${assign.primary}"/>	
+															value="${assign.primary}"/>
 																
 																<c:if test="${assign.primary==true}" >
 																<input type="text" id="table_department${status.index}" class="form-control" 
@@ -570,7 +566,9 @@
 														</c:if>
 													</td>
 													<td>
-														<span class="parallel-actions"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+														<span class="add-padding" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
+													   <span class="add-padding" data-toggle="tooltip" title="Delete"><i
+														id="delete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 													</td>
 												</tr>
 											</c:forEach>
@@ -620,7 +618,7 @@
 										/ Modify</button>
 							</div>
 							</div>
-							<div class="row form-group">
+							<div class="panel-heading custom_form_panel_heading">
 								<table id="jurisdictionTable" class="table table-bordered">
 									<thead>
 										<div
@@ -655,10 +653,10 @@
 													id="table_boundary${status.index}" class="form-control"
 													readonly="readonly" style="text-align: center"
 													value="${jurdctn.boundary.name}" /></td>
-													<td><span class="parallel-actions"><i
-														id="jurdctnedit_row" class="fa fa-edit" value="${status.index}"></i></span>
-														<span class="parallel-actions"><i
-														id="jurdctndelete_row" class="fa fa-remove" value="${status.index}"></i></span>
+													<td><span class="add-padding" data-toggle="tooltip" title="Edit"><i
+														id="jurdctnedit_row" class="fa fa-edit"  value="${status.index}"></i></span>
+														<span class="add-padding" data-toggle="tooltip" title="Delete"><i
+														id="jurdctndelete_row" class="fa fa-remove"  value="${status.index}"></i></span>
 												</td>
 												
 											</tr>
@@ -676,7 +674,7 @@
 				<div class="row">
 					<div class="text-center">
 						<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
                 

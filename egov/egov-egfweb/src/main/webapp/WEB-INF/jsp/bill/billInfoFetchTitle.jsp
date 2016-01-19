@@ -37,11 +37,11 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <s:if
-		test="%{mode == @org.egov.utils.FinancialConstants@STRUTS_RESULT_PAGE_NEW}">
+	test="%{mode == @org.egov.utils.FinancialConstants@STRUTS_RESULT_PAGE_NEW}">
 	<s:text name="billInfoFetch.title" />
 </s:if>
 <s:elseif

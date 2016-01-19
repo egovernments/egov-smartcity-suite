@@ -19,6 +19,7 @@
 		<property name="toDate" column="END_DATE" />
 		<many-to-one name="module" class="org.egov.infra.admin.master.entity.Module"
 			column="ID_MODULE" />
+		<property name="finYearRange" column="FINANCIAL_YEAR" />
 	</class>
 	<query name="INSTALLMENTLISTBY_MODULE_AND_STARTYEAR">
         <![CDATA[select it from org.egov.commons.Installment it where (it.fromDate>=? or ? between it.fromDate and it.toDate) and it.fromDate<=current_date and it.module.name=? order by it.fromDate]]></query>

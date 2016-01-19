@@ -37,16 +37,14 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>
-<s:text name="receiptInfoFetch.title"/> 
-</title>
-<sx:head/>
+<title><s:text name="receiptInfoFetch.title" /></title>
+<sx:head />
 <script type="text/javascript">
 	<s:if test="%{hasActionMessages()}">
 		undoLoadingMask();
@@ -54,11 +52,11 @@
 </script>
 </head>
 <script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-<body> 
+<body>
 	<s:actionmessage />
-	<s:actionerror/>
-	<s:form name="receiptInfoFetchForm" id="receiptInfoFetchForm" action="eBReceiptInfoFetch"
-		theme="css_xhtml" validate="true">
+	<s:actionerror />
+	<s:form name="receiptInfoFetchForm" id="receiptInfoFetchForm"
+		action="eBReceiptInfoFetch" theme="css_xhtml" validate="true">
 		<s:token />
 		<div class="formmainbox"></div>
 		<div class="formheading" />
@@ -95,15 +93,13 @@
 				<td width="25%">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 					&nbsp; &nbsp;<s:text name="rtgsNumber" /> :
 				</td>
-				<td colspan="2" width="50%">
-					<egov:ajaxdropdown
+				<td colspan="2" width="50%"><egov:ajaxdropdown
 						fields="['Text', 'Value']"
 						url="/common/eBCommon!ajaxLoadRTGSNumbers.action"
-						dropdownId="rtgsNumbers" id="ajaxDropdownYear" /> 
-					<s:select
+						dropdownId="rtgsNumbers" id="ajaxDropdownYear" /> <s:select
 						name="rtgsNumber" id="rtgsNumbers"
 						list="%{dropdownData.rtgsNumbers}" headerKey=""
-						headerValue="%{getText('default.select')}" vaue="%{rtgsNumber}"/>
+						headerValue="%{getText('default.select')}" vaue="%{rtgsNumber}" />
 				</td>
 			</tr>
 		</table>
@@ -113,8 +109,8 @@
 				class="buttonbottom">
 				<tr align="center">
 					<td style="padding: 0px"><s:submit method="create"
-							cssClass="buttonsubmit" value="Fetch Receipt Info" onclick="return validate();" />
-					</td>
+							cssClass="buttonsubmit" value="Fetch Receipt Info"
+							onclick="return validate();" /></td>
 					<td style="padding: 0px"><input type="button" value="Close"
 						onclick="javascript:window.close();" class="button" /></td>
 				</tr>

@@ -97,7 +97,7 @@
                                			</div>	
                              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.subcategory.active"/></label>
                         	<div class="col-sm-1 add-margin">
-								<form:checkbox path="active" id="classactive" cssClass="form-control" />
+								<form:checkbox path="active" id="classactive" />
 								<form:errors path="active" cssClass="error-msg" />
 							</div>   			
                     </div>

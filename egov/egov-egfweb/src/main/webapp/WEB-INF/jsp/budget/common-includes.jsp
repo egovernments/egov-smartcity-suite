@@ -37,4 +37,5 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>

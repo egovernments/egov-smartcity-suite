@@ -1,42 +1,42 @@
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html class="no-js" oncontextmenu="return false;">
@@ -50,7 +50,6 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
@@ -59,6 +58,7 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 		
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
@@ -70,6 +70,7 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
+		body{padding:0;}
 		footer {
 			background-color:#f3f4f5;bottom: 0;clear:both;position: fixed;width:100%;z-index: 9999;
 		}
@@ -117,7 +118,7 @@
 					</div>
 					
 					<div class="navbar-brand">
-						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
+						<h3 class="horizontal-page-title homepage hidden-xs hidden-sm" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
 					</div>
 					
 					<!-- notifications and other links -->
@@ -376,7 +377,7 @@
 									<label class="control-label">Re-type Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32"><br>
+									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32">
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>
@@ -469,7 +470,6 @@
 		var focussedmenu = "worklist";
 		var now;
 		</script>
-		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/custom-menu.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>

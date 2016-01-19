@@ -52,12 +52,14 @@
 			<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message  code="lbl.basicdetails"/>
-				</div>vi
+				</div>
 			</div>
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 				<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 				<input type="hidden"  id="cscUserRole" value="${cscUserRole}" />
+				<input type="hidden"  id="checkOperator" value="${checkOperator}" />
 				<input type="hidden"  id="ulbUserRole" value="${ulbUserRole}" />
+				
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  
 			<input id="consumerCode" type="hidden" value="<c:out value="${waterConnectionDetails.connection.consumerCode}" />" /> 						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
@@ -66,6 +68,8 @@
 </div>			
 <div class="row text-center">
 	<div class="add-margin">
+	
+	
 	<c:choose>
 	<c:when test="${waterConnectionDetails.legacy}">
 	<%-- <input type="button" class="btn btn-primary" id="viewWorkOrder" value="Edit" onclick="showEdit('<c:out value="${waterConnectionDetails.connection.consumerCode}" />')"/> --%>
@@ -74,12 +78,12 @@
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.status.code != 'VERIFIED'  && (checkOperator ) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if>
-	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.status.code != 'VERIFIED' && waterTaxDueforParent > 0 && (checkOperator) }">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-	</c:if>
 	
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && ( citizenRole && !checkOperator) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
+	</c:if>
+	<c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && checkOperator && waterTaxDueforParent > 0}">
+		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
 	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && (citizenRole && !checkOperator) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
@@ -91,70 +95,50 @@
 	<c:if test="${!legacy &&  !citizenRole && (waterConnectionDetails.status.code == 'SANCTIONED' || waterConnectionDetails.status.code == 'WORKORDERGENERATED')}">
 		<button type="submit" class="btn btn-primary" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
 	</c:if>
+	
 	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.applicationType.code == 'NEWCONNECTION' && waterConnectionDetails.closeConnectionType== null && waterConnectionDetails.connectionType !='METERED'}">
 		<button type="submit" class="btn btn-primary" id="addConnection"><spring:message code="lbl.addconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<c:if test="${waterTaxDueforParent > 0}">
+		<%-- <c:if test="${waterTaxDueforParent > 0}">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-		</c:if>
+		</c:if> --%>
 	</c:if>
 	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.applicationType.code == 'ADDNLCONNECTION'&& waterConnectionDetails.closeConnectionType== null && waterConnectionDetails.connectionType !='METERED'}">
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<c:if test="${waterTaxDueforParent > 0}">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-		</c:if>
+		
 	</c:if>
 	
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'NEWCONNECTION' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null && waterTaxDueforParent > 0 }">
+	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'NEWCONNECTION' && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null }">
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<button type="submit" class="btn btn-primary" id="meter-entry"><spring:message code="lbl.meter.entry"/></button>
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+		<%-- <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button> --%>
 	</c:if>
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'NEWCONNECTION' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null }">
+	
+	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'ADDNLCONNECTION'  && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null }">
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-	</c:if>
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) &&  waterConnectionDetails.applicationType.code == 'ADDNLCONNECTION' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null && waterTaxDueforParent > 0 }">
-		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
-		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
-		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<button type="submit" class="btn btn-primary" id="meter-entry"><spring:message code="lbl.meter.entry"/></button>
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-	</c:if>
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'ADDNLCONNECTION' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null }">
-		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
-		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
-		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+		<%-- <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button> --%>
 	</c:if>
 	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.applicationType.code == 'CHANGEOFUSE' && waterConnectionDetails.closeConnectionType== null && waterConnectionDetails.connectionType !='METERED'}">
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<c:if test="${waterTaxDueforParent > 0}">
+		<%-- <c:if test="${waterTaxDueforParent > 0}">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-		</c:if>
+		</c:if> --%>
 	</c:if>
-	<c:if test="${((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CHANGEOFUSE' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null && waterTaxDueforParent > 0 }">
+	
+	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'CHANGEOFUSE' && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null }">
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<button type="submit" class="btn btn-primary" id="meter-entry"><spring:message code="lbl.meter.entry"/></button>
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-	</c:if>
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.applicationType.code == 'CHANGEOFUSE' && waterConnectionDetails.connectionType == 'METERED' && waterConnectionDetails.closeConnectionType== null }">
-		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
-		<button type="submit" class="btn btn-primary" id="closureConnection"><spring:message code="lbl.closureconnection"/></button>
-		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+		<%-- <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button> --%>
 	</c:if>
 	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.closeConnectionType== 'T' }">
 		<button type="submit" class="btn btn-primary" id="re-connection"><spring:message code="lbl.re-connection"/></button>

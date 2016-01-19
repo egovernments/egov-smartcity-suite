@@ -47,6 +47,7 @@
 	default-lazy-init="true">
 	
 	<context:component-scan base-package="org.egov.collection.config" />
+	<context:component-scan base-package="org.egov.collection.integration.pgi"/>
 	
 	<bean id="collectionsUtil" class="org.egov.collection.utils.CollectionsUtil" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -137,7 +138,7 @@
    <bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
    </bean>
 
-	 <bean id="TLCollectionsInterface" class="org.egov.tl.domain.service.integration.LicenseBillService" scope="prototype" >
+	 <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" >
 			<property name="licenseUtils" ref="licenseUtils" />
 	</bean>
 	

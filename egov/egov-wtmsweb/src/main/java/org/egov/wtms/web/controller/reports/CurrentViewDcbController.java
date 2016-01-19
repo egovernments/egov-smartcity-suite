@@ -48,8 +48,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.Installment;
@@ -98,19 +98,6 @@ public class CurrentViewDcbController {
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
-    private DCBReport dCBReport = new DCBReport();
-    List<Receipt> cancelRcpt = new ArrayList<Receipt>();
-    List<Receipt> activeRcpts = new ArrayList<Receipt>();
-
-    @ModelAttribute("activeRcpts")
-    private List<Receipt> getAciveReceipts() {
-        return activeRcpts;
-    }
-
-    @ModelAttribute("cancelRcpt")
-    private List<Receipt> getCancelReceipts() {
-        return cancelRcpt;
-    }
     
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
@@ -128,14 +115,6 @@ public class CurrentViewDcbController {
     }
 
 
-    @PersistenceContext
-    EntityManager entityManager;
-
-    @ModelAttribute("dcbReport")
-    public DCBReport dCBReportResultModel() {
-        return dCBReport;
-    }
-
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
@@ -151,6 +130,12 @@ public class CurrentViewDcbController {
     @RequestMapping(value = "/consumerCodeWis/{applicationCode}", method = RequestMethod.GET)
     public String search(final Model model, @PathVariable final String applicationCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
+        
+        List<Receipt> cancelRcpt = new ArrayList<Receipt>();
+        List<Receipt> activeRcpts = new ArrayList<Receipt>();
+        DCBReport dCBReport = new DCBReport();
+  
+
         model.addAttribute("consumerCode", waterConnectionDetails.getApplicationNumber());
 
         model.addAttribute(
@@ -160,6 +145,7 @@ public class CurrentViewDcbController {
         if (waterConnectionDetails.getDemand() != null) {
             final DCBServiceImpl dcbdemandService = (DCBServiceImpl) context.getBean("dcbdemandService");
             final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo();
+            
             final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                     .getBean("waterConnectionBillable");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -169,11 +155,14 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbdemandService.setBillable(waterConnectionBillable);
             dCBReport = dcbdemandService.getCurrentDCBAndReceipts(dcbDispInfo);
-            activeRcpts = populateActiveReceiptsOnly(dCBReport.getReceipts());
-            cancelRcpt = populateCancelledReceiptsOnly(dCBReport.getReceipts());
-            model.addAttribute("totalRcptAmt", calculateReceiptTotal());
-            model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal());
+            activeRcpts=populateActiveReceiptsOnly(dCBReport.getReceipts());
+            cancelRcpt= populateCancelledReceiptsOnly(dCBReport.getReceipts());
+            model.addAttribute("activeRcpts", activeRcpts);
+            model.addAttribute("cancelRcpt", cancelRcpt);
+            model.addAttribute("totalRcptAmt", calculateReceiptTotal(activeRcpts));
+            model.addAttribute("CanceltotalRcptAmt", calculateCancelledReceiptTotal(cancelRcpt));
             model.addAttribute("applicationTypeCode", waterConnectionDetails.getApplicationType().getCode());
+            model.addAttribute("dcbReport", dCBReport);
             BigDecimal waterTaxDueforParent=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             model.addAttribute("waterTaxDueforParent",waterTaxDueforParent);
             model.addAttribute("mode", "viewdcb"); 
@@ -182,10 +171,9 @@ public class CurrentViewDcbController {
         return "currentDcb-new";
     }
 
-    public BigDecimal calculateReceiptTotal() {
+    public BigDecimal calculateReceiptTotal(List<Receipt> activeRcpts) {
         final List<Receipt> rcpts = new ArrayList<Receipt>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
-
         for (final Receipt r : activeRcpts)
             if (!rcpts.contains(r) && r.getReceiptStatus().equals('A')) {
                 rcpts.add(r);
@@ -193,12 +181,11 @@ public class CurrentViewDcbController {
             }
         return totalRcptAmt;
     }
-
-    public BigDecimal calculateCancelledReceiptTotal() {
+    
+    public BigDecimal calculateCancelledReceiptTotal(List<Receipt> cancelRcpt) {
         final List<Receipt> rcpts = new ArrayList<Receipt>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
-
-        for (final Receipt r : activeRcpts)
+        for (final Receipt r : cancelRcpt)
             if (!rcpts.contains(r) && r.getReceiptStatus().equals(EgdmCollectedReceipt.RCPT_CANCEL_STATUS)) {
                 rcpts.add(r);
                 totalRcptAmt = totalRcptAmt.add(r.getReceiptAmt());

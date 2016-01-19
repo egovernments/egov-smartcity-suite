@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.model.recoveries;
@@ -52,135 +52,170 @@ import org.egov.commons.EgwTypeOfWork;
  */
 public class EgDeductionDetails implements java.io.Serializable
 {
-	public EgwTypeOfWork getWorkDocSubType() {
-		return workDocSubType;
-	}
-	public void setWorkDocSubType(EgwTypeOfWork workDocSubType) {
-		this.workDocSubType = workDocSubType;
-	}
-	public EgwTypeOfWork getWorkDocType() {
-		return workDocType;
-	}
-	public void setWorkDocType(EgwTypeOfWork workDocType) {
-		this.workDocType = workDocType;
-	}
-	public Date getDatefrom() {
-		return datefrom;
-	}
-	public void setDatefrom(Date datefrom) {
-		this.datefrom = datefrom;
-	}
-	public Date getDateto() {
-		return dateto;
-	}
-	public void setDateto(Date dateto) {
-		this.dateto = dateto;
-	}
-	public BigDecimal getEducation() {
-		return education;
-	}
-	public void setEducation(BigDecimal education) {
-		this.education = education;
-	}
-	public EgPartytype getEgpartytype() {
-		return egpartytype;
-	}
-	public void setEgpartytype(EgPartytype egpartytype) {
-		this.egpartytype = egpartytype;
-	}
-	public BigDecimal getHighlimit() {
-		return highlimit;
-	}
-	public void setHighlimit(BigDecimal highlimit) {
-		this.highlimit = highlimit;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public BigDecimal getIncometax() {
-		return incometax;
-	}
-	public void setIncometax(BigDecimal incometax) {
-		this.incometax = incometax;
-	}
-	public Date getLastmodifieddate() {
-		return lastmodifieddate;
-	}
-	public void setLastmodifieddate(Date lastmodifieddate) {
-		this.lastmodifieddate = lastmodifieddate;
-	}
-	public BigDecimal getLowlimit() {
-		return lowlimit;
-	}
-	public void setLowlimit(BigDecimal lowlimit) {
-		this.lowlimit = lowlimit;
-	}
-	public BigDecimal getSurcharge() {
-		return surcharge;
-	}
-	public void setSurcharge(BigDecimal surcharge) {
-		this.surcharge = surcharge;
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3246660538236250711L;
 
-	public Recovery getRecovery() {
-		return recovery;
-	}
-	public void setRecovery(Recovery recovery) {
-		this.recovery = recovery;
-	}
-	
-	public EgDeductionDetails()
-		{
-	}
-	private Integer id;
+    public EgwTypeOfWork getWorkDocSubType() {
+        return workDocSubType;
+    }
 
-	private Recovery recovery;
+    public void setWorkDocSubType(final EgwTypeOfWork workDocSubType) {
+        this.workDocSubType = workDocSubType;
+    }
 
-	private EgPartytype egpartytype;
+    public EgwTypeOfWork getWorkDocType() {
+        return workDocType;
+    }
 
-	private EgwTypeOfWork workDocType;
-	private EgwTypeOfWork workDocSubType;
+    public void setWorkDocType(final EgwTypeOfWork workDocType) {
+        this.workDocType = workDocType;
+    }
 
-	private Date datefrom;
+    public Date getDatefrom() {
+        return datefrom;
+    }
 
-	private Date dateto;
+    public void setDatefrom(final Date datefrom) {
+        this.datefrom = datefrom;
+    }
 
-	private BigDecimal lowlimit;
+    public Date getDateto() {
+        return dateto;
+    }
 
-	private BigDecimal highlimit;
+    public void setDateto(final Date dateto) {
+        this.dateto = dateto;
+    }
 
-	private BigDecimal incometax;
+    public BigDecimal getEducation() {
+        return education;
+    }
 
-	private BigDecimal surcharge;
+    public void setEducation(final BigDecimal education) {
+        this.education = education;
+    }
 
-	private BigDecimal education;
-	
-	private BigDecimal flatAmount;
+    public EgPartytype getEgpartytype() {
+        return egpartytype;
+    }
 
-	private Date lastmodifieddate;
-	private BigDecimal cumulativeHighLimit;
-	private BigDecimal cumulativeLowLimit;
-	
-	public BigDecimal getFlatAmount() {
-		return flatAmount;
-	}
-	public void setFlatAmount(BigDecimal flatAmount) {
-		this.flatAmount = flatAmount;
-	}
-	public BigDecimal getCumulativeHighLimit() {
-		return cumulativeHighLimit;
-	}
-	public void setCumulativeHighLimit(BigDecimal cumulativeHighLimit) {
-		this.cumulativeHighLimit = cumulativeHighLimit;
-	}
-	public BigDecimal getCumulativeLowLimit() {
-		return cumulativeLowLimit;
-	}
-	public void setCumulativeLowLimit(BigDecimal cumulativeLowLimit) {
-		this.cumulativeLowLimit = cumulativeLowLimit;
-	}
-	
+    public void setEgpartytype(final EgPartytype egpartytype) {
+        this.egpartytype = egpartytype;
+    }
+
+    public BigDecimal getHighlimit() {
+        return highlimit;
+    }
+
+    public void setHighlimit(final BigDecimal highlimit) {
+        this.highlimit = highlimit;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(final Integer id) {
+        this.id = id;
+    }
+
+    public BigDecimal getIncometax() {
+        return incometax;
+    }
+
+    public void setIncometax(final BigDecimal incometax) {
+        this.incometax = incometax;
+    }
+
+    public Date getLastmodifieddate() {
+        return lastmodifieddate;
+    }
+
+    public void setLastmodifieddate(final Date lastmodifieddate) {
+        this.lastmodifieddate = lastmodifieddate;
+    }
+
+    public BigDecimal getLowlimit() {
+        return lowlimit;
+    }
+
+    public void setLowlimit(final BigDecimal lowlimit) {
+        this.lowlimit = lowlimit;
+    }
+
+    public BigDecimal getSurcharge() {
+        return surcharge;
+    }
+
+    public void setSurcharge(final BigDecimal surcharge) {
+        this.surcharge = surcharge;
+    }
+
+    public Recovery getRecovery() {
+        return recovery;
+    }
+
+    public void setRecovery(final Recovery recovery) {
+        this.recovery = recovery;
+    }
+
+    public EgDeductionDetails()
+    {
+    }
+
+    private Integer id;
+
+    private Recovery recovery;
+
+    private EgPartytype egpartytype;
+
+    private EgwTypeOfWork workDocType;
+    private EgwTypeOfWork workDocSubType;
+
+    private Date datefrom;
+
+    private Date dateto;
+
+    private BigDecimal lowlimit;
+
+    private BigDecimal highlimit;
+
+    private BigDecimal incometax;
+
+    private BigDecimal surcharge;
+
+    private BigDecimal education;
+
+    private BigDecimal flatAmount;
+
+    private Date lastmodifieddate;
+    private BigDecimal cumulativeHighLimit;
+    private BigDecimal cumulativeLowLimit;
+
+    public BigDecimal getFlatAmount() {
+        return flatAmount;
+    }
+
+    public void setFlatAmount(final BigDecimal flatAmount) {
+        this.flatAmount = flatAmount;
+    }
+
+    public BigDecimal getCumulativeHighLimit() {
+        return cumulativeHighLimit;
+    }
+
+    public void setCumulativeHighLimit(final BigDecimal cumulativeHighLimit) {
+        this.cumulativeHighLimit = cumulativeHighLimit;
+    }
+
+    public BigDecimal getCumulativeLowLimit() {
+        return cumulativeLowLimit;
+    }
+
+    public void setCumulativeLowLimit(final BigDecimal cumulativeLowLimit) {
+        this.cumulativeLowLimit = cumulativeLowLimit;
+    }
+
 }

@@ -73,7 +73,9 @@ public class Installment implements Serializable, Comparable<Installment> {
 
     private String installmentType;
 
-    /**
+    private String finYearRange;
+    
+	/**
      * @return Returns the id.
      */
     public Integer getId() {
@@ -283,5 +285,13 @@ public class Installment implements Serializable, Comparable<Installment> {
 				.append(installmentType, inst.getInstallmentType())
 				.append(module.getName(), inst.getModule().getName())
 				.append(toDate, inst.getToDate()).build();
+	}
+    
+    public String getFinYearRange() {
+		return finYearRange;
+	}
+
+	public void setFinYearRange(String finYearRange) {
+		this.finYearRange = finYearRange;
 	}
 }

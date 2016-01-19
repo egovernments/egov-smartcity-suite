@@ -62,7 +62,7 @@
 			function openNewWindow() {
 				window.open('../view/viewDCBProperty-showMigData.action?' + 
 							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
-							'_blank', 'width=650, height=500', false);
+							'_blank', 'width=650, height=500, scrollbars=yes', false);
 			}
 
 			function openHeadwiseDCBWindow() {
@@ -92,6 +92,14 @@
 
 	<body onload="loadOnStartup();">
 		<div class="formmainbox">
+			<s:if test="%{hasErrors()}">
+			<div class="errorstyle" id="property_error_area">
+				<div class="errortext">
+					<s:actionerror />
+					<s:fielderror/>
+				</div>
+			</div>
+			</s:if>
 			<div class="headingbg">
 			<s:if test="%{isCitizen}">
 				<s:text name="taxdetailsheader" />
@@ -737,7 +745,7 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
+																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="#rcpt.getConsumerCode()" />&serviceCode=PTMF" target="_blank" >
 																	<s:property value="#rcpt.getReceiptNumber()" />
 																</a>
 															</div>

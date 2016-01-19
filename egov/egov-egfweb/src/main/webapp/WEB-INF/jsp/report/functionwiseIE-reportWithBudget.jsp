@@ -37,13 +37,13 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<html>  
-<head>  
-    <title>Functionwise Income/Expense Subsidary Report</title>
-    <script>
+<html>
+<head>
+<title>Functionwise Income/Expense Subsidary Report</title>
+<script>
     function validate()
     {
 	    if(document.getElementById('incExp').value==-1)
@@ -71,43 +71,59 @@
     }
     </script>
 </head>
-	<body>  
-		<s:form action="functionwiseIE" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Functionwise Income/Expense Subsidary Report" />
-			</jsp:include>
-			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox"><div class="formheading"></div>
+<body>
+	<s:form action="functionwiseIE" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading"
+				value="Functionwise Income/Expense Subsidary Report" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="formheading"></div>
 			<table align="center" width="80%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="greybox" width="30%">Income/ expenditure<span class="mandatory">*</span></td>
-					<td class="greybox"><s:select name="incExp" id="incExp" list="#{'-1':'---Select---','I':'Income','E':'Expenditure'}" /> </td>
-					<td class="greybox" width="30%">As On Date<span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
+					<td class="greybox" width="30%">Income/ expenditure<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:select name="incExp" id="incExp"
+							list="#{'-1':'---Select---','I':'Income','E':'Expenditure'}" />
+					</td>
+					<td class="greybox" width="30%">As On Date<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate"
+							maxlength="20" /><a
+						href="javascript:show_calendar('forms[0].asOnDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
-				<td class="bluebox"><s:text name="voucher.fund"/><span class="mandatory">*</span>
-					<td class="bluebox"><s:select name="fund" id="fund" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="%{fund.id}"/></td>
-					<td class="bluebox"><s:text name="voucher.function"/><span class="mandatory">*</span>
-					<td class="bluebox"><s:select name="function" id="function" list="dropdownData.functionList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="%{function.id}"/></td>
-				</tr>
-				</table>
-				<div class="buttonbottom" id="buttondiv" style="align:middle" >
-				<CENTER>
-				<table>
-				<tr >
-					<td align="right"></td>  
-					<td><s:submit method="searchWithBudget" value="Submit" cssClass="buttonsubmit" onclick="return validate()" /></td>
-					<td><input type="button" value="Close" onclick="javascript:window.close()" class="button" /></td>
+					<td class="bluebox"><s:text name="voucher.fund" /><span
+						class="mandatory">*</span>
+					<td class="bluebox"><s:select name="fund" id="fund"
+							list="dropdownData.fundList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="----Choose----" value="%{fund.id}" /></td>
+					<td class="bluebox"><s:text name="voucher.function" /><span
+						class="mandatory">*</span>
+					<td class="bluebox"><s:select name="function" id="function"
+							list="dropdownData.functionList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="----Choose----"
+							value="%{function.id}" /></td>
 				</tr>
 			</table>
-			</CENTER>
+			<div class="buttonbottom" id="buttondiv" style="align: middle">
+				<CENTER>
+					<table>
+						<tr>
+							<td align="right"></td>
+							<td><s:submit method="searchWithBudget" value="Submit"
+									cssClass="buttonsubmit" onclick="return validate()" /></td>
+							<td><input type="button" value="Close"
+								onclick="javascript:window.close()" class="button" /></td>
+						</tr>
+					</table>
+				</CENTER>
 			</div>
-			<br/>
-		</s:form>  
-	</body>  
+			<br />
+	</s:form>
+</body>
 </html>

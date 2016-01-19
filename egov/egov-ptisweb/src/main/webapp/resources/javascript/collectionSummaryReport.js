@@ -45,26 +45,17 @@ function populateWard() {
 	populatewardId( {
 		zoneId : document.getElementById("zoneId").value
 	});
-	document.getElementById("areaId").options.length = 1;
-	jQuery('#areaId').val('-1');
+	document.getElementById("blockId").options.length = 1;
+	jQuery('#blockId').val('-1');
 }	
-
-function populateBlock() {
-	populateareaId({
-		wardId : document.getElementById("wardId").value
-	});
-}
-
 
 jQuery(document).ready(function() { 
 	
 	jQuery('.datepicker').datepicker({
-		format: 'dd/mm/yyyy'
+		format: 'dd/mm/yyyy',
+		autoclose:true
 	});
 	
-	jQuery('.datepicker').on('changeDate', function(ev){
-		jQuery(this).datepicker('hide');
-	});
 	
 	jQuery(':input').inputmask();
 	drillDowntableContainer = jQuery("#tblCollectionSummary");
@@ -118,14 +109,14 @@ function callAjaxForCollectionSummary() {
 	var boundaryId;
 	var zoneId;
 	var wardId;
-	var areaId;
+	var blockId;
 	var propTypeCategoryId;
 	if(modeval!='usageWise'){
 		boundaryId=jQuery('#boundaryId').val();
 	} else {
 		zoneId = jQuery('#zoneId').val();
 		wardId = jQuery('#wardId').val();
-		areaId=jQuery('#areaId').val();
+		blockId=jQuery('#blockId').val();
 		propTypeCategoryId=jQuery('#propTypeCategoryId').val();
 	}
 	jQuery('.report-section').removeClass('display-hide');
@@ -139,7 +130,7 @@ function callAjaxForCollectionSummary() {
 					data : {
 						zoneId : zoneId,
 						wardId : wardId,
-						areaId : areaId,
+						blockId : blockId,
 						fromDate : fromDate, 
 						toDate : toDate,
 						collMode : collMode,

@@ -112,7 +112,7 @@
 
 						<div class="text-center">
 							<button type="button" id="drilldownReportSearch"
-								class="btn btn-success">Search</button>
+								class="btn btn-primary">Search</button>
 							<a href="javascript:void(0)" class="btn btn-default"
 								onclick="self.close()"> <spring:message code="lbl.close" /></a>
 						</div>

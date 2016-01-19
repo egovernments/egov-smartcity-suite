@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <SCRIPT type="text/javascript">
@@ -442,29 +442,29 @@ function updateFDTableIndex()
 }
 
 </SCRIPT>
-		
-		<div id="labelAD" align="center">
-			<h1>
-				<s:text name="fixeddeposit.heading.view" />
-			</h1>
-		</div>
-		<br></br>
 
-		<div class="formmainbox">
-			<div class="formheading" />
-				<div class="subheadnew">
-					<s:text name="fixeddeposit.heading.detail" />
-				</div>
-			</div>
-		</div>
-		<div id="listid" style="display: block"></div>
-		<br></br>
-		<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
-			<div id="fdTablediv"></div>
-		</div>
-		
+<div id="labelAD" align="center">
+	<h1>
+		<s:text name="fixeddeposit.heading.view" />
+	</h1>
+</div>
+<br></br>
 
-		<script type="text/javascript">
+<div class="formmainbox">
+	<div class="formheading" />
+	<div class="subheadnew">
+		<s:text name="fixeddeposit.heading.detail" />
+	</div>
+</div>
+</div>
+<div id="listid" style="display: block"></div>
+<br></br>
+<div class="yui-skin-sam" align="center" style="overflow-x: scroll">
+	<div id="fdTablediv"></div>
+</div>
+
+
+<script type="text/javascript">
      		makeFDTable('fdTablediv');
      		document.getElementById('fdTablediv').getElementsByTagName('table')[0].width="80%";
      		 

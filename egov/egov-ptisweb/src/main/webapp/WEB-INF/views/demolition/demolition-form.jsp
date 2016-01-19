@@ -201,8 +201,7 @@ body
 	jQuery("#marketValue").blur(function() {
 		var vacantLandArea = jQuery("#vacantLandArea").val();
 		var marketValue = jQuery("#marketValue").val();
-		//1 square yard = 0.836127 sqr mtrs
-		var capitalValue = vacantLandArea * marketValue * 0.836127;
+		var capitalValue = vacantLandArea * marketValue;
 		jQuery("#currentCapitalValue").val(roundoff(capitalValue));
 	});
 </script>

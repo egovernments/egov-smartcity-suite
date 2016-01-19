@@ -39,57 +39,105 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet"
+	type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet"
+	type="text/css" />
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-
-@media print {
-input#printbutton {
-display: none;
-}
-}
-@media print {
-input#closeButton {
-display: none;
-}
-}
-@media print {
-div.commontopyellowbg {
-display: none;
-}
-}
-@media print {
-div.commontopbluebg {
-display: none;
-}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
 }
 
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+@media print {
+	input#printbutton {
+		display: none;
+	}
+}
+
+@media print {
+	input#closeButton {
+		display: none;
+	}
+}
+
+@media print {
+	div.commontopyellowbg {
+		display: none;
+	}
+}
+
+@media print {
+	div.commontopbluebg {
+		display: none;
+	}
+}
 </style>
 <script>
 function showHistory(stateId)
 {
-var url="../voucher/common!showHistory.action?stateId="+stateId;
+var url="../voucher/common-showHistory.action?stateId="+stateId;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 
@@ -282,138 +330,180 @@ function addYUIRow_billDetailTable(obj)
 		}
 function printVoucher(){
 	
-	document.forms[0].action='../report/billPaymentVoucherPrint!print.action?id=<s:property value="paymentheader.id"/>';
+	document.forms[0].action='../report/billPaymentVoucherPrint-print.action?id=<s:property value="paymentheader.id"/>';
 	document.forms[0].submit();
 }
 
 	</script>
 </head>
-<body >
-<s:form  action="directBankPayment" theme="simple" name="dbpform">
-<s:push value="model">
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
+<body>
+	<s:form action="directBankPayment" theme="simple" name="dbpform">
+		<s:push value="model">
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
 			</span>
-<div align="left">
-<div class="tabber">
-<div class="tabbertab" >
-<h2>Payment Details</h2>
+			<div align="left">
+				<div class="tabber">
+					<div class="tabbertab">
+						<h2>Payment Details</h2>
 
-		<div id="budgetSearchGrid" style="display:block;width:100%;border-top:1px solid #ccc;" >
-		<br/>
-		
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr>
-		<td class="bluebox" width="10%"></td>
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/></td>
-			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A></td>
-		</tr>
-				<div class="buttonbottom" ></div>
-	
-	<%@include file="directBankPayment-form.jsp"%>
+						<div id="budgetSearchGrid"
+							style="display: block; width: 100%; border-top: 1px solid #ccc;">
+							<br />
 
-  	
+							<table border="0" width="100%" cellspacing="0" cellpadding="0">
+								<tr>
+									<td class="bluebox" width="10%"></td>
+									<td class="bluebox" width="22%"><s:text
+											name="voucher.number" /></td>
+									<td class="bluebox" width="22%"><s:textfield
+											name="voucherNumber" id="voucherNumber" /></td>
+									<s:hidden name="id" />
+									<td class="bluebox" width="18%"><s:text
+											name="voucher.date" /><span class="mandatory">*</span></td>
+									<td class="bluebox" width="38%"><input type="text"
+										name="voucherDate"
+										onkeyup="DateFormat(this,this.value,event,false,'3')"
+										value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+										href="javascript:show_calendar('cbtbform.voucherDate');"
+										style="text-decoration: none">&nbsp;<img tabIndex="-1"
+											src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+								</tr>
+								<div class="buttonbottom"></div>
 
-			
-			
-	</table>
-	</div>
-	</div>
-	
-	<div class="tabbertab" id="chequetab">
-                  	<h2>Cheque Details</h2>
-	                <span>
-                <table align="center" border="0" cellpadding="0" cellspacing="0" class="newtable">
-				<tr><td colspan="6"><div class="subheadsmallnew">Cheque Details</div></td></tr>
-				<tr>
-				<td colspan="4">
-				<div  style="float:left; width:100%;">
-				<table id="chequeTable" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
-					<tr>  
-					    <s:if test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
-								    <th class="bluebgheadtdnew">Cheque Number</td>
-								    <th class="bluebgheadtdnew">Cheque Date</td> 
-						</s:if>
-						<s:else>
-									<th class="bluebgheadtdnew">RTGS Number</td>
-								    <th class="bluebgheadtdnew">RTGS Date</td> 
-						</s:else>
-					    <th class="bluebgheadtdnew">Party Code</td>
-					    <th class="bluebgheadtdnew">Cheque Amount(Rs)</td>
-					    <th class="bluebgheadtdnew">Cheque Status</td>
-					</tr>
-			 <s:if test="%{instrumentHeaderList.size()>0}">
-			  <s:iterator var="p" value="instrumentHeaderList" status="s">  
-				<tr >
-				<s:if test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
-					<td style="text-align:center"  class="blueborderfortdnew"><s:property value="%{instrumentNumber}" /></td>
-					<td style="text-align:center" class="blueborderfortdnew"><s:date name="%{instrumentDate}" format="dd/MM/yyyy"/></td>
-				</s:if>
-				<s:else>
-					<td style="text-align:center"  class="blueborderfortdnew"><s:property value="%{transactionNumber}" /></td>
-					<td style="text-align:center" class="blueborderfortdnew"><s:date name="%{transactionDate}" format="dd/MM/yyyy"/></td>
-				</s:else>
-		 			<td style="text-align:center"  class="blueborderfortdnew"><s:property value="%{payTo}" /></td>
-			     	<td style="text-align:right" class="blueborderfortdnew"><s:text name="format.number" ><s:param value="%{instrumentAmount}" /></s:text></td>
-			     	<td style="text-align:center" class="blueborderfortdnew"><s:property value="%{statusId.description}"/></td>
-				</tr>
-				</s:iterator>
-				</s:if>
-				</table>
-				<s:if test="%{instrumentHeaderList==null || instrumentHeaderList.size==0}">
-					<div  class="bottom" align="center">
-						<s:text name="chq.not.found" ></s:text>
+								<%@include file="directBankPayment-form.jsp"%>
+
+
+
+
+
+							</table>
+						</div>
 					</div>
-				</s:if>
+
+					<div class="tabbertab" id="chequetab">
+						<h2>Cheque Details</h2>
+						<span>
+							<table align="center" border="0" cellpadding="0" cellspacing="0"
+								class="newtable">
+								<tr>
+									<td colspan="6"><div class="subheadsmallnew">Cheque
+											Details</div></td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<div style="float: left; width: 100%;">
+											<table id="chequeTable" align="center" border="0"
+												cellpadding="0" cellspacing="0" width="100%">
+												<tr>
+													<s:if
+														test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
+														<th class="bluebgheadtdnew">Cheque Number
+														</td>
+														<th class="bluebgheadtdnew">Cheque Date
+														</td>
+													</s:if>
+													<s:else>
+														<th class="bluebgheadtdnew">RTGS Number
+														</td>
+														<th class="bluebgheadtdnew">RTGS Date
+														</td>
+													</s:else>
+													<th class="bluebgheadtdnew">Party Code
+													</td>
+													<th class="bluebgheadtdnew">Cheque Amount(Rs)
+													</td>
+													<th class="bluebgheadtdnew">Cheque Status
+													</td>
+												</tr>
+												<s:if test="%{instrumentHeaderList.size()>0}">
+													<s:iterator var="p" value="instrumentHeaderList" status="s">
+														<tr>
+															<s:if
+																test="%{paymentheader.type == 'cash' || paymentheader.type == 'Cash' || paymentheader.type == 'Cheque' || paymentheader.type == 'cheque'}">
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:property
+																		value="%{instrumentNumber}" /></td>
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:date
+																		name="%{instrumentDate}" format="dd/MM/yyyy" /></td>
+															</s:if>
+															<s:else>
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:property
+																		value="%{transactionNumber}" /></td>
+																<td style="text-align: center"
+																	class="blueborderfortdnew"><s:date
+																		name="%{transactionDate}" format="dd/MM/yyyy" /></td>
+															</s:else>
+															<td style="text-align: center" class="blueborderfortdnew"><s:property
+																	value="%{payTo}" /></td>
+															<td style="text-align: right" class="blueborderfortdnew"><s:text
+																	name="format.number">
+																	<s:param value="%{instrumentAmount}" />
+																</s:text></td>
+															<td style="text-align: center" class="blueborderfortdnew"><s:property
+																	value="%{statusId.description}" /></td>
+														</tr>
+													</s:iterator>
+												</s:if>
+											</table>
+											<s:if
+												test="%{instrumentHeaderList==null || instrumentHeaderList.size==0}">
+												<div class="bottom" align="center">
+													<s:text name="chq.not.found"></s:text>
+												</div>
+											</s:if>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</span>
+					</div>
+
 				</div>
-				</td>
-				</tr>
-				</table>            
-				</span>                  
-			    </div>				
-		  	
-	</div>
 
-	<div class="buttonbottom" id="viewButton" align="center">
-	<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/>
-	<s:submit cssClass="button" id="printPreview2" value="Print Preview"  onclick="printVoucher()"/>
+				<div class="buttonbottom" id="viewButton" align="center">
+					<input type="button" id="closeButton" value="Close"
+						onclick="javascript:window.close()" class="button" />
+					<s:submit cssClass="button" id="printPreview2"
+						value="Print Preview" onclick="printVoucher()" />
 
-</div>
-<s:if test="%{showApprove}">
-	
-	<tr>
-							<td class="bluebox">&nbsp;</td>
-							<td class="bluebox" ><strong>Comments</strong></td>
-							<td class="bluebox" colspan="4"><s:textarea name="comments" id="comments" cols="100" rows="3" onblur="checkLength(this)" value="%{getComments()}"/></td>
-						</tr>
-						<script>
+				</div>
+				<s:if test="%{showApprove}">
+
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><strong>Comments</strong></td>
+						<td class="bluebox" colspan="4"><s:textarea name="comments"
+								id="comments" cols="100" rows="3" onblur="checkLength(this)"
+								value="%{getComments()}" /></td>
+					</tr>
+					<script>
 				document.getElementById('viewButton').style.display="none";
 	</script>
-			
-	</s:if>	
-	<div align="center">
-	<tr>
-  		<td  colspan="6"> 
-			<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-				<%@include file="../voucher/workflowApproval.jsp"%>
-			</s:if>
-		</td>
-  	</tr>
-  	</div>	
-   	      
-	
 
-<SCRIPT type="text/javascript">
+				</s:if>
+				<div align="center">
+					<tr>
+						<td colspan="6"><s:if
+								test='%{! wfitemstate.equalsIgnoreCase("END")}'>
+								<%@include file="../voucher/workflowApproval.jsp"%>
+							</s:if></td>
+					</tr>
+				</div>
+
+
+
+				<SCRIPT type="text/javascript">
 
 		var frmIndex=0;
 		for(var i=0;i<document.forms[frmIndex].length;i++)
@@ -476,30 +566,38 @@ function printVoucher(){
 	
 		
 </SCRIPT>
-	
-<s:if test="%{showApprove}">
 
-<s:if test="%{paymentheader.state.value != 'NEW'}">
-	<s:if test="%{paymentheader.state.id!=null}">
-		<div id="labelAD" align="center">
-		<h5>
-		  <a href="#" onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show History</a>
-		  </h5>
-	  	</div>
-	</s:if>
-</s:if>
+				<s:if test="%{showApprove}">
+
+					<s:if test="%{paymentheader.state.value != 'NEW'}">
+						<s:if test="%{paymentheader.state.id!=null}">
+							<div id="labelAD" align="center">
+								<h5>
+									<a href="#"
+										onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
+										History</a>
+								</h5>
+							</div>
+						</s:if>
+					</s:if>
 
 
-<div  class="buttonbottom" id="newbuttondiv" align="center">
-		<s:hidden id="paymentid" name="paymentid" value="%{paymentheader.id}"/>
-		<s:hidden  name="actionname" id="actionName" value="%{action}"/>
-		<s:iterator value="%{getValidActions()}" var="p"  status="s">
-		  <s:submit type="submit"  cssClass="buttonsubmit" value="%{description}" id="wfBtn%{#s.index}" name="%{name}" method="sendForApproval" onclick="return balanceCheck(this, '%{name}','%{description}');return false;"/>
-		</s:iterator>
-		<input type="button" id="closeButtonNew" value="Close" onclick="javascript:window.close()" class="button"/>
-		<s:submit cssClass="button" id="printPreview1" value="Print Preview"  onclick="printVoucher()"/>
-	</div>
-<script>
+					<div class="buttonbottom" id="newbuttondiv" align="center">
+						<s:hidden id="paymentid" name="paymentid"
+							value="%{paymentheader.id}" />
+						<s:hidden name="actionname" id="actionName" value="%{action}" />
+						<s:iterator value="%{getValidActions()}" var="p" status="s">
+							<s:submit type="submit" cssClass="buttonsubmit"
+								value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
+								method="sendForApproval"
+								onclick="return balanceCheck(this, '%{name}','%{description}');return false;" />
+						</s:iterator>
+						<input type="button" id="closeButtonNew" value="Close"
+							onclick="javascript:window.close()" class="button" />
+						<s:submit cssClass="button" id="printPreview1"
+							value="Print Preview" onclick="printVoucher()" />
+					</div>
+					<script>
 if(document.getElementById('actionName').value!='')
 		{
 			if(document.getElementById('wfBtn0'))
@@ -520,15 +618,16 @@ if(document.getElementById('actionName').value!='')
 			}
 	    </s:if>	    
 	
-</script>						  
-</s:if>	
-	
-	<div class="subheadsmallnew"/> </div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>
+</script>
+				</s:if>
 
-</s:push>
-</s:form>				  
+				<div class="subheadsmallnew" />
+			</div>
+			<div class="mandatory" align="left">* Mandatory Fields</div>
+			</div>
+
+		</s:push>
+	</s:form>
 </body>
 
 

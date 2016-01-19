@@ -202,7 +202,7 @@
 		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
 		<td class="greybox" width="">
 			<span class="bold">
-				<s:if test='%{propertyDetail.deviationPercentage == ""}'>N/A</s:if>
+				<s:if test='%{propertyDetail.deviationPercentage == "" || propertyDetail.deviationPercentage == "-1"}'>N/A</s:if>
 				<s:else><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/></s:else>
 			</span>
 		</td>

@@ -279,8 +279,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax().add(currInstDmdColMatView.getGeneralTax())
                 .add(currInstDmdColMatView.getPenaltyFinesTax());
 
-        final CFinancialYear finYear = financialYearDAO.getFinYearByDate(currInstDmdColMatView.getInstallment().getFromDate());
-        propertyWiseInfo.setArrearInstallmentYear(finYear.getFinYearRange());
+        propertyWiseInfo.setArrearInstallmentYear(currInstDmdColMatView.getInstallment().getFinYearRange());
         propertyWiseInfo.setArrearLibraryCess(currInstDmdColMatView.getLibCessTax());
         propertyWiseInfo.setArrearPropertyTax(currInstDmdColMatView.getGeneralTax());
         propertyWiseInfo.setArrearPenalty(currInstDmdColMatView.getPenaltyFinesTax());

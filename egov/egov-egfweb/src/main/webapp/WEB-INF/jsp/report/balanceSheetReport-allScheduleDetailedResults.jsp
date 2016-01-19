@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <script>
 function showDetails(glcode){           
 		var deptId = "<s:property value="balanceSheet.department.id"/>";
@@ -83,105 +83,145 @@ function showPreviousYearDetails(glcode)
 
 </script>
 <s:if test="%{balanceSheet.size()>0}">
-<br/>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td>
-      <div align="center"><br/>
-        <table border="0" cellspacing="0" cellpadding="0" class="tablebottom" width="100%">
-          <tr>
-        <td class="subheadsmallnew">
-		<div>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" >
-              <tr>
-                <th class="subheadsmallnew" colspan="16" bgcolor="#CCCCCC"><s:property value="ulbName"/><br/> 
-                <strong><s:text name="report.balancesheet.schedule"/> <s:property value="model.financialYear.finYearRange"/> <s:property value="header"/></strong></th></td>
-			  </tr>
-			  <tr>
-				<td class="bluebox"  colspan="2"> <strong><s:text name="report.run.date"/>-<s:date name="todayDate" format="dd/MM/yyyy"/></strong>
-	    	</td>
-            <td  colspan="16">
-				<div class="blueborderfortd" align="right"><strong>Amount in <s:property value="model.currency"/> &nbsp;&nbsp;&nbsp;&nbsp;</strong></div></td>
-          	</tr>
-          <tr>
-		    <th class="bluebgheadtd"><s:text name="report.accountCode"/></th>
-            <th class="bluebgheadtd"><s:text name="report.headOfAccount"/></th>
-			<s:if test="%{balanceSheet.funds.size()>1}" >
-			<s:iterator value="balanceSheet.funds" status="stat">
-            	<th class="bluebgheadtd"><s:property value="name"/> </th>
-			</s:iterator>
-			</s:if>
-            <th class="bluebgheadtd"><s:property value="currentYearToDate"/> </th>
-            <th class="bluebgheadtd"><s:property value="previousYearToDate"/></th>
-          </tr>
-		<s:iterator value="balanceSheet.entries" status="stat">
-          <tr>
-            <td class="blueborderfortd">
-			<div align="center">
-				<s:if test='%{glCode != ""}'>
-					<s:if test='%{displayBold == true}'>
-						<strong><s:property value="glCode"/></strong>
+	<br />
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td>
+				<div align="center">
+					<br />
+					<table border="0" cellspacing="0" cellpadding="0"
+						class="tablebottom" width="100%">
+						<tr>
+							<td class="subheadsmallnew">
+								<div>
+									<table width="100%" border="0" cellpadding="0" cellspacing="0">
+										<tr>
+											<th class="subheadsmallnew" colspan="16" bgcolor="#CCCCCC"><s:property
+													value="ulbName" /><br /> <strong><s:text
+														name="report.balancesheet.schedule" /> <s:property
+														value="model.financialYear.finYearRange" /> <s:property
+														value="header" /></strong></th>
+											</td>
+										</tr>
+										<tr>
+											<td class="bluebox" colspan="2"><strong><s:text
+														name="report.run.date" />-<s:date name="todayDate"
+														format="dd/MM/yyyy" /></strong></td>
+											<td colspan="16">
+												<div class="blueborderfortd" align="right">
+													<strong>Amount in <s:property
+															value="model.currency" /> &nbsp;&nbsp;&nbsp;&nbsp;
+													</strong>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="bluebgheadtd"><s:text
+													name="report.accountCode" /></th>
+											<th class="bluebgheadtd"><s:text
+													name="report.headOfAccount" /></th>
+											<s:if test="%{balanceSheet.funds.size()>1}">
+												<s:iterator value="balanceSheet.funds" status="stat">
+													<th class="bluebgheadtd"><s:property value="name" /></th>
+												</s:iterator>
+											</s:if>
+											<th class="bluebgheadtd"><s:property
+													value="currentYearToDate" /></th>
+											<th class="bluebgheadtd"><s:property
+													value="previousYearToDate" /></th>
+										</tr>
+										<s:iterator value="balanceSheet.entries" status="stat">
+											<tr>
+												<td class="blueborderfortd">
+													<div align="center">
+														<s:if test='%{glCode != ""}'>
+															<s:if test='%{displayBold == true}'>
+																<strong><s:property value="glCode" /></strong>
+															</s:if>
+															<s:else>
+																<s:property value="glCode" />
+															</s:else>
+														</s:if>
+														&nbsp;
+													</div>
+												</td>
+												<td class="blueborderfortd">
+													<div align="left">
+														<s:if test='%{displayBold == true}'>
+															<strong><s:property value="accountName" /></strong>
+														</s:if>
+														<s:else>
+															<s:property value="accountName" />
+														</s:else>
+														&nbsp;
+													</div>
+												</td>
+												<s:if test="%{balanceSheet.funds.size()>1}">
+													<s:iterator value="balanceSheet.funds" status="stat">
+														<s:if test='%{displayBold == true}'>
+															<td class="blueborderfortd"><strong><div
+																		align="right">
+																		<s:property value="fundWiseAmount[name]" />
+																		&nbsp;
+																	</div> </strong></td>
+														</s:if>
+														<s:else>
+															<td class="blueborderfortd">
+																<div align="right">
+																	<s:property value="fundWiseAmount[name]" />
+																	&nbsp;
+																</div>
+															</td>
+														</s:else>
+													</s:iterator>
+												</s:if>
+												<td class="blueborderfortd">
+													<div align="right">
+														<s:if test='%{displayBold == true}'>
+															<strong><s:if test='%{currentYearTotal != 0}'>
+																	<s:property value="currentYearTotal" />
+																</s:if>
+																<s:else>0.0</s:else></strong>
+														</s:if>
+														<s:else>
+															<s:if test='%{currentYearTotal != 0}'>
+																<s:property value="currentYearTotal" />
+															</s:if>
+															<s:else>0.0</s:else>
+														</s:else>
+														&nbsp;
+													</div>
+												</td>
+												<td class="blueborderfortd">
+													<div align="right">
+														<s:if test='%{displayBold == true}'>
+															<strong><s:if test='%{previousYearTotal != 0}'>
+																	<s:property value="previousYearTotal" />
+																</s:if>
+																<s:else>0.0</s:else></strong>
+														</s:if>
+														<s:else>
+															<s:if test='%{previousYearTotal != 0}'>
+																<s:property value="previousYearTotal" />
+															</s:if>
+															<s:else>0.0</s:else>
+														</s:else>
+														&nbsp;
+													</div>
+												</td>
+											</tr>
+										</s:iterator>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
 					</s:if>
-					<s:else>
-						<s:property value="glCode"/>
-					</s:else>
-				</s:if>&nbsp;</div>		
-			</td>
-            <td class="blueborderfortd">
-			<div align="left">
-				<s:if test='%{displayBold == true}'>
-					<strong><s:property value="accountName"/></strong>
-				</s:if>
-				<s:else>
-					<s:property value="accountName"/>
-				</s:else>&nbsp;
-			</div>		
-			</td>
-			<s:if test="%{balanceSheet.funds.size()>1}" >
-			<s:iterator value="balanceSheet.funds" status="stat">
-			<s:if test='%{displayBold == true}'>
-            	<td class="blueborderfortd">
-					<strong><div align="right"><s:property value="fundWiseAmount[name]"/>&nbsp;</div>	</strong>	
-				</td>
-				</s:if>      
-				<s:else>
-				<td class="blueborderfortd">
-					<div align="right"><s:property value="fundWiseAmount[name]"/>&nbsp;</div>		
-				</td>
-				</s:else>
-			</s:iterator>
-			</s:if>
-            <td class="blueborderfortd">
-			<div align="right">
-				<s:if test='%{displayBold == true}'>
-					<strong><s:if test='%{currentYearTotal != 0}'>
-						<s:property value="currentYearTotal"/>	  
-					</s:if><s:else>0.0</s:else></strong>
-				</s:if>
-				<s:else>
-					<s:if test='%{currentYearTotal != 0}'>
-					 <s:property value="currentYearTotal"/>
-					</s:if><s:else>0.0</s:else>
-				</s:else>&nbsp;
-			</div>		
-			</td>
-            <td class="blueborderfortd">
-			<div align="right">
-				<s:if test='%{displayBold == true}'>
-					<strong><s:if test='%{previousYearTotal != 0}'><s:property value="previousYearTotal"/></s:if><s:else>0.0</s:else></strong>
-				</s:if>
-				<s:else>
-					<s:if test='%{previousYearTotal != 0}'><s:property value="previousYearTotal"/></s:if><s:else>0.0</s:else>
-				</s:else>&nbsp;
-			</div>		
-			</td>
-          </tr>
-		</s:iterator>
-        </table>
-</div>
-</td>
-</tr>
-</table>
-</s:if>
 
-<div class="buttonbottom"><s:text name="report.export.options"/>: <a href='/EGF/report/balanceSheetReport!generateDetailedScheduleXls.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>&majorCode=<s:property value="#parameters['majorCode']" />'>Excel</a> | <a href='/EGF/report/balanceSheetReport!generateDetailedSchedulePdf.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>&majorCode=<s:property value="#parameters['majorCode']" />'>PDF</a></div>
+					<div class="buttonbottom">
+						<s:text name="report.export.options" />
+						: <a
+							href='/EGF/report/balanceSheetReport!generateDetailedScheduleXls.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>&majorCode=<s:property value="#parameters['majorCode']" />'>Excel</a>
+						| <a
+							href='/EGF/report/balanceSheetReport!generateDetailedSchedulePdf.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>&majorCode=<s:property value="#parameters['majorCode']" />'>PDF</a>
+					</div>

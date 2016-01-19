@@ -45,9 +45,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
@@ -59,6 +60,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -66,6 +70,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -97,6 +102,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
@@ -213,6 +219,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String applicationType;
     private String fileStoreIds;
     private String ulbCode;
+    private boolean enableApproverDetails = Boolean.FALSE;
 
     private Map<String, String> guardianRelationMap;
     private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
@@ -235,11 +242,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
         } else {
-        	PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-        	propertyTaxUtil.setPersistenceService(persistenceService);
-        	boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicproperty.getUpicNo());
-            if(hasChildPropertyUnderWorkflow){
-            	wfErrorMsg = getText("error.msg.child.underworkflow");
+            PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
+            propertyTaxUtil.setPersistenceService(persistenceService);
+            boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicproperty
+                    .getUpicNo());
+            if (hasChildPropertyUnderWorkflow) {
+                wfErrorMsg = getText("error.msg.child.underworkflow");
                 return TARGET_WORKFLOW_ERROR;
             }
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
@@ -295,8 +303,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/view")
     public String view() {
         final String currState = propertyMutation.getState().getValue();
+        final String nextAction = propertyMutation.getState().getNextAction();
         final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesignation)
+        if (currState.endsWith(WF_STATE_REJECTED)
+                || (nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 || currState.equals(WFLOW_ACTION_NEW)) {
             mode = EDIT;
             return EDIT;
@@ -316,25 +326,31 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/collect-fee")
     public String collectFee() {
+        String target = "";
         if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
         else if (StringUtils.isNotBlank(applicationNo))
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
         else {
             addActionError(getText("mandatory.assessmentno.applicationno"));
-            return SEARCH;
+            target = SEARCH;
         }
         if (null == propertyMutation || null == propertyMutation.getId()) {
             addActionError(getText("mutation.notexists"));
-            return SEARCH;
+            target = SEARCH;
         } else if (null != propertyMutation && null != propertyMutation.getReceiptDate()) {
             final SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             addActionError(getText("mutationpayment.done",
                     new String[] { df.format(propertyMutation.getReceiptDate()) }));
-            return SEARCH;
-        } else
+            target = SEARCH;
+        } else if (null != propertyMutation && null == propertyMutation.getMutationFee()) {
+            addActionError(getText("mutationfee.notexists"));
+            target = SEARCH;
+        } else {
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
-        return COLLECT_FEE;
+            target = COLLECT_FEE;
+        }
+        return target;
     }
 
     @SkipValidation
@@ -366,15 +382,21 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         approverName = "";
-        if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
-            mutationInitiatedBy = propertyMutation.getCreatedBy().getUsername();
-        else
-            mutationInitiatedBy = assignmentService
-                    .getPrimaryAssignmentForPositon(
-                            propertyMutation.getStateHistory().get(0).getOwnerPosition().getId()).getEmployee()
-                    .getUsername();
+        Assignment assignment;
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy())) {
+            assignment = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
+            mutationInitiatedBy = propertyMutation.getCreatedBy().getName().concat("~")
+                    .concat(assignment.getPosition().getName());
+        } else {
+            assignment = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+            mutationInitiatedBy = assignment.getEmployee().getName().concat("~")
+                    .concat(assignment.getPosition().getName());
+        }
         if (propertyMutation.getState().getValue().equals("Closed")) {
-            mutationInitiatedBy = transferOwnerService.getLoggedInUser().getUsername();
+            assignment = assignmentService.getPrimaryAssignmentForUser(transferOwnerService.getLoggedInUser().getId());
+            mutationInitiatedBy = transferOwnerService.getLoggedInUser().getName().concat("~")
+                    .concat(assignment.getPosition().getName());
             setAckMessage("Transfer of ownership data rejected successfuly By ");
         } else
             setAckMessage("Transfer of ownership data rejected successfuly and forwarded to initiator : ");
@@ -389,15 +411,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
-        /*
-         * if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
-         * mutationInitiatedBy = propertyMutation.getCreatedBy().getName(); else
-         * mutationInitiatedBy = assignmentService
-         * .getPrimaryAssignmentForPositon(
-         * propertyMutation.getStateHistory().get
-         * (0).getOwnerPosition().getId()).getEmployee() .getUsername();
-         */
-        mutationInitiatedBy = securityUtils.getCurrentUser().getUsername();
+        Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
+        mutationInitiatedBy = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
@@ -542,6 +557,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     addActionError(getText("mandatory.ownerName"));
                 if (StringUtils.isBlank(propOwnerInfo.getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
+                if(propOwnerInfo.getGender()==null)
+                	addActionError(getText("mandatory.gender"));
                 if (StringUtils.isBlank(propOwnerInfo.getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
                 if (StringUtils.isBlank(propOwnerInfo.getGuardian()))
@@ -567,7 +584,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("notexists.position"));
             }
         }
-
         super.validate();
     }
 
@@ -582,7 +598,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentState = "Created";
             final Assignment assignment = propertyService.getUserPositionByZone(basicproperty);
             approverPositionId = assignment.getPosition().getId();
-            approverName = assignment.getEmployee().getUsername();
+            approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         } else
             currentState = null;
 
@@ -620,16 +636,28 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         null, null, getAdditionalRule(), currentState, null);
                 propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_TITLE_TRANSFER);
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(NATURE_TITLE_TRANSFER);
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
             else {
-                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                        null, null, getAdditionalRule(), propertyMutation.getCurrentState().getValue(), null);
-                propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                WorkFlowMatrix wfmatrix = null;
+                if (propertyMutation.getState().getValue().equals(WF_STATE_BILL_COLLECTOR_APPROVED)
+                        && null != propertyMutation.getMutationFee() && null != propertyMutation.getReceiptDate()
+                        && StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
+                    propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approverComments).withStateValue(TRANSFER_FEE_COLLECTED)
+                            .withDateInfo(currentDate.toDate()).withOwner(pos)
+                            .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
+                } else {
+                    wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null, null,
+                            getAdditionalRule(), propertyMutation.getCurrentState().getValue(), null);
+                    propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approverComments).withStateValue(wfmatrix.getNextState())
+                            .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                }
+
             }
         }
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
@@ -947,6 +975,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
         this.historyMap = historyMap;
+    }
+
+    public boolean isEnableApproverDetails() {
+        return enableApproverDetails;
+    }
+
+    public void setEnableApproverDetails(boolean enableApproverDetails) {
+        this.enableApproverDetails = enableApproverDetails;
     }
 
 }

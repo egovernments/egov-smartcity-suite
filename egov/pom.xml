@@ -98,6 +98,11 @@
 		<build.number>${timestamp}</build.number>
 		<app.version>${project.version}</app.version>
 
+        <!-- Sonar properties -->
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+
 		<!-- Application core dependency versions -->
 		<egov-search-version>1.0.2-SNAPSHOT</egov-search-version>
 
@@ -170,8 +175,7 @@
 		<strutstestcase-version>2.1.4-1.2-2.4</strutstestcase-version>
 		<dbunit-version>2.2.3</dbunit-version>
 		<hamcrest-all-version>1.3</hamcrest-all-version>
-		<slf4j-api-version>1.7.7</slf4j-api-version>
-		<jcl-over-slf4j-version>1.7.7</jcl-over-slf4j-version>
+		<slf4j-version>1.7.7</slf4j-version>
 		<log4j-version>1.2.17</log4j-version>
 		<google-guava-version>19.0-rc3</google-guava-version>
 	</properties>
@@ -845,12 +849,18 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j-api-version}</version>
+				<version>${slf4j-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-nop</artifactId>
+				<version>${slf4j-version}</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>${jcl-over-slf4j-version}</version>
+				<version>${slf4j-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>log4j</groupId>
@@ -1128,6 +1138,10 @@
 
 		<!-- LOGGING END -->
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
@@ -1152,7 +1166,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.7.1</version>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
@@ -1170,7 +1184,7 @@
 											jacoco-maven-plugin
 										</artifactId>
 										<versionRange>
-											[0.7.2.201409121644,)
+											[0.7.5.201505241946,)
 										</versionRange>
 										<goals>
 											<goal>prepare-agent</goal>
@@ -1225,10 +1239,6 @@
 				<version>2.5</version>
 				<configuration>
 					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-					<manifest>
-						<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						<addClasspath>true</addClasspath>
-					</manifest>
 					<archive>
 						<manifestEntries>
 							<Specification-Title>${project.name}</Specification-Title>
@@ -1256,7 +1266,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.2.201409121644</version>
+				<version>0.7.5.201505241946</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
@@ -1272,6 +1282,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<destFile>${sonar.jacoco.reportPath}</destFile>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -1307,6 +1320,13 @@
 					</execution>
 				</executions>
 			</plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+            </plugin>
+
 		</plugins>
 	</build>
 </project>

@@ -56,7 +56,6 @@ jQuery(document).ready(function ($) {
 		}
 		 }
 	    $('#searchapplication').click(function () {
-	    	
 	    	submitForm();
 	    });
 		
@@ -156,10 +155,10 @@ jQuery(document).ready(function ($) {
 });
 
 function submitForm(){
-
+	$('.loader-class').modal('show', {backdrop: 'static'});
 	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
 	.done(function (searchResult) {
-		console.log(JSON.stringify(searchResult));
+		//console.log(JSON.stringify(searchResult));
 		
 		tableContainer.dataTable({
 			destroy:true,
@@ -190,6 +189,7 @@ function submitForm(){
 			],
 			"aaSorting": [[3, 'desc']]
 		});
-	})
-
+		
+	});
+	$('.loader-class').modal('hide');
 }

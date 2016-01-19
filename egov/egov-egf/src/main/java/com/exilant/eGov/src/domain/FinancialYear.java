@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 /*
@@ -60,227 +60,232 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-@Transactional(readOnly=true)
+
+@Transactional(readOnly = true)
 public class FinancialYear {
-	private String id = null;
-	private String financialYear = null;
-	private String startingDate = "1-Jan-1900";
-	private String endingDate = "1-Jan-1900";
-	private String isActive = "1";
-	private String created = "1-Jan-1900";
-	private String lastModified = "1-Jan-1900";
-	private String modifiedBy = null;
-	private String isActiveForPosting = "0";
-	private String isClosed = "0";
-	private String TransferClosingBalance = "0";
-	private static final Logger LOGGER = Logger.getLogger(FinancialYear.class);
-	private TaskFailedException taskExc;
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
-			.getDefault());
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
-			Locale.getDefault());
+    private String id = null;
+    private String financialYear = null;
+    private String startingDate = "1-Jan-1900";
+    private String endingDate = "1-Jan-1900";
+    private String isActive = "1";
+    private String created = "1-Jan-1900";
+    private String lastModified = "1-Jan-1900";
+    private String modifiedBy = null;
+    private String isActiveForPosting = "0";
+    private String isClosed = "0";
+    private String TransferClosingBalance = "0";
+    private static final Logger LOGGER = Logger.getLogger(FinancialYear.class);
+    private TaskFailedException taskExc;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
+            .getDefault());
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
+            Locale.getDefault());
 
-	public int getId() {
-		return Integer.valueOf(id).intValue();
-	}
-	@Transactional
-	public void insert() throws SQLException,
-			TaskFailedException {
-		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate();
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-			created = formatter.format(sdf.parse(created));
-			EgovMasterDataCaching.getInstance().removeFromCache(
-					"egi-activeFinYr");
-		} catch (Exception e) {
-			LOGGER
-					.error("Exp in insert to financialyear: " + e.getMessage(),
-							e);
-			throw new TaskFailedException();
-		}
-		setCreated(created);
-		setLastModified(created);
-		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("FinancialYear")));
+    public int getId() {
+        return Integer.valueOf(id).intValue();
+    }
 
-		String insertQuery = "INSERT INTO FinancialYear (id, financialyear, startingdate, endingdate, "
-				+ "isactive, created, lastmodified, MODIFIEDBY, isActiveForPosting, isClosed, TransferClosingBalance) "
-				+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    @Transactional
+    public void insert() throws SQLException,
+    TaskFailedException {
+        final EGovernCommon commommethods = new EGovernCommon();
+        created = commommethods.getCurrentDate();
+        try {
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+            created = formatter.format(sdf.parse(created));
+            EgovMasterDataCaching.getInstance().removeFromCache(
+                    "egi-activeFinYr");
+        } catch (final Exception e) {
+            LOGGER
+            .error("Exp in insert to financialyear: " + e.getMessage(),
+                    e);
+            throw new TaskFailedException();
+        }
+        setCreated(created);
+        setLastModified(created);
+        setId(String.valueOf(PrimaryKeyGenerator.getNextKey("FinancialYear")));
 
-		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-		pst.setString(1, id);
-		pst.setString(2, financialYear);
-		pst.setString(3, startingDate);
-		pst.setString(4, endingDate);
-		pst.setString(5, isActive);
-		pst.setString(6, created);
-		pst.setString(7, lastModified);
-		pst.setString(8, modifiedBy);
-		pst.setString(9, isActiveForPosting);
-		pst.setString(10, isClosed);
-		pst.setString(11, TransferClosingBalance);
-		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		pst.executeUpdate();
+        final String insertQuery = "INSERT INTO FinancialYear (id, financialyear, startingdate, endingdate, "
+                + "isactive, created, lastmodified, MODIFIEDBY, isActiveForPosting, isClosed, TransferClosingBalance) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	}
-	@Transactional
-	public void update() throws SQLException,
-			TaskFailedException {
-		newUpdate();
-	}
+        final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+        pst.setString(0, id);
+        pst.setString(1, financialYear);
+        pst.setString(2, startingDate);
+        pst.setString(3, endingDate);
+        pst.setString(4, isActive);
+        pst.setString(5, created);
+        pst.setString(6, lastModified);
+        pst.setString(7, modifiedBy);
+        pst.setString(8, isActiveForPosting);
+        pst.setString(9, isClosed);
+        pst.setString(10, TransferClosingBalance);
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info(insertQuery);
+        pst.executeUpdate();
 
-	public String getFinancialYear() {
-		return financialYear;
-	}
+    }
 
-	public void setFinancialYear(String financialYear) {
-		this.financialYear = financialYear;
-	}
+    @Transactional
+    public void update() throws SQLException,
+    TaskFailedException {
+        newUpdate();
+    }
 
-	public String getStartingDate() {
-		return startingDate;
-	}
+    public String getFinancialYear() {
+        return financialYear;
+    }
 
-	public void setStartingDate(String startingDate) {
-		this.startingDate = startingDate;
-	}
+    public void setFinancialYear(final String financialYear) {
+        this.financialYear = financialYear;
+    }
 
-	public String getEndingDate() {
-		return endingDate;
-	}
+    public String getStartingDate() {
+        return startingDate;
+    }
 
-	public void setEndingDate(String endingDate) {
-		this.endingDate = endingDate;
-	}
+    public void setStartingDate(final String startingDate) {
+        this.startingDate = startingDate;
+    }
 
-	public String getIsActive() {
-		return isActive;
-	}
+    public String getEndingDate() {
+        return endingDate;
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public void setEndingDate(final String endingDate) {
+        this.endingDate = endingDate;
+    }
 
-	public String getCreated() {
-		return created;
-	}
+    public String getIsActive() {
+        return isActive;
+    }
 
-	public void setCreated(String created) {
-		this.created = created;
-	}
+    public void setIsActive(final String isActive) {
+        this.isActive = isActive;
+    }
 
-	public String getLastModified() {
-		return lastModified;
-	}
+    public String getCreated() {
+        return created;
+    }
 
-	public void setLastModified(String lastModified) {
-		this.lastModified = lastModified;
-	}
+    public void setCreated(final String created) {
+        this.created = created;
+    }
 
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
+    public String getLastModified() {
+        return lastModified;
+    }
 
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
+    public void setLastModified(final String lastModified) {
+        this.lastModified = lastModified;
+    }
 
-	public String getIsActiveForPosting() {
-		return isActiveForPosting;
-	}
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
 
-	public void setIsActiveForPosting(String isActiveForPosting) {
-		this.isActiveForPosting = isActiveForPosting;
-	}
+    public void setModifiedBy(final String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
 
-	public String getIsClosed() {
-		return isClosed;
-	}
+    public String getIsActiveForPosting() {
+        return isActiveForPosting;
+    }
 
-	public void setIsClosed(String isClosed) {
-		this.isClosed = isClosed;
-	}
+    public void setIsActiveForPosting(final String isActiveForPosting) {
+        this.isActiveForPosting = isActiveForPosting;
+    }
 
-	public String getTransferClosingBalance() {
-		return TransferClosingBalance;
-	}
+    public String getIsClosed() {
+        return isClosed;
+    }
 
-	public void setTransferClosingBalance(String transferClosingBalance) {
-		TransferClosingBalance = transferClosingBalance;
-	}
+    public void setIsClosed(final String isClosed) {
+        this.isClosed = isClosed;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getTransferClosingBalance() {
+        return TransferClosingBalance;
+    }
 
-	public void newUpdate() throws TaskFailedException,
-			SQLException {
-		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate();
-		Query pstmt = null;
-		try {
-			created = formatter.format(sdf.parse(created));
-		} catch (ParseException parseExp) {
-			if(LOGGER.isDebugEnabled())     LOGGER.debug(parseExp.getMessage(), parseExp);
-		}
-		setCreated(created);
-		setLastModified(created);
-		StringBuilder query = new StringBuilder(500);
-		query.append("update financialyear set ");
-		if (financialYear != null)
-			query.append("financialYear=?,");
-		if (startingDate != null)
-			query.append("startingDate=?,");
-		if (endingDate != null)
-			query.append("endingDate=?,");
-		if (isActive != null)
-			query.append("isActive=?,");
-		if (created != null)
-			query.append("created=?,");
-		if (lastModified != null)
-			query.append("lastModified=?,");
-		if (modifiedBy != null)
-			query.append("modifiedBy=?,");
-		if (isActiveForPosting != null)
-			query.append("isActiveForPosting=?,");
-		if (isClosed != null)
-			query.append("isClosed=?,");
-		if (TransferClosingBalance != null)
-			query.append("TransferClosingBalance=?,");
-		int lastIndexOfComma = query.lastIndexOf(",");
-		query.deleteCharAt(lastIndexOfComma);
-		query.append(" where id=?");
-		try {
-			int i = 1;
-			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
-			if (financialYear != null)
-				pstmt.setString(i++, financialYear);
-			if (startingDate != null)
-				pstmt.setString(i++, startingDate);
-			if (endingDate != null)
-				pstmt.setString(i++, endingDate);
-			if (isActive != null)
-				pstmt.setString(i++, isActive);
-			if (created != null)
-				pstmt.setString(i++, created);
-			if (lastModified != null)
-				pstmt.setString(i++, lastModified);
-			if (modifiedBy != null)
-				pstmt.setString(i++, modifiedBy);
-			if (isActiveForPosting != null)
-				pstmt.setString(i++, isActiveForPosting);
-			if (isClosed != null)
-				pstmt.setString(i++, isClosed);
-			if (TransferClosingBalance != null)
-				pstmt.setString(i++, TransferClosingBalance);
-			pstmt.setString(i++, id);
+    public void setTransferClosingBalance(final String transferClosingBalance) {
+        TransferClosingBalance = transferClosingBalance;
+    }
 
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			LOGGER.error("Exp in update: " + e.getMessage());
-			throw taskExc;
-		} 
+    public void setId(final String id) {
+        this.id = id;
+    }
 
-	}
+    public void newUpdate() throws TaskFailedException,
+    SQLException {
+        final EGovernCommon commommethods = new EGovernCommon();
+        created = commommethods.getCurrentDate();
+        Query pstmt = null;
+        try {
+            created = formatter.format(sdf.parse(created));
+        } catch (final ParseException parseExp) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug(parseExp.getMessage(), parseExp);
+        }
+        setCreated(created);
+        setLastModified(created);
+        final StringBuilder query = new StringBuilder(500);
+        query.append("update financialyear set ");
+        if (financialYear != null)
+            query.append("financialYear=?,");
+        if (startingDate != null)
+            query.append("startingDate=?,");
+        if (endingDate != null)
+            query.append("endingDate=?,");
+        if (isActive != null)
+            query.append("isActive=?,");
+        if (created != null)
+            query.append("created=?,");
+        if (lastModified != null)
+            query.append("lastModified=?,");
+        if (modifiedBy != null)
+            query.append("modifiedBy=?,");
+        if (isActiveForPosting != null)
+            query.append("isActiveForPosting=?,");
+        if (isClosed != null)
+            query.append("isClosed=?,");
+        if (TransferClosingBalance != null)
+            query.append("TransferClosingBalance=?,");
+        final int lastIndexOfComma = query.lastIndexOf(",");
+        query.deleteCharAt(lastIndexOfComma);
+        query.append(" where id=?");
+        try {
+            int i = 1;
+            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+            if (financialYear != null)
+                pstmt.setString(i++, financialYear);
+            if (startingDate != null)
+                pstmt.setString(i++, startingDate);
+            if (endingDate != null)
+                pstmt.setString(i++, endingDate);
+            if (isActive != null)
+                pstmt.setString(i++, isActive);
+            if (created != null)
+                pstmt.setString(i++, created);
+            if (lastModified != null)
+                pstmt.setString(i++, lastModified);
+            if (modifiedBy != null)
+                pstmt.setString(i++, modifiedBy);
+            if (isActiveForPosting != null)
+                pstmt.setString(i++, isActiveForPosting);
+            if (isClosed != null)
+                pstmt.setString(i++, isClosed);
+            if (TransferClosingBalance != null)
+                pstmt.setString(i++, TransferClosingBalance);
+            pstmt.setString(i++, id);
+
+            pstmt.executeUpdate();
+        } catch (final Exception e) {
+            LOGGER.error("Exp in update: " + e.getMessage());
+            throw taskExc;
+        }
+
+    }
 }

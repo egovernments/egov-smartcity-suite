@@ -1393,14 +1393,18 @@ public class PropertyService {
      */
     private FloorwiseDemandCalculations createFloorDmdCalc(final PTDemandCalculations ptDmdCal, final Floor floor,
             final TaxCalculationInfo taxCalcInfo) {
-        // LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
-        // + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
+        LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal + ", floor: " + floor + ", taxCalcInfo: "
+                + taxCalcInfo);
         final FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
         floorDmdCalc.setPTDemandCalculations(ptDmdCal);
         floorDmdCalc.setFloor(floor);
 
         for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos()) {
-            if (FLOOR_MAP.get(floorDmdCalc.getFloor().getFloorNo()).equals(unitTax.getFloorNumber()))
+            if (FLOOR_MAP.get(floor.getFloorNo()).equals(unitTax.getFloorNumber())
+                    && floor.getPropertyUsage().getUsageCode().equalsIgnoreCase(unitTax.getUnitUsage())
+                    && floor.getPropertyOccupation().getOccupancyCode().equalsIgnoreCase(unitTax.getUnitOccupation())
+                    && floor.getStructureClassification().getConstrTypeCode().equalsIgnoreCase(unitTax.getUnitStructure())
+                    && floor.getBuiltUpArea().getArea().equals(Float.valueOf(unitTax.getFloorArea().toString())))
                 setFloorDmdCalTax(unitTax, floorDmdCalc);
         }
         totalAlv = totalAlv.add(floorDmdCalc.getAlv());
@@ -2287,10 +2291,10 @@ public class PropertyService {
         if (position == null) {
             user = stateAwareObject.getState().getCreatedBy();
         } else {
-            user = assignmentService.getPrimaryAssignmentForPositionAndDate(
-                    position.getId(), new Date()).getEmployee();
+            user = assignmentService.getAssignmentsForPosition(
+                    position.getId(), new Date()).get(0).getEmployee();
         }
-    	Map<String, String> ownerMap = new HashMap<String, String>();
+        Map<String, String> ownerMap = new HashMap<String, String>();
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
@@ -2546,8 +2550,6 @@ public class PropertyService {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (propertyDetail.isAppurtenantLandChecked() != null && propertyDetail.isAppurtenantLandChecked())
             area = area.add(BigDecimal.valueOf(propertyDetail.getExtentAppartenauntLand()));
-        else if (propertyDetail.getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-            area = convertYardToSquareMeters(propertyDetail.getSitalArea().getArea());
         else
             area = area.add(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
         return area;
@@ -2649,16 +2651,6 @@ public class PropertyService {
 
     }
 
-    /**
-     * Returns the installment in which the assessment date falls
-     * 
-     * @param assessmentDate
-     * @return
-     */
-    public Installment getAssessmentEffectiveInstallment(final Date assessmentDate) {
-        return installmentDao.getInsatllmentByModuleForGivenDate(moduleDao.getModuleByName(PTMODULENAME),
-                assessmentDate);
-    }
 
     /**
      * @param fromDemand
@@ -2692,13 +2684,13 @@ public class PropertyService {
         if (houseNo != null && !houseNo.trim().isEmpty())
             queryStr.append("and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append("and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append("and upper(trim(pmv.ownerName)) like :OwnerName");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setLong("locationId", locationId);
         if (houseNo != null && !houseNo.trim().isEmpty())
             query.setString("HouseNo", houseNo + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString("OwnerName", ownerName + "%");
+            query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
@@ -2724,7 +2716,7 @@ public class PropertyService {
         if (houseNum != null && !houseNum.trim().isEmpty())
             queryStr.append(" and pmv.houseNo like :HouseNo ");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            queryStr.append(" and trim(pmv.ownerName) like :OwnerName");
+            queryStr.append(" and upper(trim(pmv.ownerName)) like :OwnerName");
 
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
 
@@ -2735,7 +2727,7 @@ public class PropertyService {
         if (houseNum != null && !houseNum.trim().isEmpty())
             query.setString("HouseNo", houseNum + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString("OwnerName", ownerName + "%");
+            query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;

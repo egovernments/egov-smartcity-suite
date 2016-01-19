@@ -39,7 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -158,15 +157,17 @@ public interface CollectionIntegrationService {
     /**
      * This method returns the list of receipt created in the system for the 
      * given date range and service code of the billing system.
-     * @param fromDate From Date to Search the Aggregate Payment
+     * @param fromDate From Date to Search the Aggregate Paymentss
      * @param toDate To Date to Search the Aggregate Payment
      * @param serviceCode The service code of the billing system
      * @return List of <code>RestReceiptInfo</code> containing details of Receipt Information
      */
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(Date fromDate, Date toDate, String serviceCode);
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     
     public List<ServiceCategory>  getActiveServiceCategories();
     
     public String cancelReceipt(PaymentInfoSearchRequest paymentInfoSearchRequest);
+
+    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);  
 }

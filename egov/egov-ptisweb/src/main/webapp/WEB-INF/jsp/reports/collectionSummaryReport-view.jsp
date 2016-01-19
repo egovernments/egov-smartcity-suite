@@ -63,6 +63,33 @@
 		</s:elseif>
 		
 	</title>
+	<script type="text/javascript">
+		function populateBlock() {
+			jQuery.ajax({
+				url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+				type: "GET",
+				data: {
+					wardId : jQuery('#wardId').val()
+				},
+				cache: false,
+				dataType: "json",
+				success: function (response) {
+					jQuery('#blockId').html("");
+					jQuery.each(response, function (j, block) {
+						jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
+					});
+					<s:if test="%{blockId != null}">
+						jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+					</s:if>
+				}, 
+				error: function (response) {
+					console.log("failed");
+					jQuery('#blockId').html("");
+					alert("No block details mapped for ward")
+				}
+			});
+		}
+	</script>
 </head>
 <body>
 	<div id="colSummaryError" class="errorstyle" style="display:none;"></div> 
@@ -171,10 +198,7 @@
 									<s:select headerKey="-1"
 										headerValue="%{getText('default.all')}" name="zoneId"
 										id="zoneId" listKey="id" listValue="name"
-										list="dropdownData.zoneList" cssClass="form-control" value="%{zoneId}" 
-										onchange="populateWard()"/>
-										<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-											dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
+										list="dropdownData.zoneList" cssClass="form-control" value="%{zoneId}"/>
 								</div>
 							</div>
 							
@@ -183,21 +207,18 @@
 										name="Ward" /> :</label>
 								<div class="col-sm-3 add-margin">
 									<s:select headerKey="-1"
-										headerValue="%{getText('default.all')}" name="boundaryId"
-										id="boundaryId" listKey="key" listValue="value"
-										list="wardBndryMap" cssClass="form-control" value="%{boundaryId}" 
-										onchange="populateBlock()"/>
-										<egov:ajaxdropdown id="areaId" fields="['Text','Value']"
-											dropdownId="areaId" url="common/ajaxCommon-areaByWard.action" />
+										headerValue="%{getText('default.all')}" name="wardId"
+										id="wardId" listKey="key" listValue="value"
+										list="wardBndryMap" cssClass="form-control" value="%{wardId}" onchange="populateBlock()"/>
 								</div>
 							
 								<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 										name="block" /> :</label>
 								<div class="col-sm-3 add-margin">
 									<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="areaId"
-										id="areaId" listKey="key" listValue="value"
-										list="dropdownData.blockList" cssClass="form-control" value="%{areaId}" 
+										headerValue="%{getText('default.select')}" name="blockId"
+										id="blockId" listKey="key" listValue="value"
+										list="dropdownData.blockList" cssClass="form-control" value="%{blockId}" 
 										/>
 								</div>
 							</div>
@@ -256,7 +277,7 @@
 
 				<div class="row">
 					<div class="text-center">
-						<button type="button" id="btnsearch" class="btn btn-success">
+						<button type="button" id="btnsearch" class="btn btn-primary">
 							Search</button>
 						<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
 							Close</button>

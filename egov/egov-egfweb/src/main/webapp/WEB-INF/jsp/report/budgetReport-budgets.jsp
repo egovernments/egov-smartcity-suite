@@ -37,5 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
-<s:select name="budgetDetail.budget.id" id="budget" list="budgetList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" />
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<s:select name="budgetDetail.budget.id" id="budget" list="budgetList"
+	listKey="id" listValue="name" headerKey="-1"
+	headerValue="----Choose----" />

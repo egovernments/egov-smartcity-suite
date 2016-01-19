@@ -37,18 +37,18 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<%@ page import="java.util.*" %>
-<%@ page import="java.text.*" %>
-<%@ page import="java.math.*" %>
-<%@ page import="org.apache.log4j.Logger" %>
-<%@ page import="org.egov.infstr.utils.EgovMasterDataCaching" %>
-<%@ page import="org.egov.commons.EgwTypeOfWork" %>
-<%@ page import="org.egov.commons.EgPartytype" %>
-<%@ page import="org.egov.commons.EgwTypeOfWork" %>
-<%@ page import="org.egov.deduction.client.RecoverySetupForm" %>
+<%@ page import="java.util.*"%>
+<%@ page import="java.text.*"%>
+<%@ page import="java.math.*"%>
+<%@ page import="org.apache.log4j.Logger"%>
+<%@ page import="org.egov.infstr.utils.EgovMasterDataCaching"%>
+<%@ page import="org.egov.commons.EgwTypeOfWork"%>
+<%@ page import="org.egov.commons.EgPartytype"%>
+<%@ page import="org.egov.commons.EgwTypeOfWork"%>
+<%@ page import="org.egov.deduction.client.RecoverySetupForm"%>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -70,7 +70,8 @@
 <link href="resources/css/budget.css" rel="stylesheet" type="text/css" />
 <link href="css/commonegov.css" rel="stylesheet" type="text/css" />
 <!-- script type="text/javascript" src="common/js/budget.js"></script> -->
-<script type="text/javascript" src="<c:url value='/resources/javascript/recoveryMasterHelper.js'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/javascript/recoveryMasterHelper.js'/>"></script>
 <script language=javascript>
 // ---- Manual Script ---STARTS--
 var myrowId;
@@ -1755,13 +1756,24 @@ function validateBankAccount(obj)
 </script>
 
 </head>
-<body onload="onBodyLoad();" onKeyDown ="CloseWindow(window.self);" onKeyUp="keyPressed();" >
-<html:form  action="/deduction/recoverySetupMaster.do" >
-<div class="topbar"><div class="egov"><img src="/egi/resources/erp2/images/eGov.png" alt="eGov" width="54" height="58" /></div><div class="gov"><img src="/egi/resources/erp2/images/india.png" alt="India" width="54" height="58" /></div>
-  <div class="mainheading">Corporation of Chennai <br />
-    <!-- Online Cash Collection System  -->   </div>
-</div>
-<!-- <div class="navibar"><div align="right">
+<body onload="onBodyLoad();" onKeyDown="CloseWindow(window.self);"
+	onKeyUp="keyPressed();">
+	<html:form action="/deduction/recoverySetupMaster.do">
+		<div class="topbar">
+			<div class="egov">
+				<img src="/egi/resources/erp2/images/eGov.png" alt="eGov" width="54"
+					height="58" />
+			</div>
+			<div class="gov">
+				<img src="/egi/resources/erp2/images/india.png" alt="India"
+					width="54" height="58" />
+			</div>
+			<div class="mainheading">
+				Corporation of Chennai <br />
+				<!-- Online Cash Collection System  -->
+			</div>
+		</div>
+		<!-- <div class="navibar"><div align="right">
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
            <td><div align="left"><ul id="tabmenu" class="tabmenu">
@@ -1775,278 +1787,333 @@ function validateBankAccount(obj)
   </div>
 </div> -->
 
-<div class="subheadsmallnew"><span class="subheadnew">&nbsp;</span>
-<span class="subheadnew">Recovery Master</span></div>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr id="flagRow">
-	  <td class="bluebox">&nbsp;</td>
-	  <td class="bluebox"><span class="bold">Method</span>:<span class="mandatory">*</span></td>
-	  <td colspan="3" class="bluebox" >
-	   <!--  
+		<div class="subheadsmallnew">
+			<span class="subheadnew">&nbsp;</span> <span class="subheadnew">Recovery
+				Master</span>
+		</div>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr id="flagRow">
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox"><span class="bold">Method</span>:<span
+					class="mandatory">*</span></td>
+				<td colspan="3" class="bluebox">
+					<!--  
 	    <input name="radiobutton" type="radio" value="radiobutton" align="absmiddle" onclick="show('recoverytable');" checked="checked"/>
 	    <span class="bold" >Automatic</span>
 	    <input name="radiobutton" type="radio" value="radiobutton" align="absmiddle" onclick="hide('recoverytable')"/>
 		<span class="bold">Manual</span>
-		-->
-		<span class="bold">Automatic</span>&nbsp;<html:radio property="recMode" value="Automatic" onclick="getSelected(this)"/>&nbsp;&nbsp;
-		<span class="bold">Manual</span>&nbsp;<html:radio property="recMode" value="Manual" onclick="getSelected(this)"/>
-	 </td>
-  </tr>
-  <!-- This Row For view/modify purpose-->
-  <tr style="display:none"  id="hideRow1">
-  	<td class="greybox" width="35%">&nbsp;</td>
-    <td class="greybox">&nbsp;Recovery Code:<span class="mandatory">*</span></td>
-    <td class="greybox">
-	<html:select  property="tdsTypeId" onchange="loadRecoveryMasterDetails();" styleClass="bigcombowidth">
-		<html:option value='0'>----choose----</html:option>
-		<c:forEach var="tdsTypeVar" items="<%=tdsTypeList%>" > 
-		<html:option value="${tdsTypeVar.id}">${tdsTypeVar.name}</html:option>
-		</c:forEach> 
-	</html:select>
-    </td>
-    <td class="greybox" width="15%">&nbsp;</td>
-    <td class="greybox" colspan="2" width="20%">&nbsp;</td>
-  </tr>
-  
-<tr id="hideRow2">
-  	<td class="greybox">&nbsp;</td>
-    <td class="greybox">Recovery Code:<span class="mandatory">*</span></td>
-    	<input type=hidden name="tdsIdHidden" id="tdsIdHidden"/>
-    <td class="greybox">
-    	<html:text styleId="recovCode" property="recovCode" onblur="uniqueCheckForRecoveryCode(this);"/>
-    </td>
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox" colspan="2">&nbsp;</td>
-</tr>
-<tr id="hideRow3">
-  <td width="10%" class="bluebox">&nbsp;</td>
-    <td width="22%" class="bluebox"><span class="greybox">Recovery Name</span>:<span class="mandatory">*</span></td>
-    <td width="22%" class="bluebox" ><span class="greybox">
-      <html:text styleId="recovName" property="recovName" size="30" />
-    </span></td>
-    <td width="18%" class="bluebox" id="CalculationTypeId1">Calculation Type:<span class="mandatory">*</span></td>
-    <td width="34%" class="bluebox" id="CalculationTypeId2">
-	    <span class="greybox">
-	        <html:select styleId="calculationType" property="calculationType" onchange="callTheType('DD');" styleClass="bigcombowidth">
-				<html:option value='Flat'>Flat</html:option>
-				<html:option value='Percentage'>Percentage</html:option>
-			</html:select>
-	    </span>
-    </td>
-</tr>
-<tr id="hideRow5">
-  <td class="greybox">&nbsp;</td>
-    <td class="greybox">Applied To:<span class="mandatory">*</span></td>
-    <td class="greybox">
-    	<html:select styleId="recovAppliedTo" property="recovAppliedTo" onchange="changeAppliedTo(this);" styleClass="bigcombowidth">
-			<html:option value='0'>----choose----</html:option>
-			<c:forEach var="applyVar" items="<%=partyMasterList%>" > 
-				<html:option value="${applyVar.id}">${applyVar.name}</html:option>
-			</c:forEach> 
-		</html:select>
-		<input type="hidden" name="recovAppliedToHidden"/>
-	</td>
-	<td class="greybox" id="bankLoanCheckBox" name="bankLoanCheckBox" align="right" style="display:none">
-		Bank Loan&nbsp;<input type="checkbox" name="isBankLoan" id="isBankLoan" onclick="getBankList(this)" />
-	</td>
-	<html:hidden property="bankLoan"/>
-	<td class="greybox" colspan="2"></td>
-</tr>
- 
-<tr id="EarDedRow" style="display:none">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">Type</td>
-		<td class="greybox">	
-			<html:select property="isEarning" styleClass="bigcombowidth" value="<%=rsf.getIsEarning()%>" onchange="toggleAccountCodes();" >
-			<html:option value='0' >Deduction</html:option>
-			<html:option value='1'>Earning</html:option>
-			</html:select>
-		</td>
-		<td class="greybox" colspan="2"></td>
-</tr>  
-<tr id="bankListRow" style="display:none">
-	<td class="bluebox">&nbsp;</td>
-	<td class="bluebox">Bank<span class="mandatory">*</span></td>
-	<td class="bluebox">			
-		<html:select property="bank" styleClass="bigcombowidth" >
-		<html:option value='0'>----Choose----</html:option>
-		<c:forEach var="b" items="<%=bankList%>" > 
-			<html:option value="${b.id}">${b.name}</html:option>
-		</c:forEach>
-		</html:select>
-	</td>
-	<td class="bluebox" colspan="2"></td>
-</tr>  
+		--> <span class="bold">Automatic</span>&nbsp;<html:radio
+						property="recMode" value="Automatic" onclick="getSelected(this)" />&nbsp;&nbsp;
+					<span class="bold">Manual</span>&nbsp;<html:radio
+						property="recMode" value="Manual" onclick="getSelected(this)" />
+				</td>
+			</tr>
+			<!-- This Row For view/modify purpose-->
+			<tr style="display: none" id="hideRow1">
+				<td class="greybox" width="35%">&nbsp;</td>
+				<td class="greybox">&nbsp;Recovery Code:<span class="mandatory">*</span></td>
+				<td class="greybox"><html:select property="tdsTypeId"
+						onchange="loadRecoveryMasterDetails();" styleClass="bigcombowidth">
+						<html:option value='0'>----choose----</html:option>
+						<c:forEach var="tdsTypeVar" items="<%=tdsTypeList%>">
+							<html:option value="${tdsTypeVar.id}">${tdsTypeVar.name}</html:option>
+						</c:forEach>
+					</html:select></td>
+				<td class="greybox" width="15%">&nbsp;</td>
+				<td class="greybox" colspan="2" width="20%">&nbsp;</td>
+			</tr>
 
-<!--old-->
-  <tr id="hideRow4">
-    <td class="bluebox">&nbsp;</td>
-    <td class="bluebox">Account Code:<span class="mandatory">*</span></td>
-    <td class="bluebox" >
-		<html:select styleId="recovAccCodeId"  property="recovAccCodeId" onchange="splitGlCode();"  styleClass="bigcombowidth">
-			<html:option value='0'>----choose----</html:option>
-			<c:forEach var="glcodeVar" items="<%=glCodeList%>" > 
-				<html:option value="${glcodeVar.id}">${glcodeVar.name}</html:option>
-			</c:forEach> 			
-		</html:select>
-	</td>
-    <td class="bluebox" colspan="2"><html:text styleId="recAccDesc" readonly="true" tabindex="-1" style="width:250px;text-align:left" property="recAccDesc"/></td>
-  </tr>
-  
- <tr id="onlyEmp" style="display:none">
- 	<td class="bluebox">&nbsp;</td>
-	<td class="bluebox" align="right">Account Code<span class="mandatory">*</span></td>
-	<td class="bluebox" align="center" colspan="3" >
-		<html:select styleId="emprecovAccCodeId"  property="emprecovAccCodeId" onchange="empsplitGlCode();"  styleClass="bigcombowidth" >
-		<html:option value='0'>----choose----</html:option>
-		<c:forEach var="empglcodeVar" items="<%=empglCodeList%>" > 
-			<html:option value="${empglcodeVar.id}">${empglcodeVar.name}</html:option>
-		</c:forEach> 			
-		</html:select>&nbsp;
-		<html:text styleId="emprecAccDesc" readonly="true" tabindex="-1" style="width:250px;text-align:left" property="emprecAccDesc"/>
-	</td>
- </tr>
-  
-  
-  <tr id="descriptionId">
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox">Description:</td>
-    <td colspan="3" class="greybox"><html:textarea styleId="description" style="width: 580px;" property="description" /></td>
-  </tr>
-  <tr id="hideRow6">
-    <td class="bluebox">&nbsp;</td>
-    <td class="bluebox">Remitted To:<span class="mandatory">*</span></td>
-    <td class="bluebox"><html:text styleId="recovRemitTo" style="text-align:left" property="recovRemitTo" size="35"/></td>
-    <td class="bluebox">BSR Code:</td>
-    <td class="bluebox"><html:text styleId="recovBSRCode" style="text-align:left" property="recovBSRCode" size="35"/></td>
-  </tr>
-  <tr id ="IFSCCodeRowId">
-    <td class="bluebox">&nbsp;</td>
-    <td class="bluebox">IFSC Code:</td>
-    <td class="bluebox"><html:text styleId="recovIFSCCode" style="text-align:left" property="recovIFSCCode"  onchange="validateIFSCCode(this)" size="35"/></td>
-    <td class="bluebox">Bank Account:</td>
-    <td class="bluebox"><html:text styleId="recovBankAccount" style="text-align:left" property="recovBankAccount" onchange="validateBankAccount(this)" size="35"/></td>
-  </tr>
-  
-  <tr id="SectionRowId">
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox">Section:</td>
-    <td class="greybox"><html:text styleId="section" style="text-align:left" property="section" size="20"/></td>
-    <td class="greybox">&nbsp;</td>
-    <td class="greybox">&nbsp;</td>
-  </tr>
-  
-    <tr>
-    <td class="bluebox" colspan="5">&nbsp;</td>
-  </tr>
-  
-</table>
+			<tr id="hideRow2">
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox">Recovery Code:<span class="mandatory">*</span></td>
+				<input type=hidden name="tdsIdHidden" id="tdsIdHidden" />
+				<td class="greybox"><html:text styleId="recovCode"
+						property="recovCode" onblur="uniqueCheckForRecoveryCode(this);" />
+				</td>
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox" colspan="2">&nbsp;</td>
+			</tr>
+			<tr id="hideRow3">
+				<td width="10%" class="bluebox">&nbsp;</td>
+				<td width="22%" class="bluebox"><span class="greybox">Recovery
+						Name</span>:<span class="mandatory">*</span></td>
+				<td width="22%" class="bluebox"><span class="greybox">
+						<html:text styleId="recovName" property="recovName" size="30" />
+				</span></td>
+				<td width="18%" class="bluebox" id="CalculationTypeId1">Calculation
+					Type:<span class="mandatory">*</span>
+				</td>
+				<td width="34%" class="bluebox" id="CalculationTypeId2"><span
+					class="greybox"> <html:select styleId="calculationType"
+							property="calculationType" onchange="callTheType('DD');"
+							styleClass="bigcombowidth">
+							<html:option value='Flat'>Flat</html:option>
+							<html:option value='Percentage'>Percentage</html:option>
+						</html:select>
+				</span></td>
+			</tr>
+			<tr id="hideRow5">
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox">Applied To:<span class="mandatory">*</span></td>
+				<td class="greybox"><html:select styleId="recovAppliedTo"
+						property="recovAppliedTo" onchange="changeAppliedTo(this);"
+						styleClass="bigcombowidth">
+						<html:option value='0'>----choose----</html:option>
+						<c:forEach var="applyVar" items="<%=partyMasterList%>">
+							<html:option value="${applyVar.id}">${applyVar.name}</html:option>
+						</c:forEach>
+					</html:select> <input type="hidden" name="recovAppliedToHidden" /></td>
+				<td class="greybox" id="bankLoanCheckBox" name="bankLoanCheckBox"
+					align="right" style="display: none">Bank Loan&nbsp;<input
+					type="checkbox" name="isBankLoan" id="isBankLoan"
+					onclick="getBankList(this)" />
+				</td>
+				<html:hidden property="bankLoan" />
+				<td class="greybox" colspan="2"></td>
+			</tr>
+
+			<tr id="EarDedRow" style="display: none">
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox">Type</td>
+				<td class="greybox"><html:select property="isEarning"
+						styleClass="bigcombowidth" value="<%=rsf.getIsEarning()%>"
+						onchange="toggleAccountCodes();">
+						<html:option value='0'>Deduction</html:option>
+						<html:option value='1'>Earning</html:option>
+					</html:select></td>
+				<td class="greybox" colspan="2"></td>
+			</tr>
+			<tr id="bankListRow" style="display: none">
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">Bank<span class="mandatory">*</span></td>
+				<td class="bluebox"><html:select property="bank"
+						styleClass="bigcombowidth">
+						<html:option value='0'>----Choose----</html:option>
+						<c:forEach var="b" items="<%=bankList%>">
+							<html:option value="${b.id}">${b.name}</html:option>
+						</c:forEach>
+					</html:select></td>
+				<td class="bluebox" colspan="2"></td>
+			</tr>
+
+			<!--old-->
+			<tr id="hideRow4">
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">Account Code:<span class="mandatory">*</span></td>
+				<td class="bluebox"><html:select styleId="recovAccCodeId"
+						property="recovAccCodeId" onchange="splitGlCode();"
+						styleClass="bigcombowidth">
+						<html:option value='0'>----choose----</html:option>
+						<c:forEach var="glcodeVar" items="<%=glCodeList%>">
+							<html:option value="${glcodeVar.id}">${glcodeVar.name}</html:option>
+						</c:forEach>
+					</html:select></td>
+				<td class="bluebox" colspan="2"><html:text styleId="recAccDesc"
+						readonly="true" tabindex="-1" style="width:250px;text-align:left"
+						property="recAccDesc" /></td>
+			</tr>
+
+			<tr id="onlyEmp" style="display: none">
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox" align="right">Account Code<span
+					class="mandatory">*</span></td>
+				<td class="bluebox" align="center" colspan="3"><html:select
+						styleId="emprecovAccCodeId" property="emprecovAccCodeId"
+						onchange="empsplitGlCode();" styleClass="bigcombowidth">
+						<html:option value='0'>----choose----</html:option>
+						<c:forEach var="empglcodeVar" items="<%=empglCodeList%>">
+							<html:option value="${empglcodeVar.id}">${empglcodeVar.name}</html:option>
+						</c:forEach>
+					</html:select>&nbsp; <html:text styleId="emprecAccDesc" readonly="true"
+						tabindex="-1" style="width:250px;text-align:left"
+						property="emprecAccDesc" /></td>
+			</tr>
 
 
-<div style="overflow-x:auto; overflow-y:hidden; width:100%;" id="hidegridRecovery" align="center">
-<table width="75%" border="0" cellpadding="0" cellspacing="0" class="tablebottom" id="gridRecoverySetup" name="gridRecoverySetup" >
-<tr>
-		  <th width="5%" class="bluebgheadtd">Party Sub-type</th>
-		  <th width="10%" class="bluebgheadtd">Document Type</th>
-          <th width="10%" class="bluebgheadtd">From Date</th>
-		  <th width="10%" class="bluebgheadtd">To Date</th>
-		  <th width="20%" colspan="2" >
-	   		<table cellpadding="0" cellspacing="0" border="0" width="100%">
-			<tr><th class="bluebgheadtd" colspan="2" height="25"><div align="center">Amount</div></th></tr>
-			<tr>
-			<th class="bluebgheadtd" width="50%"><div align="center">Low</div></th>
-			<th class="bluebgheadtd" width="50%"><div align="center">High</div></th>
+			<tr id="descriptionId">
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox">Description:</td>
+				<td colspan="3" class="greybox"><html:textarea
+						styleId="description" style="width: 580px;" property="description" /></td>
 			</tr>
-			</table>
-   		  </th>
-   		  <th width="20%" colspan="2" >
-	   		<table cellpadding="0" cellspacing="0" border="0" width="100%">
-			<tr><th class="bluebgheadtd" colspan="2" height="25"><div align="center">Cumulative Amount</div></th></tr>
-			<tr>
-			<th class="bluebgheadtd" width="50%"><div align="center">Low</div></th>
-			<th class="bluebgheadtd" width="50%"><div align="center">High</div></th>
+			<tr id="hideRow6">
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">Remitted To:<span class="mandatory">*</span></td>
+				<td class="bluebox"><html:text styleId="recovRemitTo"
+						style="text-align:left" property="recovRemitTo" size="35" /></td>
+				<td class="bluebox">BSR Code:</td>
+				<td class="bluebox"><html:text styleId="recovBSRCode"
+						style="text-align:left" property="recovBSRCode" size="35" /></td>
 			</tr>
-			</table>
-   		  </th>
-   		  <th colspan="4" width="20%" id="ItScEcId">
-	   		<table cellpadding="0" cellspacing="0" border="0" width="100%">
-			<tr><th class="bluebgheadtd" colspan="4"><div align="center">IT/SC/EC</div></th></tr>
-			<tr>
-			<th class="bluebgheadtd"  width="25%"><div align="center">IT</div></th>
-			<th class="bluebgheadtd"  width="25%"><div align="center">Sur Charge</div></th>
-			<th class="bluebgheadtd"  width="25%"><div align="center">EDU Cess</div></th>
-			<th class="bluebgheadtd"  width="25%"><div align="center">Total</div></th>
+			<tr id="IFSCCodeRowId">
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">IFSC Code:</td>
+				<td class="bluebox"><html:text styleId="recovIFSCCode"
+						style="text-align:left" property="recovIFSCCode"
+						onchange="validateIFSCCode(this)" size="35" /></td>
+				<td class="bluebox">Bank Account:</td>
+				<td class="bluebox"><html:text styleId="recovBankAccount"
+						style="text-align:left" property="recovBankAccount"
+						onchange="validateBankAccount(this)" size="35" /></td>
 			</tr>
-			</table>
-   		  </th>
-		  <th width="5%" class="bluebgheadtd" id="FlatAmtId">Flat Amount</th>
-		  <th width="5%" class="bluebgheadtd" id="AddDelId">Add/del</th>
-</tr>
-			
-	<% 
+
+			<tr id="SectionRowId">
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox">Section:</td>
+				<td class="greybox"><html:text styleId="section"
+						style="text-align:left" property="section" size="20" /></td>
+				<td class="greybox">&nbsp;</td>
+				<td class="greybox">&nbsp;</td>
+			</tr>
+
+			<tr>
+				<td class="bluebox" colspan="5">&nbsp;</td>
+			</tr>
+
+		</table>
+
+
+		<div style="overflow-x: auto; overflow-y: hidden; width: 100%;"
+			id="hidegridRecovery" align="center">
+			<table width="75%" border="0" cellpadding="0" cellspacing="0"
+				class="tablebottom" id="gridRecoverySetup" name="gridRecoverySetup">
+				<tr>
+					<th width="5%" class="bluebgheadtd">Party Sub-type</th>
+					<th width="10%" class="bluebgheadtd">Document Type</th>
+					<th width="10%" class="bluebgheadtd">From Date</th>
+					<th width="10%" class="bluebgheadtd">To Date</th>
+					<th width="20%" colspan="2">
+						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+							<tr>
+								<th class="bluebgheadtd" colspan="2" height="25"><div
+										align="center">Amount</div></th>
+							</tr>
+							<tr>
+								<th class="bluebgheadtd" width="50%"><div align="center">Low</div></th>
+								<th class="bluebgheadtd" width="50%"><div align="center">High</div></th>
+							</tr>
+						</table>
+					</th>
+					<th width="20%" colspan="2">
+						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+							<tr>
+								<th class="bluebgheadtd" colspan="2" height="25"><div
+										align="center">Cumulative Amount</div></th>
+							</tr>
+							<tr>
+								<th class="bluebgheadtd" width="50%"><div align="center">Low</div></th>
+								<th class="bluebgheadtd" width="50%"><div align="center">High</div></th>
+							</tr>
+						</table>
+					</th>
+					<th colspan="4" width="20%" id="ItScEcId">
+						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+							<tr>
+								<th class="bluebgheadtd" colspan="4"><div align="center">IT/SC/EC</div></th>
+							</tr>
+							<tr>
+								<th class="bluebgheadtd" width="25%"><div align="center">IT</div></th>
+								<th class="bluebgheadtd" width="25%"><div align="center">Sur
+										Charge</div></th>
+								<th class="bluebgheadtd" width="25%"><div align="center">EDU
+										Cess</div></th>
+								<th class="bluebgheadtd" width="25%"><div align="center">Total</div></th>
+							</tr>
+						</table>
+					</th>
+					<th width="5%" class="bluebgheadtd" id="FlatAmtId">Flat Amount</th>
+					<th width="5%" class="bluebgheadtd" id="AddDelId">Add/del</th>
+				</tr>
+
+				<% 
 		if(rsf.getLowAmount()==null && session.getAttribute("mode").equals("create"))
 		{	
 			logger.info("INSIDE JSP --------------->CREATE MODE");
 	%>
-			<tr id="detailsRow" name="detailsRow" onClick="selected(this);" height="40" >
-			<!--
+				<tr id="detailsRow" name="detailsRow" onClick="selected(this);"
+					height="40">
+					<!--
 			<td class="tdStlyle"><div align="left" id=recovery_srNo name="recovery_srNo"></div></td>
 			-->
-			<td style="display:none" class="blueborderfortd"><html:text styleId="id"  property="id" value="" /></td> 
-			<td style="display:none" class="blueborderfortd"><html:text styleId="appliedToHiddenId"  property="appliedToHiddenId" value="" /></td> 
-            <td class="blueborderfortd" ><div align="center">
-				<html:select  property="partyType" styleId="partyType" onchange="">
-					<html:option value='0'>--Choose--</html:option>
-				</html:select>
-            	</div>
-            </td>			
-            <td class="blueborderfortd" ><div align="center">
-				<html:select  property="docType" styleId="docType" onchange="">
-					<html:option value='0'>--Choose--</html:option>
-				</html:select>
-            	</div>
-            </td>	
-		<td class="blueborderfortd" ><div align="center">
-          <html:text property="recovDateFrom"  value="" size="12"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-        </div></td>
-        <td class="blueborderfortd" ><div align="center">
-          <html:text property="recovDateTo"  value="" size="12"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-        </div></td>
-        <td class="blueborderfortd"><div align="center">
-          <html:text  property="lowAmount"  style="text-align:right" value="" size="12"  maxlength="16" onblur=""/>
-        </div></td>
-        <td class="blueborderfortd" ><div align="center">
-          <html:text  property="highAmount"  style="text-align:right" value=""  size="12" maxlength="16" onblur=""/>
-        </div></td>
-        <td class="blueborderfortd" ><div align="center">
-          <html:text  property="cumulativeAmountLow"  style="text-align:right" value="" size="12"  maxlength="16" onblur=""/>
-        </div></td>
-        <td class="blueborderfortd" ><div align="center">
-          <html:text  property="cumulativeAmountHigh"  style="text-align:right" value="" size="12"  maxlength="16" onblur=""/>
-        </div></td>
-         <td class="blueborderfortd" id="ItScEcTextId1"><div align="center">
-          <html:text property="ITPercentage"  style="text-align:right" value="" size="12"  maxlength="5" onblur="calcTotalPer(this);"/>
-        </div></td>
-        <td class="blueborderfortd" id="ItScEcTextId2"><div align="center">
-          <html:text property="surPercentage"   style="text-align:right" value="" size="12"  maxlength="5" onblur="calcTotalPer(this);"/>
-        </div></td>
-        <td class="blueborderfortd" id="ItScEcTextId3"><div align="center">
-          <html:text property="eduCessPercentage"   style="text-align:right" value="" size="12" maxlength="5" onblur="calcTotalPer(this);"/>
-        </div></td>
-        <td class="blueborderfortd" id="ItScEcTextId4"><div align="center">
-          <html:text property="totalPercentage"   style="text-align:right" value="" size="12" maxlength="5" tabindex="-1" readonly="true" />
-        </div></td>
-        <td class="blueborderfortd" id="flatAmountTextId" ><div align="center">
-          <html:text property="flatAmount"  style="text-align:right" value="" size="12" maxlength="16"/>
-        </div></td>
-        <td class="blueborderfortd">
-        	<div align="center">
-        	<a href="#"><img src="/egi/resources/erp2/images/addrow.gif" alt="Add" width="18" height="18" border="0" onclick="javascript:addRow();"/></a> 
-        	<a href="#"><img src="/egi/resources/erp2/images/removerow.gif" alt="Del" width="18" height="18" border="0" onclick="javascript:return deleteRow(this);"/></a>
-        	</div>
-        </td>
-		</tr>
-		<%
+					<td style="display: none" class="blueborderfortd"><html:text
+							styleId="id" property="id" value="" /></td>
+					<td style="display: none" class="blueborderfortd"><html:text
+							styleId="appliedToHiddenId" property="appliedToHiddenId" value="" /></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:select property="partyType" styleId="partyType" onchange="">
+								<html:option value='0'>--Choose--</html:option>
+							</html:select>
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:select property="docType" styleId="docType" onchange="">
+								<html:option value='0'>--Choose--</html:option>
+							</html:select>
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:text property="recovDateFrom" value="" size="12"
+								maxlength="10"
+								onkeyup="DateFormat(this,this.value,event,false,'3')" />
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:text property="recovDateTo" value="" size="12"
+								maxlength="10"
+								onkeyup="DateFormat(this,this.value,event,false,'3')" />
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:text property="lowAmount" style="text-align:right" value=""
+								size="12" maxlength="16" onblur="" />
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:text property="highAmount" style="text-align:right"
+								value="" size="12" maxlength="16" onblur="" />
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:text property="cumulativeAmountLow"
+								style="text-align:right" value="" size="12" maxlength="16"
+								onblur="" />
+						</div></td>
+					<td class="blueborderfortd"><div align="center">
+							<html:text property="cumulativeAmountHigh"
+								style="text-align:right" value="" size="12" maxlength="16"
+								onblur="" />
+						</div></td>
+					<td class="blueborderfortd" id="ItScEcTextId1"><div
+							align="center">
+							<html:text property="ITPercentage" style="text-align:right"
+								value="" size="12" maxlength="5" onblur="calcTotalPer(this);" />
+						</div></td>
+					<td class="blueborderfortd" id="ItScEcTextId2"><div
+							align="center">
+							<html:text property="surPercentage" style="text-align:right"
+								value="" size="12" maxlength="5" onblur="calcTotalPer(this);" />
+						</div></td>
+					<td class="blueborderfortd" id="ItScEcTextId3"><div
+							align="center">
+							<html:text property="eduCessPercentage" style="text-align:right"
+								value="" size="12" maxlength="5" onblur="calcTotalPer(this);" />
+						</div></td>
+					<td class="blueborderfortd" id="ItScEcTextId4"><div
+							align="center">
+							<html:text property="totalPercentage" style="text-align:right"
+								value="" size="12" maxlength="5" tabindex="-1" readonly="true" />
+						</div></td>
+					<td class="blueborderfortd" id="flatAmountTextId"><div
+							align="center">
+							<html:text property="flatAmount" style="text-align:right"
+								value="" size="12" maxlength="16" />
+						</div></td>
+					<td class="blueborderfortd">
+						<div align="center">
+							<a href="#"><img src="/egi/resources/erp2/images/addrow.gif"
+								alt="Add" width="18" height="18" border="0"
+								onclick="javascript:addRow();" /></a> <a href="#"><img
+								src="/egi/resources/erp2/images/removerow.gif" alt="Del"
+								width="18" height="18" border="0"
+								onclick="javascript:return deleteRow(this);" /></a>
+						</div>
+					</td>
+				</tr>
+				<%
 		}
 		else if((rsf.getLowAmount()!=null && !session.getAttribute("mode").equals("create")))
 		{
@@ -2066,105 +2133,151 @@ function validateBankAccount(obj)
 			//logger.info("DOC SUBTYPE ID------------>"+rsf.getSubType()[i]); 
 			//logger.info("LIST OF PTYPE------------>"+session.getAttribute("partyTypeList")); 
  	 	  %>
-			<tr id="detailsRow" name="detailsRow" onClick="selected(this);" height="40" >
-			<!--
+				<tr id="detailsRow" name="detailsRow" onClick="selected(this);"
+					height="40">
+					<!--
 			<td class="tdStlyle"><div align="left" id=recovery_srNo name="recovery_srNo"></div></td>
 			-->
-			<td style="display:none" class="blueborderfortd"><html:text  property="id" value="<%= (rsf.getId()[i])%>"  /></td> 
-			<td style="display:none" class="blueborderfortd"><html:text  property="appliedToHiddenId" value="<%= (rsf.getAppliedToHiddenId()[i])%>" /></td> 
-			<td class="blueborderfortd"><html:select  property="partyType" styleId="partyType" style="width:90 px" onchange="">
-				<html:option value='0'>--Choose--</html:option>
-				</html:select>
-			</td> 	
-			<td class="blueborderfortd"><html:select  property="docType" styleId="docType" style="width:90 px" onchange="">
-				<html:option value='0'>--Choose--</html:option>
-				</html:select>
-			</td> 	
+					<td style="display: none" class="blueborderfortd"><html:text
+							property="id" value="<%= (rsf.getId()[i])%>" /></td>
+					<td style="display: none" class="blueborderfortd"><html:text
+							property="appliedToHiddenId"
+							value="<%= (rsf.getAppliedToHiddenId()[i])%>" /></td>
+					<td class="blueborderfortd"><html:select property="partyType"
+							styleId="partyType" style="width:90 px" onchange="">
+							<html:option value='0'>--Choose--</html:option>
+						</html:select></td>
+					<td class="blueborderfortd"><html:select property="docType"
+							styleId="docType" style="width:90 px" onchange="">
+							<html:option value='0'>--Choose--</html:option>
+						</html:select></td>
 
-			<td class="blueborderfortd"><html:text  property="recovDateFrom"  value="<%= (rsf.getRecovDateFrom()[i])%>"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/></td> 
-			<td class="blueborderfortd"><html:text  property="recovDateTo"  value="<%= (rsf.getRecovDateTo()[i])%>"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" /></td> 
+					<td class="blueborderfortd"><html:text
+							property="recovDateFrom"
+							value="<%= (rsf.getRecovDateFrom()[i])%>" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /></td>
+					<td class="blueborderfortd"><html:text property="recovDateTo"
+							value="<%= (rsf.getRecovDateTo()[i])%>" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /></td>
 
-			<td class="blueborderfortd"><html:text  property="lowAmount"  style="text-align:right" value="<%= (rsf.getLowAmount()[i])%>"  maxlength="16" onblur=""/></td> 
-			<td class="blueborderfortd"><html:text  property="highAmount"  style="text-align:right" value="<%= (rsf.getHighAmount()[i])%>"  maxlength="16" onblur=""/></td> 
+					<td class="blueborderfortd"><html:text property="lowAmount"
+							style="text-align:right" value="<%= (rsf.getLowAmount()[i])%>"
+							maxlength="16" onblur="" /></td>
+					<td class="blueborderfortd"><html:text property="highAmount"
+							style="text-align:right" value="<%= (rsf.getHighAmount()[i])%>"
+							maxlength="16" onblur="" /></td>
 
-			<td class="blueborderfortd"><html:text  property="cumulativeAmountLow"  style="text-align:right" value="<%= (rsf.getCumulativeAmountLow()[i])%>"  maxlength="16" onblur=""/></td> 
-			<td class="blueborderfortd"><html:text  property="cumulativeAmountHigh"  style="text-align:right" value="<%= (rsf.getCumulativeAmountHigh()[i])%>"  maxlength="16" onblur=""/></td> 
+					<td class="blueborderfortd"><html:text
+							property="cumulativeAmountLow" style="text-align:right"
+							value="<%= (rsf.getCumulativeAmountLow()[i])%>" maxlength="16"
+							onblur="" /></td>
+					<td class="blueborderfortd"><html:text
+							property="cumulativeAmountHigh" style="text-align:right"
+							value="<%= (rsf.getCumulativeAmountHigh()[i])%>" maxlength="16"
+							onblur="" /></td>
 
-			<td class="blueborderfortd" id="ItScEcTextId1" <%=PercentageAmtStyleMaker%> ><html:text  property="ITPercentage"  style="text-align:right" value="<%= (rsf.getITPercentage()[i])%>"  maxlength="5" onblur="calcTotalPer(this);"/></td> 
-			<td class="blueborderfortd" id="ItScEcTextId2"  <%=PercentageAmtStyleMaker%>><html:text  property="surPercentage"  style="text-align:right" value="<%= (rsf.getSurPercentage()[i])%>"  maxlength="5" onblur="calcTotalPer(this);"/></td> 
-			<td class="blueborderfortd" id="ItScEcTextId3"  <%=PercentageAmtStyleMaker%>><html:text  property="eduCessPercentage"  style="text-align:right" value="<%= (rsf.getEduCessPercentage()[i])%>"  maxlength="5" onblur="calcTotalPer(this);"/></td> 
-			<td class="blueborderfortd" id="ItScEcTextId4"  <%=PercentageAmtStyleMaker%>><html:text  property="totalPercentage" style="text-align:right" readonly="true"  tabindex="-1"    value=""  maxlength="5"/></td> 
+					<td class="blueborderfortd" id="ItScEcTextId1"
+						<%=PercentageAmtStyleMaker%>><html:text
+							property="ITPercentage" style="text-align:right"
+							value="<%= (rsf.getITPercentage()[i])%>" maxlength="5"
+							onblur="calcTotalPer(this);" /></td>
+					<td class="blueborderfortd" id="ItScEcTextId2"
+						<%=PercentageAmtStyleMaker%>><html:text
+							property="surPercentage" style="text-align:right"
+							value="<%= (rsf.getSurPercentage()[i])%>" maxlength="5"
+							onblur="calcTotalPer(this);" /></td>
+					<td class="blueborderfortd" id="ItScEcTextId3"
+						<%=PercentageAmtStyleMaker%>><html:text
+							property="eduCessPercentage" style="text-align:right"
+							value="<%= (rsf.getEduCessPercentage()[i])%>" maxlength="5"
+							onblur="calcTotalPer(this);" /></td>
+					<td class="blueborderfortd" id="ItScEcTextId4"
+						<%=PercentageAmtStyleMaker%>><html:text
+							property="totalPercentage" style="text-align:right"
+							readonly="true" tabindex="-1" value="" maxlength="5" /></td>
 
-			<td class="blueborderfortd" id="flatAmountTextId"  <%=FlatAmtStyleMaker%>><html:text  property="flatAmount"  style="text-align:right" value="<%= (rsf.getFlatAmount()[i])%>"  maxlength="16"/></td> 
+					<td class="blueborderfortd" id="flatAmountTextId"
+						<%=FlatAmtStyleMaker%>><html:text property="flatAmount"
+							style="text-align:right" value="<%= (rsf.getFlatAmount()[i])%>"
+							maxlength="16" /></td>
 
-			<%
+					<%
 				if( ((String)session.getAttribute("mode")).equalsIgnoreCase("modify")) { %>
-			        <td class="blueborderfortd">
-			        	<div align="center">
-			        	<a href="#"><img src="/egi/resources/erp2/images/addrow.gif" alt="Add" width="18" height="18" border="0" onclick="javascript:addRow();"/></a> 
-			        	<a href="#"><img src="/egi/resources/erp2/images/removerow.gif" alt="Del" width="18" height="18" border="0" onclick="javascript:return deleteRow(this);"/></a>
-			        	</div>
-			        </td>
-				<% }
+					<td class="blueborderfortd">
+						<div align="center">
+							<a href="#"><img src="/egi/resources/erp2/images/addrow.gif"
+								alt="Add" width="18" height="18" border="0"
+								onclick="javascript:addRow();" /></a> <a href="#"><img
+								src="/egi/resources/erp2/images/removerow.gif" alt="Del"
+								width="18" height="18" border="0"
+								onclick="javascript:return deleteRow(this);" /></a>
+						</div>
+					</td>
+					<% }
 			 %>
-			
-			</tr>
-		    <%
+
+				</tr>
+				<%
 		   }
 		}
       %>
-	</table>
-</div>
+			</table>
+		</div>
 
-<div id="MandatoryFieldsId">
-	<div class="subheadsmallnew"></div>
-	<div align="left" class="mandatory">* Mandatory Fields</div>
-	</div>
-</div>
+		<div id="MandatoryFieldsId">
+			<div class="subheadsmallnew"></div>
+			<div align="left" class="mandatory">* Mandatory Fields</div>
+		</div>
+		</div>
 
-<div class="buttonbottom">
-<table align="center">
-    <tr id="hideRow8">
-		<td>
-		<input type="hidden" name="button" id="button"/>
-			<html:button styleClass="buttonsubmit" value="Save & Close" property="b1" onclick="ButtonPress('saveclose')" />
-			<html:button styleClass="buttonsubmit" value="Save & New" property="b2" onclick="ButtonPress('savenew')" />
-		</td>
-		<td><html:reset styleClass="button" value="Cancel" property="b4"/></td>
-		<td><html:button styleClass="button" value="Close" property="b3" onclick="window.close();" /></td>
-	</tr>
-	<tr id="hideRow11" style="display:none">
-		<td>
-			<html:button styleClass="buttonsubmit" value=" Save & Close" property="b1" onclick="ButtonPress('saveclose')" />
-			<html:button styleClass="button" value="Back" property="b2" onclick="ButtonPress('backModify')" />
-			<html:button styleClass="button" value="Close" property="b3" onclick="window.close();" />
-		</td>
-	</tr>
+		<div class="buttonbottom">
+			<table align="center">
+				<tr id="hideRow8">
+					<td><input type="hidden" name="button" id="button" /> <html:button
+							styleClass="buttonsubmit" value="Save & Close" property="b1"
+							onclick="ButtonPress('saveclose')" /> <html:button
+							styleClass="buttonsubmit" value="Save & New" property="b2"
+							onclick="ButtonPress('savenew')" /></td>
+					<td><html:reset styleClass="button" value="Cancel"
+							property="b4" /></td>
+					<td><html:button styleClass="button" value="Close"
+							property="b3" onclick="window.close();" /></td>
+				</tr>
+				<tr id="hideRow11" style="display: none">
+					<td><html:button styleClass="buttonsubmit"
+							value=" Save & Close" property="b1"
+							onclick="ButtonPress('saveclose')" /> <html:button
+							styleClass="button" value="Back" property="b2"
+							onclick="ButtonPress('backModify')" /> <html:button
+							styleClass="button" value="Close" property="b3"
+							onclick="window.close();" /></td>
+				</tr>
 
-	<tr id="hideRow9" style="display:none">
-		<td align="center">
-		<!-- <html:button styleClass="buttonsubmit" value="  View   " property="b1" onclick="ButtonPress('view')" /> -->
-		<html:button styleClass="button" value="  Close  " property="b3" onclick="window.close();" />
-		</td>
-	</tr>
-	<tr id="hideRow12" style="display:none">
-		<td align="center" >
-		<html:button styleClass="buttonsubmit" value="  Modify  " property="b4" onclick="ButtonPress('modify')" />
-		<html:button styleClass="button" value="  Close  " property="b3" onclick="window.close();" />
-		</td>
-	</tr>
-	
-	<tr id="hideRow10" style="display:none" name="hideRow10">
-		<td  align="center">
-		<html:button styleClass="button" value="Back" property="b3" onclick="ButtonPress('backView')" />
-		<html:button styleClass="button" value="Close" property="b4" onclick="window.close();" />
-		</td>
-	</tr>	
-</table>
-</div>
+				<tr id="hideRow9" style="display: none">
+					<td align="center">
+						<!-- <html:button styleClass="buttonsubmit" value="  View   " property="b1" onclick="ButtonPress('view')" /> -->
+						<html:button styleClass="button" value="  Close  " property="b3"
+							onclick="window.close();" />
+					</td>
+				</tr>
+				<tr id="hideRow12" style="display: none">
+					<td align="center"><html:button styleClass="buttonsubmit"
+							value="  Modify  " property="b4" onclick="ButtonPress('modify')" />
+						<html:button styleClass="button" value="  Close  " property="b3"
+							onclick="window.close();" /></td>
+				</tr>
+
+				<tr id="hideRow10" style="display: none" name="hideRow10">
+					<td align="center"><html:button styleClass="button"
+							value="Back" property="b3" onclick="ButtonPress('backView')" />
+						<html:button styleClass="button" value="Close" property="b4"
+							onclick="window.close();" /></td>
+				</tr>
+			</table>
+		</div>
 
 
-<html:javascript formName="RecoverySetupForm"/>	
-</html:form>
+		<html:javascript formName="RecoverySetupForm" />
+	</html:form>
 </body>
 </html>

@@ -75,23 +75,23 @@ jQuery(document).ready(function() {
      
      jQuery( "#instrumentDate" ).datepicker({ 
     	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
          onRender: function(date) {
              console.log(date);
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
       	  }
 	  }).on('changeDate', function(ev) {
-		  jQuery(this).datepicker('hide');
 		  isDatepickerOpened=false; 
        	  checkForCurrentDate(this);
 	  }).data('datepicker');
 
      jQuery( "#manualReceiptDate" ).datepicker({ 
     	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
     	 onRender: function(date) {
        	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
        	  }
 	  }).on('changeDate', function(ev) {
-		  jQuery(this).datepicker('hide');
 		  isDatepickerOpened=false; 
        	  checkForCurrentDate(this);
 		  validateManualReceiptDate(this);
@@ -238,6 +238,7 @@ var initialSetting="true";
 function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
 {
 	document.getElementById("receipt_error_area").innerHTML=""; 
+	document.getElementById("receipt_error_area").style.display="none";
 	var chequetable=document.getElementById('chequegrid');
 	var chequetablelen1 =chequetable.rows.length;
     if(!verifyChequeDetails(chequetable,chequetablelen1)){
@@ -982,9 +983,7 @@ function validate()
 		return false;
 	}
 	else {
-		doLoadingMask('#loadingMask');
 		document.collDetails.action="receipt-save.action";
-		document.collDetails.submit();
   		
 		return validation;
   		
@@ -1374,7 +1373,7 @@ function onBodyLoad()
 		document.getElementById('instrumentChequeAmount').value="";
 	}
 	if(document.getElementById('paidBy').value==""){
-		var paidby =  "Paid By" + '<s:property value="%{payeeName}"/>';
+		var paidby =  '<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 		paidby = paidby.replace('&amp;','&');
 		document.getElementById('paidBy').value=paidby;
 	}
@@ -1392,7 +1391,9 @@ function onBodyLoad()
 }
 
 function displayPaymentDetails(){
-if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
+	var collectionamount = parseFloat(document.getElementById("totalamounttobepaid").value);;
+	document.getElementById("totalamounttobepaid").value=isNaN(collectionamount)?collectionamount:collectionamount.toFixed(2);
+	if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
 		document.getElementById('bankradiobutton').checked=true;
 		document.getElementById('bankdetails').style.display='table-row';
        	document.getElementById('instrumentTypeCashOrCard').value="bank";
@@ -1668,7 +1669,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value='<s:property value="%{payeeName}"/>';
+	document.getElementById('paidBy').value='<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -1720,6 +1721,10 @@ function loadDropDownCodesBank()
 var yuiflagBank = new Array();
 function autocompletecodeBank(obj,myEvent)
 {
+	//Fix-Me
+	var branchObj = document.getElementById('instrumentBranchName');
+	jQuery(branchObj).trigger('focus');
+	jQuery(obj).focus();
 	var src = obj;	
 	var target = document.getElementById('bankcodescontainer');	
 	var posSrc=findPos(src); 
@@ -1763,11 +1768,11 @@ function fillAfterSplitBank(obj)
 		getControlInBranch(currRow,'bankName').value=temp[0];
 		
 	}
-	else
+	/* else
 	{
 		getControlInBranch(currRow,'bankID').value="";
 		getControlInBranch(currRow,'bankName').value="";
-	}
+	} */
 	
 }
 
@@ -1951,7 +1956,7 @@ function showHideMandataryMark(obj){
 	   <tr id="cashdetails" >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
+		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"/></td>
 	   </tr>
 	   
 	   
@@ -2000,7 +2005,7 @@ function showHideMandataryMark(obj){
 		       		<tr id="chequeamountrow">
 		       		    <td class="bluebox" width="3%"></td>
 						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -2050,7 +2055,7 @@ function showHideMandataryMark(obj){
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
 						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" /></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -2139,7 +2144,7 @@ function showHideMandataryMark(obj){
 				       		<tr id="bankamountrow">
 				       		<td class="bluebox" width="3%">&nbsp;</td>
 				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
+				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);"/></td>
 				       		</tr>
 						</table> 
 				<!-- End of bank grid table -->
@@ -2190,7 +2195,7 @@ function showHideMandataryMark(obj){
 			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 			<div class="buttonbottom" align="center">
-			      <label><input align="center" type="button" class="buttonsubmit" id="button2" value="Pay" onclick="return validate();"/></label>
+			      <label><input align="center" type="submit" class="buttonsubmit" id="button2" value="Pay" onclick="return validate();"/></label>
 			      &nbsp;
 			      <input name="button" type="button" class="button" id="button" value="Reset" onclick="checkreset();"/>
 			      &nbsp;

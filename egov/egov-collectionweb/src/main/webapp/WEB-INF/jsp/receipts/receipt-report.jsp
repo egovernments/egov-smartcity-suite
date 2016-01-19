@@ -71,8 +71,7 @@ function refreshInbox() {
 	refreshInbox();
 	</script>
 	<div class="buttonbottom">
-	<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close()" />&nbsp;
-	<input name="buttonBack" type="button" class="button" id="buttonBack" value="Back" onclick="window.location='${pageContext.request.contextPath}/receipts/searchReceipt.action';"  />
+	<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close()" />
 	</div>
 </s:form>
 </body>

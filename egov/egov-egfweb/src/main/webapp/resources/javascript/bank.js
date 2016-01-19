@@ -103,6 +103,27 @@ function check_MICR(e) {
 	}
 }
 
+function check_BankAccounts(branchId) {
+	var response;
+		jQuery.ajax({
+			url : 'bankBranch.action?mode=CHECK_BANK_ACC',
+			data : {
+				id : branchId
+			},
+			type : 'POST',
+			async : false,
+			datatype : 'text',
+			success : function(data) {
+				if (data == 'true') {
+					response  = true;
+				}else{
+					response  = false;
+				}
+			
+			}
+		});
+		return response;
+}
 function initializeGrid() {
 	jQuery("#listsg11")
 			.jqGrid(
@@ -116,10 +137,10 @@ function initializeGrid() {
 						hiddengrid : true,
 						colNames : [ 'Srl No', 'Branch Name', 'Branch Code','MICR', 'Address', 'Contact Person', 'Phone Number', 'Narration', 'Active' ],
 						colModel : [ {name : 'id',index : 'id',key : true,hidden : true,width : 55,	editable : true,editoptions : {readonly : true, size : 10}}, 
-						             {name : 'branchname', index : 'branchname', width : 90, editable : true, editoptions : {size : 25},editrules : {required : true}}, 
-						             {name : 'branchcode', index : 'branchcode', width : 90, editable : true, editoptions : {size : 25}, editrules : {required : true}}, 
+						             {name : 'branchname', index : 'branchname', width : 90, editable : true, editoptions : {size : 25},editrules : {required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}}, 
+						             {name : 'branchcode', index : 'branchcode', width : 90, editable : true, editoptions : {size : 25}, editrules : {required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}}, 
 						             {name : 'branchMICR', index : 'branchMICR', width : 90, editable : true, searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] },editoptions : {size : 25, dataEvents : [ {type : 'blur', fn : check_MICR} ]}}, 
-						             {name : 'branchaddress1', index : 'branchaddress1', width : 100, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}, editrules : {required : true}},
+						             {name : 'branchaddress1', index : 'branchaddress1', width : 100, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}, editrules : {required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
 						             {name : 'contactperson', index : 'contactperson', width : 80, editable : true, editoptions : {size : 25}}, 
 						             {name : 'branchphone', index : 'branchphone', width : 80, editable : true, editoptions : {size : 25}}, 
 						             {name : 'narration', index : 'narration', width : 80, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}}, 
@@ -144,16 +165,16 @@ function initializeGrid() {
 												caption : "Account Details",
 												url : 'bankAccount.action?mode=LIST_BRANCH_ACC&q=2&bankBranchId='+ row_id,
 												editurl : 'bankAccount.action?mode=CRUD&bankBranchId='+ row_id,
-												colNames : [ 'ID', 'Account No:', 'Fund', 'Account Type', 'Description', 'Pay To', 'Type', 'Active' , 'GlCode'],
+												colNames : [ 'ID', 'Account No:', 'Fund', 'Account Type', 'Description', 'Pay To', 'Usage Type', 'Active' , 'GlCode'],
 												colModel : [{name : 'id', index : 'id', key : true, hidden : true, width : 55, editable : true, editoptions : {readonly : true, size : 10}},
-												            {name : "accountnumber", index : "accountnumber", width : 80, key : true, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : {size : 25}, editrules : { required : true}},
-												            {name : "fundname", index : "fundname", width : 130, editable : true, edittype : "select", editoptions : {value : fundJson}, editrules : { required : true}},
-												            {name : "accounttype", index : "accounttype", width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}},
-												            {name : "narration", index : "narration", width : 70, editable : true, edittype : "textarea", editoptions : { rows : "2", cols : "20" } },
-												            {name : "payto", index : "payto", width : 70, editable : true, editoptions : {size : 25}},
-												            {name : "typename", index : "typename", width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}, editrules : { required : true}},
-												            {name : "active", index : "active", width : 70, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}},
-												            {name : 'glcode', index : 'glcode', key : true, width : 60, editable : false, editoptions : {readonly : true, size : 20}}
+												            {name : 'accountnumber', index : 'accountnumber', width : 80, key : true, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : {size : 25}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+												            {name : 'fundname', index : 'fundname', width : 130, editable : true, edittype : "select", editoptions : {value : fundJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+												            {name : 'accounttype', index : 'accounttype', width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}},
+												            {name : 'narration', index : 'narration', width : 70, editable : true, edittype : "textarea", editoptions : { rows : "2", cols : "20" } },
+												            {name : 'payto', index : 'payto', width : 70, editable : true, editoptions : {size : 25}},
+												            {name : 'typename', index : 'typename', width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+												            {name : 'active', index : 'active', width : 70, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}},
+												            {name : 'glcode', index : 'glcode', key : true, width : 60, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : { size : 20}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}}
 												           ],
 												datatype : "json",
 												rowNum : 20,
@@ -173,20 +194,26 @@ function initializeGrid() {
 										editCaption: "Edit Bank Account",
 										beforeShowForm:function(response,data){
 											jQuery("#accounttype").prop('disabled',true);
+											jQuery("#glcode").prop('disabled',true);
 										},
 										afterSubmit: function(response,data){
-											return afterSubmit(response.responseText,data,"Bank Account Update, ");
-										}				
+											return afterSubmit(response.responseText,data,"Bank Account Updated ");
+										}
 									},
 									{
 										closeAfterAdd:true,
 										resize : true,
-										addCaption: "Add Bank Branch",
+										addCaption: "Add Bank Account",
 										beforeShowForm:function(response,data){
 											jQuery("#accounttype").prop('disabled',false);
+											jQuery("#glcode").prop('disabled',false);
+										},
+										errorTextFormat: function (response) {
+										    return '<span class="ui-icon ui-icon-alert" ' +
+							                 'style="float:left; margin-right:.3em;"></span>' + response.responseText;
 										},
 										afterSubmit: function(response,data){
-											return afterSubmit(response.responseText,data,"Bank Account Add, ");
+											return afterSubmit(response.responseText,data,"Bank Account Added ");
 										}
 									},{
 										 caption: "Remove Bank Account",
@@ -209,7 +236,7 @@ function initializeGrid() {
 					editCaption: "Edit Bank Branch",
 					resize : true,
 					afterSubmit: function(response,data){
-						return afterSubmit(response.responseText,data,"Bank Branch Update, ");
+						return afterSubmit(response.responseText,data,"Bank Branch Updated ");
 					}				
 				},
 				{
@@ -218,11 +245,21 @@ function initializeGrid() {
 					addCaption: "Add Bank Branch",
 					resize : true,
 					afterSubmit: function(response,data){
-						return afterSubmit(response.responseText,data,"Bank Branch Add, ");
+						return afterSubmit(response.responseText,data,"Bank Branch Added ");
 					}
 				},{
 					caption: "Remove Bank Branch",
-					 msg: "Remove the selected Bank Branch ?"
+					 msg: "Remove the selected Bank Branch ?",
+						 beforeSubmit : function(data, formid) { 
+							 if(check_BankAccounts(data)){
+								 return[false,"Should not delete branch!!!"];
+							 }
+							 else{
+								 return[true,"Deleted Bank branch successfully"];
+							 }
+								  
+
+						} 
 				},{multipleSearch:true});
 }
 
@@ -236,7 +273,7 @@ function afterSubmit(reply,data, action) {
 	var isSuccess = false;
 	var message='';
 	if (reply == "success") {
-		showMessage(action+"successful.");
+		showMessage(action+"successfully.");
 		isSuccess = true;
 	} else {
 		message = action+"failed.";

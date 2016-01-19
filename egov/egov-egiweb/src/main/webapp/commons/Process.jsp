@@ -1,42 +1,42 @@
-<%--#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#---------------------------------------------------------------------------------%>
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@page import="org.hibernate.jdbc.ReturningWork"%>
 <%@ page language="java" contentType="text/plain; charset=UTF-8" pageEncoding="UTF-8"
@@ -220,10 +220,6 @@ try {
 				}	
 			}
 		});
-	} else if(type.equalsIgnoreCase("getCounterByEnteringCode")){//TESTED
-		final String counterName=SecurityUtils.checkSQLInjection(request.getParameter("code"));
-		final String query="select ca.name || '`--`' || ca.id  as \"code\" from eg_location ca where ca.name=? and ca.isactive=1";
-		result = executeWithParam(query,counterName);
 	} else if(type.equalsIgnoreCase("getAllUserNames")) {//TESTED
 		final java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
 		final String includeRolesList = EGovConfig.getProperty("INCLUDE_ROLES","","IP-BASED-LOGIN");
@@ -262,10 +258,6 @@ try {
 				}	
 			}
 		});
-	} else if(type.equalsIgnoreCase("getAllCounters")) {//TESTED
-		final String locationId = SecurityUtils.checkSQLInjection(request.getParameter("id"));
-		final String query="select l.name|| '`--`' ||l.id as \"code\" from eg_location l where l.locationid=? and l.isactive=1";
-		result = executeWithParam(query,locationId);
 	} else if(type.equalsIgnoreCase("getAllBoundary")){//TESTED
 		final String btypeId= SecurityUtils.checkSQLInjection(request.getParameter("btypeId"));
 		final String query="SELECT  ID_BNDRY,NAME    FROM EG_BOUNDARY b  WHERE b.IS_HISTORY='N' and b.ID_BNDRY_TYPE=? ORDER BY ID_BNDRY";
@@ -319,17 +311,6 @@ try {
 	    	String cgn = SecurityUtils.checkSQLInjection(request.getParameter("cgn"));
 	    	result = executeWithParam(query+" union "+queryedit,cgn);
        	}
-	} else if (type.equalsIgnoreCase("checkUserCounterMapping")) {//TESTED
-		String fDate = SecurityUtils.checkSQLInjection(request.getParameter("fDate"));
-		String tDate = SecurityUtils.checkSQLInjection(request.getParameter("tDate"));
-		String userId = SecurityUtils.checkSQLInjection(request.getParameter("userId"));
-		String counterId = SecurityUtils.checkSQLInjection(request.getParameter("counterId"));
-		
-		String query="SELECT  id  AS \"code\"  FROM EG_USERCOUNTER_MAP b  WHERE b.USERID=? and  "+
-					"((b.TODATE IS NULL and b.FROMDATE <= TO_DATE(?,'DD/MM/YYYY')) OR (b.FROMDATE<= TO_DATE(?,'DD/MM/YYYY') AND b.TODATE>=TO_DATE(?,'DD/MM/YYYY'))) and b.counterid=? ORDER BY b.id";
-		
-		result = dataExist(query,userId,fDate,fDate,tDate,counterId);
-		
 	} else if(type.equalsIgnoreCase("checkJurisdictionDates")){//TESTED
 		String fDate = SecurityUtils.checkSQLInjection(request.getParameter("fDate"));
 		String tDate = SecurityUtils.checkSQLInjection(request.getParameter("tDate"));

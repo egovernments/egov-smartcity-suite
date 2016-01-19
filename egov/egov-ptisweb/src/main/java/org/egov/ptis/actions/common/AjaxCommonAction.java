@@ -725,4 +725,24 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         this.propTypeCategory = propTypeCategory;
     }
 
+    public void setCategoryDAO(CategoryDao categoryDAO) {
+        this.categoryDAO = categoryDAO;
+    }
+
+    public void setBoundaryService(BoundaryService boundaryService) {
+        this.boundaryService = boundaryService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setCrossHierarchyService(CrossHierarchyService crossHierarchyService) {
+        this.crossHierarchyService = crossHierarchyService;
+    }
+
+    public void setBoundaryTypeService(BoundaryTypeService boundaryTypeService) {
+        this.boundaryTypeService = boundaryTypeService;
+    }
+
 }

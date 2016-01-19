@@ -40,7 +40,7 @@
 package org.egov.ptis.service.collection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -84,7 +84,7 @@ public class MutationFeeCollection extends TaxCollection {
         propertyMutation.setReceiptNum(bri.getReceiptNum());
         propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
                 .withOwner(propertyMutation.getState().getOwnerPosition()).withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
-                .withNextAction(WF_STATE_COMMISSIONER_APPROVAL_PENDING);
+                .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
     }
@@ -100,6 +100,13 @@ public class MutationFeeCollection extends TaxCollection {
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    
+    @Override
+    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo) {
         // TODO Auto-generated method stub
         return null;
     }

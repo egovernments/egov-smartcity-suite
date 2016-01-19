@@ -42,10 +42,13 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 @Service
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterConnectionSmsAndEmailService {
 
     @Autowired
@@ -72,9 +75,13 @@ public class WaterConnectionSmsAndEmailService {
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
 
-        final Iterator<OwnerName> ownerNameItr = assessmentDetailsfullFlag.getOwnerNames().iterator();
+        Iterator<OwnerName> ownerNameItr = null;
+        
+        if(null != assessmentDetailsfullFlag.getOwnerNames()) {
+            ownerNameItr = assessmentDetailsfullFlag.getOwnerNames().iterator();
+        }
         final StringBuilder consumerName = new StringBuilder();
-        if (ownerNameItr.hasNext()) {
+        if (null != ownerNameItr && ownerNameItr.hasNext()) {
             consumerName.append(ownerNameItr.next().getOwnerName());
             while (ownerNameItr.hasNext())
                 consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));

@@ -57,6 +57,7 @@ import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +86,12 @@ public class RestWaterConnectionValidationService {
 
     @Autowired
     private AdditionalConnectionService additionalConnectionService;
+    
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
+    
+    @Autowired
+    private PropertyCategoryService propertyCategoryService;
 
     @Autowired
     private NewConnectionService newConnectionService;
@@ -112,7 +117,7 @@ public class RestWaterConnectionValidationService {
                 return errorDetails;
             }
 
-            final PropertyCategory categoryTypes = connectionCategoryService
+            final PropertyCategory categoryTypes = propertyCategoryService
                     .getAllCategoryTypesByPropertyTypeAndCategory(connectionInfo.getPropertyType(),
                             connectionInfo.getCategory());
 

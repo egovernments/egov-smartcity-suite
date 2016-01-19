@@ -39,27 +39,69 @@
 #-------------------------------------------------------------------------------  -->
 <html>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <head>
-<sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
+<sx:head />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
 
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
 </style>
 <script>
 	path="${pageContext.request.contextPath}";
@@ -224,58 +266,79 @@
 	</script>
 </head>
 <body onload="onLoadTask_reverse();">
-<s:form  action="directBankPayment" theme="css_xhtml" name="dbpform" validate="true">
-<s:push value="model">
-<jsp:include page="../budget/budgetHeader.jsp">
-<jsp:param value="Bank to Bank Transfer" name="heading"/>
-</jsp:include>
-<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Reverse Direct  Bank Payment</div>
-		<div id="listid" style="display:block">
-		<br/>
-		</div></div>
-		<div align="center">
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-</div>
-<span class="mandatory" >
-				<div id="Errors" ><s:actionerror /><s:fielderror /></div>
-				<s:actionmessage />
+	<s:form action="directBankPayment" theme="css_xhtml" name="dbpform"
+		validate="true">
+		<s:push value="model">
+			<jsp:include page="../budget/budgetHeader.jsp">
+				<jsp:param value="Bank to Bank Transfer" name="heading" />
+			</jsp:include>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Reverse Direct Bank Payment</div>
+				<div id="listid" style="display: block">
+					<br />
+				</div>
+			</div>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
 			</span>
-	<table border="0" width="100%" cellspacing="0" cellpadding="0">
-						<tr>
-		<td class="bluebox" width="10%"></td>
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/></td>
-			<td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			<s:hidden name="id"/>
-			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A></td>
-		</tr>
-						<%@include file="directBankPayment-form.jsp"%>
-		<table border="0" width="100%" cellspacing="0" cellpadding="0">
-										
-						<tr>
-		<td class="bluebox" width="10%"></td>
-		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			
-			<td class="bluebox" width="22%"><s:text name="reversalVoucherNumber"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="22%"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td></s:if>
-			<td class="bluebox" width="18%"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
-			<td class="bluebox" width="38%"><s:textfield name="reversalVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('dbpform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
-		</tr>
-	</table>
-	</div>	
-<%@include file="../voucher/ReverseButtons.jsp"%>
-	</table>
-	<div class="subheadsmallnew"/></div>
-	<div class="mandatory" align="left">* Mandatory Fields</div>
-	</div>	
-</s:push>
-</s:form>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebox" width="10%"></td>
+					<td class="bluebox" width="22%"><s:text name="voucher.number" /></td>
+					<td class="bluebox" width="22%"><s:textfield
+							name="voucherNumber" id="voucherNumber" /></td>
+					<s:hidden name="id" />
+					<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" width="38%"><input type="text"
+						name="voucherDate"
+						onkeyup="DateFormat(this,this.value,event,false,'3')"
+						value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
+						href="javascript:show_calendar('cbtbform.voucherDate');"
+						style="text-decoration: none">&nbsp;<img tabIndex="-1"
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+				</tr>
+				<%@include file="directBankPayment-form.jsp"%>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
 
-<SCRIPT type="text/javascript">
+					<tr>
+						<td class="bluebox" width="10%"></td>
+						<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+
+							<td class="bluebox" width="22%"><s:text
+									name="reversalVoucherNumber" /><span class="mandatory">*</span></td>
+							<td class="bluebox" width="22%"><s:textfield
+									name="reversalVoucherNumber" id="reversalVoucherNumber" /></td>
+						</s:if>
+						<td class="bluebox" width="18%"><s:text
+								name="reversalVoucherDate" /><span class="mandatory">*</span></td>
+						<td class="bluebox" width="38%"><s:textfield
+								name="reversalVoucherDate" id="reversalVoucherDate"
+								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+							href="javascript:show_calendar('dbpform.reversalVoucherDate');"
+							style="text-decoration: none">&nbsp;<img tabIndex="-1"
+								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+					</tr>
+				</table>
+				</div>
+				<%@include file="../voucher/ReverseButtons.jsp"%>
+			</table>
+			<div class="subheadsmallnew" /></div>
+			<div class="mandatory" align="left">* Mandatory Fields</div>
+			</div>
+		</s:push>
+	</s:form>
+
+	<SCRIPT type="text/javascript">
  function onLoadTask_reverse() {
         if (button != null && button != "") {
 				if (document.getElementById("Errors").innerHTML == '') {

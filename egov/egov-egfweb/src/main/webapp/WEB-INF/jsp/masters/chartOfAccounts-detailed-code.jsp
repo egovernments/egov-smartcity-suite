@@ -71,13 +71,13 @@
 	<s:actionmessage theme="simple" />
 	<s:actionerror />
 	<s:fielderror />
-<div class="formmainbox">
-	<div class="subheadnew">
-		<s:text name="chartOfAccount.detailed" />
-	</div>
-	<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
-		action="chartOfAccounts" theme="simple">
-		
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="chartOfAccount.detailed" />
+		</div>
+		<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
+			action="chartOfAccounts" theme="simple">
+
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
 				id="chartOfAccountsTable">
 				<tr>
@@ -93,18 +93,17 @@
 					<td width="30%" class="bluebox">&nbsp;</td>
 				</tr>
 			</table>
-			
-		</div>
-		<div class="buttonbottom" style="padding-bottom: 10px;">
-			<input type="submit" class="buttonsubmit" value="Search and Modify"
-				id="Search" name="Search" onclick="return validateAndSubmit(this);" />
-			<input type="submit" class="buttonsubmit" value="Search and View"
-				id="Search" name="Search" onclick="return validateAndSubmit(this);" />
-			<input type="button" name="add" value="Add New" method="addNew"
-				class="buttonsubmit" onClick="return addNew();" /> <input
-				type="button" value="Close" onclick="javascript:window.close()"
-				class="button" />
-		</div>
+	</div>
+	<div class="buttonbottom" style="padding-bottom: 10px;">
+		<input type="submit" class="buttonsubmit" value="Search and Modify"
+			id="Search" name="Search" onclick="return validateAndSubmit(this);" />
+		<input type="submit" class="buttonsubmit" value="Search and View"
+			id="Search" name="Search" onclick="return validateAndSubmit(this);" />
+		<input type="button" name="add" value="Add New" method="addNew"
+			class="buttonsubmit" onClick="return addNew();" /> <input
+			type="button" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</div>
 	</s:form>
 	<script type="text/javascript">
 	var allGlcodes = [];

@@ -77,18 +77,16 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Collections integration service implementation - exposes APIs that can be
- * used by other applications (typically billing systems) to interact with the
- * collections module.
+ * Collections integration service implementation - exposes APIs that can be used by other applications (typically billing
+ * systems) to interact with the collections module.
  */
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-CollectionIntegrationService {
+        CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -132,8 +130,7 @@ CollectionIntegrationService {
 
     /*
      * (non-Javadoc)
-     * @seeorg.egov.infstr.collections.integration.ICollectionInterface#
-     * getBillReceiptInfo(java.lang.String, java.lang.String)
+     * @seeorg.egov.infstr.collections.integration.ICollectionInterface# getBillReceiptInfo(java.lang.String, java.lang.String)
      */
     @Override
     public List<BillReceiptInfo> getBillReceiptInfo(final String serviceCode, final String refNum) {
@@ -152,8 +149,7 @@ CollectionIntegrationService {
 
     /*
      * (non-Javadoc)
-     * @seeorg.egov.infstr.collections.integration.ICollectionInterface#
-     * getBillReceiptInfo(java.lang.String, java.util.Set)
+     * @seeorg.egov.infstr.collections.integration.ICollectionInterface# getBillReceiptInfo(java.lang.String, java.util.Set)
      */
     @Override
     public Map<String, List<BillReceiptInfo>> getBillReceiptInfo(final String serviceCode, final Set<String> refNums) {
@@ -167,8 +163,8 @@ CollectionIntegrationService {
 
     /*
      * (non-Javadoc)
-     * @seeorg.egov.infstr.collections.integration.ICollectionInterface#
-     * getInstrumentReceiptInfo(java.lang.String, java.lang.String)
+     * @seeorg.egov.infstr.collections.integration.ICollectionInterface# getInstrumentReceiptInfo(java.lang.String,
+     * java.lang.String)
      */
     @Override
     public List<BillReceiptInfo> getInstrumentReceiptInfo(final String serviceCode, final String instrumentNum) {
@@ -186,8 +182,7 @@ CollectionIntegrationService {
 
     /*
      * (non-Javadoc)
-     * @seeorg.egov.infstr.collections.integration.ICollectionInterface#
-     * getInstrumentReceiptInfo(java.lang.String, java.util.Set)
+     * @seeorg.egov.infstr.collections.integration.ICollectionInterface# getInstrumentReceiptInfo(java.lang.String, java.util.Set)
      */
     @Override
     public Map<String, List<BillReceiptInfo>> getInstrumentReceiptInfo(final String serviceCode,
@@ -202,9 +197,8 @@ CollectionIntegrationService {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.egov.infstr.collections.integration.CollectionIntegrationService#
-     * getReceiptInfo (java.lang.String, java.lang.String)
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# getReceiptInfo (java.lang.String,
+     * java.lang.String)
      */
     @Override
     public BillReceiptInfo getReceiptInfo(final String serviceCode, final String receiptNum) {
@@ -220,11 +214,22 @@ CollectionIntegrationService {
         }
     }
 
+    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest)
+    {
+        LOGGER.info(paymentInfoSearchRequest.getSource());
+        ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",
+                paymentInfoSearchRequest.getTransactionId(), paymentInfoSearchRequest.getSource());
+        if (header == null)
+        {
+            throw new RuntimeException("No data found");
+        }
+        return new RestReceiptInfo(header);
+
+    }
+
     /*
      * (non-Javadoc)
-     * @see
-     * org.egov.infstr.collections.integration.CollectionIntegrationService#
-     * getReceiptInfo (java.lang.String, java.util.Set)
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# getReceiptInfo (java.lang.String, java.util.Set)
      */
     @Override
     public Map<String, BillReceiptInfo> getReceiptInfo(final String serviceCode, final Set<String> receiptNums) {
@@ -237,13 +242,12 @@ CollectionIntegrationService {
     }
 
     /*
-     * @see
-     * org.egov.infstr.collections.integration.CollectionIntegrationService#
-     * createReceipt (BillInfo bill, List<PaymentInfo> paymentInfoList)
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# createReceipt (BillInfo bill, List<PaymentInfo>
+     * paymentInfoList)
      */
     @Override
     public BillReceiptInfo createReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Started....");
+        LOGGER.info("Logs for CreateReceipt : Receipt Creation Started....");
         final Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
@@ -273,9 +277,12 @@ CollectionIntegrationService {
             final User user = collectionsUtil.getUserById(EgovThreadLocals.getUserId());
             receiptHeader.setCreatedBy(user);
             receiptHeader.setLastModifiedBy(user);
-            final Location location = collectionsUtil.getLocationByUser(EgovThreadLocals.getUserId());
-            if (location != null)
-                receiptHeader.setLocation(location);
+            // TODO: Uncomment following lines once LocationId is added to ThreadLocals
+            /*if (EgovThreadLocals.getLocationId() != null) {
+                final Location location = collectionsUtil.getLocationById(EgovThreadLocals.getLocationId());
+                if (location != null)
+                    receiptHeader.setLocation(location);
+            }*/
         }
 
         BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
@@ -295,12 +302,9 @@ CollectionIntegrationService {
             }
 
             /*
-             * if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrType)){
-             * PaymentInfoCard paytInfoCard = (PaymentInfoCard)paytInfo;
-             * instrumentHeaderList.add(
-             * collectionCommon.validateAndConstructCardInstrument(
-             * paytInfoCard,receiptHeader)); otherInstrumenttotal =
-             * paytInfoCard.getInstrumentAmount(); }
+             * if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrType)){ PaymentInfoCard paytInfoCard =
+             * (PaymentInfoCard)paytInfo; instrumentHeaderList.add( collectionCommon.validateAndConstructCardInstrument(
+             * paytInfoCard,receiptHeader)); otherInstrumenttotal = paytInfoCard.getInstrumentAmount(); }
              */
 
             if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
@@ -322,12 +326,9 @@ CollectionIntegrationService {
             }
 
             /*
-             * if(CollectionConstants.INSTRUMENTTYPE_ATM.equals(instrType)){
-             * PaymentInfoATM paytInfoATM = (PaymentInfoATM)paytInfo;
-             * instrumentHeaderList.add(
-             * collectionCommon.validateAndConstructATMInstrument(
-             * paytInfoATM)); otherInstrumenttotal =
-             * paytInfoATM.getInstrumentAmount(); }
+             * if(CollectionConstants.INSTRUMENTTYPE_ATM.equals(instrType)){ PaymentInfoATM paytInfoATM =
+             * (PaymentInfoATM)paytInfo; instrumentHeaderList.add( collectionCommon.validateAndConstructATMInstrument(
+             * paytInfoATM)); otherInstrumenttotal = paytInfoATM.getInstrumentAmount(); }
              */
         }
         final Set<InstrumentHeader> instHeaderSet = new HashSet(
@@ -351,15 +352,12 @@ CollectionIntegrationService {
         LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
 
         /*
-         * try { receiptHeaderService.createVoucherForReceipt(receiptHeader,
-         * Boolean.FALSE);
-         * LOGGER.debug("Updated financial systems and created voucher."); }
-         * catch (ApplicationRuntimeException ex) { errors.add(new
-         * ValidationError(
-         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."
-         * ,
-         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."
-         * )); LOGGER.error("Update to financial systems failed"); }
+         * try { receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.FALSE);
+         * LOGGER.debug("Updated financial systems and created voucher."); } catch (ApplicationRuntimeException ex) {
+         * errors.add(new ValidationError(
+         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state." ,
+         * "Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state." ));
+         * LOGGER.error("Update to financial systems failed"); }
          */
 
         collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
@@ -367,26 +365,22 @@ CollectionIntegrationService {
 
         // Create Vouchers
         /*
-         * List<CVoucherHeader> voucherHeaderList = new
-         * ArrayList<CVoucherHeader>();
-         * LOGGER.info("Receipt Voucher created with vouchernumber:     " +
-         * receiptHeader.getVoucherNum()); for (ReceiptVoucher receiptVoucher :
-         * receiptHeader.getReceiptVoucher()) {
-         * voucherHeaderList.add(receiptVoucher.getVoucherheader()); }
+         * List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
+         * LOGGER.info("Receipt Voucher created with vouchernumber:     " + receiptHeader.getVoucherNum()); for (ReceiptVoucher
+         * receiptVoucher : receiptHeader.getReceiptVoucher()) { voucherHeaderList.add(receiptVoucher.getVoucherheader()); }
          */
         /*
          * if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
-         * receiptHeaderService.updateInstrument(voucherHeaderList,
-         * instrumentHeaderList); }
+         * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
          */
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
+        LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader);
     }
 
     /*
      * (non-Javadoc)
-     * @seeorg.egov.infstr.collections.integration.ICollectionInterface#
-     * getPendingReceiptsInfo(java.lang.String, java.lang.String)
+     * @seeorg.egov.infstr.collections.integration.ICollectionInterface# getPendingReceiptsInfo(java.lang.String,
+     * java.lang.String)
      */
     @Override
     public List<BillReceiptInfo> getOnlinePendingReceipts(final String serviceCode, final String consumerCode) {
@@ -405,10 +399,8 @@ CollectionIntegrationService {
     }
 
     /*
-     * @see
-     * org.egov.infstr.collections.integration.CollectionIntegrationService#
-     * createMiscellaneousReceipt (BillInfo bill, List<PaymentInfo>
-     * paymentInfoList)
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# createMiscellaneousReceipt (BillInfo bill,
+     * List<PaymentInfo> paymentInfoList)
      */
     @Override
     public BillReceiptInfo createMiscellaneousReceipt(final BillInfo bill, final List<PaymentInfo> paymentInfoList) {
@@ -439,43 +431,31 @@ CollectionIntegrationService {
 
         if (EgovThreadLocals.getUserId() != null) {
             receiptHeader.setCreatedBy(collectionsUtil.getUserById(EgovThreadLocals.getUserId()));
-            final Location location = collectionsUtil.getLocationByUser(EgovThreadLocals.getUserId());
-            if (location != null)
-                receiptHeader.setLocation(location);
+            // TODO: Uncomment following lines once LocationId is added to ThreadLocals
+            /*if (EgovThreadLocals.getLocationId() != null) {
+                final Location location = collectionsUtil.getLocationById(EgovThreadLocals.getLocationId());
+                if (location != null)
+                    receiptHeader.setLocation(location);
+            }*/
         }
 
         final BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
         final BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
 
         /*
-         * // populate instrument details List<InstrumentHeader>
-         * instrumentHeaderList = new ArrayList<InstrumentHeader>(); for
-         * (PaymentInfo paytInfo : paymentInfoList) { String instrType =
-         * paytInfo.getInstrumentType().toString(); if
-         * (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrType)) {
-         * PaymentInfoCash paytInfoCash = (PaymentInfoCash) paytInfo;
-         * instrumentHeaderList
-         * .add(collectionCommon.validateAndConstructCashInstrument
-         * (paytInfoCash)); otherInstrumenttotal =
-         * paytInfo.getInstrumentAmount(); } if
-         * (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
-         * PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo;
-         * instrumentHeaderList
-         * .add(collectionCommon.validateAndConstructBankInstrument
-         * (paytInfoBank)); otherInstrumenttotal =
-         * paytInfoBank.getInstrumentAmount(); } if
-         * (CollectionConstants.INSTRUMENTTYPE_CHEQUE.equals(instrType) ||
-         * CollectionConstants.INSTRUMENTTYPE_DD.equals(instrType)) {
-         * PaymentInfoChequeDD paytInfoChequeDD = (PaymentInfoChequeDD)
-         * paytInfo; instrumentHeaderList.add(collectionCommon.
-         * validateAndConstructChequeDDInstrument(paytInfoChequeDD));
-         * chequeDDInstrumenttotal =
-         * chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount());
-         * } } instrumentHeaderList =
-         * receiptHeaderService.createInstrument(instrumentHeaderList);
-         * LOGGER.info("        Instrument List created ");
-         * receiptHeader.setReceiptInstrument(new
-         * HashSet(instrumentHeaderList));
+         * // populate instrument details List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>(); for
+         * (PaymentInfo paytInfo : paymentInfoList) { String instrType = paytInfo.getInstrumentType().toString(); if
+         * (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrType)) { PaymentInfoCash paytInfoCash = (PaymentInfoCash)
+         * paytInfo; instrumentHeaderList .add(collectionCommon.validateAndConstructCashInstrument (paytInfoCash));
+         * otherInstrumenttotal = paytInfo.getInstrumentAmount(); } if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType))
+         * { PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo; instrumentHeaderList
+         * .add(collectionCommon.validateAndConstructBankInstrument (paytInfoBank)); otherInstrumenttotal =
+         * paytInfoBank.getInstrumentAmount(); } if (CollectionConstants.INSTRUMENTTYPE_CHEQUE.equals(instrType) ||
+         * CollectionConstants.INSTRUMENTTYPE_DD.equals(instrType)) { PaymentInfoChequeDD paytInfoChequeDD = (PaymentInfoChequeDD)
+         * paytInfo; instrumentHeaderList.add(collectionCommon. validateAndConstructChequeDDInstrument(paytInfoChequeDD));
+         * chequeDDInstrumenttotal = chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount()); } } instrumentHeaderList
+         * = receiptHeaderService.createInstrument(instrumentHeaderList); LOGGER.info("        Instrument List created ");
+         * receiptHeader.setReceiptInstrument(new HashSet(instrumentHeaderList));
          */
 
         BigDecimal debitAmount = BigDecimal.ZERO;
@@ -512,17 +492,15 @@ CollectionIntegrationService {
 
         /*
          * if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
-         * receiptHeaderService.updateInstrument(voucherHeaderList,
-         * instrumentHeaderList); }
+         * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
          */
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
+        LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Finished....");
         return new BillReceiptInfoImpl(receiptHeader);
     }
 
     /*
-     * @see
-     * org.egov.infstr.collections.integration.CollectionIntegrationService#
-     * getAggregateReceiptTotal (Date fromDate, Date toDate)
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# getAggregateReceiptTotal (Date fromDate, Date
+     * toDate)
      */
     @Override
     public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest aggrReq) {
@@ -533,13 +511,17 @@ CollectionIntegrationService {
         // SimpleDateFormat("dd-MMM-yyyy");
         final StringBuilder queryBuilder = new StringBuilder(
                 "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
-                        + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode"
-                        + " group by ulb,service  ");
+                        + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
+                        + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
         final Query query = getSession().createSQLQuery(queryBuilder.toString());
         query.setDate("fromDate", aggrReq.getFromdate());
         query.setDate("toDate", aggrReq.getTodate());
         query.setString("serviceCode", aggrReq.getServicecode());
+        query.setString("source", aggrReq.getSource());
+        query.setString("ulbCode", aggrReq.getUlbCode());
+
+        LOGGER.debug(aggrReq.getSource());
 
         final List<Object[]> queryResults = query.list();
 
@@ -551,25 +533,27 @@ CollectionIntegrationService {
             aggregatePaymentInfo.setServiceCode(objectArray[3].toString());
             listAggregatePaymentInfo.add(aggregatePaymentInfo);
         }
+        if (listAggregatePaymentInfo.size() == 0)
+        {
+            listAggregatePaymentInfo.add(new RestAggregatePaymentInfo());
+        }
         return listAggregatePaymentInfo;
     }
 
     /*
-     * @see
-     * org.egov.infstr.collections.integration.CollectionIntegrationService#
-     * getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
-     * final String serviceCode)
+     * @see org.egov.infstr.collections.integration.CollectionIntegrationService# getReceiptDetailsByDateAndService(final Date
+     * fromDate, final Date toDate, final String serviceCode)
      */
     @Override
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(final Date fromDate, final Date toDate,
-            final String serviceCode) {
+    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest aggrReq) {
         final ArrayList<RestReceiptInfo> receipts = new ArrayList<RestReceiptInfo>(0);
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
-                CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, fromDate, toDate, serviceCode);
+                CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, aggrReq.getFromdate(), aggrReq.getTodate(),
+                aggrReq.getServicecode(), aggrReq.getSource());
         if (receiptHeaders == null || receiptHeaders.isEmpty())
         {
-             receipts.add(new RestReceiptInfo());
-             return receipts;
+            receipts.add(new RestReceiptInfo());
+            return receipts;
         }
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
@@ -587,24 +571,25 @@ CollectionIntegrationService {
     }
 
     @Override
-    public String cancelReceipt(PaymentInfoSearchRequest cancelReq){
+    public String cancelReceipt(PaymentInfoSearchRequest cancelReq) {
         String statusMessage = null;
         String instrumentType = "";
         boolean isInstrumentDeposited = false;
         final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, cancelReq.getReceiptNo());
-        if(receiptHeaderToBeCancelled==null)
+        if (receiptHeaderToBeCancelled == null)
         {
-            throw new RuntimeException("Invalid receiptNumber:"+cancelReq.getReceiptNo());
+            throw new RuntimeException("Invalid receiptNumber:" + cancelReq.getReceiptNo());
 
         }
         else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
         {
-            throw new RuntimeException("transactionId doesnot match with receiptNo  " +cancelReq.getReceiptNo());
+            throw new RuntimeException("transactionId doesnot match with receiptNo  " + cancelReq.getReceiptNo());
         }
-        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled.getStatus().getCode()))
+        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled.getStatus()
+                .getCode()))
         {
-            throw new RuntimeException("Receipt is already Cancelled  " +cancelReq.getReceiptNo());
+            throw new RuntimeException("Receipt is already Cancelled  " + cancelReq.getReceiptNo());
         }
 
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());

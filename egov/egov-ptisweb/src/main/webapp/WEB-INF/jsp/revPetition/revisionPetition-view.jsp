@@ -62,15 +62,12 @@
 	jQuery(function($) {
 		try {
 			jQuery(".datepicker").datepicker({
-				format : "dd/mm/yyyy"
+				format : "dd/mm/yyyy",
+				autoclose:true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
 		}
-
-		jQuery('.datepicker').on('changeDate', function(ev) {
-			jQuery(this).datepicker('hide');
-		});
 	});
 
 	var propType ;
@@ -83,6 +80,9 @@
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
 		enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 		//toggleFloorDetailsView();
+		<s:if test="(objection.egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED))" >
+			showHideFirmName();
+		</s:if>
 		loadDesignationFromMatrix();
 	}
 	function enableAppartnaumtLandDetailsView() {
@@ -212,9 +212,48 @@
 
 		return true;
 	}
+
+	function showHideFirmName(){
+		var tbl=document.getElementById("floorDetails");
+        var tabLength = (tbl.rows.length)-1;
+        var usageId ;
+        if(tabLength==1){
+        	enableDisableFirmName(getControlInBranch(tbl.rows[1],'floorUsage'));
+        }else{
+        	for(var i=0;i<tabLength;i++){
+            	if(i==0){
+            		enableDisableFirmName(getControlInBranch(tbl.rows[1],'floorUsage'));
+                }else{
+                	usageId = 'floorUsage'+(i-1);
+                	enableDisableFirmName(getControlInBranch(tbl.rows[i+1],usageId));
+                }
+            }
+        }
+        
+	}
+
+	function enableDisableFirmName(obj){ 
+		var selIndex = obj.selectedIndex;
+		if(selIndex != undefined){
+			var selText = obj.options[selIndex].text; 
+			var rIndex = getRow(obj).rowIndex;
+			var tbl = document.getElementById('floorDetails');
+			var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+			if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+				if(firmval.value!=null && firmval.value!="") 
+					firmval.value="";
+				firmval.readOnly = true;      
+			} else{
+				firmval.readOnly = false; 
+			}
+		}
+	} 
+
+		
 </script>
 <script
 	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 <link href="<c:url value='/resources/css/headertab.css'/>"
 	rel="stylesheet" type="text/css" />
 </head>

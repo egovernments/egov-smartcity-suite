@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<html>  
+<html>
 <script>
 var totalAmount=0;
 function setTotalAmount()
@@ -60,67 +60,153 @@ function setTotalAmount()
 	}
 }
 </script>
-<head>  
-	<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css"/>
-    <title>Cheque Assignment Search for Salary Payments</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<head>
+<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css" />
+<title>Cheque Assignment Search for Salary Payments</title>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 </head>
-	<body onLoad="setTotalAmount()">  
-		<s:form action="chequeAssignment" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-				<jsp:param name="heading" value="Cheque Assignment Search" />
-			</jsp:include>
- 			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-			<div class="formmainbox"><div class="subheadnew"><s:text name="chq.assignment.heading.salary.search"/></div>
-			<table align="center" width="100%" cellpadding="0" cellspacing="0" id="paymentTable">
-				<tr>  
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.select"/><s:checkbox id="selectall" name="selectall" onclick="checkAll(this)"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="Sl No"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.partyname"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.payment.voucherno"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.payment.voucherdate"/></th>
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.payment.amount"/></th>
-				      <s:if test="%{reassignSurrenderChq && paymentMode=='cheque'}">
-				      <th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.serialno"/></th>
-				    	<th class="bluebgheadtdnew" width="10%"><s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span></th>
-				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
-				    </s:if>
-				    <s:elseif test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
-				    <th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.serialno"/></th>
-				    	<th class="bluebgheadtdnew" width="10%"><s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span></th>
-				    	<th class="bluebgheadtdnew"><s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
-				    </s:elseif>
-				</tr>
-				<s:iterator var="p" value="chequeAssignmentList" status="s">  
-	        	<tr>  
-			  	  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="voucherHeaderId" name="chequeAssignmentList[%{#s.index}].voucherHeaderId" value="%{voucherHeaderId}"/><s:checkbox name="chequeAssignmentList[%{#s.index}].isSelected" id="isSelected%{#s.index}" onclick="update(this,%{#s.index})"/></td>
-			  	   <td align="left"   style="text-align:center" class="blueborderfortdnew"/> <s:property value="#s.index+1" /> </td>  
-			  	  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="paidTo" name="chequeAssignmentList[%{#s.index}].paidTo" value="%{paidTo}"/><s:property value="%{paidTo}"/></td>
-				  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="voucherNumber" name="chequeAssignmentList[%{#s.index}].voucherNumber" value="%{voucherNumber}"/><s:hidden id="detailtypeid" name="chequeAssignmentList[%{#s.index}].detailtypeid" value="%{detailtypeid}"/><s:hidden id="detailkeyid" name="chequeAssignmentList[%{#s.index}].detailkeyid" value="%{detailkeyid}"/><s:property value="%{voucherNumber}" /></td>
-      			  <td style="text-align:center" class="blueborderfortdnew"><s:hidden id="voucherDate" name="chequeAssignmentList[%{#s.index}].voucherDate" value="%{voucherDate}"/><s:date name="%{voucherDate}" var="tempPaymentDate" format="dd/MM/yyyy"/><s:date name="%{voucherDate}" format="dd/MM/yyyy"/><s:hidden  name="chequeAssignmentList[%{#s.index}].tempPaymentDate" value="%{tempPaymentDate}"></s:hidden></td>
-      			  <td style="text-align:right" class="blueborderfortdnew"><s:hidden name="chequeAssignmentList[%{#s.index}].paidAmount" id="chequeAssignmentList[%{#s.index}].paidAmount" value="%{paidAmount}"/><s:text name="format.number" ><s:param value="%{paidAmount}"/></s:text></td>
-				 	
+<body onLoad="setTotalAmount()">
+	<s:form action="chequeAssignment" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Cheque Assignment Search" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="chq.assignment.heading.salary.search" />
+			</div>
+			<table align="center" width="100%" cellpadding="0" cellspacing="0"
+				id="paymentTable">
+				<tr>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.select" />
+						<s:checkbox id="selectall" name="selectall"
+							onclick="checkAll(this)" /></th>
+					<th class="bluebgheadtdnew"><s:text name="Sl No" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.partyname" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.payment.voucherno" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.payment.voucherdate" /></th>
+					<th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.payment.amount" /></th>
 					<s:if test="%{reassignSurrenderChq && paymentMode=='cheque'}">
-      			 <td style="text-align:right" class="blueborderfortdnew"><s:select name="chequeAssignmentList[%{#s.index}].serialNo" id="chequeAssignmentList[%{#s.index}].serialNo" list="chequeSlNoMap"  value='%{chequeAssignmentList[%{#s.index}].serialNo}'  /></td>
-      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:textfield id="chequeNumber%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeNumber" value="%{chequeNumber}" onchange="validateReassignSurrenderChequeNumber(this)"  size="10"/></td>
-      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:date name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDate%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeDate" value="%{tempChequeDate}" size="10"/><a href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
-      			  </s:if>    
-      			  <s:elseif test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
-      			  <td style="text-align:right" class="blueborderfortdnew"><s:select name="chequeAssignmentList[%{#s.index}].serialNo" id="chequeAssignmentList[%{#s.index}].serialNo" list="chequeSlNoMap"  value='%{chequeAssignmentList[%{#s.index}].serialNo}'  /></td>
-      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:textfield id="chequeNumber%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeNumber" value="%{chequeNumber}" onchange="validateChequeNumber(this)"  size="10"/></td>
-      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:date name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDate%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeDate" value="%{tempChequeDate}" size="10"/><a href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
-      			  </s:elseif>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.instrument.serialno" /></th>
+						<th class="bluebgheadtdnew" width="10%"><s:text
+								name="chq.assignment.instrument.no" /><span class="mandatory">*</span></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.instrument.date" /><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
+					</s:if>
+					<s:elseif
+						test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.instrument.serialno" /></th>
+						<th class="bluebgheadtdnew" width="10%"><s:text
+								name="chq.assignment.instrument.no" /><span class="mandatory">*</span></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="chq.assignment.instrument.date" /><span class="mandatory">*</span><br>(dd/mm/yyyy)</th>
+					</s:elseif>
 				</tr>
+				<s:iterator var="p" value="chequeAssignmentList" status="s">
+					<tr>
+						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+								id="voucherHeaderId"
+								name="chequeAssignmentList[%{#s.index}].voucherHeaderId"
+								value="%{voucherHeaderId}" />
+							<s:checkbox name="chequeAssignmentList[%{#s.index}].isSelected"
+								id="isSelected%{#s.index}" onclick="update(this,%{#s.index})" /></td>
+						<td align="left" style="text-align: center"
+							class="blueborderfortdnew" />
+						<s:property value="#s.index+1" />
+						</td>
+						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+								id="paidTo" name="chequeAssignmentList[%{#s.index}].paidTo"
+								value="%{paidTo}" />
+							<s:property value="%{paidTo}" /></td>
+						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+								id="voucherNumber"
+								name="chequeAssignmentList[%{#s.index}].voucherNumber"
+								value="%{voucherNumber}" />
+							<s:hidden id="detailtypeid"
+								name="chequeAssignmentList[%{#s.index}].detailtypeid"
+								value="%{detailtypeid}" />
+							<s:hidden id="detailkeyid"
+								name="chequeAssignmentList[%{#s.index}].detailkeyid"
+								value="%{detailkeyid}" />
+							<s:property value="%{voucherNumber}" /></td>
+						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
+								id="voucherDate"
+								name="chequeAssignmentList[%{#s.index}].voucherDate"
+								value="%{voucherDate}" />
+							<s:date name="%{voucherDate}" var="tempPaymentDate"
+								format="dd/MM/yyyy" />
+							<s:date name="%{voucherDate}" format="dd/MM/yyyy" />
+							<s:hidden
+								name="chequeAssignmentList[%{#s.index}].tempPaymentDate"
+								value="%{tempPaymentDate}"></s:hidden></td>
+						<td style="text-align: right" class="blueborderfortdnew"><s:hidden
+								name="chequeAssignmentList[%{#s.index}].paidAmount"
+								id="chequeAssignmentList[%{#s.index}].paidAmount"
+								value="%{paidAmount}" />
+							<s:text name="format.number">
+								<s:param value="%{paidAmount}" />
+							</s:text></td>
+
+						<s:if test="%{reassignSurrenderChq && paymentMode=='cheque'}">
+							<td style="text-align: right" class="blueborderfortdnew"><s:select
+									name="chequeAssignmentList[%{#s.index}].serialNo"
+									id="chequeAssignmentList[%{#s.index}].serialNo"
+									list="chequeSlNoMap"
+									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
+									id="chequeNumber%{#s.index}"
+									name="chequeAssignmentList[%{#s.index}].chequeNumber"
+									value="%{chequeNumber}"
+									onchange="validateReassignSurrenderChequeNumber(this)"
+									size="10" /></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:date
+									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
+								<s:textfield id="chequeDate%{#s.index}"
+									name="chequeAssignmentList[%{#s.index}].chequeDate"
+									value="%{tempChequeDate}" size="10" /><a
+								href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');"
+								style="text-decoration: none">&nbsp;<img
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+						</s:if>
+						<s:elseif
+							test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
+							<td style="text-align: right" class="blueborderfortdnew"><s:select
+									name="chequeAssignmentList[%{#s.index}].serialNo"
+									id="chequeAssignmentList[%{#s.index}].serialNo"
+									list="chequeSlNoMap"
+									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
+									id="chequeNumber%{#s.index}"
+									name="chequeAssignmentList[%{#s.index}].chequeNumber"
+									value="%{chequeNumber}" onchange="validateChequeNumber(this)"
+									size="10" /></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:date
+									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
+								<s:textfield id="chequeDate%{#s.index}"
+									name="chequeAssignmentList[%{#s.index}].chequeDate"
+									value="%{tempChequeDate}" size="10" /><a
+								href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');"
+								style="text-decoration: none">&nbsp;<img
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+						</s:elseif>
+					</tr>
 				</s:iterator>
 				<s:if test="%{chequeAssignmentList!=null}">
 					<s:if test="%{chequeAssignmentList.size()!=0}">
-						<tr>  
-					  	  <td style="text-align:center" class="blueborderfortdnew">&nbsp</td>
-					  	  <td align="left"   style="text-align:center" class="blueborderfortdnew"/> &nbsp </td>  
+						<tr>
+							<td style="text-align: center" class="blueborderfortdnew">&nbsp</td>
+							<td align="left" style="text-align: center"
+								class="blueborderfortdnew" /> &nbsp
+							</td>  
 					  	  <td align="left"   style="text-align:center" class="blueborderfortdnew"/> &nbsp </td>  
 					  	  <td align="left"   style="text-align:center" class="blueborderfortdnew"/> &nbsp </td>  
 		      			  <td style="text-align:center" class="blueborderfortdnew">Total Amount - </td>
@@ -129,83 +215,114 @@ function setTotalAmount()
 					</s:if>
 				</s:if>
 			</table>
-			<div class="subheadsmallnew" id="noRecordsDiv" style="visibility:hidden">No Records Found</div>
-			<br/>
-			<div id="departmentDiv" style="visibility:visible">
-			<s:hidden name="reassignSurrenderChq"/>
+			<div class="subheadsmallnew" id="noRecordsDiv"
+				style="visibility: hidden">No Records Found</div>
+			<br />
+			<div id="departmentDiv" style="visibility: visible">
+				<s:hidden name="reassignSurrenderChq" />
 				<table align="center" width="100%" cellspacing="0">
 					<tr>
 						<s:if test="%{paymentMode=='rtgs'}">
-							<td class="greybox">
-								<s:text name="chq.assignment.rtgs.refno"/><span class="mandatory">*</span>
-								<s:textfield id="rtgsRefNo" name="rtgsRefNo" value="%{rtgsRefNo}"  maxlength="150"/>
+							<td class="greybox"><s:text name="chq.assignment.rtgs.refno" /><span
+								class="mandatory">*</span> <s:textfield id="rtgsRefNo"
+									name="rtgsRefNo" value="%{rtgsRefNo}" maxlength="150" /></td>
+							<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
+								class="mandatory">*</span> <s:textfield name="rtgsDate"
+									id="rtgsDate" maxlength="20" value="%{rtgsDate}"
+									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+								href="javascript:show_calendar('forms[0].rtgsDate');"
+								style="text-decoration: none">&nbsp;<img
+									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 							</td>
-							<td class="greybox">
-								<s:text name="chq.assignment.rtgs.date"/><span class="mandatory">*</span>
-								<s:textfield name="rtgsDate" id="rtgsDate" maxlength="20" value="%{rtgsDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].rtgsDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-							</td>
-							
+
 						</s:if>
 						<s:else>
-							<td class="greybox">
-								<s:text name="chq.assignment.department"/><span class="mandatory">*</span>
-								<s:select name="vouchermis.departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----"  value="%{voucherHeader.vouchermis.departmentid.id}"/>
-							</td>
-							<td class="greybox">
-								<s:text name="chq.assignment.instrument.serialno"/><span class="mandatory">*</span>
-								<s:select name="serialNo" id="serialNo" list="chequeSlNoMap"  value='%{serialNo}'  />
-							</td>
+							<td class="greybox"><s:text name="chq.assignment.department" /><span
+								class="mandatory">*</span> <s:select
+									name="vouchermis.departmentid" id="departmentid"
+									list="dropdownData.departmentList" listKey="id"
+									listValue="name" headerKey="-1"
+									headerValue="----Choose----"
+									value="%{voucherHeader.vouchermis.departmentid.id}" /></td>
+							<td class="greybox"><s:text
+									name="chq.assignment.instrument.serialno" /><span
+								class="mandatory">*</span> <s:select name="serialNo"
+									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
 							<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
-								<td class="greybox">
-									<s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span>
-									<s:textfield id="chequeNumber0" name="chequeNo" value="%{chequeNo}" onchange="validateReassignSurrenderChequeNumber(this)"/>
-								</td>
-								<td class="greybox">
-									<s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span>(dd/mm/yyyy)
-									<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
+								<td class="greybox"><s:text
+										name="chq.assignment.instrument.no" /><span class="mandatory">*</span>
+									<s:textfield id="chequeNumber0" name="chequeNo"
+										value="%{chequeNo}"
+										onchange="validateReassignSurrenderChequeNumber(this)" /></td>
+								<td class="greybox"><s:text
+										name="chq.assignment.instrument.date" /><span
+									class="mandatory">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
+										var="tempChequeDate" format="dd/MM/yyyy" />
+									<s:textfield id="chequeDt" name="chequeDt"
+										value="%{tempChequeDate}"
+										onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+									href="javascript:show_calendar('forms[0].chequeDt');"
+									style="text-decoration: none">&nbsp;<img
+										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
 								</td>
 							</s:if>
-							
-							
-							<s:elseif test="%{!isChequeNoGenerationAuto() && paymentMode!='cheque'}">
-								<td class="greybox">
-									<s:text name="chq.assignment.instrument.no"/><span class="mandatory">*</span>
-									<s:textfield id="chequeNumber0" name="chequeNo" value="%{chequeNo}" onchange="validateChequeNumber(this)"/>
-								</td>
-								<td class="greybox">
-									<s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span>(dd/mm/yyyy)
-									<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
+
+
+							<s:elseif
+								test="%{!isChequeNoGenerationAuto() && paymentMode!='cheque'}">
+								<td class="greybox"><s:text
+										name="chq.assignment.instrument.no" /><span class="mandatory">*</span>
+									<s:textfield id="chequeNumber0" name="chequeNo"
+										value="%{chequeNo}" onchange="validateChequeNumber(this)" /></td>
+								<td class="greybox"><s:text
+										name="chq.assignment.instrument.date" /><span
+									class="mandatory">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
+										var="tempChequeDate" format="dd/MM/yyyy" />
+									<s:textfield id="chequeDt" name="chequeDt"
+										value="%{tempChequeDate}"
+										onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+									href="javascript:show_calendar('forms[0].chequeDt');"
+									style="text-decoration: none">&nbsp;<img
+										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
 								</td>
 							</s:elseif>
-							<s:if  test="%{paymentMode=='cash'}">
-								<td class="greybox">
-									<s:text name="chq.assignment.instrument.infavourof"/><span class="mandatory">*</span>
-									<s:textfield id="inFavourOf" name="inFavourOf" value="%{inFavourOf}" maxlength="50"/>
-								</td>
+							<s:if test="%{paymentMode=='cash'}">
+								<td class="greybox"><s:text
+										name="chq.assignment.instrument.infavourof" /><span
+									class="mandatory">*</span> <s:textfield id="inFavourOf"
+										name="inFavourOf" value="%{inFavourOf}" maxlength="50" /></td>
 							</s:if>
 						</s:else>
-						
+
 					</tr>
 				</table>
 			</div>
-			<div  class="buttonbottom">
-				<s:hidden id="assignmentType" name="assignmentType" value="%{assignmentType}"/>
-				<s:hidden id="selectedRows" name="selectedRows" value="%{selectedRows}"/>
-				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}"/>
-				<s:hidden id="bankaccount" name="bankaccount" value="%{bankaccount}"/>
-				<s:hidden id="isSalaryChequeAssignment" name="isSalaryChequeAssignment" value="%{isSalaryChequeAssignment}"/>
+			<div class="buttonbottom">
+				<s:hidden id="assignmentType" name="assignmentType"
+					value="%{assignmentType}" />
+				<s:hidden id="selectedRows" name="selectedRows"
+					value="%{selectedRows}" />
+				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}" />
+				<s:hidden id="bankaccount" name="bankaccount" value="%{bankaccount}" />
+				<s:hidden id="isSalaryChequeAssignment"
+					name="isSalaryChequeAssignment" value="%{isSalaryChequeAssignment}" />
 				<s:if test="%{paymentMode=='rtgs'}">
-					<s:submit id="assignChequeBtn" method="createInstrumentForSalaryPayment" value="Process" cssClass="buttonsubmit" onclick="return validate()" />
+					<s:submit id="assignChequeBtn"
+						method="createInstrumentForSalaryPayment" value="Process"
+						cssClass="buttonsubmit" onclick="return validate()" />
 				</s:if>
 				<s:else>
-					<s:submit id="assignChequeBtn" method="createInstrumentForSalaryPayment" value="Assign Cheque" cssClass="buttonsubmit" onclick="return validate()" />
+					<s:submit id="assignChequeBtn"
+						method="createInstrumentForSalaryPayment" value="Assign Cheque"
+						cssClass="buttonsubmit" onclick="return validate()" />
 				</s:else>
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
 		</div>
-		<s:token/>
-		</s:form>
-		<script>
+		<s:token />
+	</s:form>
+	<script>
 			function update(obj,index)
 			{
 				if(obj.checked)
@@ -470,12 +587,13 @@ function setTotalAmount()
 				document.getElementById('totalAmount').value=totalAmount.toFixed(2);
 			}
 		</script>
-		<s:if test="chequeAssignmentList == null || chequeAssignmentList.size==0">
-			<script>
+	<s:if
+		test="chequeAssignmentList == null || chequeAssignmentList.size==0">
+		<script>
 				document.getElementById('noRecordsDiv').style.visibility='visible';
 				document.getElementById('departmentDiv').style.visibility='hidden';
 				document.getElementById('assignChequeBtn').style.display='none';
 			</script>
-		</s:if>
-	</body>  
+	</s:if>
+</body>
 </html>

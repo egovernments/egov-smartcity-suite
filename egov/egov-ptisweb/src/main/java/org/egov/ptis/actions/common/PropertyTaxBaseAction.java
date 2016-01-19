@@ -75,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -123,11 +124,14 @@ import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
+import org.egov.ptis.master.service.PropertyUsageService;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
+import org.jsoup.select.Evaluator.IsEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -174,6 +178,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PositionMasterService positionMasterService;
     private PropertyImpl propertyModel;
     protected WorkflowBean workflowBean;
+    @Autowired
+    private PropertyUsageService propertyUsageService;
+    
 
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();
@@ -345,13 +352,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 addActionError(getText("mandatory.buildingPlanNo"));
             if (null == propertyDetail.getBuildingPermissionDate())
                 addActionError(getText("mandatory.buildingPlanDate"));
-            else if (null != regDocDate
+            /*else if (null != regDocDate
                     && DateUtils.compareDates(propertyDetail.getBuildingPermissionDate(), regDocDate)) {
                 if (modifyRsn == null
                         || (modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER) && !modifyRsn
                                 .equals(PROPERTY_MODIFY_REASON_BIFURCATE)))
                     addActionError(getText("regDate.greaterThan.buildingPermDate"));
-            }
+            }*/
         }
         if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
@@ -399,6 +406,16 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.usage", msgParams));
+                        
+                        if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
+                                || floor.getFirmName().equals("")){     
+                            if (floor.getPropertyUsage() != null || null != floor.getPropertyUsage().getId()
+                                    || !floor.getPropertyUsage().getId().toString().equals("-1")){
+                                final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor.getPropertyUsage().getId()));
+                                if(pu!=null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
+                                    addActionError(getText("mandatory.floor.firmName", msgParams)); 
+                            } 
+                        }
 
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
@@ -499,10 +516,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
-                approverName = assignment.getEmployee().getUsername();
+                approverName = (assignment.getEmployee().getName()).concat("~").concat(assignment.getPosition().getName()); 
             }
-        } else
+        } else{
             currentState = null;
+            if (null != approverPositionId && approverPositionId != -1){
+                Assignment assignment = assignmentService.getAssignmentsForPosition(approverPositionId,new Date()).get(0);
+                approverName =  assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+            }
+        }
         if (null != property.getId())
             wfInitiator = propertyService.getWorkflowInitiator(property);
 

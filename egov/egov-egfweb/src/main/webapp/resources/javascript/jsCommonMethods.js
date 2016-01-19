@@ -482,7 +482,6 @@ function addNewRowFromButton(TableID, checkFields1)
 	PageManager.DataService.getControlInBranch(table.rows[rowLength],checkFields[0]).focus();
 	return true;
 	
-	return false;
 }
 
 //This function will recalculate the debit and credit amount on Deleting a row  

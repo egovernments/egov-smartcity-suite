@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -69,11 +68,14 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterConnectionBillable extends AbstractBillable implements Billable {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
@@ -201,7 +203,12 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        return true;
+    	if(getWaterConnectionDetails().getConnectionStatus() !=null && getWaterConnectionDetails().getConnectionStatus().equals(ConnectionStatus.ACTIVE)) 
+    	{
+    		return true;
+    	}
+    	else
+    		return false;
     }
 
     @Override

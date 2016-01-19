@@ -38,39 +38,46 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="20%"><strong><s:text name="fund.code"/><span class="mandatory">*</span></strong></td>
-			    <td class="bluebox">
-			    	<s:textfield id="code" name="code" value="%{code}"/>
-			    </td>
-				<td class="bluebox" width="20%"><strong><s:text name="fund.fundNameActual"/><span class="mandatory">*</span></strong></td>
-			    <td class="bluebox">
-			    	<s:textfield id="fundNameAcual" name="fundNameActual" value="%{fundNameActual}"/>
-			    </td>
-			</tr>
-			<tr>
-			    <td class="greybox">&nbsp;</td>
-				<td class="greybox" width="20%"><strong><s:text name="fund.parent"/></strong></td>
-			    <td class="greybox">
-			    	<s:select list="dropdownData.fundList" id="fund.fund.id" listKey="id"	listValue="name" name="fund.fund.id" headerKey=""	headerValue="---- Choose ----" value="fund.id"></s:select>
-			    </td>
-				<td class="greybox" width="20%"><strong><s:text name="fund.identifier"/></strong></td>
-			    <td class="greybox">
-			    	<s:textfield id="identifier" name="identifier" value="%{identifier}" maxlength="1"/>
-			    </td>
-			</tr>
-			<tr>
-			    <td class="bluebox">&nbsp;</td>
-			    <td class="bluebox" width="20%"><strong><s:text name="fund.interFTrnfrCode"/></strong></td>
-			    <td class="bluebox">
-			    	<s:hidden name="chartofaccountsByPayglcodeid.id" id="chartofaccountsByPayglcodeid.id"/>
-			    	<s:textfield id="chartofaccountsByPayglcodeid.name" name="chartofaccountsByPayglcodeid.name" value="%{chartofaccountsByPayglcodeid.name}"/>
-			    	<IMG id=IMG1 onclick="openSearch(this,'12')" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0 >
-			    </td>
-				<td class="bluebox" width="20%"><strong><s:text name="fund.active"/></strong></td>
-			    <td class="bluebox">
-			    	<s:checkbox name="isactive" id="isactive"/>
-			    </td>
-			</tr>
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="fund.code" /><span class="mandatory">*</span></strong></td>
+		<td class="bluebox"><s:textfield id="code" name="code"
+				value="%{code}" /></td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="fund.fundNameActual" /><span class="mandatory">*</span></strong></td>
+		<td class="bluebox"><s:textfield id="fundNameAcual"
+				name="fundNameActual" value="%{fundNameActual}" /></td>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="20%"><strong><s:text
+					name="fund.parent" /></strong></td>
+		<td class="greybox"><s:select list="dropdownData.fundList"
+				id="fund.fund.id" listKey="id" listValue="name" name="fund.fund.id"
+				headerKey="" headerValue="---- Choose ----" value="fund.id"></s:select>
+		</td>
+		<td class="greybox" width="20%"><strong><s:text
+					name="fund.identifier" /></strong></td>
+		<td class="greybox"><s:textfield id="identifier"
+				name="identifier" value="%{identifier}" maxlength="1" /></td>
+	</tr>
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="fund.interFTrnfrCode" /></strong></td>
+		<td class="bluebox"><s:hidden
+				name="chartofaccountsByPayglcodeid.id"
+				id="chartofaccountsByPayglcodeid.id" /> <s:textfield
+				id="chartofaccountsByPayglcodeid.name"
+				name="chartofaccountsByPayglcodeid.name"
+				value="%{chartofaccountsByPayglcodeid.name}" /> <IMG id=IMG1
+			onclick="openSearch(this,'12')" height=22
+			src="/egi/resources/erp2/images/plus1.gif" width=25 align=top
+			border=0></td>
+		<td class="bluebox" width="20%"><strong><s:text
+					name="fund.active" /></strong></td>
+		<td class="bluebox"><s:checkbox name="isactive" id="isactive" />
+		</td>
+	</tr>
 </table>

@@ -37,26 +37,63 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <title><s:property value="type" /> JV-Create</title>
 <style type="text/css">
-	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#codescontainer ul {padding:5px 0;width:100%;}
-	#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#codescontainer li.yui-ac-highlight {background:#ff0;}
-	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
 </style>
 </head>
 
-	<script>
+<script>
 		path="${pageContext.request.contextPath}";
 		var totaldbamt=0,totalcramt=0;
 		function addGridRows(){
@@ -220,86 +257,102 @@ function validate(name,value){
 	return true;
 }
 	</script>
-<body onload="loadDropDownCodes();loadDropDownCodesFunction();checkBillId();refreshInbox()">
-<s:form action="preApprovedVoucher" theme="simple" >
-			<s:token/>
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="PJV-Create" />
-			</jsp:include>
-<font  style='color: red ;'> 
-<p class="error-block" id="lblError" style="font:bold" ></p>
-</font>
-			<span class="mandatory">
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-			</span>
-		<div class="formmainbox"><div class="formheading"></div>
-		<div id="listid" style="display:block">
-		<br/>
-	<jsp:include page="voucherViewHeader.jsp"/>
+<body
+	onload="loadDropDownCodes();loadDropDownCodesFunction();checkBillId();refreshInbox()">
+	<s:form action="preApprovedVoucher" theme="simple">
+		<s:token />
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="PJV-Create" />
+		</jsp:include>
+		<font style='color: red;'>
+			<p class="error-block" id="lblError" style="font: bold"></p>
+		</font>
+		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		</span>
+		<div class="formmainbox">
+			<div class="formheading"></div>
+			<div id="listid" style="display: block">
+				<br />
+				<jsp:include page="voucherViewHeader.jsp" />
 
-	<s:hidden id="billid" name="billid" value="%{egBillregister.id}"/><s:hidden id="id" name="id" value="%{voucherHeader.id}"/>
-	<s:hidden id="vhid" name="vhid" value="%{voucherHeader.id}"/><s:hidden  name="actionName"  id="actionName"/>
+				<s:hidden id="billid" name="billid" value="%{egBillregister.id}" />
+				<s:hidden id="id" name="id" value="%{voucherHeader.id}" />
+				<s:hidden id="vhid" name="vhid" value="%{voucherHeader.id}" />
+				<s:hidden name="actionName" id="actionName" />
 
-	<s:if test="%{type == finConstExpendTypeContingency}">
-		<table> <tr class="bluebox"> <a href="#" onclick="openSource()">Source</a> </tr></table>
-	</s:if>
-	<br/>
-	<div id="labelAD" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Account Details</th></table>
-	</div>
-	<div class="yui-skin-sam" align="center">
-       <div id="billDetailTable"></div>
-     </div>
-     <script>
+				<s:if test="%{type == finConstExpendTypeContingency}">
+					<table>
+						<tr class="bluebox">
+							<a href="#" onclick="openSource()">Source</a>
+						</tr>
+					</table>
+				</s:if>
+				<br />
+				<div id="labelAD" align="center">
+					<table width="80%" border=0 id="labelid">
+						<th>Account Details</th>
+					</table>
+				</div>
+				<div class="yui-skin-sam" align="center">
+					<div id="billDetailTable"></div>
+				</div>
+				<script>
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
 	 </script>
-	 <div id="codescontainer"></div>
-	 <br/>
-	 	<div id="labelSL" align="center">
-	 		<table width="80%" border=0 id="labelid"><th>Sub-Ledger Details</th></table>
-	 	</div>
-	 	
-		<div class="yui-skin-sam" align="center">
-	       <div id="subLedgerTable"></div>
-	     </div>
-		<script>
+				<div id="codescontainer"></div>
+				<br />
+				<div id="labelSL" align="center">
+					<table width="80%" border=0 id="labelid">
+						<th>Sub-Ledger Details</th>
+					</table>
+				</div>
+
+				<div class="yui-skin-sam" align="center">
+					<div id="subLedgerTable"></div>
+				</div>
+				<script>
 			addGridRows();
 			makeSubLedgerTable();
 			addGridRowsSL();
 			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
 		</script>
-		
-			<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-				<%@include file="workflowApproval.jsp"%>
-			</s:if>
-		<div align="center">
-		
-		<table border="0" width="80%">
-			<tr>
-				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox"><s:textarea name="comments" id="comments" cols="50" rows="3" value="%{voucherHeader.state.text1}" onblur="checkLength(this)"/></td>
-			</tr>
-			
-			<tr>
-				<td/><td>
-				<s:submit type="submit" cssClass="buttonsubmit" value="Save as Working Copy" id="save" name="save" method="saveAsWorkingCopy" onclick="return validate()"/>
-				<s:iterator value="%{getValidActions('')}" var="p">
-				  <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" 
-				  method="sendForApprovalForWC" onclick="return validate('%{name}','%{description}')"/>
-				</s:iterator>
-				<s:submit cssClass="button" id="print" value="Print Preview" action="journalVoucherPrint" method="print"/>
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/></td>
-			</tr>
-		</table>
-		
-	</div>
-</div>
-</div>
-<div id="codescontainer"></div>
-</s:form>
+
+				<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
+					<%@include file="workflowApproval.jsp"%>
+				</s:if>
+				<div align="center">
+
+					<table border="0" width="80%">
+						<tr>
+							<td class="bluebox">Comments</td>
+							<td class="bluebox"><s:textarea name="comments"
+									id="comments" cols="50" rows="3"
+									value="%{voucherHeader.state.text1}" onblur="checkLength(this)" /></td>
+						</tr>
+
+						<tr>
+							<td />
+							<td><s:submit type="submit" cssClass="buttonsubmit"
+									value="Save as Working Copy" id="save" name="save"
+									method="saveAsWorkingCopy" onclick="return validate()" /> <s:iterator
+									value="%{getValidActions('')}" var="p">
+									<s:submit type="submit" cssClass="buttonsubmit"
+										value="%{description}" id="%{name}" name="%{name}"
+										method="sendForApprovalForWC"
+										onclick="return validate('%{name}','%{description}')" />
+								</s:iterator> <s:submit cssClass="button" id="print" value="Print Preview"
+									action="journalVoucherPrint" method="print" /> <input
+								type="button" value="Close" onclick="javascript:window.close()"
+								class="button" /></td>
+						</tr>
+					</table>
+
+				</div>
+			</div>
+		</div>
+		<div id="codescontainer"></div>
+	</s:form>
 
 </body>
 

@@ -45,6 +45,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
@@ -60,6 +63,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.RestErrors;
+import org.egov.restapi.model.RestResponse;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.search.domain.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +82,8 @@ import com.google.gson.reflect.TypeToken;
 
 @RestController
 public class RestPaymentReportConroller {
+	
+	  private static final Logger LOGGER = Logger.getLogger(RestPaymentReportConroller.class);
 
 	@Autowired
 	private  CollectionIntegrationService collectionService;
@@ -90,25 +97,54 @@ public class RestPaymentReportConroller {
 	@Autowired
 	ApplicationContext applicationContext;
 
+	@RequestMapping(value = "/reconciliation/paymentdetails/transaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String searchPaymentByTransactionId(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
+	{
+		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString(): "");
+	
+		LOGGER.info(request.getSession().getAttribute("source"));
+		RestResponse detailsByTransactionId=new RestResponse();
+		try {
+			 RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest); 
+			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+			detailsByTransactionId.setAmount(detailsByTransactionId2.getAmount());
+			detailsByTransactionId.setReceiptNo(detailsByTransactionId2.getReceiptNo());
+			detailsByTransactionId.setReferenceNo(detailsByTransactionId2.getReferenceNo());
+			detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
+			
+		} catch (Exception e) {
+			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
+			RestErrors err=new  RestErrors();
+			err.setErrorMessage(e.getMessage());
+			err.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
+			detailsByTransactionId.getErrorDetails().add(err);   
+		}
+		return JsonConvertor.convert(detailsByTransactionId);
+		  
+	}  
 
 
 	@RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest)
+	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
 			throws JsonGenerationException, JsonMappingException, IOException {
+		
+		LOGGER.info(request.getSession().getAttribute("source"));
+		
+		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString(): "");
 
 		List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(paymentInfoSearchRequest);
 		return getJSONResponse(listAggregatePaymentInfo);
 	}
 
 	@RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,BindingResult errors)
+	public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
 			throws JsonGenerationException, JsonMappingException, IOException {
 
-
-		validatePaymentDetails(paymentInfoSearchRequest,errors);
-		List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(
-				paymentInfoSearchRequest.getFromdate(),
-				paymentInfoSearchRequest.getTodate(), paymentInfoSearchRequest.getServicecode());
+		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString(): "");
+		List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(paymentInfoSearchRequest);
 		return getJSONResponse(receiptInfoList);
 	}
 

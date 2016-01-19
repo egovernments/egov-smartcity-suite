@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <script>
 <s:set var="colratio" value="%{'[50,80,80,200,80,80,80,80,80,80,80,80,150,150,200,150]'}"/>
@@ -138,144 +138,296 @@ function alertTimeOut()
 	}
 
 </script>
-<s:hidden name="consolidatedScreen"/>
+<s:hidden name="consolidatedScreen" />
 <div id="detail" width="1200px">
 
-<table id="detailsTable" class="table-header-fix"  width="1200px">
- <thead>
-    <tr>
-        <th><s:text name="budgetdetail.budget.department"/></th>
-        <th><s:text name="fund"/></th>
-        <th><s:text name="budgetdetail.function"/></th>
-        <th><s:text name="budgetdetail.budgetGroup"/></th>
-        <th><s:text name="budgetdetail.reference"/></th>
-        <th><s:text name="budgetdetail.actuals"/><s:property value="twopreviousfinYearRange"/></th>
-        <th><s:text name="budgetdetail.actuals"/><s:property value="previousfinYearRange"/></th>
-        <th>BE <s:property value="currentfinYearRange"/>(A)</th>
-        <th><s:text name="budget.reappropriation"/>(B)</th>
-        <th>Total (A+B)</th>
-        <th><s:text name="budgetdetail.actuals"/> upto <s:property value="currentfinYearRange"/> </th>
-        <th id="anticipatoryAmountheading" ><s:text name="budgetdetail.anticipatoryAmount"/> <s:property value="currentfinYearRange"/></th>
-        <th> <s:text name="budget.re"/> <s:property value="savedbudgetDetailList.get(0).getBudget().getFinancialYear().getFinYearRange()"/>  Proposed</th>
-       	<s:if test="%{isConsolidatedScreen()}">
-          <th>RE <s:property value="savedbudgetDetailList.get(0).getBudget().getFinancialYear().getFinYearRange()"/> Fixed</th>
-        </s:if>
-        <th><s:text name="budget.be"/> <s:property value="nextfinYearRange"/> Proposed </th>
-        <s:if test="%{isConsolidatedScreen()}">
-        	<th width="10%">BE <s:property value="nextfinYearRange"/> Fixed </th>
-		</s:if>
-		<th><s:text name="budgetdetail.remarks"/><s:hidden  name="detailsLength"  id="detailsLength" value="%{bpBeanList.size()}"/></th>
-        <th>Documents</th>
-        <s:if test="%{isAsstFMU()}">
-        <th><s:text name="delete"/></th>
-       </s:if>
-    </tr>
-    </thead>
-    <tbody>
-    <s:iterator value="bpBeanList" status="stat">
-    <tr>
-    <s:if test="%{rowType=='heading'}">
-<td style="text-align:right;"> <s:property value="reference"/>&nbsp;</td>
-<td colspan="4"><h4><s:property value="budgetGroup"/>&nbsp;</h4></td>
-<td/><td/><td/><td/><td/>
-<td/><td/><td/><td/><td/>
-<td/> </s:if>
-    <s:elseif test="%{rowType=='majorcode'}">
-    
-    		<td/>
-    
-            <td colspan="3" class="blueborderfortd"><h4 style="font-size: 9.6px;"> <s:property value="budgetGroup"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <s:property value="reference"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="twoPreviousYearActuals"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="previousYearActuals"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="currentYearBE"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="reappropriation"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="total"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="currentYearActuals"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="anticipatory"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="proposedRE"/>&nbsp;</td>
-			<s:if test="%{isConsolidatedScreen()}">
-				<td style="text-align:right;"> <h4><s:property value="approvedRE"/>&nbsp;</h4></td>
-			</s:if>
-            <td style="text-align:right;"> <s:property value="proposedBE"/>&nbsp;</td>
-			<s:if test="%{isConsolidatedScreen()}">
-				<td style="text-align:right;"> <h4><s:property value="approvedBE"/>&nbsp;</h4></td>
-			</s:if>
-            <td/><td/>
-    </s:elseif>
-    
-    <s:elseif test="%{rowType=='total'}">
-    
-    		<td/>
-    
-            <td colspan="3" ><h4> <s:property value="budgetGroup"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="reference"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="twoPreviousYearActuals"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="previousYearActuals"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="currentYearBE"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="reappropriation"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="total"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="currentYearActuals"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="anticipatory"/>&nbsp;</h4></td>
-            <td style="text-align:right;"> <h4><s:property value="proposedRE"/>&nbsp;</h4></td>
-			<s:if test="%{isConsolidatedScreen()}">
-				<td style="text-align:right;"> <h4><s:property value="approvedRE"/>&nbsp;</h4></td>
-			</s:if>
-            <td style="text-align:right;"> <h4><s:property value="proposedBE"/>&nbsp;</h4></td>
-			<s:if test="%{isConsolidatedScreen()}">
-				<td style="text-align:right;"> <h4><s:property value="approvedBE"/>&nbsp;</h4></td>
-			</s:if>
-            <td/><td/>
-    </s:elseif>
-                                                            
-    <s:else>            
-            <input type='hidden' name="bpBeanList[<s:property value='#stat.index'/>].id"  id="bpBeanList[<s:property value='#stat.index'/>].id" value="<s:property value='id'/>"/>
-            <input type='hidden' name="bpBeanList[<s:property value='#stat.index'/>].nextYrId" id="bpBeanList[<s:property value='#stat.index'/>].nextYrId" value="<s:property value='nextYrId'/>"/>
-            <input type='hidden' name="bpBeanList[<s:property value='#stat.index'/>].documentNumber" id="bpBeanList[<s:property value='#stat.index'/>].documentNumber" value="<s:property value='docNo'/>"/>
-            <td> <s:property value="executingDepartment"/> &nbsp;</td>   
-            <td> <s:property value="fund"/>&nbsp;</td>
-            <td> <s:property value="function"/>&nbsp;</td>
-            <td> <s:property value="budgetGroup"/>&nbsp;</td>                      
-            <td/>
-                                   
-            
-            <td style="text-align:right;"> <s:property value="twoPreviousYearActuals"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="previousYearActuals"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="currentYearBE"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="reappropriation"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="total"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="currentYearActuals"/>&nbsp;</td>
-            <td style="text-align:right;"> <s:property value="anticipatory"/>&nbsp;</td>
-                   
-            
-           			<s:if test="%{isConsolidatedScreen()}">
-           			<td style="text-align:right;"> <s:property value="proposedRE"/>&nbsp;</td>
-                   	<td>	<input type="text" onchange="update(this);" size="10" style="text-align:right;" id='bpBeanList[<s:property value="#stat.index"/>].approvedRE'  name='bpBeanList[<s:property value="#stat.index"/>].approvedRE' value='<s:text name="approvedRE"><s:param value="approvedRE"/></s:text>'/>&nbsp;</td>
-                   	</s:if>
-                   	<s:else>
-                   	<td> <input type="text" onchange="update(this);" style="text-align:right;size: 50px;" id='bpBeanList[<s:property value="#stat.index"/>].proposedRE' name='bpBeanList[<s:property value="#stat.index"/>].proposedRE' value='<s:text name="format.number"><s:param value="proposedRE"/></s:text>'/>&nbsp;</td>
-                   	</s:else>
-                    <s:if test="%{isConsolidatedScreen()}">
-                    	<td style="text-align:right;"> <s:property value="proposedBE"/>&nbsp;</td>
-                    	<td><input type="text" onchange="update(this);" size="10" style="text-align:right;" id='bpBeanList[<s:property value="#stat.index"/>].approvedBE' name='bpBeanList[<s:property value="#stat.index"/>].approvedBE' value='<s:text name="approvedBE"><s:param value="approvedBE"/></s:text>'/>&nbsp;</td>
-                    </s:if>
-                    <s:else>
-                       	<td> <input type="text" onChange="update(this);" style="text-align:right;size: 50px;" id='bpBeanList[<s:property value="#stat.index"/>].proposedBE' name='bpBeanList[<s:property value="#stat.index"/>].proposedBE' value='<s:text name="format.number"><s:param value="proposedBE"/></s:text>'/>&nbsp;</td>
-                    </s:else>
+	<table id="detailsTable" class="table-header-fix" width="1200px">
+		<thead>
+			<tr>
+				<th><s:text name="budgetdetail.budget.department" /></th>
+				<th><s:text name="fund" /></th>
+				<th><s:text name="budgetdetail.function" /></th>
+				<th><s:text name="budgetdetail.budgetGroup" /></th>
+				<th><s:text name="budgetdetail.reference" /></th>
+				<th><s:text name="budgetdetail.actuals" />
+					<s:property value="twopreviousfinYearRange" /></th>
+				<th><s:text name="budgetdetail.actuals" />
+					<s:property value="previousfinYearRange" /></th>
+				<th>BE <s:property value="currentfinYearRange" />(A)
+				</th>
+				<th><s:text name="budget.reappropriation" />(B)</th>
+				<th>Total (A+B)</th>
+				<th><s:text name="budgetdetail.actuals" /> upto <s:property
+						value="currentfinYearRange" /></th>
+				<th id="anticipatoryAmountheading"><s:text
+						name="budgetdetail.anticipatoryAmount" /> <s:property
+						value="currentfinYearRange" /></th>
+				<th><s:text name="budget.re" /> <s:property
+						value="savedbudgetDetailList.get(0).getBudget().getFinancialYear().getFinYearRange()" />
+					Proposed</th>
+				<s:if test="%{isConsolidatedScreen()}">
+					<th>RE <s:property
+							value="savedbudgetDetailList.get(0).getBudget().getFinancialYear().getFinYearRange()" />
+						Fixed
+					</th>
+				</s:if>
+				<th><s:text name="budget.be" /> <s:property
+						value="nextfinYearRange" /> Proposed</th>
+				<s:if test="%{isConsolidatedScreen()}">
+					<th width="10%">BE <s:property value="nextfinYearRange" />
+						Fixed
+					</th>
+				</s:if>
+				<th><s:text name="budgetdetail.remarks" />
+					<s:hidden name="detailsLength" id="detailsLength"
+						value="%{bpBeanList.size()}" /></th>
+				<th>Documents</th>
+				<s:if test="%{isAsstFMU()}">
+					<th><s:text name="delete" /></th>
+				</s:if>
+			</tr>
+		</thead>
+		<tbody>
+			<s:iterator value="bpBeanList" status="stat">
+				<tr>
+					<s:if test="%{rowType=='heading'}">
+						<td style="text-align: right;"><s:property value="reference" />&nbsp;</td>
+						<td colspan="4"><h4>
+								<s:property value="budgetGroup" />
+								&nbsp;
+							</h4></td>
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+						<td />
+					</s:if>
+					<s:elseif test="%{rowType=='majorcode'}">
 
-                  <td><textarea cols="50" rows="1" style="size:50px" name='bpBeanList[<s:property value="#stat.index"/>].remarks' ><s:property value="remarks"/></textarea></td>
-                    	
-    
-                    <td><input type="button" class="buttonsubmit" value="Edit" id="budgetDocUploadButton" onclick='showDocumentManager(<s:property value="#stat.index"/>);' /></td>
-                    <s:if test="%{isAsstFMU()}">
-                    <td><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(<s:property value='id'/>, <s:property value='nextYrId'/>,this,'bpBeanList[<s:property value="#stat.index"/>].approvedBE','bpBeanList[<s:property value="#stat.index"/>].approvedRE');"><img src="/egi/resources/erp2/images/cancel.png" border="0"/></a></td>
-                    </s:if>
-		</s:else>
-        </tr>
-        
-    </s:iterator>
-    </tbody>       
-</table>
+						<td />
+
+						<td colspan="3" class="blueborderfortd"><h4
+								style="font-size: 9.6px;">
+								<s:property value="budgetGroup" />
+								&nbsp;
+							</h4></td>
+						<td style="text-align: right;"><s:property value="reference" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="twoPreviousYearActuals" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="previousYearActuals" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="currentYearBE" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="reappropriation" />&nbsp;</td>
+						<td style="text-align: right;"><s:property value="total" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="currentYearActuals" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="anticipatory" />&nbsp;</td>
+						<td style="text-align: right;"><s:property value="proposedRE" />&nbsp;</td>
+						<s:if test="%{isConsolidatedScreen()}">
+							<td style="text-align: right;">
+								<h4>
+									<s:property value="approvedRE" />
+									&nbsp;
+								</h4>
+							</td>
+						</s:if>
+						<td style="text-align: right;"><s:property value="proposedBE" />&nbsp;</td>
+						<s:if test="%{isConsolidatedScreen()}">
+							<td style="text-align: right;">
+								<h4>
+									<s:property value="approvedBE" />
+									&nbsp;
+								</h4>
+							</td>
+						</s:if>
+						<td />
+						<td />
+					</s:elseif>
+
+					<s:elseif test="%{rowType=='total'}">
+
+						<td />
+
+						<td colspan="3"><h4>
+								<s:property value="budgetGroup" />
+								&nbsp;
+							</h4></td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="reference" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="twoPreviousYearActuals" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="previousYearActuals" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="currentYearBE" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="reappropriation" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="total" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="currentYearActuals" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="anticipatory" />
+								&nbsp;
+							</h4>
+						</td>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="proposedRE" />
+								&nbsp;
+							</h4>
+						</td>
+						<s:if test="%{isConsolidatedScreen()}">
+							<td style="text-align: right;">
+								<h4>
+									<s:property value="approvedRE" />
+									&nbsp;
+								</h4>
+							</td>
+						</s:if>
+						<td style="text-align: right;">
+							<h4>
+								<s:property value="proposedBE" />
+								&nbsp;
+							</h4>
+						</td>
+						<s:if test="%{isConsolidatedScreen()}">
+							<td style="text-align: right;">
+								<h4>
+									<s:property value="approvedBE" />
+									&nbsp;
+								</h4>
+							</td>
+						</s:if>
+						<td />
+						<td />
+					</s:elseif>
+
+					<s:else>
+						<input type='hidden'
+							name="bpBeanList[<s:property value='#stat.index'/>].id"
+							id="bpBeanList[<s:property value='#stat.index'/>].id"
+							value="<s:property value='id'/>" />
+						<input type='hidden'
+							name="bpBeanList[<s:property value='#stat.index'/>].nextYrId"
+							id="bpBeanList[<s:property value='#stat.index'/>].nextYrId"
+							value="<s:property value='nextYrId'/>" />
+						<input type='hidden'
+							name="bpBeanList[<s:property value='#stat.index'/>].documentNumber"
+							id="bpBeanList[<s:property value='#stat.index'/>].documentNumber"
+							value="<s:property value='docNo'/>" />
+						<td><s:property value="executingDepartment" /> &nbsp;</td>
+						<td><s:property value="fund" />&nbsp;</td>
+						<td><s:property value="function" />&nbsp;</td>
+						<td><s:property value="budgetGroup" />&nbsp;</td>
+						<td />
+
+
+						<td style="text-align: right;"><s:property
+								value="twoPreviousYearActuals" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="previousYearActuals" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="currentYearBE" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="reappropriation" />&nbsp;</td>
+						<td style="text-align: right;"><s:property value="total" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="currentYearActuals" />&nbsp;</td>
+						<td style="text-align: right;"><s:property
+								value="anticipatory" />&nbsp;</td>
+
+
+						<s:if test="%{isConsolidatedScreen()}">
+							<td style="text-align: right;"><s:property
+									value="proposedRE" />&nbsp;</td>
+							<td><input type="text" onchange="update(this);" size="10"
+								style="text-align: right;"
+								id='bpBeanList[<s:property value="#stat.index"/>].approvedRE'
+								name='bpBeanList[<s:property value="#stat.index"/>].approvedRE'
+								value='<s:text name="approvedRE"><s:param value="approvedRE"/></s:text>' />&nbsp;</td>
+						</s:if>
+						<s:else>
+							<td><input type="text" onchange="update(this);"
+								style="text-align: right; size: 50px;"
+								id='bpBeanList[<s:property value="#stat.index"/>].proposedRE'
+								name='bpBeanList[<s:property value="#stat.index"/>].proposedRE'
+								value='<s:text name="format.number"><s:param value="proposedRE"/></s:text>' />&nbsp;</td>
+						</s:else>
+						<s:if test="%{isConsolidatedScreen()}">
+							<td style="text-align: right;"><s:property
+									value="proposedBE" />&nbsp;</td>
+							<td><input type="text" onchange="update(this);" size="10"
+								style="text-align: right;"
+								id='bpBeanList[<s:property value="#stat.index"/>].approvedBE'
+								name='bpBeanList[<s:property value="#stat.index"/>].approvedBE'
+								value='<s:text name="approvedBE"><s:param value="approvedBE"/></s:text>' />&nbsp;</td>
+						</s:if>
+						<s:else>
+							<td><input type="text" onChange="update(this);"
+								style="text-align: right; size: 50px;"
+								id='bpBeanList[<s:property value="#stat.index"/>].proposedBE'
+								name='bpBeanList[<s:property value="#stat.index"/>].proposedBE'
+								value='<s:text name="format.number"><s:param value="proposedBE"/></s:text>' />&nbsp;</td>
+						</s:else>
+
+						<td><textarea cols="50" rows="1" style="size: 50px"
+								name='bpBeanList[<s:property value="#stat.index"/>].remarks'><s:property
+									value="remarks" /></textarea></td>
+
+
+						<td><input type="button" class="buttonsubmit" value="Edit"
+							id="budgetDocUploadButton"
+							onclick='showDocumentManager(<s:property value="#stat.index"/>);' /></td>
+						<s:if test="%{isAsstFMU()}">
+							<td><a href="#" id="<s:property value='id'/>"
+								onclick="return deleteBudgetDetail(<s:property value='id'/>, <s:property value='nextYrId'/>,this,'bpBeanList[<s:property value="#stat.index"/>].approvedBE','bpBeanList[<s:property value="#stat.index"/>].approvedRE');"><img
+									src="/egi/resources/erp2/images/cancel.png" border="0" /></a></td>
+						</s:if>
+					</s:else>
+				</tr>
+
+			</s:iterator>
+		</tbody>
+	</table>
 </div>
 
 

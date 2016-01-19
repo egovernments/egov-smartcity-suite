@@ -12,6 +12,9 @@ Our primary business motivator is to increase the footprint of eGovernance acros
 Report issues via the [eGov Opensource JIRA][].
 #### License
 The eGov suit is released under version 3.0 of the [GPL][].
+#### Powered By
+<a href="https://www.atlassian.com/" target="_blank"><img src="http://downloads.egovernments.org/atlassian.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/" target="_blank"><img src="http://downloads.egovernments.org/Octocat.png" width="48"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.jetbrains.com/" target="_blank"><img src="http://downloads.egovernments.org/icon_IntelliJIDEA.png" width="48"></a>
+
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
 
@@ -180,12 +183,12 @@ This section gives more details regarding developing and contributing to eGov su
 `git clone git@github.com:egovernments/eGov.git` or `git clone https://github.com/egovernments/eGov.git`
 #### Prerequisites
 
+* Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
-* Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.4.2][Elastic Search]
+* Install [Elastic Search >= v1.7.1][Elastic Search]
 * Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 20 or later][JDK8 build]
+* [Git][] and [JDK 8 update 66 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -202,7 +205,7 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 ##### 2. Intellij Deployment
 
-* TODO - Contribute
+* TODO - Contribution welcome
 
 ##### 3. Database Migration Procedure
 

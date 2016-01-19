@@ -37,11 +37,17 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-  	  <td align="left"  class="blueborderfortdnew"><s:property value="%{billnumber}" /></td>
-      <td class="blueborderfortdnew"><s:date name="%{billdate}" format="dd/MM/yyyy"/></td>
-      <td align="left"  class="blueborderfortdnew"><s:property value="%{egBillregistermis.payto}"/></td>
-      <td style="text-align:right"  class="blueborderfortdnew"><s:property value="%{passedamount - deductionAmtMap.get(id)}" /></td>
-      <td style="text-align:right"  class="blueborderfortdnew"><s:property value="%{paidAmtMap.get(id)}" /></td>
-      <td style="text-align:right"  class="blueborderfortdnew"><s:property value="%{passedamount-paidAmtMap.get(id)-deductionAmtMap.get(id)}" /></td>
+<td align="left" class="blueborderfortdnew"><s:property
+		value="%{billnumber}" /></td>
+<td class="blueborderfortdnew"><s:date name="%{billdate}"
+		format="dd/MM/yyyy" /></td>
+<td align="left" class="blueborderfortdnew"><s:property
+		value="%{egBillregistermis.payto}" /></td>
+<td style="text-align: right" class="blueborderfortdnew"><s:property
+		value="%{passedamount - deductionAmtMap.get(id)}" /></td>
+<td style="text-align: right" class="blueborderfortdnew"><s:property
+		value="%{paidAmtMap.get(id)}" /></td>
+<td style="text-align: right" class="blueborderfortdnew"><s:property
+		value="%{passedamount-paidAmtMap.get(id)-deductionAmtMap.get(id)}" /></td>

@@ -39,31 +39,13 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.WordUtils;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.pims.commons.Position;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.OwnerName;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -79,77 +61,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application")
 public class ReconnectionAckController {
 
-    @Autowired
-    private ReportService reportService;
-
     public static final String ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
-    
-    @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
-    
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-    
-    @Autowired
-    private AssignmentService assignmentService;
-     
-    @Autowired
-    private UserService userService;
-    
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+    
+    @Autowired
+    private ReportGenerationService reportGenerationService;
 
     @RequestMapping(value = "/ReconnacknowlgementNotice", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
-        return generateReport(waterConnectionDetails, session);
-    }
-
-    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
-            final HttpSession session) {
-        if (waterConnectionDetails != null) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            Assignment assignment=null;
-            User user=null;
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                    waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS);
-            final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
-            String ownerName = "";
-            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                ownerName = names.getOwnerName();
-                break;
-            }
-            Position approverPos=waterTaxUtils.getCityLevelCommissionerPosition("Commissioner");
-            if (approverPos!=null) {
-                assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approverPos.getId(),new Date());
-                if (assignment != null && assignment.getEmployee() != null)
-              user = userService.getUserById(assignment.getEmployee().getId());
-            }
-            reportParams.put("applicationType",
-                    WordUtils.capitalize(WaterTaxConstants.RECONNECTIONWITHSLASH));
-            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
-            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
-            reportParams.put("reconnApprovalDate", formatter.format(waterConnectionDetails.getReconnectionApprovalDate()!=null ?waterConnectionDetails.getReconnectionApprovalDate():new Date()));
-            reportParams.put("applicantName", ownerName);
-            reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
-            reportParams.put("commissionerName",(user.getUsername()!=null ? user.getName():ownerName));
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
-            reportParams.put("houseNo", doorNo[0]);
-            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails.getEstimationDetails(), reportParams);
-        }
+        String cityMaunicipalityName = (String)session.getAttribute("citymunicipalityname");
+        String districtName = (String)session.getAttribute("districtName");
+        final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null, cityMaunicipalityName, districtName);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED); 
     }
 
     @RequestMapping(value = "/ReconnacknowlgementNotice/view/{applicationNumber}", method = RequestMethod.GET)
@@ -157,6 +88,12 @@ public class ReconnectionAckController {
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
-        return generateReport(waterConnectionDetails, session);
+        String cityMaunicipalityName = (String)session.getAttribute("citymunicipalityname");
+        String districtName = (String)session.getAttribute("districtName");
+        final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null, cityMaunicipalityName, districtName);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED); 
     }
 }

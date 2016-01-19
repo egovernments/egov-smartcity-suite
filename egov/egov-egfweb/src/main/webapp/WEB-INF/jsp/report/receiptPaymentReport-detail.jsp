@@ -37,126 +37,151 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
-  <head>
-    <title>
-			<s:text name="receipt.payment.report"/>	    	
-	</title>
-  
-  </head>
-  
-  <body>
-	<div class="formmainbox"><div class="subheadnew"><s:text name="receipt.payment.report"/></div>
-	
-	<br/><br/>
-	
-	<s:form name="receiptPaymentReportForm" action="receiptPaymentReport" theme="simple" >
+<head>
+<title><s:text name="receipt.payment.report" /></title>
 
-    	
-    	<br/><br/>
-		
-		<s:if test="%{model.entries.size!=0}">
-		<!-- <div align="center" class="extracontent"><h4><s:property value="fundType"/>  <s:property value="budgetType"/></h4></div> 
-		<div align="right" class="extracontent"><b>Amount in Thousands</b></div> -->  
-		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom"> 
-		<tr>
-            <td  colspan="8">
-			<div class="subheadsmallnew"><strong><s:property value="header"/></strong></div></td>
-          </tr>
-          <tr>
-          <td class="bluebox" colspan="4"> <strong><s:text name="report.run.date"/>:<s:date name="todayDate" format="dd/MM/yyyy"/></strong>
-	    	</td>
-            <td  colspan="8">
-			<div class="blueborderfortd" align="right"><strong> <s:text name="report.amount.in"/> <s:property value="model.currency"/>&nbsp;&nbsp;&nbsp;</strong></div></td>
-          </tr>
-		<tr>
-		<tr>
+</head>
 
-			<th class="bluebgheadtd"  style="width:6%;text-align:center" align="center">
-			</th> 
-			<th class="bluebgheadtd"  style="width:38%;text-align:center" align="center">
-				Schedule Number
-			</th>
-			<th class="bluebgheadtd"  style="width:20%;text-align:center" align="center">
-				Glcode
-			</th>
-			<s:if test="%{model.funds.size()>1}" >
-			<s:iterator value="model.funds" status="stat">
-            	<th class="bluebgheadtd"><s:property value="name"/> </th>
-			</s:iterator>
-			</s:if>	
-			<th class="bluebgheadtd"  style="width:22%;text-align:center" align="center">
-				<s:property value="currentYearToDate"/>
-			</th>
-			<th class="bluebgheadtd"  style="width:22%;text-align:center" align="center">
-				<s:property value="previousYearToDate"/>
-			</th>
-		</tr>
-		<c:set var="trclass" value="greybox"/>
-		<s:iterator  value="model.entries" status="stat">
-			<tr>
-				<s:if test='%{accountName == "Sub Total" || accountName == "Grand Total" }'>
-					<td class="blueborderfortd"><strong> <s:property value="accountName"/>&nbsp;</strong></td>
-					<td class="blueborderfortd"> <s:property value="glCode"/>&nbsp;</td>
-					<td class="blueborderfortd"> &nbsp;</td>
-					<s:if test="%{model.funds.size()>1}">
-						<s:iterator value="model.funds" status="stat">
-			            	<td class="blueborderfortd">
-								<div align="right">
-								<strong>	<s:property value="fundWiseAmount[code]"/>&nbsp;</strong>
-								</div>		
-							</td>
-						</s:iterator>
-					</s:if>
-					<td class="blueborderfortd"> <strong><s:property value="currentYearTotal"/>&nbsp;</strong></td>
-					<td class="blueborderfortd"><strong> <s:property value="previousYearTotal"/>&nbsp;</strong></td>
-				</s:if>
-				<s:else>
-					<td class="blueborderfortd"> &nbsp;</td>
-						<td class="blueborderfortd"> <strong><s:property value="accountName"/>&nbsp;</strong></td>
-						<td class="blueborderfortd"> <s:property value="glCode"/>&nbsp;</td>
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="receipt.payment.report" />
+		</div>
+
+		<br />
+		<br />
+
+		<s:form name="receiptPaymentReportForm" action="receiptPaymentReport"
+			theme="simple">
+
+
+			<br />
+			<br />
+
+			<s:if test="%{model.entries.size!=0}">
+				<!-- <div align="center" class="extracontent"><h4><s:property value="fundType"/>  <s:property value="budgetType"/></h4></div> 
+		<div align="right" class="extracontent"><b>Amount in Thousands</b></div> -->
+				<table width="100%" border="0" align="center" cellpadding="0"
+					cellspacing="0" class="tablebottom">
+					<tr>
+						<td colspan="8">
+							<div class="subheadsmallnew">
+								<strong><s:property value="header" /></strong>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="bluebox" colspan="4"><strong><s:text
+									name="report.run.date" />:<s:date name="todayDate"
+									format="dd/MM/yyyy" /></strong></td>
+						<td colspan="8">
+							<div class="blueborderfortd" align="right">
+								<strong> <s:text name="report.amount.in" /> <s:property
+										value="model.currency" />&nbsp;&nbsp;&nbsp;
+								</strong>
+							</div>
+						</td>
+					</tr>
+					<tr>
+					<tr>
+
+						<th class="bluebgheadtd" style="width: 6%; text-align: center"
+							align="center"></th>
+						<th class="bluebgheadtd" style="width: 38%; text-align: center"
+							align="center">Schedule Number</th>
+						<th class="bluebgheadtd" style="width: 20%; text-align: center"
+							align="center">Glcode</th>
 						<s:if test="%{model.funds.size()>1}">
 							<s:iterator value="model.funds" status="stat">
-				            	<td class="blueborderfortd">
-									<div align="right">
-										<s:property value="fundWiseAmount[code]"/>&nbsp;
-									</div>		
-								</td>
+								<th class="bluebgheadtd"><s:property value="name" /></th>
 							</s:iterator>
 						</s:if>
-					<td class="blueborderfortd"> <s:property value="currentYearTotal"/>&nbsp;</td>
-					<td class="blueborderfortd"> <s:property value="previousYearTotal"/>&nbsp;</td>
-				</s:else>
-			</tr>
-		
-		</s:iterator>
-		
-		</table>
-		
-		</s:if>
-		
-<div class="buttonbottom"><s:text name="report.export.options"/>: <a href='/EGF/report/receiptPaymentReport!exportReceiptPaymentScheduleXls.action?
+						<th class="bluebgheadtd" style="width: 22%; text-align: center"
+							align="center"><s:property value="currentYearToDate" /></th>
+						<th class="bluebgheadtd" style="width: 22%; text-align: center"
+							align="center"><s:property value="previousYearToDate" /></th>
+					</tr>
+					<c:set var="trclass" value="greybox" />
+					<s:iterator value="model.entries" status="stat">
+						<tr>
+							<s:if
+								test='%{accountName == "Sub Total" || accountName == "Grand Total" }'>
+								<td class="blueborderfortd"><strong> <s:property
+											value="accountName" />&nbsp;
+								</strong></td>
+								<td class="blueborderfortd"><s:property value="glCode" />&nbsp;</td>
+								<td class="blueborderfortd">&nbsp;</td>
+								<s:if test="%{model.funds.size()>1}">
+									<s:iterator value="model.funds" status="stat">
+										<td class="blueborderfortd">
+											<div align="right">
+												<strong> <s:property value="fundWiseAmount[code]" />&nbsp;
+												</strong>
+											</div>
+										</td>
+									</s:iterator>
+								</s:if>
+								<td class="blueborderfortd"><strong><s:property
+											value="currentYearTotal" />&nbsp;</strong></td>
+								<td class="blueborderfortd"><strong> <s:property
+											value="previousYearTotal" />&nbsp;
+								</strong></td>
+							</s:if>
+							<s:else>
+								<td class="blueborderfortd">&nbsp;</td>
+								<td class="blueborderfortd"><strong><s:property
+											value="accountName" />&nbsp;</strong></td>
+								<td class="blueborderfortd"><s:property value="glCode" />&nbsp;</td>
+								<s:if test="%{model.funds.size()>1}">
+									<s:iterator value="model.funds" status="stat">
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:property value="fundWiseAmount[code]" />
+												&nbsp;
+											</div>
+										</td>
+									</s:iterator>
+								</s:if>
+								<td class="blueborderfortd"><s:property
+										value="currentYearTotal" />&nbsp;</td>
+								<td class="blueborderfortd"><s:property
+										value="previousYearTotal" />&nbsp;</td>
+							</s:else>
+						</tr>
+
+					</s:iterator>
+
+				</table>
+
+			</s:if>
+
+			<div class="buttonbottom">
+				<s:text name="report.export.options" />
+				: <a
+					href='/EGF/report/receiptPaymentReport!exportReceiptPaymentScheduleXls.action?
 showDropDown=false&model.period=<s:property value="model.period"/>
 &model.currency=<s:property value="model.currency"/>
 &model.financialYear.id=<s:property value="model.financialYear.id"/>
 &model.fund.id=<s:property value="model.fund.id"/>
 &model.fromDate=<s:property value="model.fromDate"/>
 &model.toDate=<s:property value="model.toDate"/>
-&scheduleNo=<s:property value="scheduleNo" />'>Excel</a> 
-| <a href='/EGF/report/receiptPaymentReport!exportReceiptPaymentSchedulePdf.action?
+&scheduleNo=<s:property value="scheduleNo" />'>Excel</a>
+				| <a
+					href='/EGF/report/receiptPaymentReport!exportReceiptPaymentSchedulePdf.action?
 showDropDown=false&model.period=<s:property value="model.period"/>
 &model.currency=<s:property value="model.currency"/>
 &model.financialYear.id=<s:property value="model.financialYear.id"/>
 &model.fund.id=<s:property value="model.fund.id"/>
 &model.fromDate=<s:property value="model.fromDate"/>
 &model.toDate=<s:property value="model.toDate"/>
-&scheduleNo=<s:property value="scheduleNo" />'>PDF</a></div>
-		
-		
-	</s:form>
-	
-  </body>
+&scheduleNo=<s:property value="scheduleNo" />'>PDF</a>
+			</div>
+
+
+		</s:form>
+</body>
 </html>

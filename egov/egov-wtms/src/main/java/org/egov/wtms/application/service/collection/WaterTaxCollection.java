@@ -40,6 +40,8 @@
 package org.egov.wtms.application.service.collection;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +59,7 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -69,6 +72,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.application.rest.CollectionApportioner;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
@@ -84,7 +88,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WaterTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(WaterTaxCollection.class);
-    private BigDecimal totalAmount = BigDecimal.ZERO;
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
@@ -114,7 +117,7 @@ public class WaterTaxCollection extends TaxCollection {
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
-        totalAmount = billRcptInfo.getTotalAmount();
+        final BigDecimal totalAmount = billRcptInfo.getTotalAmount();
         final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
                 .getConsumerCode();
@@ -126,7 +129,7 @@ public class WaterTaxCollection extends TaxCollection {
         }
 
         if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-            updateCollForRcptCreate(demand, billRcptInfo);
+            updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
             updateWaterConnectionDetails(demand);
             updateWaterTaxIndexes(demand);
         } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
@@ -170,21 +173,22 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
+            final BigDecimal totalAmount) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
                     + " with BillReceiptInfo - " + billRcptInfo);
-        updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
+        updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
     }
 
     @Transactional
     private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails,
-            final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+            final EgDemand demand, final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
 
         final StringBuffer query = new StringBuffer(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-                .append("WHERE dmdet.egDemand.id = :demand");
+        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+        .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -200,7 +204,6 @@ public class WaterTaxCollection extends TaxCollection {
                 dmdRsn = dmdDtls.getEgDemandReason();
                 installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
                 demandDetailByReason = new HashMap<String, EgDemandDetails>();
-
                 if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
                     demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
                     installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
@@ -216,9 +219,9 @@ public class WaterTaxCollection extends TaxCollection {
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
                 if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                     final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                    final String[] installsplit = desc[1].split("#");
                     final String reason = desc[0].trim();
-                    final String instDesc = desc[1].trim();
-
+                    final String instDesc = installsplit[0].trim();
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
                     demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                     if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
@@ -251,8 +254,12 @@ public class WaterTaxCollection extends TaxCollection {
                 + " with BillReceiptInfo - " + billRcptInfo);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
 
-        if (demand.getAmtCollected() != null && demand.getAmtCollected() != BigDecimal.ZERO)
-            demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));
+        /*
+         * if (demand.getAmtCollected() != null && demand.getAmtCollected() !=
+         * BigDecimal.ZERO)
+         * demand.setAmtCollected(demand.getAmtCollected().subtract
+         * (billRcptInfo.getTotalAmount()));
+         */
 
         updateDmdDetForRcptCancel(demand, billRcptInfo);
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
@@ -269,17 +276,20 @@ public class WaterTaxCollection extends TaxCollection {
     @Transactional
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
-
+        String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+                    && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
-                final String installment = desc[1].trim();
+                final String[] installsplit = desc[1].split("#");
+                installment = installsplit[0].trim();
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
-                            .getReasonMaster()) && installment.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                            .getReasonMaster())
+                            && installment.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster()
+                                    .getDescription())) {
                         if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
                             throw new ApplicationRuntimeException(
                                     "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
@@ -288,7 +298,11 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                            demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+
                         LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
                                 + reason + " and installment : " + installment);
                     }
@@ -327,8 +341,95 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid) {
+    @Transactional
+    public void apportionCollection(final String billRefNo, final BigDecimal amtPaid,
+            final List<ReceiptDetail> receiptDetails) {
+        final boolean isEligibleForCurrentRebate = false;
+        final boolean isEligibleForAdvanceRebate = false;
+
+        /*
+         * if (isRebatePeriodActive()) { isEligibleForCurrentRebate = true; }
+         */
+        final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
+                isEligibleForAdvanceRebate, BigDecimal.ZERO);
+        final Map<String, BigDecimal> instDemand = getInstDemand(receiptDetails);
+        apportioner.apportion(amtPaid, receiptDetails, instDemand);
+    }
+
+    public Map<String, BigDecimal> getInstDemand(final List<ReceiptDetail> receiptDetails) {
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        String installment = "";
+        String[] desc;
+
+        for (final ReceiptDetail rd : receiptDetails) {
+            final String glCode = rd.getAccounthead().getGlcode();
+            installment = "";
+            desc = rd.getDescription().split("-", 2);
+            final String[] installsplit = desc[1].split("#");
+            installment = installsplit[0].trim();
+
+            if (WaterTaxConstants.GLCODEMAP_FOR_CURRENTTAX.containsValue(glCode))
+                if (retMap.get(installment) == null)
+                    retMap.put(installment, rd.getCramountToBePaid());
+                else
+                    retMap.put(installment, retMap.get(installment).add(rd.getCramountToBePaid()));
+            if (WaterTaxConstants.GLCODES_FOR_CURRENTTAX.contains(glCode))
+                prepareTaxMap(retMap, installment, rd, "FULLTAX");
+        }
+        return retMap;
+    }
+
+    /**
+     * @param retMap
+     * @param installment
+     * @param rd
+     */
+    private void prepareTaxMap(final Map<String, BigDecimal> retMap, final String installment, final ReceiptDetail rd,
+            final String type) {
+        if (retMap.get(installment + type) == null)
+            retMap.put(installment + type, rd.getCramountToBePaid());
+        else
+            retMap.put(installment + type, retMap.get(installment + type).add(rd.getCramountToBePaid()));
+    }
+
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
+            final BigDecimal actualAmountPaid) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
+        String additionalInfo = "Paid From";
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
+        final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
+        final List<EgBillDetails> billdEtList = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
+        egBill.getEgBillDetails().size();
+        egBill.getEgBillDetails().size();
+        for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
+            if (billDet.getOrderNo() == 1) {
+                additionalInfo = additionalInfo + " "
+                        + formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate());
+                additionalInfo = additionalInfo + " To ";
+                if (billdEtList.size() == 1) {
+                    additionalInfo = additionalInfo
+                            + formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate());
+                    break;
+                }
+
+            }
+            if (billdEtList.size() > 1
+                    && billdEtList.get(billdEtList.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
+                additionalInfo = additionalInfo
+                        + formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate());
+                break;
+            }
+        }
+        if (!amounttobeCalc.equals(BigDecimal.ZERO))
+            additionalInfo = additionalInfo + " (Partialy)";
+
+        return additionalInfo;
     }
 }

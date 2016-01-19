@@ -97,6 +97,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -369,7 +370,7 @@ public class ReceiptAction extends BaseFormAction {
         final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
         ajaxBankRemittanceAction.setServiceName(getServiceName());
         ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
-        
+
         if (populate) {
             ajaxBankRemittanceAction.setFundName(getFundName());
             ajaxBankRemittanceAction.bankBranchList();
@@ -625,7 +626,11 @@ public class ReceiptAction extends BaseFormAction {
 
             // initialise receipt info,persist receipts,create vouchers & update
             // billing system
-            populateAndPersistReceipts();
+            try {
+                populateAndPersistReceipts();
+            } catch (final ApplicationRuntimeException e) {
+                return NEW;
+            }
 
             // ReceiptHeader rh = null
             // ;//modelPayeeList.get(0).getReceiptHeaders().iterator().next();
@@ -811,6 +816,7 @@ public class ReceiptAction extends BaseFormAction {
             receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                     CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
             receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
+            receiptHeader.setSource(Source.SYSTEM.toString());
 
             // If this is a new receipt in lieu of cancelling old
             // receipt, update
@@ -865,17 +871,17 @@ public class ReceiptAction extends BaseFormAction {
 
         LOGGER.info("Persisted receipts");
 
-        // Start work flow for all newly created receipts This might internally
-        // create vouchers also based on configuration
-        receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
-        receiptHeaderService.getSession().flush();
-        LOGGER.info("Workflow started for newly created receipts");
-
         if (serviceType.equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
             if (!receiptBulkUpload)
                 collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
             LOGGER.info("Updated billing system ");
         }
+
+        // Start work flow for all newly created receipts This might internally
+        // create vouchers also based on configuration
+        receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
+        receiptHeaderService.getSession().flush();
+        LOGGER.info("Workflow started for newly created receipts");
 
         final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>(0);
         Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>(0);
@@ -980,7 +986,11 @@ public class ReceiptAction extends BaseFormAction {
             else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
-            if (instrumentHeader.getBankId() != null)
+            if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null) {
+                addActionError("Bank is not exist");
+                throw new ApplicationRuntimeException("Bank is not exist");
+
+            } else if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
                 instrumentHeader.setBankId((Bank) bankDAO.findById(
                         Integer.valueOf(instrumentHeader.getBankId().getId()), false));
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
@@ -1883,7 +1893,7 @@ public class ReceiptAction extends BaseFormAction {
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
     }
-    
+
     public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
         this.serviceCategoryService = serviceCategoryService;
     }

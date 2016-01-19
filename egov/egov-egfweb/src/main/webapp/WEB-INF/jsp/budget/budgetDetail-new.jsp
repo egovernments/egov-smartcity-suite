@@ -37,12 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>Create budget proposal (BE)</title>
-    <SCRIPT type="text/javascript">
+<html>
+<head>
+<title>Create budget proposal (BE)</title>
+<SCRIPT type="text/javascript">
     function onLoadTask(){
     	showMessage = '<s:property value="showMessage"/>';
     	if(showMessage == 'true' && '<s:property value="actionMessage"/>' != ''){
@@ -52,12 +52,12 @@
     	}
     }
     </SCRIPT>
-</head>  
-	<body onload="onLoadTask()">  
-	<input type="hidden" id="bere" value="be"/>
-		<jsp:include page="budgetHeader.jsp"/>
-		<%@ include file='budgetDetailSetUp.jsp'%>
-		<script>
+</head>
+<body onload="onLoadTask()">
+	<input type="hidden" id="bere" value="be" />
+	<jsp:include page="budgetHeader.jsp" />
+	<%@ include file='budgetDetailSetUp.jsp'%>
+	<script>
 			function validate(){
 				anticipatory = false;
 				estimate = false;
@@ -83,27 +83,41 @@
 				return;
 			}
 		</script>
-		<div class="formmainbox"><div class="subheadnew">Create budget proposal (BE)</div> </div>
-		<s:actionmessage theme="simple"/>
-		<s:actionerror/>  
-		<s:fielderror />  
-		<s:form name="budgetDetailForm" action="budgetDetail" theme="simple" >
-		<s:token/>
-			<%@ include file='budgetDetail-form.jsp'%>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" id="budgetDetailFormTable">
-		<tr><td>&nbsp;</td></tr>
-		<tr> 
-			<td width="10%" class="bluebox">&nbsp;</td>
-	 		<td class="bluebox"><s:text name="budgetdetail.budget.asOnDate"/></td>
-			<td class="bluebox"><input type="text"  id="asOnDate" name="asOnDate" style="width:100px" value='<s:date name="asOnDate" format="dd/MM/yyyy"/>'/><a href="javascript:show_calendar('budgetDetailForm.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-			<td class="bluebox"><s:submit method="loadActuals" value="Get Actuals" cssClass="buttonsubmit"/></td>
-		</tr>
-		<tr><td>&nbsp;</td></tr>
+	<div class="formmainbox">
+		<div class="subheadnew">Create budget proposal (BE)</div>
+	</div>
+	<s:actionmessage theme="simple" />
+	<s:actionerror />
+	<s:fielderror />
+	<s:form name="budgetDetailForm" action="budgetDetail" theme="simple">
+		<s:token />
+		<%@ include file='budgetDetail-form.jsp'%>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0"
+			id="budgetDetailFormTable">
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td width="10%" class="bluebox">&nbsp;</td>
+				<td class="bluebox"><s:text name="budgetdetail.budget.asOnDate" /></td>
+				<td class="bluebox"><input type="text" id="asOnDate"
+					name="asOnDate" style="width: 100px"
+					value='<s:date name="asOnDate" format="dd/MM/yyyy"/>' /><a
+					href="javascript:show_calendar('budgetDetailForm.asOnDate');"
+					style="text-decoration: none">&nbsp;<img
+						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+				<td class="bluebox"><s:submit method="loadActuals"
+						value="Get Actuals" cssClass="buttonsubmit" /></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
 		</table>
-		<br/>
-			 <div class="yui-skin-sam" style="width:100%;overflow-x:auto; overflow-y:hidden;">
-		       <div id="budgetDetailTable"></div>
-		     </div>
+		<br />
+		<div class="yui-skin-sam"
+			style="width: 100%; overflow-x: auto; overflow-y: hidden;">
+			<div id="budgetDetailTable"></div>
+		</div>
 		<script>
 			makeBudgetDetailTable();
 			document.getElementById('budgetDetailTable').getElementsByTagName('table')[0].width = "100%";
@@ -114,11 +128,15 @@
 				setValues();
 			</s:if>
 		</script>
-		<br/><br/>
-		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<s:hidden name="budget" id="hidden_budget"/>
-			<input type="submit" value="Save" id="budgetDetail__create" name="method:create" onClick="javascript: return validate();" class="buttonsubmit"/>
-			<s:submit value="Close" onclick="javascript: self.close()" cssClass="buttonsubmit"/>
+		<br />
+		<br />
+		<div class="buttonbottom" style="padding-bottom: 10px;">
+			<s:hidden name="budget" id="hidden_budget" />
+			<input type="submit" value="Save" id="budgetDetail__create"
+				name="method:create" onClick="javascript: return validate();"
+				class="buttonsubmit" />
+			<s:submit value="Close" onclick="javascript: self.close()"
+				cssClass="buttonsubmit" />
 		</div>
 		<div id="savedDataGrid">
 			<s:if test="%{savedbudgetDetailList.size()>0}">
@@ -128,6 +146,6 @@
 		<script>
 				document.getElementById('hidden_budget').value = '<s:property value="budgetDetail.budget.id"/>'
 		</script>
-		</s:form>  
-	</body>  
+	</s:form>
+</body>
 </html>

@@ -37,58 +37,67 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	
-		
-		<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+
+
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/calendar.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/dateValidation.js"></script>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
 <title>Contra - Cash Deposit</title>
 
 </head>
 
-	
+
 <body onload="onloadTask();">
-<s:form action="contraCTB" theme="simple" name="cashDepositForm" >
-<s:push value="model">
+	<s:form action="contraCTB" theme="simple" name="cashDepositForm">
+		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Cash Deposit" />
+				<jsp:param name="heading" value="Cash Deposit" />
 			</jsp:include>
-			
-			<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
+
+			<span class="mandatory"> <font
+				style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+					<s:actionmessage /></font>
 			</span>
-<div class="formmainbox">
-<div class="formheading"/><div class="subheadnew">Cash Deposit</div>
-<div id="listid" style="display:block"><br/>
-<div align="center">
-<font  style='color: red ; font-weight:bold '> 
-<p class="error-block" id="lblError" ></p></font>
-	 <table id="boundarytableGrid" border="0" cellSpacing=0 cellPadding=0 width="55%" align="center" >
-		  <tr class="tableheader" >
-				<td class="greybox"><s:text name="contra.cashInHand"/></td>
-	          </tr>
-			<td class="greybox"><s:textfield name="contraBean.cashInHand" id="cashInHand" readonly="true" /></td>
-		</tr>
-	</table>
-	<%@include file="contraCTB-form.jsp"%>
-</div>
-</div>
-</div>
-</div>
-</s:push>
-</s:form>
-<script>
+			<div class="formmainbox">
+				<div class="formheading" />
+				<div class="subheadnew">Cash Deposit</div>
+				<div id="listid" style="display: block">
+					<br />
+					<div align="center">
+						<font style='color: red; font-weight: bold'>
+							<p class="error-block" id="lblError"></p>
+						</font>
+						<table id="boundarytableGrid" border="0" cellSpacing=0
+							cellPadding=0 width="55%" align="center">
+							<tr class="tableheader">
+								<td class="greybox"><s:text name="contra.cashInHand" /></td>
+							</tr>
+							<td class="greybox"><s:textfield
+									name="contraBean.cashInHand" id="cashInHand" readonly="true" /></td>
+							</tr>
+						</table>
+						<%@include file="contraCTB-form.jsp"%>
+					</div>
+				</div>
+			</div>
+			</div>
+		</s:push>
+	</s:form>
+	<script>
 
 function onloadTask(){
 	disableControls(0,true);

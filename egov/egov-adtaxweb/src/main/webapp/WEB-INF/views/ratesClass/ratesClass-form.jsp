@@ -71,7 +71,7 @@
                            </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.rateClass.active"/><span class="mandatory"></span></label>
                         	<div class="col-sm-3 add-margin">
-								<form:checkbox path="active" id="classactive" cssClass="form-control" />
+								<form:checkbox path="active" id="classactive" />
 								<form:errors path="active" cssClass="error-msg" />
 							</div>
                     </div>

@@ -56,10 +56,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRE
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -96,6 +99,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     
     @Autowired
     private PersistenceService<Property, Long> persistenceService;
+    
+    @Autowired
+    protected AssignmentService assignmentService;
 
     @Autowired
     public UpdatePropertyDemolitionController(PropertyDemolitionService propertyDemolitionService) {
@@ -127,6 +133,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         String userDesgn = "";
         final String currState = property.getState().getValue();
+        final String nextAction = property.getState().getNextAction();
         final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
         if (null != designation)
             userDesgn = designation.getName();
@@ -138,7 +145,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         model.addAttribute("userDesgn", userDesgn);
         model.addAttribute("designation", COMMISSIONER_DESGN);
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)
+        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("mode", EDIT);
             return DEMOLITION_FORM;
@@ -203,16 +210,18 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                         e.printStackTrace();
                     }
                 }
-
+                Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + securityUtils.getCurrentUser().getName() + " with assessment number "
+                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
                     model.addAttribute(
                             "successMessage",
                             "Property Demolition rejected successfully and forwared to initiator "
-                                    + property.getCreatedBy().getName() + " with application number "
+                                    + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())+ " with application number "
                                     + property.getApplicationNo());
                 } else
                     model.addAttribute("successMessage",

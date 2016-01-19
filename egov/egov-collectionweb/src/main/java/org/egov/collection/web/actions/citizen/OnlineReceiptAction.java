@@ -83,6 +83,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -732,6 +733,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
             receiptHeader.setStatus(statusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                     CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
+            receiptHeader.setSource(Source.SYSTEM.toString());
 
             setOnlineInstrumenttotal(getOnlineInstrumenttotal().add(getPaymentAmount()));
 

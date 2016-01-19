@@ -68,6 +68,8 @@
 					window.location = "/ptis/property/demolition/" + assessmentNum;
 				} else if(selectedValue == 'TaxExemption'){
 					window.location = "/ptis/exemption/form/" + assessmentNum;
+				} else if(selectedValue == 'addArrears'){
+					window.location = "/ptis/addarrears/form/" + assessmentNum;
 				}
 			}
 
@@ -144,11 +146,13 @@
 											----Choose----
 										</option>
 								
-										<c:if test="${currentRowObject.isTaxExempted == true}">
-										<option value="TaxExemption">
-													<s:text name="TaxExemption"></s:text>
-										</option>
-										</c:if>
+										<s:if test="%{#attr.currentRowObject.isDemandActive}">
+											<c:if test="${currentRowObject.isTaxExempted == true}">
+												<option value="TaxExemption">
+															<s:text name="TaxExemption"></s:text>
+												</option>
+											</c:if>
+										</s:if>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
 										<c:if test="${currentRowObject.isTaxExempted == false }">
@@ -189,6 +193,13 @@
 														</option>
 													</s:if>
 												</c:if>
+												<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat}">
+													<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.source == 'M'}">
+														<option value="addArrears">
+															<s:text name="addArrears"></s:text>
+														</option>
+													</c:if>
+												</s:if>
 											</s:if>
 											<s:else>
 												<option value="RevisionPetition">
@@ -197,11 +208,11 @@
 											</s:else>
 											</c:if>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase())}">
 											<c:if test="${currentRowObject.isTaxExempted == false }">
-										<option value="CollectTax">
-											<s:text name="collectTax"></s:text>
-										</option>
+												<option value="CollectTax">
+													<s:text name="collectTax"></s:text>
+												</option>
 									   </c:if>
 									   
 									</s:if>

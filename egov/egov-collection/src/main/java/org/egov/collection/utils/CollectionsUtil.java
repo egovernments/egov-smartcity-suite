@@ -60,7 +60,6 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -84,7 +83,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.security.terminal.model.Location;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -144,7 +143,7 @@ public class CollectionsUtil {
         synchronized (this) {
             if (status == null) {
                 // Status not yet cached. Get it from DB and cache it
-                status = (EgwStatus) this.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
+                status = getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
 
                 if (status != null)
                     statusMap.put(statusCode, status);
@@ -163,7 +162,7 @@ public class CollectionsUtil {
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
 
-        final EgwStatus status = (EgwStatus) egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
+        final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
     }
 
@@ -219,13 +218,8 @@ public class CollectionsUtil {
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
         try {
-            if (sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID) != null
-                    && !sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID).equals(""))
-                location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_GET_LOCATIONBYID,
-                        Integer.valueOf((String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID)));
-            else
-                location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
-                        getLoggedInUser().getUsername());
+            location = this.getLocationById(Long.valueOf((String) sessionMap
+                    .get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID)));
             if (location == null)
                 throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
                         + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
@@ -236,6 +230,10 @@ public class CollectionsUtil {
             throw new ApplicationRuntimeException(errorMsg, exp);
         }
         return location;
+    }
+
+    public Location getLocationById(final Long locationId) {
+        return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_GET_LOCATIONBYID, locationId);
     }
 
     /**
@@ -297,25 +295,23 @@ public class CollectionsUtil {
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
-        final List<AppConfigValues> deptCodesApp =appConfigValuesService.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<AppConfigValues> deptCodesApp = appConfigValuesService
+                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
         final List<String> deptCodes = new ArrayList<String>();
-        for(AppConfigValues deptCode :deptCodesApp ){
+        for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
-        }
         Department dept = null;
-        if (!isEmployee(loggedInUser))
-            dept = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        else
+        final Boolean isEmp = isEmployee(loggedInUser);
+        if (isEmp)
             dept = getDepartmentOfUser(loggedInUser);
-        if (dept == null) {
-
+        if (isEmp && dept == null) {
             final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
             validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!deptCodes.isEmpty() && deptCodes.contains(dept.getCode())) {
+        } else if (!isEmp || (dept != null && !deptCodes.isEmpty() && deptCodes.contains(dept.getCode()))) {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        }
-        else {
+        } else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
@@ -351,13 +347,14 @@ public class CollectionsUtil {
     public Position getPositionByDeptDesgAndBoundary(final Boundary boundary) {
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
-        String[] department = departmentStr.split(",");
-        String[] designation = designationStr.split(",");
+        final String[] department = departmentStr.split(",");
+        final String[] designation = designationStr.split(",");
         List<Assignment> assignment = new ArrayList<Assignment>();
-        for (String dept : department) {
-            for (String desg : designation) {
+        for (final String dept : department) {
+            for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),boundary.getId());
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        boundary.getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -375,15 +372,6 @@ public class CollectionsUtil {
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
         return designation;
-    }
-    
-    public String getDepartmentForCollectionModes() {
-        String department = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_WORKFLOWDEPARTMENT);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            department = appConfigValue.get(0).getValue();
-        return department;
     }
 
     /**
@@ -496,12 +484,13 @@ public class CollectionsUtil {
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
-        List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
-        if(appConfValues!=null && appConfValues.size()>0){
-            return appConfValues.get(0).getValue();  
-        }else
+        final List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
+                key);
+        if (appConfValues != null && appConfValues.size() > 0)
+            return appConfValues.get(0).getValue();
+        else
             return "";
-    } 
+    }
 
     /**
      * This method returns the list of config values for the given module name and key
@@ -722,8 +711,8 @@ public class CollectionsUtil {
 
     }
 
-    public BillingIntegrationService getBillingService(String code) {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
+    public BillingIntegrationService getBillingService(final String code) {
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
                 "classpath*:org/egov/infstr/beanfactory/globalApplicationContext.xml",
                 "classpath*:org/egov/infstr/beanfactory/egiApplicationContext.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-pims.xml",
@@ -732,23 +721,21 @@ public class CollectionsUtil {
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-ptis.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-erpcollections.xml",
                 "classpath*:org/egov/infstr/beanfactory/applicationContext-bpa.xml" });
-        BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
+        final BillingIntegrationService billingService = (BillingIntegrationService) applicationContext.getBean(code
                 + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService;
     }
-    
+
     /**
-     * 
      * @param consumerCode
-     * @return  last three online transaction for the consumerCode 
+     * @return last three online transaction for the consumerCode
      */
-    public List<OnlinePayment> getOnlineTransactionHistory(String consumerCode)
-    {
-            String hql = "select online from ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.consumerCode =:consumercode  order by online.id desc";
-            Query query = persistenceService.getSession().createQuery(hql);
-            query.setString("consumercode",consumerCode);
-            query.setMaxResults(3);
-            return  query.list() ;
+    public List<OnlinePayment> getOnlineTransactionHistory(final String consumerCode) {
+        final String hql = "select online from ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.consumerCode =:consumercode  order by online.id desc";
+        final Query query = persistenceService.getSession().createQuery(hql);
+        query.setString("consumercode", consumerCode);
+        query.setMaxResults(3);
+        return query.list();
     }
 
     /**
@@ -769,11 +756,10 @@ public class CollectionsUtil {
         return userService.getUserById(userId);
     }
 
-    public Location getLocationByUser(final Long userId) {
-        final User user = userService.getUserById(userId);
-        return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
-                user.getUsername());
-    }
+    /*
+     * public Location getLocationByUser(final Long userId) { final User user = userService.getUserById(userId); return (Location)
+     * persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername()); }
+     */
 
     public void setUserService(final UserService userService) {
         this.userService = userService;

@@ -101,6 +101,34 @@
 			}
  		}
 		}
-
+		$('#submitButtonId').click(function(e){
+			var i= 0;
+			var j=0;
+			$("#dcbOnlinePaymentTable tr.item").each(function() {
+				i++;
+			  $this = $(this);
+			  var actamount = $this.find("#actualAmount").val();
+			  var actcollection = $this.find("#actualCollection").val();
+			  if( actcollection > 0 && actamount == 0 ){
+				  alert('please fill actual amount');
+				  e.preventDefault();
+				  return false;
+			  }
+			  if(actamount == 0 && actcollection == 0){
+				  j++;
+			  }
+			  if(parseInt(actcollection) > parseInt(actamount)){
+				  alert('Collection should not be greater than actual amount');
+				  e.preventDefault();
+				  return false;
+			  }
+			});
+			if(i==j)
+			  {
+				alert('Enter atleast one demand and collection');
+				  e.preventDefault();
+				  return false;
+			  }
+		});
 	 
 	 

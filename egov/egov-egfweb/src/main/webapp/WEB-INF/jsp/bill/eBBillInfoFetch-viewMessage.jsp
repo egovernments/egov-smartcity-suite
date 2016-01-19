@@ -37,12 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>TNEB Bill Workflow</title>
-    <script type="text/javascript">
+<html>
+<head>
+<title>TNEB Bill Workflow</title>
+<script type="text/javascript">
     
     	function refreshInbox() {
     		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
@@ -50,15 +50,15 @@
     	
     </script>
 </head>
-	<body onload="refreshInbox()">  
-		<s:form action="billInfoFetch" form="tnebBillWorkflow" theme="simple" >
-			
-			<span class="mandatory">
-				<s:actionmessage /> 
-			</span>
-			<br/>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
-		</s:form> 
+<body onload="refreshInbox()">
+	<s:form action="billInfoFetch" form="tnebBillWorkflow" theme="simple">
 
-	</body>  
+		<span class="mandatory"> <s:actionmessage />
+		</span>
+		<br />
+		<input type="button" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</s:form>
+
+</body>
 </html>

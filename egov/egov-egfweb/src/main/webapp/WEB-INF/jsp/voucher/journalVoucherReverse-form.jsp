@@ -39,20 +39,15 @@
 #-------------------------------------------------------------------------------  -->
 <jsp:include page="vouchertrans-filter.jsp" />
 <tr>
-	<td width="30%" class="greybox">
-		Narration &nbsp;
-	</td>
-	<td colspan="10" class="greybox">
-		<s:textarea maxlength="250" rows="4" cols="60" name="narration" />
-	</td>
+	<td width="30%" class="greybox">Narration &nbsp;</td>
+	<td colspan="10" class="greybox"><s:textarea maxlength="250"
+			rows="4" cols="60" name="narration" /></td>
 </tr>
 </table>
 <br />
 <div id="labelAD" align="center">
 	<table width="80%" border=0 id="labelid">
-		<th>
-			Account Details
-		</th>
+		<th>Account Details</th>
 	</table>
 </div>
 <div class="yui-skin-sam" align="center">
@@ -66,9 +61,7 @@
 <br />
 <div id="labelSL" align="center">
 	<table width="80%" border=0 id="labelid">
-		<th>
-			Sub-Ledger Details
-		</th>
+		<th>Sub-Ledger Details</th>
 	</table>
 </div>
 

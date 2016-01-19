@@ -101,7 +101,7 @@
 				<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 				<s:if test="%{basicProperty.upicNo!=null}">
 				<s:if test="%{!property.getIsExemptedFromTax() && (isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) ||
-					roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()))}">
+					roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase()))}">
 					<div align="center">
 						<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 						<span style="font-size:15px; color:red ">										
@@ -122,8 +122,8 @@
 				</s:if>
 				
 				<br>	
-				<s:if test="%{property.getIsExemptedFromTax()}">
-				<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
+				<s:if test="%{property.getIsExemptedFromTax() && isDemandActive}">
+					<input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
 				</s:if>
 				<s:elseif test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
@@ -166,6 +166,12 @@
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && !property.getIsExemptedFromTax()}">
 					<input type="button" name="generateBill" id="generateBill" value="Generate Demand Bill" class="buttonsubmit"
 						onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
+				</s:if>
+				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat 
+					&& !basicProperty.underWorkflow && basicProperty.source=='M'}">
+					<input type="button" class="buttonsubmit" name="addArrearsButton"
+									id="addArrearsButton" value="Add Arrears" 
+									onclick="window.location='/ptis/addarrears/form/<s:property value="%{basicProperty.upicNo}" />'" />
 				</s:if>
 				<br/><br/> <!-- common buttons starts here -->	
 				<s:if test="%{!property.getIsExemptedFromTax()}">			

@@ -37,13 +37,14 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
+<script language="javascript"
+	src="../resources/javascript/jsCommonMethods.js"></script>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title><s:text name="departmentwise.expenditure.report"/></title>
+<title><s:text name="departmentwise.expenditure.report" /></title>
 </head>
 
 <script>
@@ -146,113 +147,155 @@ function populateAssetCode(obj){
 
 </script>
 <body onload="onLoadTask();">
-	<div class="subheadnew"><s:text name="departmentwise.expenditure.report"/></div>
-	<s:form  name="departmentwiseExpenditureReport" action="departmentwiseExpenditureReport" theme="simple">
-	<jsp:include page="../budget/budgetHeader.jsp">
-   		<jsp:param name="heading" value='departmentwiseExpenditureReport' />
-	</jsp:include>
-	<span class="mandatory" id="error">    
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage />
-	</span>
-	
-
-	<table id="header" width="100%" cellpadding="0" cellspacing="0" border="0">
-	
-	<tr>
-		<td class="greybox"  width="6%"></td>
-		<td class="greybox"  width="6%">
-		<div id="fundlbl"><s:text name="report.fund"/><span id="fundStar" class="mandatory">*</span></div>
-		<td class="greybox"> <s:select name="fundId" id="fundId" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="" headerValue="----Choose----" onChange="populateAssetCode(this);" value="%{deptReport.fundId}"/></td>
-	    
-		<td class="greybox"  width="6%">
-		<div id="reportlbl"  width="4%"><s:text name="reporttype"/><span id="repStar" class="mandatory">*</span></div>
-		<td class="greybox"  ><s:select name="reportType" id="reportType" list="#{'daterange':'Date Range','Month':'Month'}"  headerKey="0" headerValue="----Choose----" onChange="changeType(this)" value="%{deptReport.reportType}" /></td>
-		<td class="greybox"  width="4%"></td>
-		<td class="greybox"  width="4%"></td>
-		<td class="greybox"  width="4%"></td>
-	</tr>
-	
-	</table>
-	
-	<div id="asset" >
-		<table id="header" width="100%" cellpadding="0" cellspacing="0" border="0">
-		<tr>
-			<td class="bluebox"  width="6%"></td>
-			<td  class="bluebox"  width="6%">
-			<div id="explbl">Expenditure on<span class="mandatory"></div>
-			</td>
-			<td  class="bluebox" >
-			<s:select name="assetCode" id="assetCode" list="#{'0':'---Choose---','412':'CWIP','410':'Fixed Asset'}" headerKey="0"   value="%{deptReport.assetCode}"/>
-			</td>
-			<td class="bluebox"  width="6%">
-			<td class="bluebox"  width="4%">
-			<td class="bluebox"  width="4%">
-			<td class="bluebox"  width="4%">
-			<td class="bluebox"  width="4%">
-		</tr>
-		</table>
-	</div>   
-	
-	<div id="dateran">	
-	<table id="header" width="100%" cellpadding="0" cellspacing="0" border="0">
-		<tr>
-			<td class="bluebox"  width="6%"></td>
-			<td  class="bluebox" width="6%"> <s:text name="report.fromdate" /><span class="mandatory">*</span></td>
-			<td  class="bluebox" ><s:date name="fromDate" format="dd/MM/yyyy" var="fromDateId"/>
-			<s:textfield name="fromDate" id="fromDate" value="%{fromDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('departmentwiseExpenditureReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-			</td>
-			<td  class="bluebox" width="6%">
-			<td class="bluebox"  width="6%"></td>
-			<td class="bluebox"  ><s:text name="report.todate" /><span class="mandatory">*</span></td>
-			<td  class="bluebox" ><s:date name="toDate"  format="dd/MM/yyyy" var ="toDateId"/>
-			<s:textfield name="toDate" id="toDate" value="%{toDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('departmentwiseExpenditureReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-			</td>
-			<td class="bluebox"  width="4%">
-			<td class="bluebox"  width="4%">
-				<td class="bluebox"  width="4%">
-		</tr>
-	</table>
+	<div class="subheadnew">
+		<s:text name="departmentwise.expenditure.report" />
 	</div>
-	
-	<div id="monthRow">	
-		<table id="header" width="100%" cellpadding="0" cellspacing="0" border="0">
-			<tr>
-				<td class="bluebox"  width="6%"></td>
-				<td  class="bluebox"  width="6%">
-				
-				<div id="monlbl"><s:text name="report.month"/><span class="mandatory">*</span></div></td>
-				<td  class="bluebox" >
-				<s:select name="month" id="month" list="#{'Select':'---Choose---','01':'January','02':'February','03':'March','04':'April','05':'May','06':'June','07':'July','08':'August','09':'September','10':'October','11':'November','12':'December'}" headerKey="0"   value="%{deptReport.month}"/>
-				</td>
-				<td  class="bluebox"  width="6%">
-				<td  class="bluebox"  width="4%">  
-				 <td class="bluebox"><s:text name="report.financialYear"/>:<span class="mandatory">*</span>
-					<s:select name="financialYearId" id="financialYearId" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" headerKey="0" headerValue="----Choose----"  value="%{deptReport.financialYearId}" />
-				</td>
-				<td class="bluebox"  width="4%">
-				<td class="bluebox"  width="4%">
-				<td class="bluebox"  width="4%">
-			</tr>
-		</table>
-	</div>
-	<div class="buttonbottom">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-					<s:hidden name="exportType" id="exportType" value="%{deptReport.exportType}"/>
-					<s:submit value="Export EXCEL" method="search" cssClass="button" onClick="return validate('xls');" />
-					<s:submit value="Export PDF" method="search" cssClass="button" onClick="return validate('pdf');" />
-					<s:submit value="View HTML" method="search" cssClass="button" onClick="return validate('html');" />
-					
-					<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-			</tr>
-		</table>
-	</div>	
-	
+	<s:form name="departmentwiseExpenditureReport"
+		action="departmentwiseExpenditureReport" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value='departmentwiseExpenditureReport' />
+		</jsp:include>
+		<span class="mandatory" id="error"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
+		</span>
 
-</s:form>
+
+		<table id="header" width="100%" cellpadding="0" cellspacing="0"
+			border="0">
+
+			<tr>
+				<td class="greybox" width="6%"></td>
+				<td class="greybox" width="6%">
+					<div id="fundlbl">
+						<s:text name="report.fund" />
+						<span id="fundStar" class="mandatory">*</span>
+					</div>
+				<td class="greybox"><s:select name="fundId" id="fundId"
+						list="dropdownData.fundDropDownList" listKey="id" listValue="name"
+						headerKey="" headerValue="----Choose----"
+						onChange="populateAssetCode(this);" value="%{deptReport.fundId}" /></td>
+
+				<td class="greybox" width="6%">
+					<div id="reportlbl" width="4%">
+						<s:text name="reporttype" />
+						<span id="repStar" class="mandatory">*</span>
+					</div>
+				<td class="greybox"><s:select name="reportType"
+						id="reportType" list="#{'daterange':'Date Range','Month':'Month'}"
+						headerKey="0" headerValue="----Choose----"
+						onChange="changeType(this)" value="%{deptReport.reportType}" /></td>
+				<td class="greybox" width="4%"></td>
+				<td class="greybox" width="4%"></td>
+				<td class="greybox" width="4%"></td>
+			</tr>
+
+		</table>
+
+		<div id="asset">
+			<table id="header" width="100%" cellpadding="0" cellspacing="0"
+				border="0">
+				<tr>
+					<td class="bluebox" width="6%"></td>
+					<td class="bluebox" width="6%">
+						<div id="explbl">
+							Expenditure on<span class="mandatory">
+						</div>
+					</td>
+					<td class="bluebox"><s:select name="assetCode" id="assetCode"
+							list="#{'0':'---Choose---','412':'CWIP','410':'Fixed Asset'}"
+							headerKey="0" value="%{deptReport.assetCode}" /></td>
+					<td class="bluebox" width="6%">
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+				</tr>
+			</table>
+		</div>
+
+		<div id="dateran">
+			<table id="header" width="100%" cellpadding="0" cellspacing="0"
+				border="0">
+				<tr>
+					<td class="bluebox" width="6%"></td>
+					<td class="bluebox" width="6%"><s:text name="report.fromdate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:date name="fromDate"
+							format="dd/MM/yyyy" var="fromDateId" /> <s:textfield
+							name="fromDate" id="fromDate" value="%{fromDateId}"
+							maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('departmentwiseExpenditureReport.fromDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					</td>
+					<td class="bluebox" width="6%">
+					<td class="bluebox" width="6%"></td>
+					<td class="bluebox"><s:text name="report.todate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:date name="toDate" format="dd/MM/yyyy"
+							var="toDateId" /> <s:textfield name="toDate" id="toDate"
+							value="%{toDateId}" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('departmentwiseExpenditureReport.toDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					</td>
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+				</tr>
+			</table>
+		</div>
+
+		<div id="monthRow">
+			<table id="header" width="100%" cellpadding="0" cellspacing="0"
+				border="0">
+				<tr>
+					<td class="bluebox" width="6%"></td>
+					<td class="bluebox" width="6%">
+
+						<div id="monlbl">
+							<s:text name="report.month" />
+							<span class="mandatory">*</span>
+						</div>
+					</td>
+					<td class="bluebox"><s:select name="month" id="month"
+							list="#{'Select':'---Choose---','01':'January','02':'February','03':'March','04':'April','05':'May','06':'June','07':'July','08':'August','09':'September','10':'October','11':'November','12':'December'}"
+							headerKey="0" value="%{deptReport.month}" /></td>
+					<td class="bluebox" width="6%">
+					<td class="bluebox" width="4%">
+					<td class="bluebox"><s:text name="report.financialYear" />:<span
+						class="mandatory">*</span> <s:select name="financialYearId"
+							id="financialYearId" list="dropdownData.financialYearList"
+							listKey="id" listValue="finYearRange" headerKey="0"
+							headerValue="----Choose----"
+							value="%{deptReport.financialYearId}" /></td>
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+					<td class="bluebox" width="4%">
+				</tr>
+			</table>
+		</div>
+		<div class="buttonbottom">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<s:hidden name="exportType" id="exportType"
+						value="%{deptReport.exportType}" />
+					<s:submit value="Export EXCEL" method="search" cssClass="button"
+						onClick="return validate('xls');" />
+					<s:submit value="Export PDF" method="search" cssClass="button"
+						onClick="return validate('pdf');" />
+					<s:submit value="View HTML" method="search" cssClass="button"
+						onClick="return validate('html');" />
+
+					<input type="button" value="Close"
+						onclick="javascript:window.close()" class="button" />
+				</tr>
+			</table>
+		</div>
+
+
+	</s:form>
 </body>
 </html>

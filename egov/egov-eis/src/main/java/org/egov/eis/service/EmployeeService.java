@@ -142,8 +142,7 @@ public class EmployeeService implements EntityTypeService {
     }
 
     /**
-     * since it is mapped to only one AccountDetailType -creditor it ignores the
-     * input parameter
+     * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -373,7 +372,7 @@ public class EmployeeService implements EntityTypeService {
     @Override
     public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
-        return null;
+        return employeeRepository.findByNameLikeOrCodeLike(filterKey+"%", filterKey+"%");
     }
 
     @Override

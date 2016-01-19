@@ -37,4 +37,4 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="budgetSearchAndModify-detailList.jsp" %>
+<%@ include file="budgetSearchAndModify-detailList.jsp"%>

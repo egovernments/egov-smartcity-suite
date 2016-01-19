@@ -1,43 +1,43 @@
 
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
 	String ipAddress = request.getRemoteAddr();
@@ -66,7 +66,6 @@
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -78,7 +77,7 @@
 		<![endif]-->
 	</head>
 	<body class="page-body index">
-		<div class="page-container" id="page-container">
+		<div class="page-container">
 			<header class="navbar navbar-fixed-top">
 				<!-- set fixed position by adding class "navbar-fixed-top" -->
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -104,6 +103,11 @@
 			</header>
 			<div class="main-content">
 				<div class="row top-space">
+				    <div class="text-center error-msg">
+					<noscript>
+					    	You don't have javascript enabled.  Make sure Javascript is enabled.
+					</noscript>
+					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
 							<a href="/portal/citizen/register" target="_blank">
@@ -178,6 +182,14 @@
 											class="mandatory set-mandatory"></span>
 									</div>
 								</div>
+								<div class="form-group display-hide" id="counter-section">
+									<div class="input-group">
+										<div class="input-group-addon style-label">
+											<i class="entypo-location theme-color style-color"></i>
+										</div>
+										<select class="form-control style-form" name="locationId" id="locationId"></select>
+									</div>
+								</div>
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">
@@ -232,12 +244,12 @@
 								</c:if>
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
-										class="btn btn-custom btn-block btn-login signin-submit">
+										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
 										<i class="entypo-login"></i><spring:message code="lbl.login"/>
 									</button>
 								</div>
 								<div class="row">
-									<div class="col-md-12 col-xs-12 text-right"
+									<div class="col-md-12 col-xs-12 text-right add-margin"
 										style="font-size: 12px;">
 										<a href="javascript:void(0);" data-toggle="modal"
 											data-target="#fpassword" data-backdrop="static"><spring:message code="lbl.forgot.pwd"/></a>
@@ -319,8 +331,21 @@
 				</div>
 			</div>
 		</div>
+		<div class="modal fade" id="cookieornoscript" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Enable Cookies</h4>
+					</div>
+					<div class="modal-body">
+						Oops! Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
+					</div>
+				</div>
+			</div>
+		</div>
 		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
 		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
 		<script src="/egi/resources/js/app/login.js" type="text/javascript"></script>
 	</body>
 </html>

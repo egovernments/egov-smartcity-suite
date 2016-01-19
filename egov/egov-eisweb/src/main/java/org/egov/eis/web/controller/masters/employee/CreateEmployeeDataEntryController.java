@@ -50,6 +50,10 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.service.AccountDetailKeyService;
+import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeType;
@@ -111,6 +115,12 @@ public class CreateEmployeeDataEntryController {
     @Autowired
     private PositionMasterService positionMasterService;
 
+    @Autowired
+    private AccountDetailKeyService accountDetailKeyService;
+
+    @Autowired
+    private CommonsService commonsService;
+
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {
         model.addAttribute("employee", new Employee());
@@ -130,12 +140,12 @@ public class CreateEmployeeDataEntryController {
         }
         final Department department = departmentService.getDepartmentById(deptId);
         final Designation designation = designationService.getDesignationByName(designationName);
-        final String userName = employeeService.generateUserNameByDeptDesig(department, designation);
         final EmployeeType empType = employeeTypeRepository.findByName(EisConstants.EMPLOYEE_TYPE_PERMANENT);
         final EmployeeStatus empStatus = EmployeeStatus.EMPLOYED;
-
         try {
-            employee.setUsername(userName);
+            if (null != employee.getCode() && !employee.getCode().isEmpty())
+                employee.setUsername(employee.getCode());
+
             employee.setEmployeeStatus(empStatus);
             employee.setEmployeeType(empType);
             employee.setActive(EisConstants.ISACTIVE_TRUE);
@@ -196,6 +206,16 @@ public class CreateEmployeeDataEntryController {
         employee.setAssignments(assignment);
         employee.setJurisdictions(jurisdictions);
         employeeService.createEmployeeData(employee);
+
+        final Accountdetailtype accountdetailtype = commonsService
+                .getAccountDetailTypeByName(EisConstants.ROLE_EMPLOYEE);
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setAccountdetailtype(accountdetailtype);
+        adk.setGroupid(1);
+        adk.setDetailkey(employee.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        accountDetailKeyService.createAccountDetailKey(adk);
+
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
@@ -208,4 +228,5 @@ public class CreateEmployeeDataEntryController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("department", departmentService.getAllDepartments());
     }
+
 }

@@ -59,8 +59,10 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
         jsonObject.addProperty("doorNo", baseRegisterResultObj.getDoorNO());
         jsonObject.addProperty("natureOfUsage", baseRegisterResultObj.getNatureOfUsage());
-        jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted() ? "Yes": "No");
-        jsonObject.addProperty("courtCase", baseRegisterResultObj.getCourtCase() ? "Yes": "No");
+         if(baseRegisterResultObj.getIsExempted() == null)
+             baseRegisterResultObj.setIsExempted("");
+        jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted());
+        jsonObject.addProperty("courtCase", baseRegisterResultObj.getCourtCase());
         jsonObject.addProperty("arrearPeriod", baseRegisterResultObj.getArrearPeriod());
         jsonObject.addProperty("generalTax", baseRegisterResultObj.getPropertyTax());
         jsonObject.addProperty("libraryCessTax", baseRegisterResultObj.getLibraryCessTax());
@@ -72,11 +74,9 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         jsonObject.addProperty("arrearEduCess", baseRegisterResultObj.getEduCessTax());
         jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getArrearTotal());
         jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getArrearPenaltyFines());
-        if (!baseRegisterResultObj.getPropertyType().equals(OWNERSHIP_TYPE_VAC_LAND)) {
         jsonObject.addProperty("propertyUsage", (null != baseRegisterResultObj.getPropertyUsage()) ? baseRegisterResultObj.getPropertyUsage().toString() : "");
         jsonObject.addProperty("classification", (null != baseRegisterResultObj.getClassificationOfBuilding()) ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
-        jsonObject.addProperty("area", (null != baseRegisterResultObj.getArea()) ? baseRegisterResultObj.getArea().toString() : "");
-        }
+        jsonObject.addProperty("area", (null != baseRegisterResultObj.getPlinthArea()) ? baseRegisterResultObj.getPlinthArea().toString() : "");
         return jsonObject;
     }
 

@@ -37,17 +37,22 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>     
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<link href="/EGF/resources/css/budget.css" rel="stylesheet"
+	type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet"
+	type="text/css" />
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>        
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <script>
@@ -126,77 +131,94 @@ function validateWorkFlowApprover(name,errorDivId)
 	
 	
 </script>
-<s:hidden id="workFlowAction" name="workFlowAction"/>
+<s:hidden id="workFlowAction" name="workFlowAction" />
 <s:if test="%{getNextAction()!='END'}">
-<div class="blueshadow"></div>
-<s:hidden id="currentState" name="currentState" value="%{state.value}"/>
-<s:hidden id="currentDesignation" name="currentDesignation" value="%{currentDesignation}"/>
-<s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
-<s:hidden id="amountRule" name="amountRule" value="%{amountRule}"/>
-<s:hidden id="approverName" name="approverName"/>
-<s:hidden id="workFlowDepartment" name="workFlowDepartment" value="%{workFlowDepartment}"/>
-<s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
+	<div class="blueshadow"></div>
+	<s:hidden id="currentState" name="currentState" value="%{state.value}" />
+	<s:hidden id="currentDesignation" name="currentDesignation"
+		value="%{currentDesignation}" />
+	<s:hidden id="additionalRule" name="additionalRule"
+		value="%{additionalRule}" />
+	<s:hidden id="amountRule" name="amountRule" value="%{amountRule}" />
+	<s:hidden id="approverName" name="approverName" />
+	<s:hidden id="workFlowDepartment" name="workFlowDepartment"
+		value="%{workFlowDepartment}" />
+	<s:hidden id="pendingActions" name="pendingActions"
+		value="%{pendingActions}" />
 
-<s:if test="%{#request.approverOddTextCss==null}">
-   
-      <c:set var="approverOddTextCss" value="greybox" scope="request"/>
-</s:if>
+	<s:if test="%{#request.approverOddTextCss==null}">
 
-<s:if test="%{#request.approverEvenTextCSS==null}">
-   <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
-</s:if>
+		<c:set var="approverOddTextCss" value="greybox" scope="request" />
+	</s:if>
 
- <table width="100%" border="0" cellspacing="0" cellpadding="0">
- 
-        <tr>
-            <td colspan="9" class="formmainbox">
-               	<s:if test="%{#request.headerImgCss!=null}"><div class="subheadnew"></s:if>
-               	<s:if test="%{#request.headerImgUrl!=null}"><img src="${headerImgUrl}"/></div></s:if>
-                <div class="subheadsmallnew">Approval Information</div>
-            </td>
-        </tr>
-        
-	  	<tr>   
-	  	 	 <td class="${approverOddCSS}" width="16%">&nbsp;</td>
-			 <td class="${approverOddCSS}" id="deptLabel">Approver Department:</td>
-			 <td class="${approverOddTextCss}">
-				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
-					listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----"  
-					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
-					cssClass="dropDownCss" />
-				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow!getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
-					contextToBeUsed="/egi"/>
-			</td>
-			<td class="${approverOddCSS}" width="10%">&nbsp;</td>	  
+	<s:if test="%{#request.approverEvenTextCSS==null}">
+		<c:set var="approverEvenTextCSS" value="bluebox" scope="request" />
+	</s:if>
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+		<tr>
+			<td colspan="9" class="formmainbox"><s:if
+					test="%{#request.headerImgCss!=null}">
+					<div class="subheadnew">
+				</s:if> <s:if test="%{#request.headerImgUrl!=null}">
+					<img src="${headerImgUrl}" />
+					</div>
+				</s:if>
+				<div class="subheadsmallnew">Approval Information</div></td>
+		</tr>
+
+		<tr>
+			<td class="${approverOddCSS}" width="16%">&nbsp;</td>
+			<td class="${approverOddCSS}" id="deptLabel">Approver
+				Department:</td>
+			<td class="${approverOddTextCss}"><s:select
+					name="approverDepartment" id="approverDepartment"
+					list="dropdownData.approverDepartmentList" listKey="id"
+					listValue="name" headerKey="-1" headerValue="----Choose----"
+					value="%{approverDepartment}"
+					onchange="loadDesignationFromMatrix();" cssClass="dropDownCss" />
+				<egov:ajaxdropdown fields="['Text','Value']"
+					url="workflow/ajaxWorkFlow!getDesignationsByObjectType.action"
+					id="approverDesignation" dropdownId="approverDesignation"
+					contextToBeUsed="/egi" /></td>
+			<td class="${approverOddCSS}" width="10%">&nbsp;</td>
 			<td class="${approverOddCSS}" width="14%">Approver Designation:</td>
-			<td class="${approverOddTextCss}" width="33%">
-				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.desgnationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
-					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
-				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
-					url="workflow/ajaxWorkFlow!getPositionByPassingDesigId.action" contextToBeUsed="/egi" />
-			</td>
+			<td class="${approverOddTextCss}" width="33%"><s:select
+					id="approverDesignation" name="approverDesignation"
+					list="dropdownData.desgnationList" listKey="designationId"
+					headerKey="-1" listValue="designationName"
+					headerValue="----Choose----" onchange="populateApprover();"
+					onfocus="callAlertForDepartment();" cssClass="dropDownCss" /> <egov:ajaxdropdown
+					id="approverPositionId" fields="['Text','Value']"
+					dropdownId="approverPositionId"
+					url="workflow/ajaxWorkFlow!getPositionByPassingDesigId.action"
+					contextToBeUsed="/egi" /></td>
 			<td class="${approverOddCSS}" width="10%">Approver:</td>
-			<td class="${approverOddTextCss}" width="16%" >
-			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
-			  			value="%{approverPositionId}" cssClass="dropDownCss"  /></td> 
+			<td class="${approverOddTextCss}" width="16%"><s:select
+					id="approverPositionId" name="approverPositionId"
+					list="dropdownData.approverList" headerKey="-1"
+					headerValue="----Choose----" listKey="id" listValue="firstName"
+					onfocus="callAlertForDesignation();" value="%{approverPositionId}"
+					cssClass="dropDownCss" /></td>
 			<td class="${approverOddCSS}" width="16%">&nbsp;</td>
 		</tr>
-		</table>
+	</table>
 </s:if>
-<br/>
+<br />
 
- <div id="workflowCommentsDiv" align="center">
-         <table width="100%">
-         <tr>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
-           <td class="${approverEvenCSS}" width="13%">Approver Comments: </td>
-           <td class="${approverEvenTextCSS}"> 
-           	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
-           </td>
-           <td class="${approverEvenCSS}">&nbsp;</td>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td  class="${approverEvenCSS}">&nbsp;</td>
-           </tr>
-         </table>
-  </div>
+<div id="workflowCommentsDiv" align="center">
+	<table width="100%">
+		<tr>
+			<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+			<td width="20%" class="${approverEvenCSS}">&nbsp;</td>
+			<td class="${approverEvenCSS}" width="13%">Approver Comments:</td>
+			<td class="${approverEvenTextCSS}"><textarea
+					id="approverComments" name="approverComments" rows="2" cols="35"></textarea>
+			</td>
+			<td class="${approverEvenCSS}">&nbsp;</td>
+			<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+			<td class="${approverEvenCSS}">&nbsp;</td>
+		</tr>
+	</table>
+</div>

@@ -1,0 +1,2 @@
+insert into eg_roleaction(roleid,actionid) (select (SELECT id FROM eg_role WHERE name = 'Collection Operator'), id 
+from eg_action where name in ('SearchReceipts','SearchReceiptSearch','SearchReceiptReset','ViewReceipts','PrintReceipts','SearchOnlineReceipts','SearchOnlineReceiptsSearch'));

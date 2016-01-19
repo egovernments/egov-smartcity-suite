@@ -186,10 +186,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
         try {
             if (getBasicProperty() == null) {
+                addActionError("Property not found with given Assessment Number " + propertyId); 
                 throw new PropertyNotFoundException();
             } else {
                 LOGGER.debug("BasicProperty : " + basicProperty);
-                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId); 
                 viewMap = new HashMap<String, Object>();
                 viewMap.put("propID", basicProperty.getPropertyID());
                 PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
@@ -364,7 +365,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into getMigratedData");
         LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
         // List of property receipts
-        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=?",
+        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=? order by receiptDate desc",
                 getBasicProperty().getId());
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
@@ -387,6 +388,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 receipt.setReceiptNumber(propMutation.getReceiptNum());
                 receipt.setReceiptAmt(propMutation.getMutationFee());
                 receipt.setReceiptDate(propMutation.getReceiptDate());
+                receipt.setConsumerCode(propMutation.getApplicationNo());
                 mutationRcpts.add(receipt);
             }
         }

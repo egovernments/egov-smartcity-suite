@@ -37,44 +37,66 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 
 <s:if test="%{chequeDetails.size()>0}">
-<br/>
-<table width="99%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td class="blueborderfortd">
-		<div>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
-			<tr>
-                <th class="bluebgheadtd" >Cheque/RTGS Number</th>
-                <th class="bluebgheadtd" >Cheque/RTGS Date</th>
-                <th class="bluebgheadtd" >Cheque/RTGS Amount</th>
-                <th class="bluebgheadtd" >Cheque/RTGS Status</th
-			  </tr>            
-		<s:iterator value="chequeDetails" status="stat" var="p">
-			<tr>
-				<s:if test="%{#p.instrumentNumber == null}">
-				<td class="blueborderfortd"><div style="text-align: center"><s:property value="transactionNumber" /></div></td>
-				</s:if>
-				<s:else>
-				<td class="blueborderfortd"><div style="text-align: center"><s:property value="instrumentNumber" /></div></td>
-				</s:else>
-				<s:if test="%{#p.instrumentDate == null}">
-				<td class="blueborderfortd"><div style="text-align: center"><s:date name="%{transactionDate}" format="dd/MM/yyyy"/></div></td>
-				</s:if>
-				<s:else>
-				<td class="blueborderfortd"><div style="text-align: center"><s:date name="%{instrumentDate}" format="dd/MM/yyyy"/></div></td>
-				</s:else>
-				<td class="blueborderfortd"><div style="text-align: right"><s:text name="format.number"><s:param value="#p.instrumentAmount"></s:param></s:text>&nbsp;</div></td>
-				<td class="blueborderfortd"><div style="text-align: center"><s:property value="statusId.description" /></div></td>
-			</tr>
-		</s:iterator>
-			</table>
-        </div></td>
-      </tr>
-	</table></td>
+	<br />
+	<table width="99%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class="blueborderfortd">
+				<div>
+					<table width="100%" border="0" cellpadding="0" cellspacing="0"
+						class="tablebottom">
+						<tr>
+							<th class="bluebgheadtd">Cheque/RTGS Number</th>
+							<th class="bluebgheadtd">Cheque/RTGS Date</th>
+							<th class="bluebgheadtd">Cheque/RTGS Amount</th>
+							<th class="bluebgheadtd">Cheque/RTGS Status</th
+						</tr>
+						<s:iterator value="chequeDetails" status="stat" var="p">
+							<tr>
+								<s:if test="%{#p.instrumentNumber == null}">
+									<td class="blueborderfortd"><div
+											style="text-align: center">
+											<s:property value="transactionNumber" />
+										</div></td>
+								</s:if>
+								<s:else>
+									<td class="blueborderfortd"><div
+											style="text-align: center">
+											<s:property value="instrumentNumber" />
+										</div></td>
+								</s:else>
+								<s:if test="%{#p.instrumentDate == null}">
+									<td class="blueborderfortd"><div
+											style="text-align: center">
+											<s:date name="%{transactionDate}" format="dd/MM/yyyy" />
+										</div></td>
+								</s:if>
+								<s:else>
+									<td class="blueborderfortd"><div
+											style="text-align: center">
+											<s:date name="%{instrumentDate}" format="dd/MM/yyyy" />
+										</div></td>
+								</s:else>
+								<td class="blueborderfortd"><div style="text-align: right">
+										<s:text name="format.number">
+											<s:param value="#p.instrumentAmount"></s:param>
+										</s:text>
+										&nbsp;
+									</div></td>
+								<td class="blueborderfortd"><div style="text-align: center">
+										<s:property value="statusId.description" />
+									</div></td>
+							</tr>
+						</s:iterator>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+	</td>
 	</tr>
-</table>
+	</table>
 </s:if>
 <s:else>No data found</s:else>

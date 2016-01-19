@@ -37,26 +37,33 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
-  <head>
-    <title>Loan Grant Master</title>
-	<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/loanGrantHelper.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-	</head>
-<body >
-<div class="formmainbox"><div class="subheadnew">Loan Header Register</div></div>
-<span class="mandatory">Loan Grant Header Saved Successfully</span>
-	<s:form name="loanGrantMasterForm" action="loanGrant" theme="simple" >
-	  	<div  class="buttonbottom">
-			<s:submit method="newForm" value="Create New"  cssClass="button" />
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+<head>
+<title>Loan Grant Master</title>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/loanGrantHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+</head>
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">Loan Header Register</div>
+	</div>
+	<span class="mandatory">Loan Grant Header Saved Successfully</span>
+	<s:form name="loanGrantMasterForm" action="loanGrant" theme="simple">
+		<div class="buttonbottom">
+			<s:submit method="newForm" value="Create New" cssClass="button" />
+			<input type="button" value="Close"
+				onclick="javascript:window.close()" class="button" />
 		</div>
 	</s:form>
 </body>
-</html>	
+</html>

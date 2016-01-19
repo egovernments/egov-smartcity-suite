@@ -113,8 +113,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
      */
 
     @Override
-    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) {
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Details Updating Started...");
+    public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException{
+        LOGGER.debug("updateReceiptDetails : Receipt Details Updating Started...");
         for (final BillReceiptInfo bri : billReceipts)
             try {
                 LOGGER.debug("-----updateReceiptDetails is called----------------");
@@ -123,7 +123,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
                 LOGGER.error("Exception while updating receipt details in billing system", e);
                 throw new ApplicationRuntimeException("", e);
             }
-        LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Details Updating Finished...");
+        LOGGER.debug("updateReceiptDetails : Receipt Details Updating Finished...");
     }
 
     /**

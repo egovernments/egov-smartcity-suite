@@ -42,10 +42,10 @@ package org.egov.collection.integration.models;
 import java.math.BigDecimal;
 
 public class RestAggregatePaymentInfo {
-    private String ulbcode;
-    private Integer txncount;
-    private BigDecimal txnamount;
-    private String serviceCode;
+    private String ulbcode="";
+    private Integer txncount=0;
+    private BigDecimal txnamount=BigDecimal.ZERO;
+    private String serviceCode="";
 
     public String getUlbcode() {
         return ulbcode;

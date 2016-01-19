@@ -37,8 +37,9 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %> 
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet"
+	type="text/css" />
 <link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />
 <script>
 
@@ -114,88 +115,114 @@ function doAfterSubmit(){
 }
 </script>
 
- <style type="text/css">
-
-    @media print
-    {
-        #non-printable { display: none; }
-    }
-    </style>
+<style type="text/css">
+@media print {
+	#non-printable {
+		display: none;
+	}
+}
+</style>
 
 <style>
-th.bluebgheadtd{
-	padding:0px;
-	margin:0px;
+th.bluebgheadtd {
+	padding: 0px;
+	margin: 0px;
 }
-.extracontent{
-	font-weight:bold;
-	font-size:xx-small;
-	color:#CC0000;
+
+.extracontent {
+	font-weight: bold;
+	font-size: xx-small;
+	color: #CC0000;
 }
 </style>
 <div id="non-printable">
-<s:form name="budgetAppropriationReport" action="budgetAppropriationReport" theme="simple">
-<div class="formmainbox">
-	<div class="subheadnew">Budget Addition/Deduction Appropriation Report</div>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	  
-	  <tr>
-	  <td class="bluebox"  width="4%"></td>
-	    <td class="bluebox"  width="8%"><s:text name="report.fund"/></td>
-	    <td class="bluebox">
-		<s:select name="budgetDetail.fund" id="fund" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="budgetDetail.fund.id" />
-		</td>
-	    
-	    <td class="bluebox"><s:text name="report.department"/></td>
-	    <td class="bluebox"  width="8%">
-		<s:select name="budgetDetail.executingDepartment" id="department" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="" headerValue="----Select----"  value="budgetDetail.executingDepartment.id" />      
-		 </td>
-	    
-	  </tr>
-	  <tr>
-	  <td class="greybox"  width="4%"></td>
-	<td class="greybox"  width="8%"><s:text name="report.function"/></td>
-	<td class="greybox"  width="8%">
-	<s:select name="budgetDetail.function" id="function" list="dropdownData.functionList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="budgetDetail.function.id" />
-	</td>
-	
-	<td class="greybox"  width="8%"><s:text name="report.budget"/><span class="mandatory">*</span></td>
-	    <td class="greybox">
-		<s:select name="budgetDetail.budget" id="budget" list="dropdownData.budList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="%{budgetDetail.budget.id}" />       
-		 </td>
-		 
-	</tr>
-	<tr>
-		<td class="bluebox"  width="4%"></td>
-				<td  class="bluebox" width="8%"> <s:text name="report.fromdate" /><span class="mandatory">*</span></td>
-				<td  class="bluebox" width="8%"><s:date name="fromDate" format="dd/MM/yyyy" var="fromDateId"/>
-				<s:textfield name="budgetAppropriationReport.fromDate" id="fromDate" value="%{fromDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-				</td>
-				<td  class="bluebox" width="8%"><s:text name="report.todate" /><span class="mandatory">*</span></td>
-				<td  class="bluebox">
-				<s:date name="toDate" id="toDateId" format="dd/MM/yyyy"/>
-				<s:textfield name="budgetAppropriationReport.toDate" id="toDate" value="%{toDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-			</tr>
-	</table>
-		<div align="left" class="mandatory">* <s:text name="report.mandatory.fields"/></div>
-		
-		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<input type="hidden" id="budgetName" name="budgetName" />
-			<input type="hidden" id="fundName" name="fundName" />
-			<input type="hidden" id="functionName" name="functionName" />
-			<input type="hidden" id="deptName" name="deptName" />
-			<input type="button" value="Submit" class="buttonsubmit" onclick="return getData()"/>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
+	<s:form name="budgetAppropriationReport"
+		action="budgetAppropriationReport" theme="simple">
+		<div class="formmainbox">
+			<div class="subheadnew">Budget Addition/Deduction Appropriation
+				Report</div>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+				<tr>
+					<td class="bluebox" width="4%"></td>
+					<td class="bluebox" width="8%"><s:text name="report.fund" /></td>
+					<td class="bluebox"><s:select name="budgetDetail.fund"
+							id="fund" list="dropdownData.fundDropDownList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Select----"
+							value="budgetDetail.fund.id" /></td>
+
+					<td class="bluebox"><s:text name="report.department" /></td>
+					<td class="bluebox" width="8%"><s:select
+							name="budgetDetail.executingDepartment" id="department"
+							list="dropdownData.departmentList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Select----"
+							value="budgetDetail.executingDepartment.id" /></td>
+
+				</tr>
+				<tr>
+					<td class="greybox" width="4%"></td>
+					<td class="greybox" width="8%"><s:text name="report.function" /></td>
+					<td class="greybox" width="8%"><s:select
+							name="budgetDetail.function" id="function"
+							list="dropdownData.functionList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Select----"
+							value="budgetDetail.function.id" /></td>
+
+					<td class="greybox" width="8%"><s:text name="report.budget" /><span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:select name="budgetDetail.budget"
+							id="budget" list="dropdownData.budList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Select----"
+							value="%{budgetDetail.budget.id}" /></td>
+
+				</tr>
+				<tr>
+					<td class="bluebox" width="4%"></td>
+					<td class="bluebox" width="8%"><s:text name="report.fromdate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox" width="8%"><s:date name="fromDate"
+							format="dd/MM/yyyy" var="fromDateId" /> <s:textfield
+							name="budgetAppropriationReport.fromDate" id="fromDate"
+							value="%{fromDateId}" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					</td>
+					<td class="bluebox" width="8%"><s:text name="report.todate" /><span
+						class="mandatory">*</span></td>
+					<td class="bluebox"><s:date name="toDate" id="toDateId"
+							format="dd/MM/yyyy" /> <s:textfield
+							name="budgetAppropriationReport.toDate" id="toDate"
+							value="%{toDateId}" maxlength="10"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+				</tr>
+			</table>
+			<div align="left" class="mandatory">
+				*
+				<s:text name="report.mandatory.fields" />
+			</div>
+
+			<div class="buttonbottom" style="padding-bottom: 10px;">
+				<input type="hidden" id="budgetName" name="budgetName" /> <input
+					type="hidden" id="fundName" name="fundName" /> <input
+					type="hidden" id="functionName" name="functionName" /> <input
+					type="hidden" id="deptName" name="deptName" /> <input
+					type="button" value="Submit" class="buttonsubmit"
+					onclick="return getData()" /> <input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+
 		</div>
-		
-</div>
-<div id="loading" class="loading" style="width: 700; height: 700;display:none " align="center" >
-	<blink style="color: red">Searching processing, Please wait...</blink>
-</div> 
-</s:form>
+		<div id="loading" class="loading"
+			style="width: 700; height: 700; display: none" align="center">
+			<blink style="color: red">Searching processing, Please
+				wait...</blink>
+		</div>
+	</s:form>
 </div>
 
-<div id="result">
-</div>
+<div id="result"></div>

@@ -37,11 +37,13 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
-	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 </head>
 <script>
 var callback = {
@@ -180,52 +182,73 @@ function showChequeDetails(voucherId){
 }
 </script>
 <body>
-<div class="formmainbox">
-<div class="formheading"></div>
-<div class="subheadnew">Bank Book Report</div>
+	<div class="formmainbox">
+		<div class="formheading"></div>
+		<div class="subheadnew">Bank Book Report</div>
 
 
-<s:form action="bankBookReport" theme="simple" name="bankBookReport">
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<jsp:include page="../voucher/vouchertrans-filter.jsp"/>
-	</tr>
-	<tr>
-	    <egov:ajaxdropdown id="bank" fields="['Text','Value']" dropdownId="bank" url="voucher/common!ajaxLoadAllBanks.action" />
-	    
-	    <td class="bluebox" width="10%">Bank Name:<span class="bluebox"><span class="mandatory">*</span></span></td>
-	    <td class="bluebox">
-	    	<s:select name="bank" id="bank" list="dropdownData.bankList" listKey="bankBranchId" listValue="bankBranchName" headerKey="-1" headerValue="----Choose----" onclick="validateFund()" onChange="populateAccNumbers(this);"  />
-	    </td>
-	    <egov:ajaxdropdown id="accountNumber" fields="['Text','Value']" dropdownId="accountNumber" url="voucher/common!ajaxLoadAccountNumbers.action" />
-		<td class="bluebox" width="10%">Account Number:<span class="bluebox"><span class="mandatory">*</span></span></td>
-		<td class="bluebox">
-			<s:select  name="bankAccount" id="accountNumber" list="dropdownData.accNumList" listKey="id" listValue="accountnumber" headerKey="-1" headerValue="----Choose----" onclick="validateBank()"/>
-		</td>
-	</tr>    
-	<tr>
-		<td class="greybox" width="10%">Start Date:<span class="mandatory">*</span></td>
-		<td class="greybox">
-			<s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{getFormattedDate(startDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('bankBookReport.startDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-		<td class="greybox" width="10%">End Date:<span class="mandatory">*</span></td>
-		<td class="greybox">
-			<s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{getFormattedDate(endDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('bankBookReport.endDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
-		</td>
-	</tr>
-	
-</table>
-<br/><br/>
-<div class="buttonbottom">
-  <input type="button" value="Search" class="buttonsubmit" onclick="return getData()"/>
-  &nbsp;
-	<s:reset name="button" type="submit" cssClass="button" id="button" value="Cancel"/>
-	<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-</div>
-</div>
-</s:form>
+		<s:form action="bankBookReport" theme="simple" name="bankBookReport">
+			<table width="100%" cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<jsp:include page="../voucher/vouchertrans-filter.jsp" />
+				</tr>
+				<tr>
+					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
+						dropdownId="bank" url="voucher/common!ajaxLoadAllBanks.action" />
 
-<div id="results">
-</div>
+					<td class="bluebox" width="10%">Bank Name:<span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:select name="bank" id="bank"
+							list="dropdownData.bankList" listKey="bankBranchId"
+							listValue="bankBranchName" headerKey="-1"
+							headerValue="----Choose----" onclick="validateFund()"
+							onChange="populateAccNumbers(this);" /></td>
+					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
+						dropdownId="accountNumber"
+						url="voucher/common!ajaxLoadAccountNumbers.action" />
+					<td class="bluebox" width="10%">Account Number:<span
+						class="bluebox"><span class="mandatory">*</span></span></td>
+					<td class="bluebox"><s:select name="bankAccount"
+							id="accountNumber" list="dropdownData.accNumList" listKey="id"
+							listValue="accountnumber" headerKey="-1"
+							headerValue="----Choose----" onclick="validateBank()" /></td>
+				</tr>
+				<tr>
+					<td class="greybox" width="10%">Start Date:<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:textfield name="startDate"
+							id="startDate" cssStyle="width:100px"
+							value='%{getFormattedDate(startDate)}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('bankBookReport.startDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+					<td class="greybox" width="10%">End Date:<span
+						class="mandatory">*</span></td>
+					<td class="greybox"><s:textfield name="endDate" id="endDate"
+							cssStyle="width:100px" value='%{getFormattedDate(endDate)}'
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('bankBookReport.endDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
+					</td>
+				</tr>
+
+			</table>
+			<br />
+			<br />
+			<div class="buttonbottom">
+				<input type="button" value="Search" class="buttonsubmit"
+					onclick="return getData()" /> &nbsp;
+				<s:reset name="button" type="submit" cssClass="button" id="button"
+					value="Cancel" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+	</div>
+	</s:form>
+
+	<div id="results"></div>
 </body>
 </html>

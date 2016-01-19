@@ -489,7 +489,7 @@ public class PropertyExternalService {
                 }
                 if (loopInstallment.equals(installment)) {
 
-                    if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                    if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                         arrearDetails.setPenalty(demand.subtract(collection));
                     else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                         arrearDetails.setChqBouncePenalty(demand.subtract(collection));
@@ -498,14 +498,16 @@ public class PropertyExternalService {
 
                 } else {
                     arrearDetails.setTaxAmount(total);
-                    arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
-                            arrearDetails.getChqBouncePenalty()));
+                    //penalty calculation is entirely moved to next loop . So no need to add it here 
+                  //  arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
+                    //        arrearDetails.getChqBouncePenalty()));
+                    arrearDetails.setTotalAmount(total.add(arrearDetails.getChqBouncePenalty()));
                     propertyTaxDetails.getTaxDetails().add(arrearDetails);
                     loopInstallment = installment;
                     arrearDetails = new RestPropertyTaxDetails();
                     arrearDetails.setInstallment(installment);
                     total = BigDecimal.ZERO;
-                    if (PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY.equalsIgnoreCase(taxType))
+                    if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                         arrearDetails.setPenalty(demand.subtract(collection));
                     else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                         arrearDetails.setChqBouncePenalty(demand.subtract(collection));
@@ -519,8 +521,7 @@ public class PropertyExternalService {
             }
             if (arrearDetails != null) {
                 arrearDetails.setTaxAmount(total);
-                arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
-                        arrearDetails.getChqBouncePenalty()));
+                arrearDetails.setTotalAmount(total.add(arrearDetails.getChqBouncePenalty()));
                 propertyTaxDetails.getTaxDetails().add(arrearDetails);
             }
 

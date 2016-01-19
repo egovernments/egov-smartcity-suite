@@ -37,46 +37,50 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <style type="text/css">
 #container iframe {
-width: 100%;
-height: 500px;
-border: none; }
+	width: 100%;
+	height: 500px;
+	border: none;
+}
 
 #container {
-width: 100%;
-height: 100%;
-padding: 0;
-overflow: hidden; }
-
-@media print {
-input#btnPrint {
-display: none;
-}
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	overflow: hidden;
 }
 
 @media print {
-input#printPDF {
-display: none;
-}
+	input#btnPrint {
+		display: none;
+	}
 }
 
 @media print {
-input#printXLS {
-display: none;
+	input#printPDF {
+		display: none;
+	}
 }
-}
+
 @media print {
-div.commontopyellowbg {
-display: none;
+	input#printXLS {
+		display: none;
+	}
 }
-}
+
 @media print {
-div.commontopbluebg {
-display: none;
+	div.commontopyellowbg {
+		display: none;
+	}
 }
+
+@media print {
+	div.commontopbluebg {
+		display: none;
+	}
 }
 </style>
 <script>
@@ -89,16 +93,21 @@ function exportPdf(){
 }
 </script>
 <body>
-<div id="container">
-<iframe id="report" name="report" src='/EGF/voucher/journalVoucherPrint!ajaxPrint.action?id=<s:property value="id"/>' ></iframe>
-</div> 
-
-<s:form name="journalVoucherPrint" action="journalVoucherPrint" theme="simple" >
-	<input type="hidden" name="id" value='<s:property value="id"/>'/>
-	<div id="buttons">
-		<input type="button" id="btnPrint" onclick="javascript:parent.report.print();" value="Print" class="button"/>
-		<input type="button" id="printPDF" onclick="return exportPdf();" value="Save as PDF" class="button"/>
-		<input type="button" id="printXLS" onclick="return exportXls();" value="Save as Excel" class="button"/>
+	<div id="container">
+		<iframe id="report" name="report"
+			src='/EGF/voucher/journalVoucherPrint!ajaxPrint.action?id=<s:property value="id"/>'></iframe>
 	</div>
-</s:form>
+
+	<s:form name="journalVoucherPrint" action="journalVoucherPrint"
+		theme="simple">
+		<input type="hidden" name="id" value='<s:property value="id"/>' />
+		<div id="buttons">
+			<input type="button" id="btnPrint"
+				onclick="javascript:parent.report.print();" value="Print"
+				class="button" /> <input type="button" id="printPDF"
+				onclick="return exportPdf();" value="Save as PDF" class="button" />
+			<input type="button" id="printXLS" onclick="return exportXls();"
+				value="Save as Excel" class="button" />
+		</div>
+	</s:form>
 </body>

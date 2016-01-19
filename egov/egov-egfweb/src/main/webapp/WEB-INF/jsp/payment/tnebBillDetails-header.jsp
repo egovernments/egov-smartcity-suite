@@ -37,22 +37,28 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-    
-	<th class="bluebgheadtdnew">Sl No</th>  
-    <th class="bluebgheadtdnew">Bill Number</th>
-    <th class="bluebgheadtdnew">Bill Date</th> 
-    <th class="bluebgheadtdnew">Bill Voucher Number</th>
-    <th class="bluebgheadtdnew">Bill Voucher Date</th>  
-    <th class="bluebgheadtdnew">Payee Name</th>
-    <th class="bluebgheadtdnew">Net Amount</th>
-    <th class="bluebgheadtdnew">Earlier Payment</th> 
-    <th class="bluebgheadtdnew">Payable Amount</th>             
-    <s:if test="%{!isFieldMandatory('fund')}"><th class="bluebgheadtdnew">Fund</th></s:if>
-    <s:if test="%{shouldShowHeaderField('department')}"><th class="bluebgheadtdnew">Department</th></s:if>
-    <s:if test="%{shouldShowHeaderField('function')}"><th class="bluebgheadtdnew">Function</th></s:if>
-    <th class="bluebgheadtdnew">Region</th>
 
- 
+<th class="bluebgheadtdnew">Sl No</th>
+<th class="bluebgheadtdnew">Bill Number</th>
+<th class="bluebgheadtdnew">Bill Date</th>
+<th class="bluebgheadtdnew">Bill Voucher Number</th>
+<th class="bluebgheadtdnew">Bill Voucher Date</th>
+<th class="bluebgheadtdnew">Payee Name</th>
+<th class="bluebgheadtdnew">Net Amount</th>
+<th class="bluebgheadtdnew">Earlier Payment</th>
+<th class="bluebgheadtdnew">Payable Amount</th>
+<s:if test="%{!isFieldMandatory('fund')}">
+	<th class="bluebgheadtdnew">Fund</th>
+</s:if>
+<s:if test="%{shouldShowHeaderField('department')}">
+	<th class="bluebgheadtdnew">Department</th>
+</s:if>
+<s:if test="%{shouldShowHeaderField('function')}">
+	<th class="bluebgheadtdnew">Function</th>
+</s:if>
+<th class="bluebgheadtdnew">Region</th>
+
+

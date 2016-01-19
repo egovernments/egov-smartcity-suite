@@ -37,18 +37,16 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 
 <%@ page language="java"%>
 
 <html>
-  <head>
-    
-    <title>
-    	<s:text name="scheme.view.title"/> 
-    </title>
-    <sx:head/>
-     <SCRIPT type="text/javascript">
+<head>
+
+<title><s:text name="scheme.view.title" /></title>
+<sx:head />
+<SCRIPT type="text/javascript">
     function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';
 		var code=document.getElementById('code').value;
@@ -64,69 +62,80 @@
     }
     
     </SCRIPT>
-  </head>
-  <body>        
-   <s:form name="schemeForm" action="scheme" theme="css_xhtml" validate="true">
-  
-    <div  class="formmainbox"><div id="viewhead" class="subheadnew"><s:text name="scheme.view.title"/></div>
-    		<div style="color: red">
-		<s:actionerror/>  
-		</div>
-		<div style="color: green">
-		
-		<s:actionmessage />
-		</div>
-	    <div class="errorstyle" style="display:none" id="codeuniquecode" >
-	         <s:text name="scheme.code.already.exists"/>
-	    </div>
-	    <div class="errorstyle" style="display:none" id="uniquename" >
-	         <s:text name="scheme.name.already.exists"/>
-	    </div>
-   
-   		<s:hidden name="mode" id="mode" value="%{mode}" />
-	    <s:hidden name="id" id="id" value="%{id}" />
-     	<table width="100%" border="0" cellspacing="0" cellpadding="0">                   
-    		<tr>
-    				<td class="greybox">&nbsp;</td>
-					<td class="greybox" width="10%" ><b><s:text name="scheme.code"/></b></td>
-				    <td class="greybox" width="30%" ><s:property value="%{scheme.code}" /></td>
-				                       
-				    <td class="greybox" width="10%"><b><s:text name="scheme.name"/></b></td>
-				    <td class="greybox"  width="30%"><s:property value="%{scheme.name}" /></td>
-			</tr>
-			<tr>
+</head>
+<body>
+	<s:form name="schemeForm" action="scheme" theme="css_xhtml"
+		validate="true">
+
+		<div class="formmainbox">
+			<div id="viewhead" class="subheadnew">
+				<s:text name="scheme.view.title" />
+			</div>
+			<div style="color: red">
+				<s:actionerror />
+			</div>
+			<div style="color: green">
+
+				<s:actionmessage />
+			</div>
+			<div class="errorstyle" style="display: none" id="codeuniquecode">
+				<s:text name="scheme.code.already.exists" />
+			</div>
+			<div class="errorstyle" style="display: none" id="uniquename">
+				<s:text name="scheme.name.already.exists" />
+			</div>
+
+			<s:hidden name="mode" id="mode" value="%{mode}" />
+			<s:hidden name="id" id="id" value="%{id}" />
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
 					<td class="greybox">&nbsp;</td>
-			        <td class="bluebox"><b><s:text name="scheme.fund"/></b></td>
-				    <td class="bluebox"><s:property value="%{scheme.fund.name}" /></td>
+					<td class="greybox" width="10%"><b><s:text
+								name="scheme.code" /></b></td>
+					<td class="greybox" width="30%"><s:property
+							value="%{scheme.code}" /></td>
+
+					<td class="greybox" width="10%"><b><s:text
+								name="scheme.name" /></b></td>
+					<td class="greybox" width="30%"><s:property
+							value="%{scheme.name}" /></td>
+				</tr>
+				<tr>
+					<td class="greybox">&nbsp;</td>
+					<td class="bluebox"><b><s:text name="scheme.fund" /></b></td>
+					<td class="bluebox"><s:property value="%{scheme.fund.name}" /></td>
 					<td class="bluebox"><b>IsActive</b></td>
 					<td class="bluebox"><s:property value="%{scheme.isactive}" /></td>
-			</tr>
-			<tr>
+				</tr>
+				<tr>
 					<td class="greybox">&nbsp;</td>
-					<td class="greybox" > <b><s:text name="scheme.startDate" /></b></td>
-					<td  class="greybox" ><s:property value="%{scheme.validfrom}" /></td>
-					
-					<td  class="greybox" ><b><s:text name="scheme.endDate" /></b></td>
-					<td  class="greybox"><s:property value="%{scheme.validto}" /></td>
-			</tr>
-			<tr>
+					<td class="greybox"><b><s:text name="scheme.startDate" /></b></td>
+					<td class="greybox"><s:property value="%{scheme.validfrom}" /></td>
+
+					<td class="greybox"><b><s:text name="scheme.endDate" /></b></td>
+					<td class="greybox"><s:property value="%{scheme.validto}" /></td>
+				</tr>
+				<tr>
 					<td class="greybox">&nbsp;</td>
-					<td class="bluebox" width="10%"><b><s:text name="scheme.description" /></b></td>
-					<td class="bluebox" colspan="3" ><s:property value="%{scheme.description}" /></td>				
-			</tr>          
-    	</table>
-    	</div>
-    	</s:form>    
-    	<br/>
-	  <div id="viewMode" class="buttonbottom" >	
-		<table table align="center">  
-	    	 <tr>
-				<td><input type="button" name="close" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
-			 </tr>
-		</table> 
-	 </div>  
-	   
-	
-	
-  </body>
+					<td class="bluebox" width="10%"><b><s:text
+								name="scheme.description" /></b></td>
+					<td class="bluebox" colspan="3"><s:property
+							value="%{scheme.description}" /></td>
+				</tr>
+			</table>
+		</div>
+	</s:form>
+	<br />
+	<div id="viewMode" class="buttonbottom">
+		<table table align="center">
+			<tr>
+				<td><input type="button" name="close" id="Close" value="Close"
+					onclick="javascript:window.close()" class="button" /></td>
+			</tr>
+		</table>
+	</div>
+
+
+
+</body>
 </html>

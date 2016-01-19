@@ -77,7 +77,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
@@ -89,6 +88,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -596,7 +596,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
             if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
-                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) || !propertyByEmployee)
+                    || (getModel().getState().getNextAction()!=null && getModel().getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
+                    || !propertyByEmployee)
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -646,7 +647,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         validateApproverDetails();
         if (hasErrors())
             if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
-                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+                    ||(getModel().getState().getNextAction()!=null && getModel().getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -734,7 +735,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
             if (JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)
-                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+                    || (getModel().getState().getNextAction()!=null && getModel().getState().getNextAction().equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
                 return NEW;
             else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
                     || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
@@ -759,10 +760,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         String username = "";
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForPositon(propertyModel
                 .getStateHistory().get(0).getOwnerPosition().getId());
-        if (propService.isEmployee(propertyModel.getCreatedBy()))
-            username = propertyModel.getCreatedBy().getUsername();
+        if (propService.isEmployee(propertyModel.getCreatedBy())){
+            Assignment assignment = assignmentService.getPrimaryAssignmentForUser(propertyModel.getCreatedBy().getId());
+            username = propertyModel.getCreatedBy().getName().concat("~").concat(assignment.getPosition().getName());
+        }
         else
-            username = userAssignment.getEmployee().getUsername();
+            username = userAssignment.getEmployee().getName().concat("~").concat(userAssignment.getPosition().getName());
         final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
         if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
             wfInitiatorRejected = Boolean.TRUE;
@@ -1150,9 +1153,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
      */
     private void prepareAckMsg() {
         LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
+        Assignment assignment = assignmentService
+                .getPrimaryAssignmentForPositon(approverPositionId);
         final User approverUser = eisCommonService.getUserForPosition(approverPositionId, new Date());
         final String action = getModifyReasonString();
-        setAckMessage(getText("property.modify.forward.success", new String[] { action, approverUser.getUsername(),
+        setAckMessage(getText("property.modify.forward.success", new String[] { action, approverUser.getName().concat("~").concat(assignment.getPosition().getName()),
                 propertyModel.getApplicationNo() }));
 
         LOGGER.debug("AckMessage: " + getAckMessage() + "\nExiting from prepareAckMsg");

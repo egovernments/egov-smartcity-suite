@@ -70,8 +70,16 @@
 		<div class="col-xs-3 add-margin view-content" id='propertyIdentifier'>
 			<c:out value="${waterConnectionDetails.connection.propertyIdentifier}" />
 		</div>
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
-		<div class="col-xs-3 add-margin view-content" id="applicantname"></div>
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.consumer.number"/></div>
+		<div class="col-xs-3 add-margin view-content">
+			<c:choose>
+				<c:when test="${not empty waterConnectionDetails.connection.consumerCode}">
+					<c:out value="${waterConnectionDetails.connection.consumerCode}" />
+				</c:when>
+				<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
+			</c:choose>
+		</div>
+		
 		
 	</div>
 	<div class="row add-border">
@@ -83,8 +91,8 @@
 	</div>
 	<div class="row add-border">
 		
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhar"/></div>
-		<div class="col-xs-3 add-margin view-content" id="aadhaar"></div>
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
+		<div class="col-xs-3 add-margin view-content" id="applicantname"></div>
 		<div class="col-xs-3 add-margin"><spring:message code="lbl.locality" /></div>
 		<div class="col-xs-3 add-margin view-content" id="locality"></div>
 	</div>
@@ -97,17 +105,12 @@
 	</div>
 		
 	<div class="row add-border">
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.nooffloors"/></div>
+	<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhar"/></div>
+		<div class="col-xs-3 add-margin view-content" id="aadhaar"></div>
+	<div class="col-xs-3 add-margin"><spring:message code="lbl.nooffloors"/></div>
 		<div class="col-xs-3 add-margin view-content" id="nooffloors"></div>
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.consumer.number"/></div>
-		<div class="col-xs-3 add-margin view-content">
-			<c:choose>
-				<c:when test="${not empty waterConnectionDetails.connection.consumerCode}">
-					<c:out value="${waterConnectionDetails.connection.consumerCode}" />
-				</c:when>
-				<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
-			</c:choose>
-		</div>
+		
+		
 		
 	</div>
 		

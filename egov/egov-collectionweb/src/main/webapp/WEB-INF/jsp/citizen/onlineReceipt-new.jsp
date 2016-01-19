@@ -292,7 +292,8 @@ function validateOnlineReceipt(){
 	else {
 			doLoadingMask('#loadingMask');
 			document.collDetails.action="onlineReceipt-saveNew.action";
-			document.collDetails.submit();
+
+			return true;
   		}
 }
 
@@ -740,7 +741,7 @@ function onLoad(){
 								<span style="color: red">Please wait....</span>
 							</div>
 							<div class="bottombuttonholder"  align="middle">
-								<input type="button" class="buttonsubmit"
+								<input type="submit" class="buttonsubmit"
 									id="button2" value="Pay Online"
 									onclick="return validateOnlineReceipt();" />
 							</div>

@@ -1,4 +1,5 @@
- <!-- eGov suite of products aim to improve the internal efficiency,transparency, 
+
+<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
   
       Copyright (C) <2015>  eGovernments Foundation
@@ -40,18 +41,16 @@
 <head>
 <title><s:text name="receiptRegisterReport.title" /></title>
 <script>
-<jsp:useBean id="now" class="java.util.Date" />
+	<jsp:useBean id="now" class="java.util.Date" />
 
-<fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
+	<fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
 	var currDate = "${currDate}";
 
-function validate()
-{
-	var fromdate=dom.get("fromDate").value;
-	var todate=dom.get("toDate").value;
-	var valSuccess = true;
-	document.getElementById("report_error_area").
-	innerHTML = "";
+	function validate() {
+		var fromdate = dom.get("fromDate").value;
+		var todate = dom.get("toDate").value;
+		var valSuccess = true;
+		document.getElementById("report_error_area").innerHTML = "";
 
 		if (fromdate == "") {
 			document.getElementById("report_error_area").style.display = "block";
@@ -93,101 +92,108 @@ function validate()
 </script>
 </head>
 <body>
-<div class="errorstyle" id="report_error_area" style="display:none;"></div>
-<s:form theme="simple" name="receiptRegisterForm"
-	action="receiptRegisterReport-report.action">
-	<div class="formmainbox">
-	<div class="subheadnew"><s:text name="receiptRegisterReport.title" /></div>
-	<div class="subheadsmallnew"><span class="subheadnew"><s:text
-		name="collectionReport.criteria" /></span></div>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox"><s:text
-				name="collectionReport.criteria.fromdate" /><span class="mandatory1">*</span></td>
-			<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
-			<td class="bluebox"><s:textfield id="fromDate"
-				name="fromDate" value="%{cdFormat}"
-				onfocus="javascript:vDateType='3';"
-				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-				href="javascript:show_calendar('forms[0].fromDate');"
-				onmouseover="window.status='Date Picker';return true;"
-				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
-				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
-			</td>
-			<td class="bluebox"><s:text
-				name="collectionReport.criteria.todate" /><span class="mandatory1">*</span></td>
-			<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-			<td class="bluebox"><s:textfield id="toDate"
-				name="toDate" value="%{cdFormat1}"
-				onfocus="javascript:vDateType='3';"
-				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-				href="javascript:show_calendar('forms[0].toDate');"
-				onmouseover="window.status='Date Picker';return true;"
-				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
-				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
-			</td>
-		</tr>
-		<tr>
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox"><s:text
-				name="collectionReport.criteria.dept" /></td>
-			<td class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.dept.all')}"
-				name="deptId" id="dept" cssClass="selectwk"
-				list="dropdownData.departmentList" listKey="id" listValue="name"
-				value="%{deptId}" /></td>
-			<td class="bluebox">
-				<s:text name="collectionReport.criteria.payment.mode"/></td>
-	        <td class="bluebox"><s:select headerKey="ALL"
-				headerValue="%{getText('collectionReport.payment.mode.all')}" 
-				name="paymentMode" id="paymentMode" cssClass="selectwk" 
-				list="paymentModes" value="%{paymentMode}" /> </td>
-		</tr>
-		<tr>
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox"><s:text
-				name="collectionReport.criteria.status" /></td>
-			<td class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.status.all')}"
-				name="statusId" id="status" cssClass="selectwk"
-				list="%{receiptStatuses}" listKey="id" listValue="description"
-				value="%{id}" /></td>
-			<td class="bluebox">
-				<s:text name="collectionReport.criteria.source"/></td>
-	        <td class="bluebox"><s:select headerKey="ALL"
-				headerValue="%{getText('collectionReport.sources.all')}" 
-				name="source" id="source" cssClass="selectwk" 
-				list="sources" value="%{source}" /> </td>
-		</tr>
-	</table>
-<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
+	<div class="errorstyle" id="report_error_area" style="display: none;"></div>
+	<s:form theme="simple" name="receiptRegisterForm"
+		action="receiptRegisterReport-report.action">
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="receiptRegisterReport.title" />
+			</div>
+			<div class="subheadsmallnew">
+				<span class="subheadnew"><s:text
+						name="collectionReport.criteria" /></span>
+			</div>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.fromdate" /><span
+						class="mandatory1">*</span></td>
+					<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
+					<td class="bluebox"><s:textfield id="fromDate" name="fromDate"
+							value="%{cdFormat}" onfocus="javascript:vDateType='3';"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].fromDate');"
+						onmouseover="window.status='Date Picker';return true;"
+						onmouseout="window.status='';return true;"><img
+							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							width="18" height="18" border="0" align="absmiddle" /></a>
+						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.todate" /><span
+						class="mandatory1">*</span></td>
+					<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
+					<td class="bluebox"><s:textfield id="toDate" name="toDate"
+							value="%{cdFormat1}" onfocus="javascript:vDateType='3';"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].toDate');"
+						onmouseover="window.status='Date Picker';return true;"
+						onmouseout="window.status='';return true;"><img
+							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							width="18" height="18" border="0" align="absmiddle" /></a>
+						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.dept" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('collectionReport.dept.all')}"
+							name="deptId" id="dept" cssClass="selectwk"
+							list="dropdownData.departmentList" listKey="id" listValue="name"
+							value="%{deptId}" /></td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.payment.mode" /></td>
+					<td class="bluebox"><s:select headerKey="ALL"
+							headerValue="%{getText('collectionReport.payment.mode.all')}"
+							name="paymentMode" id="paymentMode" cssClass="selectwk"
+							list="paymentModes" value="%{paymentMode}" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.status" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('collectionReport.status.all')}"
+							name="statusId" id="status" cssClass="selectwk"
+							list="%{receiptStatuses}" listKey="id" listValue="description"
+							value="%{id}" /></td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.source" /></td>
+					<td class="bluebox"><s:select headerKey="ALL"
+							headerValue="%{getText('collectionReport.sources.all')}"
+							name="source" id="source" cssClass="selectwk" list="sources"
+							value="%{source}" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.service" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('collectionReport.service.all')}"
+							name="serviceId" id="service" cssClass="selectwk"
+							list="dropdownData.servicetypeList" listKey="id" listValue="name"
+							value="%{serviceId}" /></td>
+				</tr>
+			</table>
+			<div align="left" class="mandatorycoll">
+				<s:text name="common.mandatoryfields" />
+			</div>
 
-   <br/>
-   <br/>
-	</div>
-	
-	<div class="buttonbottom">
-			<label>
-				<s:submit type="submit" cssClass="buttonsubmit" id="button"
-					value="%{getText('collectionReport.create')}"
+			<br /> <br />
+		</div>
+
+		<div class="buttonbottom">
+			<label> <s:submit type="submit" cssClass="buttonsubmit"
+					id="button" value="%{getText('collectionReport.create')}"
 					onclick="return validate();" />
-			</label>&nbsp;
-			<label>
-				<s:reset type="submit" cssClass="button"
+			</label> <label> <s:reset type="submit" cssClass="button"
 					value="%{getText('collectionReport.reset')}"
 					onclick="return clearErrors();" />
-			</label>&nbsp;
-			<label>
-				<s:submit type="submit" cssClass="button"
-					value="Close"
-					onclick="window.close()" />
+			</label> <label> <s:submit type="submit" cssClass="button"
+					value="Close" onclick="window.close()" />
 			</label>
 		</div>
-</s:form>
+	</s:form>
 </body>
 </html>

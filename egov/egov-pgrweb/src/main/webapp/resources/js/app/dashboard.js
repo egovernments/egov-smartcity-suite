@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 //Initial view
 var lastbtnId = isdefault ? "pgrPerf" : "topFiveCompTypeview"; 
 var lastWinId = isdefault ? "performanceWin" : "topFiveCompTypeWin";
@@ -79,7 +119,8 @@ function openCompPendency() {
 
 //===============================PERFORMANCE GIS=======================================//
 function performanceGIS() {
-	var gisOption = {
+	
+	 var gisOption = {
 			zoom: 11,
 			mapTypeId : google.maps.MapTypeId.TERRAIN, 
 			streetViewControl: true,
@@ -97,6 +138,7 @@ function performanceGIS() {
 				style: google.maps.ZoomControlStyle.SMALL
 			}
 	 };
+	
 	var map = new google.maps.Map(document.getElementById("performanceGIS"), gisOption);
 	var infoWin = new google.maps.InfoWindow();
 	var chartWin = new google.maps.InfoWindow();
@@ -144,9 +186,9 @@ function performanceGIS() {
 	        			  'Pending as on '+data.dateAsOn+' :<b> '+data.noOfCompPenAsonDate+'</b><br/>'+
 	        			  'Disposal Percentage : <b>'+data.disposalPerc+'% </b><br/>'+
 	        			  'Rank : <b>'+data.rank+'</b><br/>'+
-	        			  '<a href="#" id="performpgraph'+data.zoneId+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
+	        			  '<!--<a href="#" id="performpgraph'+data.zoneId+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
 	        			  '<a href="#" id="openbrkup'+data.zoneId+'"><i class="fa fa-pie-chart fa-fw"></i>Open Breakup</a><br/>'+
-	        			  '<a href="#" id="regbrkup'+data.zoneId+'"><i class="fa fa-pie-chart fa-fw"></i>Filed Breakup</a>'+
+	        			  '<a href="#" id="regbrkup'+data.zoneId+'"><i class="fa fa-pie-chart fa-fw"></i>Filed Breakup</a>-->'+
 	        			  '</div><div style="padding:5px;background-color:silver;color:white;font-size:11px;font-weight:bold">Till '+
 	        			  data.dateAsOn+'</div></div>');
 	        	  infoWin.open(map, marker);
@@ -281,9 +323,9 @@ function breakupTabularDrill(link) {
 			           // cursor: 'pointer',
 			            dataLabels: {
 			                enabled: true,
-			                distance: -13,
+			                distance: -30,
 							color:'white',
-							style:{'fontSize':'smaller'},
+							style:{'fontSize':'smaller', 'textShadow':'none'},
 			                formatter: function() {
 			                	if (this.y != 0) {
 			                        return this.y;
@@ -854,9 +896,9 @@ function slaPie() {
 		            slicedOffset: 0,
 		            dataLabels: {
 		                enabled: true,
-		                distance: -30,
+		                distance: -80,
 						color:'white',
-						style:{'fontSize':'smaller'},
+						style:{'fontSize':'smaller', 'textShadow':'none'},
 		                formatter: function() {
 		                    return this.y;
 		                }
@@ -940,8 +982,8 @@ function slaGIS() {
 	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Ward : '+
 	        			  data.zone+'</div><div class="panel-body" style="white-space:nowrap;color:#000;text-align:left;line-height:2;">Total Complaints : '+
 	        			  data.regComp+'<br/>Total Open : '+data.openComp+'<br/>Open From 90 Days: '+data.open90Comp+'<br/>Open : '+data.pecentage+'%<br/>'+
-	        			  '<a href="#" id="slapgraph'+data.zoneID+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
-	        			  '<a href="#" id="slapbrkup'+data.zoneID+'"><i class="fa fa-pie-chart fa-fw"></i>Open Breakup</a><br/>'+
+	        			  '<!--<a href="#" id="slapgraph'+data.zoneID+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
+	        			  '<a href="#" id="slapbrkup'+data.zoneID+'"><i class="fa fa-pie-chart fa-fw"></i>Open Breakup</a><br/>-->'+
 	        			  '</div><div style="padding:5px;background-color:silver;color:white;font-size:11px;font-weight:bold">Since '+
 	        			  data.startDt+' - '+data.endDt+'</div></div>');
 	        	  infoWin.open(map, marker);
@@ -1146,7 +1188,7 @@ function overviewPie() {
 		lastSelSlice = piedata[0].name;
 		$.ajax({url:"wardwise-complaint-by-type/"+piedata[0].ctId,
 			cache:true,
-			data: {color: "#5B94CB" }
+			data: {color: "#5B94CB"}
 		}).done(function(gisData) {
 			overviewGis(gisData);
 		});
@@ -1286,7 +1328,7 @@ function createPieInGmap() {
 		                enabled: true,
 		                distance: -30,
 						color:'white',
-						style:{'fontSize':'smaller'},
+						style:{'fontSize':'smaller', 'textShadow':'none'},
 		                formatter: function() {
 		                	var width = $(window).width(), height = $(window).height();
 		                	if (width >= 768) {
@@ -1304,9 +1346,9 @@ function createPieInGmap() {
 		            				var name = this.name;
 		            				var color = this.color.stops[0][1];
 		            				lastSelSlice = name;
-			            			$.ajax({url:"overviewGis.do",
+			            			$.ajax({url:"wardwise-complaint-by-type/"+this.ctId,
 			            				cache:true,
-			            				data: { ctId: this.ctId, color: color }
+			            				data: { color: color }
 			            			}).done(function(gisData) {
 			            				overviewGis(gisData);
 			            			});
@@ -1429,9 +1471,9 @@ $(".ovrviewBkBtn").on("click",function(){
 
 
 function topFiveCompType() {
-		$.ajax({url:"top-complaints",
-			cache:false
-		}).done(function(piedata) {
+	$.ajax({url:"top-complaints",
+		cache:false
+	}).done(function(piedata) {
 	$("#page-top").mask('');
 	if($("#topFiveCompTypeGraph").highcharts()) {
 		$("#topFiveCompTypeGraph").highcharts().destroy();
@@ -1520,21 +1562,25 @@ function wardwiseAnalysis() {
 				style: google.maps.ZoomControlStyle.SMALL
 			}
 	 };
-	$.ajax({url:"gisWardWiseAnalysis.do",
+	
+	$.ajax({url:"gis-analysis",
 		cache:false
 	}).done(function(analysisData) {
-		drawGisAnalysis("wardwiseAnalysis1",analysisData.registered,gisOption);
-		drawGisAnalysis("wardwiseAnalysis2",analysisData.redressed,gisOption);
-		drawGisAnalysis("wardwiseAnalysis3",analysisData.complaintPerProperty,gisOption);
 		
-		$("#top1").text(analysisData.top1[0].compType);
+		console.log(JSON.stringify(analysisData));
+		
+		drawGisAnalysis("wardwiseAnalysis1",analysisData.registered,gisOption);
+		//drawGisAnalysis("wardwiseAnalysis2",analysisData.redressed,gisOption);
+		//drawGisAnalysis("wardwiseAnalysis3",analysisData.complaintPerProperty,gisOption);
+		
+		/*$("#top1").text(analysisData.top1[0].compType);
 		drawGisAnalysis("topGis1",analysisData.top1,gisOption);
 		
 		$("#top2").text(analysisData.top2[0].compType);
 		drawGisAnalysis("topGis2",analysisData.top2,gisOption);
 		
 		$("#top3").text(analysisData.top3[0].compType);
-		drawGisAnalysis("topGis3",analysisData.top3,gisOption);
+		drawGisAnalysis("topGis3",analysisData.top3,gisOption);*/
 		$("#page-top").unmask();
 	});
 	

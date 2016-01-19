@@ -1,40 +1,40 @@
 /*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 /*
@@ -59,237 +59,241 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-@Transactional(readOnly=true)
+
+@Transactional(readOnly = true)
 public class FiscalPeriod {
-	private String id = null;
-	private String type = null;
-	private String name = null;
-	private String startingDate = "1-Jan-1900";
-	private String endingDate = "1-Jan-1900";
-	private String parentId = null;
-	private String isActiveForPosting = "0";
-	private String isActive = "0";
-	private String modifiedBy = null;
-	private String lastModified = "";
-	private String created = "1-Jan-1900";
-	private String financialYearId = null;
-	private static TaskFailedException taskExc;
-	private String updateQuery = "UPDATE FiscalPeriod SET";
-	private static final Logger LOGGER = Logger.getLogger(FiscalPeriod.class);
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
-			.getDefault());
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
-			Locale.getDefault());
+    private String id = null;
+    private String type = null;
+    private String name = null;
+    private String startingDate = "1-Jan-1900";
+    private String endingDate = "1-Jan-1900";
+    private String parentId = null;
+    private String isActiveForPosting = "0";
+    private String isActive = "0";
+    private String modifiedBy = null;
+    private String lastModified = "";
+    private String created = "1-Jan-1900";
+    private String financialYearId = null;
+    private static TaskFailedException taskExc;
+    private static final Logger LOGGER = Logger.getLogger(FiscalPeriod.class);
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
+            .getDefault());
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
+            Locale.getDefault());
 
-	public void setId(String aId) {
-		id = aId;
-	}
+    public void setId(final String aId) {
+        id = aId;
+    }
 
-	public int getId() {
-		return Integer.valueOf(id).intValue();
-	}
-	@Transactional
-	public void insert() throws SQLException,
-			TaskFailedException {
-		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate();
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-			created = formatter.format(sdf.parse(created));
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw taskExc;
-		}
-		setCreated(created);
-		setLastModified(created);
-		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("FiscalPeriod")));
+    public int getId() {
+        return Integer.valueOf(id).intValue();
+    }
 
-		String insertQuery = "INSERT INTO FiscalPeriod (id, type, name, startingdate, endingdate, parentid, "
-				+ "isactiveforposting, isactive, modifiedby, lastmodified, created, FINANCIALYEARID) "
-				+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    @Transactional
+    public void insert() throws SQLException,
+    TaskFailedException {
+        final EGovernCommon commommethods = new EGovernCommon();
+        created = commommethods.getCurrentDate();
+        try {
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+            created = formatter.format(sdf.parse(created));
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw taskExc;
+        }
+        setCreated(created);
+        setLastModified(created);
+        setId(String.valueOf(PrimaryKeyGenerator.getNextKey("FiscalPeriod")));
 
-		if(LOGGER.isInfoEnabled())     LOGGER.info("before : " + insertQuery);
-		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-		pst.setString(1, id);
-		pst.setString(2, type);
-		pst.setString(3, name);
-		pst.setString(4, startingDate);
-		pst.setString(5, endingDate);
-		pst.setString(6, parentId);
-		pst.setString(7, isActiveForPosting);
-		pst.setString(8, isActive);
-		pst.setString(9, modifiedBy);
-		pst.setString(10, lastModified);
-		pst.setString(11, created);
-		pst.setString(12, financialYearId);
-		pst.executeUpdate();
-	}
-	@Transactional
-	public void update() throws SQLException,
-			TaskFailedException {
-		newUpdate();
-	}
+        final String insertQuery = "INSERT INTO FiscalPeriod (id, type, name, startingdate, endingdate, parentid, "
+                + "isactiveforposting, isactive, modifiedby, lastmodified, created, FINANCIALYEARID) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	public void newUpdate() throws TaskFailedException,
-			SQLException {
-		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate();
-		Query pstmt = null;
-		try {
-			created = formatter.format(sdf.parse(created));
-		} catch (ParseException parseExp) {
-			if(LOGGER.isDebugEnabled())     LOGGER.debug(parseExp.getMessage(), parseExp);
-		}
-		setCreated(created);
-		setLastModified(created);
-		StringBuilder query = new StringBuilder(500);
-		query.append("update FiscalPeriod set ");
-		if (type != null)
-			query.append("type=?,");
-		if (name != null)
-			query.append("name=?,");
-		if (startingDate != null)
-			query.append("startingDate=?,");
-		if (endingDate != null)
-			query.append("endingDate=?,");
-		if (parentId != null)
-			query.append("parentId=?,");
-		if (isActiveForPosting != null)
-			query.append("isActiveForPosting=?,");
-		if (isActive != null)
-			query.append("isActive=?,");
-		if (modifiedBy != null)
-			query.append("modifiedBy=?,");
-		if (lastModified != null)
-			query.append("lastModified=?,");
-		if (created != null)
-			query.append("created=?,");
-		if (financialYearId != null)
-			query.append("financialYearId=?,");
-		int lastIndexOfComma = query.lastIndexOf(",");
-		query.deleteCharAt(lastIndexOfComma);
-		query.append(" where id=?");
-		try {
-			int i = 1;
-			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
-			if (type != null)
-				pstmt.setString(i++, type);
-			if (name != null)
-				pstmt.setString(i++, name);
-			if (startingDate != null)
-				pstmt.setString(i++, startingDate);
-			if (endingDate != null)
-				pstmt.setString(i++, endingDate);
-			if (parentId != null)
-				pstmt.setString(i++, parentId);
-			if (isActiveForPosting != null)
-				pstmt.setString(i++, isActiveForPosting);
-			if (isActive != null)
-				pstmt.setString(i++, isActive);
-			if (modifiedBy != null)
-				pstmt.setString(i++, modifiedBy);
-			if (lastModified != null)
-				pstmt.setString(i++, lastModified);
-			if (created != null)
-				pstmt.setString(i++, created);
-			if (financialYearId != null)
-				pstmt.setString(i++, financialYearId);
-			pstmt.setString(i++, id);
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("before : " + insertQuery);
+        final Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+        pst.setString(0, id);
+        pst.setString(1, type);
+        pst.setString(2, name);
+        pst.setString(3, startingDate);
+        pst.setString(4, endingDate);
+        pst.setString(5, parentId);
+        pst.setString(6, isActiveForPosting);
+        pst.setString(7, isActive);
+        pst.setString(8, modifiedBy);
+        pst.setString(9, lastModified);
+        pst.setString(10, created);
+        pst.setString(11, financialYearId);
+        pst.executeUpdate();
+    }
 
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			LOGGER.error("Exp in update: " + e.getMessage());
-			throw taskExc;
-		} 
-	}
+    @Transactional
+    public void update() throws SQLException,
+    TaskFailedException {
+        newUpdate();
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void newUpdate() throws TaskFailedException,
+    SQLException {
+        final EGovernCommon commommethods = new EGovernCommon();
+        created = commommethods.getCurrentDate();
+        Query pstmt = null;
+        try {
+            created = formatter.format(sdf.parse(created));
+        } catch (final ParseException parseExp) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug(parseExp.getMessage(), parseExp);
+        }
+        setCreated(created);
+        setLastModified(created);
+        final StringBuilder query = new StringBuilder(500);
+        query.append("update FiscalPeriod set ");
+        if (type != null)
+            query.append("type=?,");
+        if (name != null)
+            query.append("name=?,");
+        if (startingDate != null)
+            query.append("startingDate=?,");
+        if (endingDate != null)
+            query.append("endingDate=?,");
+        if (parentId != null)
+            query.append("parentId=?,");
+        if (isActiveForPosting != null)
+            query.append("isActiveForPosting=?,");
+        if (isActive != null)
+            query.append("isActive=?,");
+        if (modifiedBy != null)
+            query.append("modifiedBy=?,");
+        if (lastModified != null)
+            query.append("lastModified=?,");
+        if (created != null)
+            query.append("created=?,");
+        if (financialYearId != null)
+            query.append("financialYearId=?,");
+        final int lastIndexOfComma = query.lastIndexOf(",");
+        query.deleteCharAt(lastIndexOfComma);
+        query.append(" where id=?");
+        try {
+            int i = 1;
+            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
+            if (type != null)
+                pstmt.setString(i++, type);
+            if (name != null)
+                pstmt.setString(i++, name);
+            if (startingDate != null)
+                pstmt.setString(i++, startingDate);
+            if (endingDate != null)
+                pstmt.setString(i++, endingDate);
+            if (parentId != null)
+                pstmt.setString(i++, parentId);
+            if (isActiveForPosting != null)
+                pstmt.setString(i++, isActiveForPosting);
+            if (isActive != null)
+                pstmt.setString(i++, isActive);
+            if (modifiedBy != null)
+                pstmt.setString(i++, modifiedBy);
+            if (lastModified != null)
+                pstmt.setString(i++, lastModified);
+            if (created != null)
+                pstmt.setString(i++, created);
+            if (financialYearId != null)
+                pstmt.setString(i++, financialYearId);
+            pstmt.setString(i++, id);
 
-	public void setType(String type) {
-		this.type = type;
-	}
+            pstmt.executeUpdate();
+        } catch (final Exception e) {
+            LOGGER.error("Exp in update: " + e.getMessage());
+            throw taskExc;
+        }
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setType(final String type) {
+        this.type = type;
+    }
 
-	public String getStartingDate() {
-		return startingDate;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setStartingDate(String startingDate) {
-		this.startingDate = startingDate;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public String getEndingDate() {
-		return endingDate;
-	}
+    public String getStartingDate() {
+        return startingDate;
+    }
 
-	public void setEndingDate(String endingDate) {
-		this.endingDate = endingDate;
-	}
+    public void setStartingDate(final String startingDate) {
+        this.startingDate = startingDate;
+    }
 
-	public String getParentId() {
-		return parentId;
-	}
+    public String getEndingDate() {
+        return endingDate;
+    }
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
+    public void setEndingDate(final String endingDate) {
+        this.endingDate = endingDate;
+    }
 
-	public String getIsActiveForPosting() {
-		return isActiveForPosting;
-	}
+    public String getParentId() {
+        return parentId;
+    }
 
-	public void setIsActiveForPosting(String isActiveForPosting) {
-		this.isActiveForPosting = isActiveForPosting;
-	}
+    public void setParentId(final String parentId) {
+        this.parentId = parentId;
+    }
 
-	public String getIsActive() {
-		return isActive;
-	}
+    public String getIsActiveForPosting() {
+        return isActiveForPosting;
+    }
 
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActiveForPosting(final String isActiveForPosting) {
+        this.isActiveForPosting = isActiveForPosting;
+    }
 
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
+    public String getIsActive() {
+        return isActive;
+    }
 
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
+    public void setIsActive(final String isActive) {
+        this.isActive = isActive;
+    }
 
-	public String getLastModified() {
-		return lastModified;
-	}
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
 
-	public void setLastModified(String lastModified) {
-		this.lastModified = lastModified;
-	}
+    public void setModifiedBy(final String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
 
-	public String getCreated() {
-		return created;
-	}
+    public String getLastModified() {
+        return lastModified;
+    }
 
-	public void setCreated(String created) {
-		this.created = created;
-	}
+    public void setLastModified(final String lastModified) {
+        this.lastModified = lastModified;
+    }
 
-	public String getFinancialYearId() {
-		return financialYearId;
-	}
+    public String getCreated() {
+        return created;
+    }
 
-	public void setFinancialYearId(String financialYearId) {
-		this.financialYearId = financialYearId;
-	}
+    public void setCreated(final String created) {
+        this.created = created;
+    }
+
+    public String getFinancialYearId() {
+        return financialYearId;
+    }
+
+    public void setFinancialYearId(final String financialYearId) {
+        this.financialYearId = financialYearId;
+    }
 
 }

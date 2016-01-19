@@ -37,51 +37,79 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-	<span class="mandatory">
-			<font  style='color: red ; font-weight:bold '> 
-				<s:actionerror/>  
-				<s:fielderror />
-				<s:actionmessage /></font>
-	</span>
+<span class="mandatory"> <font
+	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+		<s:actionmessage /></font>
+</span>
 <s:if test="%{dayBookDisplayList.size!=0}">
-	<display:table name="dayBookDisplayList"  id ="currentRowObject" uid="currentRowObject" class="tablebottom" style="width:100%;" cellpadding="0" cellspacing="0" export="true" requestURI="dayBookReport!ajaxSearch.action" >
-			<display:caption>
-				<div class="headingsmallbgnew" align="center" style="text-align:center;width:98%;">
+	<display:table name="dayBookDisplayList" id="currentRowObject"
+		uid="currentRowObject" class="tablebottom" style="width:100%;"
+		cellpadding="0" cellspacing="0" export="true"
+		requestURI="dayBookReport!ajaxSearch.action">
+		<display:caption>
+			<div class="headingsmallbgnew" align="center"
+				style="text-align: center; width: 98%;">
 				<b><s:property value="%{heading}" /></b>
-				<div align="left" style="text-align:left;width:98%;"> <s:property value="%{dayBookReport.isConfirmedCount}" /> in <s:property value="%{dayBookReport.totalCount}" />  are unconfirmed</div>
+				<div align="left" style="text-align: left; width: 98%;">
+					Total Vouchers
+					<s:property value="%{dayBookReport.totalCount}" />
+					
 				</div>
-			</display:caption>	
-			<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Date" style="width:5%;text-align:center" property="voucherdate" />
-			<display:column  media="pdf" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center" property="voucher" />
-			<display:column  media="excel" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center" property="voucher" />
-			<display:column  media="html" headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Number" style="width:8%;text-align:center">
-				<a href="#" onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')" > 
-				<s:property value="#attr.currentRowObject.voucher"/>
-				</a>
-			</display:column>
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Voucher Type" style="width:8%;text-align:center" property="type" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Narration" style="width:8%;text-align:center" property="narration" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Status" style="width:6%;text-align:center" property="status" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="GlCode" style="width:6%;text-align:center" property="glcode" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Particulars" style="width:5%;text-align:center" property="particulars" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Debit Amount(Rs.)" style="width:8%;text-align:right" property="debitamount" />
-			<display:column  headerClass="bluebgheadtd" class="blueborderfortd" title="Credit Amount(Rs.)" style="width:8%;text-align:right" property="creditamount" />
-				<display:caption  media="pdf">
-				<div align="left" style="text-align:left;"><b> <s:property value="%{heading}" /> (<s:property value="%{dayBookReport.isConfirmedCount}" /> in <s:property value="%{dayBookReport.totalCount}" />  are unconfirmed)</b></div>
-			   </display:caption>
-			   <display:caption  media="excel">
+			</div>
+		</display:caption>
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Voucher Date" style="width:5%;text-align:center"
+			property="voucherdate" />
+		<display:column media="pdf" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center" property="voucher" />
+		<display:column media="excel" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center" property="voucher" />
+		<display:column media="html" headerClass="bluebgheadtd"
+			class="blueborderfortd" title="Voucher Number"
+			style="width:8%;text-align:center">
+			<a href="#"
+				onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')">
+				<s:property value="#attr.currentRowObject.voucher" />
+			</a>
+		</display:column>
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Voucher Type" style="width:8%;text-align:center"
+			property="type" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Narration" style="width:8%;text-align:center"
+			property="narration" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Status" style="width:6%;text-align:center" property="status" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="GL Code" style="width:6%;text-align:center" property="glcode" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Particulars" style="width:10%;text-align:center"
+			property="particulars" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Debit Amount(Rs.)" style="width:5%;text-align:right"
+			property="debitamount" />
+		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+			title="Credit Amount(Rs.)" style="width:5%;text-align:right"
+			property="creditamount" />
+		<display:caption media="pdf">
+		</display:caption>
+		<display:caption media="excel">
 				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						  Day Book Report  
 				</display:caption>
-					<display:setProperty name="export.pdf" value="true" />
-					<display:setProperty name="export.pdf.filename" value="Day Book Report.pdf" /> 
-					<display:setProperty name="export.excel" value="true" />
-					<display:setProperty name="export.excel.filename" value="Day Book Report.xls"/>	
-					<display:setProperty name="export.csv" value="false" />	
-					<display:setProperty name="export.xml" value="false" />							
-</display:table>
-				 	
+		<display:setProperty name="export.pdf" value="true" />
+		<display:setProperty name="export.pdf.filename"
+			value="Day Book Report.pdf" />
+		<display:setProperty name="export.excel" value="true" />
+		<display:setProperty name="export.excel.filename"
+			value="Day Book Report.xls" />
+		<display:setProperty name="export.csv" value="false" />
+		<display:setProperty name="export.xml" value="false" />
+	</display:table>
+
 </s:if>

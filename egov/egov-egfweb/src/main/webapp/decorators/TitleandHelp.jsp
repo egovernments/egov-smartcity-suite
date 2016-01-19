@@ -167,7 +167,7 @@
 		<script type="text/javascript" src="<c:url value='/commonyui/build/autocomplete/autocomplete-debug.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonyui/build/event/event-debug.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonyui/build/animation/animation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/ajaxCommonFunctions.js'/>"></script>
 		
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css" />

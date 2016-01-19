@@ -37,27 +37,29 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-    <title>PJV Approval</title>
+<html>
+<head>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<title>PJV Approval</title>
 </head>
-	<body onload="refreshInbox()">  
-		<s:form action="preApprovedVoucher" theme="simple" >
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="PJV-Approval" />
-			</jsp:include>
-			<span class="mandatory">
-				<s:actionmessage /> 
-			</span>
-			<br/>
-			<s:hidden id="id" name="id" value="%{voucherHeader.id}"/>
-			<s:submit cssClass="button" id="print" value="Print Preview" onclick="printVoucher()"/>
-			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-		</s:form> 
-<script>
+<body onload="refreshInbox()">
+	<s:form action="preApprovedVoucher" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="PJV-Approval" />
+		</jsp:include>
+		<span class="mandatory"> <s:actionmessage />
+		</span>
+		<br />
+		<s:hidden id="id" name="id" value="%{voucherHeader.id}" />
+		<s:submit cssClass="button" id="print" value="Print Preview"
+			onclick="printVoucher()" />
+		<input type="button" value="Close" onclick="javascript:window.close()"
+			class="button" />
+	</s:form>
+	<script>
 function printVoucher()
 {
 	
@@ -66,5 +68,5 @@ function printVoucher()
 	document.forms[0].submit();
 }
 </script>
-	</body>  
+</body>
 </html>

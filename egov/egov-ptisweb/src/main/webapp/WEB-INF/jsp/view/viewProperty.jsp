@@ -214,7 +214,7 @@
 				<s:text name="deviationper"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:if test='%{propertyDetail.deviationPercentage == ""}'>N/A</s:if>
+				<s:if test='%{propertyDetail.deviationPercentage == "" || propertyDetail.deviationPercentage == "-1" }'>N/A</s:if>
 				<s:else>
 					<s:property value="%{propertyDetail.deviationPercentage}"
 						default="N/A" />

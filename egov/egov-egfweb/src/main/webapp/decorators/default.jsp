@@ -40,7 +40,7 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 <head>
- <%@ include file="/includes/meta.jsp" %> 
+ <%@ include file="/includes/meta.jsp" %>    
 		<title>eGov Financials <decorator:title/></title>
 		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 		<link href="<c:url value='/resources/css/budget.css'/>" rel="stylesheet" type="text/css" />
@@ -49,14 +49,14 @@
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script>
+		<!-- <script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script> -->
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
 		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js"></script>
+		<script type="text/javascript" src="/EGF/resources/javascript/autocomplete.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
@@ -64,11 +64,9 @@
 		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js"></script>
 		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" />
-		<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<decorator:head/>
 	</head>

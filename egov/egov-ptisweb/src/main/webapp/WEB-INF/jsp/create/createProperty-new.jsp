@@ -142,21 +142,13 @@
 		jQuery(function($) {
 			try {
 				$(".datepicker").datepicker({
-					format : "dd/mm/yyyy"
+					format : "dd/mm/yyyy",
+					autoclose:true
 				});
-				reInitializeDateOnChangeEvent();
 			} catch (e) {
 				console.warn("No Date Picker " + e);
 			}
 		});
-
-		function reInitializeDateOnChangeEvent() {
-
-			jQuery(".datepicker").on('changeDate', function(ev) {
-				jQuery(this).datepicker('hide');
-			});
-
-		}
 
 		function loadOnStartUp() {
 			document.getElementById('assessmentRow').style.display = "none";
@@ -173,6 +165,7 @@
 			var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 			document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 			toggleFloorDetails();
+			
 			var aadhartextboxes = jQuery('.txtaadhar');
 			console.log(aadhartextboxes);
 			aadhartextboxes.each(function() {
@@ -182,6 +175,7 @@
 			});
 			populateBoundaries();
 			loadDesignationFromMatrix();
+			showHideFirmName();
 		}
 
 		function onSubmit() {
@@ -193,8 +187,35 @@
 			document.forms[0].submit;
 			return true;
 		}
+
+		function enableDisableFirmName(obj){ 
+			var selIndex = obj.selectedIndex;
+			if(selIndex != undefined){
+				var selText = obj.options[selIndex].text; 
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+				if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+					if(firmval.value!=null && firmval.value!="") 
+						firmval.value="";
+					firmval.readOnly = true;      
+				} else{
+					firmval.readOnly = false; 
+				}
+			}
+		}  
+
+		function showHideFirmName(){
+			var tbl=document.getElementById("floorDetails");
+            var tabLength = (tbl.rows.length)-1;
+            for(var i=1;i<=tabLength;i++){
+                 enableDisableFirmName(getControlInBranch(tbl.rows[i],'floorUsage'));
+            }
+		}
+				
 	</script>
 	<script
 		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 </body>
 </html>

@@ -13,12 +13,12 @@
 	function validateWorkFlowApprover(name) {
 	    document.getElementById("workFlowAction").value=name;
 	    var approverPosId = document.getElementById("approverPositionId");
-	    if(approverPosId && approverPosId.value != -1) {
+	    if(approverPosId && approverPosId.value != -1 && approverPosId.value != "") {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
 		<s:if test="%{getNextAction()!='END'}">
-	    if((name=="Forward" || name=="forward") && approverPosId && approverPosId.value == -1) {
+	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
 	        alert("Please Select the Approver ");
 			return false;
 	    }

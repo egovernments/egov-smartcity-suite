@@ -39,32 +39,41 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<div align="center"  ><br>
-	<div  class="subheadnew" >Approval Information</div><br>
-	   <table width="100%" border="0" cellspacing="0" cellpadding="0" >
-	  	 <tr>
-			<td class="greybox" id="deptLabel">Approver Department<span class="mandatory1">*</span></td>
-			<td class="greybox"><s:select name="departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName"  
-			   onchange= "populateDesg()"/></td>
-			 <egov:ajaxdropdown id="designationId"fields="['Text','Value']" dropdownId="designationId" url="voucher/common-ajaxLoadDesg.action" />
+<div align="center">
+	<br>
+	<div class="subheadnew">Approval Information</div>
+	<br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class="greybox" id="deptLabel">Approver Department<span
+				class="mandatory1">*</span></td>
+			<td class="greybox"><s:select name="departmentid"
+					id="departmentid" list="dropdownData.departmentList" listKey="id"
+					listValue="name" onchange="populateDesg()" /></td>
+			<egov:ajaxdropdown id="designationId" fields="['Text','Value']"
+				dropdownId="designationId" url="voucher/common-ajaxLoadDesg.action" />
 			<td class="greybox">Approver Designation<span class="mandatory1">*</span></td>
-			<td class="greybox"><s:select name="designationId" id="designationId" list="dropdownData.designationList"
-			 listKey="designationId" listValue="designationName" headerKey="-1" headerValue="----Choose----"  value="designationId"
-			 onchange= "populateUser()" /></td>
+			<td class="greybox"><s:select name="designationId"
+					id="designationId" list="dropdownData.designationList"
+					listKey="designationId" listValue="designationName" headerKey="-1"
+					headerValue="----Choose----" value="designationId"
+					onchange="populateUser()" /></td>
 		</tr>
-		
-		 <tr>
-		 <egov:ajaxdropdown id="approverUserId"fields="['Text','Value']" dropdownId="approverUserId" url="voucher/common-ajaxLoadUser.action" />
-			 <td class="bluebox" width="13%">Approver<span class="mandatory1">*</span></td>
-			  <td class="bluebox" width="33%"><s:select id="approverUserId"  name="approverUserId" list="dropdownData.userList" headerKey="-1"
-			  headerValue="----Choose----" listKey="id" listValue="userName" value="id"  /> 
-			 </td>
-			 	
-			 </tr>	
-		</table>
-		<s:hidden name="type" id="type"></s:hidden>
-		
-	</div>
+
+		<tr>
+			<egov:ajaxdropdown id="approverUserId" fields="['Text','Value']"
+				dropdownId="approverUserId" url="voucher/common-ajaxLoadUser.action" />
+			<td class="bluebox" width="13%">Approver<span class="mandatory1">*</span></td>
+			<td class="bluebox" width="33%"><s:select id="approverUserId"
+					name="approverUserId" list="dropdownData.userList" headerKey="-1"
+					headerValue="----Choose----" listKey="id" listValue="userName"
+					value="id" /></td>
+
+		</tr>
+	</table>
+	<s:hidden name="type" id="type"></s:hidden>
+
+</div>
 <script>
 designationIdFailureHandler=function(){
 }

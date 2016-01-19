@@ -1289,7 +1289,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     .withComments(approverComments).withNextAction(NATURE_REVISION_PETITION);
 
             if (loggedUserIsEmployee && user != null)
-                addActionMessage(getText("objection.forward", new String[] { user.getUsername() }));
+                addActionMessage(getText("objection.forward", new String[] { user.getName().concat("~").concat(position.getName()) }));
 
             propService.updateIndexes(objection, PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
 
@@ -1356,7 +1356,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         position = stateHistoryObj.getOwnerPosition();
                         final User sender = eisCommonService.getUserForPosition(position.getId(), new Date());
                         if (sender != null)
-                            addActionMessage(getText("objection.forward", new String[] { sender.getUsername() }));
+                            addActionMessage(getText("objection.forward", new String[] { sender.getName().concat("~").concat(position.getName()) }));
 
                         positionFoundInHistory = true;
                         break;
@@ -1405,9 +1405,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             if (wfmatrix.getNextStatus() != null)
                 updateRevisionPetitionStatus(wfmatrix, objection, null);
             if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----"))
-                addActionMessage(getText("objection.forward", new String[] { approverName }));
+                addActionMessage(getText("objection.forward", new String[] { approverName.concat("~").concat(position.getName()) }));
             else if (loggedInUser != null && !positionFoundInHistory)
-                addActionMessage(getText("objection.forward", new String[] { loggedInUser.getUsername() }));
+                addActionMessage(getText("objection.forward", new String[] { loggedInUser.getName().concat("~").concat(position.getName())}));
             // objectionWorkflowService.transition(workFlowAction.toLowerCase(),objection,
             // comments);
         } else if (workFlowAction.equalsIgnoreCase("Reject Inspection")) {
@@ -1433,7 +1433,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         position.getId(), new Date());
                 if (assignment != null)
                     addActionMessage(getText("objection.forward",
-                            new String[] { assignment.getEmployee().getUsername() }));
+                            new String[] { assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) }));
             }
 
         } else if (workFlowAction.equalsIgnoreCase("Reject") || workFlowAction.equalsIgnoreCase("reject")) {
@@ -1467,9 +1467,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
 
             if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----"))
-                addActionMessage(getText("objection.forward", new String[] { approverName }));
+                addActionMessage(getText("objection.forward", new String[] { approverName.concat("~").concat(position.getName()) }));
             else if (loggedInUser != null)
-                addActionMessage(getText("objection.forward", new String[] { loggedInUser.getUsername() }));
+                addActionMessage(getText("objection.forward", new String[] { loggedInUser.getName().concat("~").concat(position.getName()) }));
 
         } else if (workFlowAction.equalsIgnoreCase("Print Endoresement")) {
             objection.transition(true).withStateValue(wfmatrix.getNextState()).withOwner(position)
@@ -1498,7 +1498,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Assignment assignment = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId());
         if (assignment != null) {
             position = assignment.getPosition();
-            addActionMessage(getText("objection.forward", new String[] { assignment.getEmployee().getName() }));
+            addActionMessage(getText("objection.forward", new String[] { assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) }));
         }
         return position;
     }

@@ -37,25 +37,28 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title>Budget Report - Functionwise</title>
-</head> 
-	<body>  
-		<s:form action="budgetReport" theme="simple" >  
-			<jsp:include page="../budget/budgetHeader.jsp">
-        		<jsp:param name="heading" value="Budget Report - Functionwise" />
-			</jsp:include>
-			<div class="formmainbox"><div class="subheadnew">Budget Report - Functionwise</div>
-				<%@include file="budgetReport-form.jsp" %>
-				<s:hidden name="onSaveOrForward"/>
-				<div class="buttonbottom" style="padding-bottom:10px;">
-					<s:submit value="Submit" method="getFunctionwiseReport" cssClass="buttonsubmit" onclick="return validateFinYear()"/>
-					<input type="button" value="Close" onclick="javascript:window.close()" class="button" />    
-				</div>
+<html>
+<head>
+<title>Budget Report - Functionwise</title>
+</head>
+<body>
+	<s:form action="budgetReport" theme="simple">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param name="heading" value="Budget Report - Functionwise" />
+		</jsp:include>
+		<div class="formmainbox">
+			<div class="subheadnew">Budget Report - Functionwise</div>
+			<%@include file="budgetReport-form.jsp"%>
+			<s:hidden name="onSaveOrForward" />
+			<div class="buttonbottom" style="padding-bottom: 10px;">
+				<s:submit value="Submit" method="getFunctionwiseReport"
+					cssClass="buttonsubmit" onclick="return validateFinYear()" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
 			</div>
-		</s:form>  
-	</body>  
+		</div>
+	</s:form>
+</body>
 </html>

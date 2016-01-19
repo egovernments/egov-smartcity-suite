@@ -39,8 +39,11 @@
  */
 package org.egov.wtms.utils.constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
@@ -74,6 +77,8 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNESTNOTICE = "newconnestnotice";
     public static final String SMSEMAILTYPEADDCONNESTNOTICE = "addconnestnotice";
     public static final String DONATIONMASTER = "DONATIONMASTER";
+    public static final String REVENUE_WARD = "WARD";
+    
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
@@ -94,6 +99,7 @@ public class WaterTaxConstants {
     // User Roles
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
+    public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
     public static final String ROLE_CLERKFORADONI = "Senior Assistant,Junior Assistant";
     public static final String ROLE_APPROVERROLE = "Water Tax Approver";
     public static final String ROLE_COMMISSIONERDEPARTEMNT = "Administration";
@@ -236,9 +242,21 @@ public class WaterTaxConstants {
 
             put(WATERTAX_DONATION_CHARGE, "1100201");
             put(WATERTAX_SECURITY_CHARGE, "1100201");
-            put(WATERTAX_FIELDINSPECTION_CHARGE, "1100201");
+            put(WATERTAX_FIELDINSPECTION_CHARGE, "1407011");
             put(WATERTAXREASONCODE, "1405016");
 
+        }
+    };
+    // List for GLCodes for Current Taxes
+    public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -6532281844201057959L;
+
+        {
+            for (final Map.Entry<String, String> glCode : GLCODEMAP_FOR_CURRENTTAX.entrySet())
+                add(glCode.getValue());
         }
     };
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
@@ -258,4 +276,16 @@ public class WaterTaxConstants {
     public static final String APPROVAL_POSITION = "approvalPosition";
     public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String WORKFLOW_ACTION = "workFlowAction";
+    public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
+    public static final String DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
+    public static final String WATER_TAP_CONNECTION = "Water Tap Connection";
+    public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
+    public static final String[] CREATECONNECTIONDMDDESC = {"Water Security Charges","Water Donation Charges","Water Estimation Charges"};
+    public static final String[] WATERCHARGESDMDDESC = {"Water Charges"};
+    
+    public static final String CLOSECONNECTION = "CLOSECONNECTION";
+    
+    public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
+    public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
+    public static final String SIGN_ALL = "SIGN_ALL";
 }

@@ -39,8 +39,7 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.Number;
 import org.egov.infstr.utils.Sequence;
-import org.egov.lib.security.terminal.model.Location;
-import org.egov.lib.security.terminal.model.UserCounterMap;
+import org.egov.infra.admin.master.entity.Location;
 import org.egov.model.instrument.InstrumentAccountCodes;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
@@ -346,8 +345,6 @@ public class CollectionObjectFactory {
 
 		User user = createUser(userName);
 		Location counter = createCounter(counterName);
-		createUserCounterMap(user, counter);
-
 		return createReceiptHeaderWithInstrument(receiptNum, receiptType,
 				statusCode, refNum, instrumentType, instrumentNum,
 				instrumentAmount, instrumentDate, instrumentStatusCode, glCode,
@@ -525,31 +522,13 @@ public class CollectionObjectFactory {
 
 	public Location createCounter(String counterName) {
 		Location counter = new Location();
-		counter.setIsActive(Integer.valueOf(1));
-		counter.setIsLocation(Integer.valueOf(0));
+		counter.setActive(true);
 		counter.setName(counterName);
-		counter.setDesc("testCounterDesc");
+		counter.setDescription("testCounterDesc");
 		session.saveOrUpdate(counter);
 		return counter;
 	}
 
-	public UserCounterMap createUserCounterMap(User user, Location counter) {
-		Date currentDate = new Date();
-		UserCounterMap ucm = new UserCounterMap();
-		ucm.setUserId(user);
-		ucm.setCounterId(counter);
-		ucm.setFromDate(currentDate);
-		ucm.setModifiedBy(user.getId().intValue());
-		ucm.setModifiedDate(currentDate);
-		try {
-			ucm.setToDate(new SimpleDateFormat("dd/MM/yyyy")
-					.parse("31/12/2099"));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		session.saveOrUpdate(ucm);
-		return ucm;
-	}
 
 	public User createUser(String userName) {
 		User user = new User();
@@ -855,14 +834,13 @@ public class CollectionObjectFactory {
 
 	public CVoucherHeader createVoucher(String name) {
 		CVoucherHeader voucher = new CVoucherHeader();
-		voucher.setCgn(("CGN" + getRandomNumber()).substring(0, 9));
 		voucher.setName("testVoucher" + name);
 		voucher.setType("testType");
 		voucher.setEffectiveDate(new Date());
 		voucher.setVoucherDate(new Date());
 		voucher.setFiscalPeriodId(1);
 		voucher.setVoucherNumber("testVoucherNumber");
-		voucher.setCgvn("testCGVN" + name + voucher.getCgn());
+		voucher.setCgvn("testCGVN" + name );
 		session.saveOrUpdate(voucher);
 		return voucher;
 	}
@@ -1327,7 +1305,6 @@ public class CollectionObjectFactory {
 	public Accountdetailkey createAccountdetailkey(String keyname) {
 		Accountdetailkey accountdetailkey = new Accountdetailkey();
 		accountdetailkey.setAccountdetailtype(createAccountdetailtype("testAccountDetailTypeName"));
-		accountdetailkey.setChartofaccounts(createCOA("10001"));
 		accountdetailkey.setDetailkey(1);
 		accountdetailkey.setDetailname(keyname);
 		accountdetailkey.setGroupid(1);

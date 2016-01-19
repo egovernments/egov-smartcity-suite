@@ -577,6 +577,7 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING = "Revenue Inspector Approval Pending";
     public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Approved";
+    public static final String WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING = "Revenue Officer Approval Pending";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -657,6 +658,7 @@ public interface PropertyTaxConstants {
     public static final String PTCREATOR_ROLE = "PTCreator";
     public static final String PTVALIDATOR_ROLE = "PTValidator";
     public static final String ROLE_ULB_OPERATOR = "ULB Operator";
+    public static final String ROLE_COLLECTION_OPERATOR = "Collection Operator";
 
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
@@ -1249,5 +1251,9 @@ public interface PropertyTaxConstants {
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500"; 
-
+    public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
+    public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVED = "UD Revenue Inspector Approved";
+    
+    public static final String NATURE_OF_USAGE_RESIDENCE = "Residence";
+    public static final String GRADE_NAGAR_PANCHAYAT = "NP";
 }

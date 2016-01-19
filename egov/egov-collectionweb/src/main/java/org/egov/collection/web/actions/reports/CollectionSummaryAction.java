@@ -45,7 +45,7 @@ public class CollectionSummaryAction extends ReportFormAction {
         final Map<String, String> paymentModesMap = new HashMap<String, String>(0);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
-        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);
+        /*paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);*/
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
         return paymentModesMap;
     }
@@ -145,11 +145,6 @@ public class CollectionSummaryAction extends ReportFormAction {
         // Set default values of criteria fields
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
-
-        final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
-        if (dept != null)
-            setReportParam(EGOV_DEPT_ID, dept.getId());
-
         return INDEX;
     }
 

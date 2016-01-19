@@ -1,0 +1,1 @@
+delete from eg_roleaction where roleid  not in (SELECT id FROM eg_role WHERE name in ('Remitter','Super User')) and actionid in (select id from eg_action where name in ('DishonoredCheque','DishonoredChequeList','BankRemittance','BankRemittanceCreate'));

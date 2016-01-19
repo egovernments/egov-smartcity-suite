@@ -76,11 +76,11 @@
 			<label>
 				<s:submit type="submit" cssClass="buttonsubmit" id="button"
 					value="%{getText('collectionReport.create')}" />
-			</label>&nbsp;
+			</label>
 			<label>
 				<s:reset type="submit" cssClass="button"
 					value="%{getText('collectionReport.reset')}" />
-			</label>&nbsp;
+			</label>
 			<label>
 				<input type="button" class="button" id="buttonClose"
 					value="<s:text name='common.buttons.close'/>"

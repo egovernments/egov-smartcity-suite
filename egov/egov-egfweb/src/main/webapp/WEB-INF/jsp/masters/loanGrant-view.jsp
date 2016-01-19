@@ -37,57 +37,96 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
-  <head>
-    <title>Loan Grant Master</title>
-	<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/loanGrantHelper.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
-	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
-	<script type="text/javascript">
+<head>
+<title>Loan Grant Master</title>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/loanGrantHelper.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+<script type="text/javascript">
  
 	</script>
-	<style type="text/css">
-		#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-		#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-		#codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-		#codescontainer ul {padding:5px 0;width:100%;}
-		#codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-		#codescontainer li.yui-ac-highlight {background:#ff0;}
-		#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	</style>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <style type="text/css">
-	.yui-dt1-col-loanamount yui-dt-col-loanamount {
-overflow:hidden;
-width:60px;
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
 }
-    .yui-dt-liner { 
-	    text-align: center;
-	    padding-right:4px;
-	    padding-left :4px;
-	} 
-	.tabbertab {
-		border:1px solid #CCCCCC;
-		height:800px;
-		margin-bottom:8px;
-		overflow:scroll;
-	}
-	
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+</style>
+<meta http-equiv="Content-Type"
+	content="text/html; charset=windows-1252">
+<style type="text/css">
+.yui-dt1-col-loanamount yui-dt-col-loanamount {
+	overflow: hidden;
+	width: 60px;
+}
+
+.yui-dt-liner {
+	text-align: center;
+	padding-right: 4px;
+	padding-left: 4px;
+}
+
+.tabbertab {
+	border: 1px solid #CCCCCC;
+	height: 800px;
+	margin-bottom: 8px;
+	overflow: scroll;
+}
 </style>
 </head>
-  <body  >
-  <span class="mandatory">
-  	<s:actionerror/>  
-  	<s:fielderror />  
-  </span>
-  <s:form name="loanGrantMasterForm" action="loanGrant" theme="simple" >
-  <s:push value="model">
-  <script>
+<body>
+	<span class="mandatory"> <s:actionerror /> <s:fielderror />
+	</span>
+	<s:form name="loanGrantMasterForm" action="loanGrant" theme="simple">
+		<s:push value="model">
+			<script>
    function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';
 		var subSchemeId=document.getElementById('subSchemeId').value;
@@ -584,130 +623,197 @@ var makeReceiptTable = function() {
 		document.getElementById('totalreceiptamount').value=totalreceiptamount; 
 }
   </script>
-  <div align="left">
-  	<div class="tabber">
-  		<div class="tabbertab" id="loantab">
-  		<h2>Loans</h2>
-		<span>
-		  <div class="formmainbox"><div class="subheadnew">Loan Header Register</div></div>
-		   <div class="mandatory" align="center" style="display:none" id="codeuniquecode" >
-        		 <s:text name="loangrant.subscheme.already.exists"/>
-    		</div>
-		  	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		  		<jsp:include page="../report/loangrant/lgcommon.jsp" />
-		  		<tr>
-		  		</s:push>	
-               <td class="bluebox">Bank<span class="mandatory">*</span></td>
-		  			<td class="bluebox"><egov:ajaxdropdown id="bank_branch" fields="['Text','Value']" dropdownId="bank_branch" url="voucher/common!ajaxLoadBankBranch.action" />
-		  				<s:select  name="bank_branch"  id="bank_branch" listValue="%{bank.name+'-'+branchname}" listKey="id" list="dropdownData.bankbranchList"   headerKey="-1" headerValue="----Choose----" onchange="loadBankAccount(this)" value="%{bank_branch}"/>
-		  			</td>
-		  			<td class="bluebox">Bank Account<span class="mandatory">*</span></td>
-		  			<td class="bluebox"><egov:ajaxdropdown id="bankaccount" fields="['Text','Value']" dropdownId="bankaccount" url="voucher/common!ajaxLoadBankAccounts.action"/>
-		  			
-		  			
-		  			<s:select name="bankaccount" id="bankaccount" list="dropdownData.bankaccountList" listKey="id" listValue="chartofaccounts.glcode+'--'+accountnumber+'---'+accounttype" onchange="checkIfFundIsSelected()" headerKey="-1" headerValue="----Choose----" value="%{bankaccount}"/>
-		  			<s:push value="model" >
-		  			</td>
-		  		</tr>
-		  		<tr>
-		  			<td class="greybox"><s:text name="masters.loangrant.councilresolutionnumber" /><span class="mandatory">*</span></td>
-		  			<td class="greybox"><s:textfield id="councilResNo" name="councilResNo" /></td>
-		  			<td class="greybox"><s:text name="masters.loangrant.councilresolutiondate" /><span class="mandatory">*</span></td>
-		  			<td class="greybox"><s:date var="councilResDateId" name="councilResDate" format='dd/MM/yyyy' />
-		  				<s:textfield name="councilResDate"  id="councilResDate" onkeyup="DateFormat(this,this.value,event,false,'3');" onblur="checkDateLG(this);" value="%{councilResDateId}"/>
-	<a tabindex="-1" href="javascript:show_calendar('forms[0].councilResDate');"	style="text-decoration: none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
-		  			</td>
-		  		</tr>
-		  		<tr>
-		  			<td class="bluebox"><s:text name="masters.loangrant.governmentordernumber" /><span class="mandatory">*</span></td>
-		  			<td class="bluebox"><s:textfield  id="govtOrderNo" name="govtOrderNo" /></td>
-		  			<td class="bluebox"><s:text name="masters.loangrant.governmentorderdate" /><span class="mandatory">*</span></td>
-		  			<td class="bluebox"><s:date var="govtOrderDateId" name="govtOrderDate" format='dd/MM/yyyy' />
-		  				<s:textfield name="govtOrderDate"  id="govtOrderDate" onkeyup="DateFormat(this,this.value,event,false,'3');" onblur="checkDateLG(this);" value="%{govtOrderDateId}"/>
-	<a tabindex="-1" href="javascript:show_calendar('forms[0].govtOrderDate');"	style="text-decoration: none">&nbsp;<img 
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
-		  			</td>
-		  		</tr>
-		  		<tr>
-		  			<td class="greybox"><s:text name="masters.loangrant.amendmentnumber" /><span class="mandatory">*</span></td>
-		  			<td class="greybox"><s:textfield id="amendmentNo" name="amendmentNo" /></td>
-		  			<td class="greybox"><s:text name="masters.loangrant.amendmentdate" /><span class="mandatory">*</span></td>
-		  			<td class="greybox"><s:date var="amendmentDateId" name="amendmentDate" format='dd/MM/yyyy' />
-		  				<s:textfield name="amendmentDate"  id="amendmentDate" onkeyup="DateFormat(this,this.value,event,false,'3');" onblur="checkDateLG(this);" value="%{amendmentDateId}"/>
-	<a tabindex="-1" href="javascript:show_calendar('forms[0].amendmentDate');"	style="text-decoration: none">&nbsp;<img 
-										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
-		  			</td>
-		  		</tr>
-		  		</table>
-		<div style="background-color:#FFFFFF;height:24px" >&nbsp</div>
-		<div class="yui-skin-sam" align="center">
-	    <div id="projectCodeTable"></div></div>  
-	     <script>
+			<div align="left">
+				<div class="tabber">
+					<div class="tabbertab" id="loantab">
+						<h2>Loans</h2>
+						<span>
+							<div class="formmainbox">
+								<div class="subheadnew">Loan Header Register</div>
+							</div>
+							<div class="mandatory" align="center" style="display: none"
+								id="codeuniquecode">
+								<s:text name="loangrant.subscheme.already.exists" />
+							</div>
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<jsp:include page="../report/loangrant/lgcommon.jsp" />
+								<tr>
+									</s:push>
+									<td class="bluebox">Bank<span class="mandatory">*</span></td>
+									<td class="bluebox"><egov:ajaxdropdown id="bank_branch"
+											fields="['Text','Value']" dropdownId="bank_branch"
+											url="voucher/common!ajaxLoadBankBranch.action" /> <s:select
+											name="bank_branch" id="bank_branch"
+											listValue="%{bank.name+'-'+branchname}" listKey="id"
+											list="dropdownData.bankbranchList" headerKey="-1"
+											headerValue="----Choose----" onchange="loadBankAccount(this)"
+											value="%{bank_branch}" /></td>
+									<td class="bluebox">Bank Account<span class="mandatory">*</span></td>
+									<td class="bluebox"><egov:ajaxdropdown id="bankaccount"
+											fields="['Text','Value']" dropdownId="bankaccount"
+											url="voucher/common!ajaxLoadBankAccounts.action" /> <s:select
+											name="bankaccount" id="bankaccount"
+											list="dropdownData.bankaccountList" listKey="id"
+											listValue="chartofaccounts.glcode+'--'+accountnumber+'---'+accounttype"
+											onchange="checkIfFundIsSelected()" headerKey="-1"
+											headerValue="----Choose----" value="%{bankaccount}" /> <s:push
+											value="model"></td>
+								</tr>
+								<tr>
+									<td class="greybox"><s:text
+											name="masters.loangrant.councilresolutionnumber" /><span
+										class="mandatory">*</span></td>
+									<td class="greybox"><s:textfield id="councilResNo"
+											name="councilResNo" /></td>
+									<td class="greybox"><s:text
+											name="masters.loangrant.councilresolutiondate" /><span
+										class="mandatory">*</span></td>
+									<td class="greybox"><s:date var="councilResDateId"
+											name="councilResDate" format='dd/MM/yyyy' /> <s:textfield
+											name="councilResDate" id="councilResDate"
+											onkeyup="DateFormat(this,this.value,event,false,'3');"
+											onblur="checkDateLG(this);" value="%{councilResDateId}" /> <a
+										tabindex="-1"
+										href="javascript:show_calendar('forms[0].councilResDate');"
+										style="text-decoration: none">&nbsp;<img
+											src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+									</td>
+								</tr>
+								<tr>
+									<td class="bluebox"><s:text
+											name="masters.loangrant.governmentordernumber" /><span
+										class="mandatory">*</span></td>
+									<td class="bluebox"><s:textfield id="govtOrderNo"
+											name="govtOrderNo" /></td>
+									<td class="bluebox"><s:text
+											name="masters.loangrant.governmentorderdate" /><span
+										class="mandatory">*</span></td>
+									<td class="bluebox"><s:date var="govtOrderDateId"
+											name="govtOrderDate" format='dd/MM/yyyy' /> <s:textfield
+											name="govtOrderDate" id="govtOrderDate"
+											onkeyup="DateFormat(this,this.value,event,false,'3');"
+											onblur="checkDateLG(this);" value="%{govtOrderDateId}" /> <a
+										tabindex="-1"
+										href="javascript:show_calendar('forms[0].govtOrderDate');"
+										style="text-decoration: none">&nbsp;<img
+											src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+									</td>
+								</tr>
+								<tr>
+									<td class="greybox"><s:text
+											name="masters.loangrant.amendmentnumber" /><span
+										class="mandatory">*</span></td>
+									<td class="greybox"><s:textfield id="amendmentNo"
+											name="amendmentNo" /></td>
+									<td class="greybox"><s:text
+											name="masters.loangrant.amendmentdate" /><span
+										class="mandatory">*</span></td>
+									<td class="greybox"><s:date var="amendmentDateId"
+											name="amendmentDate" format='dd/MM/yyyy' /> <s:textfield
+											name="amendmentDate" id="amendmentDate"
+											onkeyup="DateFormat(this,this.value,event,false,'3');"
+											onblur="checkDateLG(this);" value="%{amendmentDateId}" /> <a
+										tabindex="-1"
+										href="javascript:show_calendar('forms[0].amendmentDate');"
+										style="text-decoration: none">&nbsp;<img
+											src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+									</td>
+								</tr>
+							</table>
+							<div style="background-color: #FFFFFF; height: 24px">&nbsp</div>
+							<div class="yui-skin-sam" align="center">
+								<div id="projectCodeTable"></div>
+							</div> <script>
 		    makeProjectDetailTable();
 			document.getElementById('projectCodeTable').getElementsByTagName('table')[0].width="80%";
 		 </script>
-		 <div style="background-color:#F7F7F7;height:24px" >&nbsp</div>
-		 <table>
-		 	<tr>
-		  		<td colspan="4">
-		  		<table>
-		  			<td class="bluebox"><s:text name="masters.loangrant.projectcost"  /><span class="mandatory">*</span></td>
-		  			<td class="bluebox"><s:textfield  id="projectCost" name="projectCost" style='text-align:right;'  maxlength="20"  onblur='validateDigitsAndDecimal(this);calculateAllPercentages();updateAllTotalAmounts()' /></td>
-		  			<td class="bluebox"><s:text name="masters.loangrant.sanctionedcost" /><span class="mandatory">*</span></td>
-		  			<td class="bluebox"><s:textfield id="sanctionedCost" name="sanctionedCost" style='text-align:right;' maxlength="20" onblur='validateDigitsAndDecimal(this);validateAmounts(this);' /></td>
-		  			<td class="bluebox"><s:text name="masters.loangrant.revisedcost" /></td>
-		  			<td class="bluebox"><s:textfield id="revisedCost" name="revisedCost" style='text-align:right;' maxlength="20" onblur='validateDigitsAndDecimal(this);validateAmounts(this);emptyRevisedCostIfZero(this);calculateAllPercentages();updateAllTotalAmounts()' /></td>
-		  			<td class="bluebox">&nbsp&nbsp&nbsp(Amounts in Lacs)</td>
-		  		</table>
-		  		</td>
-		  	</tr>
-		  </table>
-		  <div style="background-color:#F7F7F7;height:24px" >&nbsp</div>
-		  	<div class="formmainbox"><div class="subheadnew">Funding pattern for the sanctioned amount</div></div>
-		  	<div class="yui-skin-sam" align="center">
-	    <div id="sanctionedAmountTable"></div></div>  
-	     <script>
+							<div style="background-color: #F7F7F7; height: 24px">&nbsp</div>
+							<table>
+								<tr>
+									<td colspan="4">
+										<table>
+											<td class="bluebox"><s:text
+													name="masters.loangrant.projectcost" /><span
+												class="mandatory">*</span></td>
+											<td class="bluebox"><s:textfield id="projectCost"
+													name="projectCost" style='text-align:right;' maxlength="20"
+													onblur='validateDigitsAndDecimal(this);calculateAllPercentages();updateAllTotalAmounts()' /></td>
+											<td class="bluebox"><s:text
+													name="masters.loangrant.sanctionedcost" /><span
+												class="mandatory">*</span></td>
+											<td class="bluebox"><s:textfield id="sanctionedCost"
+													name="sanctionedCost" style='text-align:right;'
+													maxlength="20"
+													onblur='validateDigitsAndDecimal(this);validateAmounts(this);' /></td>
+											<td class="bluebox"><s:text
+													name="masters.loangrant.revisedcost" /></td>
+											<td class="bluebox"><s:textfield id="revisedCost"
+													name="revisedCost" style='text-align:right;' maxlength="20"
+													onblur='validateDigitsAndDecimal(this);validateAmounts(this);emptyRevisedCostIfZero(this);calculateAllPercentages();updateAllTotalAmounts()' /></td>
+											<td class="bluebox">&nbsp&nbsp&nbsp(Amounts in Lacs)</td>
+										</table>
+									</td>
+								</tr>
+							</table>
+							<div style="background-color: #F7F7F7; height: 24px">&nbsp</div>
+							<div class="formmainbox">
+								<div class="subheadnew">Funding pattern for the sanctioned
+									amount</div>
+							</div>
+							<div class="yui-skin-sam" align="center">
+								<div id="sanctionedAmountTable"></div>
+							</div> <script>
 		    makeSanctionedAmountTable();
 			document.getElementById('sanctionedAmountTable').getElementsByTagName('table')[0].width="100%";
 		 </script>
-		  	<div id="codescontainer"></div>
-		  	</span>
-		  	<div align="center" class="buttonbottom">
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
-			</div>
-	</div>
-		  	<div class="tabbertab" id="receipttab">
-		  		<h2>Unsanctioned Amount</h2>
-		  		<div class="formmainbox"><div class="subheadnew">Funding pattern for the unsanctioned amount</div></div>
-		  		<div class="yui-skin-sam" align="center">
-	    		<div id="unsanctionedAmountTable"></div></div>  
-	     		<script>
+							<div id="codescontainer"></div>
+						</span>
+						<div align="center" class="buttonbottom">
+							<input type="button" value="Close"
+								onclick="javascript:window.close()" class="button" />
+						</div>
+					</div>
+					<div class="tabbertab" id="receipttab">
+						<h2>Unsanctioned Amount</h2>
+						<div class="formmainbox">
+							<div class="subheadnew">Funding pattern for the
+								unsanctioned amount</div>
+						</div>
+						<div class="yui-skin-sam" align="center">
+							<div id="unsanctionedAmountTable"></div>
+						</div>
+						<script>
 				    makeUnsanctionedAmountTable();
 					document.getElementById('unsanctionedAmountTable').getElementsByTagName('table')[0].width="100%";
 				 </script>
-  			</div>
-  			<div class="tabbertab" id="receipttab">
-		  		<h2>Revised Amount</h2>
-		  		<div class="formmainbox"><div class="subheadnew">Funding pattern for the revised amount</div></div>
-		  		<div class="yui-skin-sam" align="left">
-	    		<div id="revisedAmountTable"></div></div>  
-	     		<script>
+					</div>
+					<div class="tabbertab" id="receipttab">
+						<h2>Revised Amount</h2>
+						<div class="formmainbox">
+							<div class="subheadnew">Funding pattern for the revised
+								amount</div>
+						</div>
+						<div class="yui-skin-sam" align="left">
+							<div id="revisedAmountTable"></div>
+						</div>
+						<script>
 				    makeRevisedAmountTable();
 					document.getElementById('revisedAmountTable').getElementsByTagName('table')[0].width="100%";
 				 </script>
-  			</div>
-		  	<div class="tabbertab" id="receipttab">
-		  		<h2>Receipts</h2>
-		  		<div class="yui-skin-sam" align="left">
-	    		<div id="receiptTable"></div></div>  
-	     		<script>
+					</div>
+					<div class="tabbertab" id="receipttab">
+						<h2>Receipts</h2>
+						<div class="yui-skin-sam" align="left">
+							<div id="receiptTable"></div>
+						</div>
+						<script>
 				    makeReceiptTable();
 					document.getElementById('receiptTable').getElementsByTagName('table')[0].width="100%";
 				 </script>
-  			</div>
-  		</div>
-  	</div>
-  	<script >
+					</div>
+				</div>
+			</div>
+			<script>
   	function loadBankAccount(obj)
 	{
 		var fund = document.getElementById('fundId');
@@ -736,10 +842,10 @@ var makeReceiptTable = function() {
 		}
 	}
   	</script>
-  	<s:token />
-</s:push>
-  </s:form>
-  <script>
+			<s:token />
+		</s:push>
+	</s:form>
+	<script>
     </script>
-  </body>
+</body>
 </html>

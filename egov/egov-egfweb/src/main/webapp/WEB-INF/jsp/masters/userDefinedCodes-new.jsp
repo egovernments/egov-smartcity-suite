@@ -37,12 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<html>  
-<head>  
-    <title><s:text name="userDefCode.create"/></title>
-     <script type="text/javascript">
+<html>
+<head>
+<title><s:text name="userDefCode.create" /></title>
+<script type="text/javascript">
 
 						function onLoadTask() {
 							var close = '<s:property value="close"/>';
@@ -84,24 +84,32 @@
 					</script>
 </head>
 <body onload="onLoadTask();">
-	<div class="formmainbox"><div class="subheadnew"><s:text name="userDefCode.create"/></div>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="userDefCode.create" />
+		</div>
 		<div style="color: red">
-		<s:actionmessage theme="simple"/>
-		<s:actionerror/>  
-		<s:fielderror />
-		</div>  
-		<s:form name="userDefCodeForm" action="userDefinedCodes" theme="simple" >
+			<s:actionmessage theme="simple" />
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+		<s:form name="userDefCodeForm" action="userDefinedCodes"
+			theme="simple">
 			<%@include file="userDefinedCodes-form.jsp"%>
-			<br/><br/>
-		<div class="buttonbottom"> 
-			<s:submit name="create" value="Save & New" method="create" cssClass="buttonsubmit" onclick="return validate();"/>
-			<s:submit name="create" value="Save & Close" method="create"  cssClass="buttonsubmit" onclick="validate();setClose();"/>
-			<s:hidden name="close" id="close"/>
-			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
-		</div>
-		</div>
-		<s:token/>
-		</s:form>
+			<br />
+			<br />
+			<div class="buttonbottom">
+				<s:submit name="create" value="Save & New" method="create"
+					cssClass="buttonsubmit" onclick="return validate();" />
+				<s:submit name="create" value="Save & Close" method="create"
+					cssClass="buttonsubmit" onclick="validate();setClose();" />
+				<s:hidden name="close" id="close" />
+				<input type="button" id="Close" value="Close"
+					onclick="javascript:window.close()" class="button" />
+			</div>
+	</div>
+	<s:token />
+	</s:form>
 	</div>
 	<script type="text/javascript">
 		<s:if test="%{clearValues == true}">
@@ -111,6 +119,6 @@
 		document.getElementById('accEntity.accountdetailtype.id').value = "";
 		document.forms[0].isactive.checked=false;
 		</s:if>
-	</script>  
+	</script>
 </body>
 </html>
