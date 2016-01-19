@@ -46,6 +46,7 @@ import javax.validation.Valid;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.springframework.stereotype.Controller;
@@ -73,9 +74,17 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
     public String updateHoarding(@PathVariable final String id, final Model model) {
         final Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
 
-        // TODO: Check whether amount already collected for this record ? any
-        // renewal process started ?
-        // TOD0: AMOUNT ALREADY COLLECTED OR NOT ?
+        Boolean taxAlreadyCollectedForDemandInAnyYear = checkTaxAlreadyCollectedForAdvertisement(advertisement);
+
+        // TODO: CHECK renewal process started ?
+        if (advertisement != null && advertisement.getStatus().equals(AdvertisementStatus.ACTIVE)) {
+            model.addAttribute("message", "msg.collection.updateRecordNotAllowed");
+            return "collectAdvtax-error";
+        }
+        if (taxAlreadyCollectedForDemandInAnyYear) {
+            model.addAttribute("message", "msg.collection.taxAlreadyCollected");
+            return "collectAdvtax-error";
+        }
         model.addAttribute("advertisementPermitDetail", advertisement.getActiveAdvertisementPermit());
         model.addAttribute("advertisementDocuments", advertisement.getDocuments());
         return "hoarding-updateLegacy";

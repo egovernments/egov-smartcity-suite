@@ -41,6 +41,7 @@ package org.egov.adtax.web.controller.common;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.HoardingDocument;
@@ -61,6 +62,8 @@ import org.egov.adtax.service.UnitOfMeasureService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -177,4 +180,22 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
        
         
     }
+
+    protected Boolean checkTaxAlreadyCollectedForAdvertisement(final Advertisement advertisement) {
+        Boolean taxAlreadyCollectedForDemandInAnyYear=false;
+        if( advertisement!=null &&  advertisement.getDemandId()!=null && advertisement.getDemandId().getEgDemandDetails()!=null)
+        {
+            for (EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails()) {
+              for (EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts()) {
+                if (!collRecpt.isCancelled()) {
+                    taxAlreadyCollectedForDemandInAnyYear=true;
+                    break;
+                }
+            }
+        
+          }
+        }
+        return taxAlreadyCollectedForDemandInAnyYear;
+    }
+
 }
