@@ -153,7 +153,7 @@ rec=billDetailTableIndex;
 else 
 rec=rebateDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionCredit(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitFunctionCredit(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionCredit(this,event)' onblur='fillNeibrAfterSplitFunctionCredit(this)' />";
 	}
 }
 
@@ -167,7 +167,7 @@ rec=billDetailTableIndex;
 else 
 rec=rebateDetailTableIndex;
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionRebate(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitFunctionRebate(this)' />";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='width:90px;' onfocus='autocompletecodeFunctionRebate(this,event)' onblur='fillNeibrAfterSplitFunctionRebate(this)' />";
 	
 	}
 }
@@ -281,7 +281,7 @@ var codeObj;
 var acccodeArray;
 function loadDropDownCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -305,7 +305,7 @@ var rebatecodeObj;
 var rebacccodeArray;
 function loadDropDownRebateCodes()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
 	var req3 = initiateRequest();
 	req3.onreadystatechange = function()
 	{
@@ -329,7 +329,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = path+"/commons/Process.jsp?type=getAllFunctionCode";
+	var url = "/EGF/commons/Process.jsp?type=getAllFunctionCode";
 	var req4 = initiateRequest();
 	req4.onreadystatechange = function()
 	{
@@ -695,7 +695,7 @@ function createDropdownFormatterDetailCode(prefix){
 	var onDropdownDetailCodeChange = function(index,obj) { 
 		var detailtypeid = document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 			var selecteddetailcode1=document.getElementById('subLedgerlist['+obj.value+'].detailCode').value;
-			var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
+			var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
 			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
 	};
 	var postTypeDetailCode = {
@@ -931,7 +931,7 @@ function getDetailType(val){
 	var subledgerid=document.getElementById('subLedgerlist['+val+'].glcode.id');
 	var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 	if( subledgerid.options[subledgerid.selectedIndex].value!=0){
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 	}
 	else{
@@ -962,7 +962,7 @@ function getDetailCodeValue(val){
 	var detailtypeid = document.getElementById('subLedgerlist['+val+'].detailType.id').value;
 	var selecteddetailcode1=document.getElementById('subLedgerlist['+val+'].detailCode').value;
 	if(selecteddetailcode1!=0){
-		var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
+		var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
 	}
 
@@ -983,7 +983,7 @@ function check(){
 			count++;
 		}
 	}
-	var url =  path+'/receipts/ajaxReceiptCreate!getDetailCode.action?accountCodes='+accountCodes;
+	var url =  path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
 	
 }
@@ -1084,7 +1084,13 @@ function updateCreditAmount()
 }
 
 function updatetotalAmount(){
-	var totalamount=parseFloat(document.getElementById('totalcramount').value)-parseFloat(document.getElementById('totaldbamount').value);
+	var totalamount;
+	if(document.getElementById('totaldbamount') !=null){
+		totalamount=parseFloat(document.getElementById('totalcramount').value)-parseFloat(document.getElementById('totaldbamount').value);
+	}
+	else {
+		totalamount=parseFloat(document.getElementById('totalcramount').value);
+	}
 	document.getElementById('misctotalAmount').value=totalamount.toFixed(2);
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
 }
@@ -1094,7 +1100,7 @@ function validateDetailCode(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url =  path+'/receipts/ajaxReceiptCreate!ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
+	var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCode, null);
 }
 var callbackCode = {
