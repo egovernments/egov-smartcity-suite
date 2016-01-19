@@ -1280,4 +1280,13 @@ public interface PropertyTaxConstants {
 
         }
     };
+    
+    //Tax collection SMS
+    public static final String STR_INSTRUMENTTYPE_CHEQUE = "Your cheque no.";  
+    public static final String STR_INSTRUMENTTYPE_DD = "Your DD no.";
+    public static final String STR_WITH_AMOUNT = " with amount :";
+    public static final String STR_FOR_SUBMISSION = "/- has been submitted for Property tax collection. Amount received will be adjusted against the assessment no : ";
+    public static final String STR_REALIZATION = " subject to the realization of instrument.";
+    public static final String STR_FOR_CASH = "We have received a property tax cash payment of Rs.";
+    public static final String STR_FOR_CASH_ADJUSTMENT = "/- and it would be adjusted against your assessment no.";
 }
