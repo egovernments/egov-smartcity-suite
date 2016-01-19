@@ -43,10 +43,10 @@ package org.egov.tl.web.controller;
 import org.springframework.beans.factory.annotation.Qualifier;
 import javax.validation.Valid;
 
-import org.egov.tl.domain.entity.Validity;
-import org.egov.tl.domain.service.NatureOfBusinessService;
-import org.egov.tl.domain.service.ValidityService;
-import org.egov.tl.domain.service.masters.LicenseCategoryService;
+import org.egov.tl.entity.Validity;
+import org.egov.tl.service.NatureOfBusinessService;
+import org.egov.tl.service.ValidityService;
+import org.egov.tl.service.masters.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

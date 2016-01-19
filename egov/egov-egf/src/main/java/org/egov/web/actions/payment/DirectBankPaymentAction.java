@@ -851,7 +851,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         totalCrAmt = totalCrAmt.add(commonBean.getAmount());
         int index = 0;
         boolean isValFailed = false;
-        isValFailed = validateOnlyRTGS();
+    //    isValFailed = validateOnlyRTGS();
         for (final VoucherDetails voucherDetails : billDetailslist) {
             index = index + 1;
             totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail());
@@ -893,7 +893,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return isValFailed;
     }
 
-    private boolean validateOnlyRTGS() {
+ /*   private boolean validateOnlyRTGS() {
         boolean isValFailed = false;
         final String paymentRestrictionDateForCJV = paymentService.getAppConfDateValForCJVPaymentModeRTGS();
         Date rtgsModeRestrictionDateForCJV = null;
@@ -947,7 +947,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return isValFailed;
     }
 
-    @SuppressWarnings("unchecked")
+*/    @SuppressWarnings("unchecked")
     @SkipValidation
     public boolean validateUser(final String purpose) {
         final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,

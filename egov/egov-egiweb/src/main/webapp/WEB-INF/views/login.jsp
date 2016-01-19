@@ -103,6 +103,11 @@
 			</header>
 			<div class="main-content">
 				<div class="row top-space">
+				    <div class="text-center error-msg">
+					<noscript>
+					    	You don't have javascript enabled.  Make sure Javascript is enabled.
+					</noscript>
+					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
 							<a href="/portal/citizen/register" target="_blank">
@@ -177,6 +182,14 @@
 											class="mandatory set-mandatory"></span>
 									</div>
 								</div>
+								<div class="form-group display-hide" id="counter-section">
+									<div class="input-group">
+										<div class="input-group-addon style-label">
+											<i class="entypo-location theme-color style-color"></i>
+										</div>
+										<select class="form-control style-form" name="locationId" id="locationId"></select>
+									</div>
+								</div>
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">
@@ -231,7 +244,7 @@
 								</c:if>
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
-										class="btn btn-custom btn-block btn-login signin-submit">
+										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
 										<i class="entypo-login"></i><spring:message code="lbl.login"/>
 									</button>
 								</div>
@@ -318,8 +331,21 @@
 				</div>
 			</div>
 		</div>
+		<div class="modal fade" id="cookieornoscript" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Enable Cookies</h4>
+					</div>
+					<div class="modal-body">
+						Oops! Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
+					</div>
+				</div>
+			</div>
+		</div>
 		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
 		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
 		<script src="/egi/resources/js/app/login.js" type="text/javascript"></script>
 	</body>
 </html>

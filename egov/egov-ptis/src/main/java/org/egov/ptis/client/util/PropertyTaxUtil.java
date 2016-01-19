@@ -2185,36 +2185,26 @@ public class PropertyTaxUtil {
                 + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and idc.installment.fromDate not between  ('"
                 + finYear.getStartingDate() + "') and ('" + finYear.getEndingDate() + "') ");
 
-        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1)
-            query.append(" and pmv.zone.id=? ");
-        else if (localityId != null && localityId != -1) {
-            query.append(" and pmv.locality.id=? ");
-            if (zoneId != null && zoneId != -1)
-                query.append(" and pmv.zone.id=? ");
-        }
+        if (localityId != null && localityId != -1)
+            query.append(" and pmv.locality.id= :localityId ");
+        if (zoneId != null && zoneId != -1)
+            query.append(" and pmv.zone.id= :zoneId ");
         if (wardId != null && wardId != -1)
-            query.append("  and pmv.ward.id=? ");
+            query.append("  and pmv.ward.id= :wardId ");
         if (areaId != null && areaId != -1)
-            query.append("  and pmv.block.id=? ");
+            query.append("  and pmv.block.id= :areaId ");
 
         query.append(" order by pmv.basicPropertyID ");
         final Query qry = persistenceService.getSession().createQuery(query.toString());
-        if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1) {
-            if (zoneId != null && zoneId != -1)
-                qry.setParameter(0, zoneId);
-            if (wardId != null && wardId != -1)
-                qry.setParameter(1, wardId);
-            if (areaId != null && areaId != -1)
-                qry.setParameter(2, areaId);
-        } else if (localityId != null && localityId != -1) {
-            qry.setParameter(0, localityId);
-            if (zoneId != null && zoneId != -1)
-                qry.setParameter(1, zoneId);
-            if (wardId != null && wardId != -1)
-                qry.setParameter(2, wardId);
-            if (areaId != null && areaId != -1)
-                qry.setParameter(3, areaId);
-        }
+        
+        if (localityId != null && localityId != -1)
+            qry.setParameter("localityId", localityId);
+        if (zoneId != null && zoneId != -1)
+            qry.setParameter("zoneId", zoneId);
+        if (wardId != null && wardId != -1)
+            qry.setParameter("wardId", wardId);
+        if (areaId != null && areaId != -1)
+            qry.setParameter("areaId", areaId);
         final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
                 CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
         return propertyViewList;
@@ -2431,15 +2421,15 @@ public class PropertyTaxUtil {
                 .getEgInstallmentMaster().getFromDate() : null;
 
     }
-    
+
     /**
      * Method to check for Nagar Panchayats as Grade
      * @return boolean
      */
-    public boolean checkIsNagarPanchayat(){
-    	HttpServletRequest request = ServletActionContext.getRequest();
+    public boolean checkIsNagarPanchayat() {
+        HttpServletRequest request = ServletActionContext.getRequest();
     	String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
-    	return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
+        return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
 }

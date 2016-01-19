@@ -79,7 +79,6 @@
 				dataType: "json",
 				success: function (response) {
 					jQuery('#zoneId').val(response.zoneId);
-					populateWard();
 					setTimeout(function(){
   					//your code to be executed after 1 seconds
 						jQuery('#wardId').val(response.wardId);

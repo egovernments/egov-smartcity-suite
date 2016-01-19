@@ -287,7 +287,7 @@ function validateBank(){
 				<td class="bluebox">Department:</td>
 				<td class="bluebox"><s:select name="department" id="department"
 						list="dropdownData.departmentList" listKey="id"
-						listValue="deptName" headerKey="-1" headerValue="----Choose----"
+						listValue="name" headerKey="-1" headerValue="----Choose----"
 						onChange="populateDO();" /><font color="red">This is
 						mandate if Level is Department</font></td>
 				<td class="bluebox">Remittance CoA:</td>

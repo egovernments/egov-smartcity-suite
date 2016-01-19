@@ -49,11 +49,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.service.BaseLicenseService;
-import org.egov.tl.domain.service.LicenseReportService;
+import org.egov.tl.service.LicenseReportService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.web.actions.BaseLicenseAction;
 
 @Results({
 @Result(name = Constants.ZONE_WISE_REPORT, location = "tradeLicenseReports-"+Constants.ZONE_WISE_REPORT+".jsp"),

@@ -74,6 +74,7 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -90,6 +91,7 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -116,7 +118,13 @@ public class BillRegisterReportAction extends SearchFormAction {
     // accounts codes based on the
     // expenditure type.
     private Date fromDate;
-    private Date toDate;
+    
+    @Autowired	
+    private static AppConfigValueService appConfigValueService;
+    
+   
+
+	private Date toDate;
     private String exptype;
     private Long preVoucherId;
     private String billType;
@@ -168,7 +176,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             query = query + " order by " + sortField + " " + sortOrder;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | prepare | query >> " + query);
-        return new SearchQuerySQL(query, "select count(*) from ( " + query + " )", null);
+        return new SearchQuerySQL(query, "select count(*) from ( " + query + " ) as count", null);
     }
 
     @Override
@@ -223,6 +231,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     }
 
     @ValidationErrorPage(value = "completeBill")
+    @Action(value = "/report/billRegisterReport-billSearch")
     public String billSearch() throws Exception {
         HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
         HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
@@ -557,17 +566,21 @@ public class BillRegisterReportAction extends SearchFormAction {
         }
     }
 
-    static {
-        final String query = "from AppConfigValues where key.module=:module and key.keyName=:keyName";
+    public void netAccountCodeValue() {
+        //final String query = "from AppConfigValues where key.module=:module and key.keyName=:keyName";
         // setting net pay account codes for expense type.
         final Session session = HibernateUtil.getCurrentSession();
         try {
 
-            final Query query1 = session.createQuery(query);
+        	final List<AppConfigValues> cBillNetPurpose = appConfigValueService.
+                    getConfigValuesByModuleAndKey("EGF", "contingencyBillPurposeIds");
+            /*final Query query1 = session.createQuery(query);
             query1.setString("module", "EGF");
             query1.setString("keyName", "contingencyBillPurposeIds");
-            final List<String> cBillNetPayCodeList = new ArrayList<String>();
-            final List<AppConfigValues> cBillNetPurpose = query1.list();
+            
+            final List<AppConfigValues> cBillNetPurpose = query1.list();*/
+        	
+        	final List<String> cBillNetPayCodeList = new ArrayList<String>();
             String coaQuery;
             for (final AppConfigValues appConfigValues : cBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
@@ -579,10 +592,12 @@ public class BillRegisterReportAction extends SearchFormAction {
 
             // setting net pay account codes for purchase type.
             final List<String> pBillNetPayCodeList = new ArrayList<String>();
-            final Query query2 = session.createQuery(query);
+            final List<AppConfigValues> purchBillNetPurpose = appConfigValueService.
+                    getConfigValuesByModuleAndKey("EGF", "purchaseBillPurposeIds");
+            /*final Query query2 = session.createQuery(query);
             query2.setString("module", "EGF");
             query2.setString("keyName", "purchaseBillPurposeIds");
-            final List<AppConfigValues> purchBillNetPurpose = query2.list();
+            final List<AppConfigValues> purchBillNetPurpose = query2.list();*/
             for (final AppConfigValues appConfigValues : purchBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
@@ -593,11 +608,13 @@ public class BillRegisterReportAction extends SearchFormAction {
 
             // setting net pay account codes for salary type.
             final List<String> sBillNetPayCodeList = new ArrayList<String>();
-            final Query query3 = session.createQuery(query);
+            final List<AppConfigValues> sBillNetPurpose = appConfigValueService.
+                    getConfigValuesByModuleAndKey("EGF", "salaryBillPurposeIds");
+            /*final Query query3 = session.createQuery(query);
             query3.setString("module", "EGF");
             query3.setString("keyName", "salaryBillPurposeIds");
             final List<AppConfigValues> sBillNetPurpose = query3.list();
-            if (LOGGER.isDebugEnabled())
+*/            if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Number of salary purpose ids - " + sBillNetPurpose.size());
             for (final AppConfigValues appConfigValues : sBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
@@ -613,10 +630,13 @@ public class BillRegisterReportAction extends SearchFormAction {
             // setting net pay account codes for works type.
 
             final List<String> wBillNetPayCodeList = new ArrayList<String>();
-            final Query query4 = session.createQuery(query);
+            
+            final List<AppConfigValues> wBillNetPurpose = appConfigValueService.
+                    getConfigValuesByModuleAndKey("EGF", "worksBillPurposeIds");
+/*            final Query query4 = session.createQuery(query);
             query4.setString("module", "EGF");
             query4.setString("keyName", "worksBillPurposeIds");
-            final List<AppConfigValues> wBillNetPurpose = query4.list();
+            final List<AppConfigValues> wBillNetPurpose = query4.list();*/
             for (final AppConfigValues appConfigValues : wBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
@@ -627,10 +647,12 @@ public class BillRegisterReportAction extends SearchFormAction {
 
             // setting the netpayable code for pension type
             final List<String> penBillNetPayCodeList = new ArrayList<String>();
-            final Query query5 = session.createQuery(query);
+            final List<AppConfigValues> pensionBillNetPurpose = appConfigValueService.
+                    getConfigValuesByModuleAndKey("EGF", "pensionBillPurposeIds");
+            /*final Query query5 = session.createQuery(query);
             query5.setString("module", "EGF");
             query5.setString("keyName", "pensionBillPurposeIds");
-            final List<AppConfigValues> pensionBillNetPurpose = query5.list();
+            final List<AppConfigValues> pensionBillNetPurpose = query5.list();*/
             for (final AppConfigValues appConfigValues : pensionBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
@@ -701,6 +723,7 @@ public class BillRegisterReportAction extends SearchFormAction {
 
     protected String getQueryByExpndType(final String expndType, final String whereQuery) {
 
+    	netAccountCodeValue();
         final List<String> listOfNetPayGlIds = netAccountCode.get(expndType);
         final StringBuffer netPayCodes = new StringBuffer(30);
         String voucherQry = "";
@@ -715,7 +738,7 @@ public class BillRegisterReportAction extends SearchFormAction {
         final StringBuffer query = new StringBuffer(500);
         // query to get bills for which vouchers are approved.
         query.append(
-                " select b.billnumber ,vh.vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
+                " select b.billnumber ,vh.vouchernumber as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
                 .
                 append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
                 .
@@ -731,7 +754,7 @@ public class BillRegisterReportAction extends SearchFormAction {
 
         // query to get bills for which vouchers are Cancelled.
         query.append(
-                " select b.billnumber ,null, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
+                " select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
                 .
                 append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
                 .
@@ -741,14 +764,14 @@ public class BillRegisterReportAction extends SearchFormAction {
                 append("  and bd.glcodeid in(").append(netPayCodes.toString()).append(")").append(" and b.expendituretype='")
                 .append(expndType).append("'").
                 append("  and vh.status = 4").append(whereQuery)
-                .append(" group by b.billnumber, null,mis.payto, b.passedamount, s.description,b.billdate");
+                .append(" group by b.billnumber,vouchernumber, mis.payto, b.passedamount, s.description,b.billdate");
 
         if (voucherHeader.getVoucherNumber() == null || StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
             query.append(" UNION ");
 
             // query to get bills for voucher is not created
             query.append(
-                    " select b.billnumber ,null, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
+                    " select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
                     .
                     append(" from eg_billregister b, eg_billdetails bd,eg_billregistermis mis , egw_status s ")
                     .
@@ -756,7 +779,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                     .
                     append("  and bd.glcodeid in(").append(netPayCodes.toString()).append(")").append(" and b.expendituretype='")
                     .append(expndType).append("'").
-                    append(whereQuery).append(" group by b.billnumber, null,mis.payto, b.passedamount, s.description,b.billdate");
+                    append(whereQuery).append(" group by b.billnumber, vouchernumber,mis.payto, b.passedamount, s.description,b.billdate");
         }
 
         return query.toString();
@@ -892,6 +915,25 @@ public class BillRegisterReportAction extends SearchFormAction {
         this.isCompleteBillRegisterReport = isCompleteBillRegisterReport;
     }
 
+    public static Map<String, List<String>> getNetAccountCode() {
+		return netAccountCode;
+	}
+
+	public static void setNetAccountCode(Map<String, List<String>> netAccountCode) {
+		BillRegisterReportAction.netAccountCode = netAccountCode;
+	}
+
+	public AppConfigValueService getAppConfigValueService() {
+		return appConfigValueService;
+	}
+
+	public void setAppConfigValueService(AppConfigValueService appConfigValueService) {
+		this.appConfigValueService = appConfigValueService;
+	}
+
+	
+	
+	
     /*
      * protected String getQuery(){ StringBuffer query = new StringBuffer();
      * query.append(" from EgBillregister egBill where egBill.egBillregistermis.fund.id="+voucherHeader.getFundId().getId());

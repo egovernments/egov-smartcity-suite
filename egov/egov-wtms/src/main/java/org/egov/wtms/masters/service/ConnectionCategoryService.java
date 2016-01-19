@@ -116,11 +116,7 @@ public class ConnectionCategoryService {
             return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
     }
 
-    public PropertyCategory getAllCategoryTypesByPropertyTypeAndCategory(final String propertyType,
-            final String categoryType) {
-       
-            return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeAndCategory(propertyType,categoryType);
-    }
+    
     public List<ConnectionCategory> getConnectionCategoryListForRest() {
         final List<ConnectionCategory> connectionCategoryList = connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
         final List<ConnectionCategory> prepareListForRest = new ArrayList<ConnectionCategory>(0);

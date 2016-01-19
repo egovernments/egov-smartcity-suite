@@ -143,6 +143,7 @@ import com.exilant.exility.common.TaskFailedException;
  */
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Transactional(readOnly=true)
 public class CreateVoucher {
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -273,11 +274,11 @@ public class CreateVoucher {
         try
         {
 
-            generalLedgerService = new PersistenceService<CGeneralLedger, Long>();
+           // generalLedgerService = new PersistenceService<CGeneralLedger, Long>();
             //generalLedgerService.setType(CGeneralLedger.class);
             // generalLedgerService.setSessionFactory(new SessionFactory());
 
-            generalLedgerDetailService = new PersistenceService<CGeneralLedgerDetail, Long>();
+            //generalLedgerDetailService = new PersistenceService<CGeneralLedgerDetail, Long>();
             //generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
             // generalLedgerDetailService.setSessionFactory(new SessionFactory());
 
@@ -290,12 +291,7 @@ public class CreateVoucher {
             LOGGER.debug("Initialization completed");
     }
 
-    public void setChartOfAccounts() {
-        engine.setVoucherHeaderService(chartOfAccounts.getVoucherHeaderService());
-        ChartOfAccounts.setChartOfAccountDetailService(ChartOfAccounts.getChartOfAccountDetailService());
-        engine.setBudgetDetailsDAO(chartOfAccounts.getBudgetDetailsDAO());
-
-    }
+   
 
     /**
      * creates voucher From billId
@@ -1069,16 +1065,85 @@ public class CreateVoucher {
             mis = createVouchermis(headerdetails);
             mis.setVoucherheaderid(vh);
             vh.setVouchermis(mis);
-            insertIntoVoucherHeader(vh);
+            //insertIntoVoucherHeader(vh);
+            
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("start | insertIntoVoucherHeader");
+            final String vdt = formatter.format(vh.getVoucherDate());
+            String fiscalPeriod = null;
+            try {
+                fiscalPeriod = cm.getFiscalPeriod(vdt);
+            } catch (final TaskFailedException e) {
+                throw new ApplicationRuntimeException("error while getting fiscal period");
+            }
+            if (null == fiscalPeriod)
+                throw new ApplicationRuntimeException(
+                        "Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
+                                + fiscalPeriod);
+            vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
+            final String fundIdentifier = vh.getFundId().getIdentifier().toString();
+            final String vType = fundIdentifier + "/" + getCgnType(vh.getType()) + "/CGVN";
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("vType" + vType);
+            String eg_voucher = null;
+            try {
+                eg_voucher = voucherHelper.getEg_Voucher(vType, fiscalPeriod);
+            } catch (final TaskFailedException e) {
+                LOGGER.error(ERR, e);
+                throw new ApplicationRuntimeException(e.getMessage());
+            } catch (final SQLException e) {
+                LOGGER.error(ERR, e);
+                throw new ApplicationRuntimeException(e.getMessage());
+            } catch (final Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            for (int i = eg_voucher.length(); i < 10; i++)
+                eg_voucher = "0" + eg_voucher;
+            final String cgNum = vType + eg_voucher;
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("cgNum------" + cgNum);
+            vh.setCgvn(cgNum);
+
+            try {
+                if (!cm.isUniqueVN(vh.getVoucherNumber(), vdt))
+                    throw new ValidationException(Arrays.asList(new ValidationError("Duplicate Voucher Number",
+                            "Duplicate Voucher Number")));
+            } catch (final Exception e) {
+                LOGGER.error(ERR, e);
+                throw new ApplicationRuntimeException(e.getMessage());
+            }
+            vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals.getUserId())));
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("++++++++++++++++++" + vh.toString());
+            voucherService.persist(vh);
+            if (null != vh.getVouchermis().getSourcePath() && null == vh.getModuleId() &&
+                    vh.getVouchermis().getSourcePath().length() == vh.getVouchermis().getSourcePath().indexOf("=") + 1) {
+                final StringBuffer sourcePath = new StringBuffer();
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Source Path received : " + vh.getVouchermis().getSourcePath());
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Voucher Header Id  : " + vh.getId());
+                sourcePath.append(vh.getVouchermis().getSourcePath()).append(vh.getId().toString());
+                vh.getVouchermis().setSourcePath(sourcePath.toString());
+                voucherService.update(vh);
+            }
+
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("End | insertIntoVoucherHeader"); 
+            
+            
+            
+            
             // insertIntoRecordStatus(vh);
             final List<Transaxtion> transactions = createTransaction(headerdetails, accountcodedetails, subledgerdetails, vh);
             HibernateUtil.getCurrentSession().flush();
-            engine = ChartOfAccounts.getInstance();
-            setChartOfAccounts();
+         //   engine = ChartOfAccounts.getInstance();
+           // setChartOfAccounts();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
                 throw new ApplicationRuntimeException("Voucher creation Failed");
         }
 
@@ -1419,6 +1484,7 @@ public class CreateVoucher {
             throw new ApplicationRuntimeException("Voucher type is not valid");
     }
 
+    @Transactional
     @SuppressWarnings("deprecation")
     public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException,
     Exception {
@@ -1654,7 +1720,7 @@ public class CreateVoucher {
         return voucherNumberPrefix;
 
     }
-
+    @Transactional
     public Vouchermis createVouchermis(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | createVouchermis");

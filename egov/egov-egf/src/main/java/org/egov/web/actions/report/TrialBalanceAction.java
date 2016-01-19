@@ -90,6 +90,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.eGov.src.reports.TrialBalanceBean;
 
 @Results(value = {
+		 @Result(name = "new", location = "trialBalance-new.jsp"),
         @Result(name = "trialBalance-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", "contentDisposition",
         "no-cache;filename=trialBalance.pdf" }),
@@ -99,7 +100,7 @@ import com.exilant.eGov.src.reports.TrialBalanceBean;
         @Result(name = "trialBalance-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html", "contentDisposition",
         "no-cache;filename=trialBalance.html" })
-})
+       })
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 public class TrialBalanceAction extends BaseFormAction {
@@ -165,13 +166,13 @@ public class TrialBalanceAction extends BaseFormAction {
         addDropdownData("functionaryList", masterCache.get("egi-functionary"));
         addDropdownData("fieldList", masterCache.get("egi-ward"));
         addDropdownData("functionList", masterCache.get("egi-function"));
-    }
 
+    }
     @Action(value = "/report/trialBalance-newForm")
     public String newForm()
     {
 
-        return NEW;
+        return "new";
     }
 
     public String exportTrialBalance()
@@ -195,7 +196,7 @@ public class TrialBalanceAction extends BaseFormAction {
             {
                 inputStream = reportHelper.exportHtml(inputStream,
                         reportHelper.exportTBDateRange(al, cityWebsite.getName(), rb, heading, fundList, null), "px");
-                return NEW;
+                return "new";
             }
         } catch (final JRException e) {
             LOGGER.error(e, e);
@@ -204,7 +205,7 @@ public class TrialBalanceAction extends BaseFormAction {
         } catch (final Exception e) {
             LOGGER.error(e, e);
         }
-        return NEW;
+        return "new";
     }
 
     @SkipValidation
@@ -243,7 +244,7 @@ public class TrialBalanceAction extends BaseFormAction {
         else
         {
             addActionMessage("No Data Found");
-            return NEW;
+            return "new";
         }
 
     }
@@ -292,7 +293,7 @@ public class TrialBalanceAction extends BaseFormAction {
         }
         String defaultStatusExclude = null;
         final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
         if (null != listAppConfVal)
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
@@ -600,7 +601,7 @@ public class TrialBalanceAction extends BaseFormAction {
         }
         String defaultStatusExclude = null;
         final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
         if (null != listAppConfVal)
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
@@ -962,7 +963,7 @@ public class TrialBalanceAction extends BaseFormAction {
 
         if (rb.getDepartmentId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select deptName from Department where id=?", rb.getDepartmentId()));
+                    + (String) persistenceService.find("select name from Department where id=?", (rb.getDepartmentId()).longValue()));
 
         if (rb.getFunctionaryId() != null)
             heading.append(" For  "
@@ -1056,5 +1057,15 @@ public class TrialBalanceAction extends BaseFormAction {
     public void setRemoveEntrysWithZeroAmount(final String removeEntrysWithZeroAmount) {
         this.removeEntrysWithZeroAmount = removeEntrysWithZeroAmount;
     }
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+    
 
 }

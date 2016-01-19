@@ -174,7 +174,7 @@ public final class CollectionConstants {
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
     public static final String QUERY_CREATEDBYUSERS_OF_RECEIPTS = "CREATEDBYUSERS_OF_RECEIPTS";
-    public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
+    //public static final String QUERY_LOCATION_BY_USER = "getLocationByUser";
     public static final String QUERY_SERVICES_BY_TYPE = "getServicesByType";
     public static final String QUERY_COLLECTION_SERVICS = "getCollectionServices";
     public static final String QUERY_FUNCTIONARY_BY_CODE = "getFunctionaryByCode";
@@ -263,7 +263,7 @@ public final class CollectionConstants {
     public static final String SESSION_VAR_LOGIN_USER_NAME = "com.egov.user.LoginUserName";
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     public static final String SUPER_USER_NAME = "egovernments";
-    public static final String SESSION_VAR_LOGIN_USER_COUNTERID = "counterId";
+    public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
     public static final String CITIZEN_USER_NAME = "9999999999";
 

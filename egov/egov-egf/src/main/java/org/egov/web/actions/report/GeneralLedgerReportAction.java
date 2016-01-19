@@ -42,6 +42,7 @@ package org.egov.web.actions.report;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -55,11 +56,15 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.reports.GeneralLedgerReport;
@@ -82,11 +87,22 @@ public class GeneralLedgerReportAction extends BaseFormAction {
      */
     private static final long serialVersionUID = 4734431707050536319L;
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReportAction.class);
-    private GeneralLedgerReportBean generalLedgerReport = new GeneralLedgerReportBean();
-    private GeneralLedgerReport generalLedger = new GeneralLedgerReport();
+    private GeneralLedgerReportBean generalLedgerReportBean = new GeneralLedgerReportBean();
+    @Autowired
+    @Qualifier("generalLedgerReport")
+    private GeneralLedgerReport generalLedgerReport;
+    
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     protected LinkedList generalLedgerDisplayList = new LinkedList();
     String heading = "";
+    List<CChartOfAccounts> allChartOfAccounts;
+    String parentForDetailedCode = "";
+    private String glCode;
+    @Autowired
+    AppConfigValueService appConfigValuesService;
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
 
     public GeneralLedgerReportAction() {
         LOGGER.error("creating instance of GeneralLedgerReportAction ");
@@ -94,16 +110,27 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 
     @Override
     public Object getModel() {
-        return generalLedgerReport;
+        return generalLedgerReportBean;
     }
+    
+   
 
-    public void prepareNewForm() {
+    @SuppressWarnings("unchecked")
+	public void prepareNewForm() {
         super.prepare();
+        
+       
+       allChartOfAccounts = persistenceService.findAllBy("select ca from CChartOfAccounts ca where"
+                                +
+                                " ca.glcode not in(select glcode from CChartOfAccounts where glcode like '47%' and glcode not like '471%' and glcode !='4741')"
+                                +
+                                " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
+                                " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?", glCode + "%");
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
-        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
         addDropdownData("fundsourceList",
-                persistenceService.findAllBy(" from Fundsource where isactive=1 and isnotleaf=0 order by name"));
+                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=0 order by name"));
         addDropdownData("fieldList", persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
@@ -133,14 +160,14 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GeneralLedgerAction | Search | start");
         try {
-            generalLedgerDisplayList = generalLedger.getGeneralLedgerList(generalLedgerReport);
+            generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
         } catch (final Exception e) {
             e.printStackTrace();
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GeneralLedgerAction | list | End");
         heading = getGLHeading();
-        generalLedgerReport.setHeading(getGLHeading());
+        generalLedgerReportBean.setHeading(getGLHeading());
         prepareNewForm();
         return "results";
     }
@@ -150,37 +177,37 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         String heading = "";
         CChartOfAccounts glCode = new CChartOfAccounts();
         Fund fund = new Fund();
-        if (checkNullandEmpty(generalLedgerReport.getGlCode1()) && checkNullandEmpty(generalLedgerReport.getGlCode1())) {
+        if (checkNullandEmpty(generalLedgerReportBean.getGlCode1()) && checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
             glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
-                    generalLedgerReport.getGlCode1());
-            fund = (Fund) persistenceService.find("from Fund where id = ?", Integer.parseInt(generalLedgerReport.getFund_id()));
+                    generalLedgerReportBean.getGlCode1());
+            fund = (Fund) persistenceService.find("from Fund where id = ?", Integer.parseInt(generalLedgerReportBean.getFund_id()));
         }
         heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " for " + fund.getName()
-                + " from " + generalLedgerReport.getStartDate() + " to " + generalLedgerReport.getEndDate();
-        if (checkNullandEmpty(generalLedgerReport.getDepartmentId()))
+                + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
+        if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))
         {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
-                    Integer.parseInt(generalLedgerReport.getDepartmentId()));
+                    Integer.parseInt(generalLedgerReportBean.getDepartmentId()));
             heading = heading + " under " + dept.getName() + " ";
         }
-        if (checkNullandEmpty(generalLedgerReport.getFunctionCode()))
+        if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
         {
             final CFunction function = (CFunction) persistenceService.find("from CFunction where code = ?",
-                    generalLedgerReport.getFunctionCode());
+                    generalLedgerReportBean.getFunctionCode());
             heading = heading + " in " + function.getName() + " Function ";
         }
 
-        if (checkNullandEmpty(generalLedgerReport.getFunctionaryId()))
+        if (checkNullandEmpty(generalLedgerReportBean.getFunctionaryId()))
         {
             final Functionary functionary = (Functionary) persistenceService.find("from Functionary where id = ?",
-                    Integer.parseInt(generalLedgerReport.getFunctionaryId()));
+                    Integer.parseInt(generalLedgerReportBean.getFunctionaryId()));
             heading = heading + " in " + functionary.getName() + " Functionary ";
         }
 
-        if (checkNullandEmpty(generalLedgerReport.getFieldId()))
+        if (checkNullandEmpty(generalLedgerReportBean.getFieldId()))
         {
             final Boundary ward = (Boundary) persistenceService.find("from Boundary where id = ?",
-                    Integer.parseInt(generalLedgerReport.getFieldId()));
+                    Integer.parseInt(generalLedgerReportBean.getFieldId()));
             heading = heading + " in " + ward.getName() + " Field ";
         }
         return heading;
@@ -195,27 +222,29 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 
     }
 
-    public GeneralLedgerReportBean getGeneralLedgerReport() {
-        return generalLedgerReport;
-    }
+    
+    public GeneralLedgerReportBean getGeneralLedgerReportBean() {
+		return generalLedgerReportBean;
+	}
 
-    public void setGeneralLedgerReport(final GeneralLedgerReportBean generalLedgerReport) {
-        this.generalLedgerReport = generalLedgerReport;
-    }
+	public void setGeneralLedgerReportBean(
+			GeneralLedgerReportBean generalLedgerReportBean) {
+		this.generalLedgerReportBean = generalLedgerReportBean;
+	}
 
-    public GeneralLedgerReport getGeneralLedger() {
-        return generalLedger;
-    }
+	public GeneralLedgerReport getGeneralLedgerReport() {
+		return generalLedgerReport;
+	}
 
-    public void setGeneralLedger(final GeneralLedgerReport generalLedger) {
-        this.generalLedger = generalLedger;
-    }
+	public void setGeneralLedgerReport(GeneralLedgerReport generalLedgerReport) {
+		this.generalLedgerReport = generalLedgerReport;
+	}
 
     public String getHeading() {
         return heading;
     }
 
-    public void setHeading(final String heading) {
+	public void setHeading(final String heading) {
         this.heading = heading;
     }
 
@@ -226,5 +255,23 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     public void setGeneralLedgerDisplayList(final LinkedList generalLedgerDisplayList) {
         this.generalLedgerDisplayList = generalLedgerDisplayList;
     }
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+
+	public PersistenceService<CChartOfAccounts, Long> getChartOfAccountsService() {
+		return chartOfAccountsService;
+	}
+
+	public void setChartOfAccountsService(
+			PersistenceService<CChartOfAccounts, Long> chartOfAccountsService) {
+		this.chartOfAccountsService = chartOfAccountsService;
+	}
 
 }

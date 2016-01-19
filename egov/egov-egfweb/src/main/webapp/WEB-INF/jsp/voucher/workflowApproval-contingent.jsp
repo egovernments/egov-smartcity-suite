@@ -49,7 +49,7 @@
 				class="mandatory1">*</span></td>
 			<td class="greybox"><s:select name="departmentid"
 					id="departmentid" list="dropdownData.departmentList" listKey="id"
-					listValue="deptName" onchange="populateDesg()" /></td>
+					listValue="name" onchange="populateDesg()" /></td>
 			<egov:ajaxdropdown id="designationId" fields="['Text','Value']"
 				dropdownId="designationId" url="voucher/common-ajaxLoadDesg.action" />
 			<td class="greybox">Approver Designation<span class="mandatory1">*</span></td>

@@ -123,5 +123,11 @@ public class DashboardController {
     @RequestMapping(value = "/top-complaints")
     public @ResponseBody Map<String, Object> topComplaints() {
         return dashboardService.topComplaints();
+    } 
+    
+    @RequestMapping(value = "/gis-analysis")
+    public @ResponseBody Map<String, List<Map<String, Object>>> gisAnalysis() {
+        return dashboardService.getGISWardWiseAnalysis();
     }
+    
 }

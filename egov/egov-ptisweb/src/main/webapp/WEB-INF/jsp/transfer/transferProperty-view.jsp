@@ -378,7 +378,8 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</div>
 				</s:if>
-				<s:elseif test="%{model.receiptNum != '' && model.receiptDate != null}">  
+				<s:elseif test="%{(model.receiptNum != '' && model.receiptDate != null) || 
+				model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)}">  
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
@@ -397,8 +398,27 @@
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
-					
 				</s:elseif>
+		<%-- 		<s:else>
+					<div id="workflowCommentsDiv" align="center">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
+								<td class="${approverEvenCSS}" width="13%">Approver
+									Remarks:</td>
+								<td class="${approverEvenTextCSS}"><textarea
+										id="approverComments" name="approverComments" rows="2"
+										value="#approverComments" cols="35"></textarea></td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+							</tr>
+							</table>
+					</div>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
+				</s:else> --%>
 			</table>
 		</s:push>
 	</s:form>

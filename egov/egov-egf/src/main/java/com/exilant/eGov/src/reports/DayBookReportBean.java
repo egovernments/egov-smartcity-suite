@@ -45,7 +45,6 @@ public class DayBookReportBean
     private String startDate;
     private String endDate;
     private String totalCount;
-    private String isConfirmedCount;
     private String fundId;
 
     /**
@@ -57,7 +56,6 @@ public class DayBookReportBean
         startDate = "";
         endDate = "";
         totalCount = "";
-        isConfirmedCount = "";
         fundId = "0";
     }
 
@@ -103,20 +101,7 @@ public class DayBookReportBean
         this.totalCount = totalCount;
     }
 
-    /**
-     * @return Returns the isConfirmedCount.
-     */
-    public String getIsConfirmedCount() {
-        return isConfirmedCount;
-    }
-
-    /**
-     * @param isConfirmedCount The isConfirmedCount to set.
-     */
-    public void setIsConfirmedCount(final String isConfirmedCount) {
-        this.isConfirmedCount = isConfirmedCount;
-    }
-
+  
     /**
      * @return Returns the fundId.
      */

@@ -49,6 +49,7 @@ public class EgovThreadLocals {
     private static ThreadLocal<String> tenantID = new ThreadLocal<>();
     private static ThreadLocal<String> cityCode = new ThreadLocal<>();
     private static ThreadLocal<String> cityName = new ThreadLocal<>();
+    private static ThreadLocal<String> municipalityName = new ThreadLocal<String>();
 
     public static String getCityName() {
         return cityName.get();
@@ -98,6 +99,14 @@ public class EgovThreadLocals {
         servletContext.set(servlContext);
     }
 
+    public static String getMunicipalityName() {
+        return municipalityName.get();
+    }
+
+    public static void setMunicipalityName(final String cityMunicipalityName) {
+        municipalityName.set(cityMunicipalityName);
+    }
+
     public static void clearValues() {
         servletContext.remove();
         domainName.remove();
@@ -105,6 +114,7 @@ public class EgovThreadLocals {
         tenantID.remove();
         cityCode.remove();
         cityName.remove();
+        municipalityName.remove();
     }
 
 }

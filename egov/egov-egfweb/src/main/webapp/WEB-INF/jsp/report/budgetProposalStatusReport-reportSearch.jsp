@@ -68,7 +68,7 @@
 						</td>
 						<td class="bluebox"><s:select
 								list="dropdownData.departmentList" listKey="id"
-								listValue="deptName" name="department.id" headerKey="0"
+								listValue="name" name="department.id" headerKey="0"
 								headerValue="--- Select ---" value="department.id"
 								id="department"></s:select></td>
 						<td class="bluebox" width="15%"></td>

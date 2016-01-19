@@ -175,7 +175,7 @@ function validateWorkFlowApprover(name,errorDivId)
 			<td class="${approverOddTextCss}"><s:select
 					name="approverDepartment" id="approverDepartment"
 					list="dropdownData.approverDepartmentList" listKey="id"
-					listValue="deptName" headerKey="-1" headerValue="----Choose----"
+					listValue="name" headerKey="-1" headerValue="----Choose----"
 					value="%{approverDepartment}"
 					onchange="loadDesignationFromMatrix();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown fields="['Text','Value']"

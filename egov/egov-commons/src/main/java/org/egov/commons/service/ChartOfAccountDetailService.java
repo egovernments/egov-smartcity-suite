@@ -41,11 +41,17 @@ package org.egov.commons.service;
 
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ChartOfAccountDetailService extends PersistenceService<CChartOfAccountDetail, Long>
 {
-    public ChartOfAccountDetailService(final Class<CChartOfAccountDetail> chartOfAccountDetail) {
-        this.type = chartOfAccountDetail;
+    public ChartOfAccountDetailService() {
+        this.type=CChartOfAccountDetail.class;
     }
+
+	public ChartOfAccountDetailService(Class<CChartOfAccountDetail> type) {
+		super(type);
+	}
 
 }

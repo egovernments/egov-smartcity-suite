@@ -54,12 +54,12 @@
 
 <egi-ward>
 	<type>hql</type>
-	<query>from BoundaryImpl BI left join fetch BI.children where upper(BI.boundaryType.name) = 'WARD' order by BI.id</query>
+	<query>from Boundary BI left join fetch BI.children where upper(BI.boundaryType.name) = 'WARD' order by BI.id</query>
 </egi-ward> 
 
 <egi-boundary>
 	<type>hql</type>
-	<query>from BoundaryImpl BI order by BI.id</query>
+	<query>from Boundary BI order by BI.id</query>
 </egi-boundary> 
 
 

@@ -48,10 +48,10 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.entity.LicenseStatus;
-import org.egov.tl.domain.entity.LicenseStatusValues;
-import org.egov.tl.domain.entity.TradeLicense;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseStatus;
+import org.egov.tl.entity.LicenseStatusValues;
+import org.egov.tl.entity.TradeLicense;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -134,12 +134,12 @@ public class DailyCancelProvisionalNocTradeJob extends AbstractQuartzJob {
 
     private LicenseStatus getLicenseStatusbyCode(final String statusCode) {
         return (LicenseStatus) persistenceService.find(
-                "FROM org.egov.tl.domain.entity.LicenseStatus where statusCode=?", statusCode);
+                "FROM org.egov.tl.entity.LicenseStatus where statusCode=?", statusCode);
     }
 
     public LicenseStatusValues getCurrentStatus(final License license) {
         return (LicenseStatusValues) persistenceService.find(
-                "from org.egov.tl.domain.entity.LicenseStatusValues  where license=? and active=true", license);
+                "from org.egov.tl.entity.LicenseStatusValues  where license=? and active=true", license);
     }
 
     public void setPersistenceService(final PersistenceService persistenceService) {

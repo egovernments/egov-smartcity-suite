@@ -32,7 +32,6 @@ package org.egov.commons;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -42,7 +41,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -52,7 +50,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
-
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
@@ -75,7 +72,7 @@ public class CVoucherHeader extends StateAware {
     private Date effectiveDate;
     private String voucherNumber;
     private Date voucherDate;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "fundId")
     private Fund fundId;
     private Integer fiscalPeriodId;
@@ -89,11 +86,9 @@ public class CVoucherHeader extends StateAware {
     private String voucherSubType;
     @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "generalLedger", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "voucherHeaderId"))
-    private Set<CGeneralLedger> genenralLedger = new HashSet<CGeneralLedger>(0);
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
+    private Set<CGeneralLedger> generalLedger;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid" , targetEntity=Vouchermis.class)
     private Vouchermis vouchermis;
 
     public Long getId() {
@@ -310,7 +305,7 @@ public class CVoucherHeader extends StateAware {
     }
 
     public Set<CGeneralLedger> getGeneralledger() {
-        return genenralLedger;
+        return generalLedger;
     }
 
     public Vouchermis getVouchermis() {
@@ -343,7 +338,7 @@ public class CVoucherHeader extends StateAware {
 
     public BigDecimal getTotalAmount() {
         BigDecimal amount = BigDecimal.ZERO;
-        for (final CGeneralLedger detail : genenralLedger)
+        for (final CGeneralLedger detail : generalLedger)
             amount = amount.add(new BigDecimal(detail.getDebitAmount()));
         return amount;
     }

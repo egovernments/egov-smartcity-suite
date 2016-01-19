@@ -209,7 +209,7 @@
 							<td class="greybox"><s:text name="subLedger.department" /></td>
 							<td class="greybox"><s:select name="departmentId"
 									id="departmentId" list="dropdownData.departmentList"
-									listKey="id" listValue="deptName" headerKey=""
+									listKey="id" listValue="name" headerKey=""
 									headerValue="----Choose----" /></td>
 							<td class="greybox"></td>
 							<td class="greybox"></td>

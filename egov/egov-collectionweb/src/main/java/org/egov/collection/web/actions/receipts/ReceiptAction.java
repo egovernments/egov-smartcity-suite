@@ -160,7 +160,7 @@ public class ReceiptAction extends BaseFormAction {
     private String reasonForCancellation;
     private String target = "view";
     private String paidBy;
-    private ReceiptHeader receiptHeader;
+    private ReceiptHeader receiptHeader = new ReceiptHeader();
 
     /**
      * A <code>Long</code> value representing the receipt header id captured from the front end, which has to be cancelled.
@@ -370,7 +370,7 @@ public class ReceiptAction extends BaseFormAction {
         final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
         ajaxBankRemittanceAction.setServiceName(getServiceName());
         ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
-        
+
         if (populate) {
             ajaxBankRemittanceAction.setFundName(getFundName());
             ajaxBankRemittanceAction.bankBranchList();
@@ -442,7 +442,7 @@ public class ReceiptAction extends BaseFormAction {
                 CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
         if (null != this.service && null != this.service.getId() && this.service.getId() != -1)
             service = serviceDetailsService.findById(this.service.getId(), false);
-        final ReceiptHeader receiptHeader = new ReceiptHeader();
+       // final ReceiptHeader receiptHeader = new ReceiptHeader();
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
         final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
@@ -464,7 +464,7 @@ public class ReceiptAction extends BaseFormAction {
         if (receiptMisc.getFundsource() != null && receiptMisc.getFundsource().getId() != null)
             fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId());
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_DEPARTMENT_BY_ID, Integer.valueOf(deptId));
+                CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(null, fund, functionary, fundSource, dept, receiptHeader,
                 scheme, subscheme, null);
@@ -576,7 +576,6 @@ public class ReceiptAction extends BaseFormAction {
             createMisc();
         // set collection modes allowed rule through script
         setCollectionModesNotAllowed();
-
         return NEW;
     }
 
@@ -626,9 +625,9 @@ public class ReceiptAction extends BaseFormAction {
 
             // initialise receipt info,persist receipts,create vouchers & update
             // billing system
-            try{
-            populateAndPersistReceipts();
-            }catch(ApplicationRuntimeException e){
+            try {
+                populateAndPersistReceipts();
+            } catch (final ApplicationRuntimeException e) {
                 return NEW;
             }
 
@@ -702,10 +701,6 @@ public class ReceiptAction extends BaseFormAction {
         partPaymentAllowed = false;
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
-
-        if (paidBy == null || CollectionConstants.BLANK.equals(paidBy))
-            paidBy = collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                    CollectionConstants.APPCONFIG_VALUE_PAYEEFORMISCRECEIPTS);
         // this.paidBy = payeename;
         if (null != service && null != service.getId() && service.getId() != -1)
             setServiceName(serviceDetailsService.findById(service.getId(), false).getName());
@@ -802,7 +797,6 @@ public class ReceiptAction extends BaseFormAction {
                 receiptHeader.setVoucherDate(voucherDate);
                 receiptHeader.setVoucherNum(voucherNum);
                 receiptHeader.setIsReconciled(Boolean.TRUE);
-                receiptHeader.setReceiptdate(manualReceiptDate);
                 receiptHeader.setManualreceiptdate(manualReceiptDate);
 
             } else {
@@ -876,7 +870,7 @@ public class ReceiptAction extends BaseFormAction {
                 collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
             LOGGER.info("Updated billing system ");
         }
-        
+
         // Start work flow for all newly created receipts This might internally
         // create vouchers also based on configuration
         receiptHeaderService.startWorkflow(receiptHeader, getReceiptBulkUpload());
@@ -986,11 +980,11 @@ public class ReceiptAction extends BaseFormAction {
             else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
-            if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null){
+            if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null) {
                 addActionError("Bank is not exist");
                 throw new ApplicationRuntimeException("Bank is not exist");
 
-            }else if(instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
+            } else if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
                 instrumentHeader.setBankId((Bank) bankDAO.findById(
                         Integer.valueOf(instrumentHeader.getBankId().getId()), false));
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
@@ -1893,7 +1887,7 @@ public class ReceiptAction extends BaseFormAction {
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
     }
-    
+
     public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
         this.serviceCategoryService = serviceCategoryService;
     }

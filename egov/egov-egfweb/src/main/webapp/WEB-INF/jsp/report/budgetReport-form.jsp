@@ -129,7 +129,7 @@ function validateData(){
 							name="budgetDetail.executingDepartment.id"
 							id="executingDepartment"
 							list="dropdownData.executingDepartmentList" listKey="id"
-							listValue="deptName" headerKey="-1" headerValue="----Choose----"
+							listValue="name" headerKey="-1" headerValue="----Choose----"
 							value="%{executingDepartment.id}" /></td>
 				</tr>
 				<tr>

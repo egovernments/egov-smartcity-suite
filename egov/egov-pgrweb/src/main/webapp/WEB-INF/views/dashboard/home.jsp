@@ -99,7 +99,7 @@ var isdefault = true;
 			<div id="wardwiseAnalysis3" style="height:500px"></div>
 		</div>
 	</div>
-	<div class="row">
+	<!-- <div class="row">
 		<div class="col-md-4 col-sm-4 col-ms-4 col-lg-4" style="height:500px;margin-bottom:50px">
 			<div class="bs-callout bs-callout-info header-lightblue">Top 1 > <span id="top1"></span></div>
 			<div id="topGis1" style="min-height:500px"></div>			
@@ -112,7 +112,7 @@ var isdefault = true;
 			<div class="bs-callout bs-callout-info header-lightgreen">Top 3 > <span id="top3"></span></div>
 			<div id="topGis3" style="min-height:500px"></div>
 		</div>
-	</div>
+	</div> -->
 </div>
 
 <!--div id="gisSearchWin" class="container-win" style="display:none;">

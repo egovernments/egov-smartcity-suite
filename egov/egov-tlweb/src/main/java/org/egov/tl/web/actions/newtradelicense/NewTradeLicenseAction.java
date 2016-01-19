@@ -68,24 +68,23 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.tl.domain.entity.License;
-import org.egov.tl.domain.entity.LicenseAppType;
-import org.egov.tl.domain.entity.LicenseDocumentType;
-import org.egov.tl.domain.entity.LicenseStatus;
-import org.egov.tl.domain.entity.Licensee;
-import org.egov.tl.domain.entity.MotorDetails;
-import org.egov.tl.domain.entity.TradeLicense;
-import org.egov.tl.domain.entity.WorkflowBean;
-import org.egov.tl.domain.service.BaseLicenseService;
-import org.egov.tl.domain.service.TradeService;
-import org.egov.tl.domain.service.masters.LicenseCategoryService;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
-import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.entity.LicenseStatus;
+import org.egov.tl.entity.Licensee;
+import org.egov.tl.entity.MotorDetails;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.service.BaseLicenseService;
+import org.egov.tl.service.TradeService;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.egov.tl.web.actions.domain.CommonTradeLicenseAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
@@ -154,7 +153,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 				license().generateLicenseNumber(nextRunningLicenseNumber);
 			}
 			final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-					.find("from org.egov.tl.domain.entity.LicenseStatus where code='ACT'");
+					.find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
 			license().setStatus(activeStatus);
 		}
 

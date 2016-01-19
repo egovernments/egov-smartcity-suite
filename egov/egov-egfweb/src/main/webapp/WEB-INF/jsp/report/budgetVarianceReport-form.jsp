@@ -173,7 +173,7 @@ function checkMandatoryField(fieldName){
 							class="mandatory">*</span></td>
 						<td class="bluebox"><s:select name="executingDepartment"
 								id="executingDepartment" list="dropdownData.departmentList"
-								listKey="id" listValue="deptName" headerKey="-1"
+								listKey="id" listValue="name" headerKey="-1"
 								headerValue="----Choose----" /></td>
 					</s:if>
 					<s:if test="%{shouldShowHeaderField('function')}">

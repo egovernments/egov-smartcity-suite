@@ -49,6 +49,61 @@ body .loading-indicator {
   margin: 0;
   height: auto;
 }
+body .spinner {
+  margin: 0px auto;
+  width: 50px;
+  height: 30px;
+  text-align: center;
+  font-size: 10px;
+}
+body .spinner div {
+  background-color: #fff;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+  animation: stretchdelay 1.2s infinite ease-in-out;
+}
+body .spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+body .spinner .rect3 {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+}
+body .spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+body .spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+body .spinner-margin {
+  margin-top: 250px;
+}
+body .spinner-text {
+  color: #fff;
+}
+@keyframes stretchdelay {
+  0% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  40% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
 ::-webkit-input-placeholder {
   color: #999999;
 }
@@ -209,6 +264,12 @@ strong {
   font-size: 13px;
   line-height: 1.42857143;
   outline: none;
+}
+.page-container.horizontal-menu header.navbar ul.nav > li a.profile-name {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 120px;
+  text-overflow: ellipsis;
 }
 .page-container.horizontal-menu header.navbar ul.nav > li.menu-responsive {
   border-left: 1px solid #5a3e1b;
@@ -1297,11 +1358,11 @@ strong {
 }
 .page-container .main-content .yui-skin-sam .yui-dt th {
   color: #fff;
-  background: #84B1AD;
-  border-right: 1px solid #84B1AD;
+  background: #6b4f2c;
+  border-right: 1px solid #5a3e1b;
 }
 .page-container .main-content .yui-skin-sam .yui-dt td {
-  border-right: 1px solid #84B1AD;
+  border-right: 1px solid #E9E9E9;
 }
 .page-container .main-content .yui-skin-sam .yui-ac-input {
   position: relative;

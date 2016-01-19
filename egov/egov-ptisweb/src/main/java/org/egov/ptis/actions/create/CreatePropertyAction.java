@@ -1170,6 +1170,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProperty.setUpicNo(assessmentNo);
         basicProperty.setOldMuncipalNum(upicNo);
+        basicProperty.setAssessmentdate(new Date());
         try {
             addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
                     basicProperty.getPropertyMutationMaster());

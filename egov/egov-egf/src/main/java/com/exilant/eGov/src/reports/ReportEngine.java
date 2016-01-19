@@ -47,13 +47,14 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Manikanta
  *
  */
-
+@Service
 public class ReportEngine {
     private final static Logger LOGGER = Logger.getLogger(ReportEngine.class);
     /**
@@ -62,11 +63,11 @@ public class ReportEngine {
      * @return query
      *
      */
-
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    public String getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException
+   
+	public String getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException
     {
         boolean includeVouchermis = false;
         boolean includeGeneralLedger = false;
@@ -182,7 +183,7 @@ public class ReportEngine {
             new ArrayList<String>();
             String defaultStatusExclude = null;
             final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                    getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                    getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
             if (null != listAppConfVal)
                 defaultStatusExclude = listAppConfVal.get(0).getValue();
             else
@@ -246,5 +247,14 @@ public class ReportEngine {
         reBean.setToVoucherNumber(null);
         return reBean;
     }
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
 
 }

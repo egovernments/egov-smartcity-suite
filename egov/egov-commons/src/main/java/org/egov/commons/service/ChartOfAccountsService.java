@@ -45,7 +45,7 @@ import org.egov.infstr.services.PersistenceService;
 public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long>
 {
     public ChartOfAccountsService(final Class<CChartOfAccounts> chartOfAccounts) {
-        this.type = chartOfAccounts;
+        super(chartOfAccounts);
     }
 
 }

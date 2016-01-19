@@ -100,6 +100,10 @@
 	src="/EGF/resources/javascript/generalLedgerHelper.js"></script>
 <link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
 	type="text/css" />
+	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" type="text/css"/>
+	
+	 <script type="text/javascript" src="/EGF/resources/javascript/autocomplete-debug.js"></script> 
+	<script type="text/javascript" src="/EGF/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>
 <div id="loading"
 	style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
 	<div class="loading-indicator"
@@ -128,18 +132,20 @@
 				<input type="hidden" name="functionCodeId" id="functionCodeId">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
+						<div id="myContainer"></div> 
 						<td class="bluebox"><s:text name="generalLedger.accountCode" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:textfield id="glCode1" name="glCode1"
 								value="%{glCode1}" autocomplete="off"
 								onfocus='autocompleteAccountCodes(this);'
-								onblur='splitAccountCodes(this);' /></td>
+								onblur='splitAccountCodes(this);' />
+							 </td>
 						<td class="bluebox"></td>
 						<td class="bluebox"></td>
 					</tr>
 					<tr>
 						<td class="greybox"><s:text name="generalLedger.fund" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="greybox"><s:select name="fund_id" id="fund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
@@ -153,7 +159,7 @@
 					</tr>
 					<tr>
 						<td class="bluebox"><s:text name="generalLedger.startDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:textfield name="startDate"
 								id="startDate" cssStyle="width:100px" value='%{startDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -161,7 +167,7 @@
 							style="text-decoration: none"><img
 								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 						<td class="bluebox"><s:text name="generalLedger.endDate" /><span
-							class="mandatory">*</span></td>
+							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:textfield name="endDate" id="endDate"
 								cssStyle="width:100px" value='%{endDate}'
 								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -173,7 +179,7 @@
 						<td class="greybox"><s:text name="generalLedger.department" /></td>
 						<td class="greybox"><s:select name="departmentId"
 								id="departmentId" list="dropdownData.departmentList"
-								listKey="id" listValue="deptName" headerKey=""
+								listKey="id" listValue="name" headerKey=""   
 								headerValue="----Choose----" /></td>
 						<td class="greybox"><s:text name="generalLedger.functionary" /></td>
 						<td class="greybox"><s:select name="functionaryId"
@@ -209,7 +215,7 @@
 				</table>
 			</div>
 		</s:push>
-		<span class="mandatory">
+		<span class="mandatory1">
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="generalLedgerReport-results.jsp" />
 			</div>
@@ -218,5 +224,28 @@
 
 		<div id="codescontainer" />
 	</s:form>
+	<script type="text/javascript">
+	var allGlcodes = [];
+	<s:iterator value="allChartOfAccounts">
+		allGlcodes.push("<s:property value="glcode"/>-<s:property value="name.replaceAll('\n',' ')"/>")
+	</s:iterator>
+	YAHOO.example.BasicLocal = function() { 
+		    var oDS = new YAHOO.util.LocalDataSource(allGlcodes); 
+		    // Optional to define fields for single-dimensional array 
+		    oDS.responseSchema = {fields : ["state"]}; 
+		 
+		    var oAC = new YAHOO.widget.AutoComplete("glCode", "myContainer", oDS); 
+		    oAC.prehighlightClassName = "yui-ac-prehighlight"; 
+			oAC.queryDelay = 0;
+		    oAC.useShadow = true;
+			oAC.useIFrame = true; 
+			oAC.maxResultsDisplayed = 10;
+		     
+		    return { 
+		        oDS: oDS, 
+		        oAC: oAC 
+		    }; 
+		}(); 
+		</script> 
 </body>
 </html>

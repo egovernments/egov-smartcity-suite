@@ -103,4 +103,11 @@ public class MutationFeeCollection extends TaxCollection {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    
+    @Override
+    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

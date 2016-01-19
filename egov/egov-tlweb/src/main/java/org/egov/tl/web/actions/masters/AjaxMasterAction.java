@@ -46,14 +46,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.tl.domain.entity.LicenseCategory;
-import org.egov.tl.domain.entity.LicenseSubCategory;
-import org.egov.tl.domain.entity.UnitOfMeasurement;
-import org.egov.tl.domain.service.masters.LicenseCategoryService;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
-import org.egov.tl.domain.service.masters.UnitOfMeasurementService;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AjaxMasterAction.UNIQUECHECK, location = "ajaxMaster-uniqueCheck.jsp") })

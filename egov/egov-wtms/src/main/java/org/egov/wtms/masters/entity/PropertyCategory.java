@@ -67,10 +67,12 @@ public class PropertyCategory extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "categorytype")
-    private ConnectionCategory categorytype;
+    private ConnectionCategory connectionCategory;
 
-    @Column(name = "propertytype")
-    private Long propertyType;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "propertytype")
+    private PropertyType propertyType;
 
     @Override
     public Long getId() {
@@ -81,21 +83,21 @@ public class PropertyCategory extends AbstractPersistable<Long> {
     protected void setId(final Long id) {
         this.id = id;
     }
-
-    public Long getPropertyType() {
+    
+    public PropertyType getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(final Long propertyType) {
+    public void setPropertyType(PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
-    public ConnectionCategory getCategorytype() {
-        return categorytype;
+    public ConnectionCategory getConnectionCategory() {
+        return connectionCategory;
     }
 
-    public void setCategorytype(final ConnectionCategory categorytype) {
-        this.categorytype = categorytype;
+    public void setConnectionCategory(ConnectionCategory connectionCategory) {
+        this.connectionCategory = connectionCategory;
     }
 
 }

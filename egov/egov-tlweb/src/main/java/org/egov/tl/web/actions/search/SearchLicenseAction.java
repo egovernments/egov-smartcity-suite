@@ -47,8 +47,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.tl.domain.entity.TradeLicense;
-import org.egov.tl.domain.service.BaseLicenseService;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.BaseLicenseService;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 

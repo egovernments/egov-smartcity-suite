@@ -88,7 +88,7 @@
 						name="budgetdetail.executingDepartment" /></td>
 				<td width="22%" class="greybox"><s:select
 						list="dropdownData.executingDepartmentList" listKey="id"
-						listValue="deptName" name="executingDepartment" headerKey="0"
+						listValue="name" name="executingDepartment" headerKey="0"
 						headerValue="--- Select ---"
 						onchange="updateGrid('executingDepartment.id',document.getElementById('budgetDetail_executingDepartment').selectedIndex)"
 						value="executingDepartment.id"

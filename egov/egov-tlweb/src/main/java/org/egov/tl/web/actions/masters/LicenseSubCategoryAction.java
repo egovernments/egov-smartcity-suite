@@ -54,12 +54,11 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.tl.domain.entity.LicenseCategory;
-import org.egov.tl.domain.entity.LicenseSubCategory;
-import org.egov.tl.domain.service.masters.LicenseCategoryService;
-import org.egov.tl.domain.service.masters.LicenseSubCategoryService;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = LicenseSubCategoryAction.NEW, location = "licenseSubCategory-new.jsp"),
@@ -103,9 +102,9 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.domain.entity.LicenseSubCategory order by id")));
+			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.entity.LicenseSubCategory order by id")));
 		if (getId() != null){
-			subCategory = licenseSubCategoryService.find("from org.egov.tl.domain.entity.LicenseSubCategory where id=?", getId());
+			subCategory = licenseSubCategoryService.find("from org.egov.tl.entity.LicenseSubCategory where id=?", getId());
 			setCategoryId(subCategory.getCategory().getId());
 		}
 	}

@@ -116,13 +116,14 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-
+@Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
     private static final Logger LOGGER = Logger.getLogger(VoucherService.class);
@@ -130,7 +131,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     protected EisCommonService eisCommonService;
     private BudgetDetailsDAO budgetDetailsDAO;
     private @Autowired AppConfigValueService appConfigValuesService;
-    @Qualifier("voucherHibDAO")
+    @Qualifier("voucherHibernateDAO")
     private VoucherHibernateDAO voucherHibDAO;
     @Autowired
     private ChartOfAccountsDAO coaDAO;
@@ -148,12 +149,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     private SequenceGenerator sequenceGenerator;
     private FinancialYearHibernateDAO financialYearDAO;
-
-    public VoucherService() {
-
-    }
-    public VoucherService(final Class<CVoucherHeader> voucherHeader) {
-        this.type = voucherHeader;
+  
+     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
+       super(voucherHeader);
     }
 
     private EISServeable eisService;
@@ -1037,6 +1035,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherService | createBillForVoucherSubType | Start");
         final EgBillregister egBillregister = new EgBillregister();
+        //Fix it for basic financial type also
         try {
             egBillregister.setBillstatus("APPROVED");
             EgwStatus egwstatus = null;
