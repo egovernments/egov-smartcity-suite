@@ -107,6 +107,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
 import org.egov.web.actions.voucher.CommonAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -169,6 +170,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private final boolean remit = false;
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
     private ScriptService scriptService;
+	private ChartOfAccounts chartOfAccounts;
 
     public BigDecimal getBalance() {
         return balance;
@@ -678,11 +680,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     voucherHeader);
             HibernateUtil.getCurrentSession().flush();
 
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data",
                         "Transaction Failed")));
 
@@ -1070,5 +1071,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public void setScriptService(final ScriptService scriptService) {
         this.scriptService = scriptService;
     }
+
+	public ChartOfAccounts getChartOfAccounts() {
+		return chartOfAccounts;
+	}
+
+	public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+		this.chartOfAccounts = chartOfAccounts;
+	}
 
 }

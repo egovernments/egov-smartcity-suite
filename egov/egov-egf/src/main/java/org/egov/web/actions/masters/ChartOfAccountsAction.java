@@ -94,7 +94,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     List<String> accountDetailTypeList = new ArrayList<String>();
     List<Accountdetailtype> accountDetailType = new ArrayList<Accountdetailtype>();
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccountsAction.class);
-
+ 
     boolean activeForPosting = false;
     boolean functionRequired = false;
     boolean budgetCheckRequired = false;
@@ -615,7 +615,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     void clearCache() {
         try {
-            ChartOfAccounts.getInstance().reLoadAccountData();
+        	chartOfAccounts.reLoadAccountData();
         } catch (final TaskFailedException e) {
 
             LOGGER.error("Error" + e.getMessage(), e);

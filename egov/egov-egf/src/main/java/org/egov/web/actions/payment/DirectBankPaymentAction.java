@@ -159,6 +159,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
     private BigDecimal balance;
     private ScriptService scriptService;
+   	private ChartOfAccounts chartOfAccounts;
 
     public BigDecimal getBalance() {
         return balance;
@@ -813,11 +814,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     voucherHeader);
             HibernateUtil.getCurrentSession().flush();
 
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data",
                         "Transaction Failed")));
         } catch (final HibernateException e) {
@@ -1260,5 +1260,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public void setCreateVoucher(final CreateVoucher createVoucher) {
         this.createVoucher = createVoucher;
     }
+
+	public ChartOfAccounts getChartOfAccounts() {
+		return chartOfAccounts;
+	}
+
+	public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+		this.chartOfAccounts = chartOfAccounts;
+	}
 
 }
