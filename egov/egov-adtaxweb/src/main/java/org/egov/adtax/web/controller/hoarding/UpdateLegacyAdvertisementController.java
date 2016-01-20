@@ -70,6 +70,20 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         return null;
     }
 
+    @RequestMapping(value = "viewLegacy/{id}")
+    public String viewHoarding(@PathVariable final String id, final Model model) {
+        Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
+        if(advertisement!=null){
+            model.addAttribute("advertisementPermitDetail", advertisement.getActiveAdvertisementPermit());
+            return "hoarding-view";
+        }
+        else
+        {
+            model.addAttribute("message", "msg.invalid.request");
+            return "collectAdvtax-error";
+        }
+    }
+    
     @RequestMapping(value = "/updateLegacy/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
         final Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
@@ -77,7 +91,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         Boolean taxAlreadyCollectedForDemandInAnyYear = checkTaxAlreadyCollectedForAdvertisement(advertisement);
 
         // TODO: CHECK renewal process started ?
-        if (advertisement != null && advertisement.getStatus().equals(AdvertisementStatus.ACTIVE)) {
+        if (advertisement != null && !advertisement.getStatus().equals(AdvertisementStatus.ACTIVE)) {
             model.addAttribute("message", "msg.collection.updateRecordNotAllowed");
             return "collectAdvtax-error";
         }

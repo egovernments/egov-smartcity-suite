@@ -303,9 +303,25 @@
 								  		<c:out value="${advertisementPermitDetail.advertisement.electricityServiceNumber}" default="N/A"/>
 								</div>
 							</div>
+							
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
 								<spring:message code="lbl.hoarding.tax.feeDetails"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">
+								
+									<spring:message code="lbl.advertisement.permit.fromdate"/>
+								</label>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${advertisementPermitDetail.permissionstartdate}" default="N/A"/>
+								</div>
+								<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.advertisement.permit.todate"/>
+								</label>
+								<div class="col-sm-3 add-margin">
+								  		<c:out value="${advertisementPermitDetail.permissionenddate}" default="N/A"/>
 								</div>
 							</div>
 							<div class="form-group">
