@@ -567,18 +567,13 @@ public class BillRegisterReportAction extends SearchFormAction {
     }
 
     public void netAccountCodeValue() {
-        //final String query = "from AppConfigValues where key.module=:module and key.keyName=:keyName";
-        // setting net pay account codes for expense type.
+        
         final Session session = HibernateUtil.getCurrentSession();
         try {
 
         	final List<AppConfigValues> cBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "contingencyBillPurposeIds");
-            /*final Query query1 = session.createQuery(query);
-            query1.setString("module", "EGF");
-            query1.setString("keyName", "contingencyBillPurposeIds");
             
-            final List<AppConfigValues> cBillNetPurpose = query1.list();*/
         	
         	final List<String> cBillNetPayCodeList = new ArrayList<String>();
             String coaQuery;
@@ -594,10 +589,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             final List<String> pBillNetPayCodeList = new ArrayList<String>();
             final List<AppConfigValues> purchBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "purchaseBillPurposeIds");
-            /*final Query query2 = session.createQuery(query);
-            query2.setString("module", "EGF");
-            query2.setString("keyName", "purchaseBillPurposeIds");
-            final List<AppConfigValues> purchBillNetPurpose = query2.list();*/
+            
             for (final AppConfigValues appConfigValues : purchBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
@@ -610,11 +602,8 @@ public class BillRegisterReportAction extends SearchFormAction {
             final List<String> sBillNetPayCodeList = new ArrayList<String>();
             final List<AppConfigValues> sBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "salaryBillPurposeIds");
-            /*final Query query3 = session.createQuery(query);
-            query3.setString("module", "EGF");
-            query3.setString("keyName", "salaryBillPurposeIds");
-            final List<AppConfigValues> sBillNetPurpose = query3.list();
-*/            if (LOGGER.isDebugEnabled())
+            
+           if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Number of salary purpose ids - " + sBillNetPurpose.size());
             for (final AppConfigValues appConfigValues : sBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
@@ -633,10 +622,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             
             final List<AppConfigValues> wBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "worksBillPurposeIds");
-/*            final Query query4 = session.createQuery(query);
-            query4.setString("module", "EGF");
-            query4.setString("keyName", "worksBillPurposeIds");
-            final List<AppConfigValues> wBillNetPurpose = query4.list();*/
+
             for (final AppConfigValues appConfigValues : wBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
@@ -649,10 +635,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             final List<String> penBillNetPayCodeList = new ArrayList<String>();
             final List<AppConfigValues> pensionBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "pensionBillPurposeIds");
-            /*final Query query5 = session.createQuery(query);
-            query5.setString("module", "EGF");
-            query5.setString("keyName", "pensionBillPurposeIds");
-            final List<AppConfigValues> pensionBillNetPurpose = query5.list();*/
+            
             for (final AppConfigValues appConfigValues : pensionBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();

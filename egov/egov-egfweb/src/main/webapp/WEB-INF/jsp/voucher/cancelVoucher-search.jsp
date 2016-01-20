@@ -298,13 +298,16 @@ function loadSearch(){
 
 function fieldReset()
 {
-	document.getElementById('voucherNumber').value="";
+
+	document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-beforeSearch.action";
+	document.cancelVoucher.submit();
+	/* document.getElementById('voucherNumber').value="";
 	document.getElementById('fundId').value=-1;
 	document.getElementById('vouchermis.departmentid').value=-1;
 	document.getElementById('type').value=-1;
 	document.getElementById('name').value=-1;
 	document.getElementById('fromDate').value="";
-	document.getElementById('toDate').value="";
+	document.getElementById('toDate').value=""; */
 }
 		</script>
 </body>

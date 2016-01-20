@@ -226,7 +226,7 @@ public class BaseVoucherAction extends BaseFormAction {
                 && null != voucherHeader.getVouchermis().getSchemeid())
             addDropdownData(
                     "subschemeList",
-                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name",
+                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
                             voucherHeader.getVouchermis().getSchemeid().getId()));
     }
 
