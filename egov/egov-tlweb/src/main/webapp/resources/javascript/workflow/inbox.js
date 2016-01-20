@@ -120,7 +120,7 @@ var wincntr = 0;
 																	winCntAry[wincntr++] = windAry[id] = window.open(url,id,"width="+(window.screen.width-200)+",height="+(window.screen.height-100)+",top=0,left=0,resizable=yes,scrollbars=yes");
 																}
 															} else {
-																window.alert("Application URL does not found !");
+																bootbox.alert("Application URL does not found !");
 															}
 															document.getElementById('loadImg').style.display = 'none';
 														 });  											 

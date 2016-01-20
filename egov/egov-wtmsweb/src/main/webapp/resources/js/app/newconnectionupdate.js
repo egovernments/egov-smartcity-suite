@@ -102,7 +102,7 @@ $(document).ready(function()
 		
 		
 		/*if($('#validationMessage').val()!='')
-			alert($('#validationMessage').val());*/
+			bootbox.alert($('#validationMessage').val());*/
 		
 		function validateDateRange(fromDate, toDate) {
 			if (fromDate != "" && toDate != "") {

@@ -110,7 +110,7 @@
 		 }
 		
 			function validate(){
-				//alert(document.forms[0].action);
+				//bootbox.alert(document.forms[0].action);
 				if($('#connectionType').val() !='METERED')
 					{
 						$('#monthlyFee').attr('required', 'required');
@@ -140,7 +140,7 @@
 		//default ajax callback function
 		function callBackAjax()
 		{
-			//alert('callback function called!');
+			//bootbox.alert('callback function called!');
 			
 		}
 		function resetPropertyDetailsafterCheckBox() {

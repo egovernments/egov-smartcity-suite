@@ -115,7 +115,7 @@
 		 loadPropertyDetails();
 		
 			function validate(){
-				//alert(document.forms[0].action);
+				//bootbox.alert(document.forms[0].action);
 				if($('#connectionType').val() !='METERED')
 					{
 						$('#monthlyFee').attr('required', 'required');

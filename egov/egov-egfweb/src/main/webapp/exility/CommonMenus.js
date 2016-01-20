@@ -93,7 +93,7 @@ function doNothing(){
 
 
 function changeto(){
-	window.bootbox.alert("This is being reached");
+	bootbox.alert("This is being reached");
 	one.style.backgroundColor="#FFCE00";
 	setInterval("changto()", 1200);
 	one.style.backgroundColor="#DADADA";
@@ -150,8 +150,8 @@ function swapall2(idshow, hide1, hide2)
 
 function CheckAll(formName)
 {
-	//window.bootbox.alert("This function is running " + document.IncludeForm1.selectAll.checked)
-	//window.bootbox.alert(formName.elements.length);
+	//bootbox.alert("This function is running " + document.IncludeForm1.selectAll.checked)
+	//bootbox.alert(formName.elements.length);
 
 	for (var i=0;i<formName.elements.length;i++)
 	{
@@ -829,7 +829,7 @@ function displayPageTitle(userName) {
 
 	if (showAlert == true){
 		if (alertButton == true){
-			//window.bootbox.alert("This is being reached");
+			//bootbox.alert("This is being reached");
 			document.write("					<td id='one' align='right'><a href='wcm-home-client2-nomsg.htm'><img src='" + imgPath + "alert_button.gif' border='0'></a>");
 			document.write("					</td>");
 		}

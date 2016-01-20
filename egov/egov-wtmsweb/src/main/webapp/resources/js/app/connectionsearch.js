@@ -158,7 +158,7 @@ jQuery(document).ready(function($) {
 	$("#aplicationSearchResults").on('click','tbody tr',function(event) {
 	var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);
 	var applicationTypeCode = tableContainer.fnGetData($(this).parent().parent(), 3);
-	alert('consumerNumber'+ consumerNumber);
+	bootbox.alert('consumerNumber'+ consumerNumber);
 	var url = '/wtms/application/generatebill/'+ consumerNumber+"?applicationTypeCode="+applicationTypeCode;
 	$('#waterSearchRequestForm').attr('method', 'get');
 	$('#waterSearchRequestForm').attr('action', url);

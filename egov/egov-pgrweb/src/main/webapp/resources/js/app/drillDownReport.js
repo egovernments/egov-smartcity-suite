@@ -674,10 +674,10 @@ function setHiddenValueByLink(obj, paaram) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 			.val($(obj).data('eleval'));
 	if (paaram == 'Departmentwise') {
-		//alert('call complaint type');
+		//bootbox.alert('call complaint type');
 		callAjaxByComplaintType();
 	} else if (paaram == 'Boundarywise') {
-		//alert('call department type');
+		//bootbox.alert('call department type');
 		callAjaxByDepartment();
 	} else if (paaram == 'ComplaintTypeWise') {
 		callAjaxByUserNameType();

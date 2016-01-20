@@ -77,7 +77,7 @@
 		var values=$(obj).parent('td').prev('td').attr("value");
 		if(document.forms[0].actualAmount[rowobj].value=="")
 		{
-			alert("Please Enter Demand Amount for This row");
+			bootbox.alert("Please Enter Demand Amount for This row");
 			obj.value="";
 			return false;
 			//need to fix .. get previous td value n do validation
@@ -85,7 +85,7 @@
 		
 		/*if((document.forms[0].actualAmount[rowobj].value) -(obj.value) <0 )
 			{
-			alert(" Collection Amount should not be greater than Demand amount");
+			bootbox.alert(" Collection Amount should not be greater than Demand amount");
 			obj.value="";
 			return false;
 			}*/

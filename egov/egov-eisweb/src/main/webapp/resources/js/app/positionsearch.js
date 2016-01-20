@@ -85,7 +85,7 @@ $(document).ready(function(){
          	var msg = data.split('/');
          	$("#outSourcedPost").val(msg[0]); 
     		$("#sanctionedPost").val(msg[1]); 	
-         //	alert(msg(0)+msg(1));
+         //	bootbox.alert(msg(0)+msg(1));
          },
          error: function() {
         	 bootbox.alert("Internal server error occurred, please try after sometime.");

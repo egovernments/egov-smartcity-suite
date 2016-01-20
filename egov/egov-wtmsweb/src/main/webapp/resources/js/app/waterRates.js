@@ -62,7 +62,7 @@ $(document).ready(function(){
 	            dataType : 'json',
 	            success: function (response) {
 	    			console.log("success"+response);
-	    			//alert("response"+response);
+	    			//bootbox.alert("response"+response);
 	    			if(response > 0){
 	    				if(!overwritedonation(response))
 	    				return false;

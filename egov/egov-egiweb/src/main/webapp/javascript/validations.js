@@ -383,8 +383,8 @@ function setlink()
 function getZoneValue()
 {
 	
-  	//alert('hi');	
-  	//alert('true');
+  	//bootbox.alert('hi');	
+  	//bootbox.alert('true');
 	link ="../maps/getZoneValue.html";
 	win1 =window.open(link,"Zoneidwindow",'scrollbars=yes,resizable=yes,height=450,width=525,status=yes');
 	win1.moveTo(10, 10);
@@ -396,8 +396,8 @@ function getZoneValue()
 function getZoneValueForRep()
 {
 	
-  	//alert('hi');	
-  	//alert('true');
+  	//bootbox.alert('hi');	
+  	//bootbox.alert('true');
 	link ="../maps/getZoneValueForRep.html";
 	win1 =window.open(link,"Zoneidwindow",'scrollbars=yes,resizable=yes,height=450,width=625,status=yes');
 	win1.moveTo(10, 10);
@@ -409,8 +409,8 @@ function getZoneValueForRep()
 function getWardValue()
 {
 	
-  	//alert('hi');	
-  	//alert('true');
+  	//bootbox.alert('hi');	
+  	//bootbox.alert('true');
   	var i = document.GrievanceForm.zoneID.value;
   	
   	if(i==0)
@@ -538,7 +538,7 @@ function calculator()
 
 			var   m_currentbalance = eval(document.payment.currentbalance.value);
 			var   m_totalamtpaid= 0.00;
-				//alert('arrpntydmd'+arrtot);
+				//bootbox.alert('arrpntydmd'+arrtot);
 
 			//When a collection is made the collected amt is distributed as Arrears,Penalty(arr),Penalty(curr)and finally PT
 			//listed asper priority i.e whatever is the collnAmt first its taken for Arrears and then for penaltyArrs and so on..
@@ -599,41 +599,41 @@ function calculator()
 		// The current payment balance will become zero and the collection value shud be negative
 		if((collection + tempTotalCurrent > dmdpttot) && (collection>0))
 		{
-			//alert('>>document.payment.currentpaymentcollection.value 1:' + dmdpttot);
+			//bootbox.alert('>>document.payment.currentpaymentcollection.value 1:' + dmdpttot);
 			document.payment.currentpaymentcollection.value =roundoff(dmdpttot);
 			m_totalamtpaid +=dmdpttot;
 			//collection = collection-dmdpttot + m_currentcollection;
 			collection = collection-(dmdpttot - tempTotalCurrent);
-			//alert('collection-(dmdpttot - tempTotalCurrent) : '+collection-(dmdpttot - tempTotalCurrent));
+			//bootbox.alert('collection-(dmdpttot - tempTotalCurrent) : '+collection-(dmdpttot - tempTotalCurrent));
 			document.payment.currentpaymentbalance.value ="0.00";
 		}
 		else //		If the amount collected is less than the demand total all the reamining money goes to demand and collection becomes 0
 		{
-			//alert('>>document.payment.currentpaymentcollection.value 2:' + roundoff(collection + tempTotalCurrent));
+			//bootbox.alert('>>document.payment.currentpaymentcollection.value 2:' + roundoff(collection + tempTotalCurrent));
 			document.payment.currentpaymentcollection.value= roundoff(collection + tempTotalCurrent);
 			m_totalamtpaid += collection;
 			//document.payment.currentpaymentbalance.value=roundoff(dmdpttot- collection - m_currentcollection);
-			//alert('roundoff(dmdpttot- collection - tempTotalCurrent) : '+roundoff(dmdpttot- collection - tempTotalCurrent));
+			//bootbox.alert('roundoff(dmdpttot- collection - tempTotalCurrent) : '+roundoff(dmdpttot- collection - tempTotalCurrent));
 			document.payment.currentpaymentbalance.value=roundoff(dmdpttot- collection - tempTotalCurrent);
 			collection = 0;
 		}
 
 		if (m_totalbalanceamt < 0)
 		{
-			//alert('>>1 totaldemandamt'+totaldemandamt);
-			//alert('>>1 m_totalbalanceamt'+m_totalbalanceamt);			
-			//alert('>>1 m_totalamtpaid'+m_totalamtpaid);
-			//alert('>>1 collection'+collection);			
-			//alert('>>1 tempTotalCurrent'+tempTotalCurrent);			
+			//bootbox.alert('>>1 totaldemandamt'+totaldemandamt);
+			//bootbox.alert('>>1 m_totalbalanceamt'+m_totalbalanceamt);			
+			//bootbox.alert('>>1 m_totalamtpaid'+m_totalamtpaid);
+			//bootbox.alert('>>1 collection'+collection);			
+			//bootbox.alert('>>1 tempTotalCurrent'+tempTotalCurrent);			
 			
 			document.payment.totalbalance.value =  roundoff(m_totalbalanceamt - collection); 		
 		}
 		else
 		{
-			//alert('>>2 totaldemandamt'+totaldemandamt);
-			//alert('>>2 m_totalamtpaid'+m_totalamtpaid);
-			//alert('>>2 collection'+collection);			
-			//alert('>>2 tempTotalCurrent'+tempTotalCurrent);			
+			//bootbox.alert('>>2 totaldemandamt'+totaldemandamt);
+			//bootbox.alert('>>2 m_totalamtpaid'+m_totalamtpaid);
+			//bootbox.alert('>>2 collection'+collection);			
+			//bootbox.alert('>>2 tempTotalCurrent'+tempTotalCurrent);			
 			if(collection==0)
 			{			
 				document.payment.totalbalance.value =  roundoff(totaldemandamt - m_totalamtpaid - collection - tempTotalCurrent); 		
@@ -650,7 +650,7 @@ function calculator()
 function trimalltext(allelemobj)
 {
 	
-	//alert("in trimall"+allelemobj.length);
+	//bootbox.alert("in trimall"+allelemobj.length);
 	for(var i=0; i<allelemobj.length; i++)
 	{
 		if(allelemobj[i].type == "text")
@@ -776,8 +776,8 @@ function updateFinalVars()
 	totalAmtinHeads = Math.round(totalAmtinHeads);	
 	var totcoll = Math.round(eval(document.payment.totalcollection.value));
 	
-	//alert("totalAmtinHeads :"+totalAmtinHeads);
-	//alert("eval(document.payment.totalcollection.value) :"+eval(document.payment.totalcollection.value));
+	//bootbox.alert("totalAmtinHeads :"+totalAmtinHeads);
+	//bootbox.alert("eval(document.payment.totalcollection.value) :"+eval(document.payment.totalcollection.value));
 	if(totalAmtinHeads != totcoll)
 	  {
 		bootbox.alert("The Total amount collected does not match the collection break up.");

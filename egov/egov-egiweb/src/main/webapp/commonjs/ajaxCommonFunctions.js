@@ -382,12 +382,12 @@ function loadSelectDataForThreeCols(url, tablename, columnname1, columnname2, co
 }
 function trimAll(strValue) {
 	var objRegExp = /^(\s*)$/;
-      // alert("strValue"+strValue);
+      // bootbox.alert("strValue"+strValue);
 
       //check for all spaces
 	if (objRegExp.test(strValue)) {
 		strValue = strValue.replace(objRegExp, "");
-        // alert("strValue-------"+strValue);
+        // bootbox.alert("strValue-------"+strValue);
 		if (strValue.length == 0) {
 			return strValue;
 		}

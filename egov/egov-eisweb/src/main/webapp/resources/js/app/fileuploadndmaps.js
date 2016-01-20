@@ -99,7 +99,7 @@ $(document).ready(function(){
 			return;
 		}
 		
-		//alert('ext'+ext);
+		//bootbox.alert('ext'+ext);
 		
 		if(e.target.files.length>0)
 		{
