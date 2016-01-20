@@ -124,7 +124,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     protected EisUtilService eisService;
-    private @Autowired static BillsService billsService;
+    private @Autowired  BillsService billsService;
     private @Autowired AppConfigValueService appConfigValuesService;
     private @Autowired BillsAccountingService billsAccountingService;
     private BillsService billsManager;
@@ -1261,12 +1261,14 @@ public class PreApprovedVoucherAction extends BaseFormAction
         this.financialYearDAO = financialYearDAO;
     }
 
-    public static BillsService getBillsService() {
-        return billsService;
-    }
+	public BillsService getBillsService() {
+		return billsService;
+	}
 
-    public static void setBillsService(final BillsService billsService) {
-        PreApprovedVoucherAction.billsService = billsService;
-    }
+	public void setBillsService(BillsService billsService) {
+		this.billsService = billsService;
+	}
+
+   
 
 }

@@ -227,7 +227,6 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
 		<property name="voucherHibDAO" ref="voucherHibDAO"/> 	
 		<property name="eisCommonService" ref="eisCommonService" />
-		<property name="billRegisterService" ref="egBillRegisterService"/>
 		<property name="financialYearDAO" ref="financialYearDAO"/>
 		<property name="voucherHelper" ref="voucherHelper"/>
 	</bean>

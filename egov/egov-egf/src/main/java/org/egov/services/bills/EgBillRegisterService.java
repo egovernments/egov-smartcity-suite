@@ -41,11 +41,21 @@ package org.egov.services.bills;
 
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EgBillRegisterService extends PersistenceService<EgBillregister, Long>
 {
     public EgBillRegisterService(final Class<EgBillregister> egBillregister) {
         this.type = egBillregister;
     }
+
+	public EgBillRegisterService() {
+		super(EgBillregister.class);
+		
+	}
+    
+    
+    
 
 }
