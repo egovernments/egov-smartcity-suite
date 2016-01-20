@@ -64,6 +64,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,8 +87,9 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-
+    
     @Autowired
+    @Qualifier("adtaxWorkflowCustomDefaultImpl")
     private AdtaxWorkflowCustomDefaultImpl adtaxWorkflowCustomDefaultImpl;
 
     @Autowired
@@ -206,10 +208,6 @@ public class AdvertisementPermitDetailService {
 
     public EgwStatus getStatusByModuleAndCode(final String code) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, code);
-    }
-
-    public String getCityCode() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
     }
 
     public List<HoardingSearch> getAdvertisementSearchResult(final AdvertisementPermitDetail advPermitDetail,

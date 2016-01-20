@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-01-20T12:04:35 -->
+<!-- 2016-01-20T15:07:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -10,7 +10,7 @@
 	<parameter name="municipality" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="advertisementtitle" class="java.lang.String"/>
-	<parameter name="applicantname" class="java.lang.String"/>
+	<parameter name="agencyname" class="java.lang.String"/>
 	<parameter name="address" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="userId" class="java.lang.Long"/>
@@ -48,7 +48,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Permit Order For "+$P{advertisementtitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{advertisementtitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="27" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
@@ -83,7 +83,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Name of the Applicant : <style isBold=\"true\">"+$P{applicantname}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Name of the Applicant : <style isBold=\"true\">"+$P{agencyname}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="29" y="83" width="497" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
@@ -121,7 +121,7 @@
 				</textElement>
 				<text><![CDATA[Measurement]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField>
 				<reportElement x="29" y="166" width="81" height="12" uuid="7c0bed86-e2cd-4de5-958a-99602474391d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -150,7 +150,7 @@
 				</textElement>
 				<text><![CDATA[Unit Of Measure	]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField>
 				<reportElement x="110" y="166" width="81" height="12" uuid="64a8d27b-ce9f-43e0-8ba5-4b2d47e523ca">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -179,7 +179,7 @@
 				</textElement>
 				<text><![CDATA[Length]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField>
 				<reportElement x="191" y="166" width="81" height="12" uuid="fe73d0d3-248f-404d-958d-1ce64ff28867">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -208,7 +208,7 @@
 				</textElement>
 				<text><![CDATA[Breadth]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField>
 				<reportElement x="272" y="166" width="81" height="12" uuid="fa14510f-f472-484c-b1d8-5d4df236ca51">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -237,7 +237,7 @@
 				</textElement>
 				<text><![CDATA[Height]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField>
 				<reportElement x="353" y="166" width="81" height="12" uuid="08d70f23-827e-4b99-a01a-1a194993175a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>

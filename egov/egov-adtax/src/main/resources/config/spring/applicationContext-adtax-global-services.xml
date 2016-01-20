@@ -57,5 +57,5 @@
 	<bean id="AdvertisementPermitDetailInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="AdvertisementPermitDetailPersistenceService"/>
     </bean>
-    
+    <bean id="adtaxWorkflowCustomDefaultImpl" class="org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl" scope="prototype"/>
 </beans>

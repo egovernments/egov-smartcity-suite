@@ -45,11 +45,11 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,9 +71,6 @@ public class AdTaxNumberGenerator {
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Autowired
-    private AdvertisementPermitDetailService advertisementPermitDetailService;
-
-    @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Transactional
@@ -86,7 +83,7 @@ public class AdTaxNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s%06d", advertisementPermitDetailService.getCityCode(), sequenceNumber);
+            return String.format("%s%06d", EgovThreadLocals.getCityCode(), sequenceNumber);
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Advertisement Number", e);
         }
@@ -102,7 +99,7 @@ public class AdTaxNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s%06d", advertisementPermitDetailService.getCityCode(), sequenceNumber);
+            return String.format("%s%06d", EgovThreadLocals.getCityCode(), sequenceNumber);
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Permit Number", e);
         }
