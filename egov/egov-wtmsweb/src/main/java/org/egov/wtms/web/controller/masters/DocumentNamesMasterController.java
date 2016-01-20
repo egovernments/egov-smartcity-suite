@@ -38,11 +38,12 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
@@ -58,22 +59,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/masters")
 public class DocumentNamesMasterController {
-    
-    
+
     private final DocumentNamesService documentNamesService;
-    
+
     private final ApplicationTypeService applicationTypeService;
-    
-   
-    
+
     @Autowired
-    public DocumentNamesMasterController(final DocumentNamesService documentNamesService,final ApplicationTypeService applicationTypeService) {
+    public DocumentNamesMasterController(final DocumentNamesService documentNamesService,
+            final ApplicationTypeService applicationTypeService) {
         this.documentNamesService = documentNamesService;
         this.applicationTypeService = applicationTypeService;
-       
-       
+
     }
-    
+
     @RequestMapping(value = "/documentNamesMaster", method = GET)
     public String viewForm(@ModelAttribute DocumentNames documentNames, final Model model) {
         documentNames = new DocumentNames();
@@ -81,42 +79,35 @@ public class DocumentNamesMasterController {
         model.addAttribute("applicationTypes", applicationTypeService.findAll());
         return "document-name-master";
     }
-    
+
     @RequestMapping(value = "/documentNamesMaster", method = RequestMethod.POST)
     public String addCategoryMasterData(@Valid @ModelAttribute final DocumentNames documentNames,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "document-name-master";
         DocumentNames documentnames = new DocumentNames();
-        documentnames = documentNamesService.findByApplicationTypeAndDocumentName(documentNames.getApplicationType(),documentNames.getDocumentName().toUpperCase().trim());
-        if (documentnames != null)
-        {
-            if (documentnames.isRequired()==documentNames.isRequired())
-            {
-             redirectAttrs.addFlashAttribute("documentNames", documentnames);
-             model.addAttribute("message", "Entered Document for the Chosen ApplicationType is already Exists");
-            }
-             else
-             {
-                 documentnames.setRequired(documentNames.isRequired());
-                 documentNamesService.updateDocumentName(documentnames);
-                 redirectAttrs.addFlashAttribute("documentNames", documentnames);
-                 if (documentnames.isRequired())
+        documentnames = documentNamesService.findByApplicationTypeAndDocumentName(documentNames.getApplicationType(),
+                documentNames.getDocumentName().toUpperCase().trim());
+        if (documentnames != null) {
+            if (documentnames.isRequired() == documentNames.isRequired()) {
+                redirectAttrs.addFlashAttribute("documentNames", documentnames);
+                model.addAttribute("message", "Entered Document for the Chosen ApplicationType is already Exists");
+            } else {
+                documentnames.setRequired(documentNames.isRequired());
+                documentNamesService.updateDocumentName(documentnames);
+                redirectAttrs.addFlashAttribute("documentNames", documentnames);
+                if (documentnames.isRequired())
                     model.addAttribute("message", "Entered Document for the Chosen ApplicationType is made mandatory");
-                 else
-                     model.addAttribute("message", "Entered Document for the Chosen ApplicationType is made non-mandatory");
-             }
-        }
-        else
-        {
-        documentNames.setActive(true);   
-        documentNamesService.createDocumentName(documentNames);
-        redirectAttrs.addFlashAttribute("documentNames", documentNames);
-        model.addAttribute("message", "Documents data created successfully");
+                else
+                    model.addAttribute("message",
+                            "Entered Document for the Chosen ApplicationType is made non-mandatory");
+            }
+        } else {
+            documentNames.setActive(true);
+            documentNamesService.createDocumentName(documentNames);
+            redirectAttrs.addFlashAttribute("documentNames", documentNames);
+            model.addAttribute("message", "Documents data created successfully");
         }
         return "document-master-success";
     }
 }
-
-
-

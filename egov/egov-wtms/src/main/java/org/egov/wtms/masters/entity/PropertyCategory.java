@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -83,12 +82,12 @@ public class PropertyCategory extends AbstractPersistable<Long> {
     protected void setId(final Long id) {
         this.id = id;
     }
-    
+
     public PropertyType getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
+    public void setPropertyType(final PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -96,7 +95,7 @@ public class PropertyCategory extends AbstractPersistable<Long> {
         return connectionCategory;
     }
 
-    public void setConnectionCategory(ConnectionCategory connectionCategory) {
+    public void setConnectionCategory(final ConnectionCategory connectionCategory) {
         this.connectionCategory = connectionCategory;
     }
 

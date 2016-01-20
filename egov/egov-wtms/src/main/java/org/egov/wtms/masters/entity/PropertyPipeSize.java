@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -68,7 +67,7 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
     @ManyToOne
     @JoinColumn(name = "pipesize")
     private PipeSize pipesize;
-    
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "propertytype")
@@ -78,7 +77,7 @@ public class PropertyPipeSize extends AbstractPersistable<Long> {
         return propertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
+    public void setPropertyType(final PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
