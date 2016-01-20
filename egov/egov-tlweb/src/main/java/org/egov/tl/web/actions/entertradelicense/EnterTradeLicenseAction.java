@@ -39,19 +39,6 @@
  */
 package org.egov.tl.web.actions.entertradelicense;
 
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,14 +51,15 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.MotorDetails;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.BaseLicenseService;
-import org.egov.tl.service.TradeService;
+import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
@@ -81,153 +69,106 @@ import org.egov.tl.web.actions.domain.CommonTradeLicenseAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
 @ParentPackage("egov")
 @Results({
-	@Result(name = EnterTradeLicenseAction.NEW, location = "enterTradeLicense-new.jsp"),
-	@Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense-view", params = { "namespace",
-			"/viewtradelicense",
-			"model.id", "${model.id}" }) })
+        @Result(name = EnterTradeLicenseAction.NEW, location = "enterTradeLicense-new.jsp"),
+        @Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense-view",
+                params = {"namespace", "/viewtradelicense", "model.id", "${model.id}"})})
 public class EnterTradeLicenseAction extends BaseLicenseAction {
-	private static final long serialVersionUID = 1L;
-	private TradeService ts;
-	private TradeLicense tradeLicense = new TradeLicense();
-	@Autowired
-	private BoundaryService boundaryService;
-	private List<LicenseDocumentType> documentTypes = new ArrayList<>();
-	private Map<String, String> ownerShipTypeMap;
-	@Autowired
-	@Qualifier("licenseCategoryService")
-	private LicenseCategoryService licenseCategoryService;
-	@Autowired
-	@Qualifier("licenseSubCategoryService")
-	private LicenseSubCategoryService licenseSubCategoryService;
-	@Autowired
-	private BaseLicenseService baseLicenseService;
-	@Autowired
-	@Qualifier("unitOfMeasurementService")
-	private UnitOfMeasurementService unitOfMeasurementService;
-	/* to log errors and debugging information */
-	private final Logger LOGGER = Logger.getLogger(getClass());
+    private static final long serialVersionUID = 1L;
 
-	public EnterTradeLicenseAction() {
-		super();
-		tradeLicense.setLicensee(new Licensee());
-	}
+    private TradeLicense tradeLicense = new TradeLicense();
+    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
+    private Map<String, String> ownerShipTypeMap;
 
-	@Override
-	@SkipValidation
-	@Action(value = "/entertradelicense/enterTradeLicense-enterExistingForm")
-	public String enterExistingForm() {
-		tradeLicense.setApplicationDate(new Date());
-		return super.newForm();
-	}
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
 
-	@Override
-	@ValidationErrorPage(Constants.NEW)
-	@Action(value = "/entertradelicense/enterTradeLicense-enterExisting")
-	public String create() {
-		try {
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Enter Existing Trade license Creation Parameters:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-			if (ts.getTps().findAllBy("from License where oldLicenseNumber = ?", tradeLicense.getOldLicenseNumber()).isEmpty()) {
-				if (tradeLicense.getInstalledMotorList() != null) {
-					final Iterator<MotorDetails> motorDetails = tradeLicense.getInstalledMotorList().iterator();
-					while (motorDetails.hasNext()) {
-						final MotorDetails installedMotor = motorDetails.next();
-						if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
-								&& installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
-								&& installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0)
-							installedMotor.setLicense(tradeLicense);
-						else
-							motorDetails.remove();
-					}
-				}
-				if (LOGGER.isDebugEnabled())
-					LOGGER.debug(" Enter Existing Trade License Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:"
-							+ tradeLicense.getNameOfEstablishment());
-				final LicenseAppType newAppType = (LicenseAppType) persistenceService
-						.find("from  LicenseAppType where name='New' ");
-				tradeLicense.setLicenseAppType(newAppType);
-				return super.enterExisting(tradeLicense);
-			} else
-				throw new ApplicationRuntimeException(getText("oldLicenseNumber", "license.number.exist", license()
-						.getOldLicenseNumber()));
-		} catch (final RuntimeException e) {
-			final ValidationError vr = new ValidationError(e.getMessage(), e.getMessage());
-			throw new ValidationException(Arrays.asList(vr));
-		}
-	}
+    public EnterTradeLicenseAction() {
+        tradeLicense.setLicensee(new Licensee());
+    }
 
-	@Override
-	public void prepareNewForm() {
-		super.prepareNewForm();
-		if (license() != null && license().getId() != null)
-			tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", license().getId());
-		setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
-		tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
-		tradeLicense.setHotelSubCatList(ts.getHotelCategoriesForTrade());
-		setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
-		final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-				LOCALITY, LOCATION_HIERARCHY_TYPE);
-		addDropdownData("localityList", localityList);
-		addDropdownData("tradeTypeList", baseLicenseService.getAllNatureOfBusinesses());
-		addDropdownData("categoryList", licenseCategoryService.findAll());
-		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
+    @Override
+    @SkipValidation
+    @Action(value = "/entertradelicense/enterTradeLicense-enterExistingForm")
+    public String enterExistingForm() {
+        tradeLicense.setApplicationDate(new Date());
+        return super.newForm();
+    }
 
-		final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction = new CommonTradeLicenseAjaxAction();
-		populateSubCategoryList(ajaxTradeLicenseAction, tradeLicense.getCategory() != null);
+    @Override
+    @ValidationErrorPage(Constants.NEW)
+    @Action(value = "/entertradelicense/enterTradeLicense-enterExisting")
+    public String create() {
+        try {
+            return super.enterExisting(tradeLicense);
+        } catch (ApplicationRuntimeException e) {
+            throw new ValidationException("oldLicenseNumber", e.getMessage(), tradeLicense.getOldLicenseNumber());
+        }
+    }
 
-	}
+    @Override
+    public void prepareNewForm() {
+        super.prepareNewForm();
+        if (license() != null && license().getId() != null)
+            tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", license().getId());
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
+        tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
+        tradeLicense.setHotelSubCatList(this.tradeLicenseService.getHotelCategoriesForTrade());
+        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
+        addDropdownData("localityList", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                LOCALITY, LOCATION_HIERARCHY_TYPE));
+        addDropdownData("tradeTypeList", this.tradeLicenseService.getAllNatureOfBusinesses());
+        addDropdownData("categoryList", licenseCategoryService.findAll());
+        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
+        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
+                licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
 
-	/**
-	 * @param ajaxTradeLicenseAction
-	 * @param categoryPopulated
-	 */
-	protected void populateSubCategoryList(final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction,
-			final boolean categoryPopulated) {
-		if (categoryPopulated) {
-			ajaxTradeLicenseAction.setCategoryId(tradeLicense.getCategory().getId());
-			ajaxTradeLicenseAction.setLicenseSubCategoryService(licenseSubCategoryService);
-			ajaxTradeLicenseAction.populateSubCategory();
-			addDropdownData("subCategoryList", ajaxTradeLicenseAction.getSubCategoryList());
-		} else
-			addDropdownData("subCategoryList", Collections.emptyList());
-	}
+    }
 
-	@Override
-	public License getModel() {
-		return tradeLicense;
-	}
+    @Override
+    public License getModel() {
+        return tradeLicense;
+    }
 
-	public void setTs(final TradeService ts) {
-		this.ts = ts;
-	}
+    @Override
+    protected License license() {
+        return tradeLicense;
+    }
 
-	@Override
-	protected License license() {
-		return tradeLicense;
-	}
+    @Override
+    protected AbstractLicenseService licenseService() {
+        return this.tradeLicenseService;
+    }
 
-	@Override
-	protected BaseLicenseService service() {
-		ts.getPersistenceService().setType(TradeLicense.class);
-		return ts;
-	}
+    public List<LicenseDocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
 
-	public List<LicenseDocumentType> getDocumentTypes() {
-		return documentTypes;
-	}
+    public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
 
-	public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
-		this.documentTypes = documentTypes;
-	}
+    public Map<String, String> getOwnerShipTypeMap() {
+        return ownerShipTypeMap;
+    }
 
-	public Map<String, String> getOwnerShipTypeMap() {
-		return ownerShipTypeMap;
-	}
-
-	public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
-		this.ownerShipTypeMap = ownerShipTypeMap;
-	}
+    public void setOwnerShipTypeMap(Map<String, String> ownerShipTypeMap) {
+        this.ownerShipTypeMap = ownerShipTypeMap;
+    }
 
 }

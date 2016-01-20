@@ -39,21 +39,11 @@
  */
 package org.egov.tl.service;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-
-import java.util.List;
-import java.util.Set;
-
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -68,29 +58,18 @@ import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-public class TradeService extends BaseLicenseService {
-    private PersistenceService<TradeLicense, Long> tps;
-    @Autowired
-    private SimpleWorkflowService<LicenseTransfer> transferWorkflowService;
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private AssignmentService assignmentService;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
+import java.util.List;
+import java.util.Set;
 
-    public PersistenceService<TradeLicense, Long> getTps() {
-        return tps;
-    }
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
-    public void setTps(final PersistenceService<TradeLicense, Long> tps) {
-        this.tps = tps;
-    }
+public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
-    public TradeService() {
-        setPersistenceService(tps);
+    public TradeLicenseService(final PersistenceService<TradeLicense, Long> licensePersitenceService) {
+        super(licensePersitenceService);
     }
 
     @Override
@@ -108,9 +87,7 @@ public class TradeService extends BaseLicenseService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public License additionalOperations(final License license, final Set<EgDemandReasonMaster> egDemandReasonMasters,
-            final Installment installment) {
+    public License additionalOperations(final TradeLicense license, final Set<EgDemandReasonMaster> egDemandReasonMasters, final Installment installment) {
         final TradeLicense tl = (TradeLicense) license;
         final List<MotorMaster> motorMasterList = persistenceService.findAllBy("from org.egov.tl.entity.MotorMaster");
         tl.setMotorMasterList(motorMasterList);
@@ -118,6 +95,7 @@ public class TradeService extends BaseLicenseService {
         return tl;
     }
 
+    @Transactional
     public void transferLicense(final TradeLicense tl, final LicenseTransfer licenseTransfer) {
         final String runningApplicationNumber = applicationNumberGenerator.generate();
         final String currentApplno = tl.getApplicationNumber();
@@ -129,7 +107,8 @@ public class TradeService extends BaseLicenseService {
         licenseTransfer.setOldApplicationNumber(generatedApplicationNumber);
     }
 
-    public void initiateWorkFlowForTransfer(final License license, final WorkflowBean workflowBean) {
+    @Transactional
+    public void initiateWorkFlowForTransfer(final TradeLicense license, final WorkflowBean workflowBean) {
         /*final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
         try {
             tradeLicenseWorkflowService.start(license, position, workflowBean.getComments());
@@ -149,7 +128,8 @@ public class TradeService extends BaseLicenseService {
         return;
     }
 
-    public void processWorkFlowForTransfer(final License license, final WorkflowBean workflowBean) {
+    @Transactional
+    public void processWorkFlowForTransfer(final TradeLicense license, final WorkflowBean workflowBean) {
         /*if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONSAVE)) {
             final Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
             license.changeState(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE + "NEW", position, workflowBean.getComments());
@@ -232,8 +212,8 @@ public class TradeService extends BaseLicenseService {
             }
         }
     }
-    
-    protected Assignment getWorkflowInitiator(final License license) {
+
+    protected Assignment getWorkflowInitiator(final TradeLicense license) {
         Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
         return wfInitiator;
     }
@@ -246,19 +226,15 @@ public class TradeService extends BaseLicenseService {
     }
 
     @Override
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    @Override
     protected LicenseAppType getLicenseApplicationType() {
         final LicenseAppType appType = (LicenseAppType) persistenceService
                 .find("from org.egov.tl.entity.LicenseAppType where   name='New'");
         return appType;
     }
 
-    public void revokeSuspendedLicense(final License license, final LicenseUtils licenseUtils,
-            final LicenseStatusValues licenseStatusValues) {
+    @Transactional
+    public void revokeSuspendedLicense(final TradeLicense license, final LicenseUtils licenseUtils,
+                                       final LicenseStatusValues licenseStatusValues) {
         license.setActive(false);
         license.setStatus(licenseUtils.getLicenseStatusbyCode("ACT"));
         licenseStatusValues.setLicense(license);
@@ -266,13 +242,11 @@ public class TradeService extends BaseLicenseService {
         licenseStatusValues.setActive(true);
         licenseStatusValues.setReason(Integer.valueOf(Constants.REASON_REVOKESUSPENTION_NO_4));
         license.addLicenseStatusValuesSet(licenseStatusValues);
-        tps.update((TradeLicense) license);
+        licensePersitenceService.update(license);
         return;
     }
 
-    @SuppressWarnings("unchecked")
-    public List getHotelCategoriesForTrade()
-    {
+    public List getHotelCategoriesForTrade() {
         final List subCategory = persistenceService
                 .findAllBy("select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
         return subCategory;

@@ -66,13 +66,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service 
 @Transactional(readOnly = true)
-public class FeeMatrixService  {
+public class FeeMatrixService<T extends License>  {
 
 	
 	private final FeeMatrixRepository feeMatrixRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
-	
+
 	@Autowired
 	private FeeTypeService feeTypeService;
 	
@@ -131,7 +129,7 @@ public class FeeMatrixService  {
  * it should be coded here to say how what parameter to be applied for the fetch  
  * 
  */
-	public List<FeeMatrixDetail> findFeeList(TradeLicense license) {
+	public List<FeeMatrixDetail> findFeeList(T license) {
 	
 		List<FeeType> allFees = feeTypeService.findAll();
 	 
@@ -181,7 +179,7 @@ public class FeeMatrixService  {
 	    		/**
 	    		 * Assuming the below fee types will have single UOM through out So exclude UOM and find
 	    		 */
-	    		case "MF":
+	    		/*case "MF":
 	    			if(license.getTotalHP()!=null && license.getTotalHP().compareTo(BigDecimal.ZERO)==1 )
 	    			{
 	    				feeMatrix = feeMatrixRepository.findByUniqueNoLike(uniqueNo+"-"+fee.getId()+"%"+"-"+financialYearByDate.getId());
@@ -216,7 +214,7 @@ public class FeeMatrixService  {
 	    		//	totalFee=	totalFee.add(feeMatrixDetail.getAmount());
 	    			feeMatrixDetailList.add(feeMatrixDetail);
 	    			}
-	    			break switchLoop;
+	    			break switchLoop;*/
 	    		}
 				
 				
@@ -227,7 +225,7 @@ public class FeeMatrixService  {
 	    return feeMatrixDetailList;	
 	}
 
-	private String generateFeeMatirixUniqueNo(License license) {
+	private String generateFeeMatirixUniqueNo(T license) {
 		
 		    return license.getBuildingType().getId()+"-"+license.getLicenseAppType().getId()+"-"+license.getCategory().getId()
 		    +"-"+license.getTradeName().getId();
