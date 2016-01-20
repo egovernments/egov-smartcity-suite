@@ -118,7 +118,7 @@
 								</div>
 								
 							</div>
-			<div class="panel-heading custom_form_panel_heading">
+							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
 								<spring:message code="lbl.advertisement.permitDetail"/>
 								</div>
