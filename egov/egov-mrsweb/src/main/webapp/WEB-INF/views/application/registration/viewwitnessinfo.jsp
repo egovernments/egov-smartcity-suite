@@ -48,79 +48,81 @@
 <div class="row">
 	<span class="bold"><spring:message code="${param.header}"/></span>
 </div>
-<div class="row">
-	<div class="col-sm-7">
+<c:forEach items="${registration.witnesses}" varStatus="loop" var="witness">
 	<div class="row">
-	<div class="form-group">
-		<div class="col-sm-5 add-margin"><spring:message code="lbl.fullname"/></div>
-		<div class="col-sm-5 add-margin view-content">
-			<c:out value="${param.firstName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${param.middleName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${param.lastName}"></c:out>
-		</div>
-		<div class="col-sm-2"></div>
-	</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	<div class="row">
-		<div class="col-sm-6">
-		</div>		
-		<div class="col-sm-6">
-		</div>
-	</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.occupation"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${param.occupation}" default="NA"></c:out></div>
-			<div class="col-sm-2"></div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.relationship.applicant"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${param.relationshipWithApplicant}" default="NA"></c:out></div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.age"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${param.age}" default="NA"></c:out></div>
-			<div class="col-sm-2"></div>
-	</div>
-	<div class="row">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${param.residenceAddress}" default="NA"></c:out></div>
-			<div class="col-sm-2"></div>
-	</div>
-	<div class="row">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${param.officeAddress}" default="NA"></c:out></div>
-			<div class="col-sm-2"></div>
-	</div>
-	</div>
-	<div class="col-sm-5">
+		<div class="col-sm-7">
 		<div class="row">
-			<div class="col-sm-5 add-margin">
-				<spring:message code="lbl.photo"/>
+		<div class="form-group">
+			<div class="col-sm-5 add-margin"><spring:message code="lbl.fullname"/></div>
+			<div class="col-sm-5 add-margin view-content">
+				<c:out value="${witness.name.firstName}"></c:out>&nbsp; &nbsp;
+				<c:out value="${witness.name.middleName}"></c:out>&nbsp; &nbsp;
+				<c:out value="${witness.name.lastName}"></c:out>
 			</div>
-			<div class="col-sm-6">			 	
-				<img class="add-border" id="witness${param.index}"height="160" width="140">
-				<script>
-					var idx = '<c:out value="${param.index}" />';
-					var strData = '';
-					if (idx == 0) {
-						strData = '<c:out value="${witness0Photo}" />';
-					} else if (idx == 1){
-						strData = '<c:out value="${witness1Photo}" />';
-					} else {
-						strData = '<c:out value="${witness2Photo}" />';
-					}
-					$('#witness'+idx).prop('src', atob(strData));					
-				</script>
+			<div class="col-sm-2"></div>
+		</div>
+		</div>
+		</div>
+		<div class="col-sm-5">
+		<div class="row">
+			<div class="col-sm-6">
+			</div>		
+			<div class="col-sm-6">
+			</div>
+		</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-7">
+		<div class="row">
+				<div class="col-sm-5 add-margin"><spring:message code="lbl.occupation"/></div>
+				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.occupation}" default="NA"></c:out></div>
+				<div class="col-sm-2"></div>
+		</div>
+		<div class="row">
+			<div class="form-group">
+				<div class="col-sm-5 add-margin"><spring:message code="lbl.relationship.applicant"/></div>
+				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.relationshipWithApplicant}" default="NA"></c:out></div>
+				<div class="col-sm-2"></div>
+			</div>
+		</div>
+		<div class="row">
+				<div class="col-sm-5 add-margin"><spring:message code="lbl.age"/></div>
+				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.age}" default="NA"></c:out></div>
+				<div class="col-sm-2"></div>
+		</div>
+		<div class="row">
+				<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
+				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.contactInfo.residenceAddress}" default="NA"></c:out></div>
+				<div class="col-sm-2"></div>
+		</div>
+		<div class="row">
+				<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
+				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.contactInfo.officeAddress}" default="NA"></c:out></div>
+				<div class="col-sm-2"></div>
+		</div>
+		</div>
+		<div class="col-sm-5">
+			<div class="row">
+				<div class="col-sm-5 add-margin">
+					<spring:message code="lbl.photo"/>
+				</div>
+				<div class="col-sm-6">			 	
+					<img class="add-border" id="witness${loop.index}"height="160" width="140">
+					<script>
+						var idx = '<c:out value="${loop.index}" />';
+						var strData = '';
+						if (idx == 0) {
+							strData = '<c:out value="${witness0Photo}" />';
+						} else if (idx == 1){
+							strData = '<c:out value="${witness1Photo}" />';
+						} else {
+							strData = '<c:out value="${witness2Photo}" />';
+						}
+						$('#witness'+idx).prop('src', atob(strData));					
+					</script>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</c:forEach>

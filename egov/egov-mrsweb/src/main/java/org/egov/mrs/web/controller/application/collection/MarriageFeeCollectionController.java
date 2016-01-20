@@ -37,61 +37,45 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.entity;
+package org.egov.mrs.web.controller.application.collection;
 
-import java.util.Date;
+import org.egov.mrs.application.service.collection.MarriageBillService;
+import org.egov.mrs.domain.service.RegistrationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Model used in Search Registration
- *
+ * Handles Marriage Fee collection
+ * 
  * @author NPathan
  *
  */
-public class SearchModel {
+@Controller
+@RequestMapping(value = "/collection")
+public class MarriageFeeCollectionController {
 
-    private String registrationNo;
-    private Date dateOfMarriage;
-    private String husbandName;
-    private String wifeName;
-    private Date registrationDate;
-    
-    public String getRegistrationNo() {
-        return registrationNo;
+    private final MarriageBillService marriageBillService;
+    private final RegistrationService registrationService;
+
+    @Autowired
+    public MarriageFeeCollectionController(final MarriageBillService marriageBillService,
+            final RegistrationService registrationService) {
+        this.marriageBillService = marriageBillService;
+        this.registrationService = registrationService;
     }
 
-    public void setRegistrationNo(final String registrationNo) {
-        this.registrationNo = registrationNo;
+    @RequestMapping(value = "/bill/{id}", method = RequestMethod.GET)
+    public String generateBill(@PathVariable final Long id, final Model model) {
+
+        final String billXml = marriageBillService.generateBill(registrationService.get(id));
+
+        model.addAttribute("billXml", billXml);
+
+        return "registrationCollection-view";
     }
 
-    public Date getDateOfMarriage() {
-        return dateOfMarriage;
-    }
-
-    public void setDateOfMarriage(final Date dateOfMarriage) {
-        this.dateOfMarriage = dateOfMarriage;
-    }
-
-    public String getHusbandName() {
-        return husbandName;
-    }
-
-    public void setHusbandName(final String husbandName) {
-        this.husbandName = husbandName;
-    }
-
-    public String getWifeName() {
-        return wifeName;
-    }
-
-    public void setWifeName(final String wifeName) {
-        this.wifeName = wifeName;
-    }
-
-    public Date getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(final Date registrationDate) {
-        this.registrationDate = registrationDate;
-    }
 }

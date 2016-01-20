@@ -45,8 +45,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="subheadsmallnew">
-	<spring:message code="${param.header}"/>
+<div class="row add-margin view-content">
+	<div class="col-sm-12"><spring:message code="${param.header}"/></div>
 </div>
 <div class="row">
 	<div class="col-sm-7">
@@ -210,7 +210,7 @@
 		<div class="row">
 			<div class="form-group">
 				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
+					<spring:message code="lbl.phoneno"/>
 				</label>
 				<div class="col-sm-6">
 					<form:input path="${applicant}.contactInfo.mobileNo" id="txt-phoneNo" type="text" class="form-control low-width" data-pattern="number" maxlength="10" placeholder="" autocomplete="off" />

@@ -45,8 +45,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="subheadsmallnew">
-	<spring:message code="subheading.general.info"/>
+<div class="row add-margin view-content">
+	<div class="co-sm-12"><spring:message code="subheading.general.info"/></div>
 </div>
 <div class="row">
 	<div class="form-group">

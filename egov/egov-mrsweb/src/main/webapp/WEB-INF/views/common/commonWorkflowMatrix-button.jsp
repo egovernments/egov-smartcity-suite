@@ -82,7 +82,7 @@
 				<c:set value="" var="disabledClass" />
 				<c:if test="${registration.id != null}">
 					<c:set value="${registration.feeCollected}" var="isFeeCollected"></c:set>
-					<c:if test="isFeeCollected">
+					<c:if test="${!isFeeCollected}">
 						<c:set value="disabled" var="disabledClass" />
 					</c:if>
 				</c:if>

@@ -45,10 +45,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<div class="col-sm-12 add-margin view-content text-left">
-		<spring:message code="${param.header}"/>
-	</div>
+<div class="row add-margin view-content">
+	<div class="col-sm-12"><spring:message code="${param.header}"/></div>
 </div>
 <div class="row">
 	<div class="col-sm-7">

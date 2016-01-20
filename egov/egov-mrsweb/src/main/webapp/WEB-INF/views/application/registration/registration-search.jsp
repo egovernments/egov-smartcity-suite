@@ -47,6 +47,7 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" />
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
@@ -76,9 +77,9 @@
 							<form:errors path="registrationNo" cssClass="error-msg"/>
 						</div>
 						<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message
-								code="lbl.date.of.marriage" /><span class="mandatory"></span></label>
+								code="lbl.date.of.marriage" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input id="dateOfMarriage" path="dateOfMarriage" type="text" cssClass="form-control datepicker today" data-date-today-highlight="true" data-date-end-date="0d" />
+							<form:input id="dateOfMarriage" path="dateOfMarriage" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
 							<form:errors path="dateOfMarriage" cssClass="error-msg"/>
 						</div>
 					</div>
@@ -103,11 +104,10 @@
 					</div>
 					<div class="row">
 						<div class="form-group">
-							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message
-									code="lbl.date.of.marriage" /><span class="mandatory"></span></label>
+							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.date.of.marriage" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="registrationDate" path="registrationDate" type="text" cssClass="form-control datepicker today" data-date-today-highlight="true" data-date-end-date="0d" />
+								<form:input id="registrationDate" path="registrationDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
 								<form:errors path="registrationDate" cssClass="error-msg"/>
 							</div>
 						</div>
@@ -131,8 +131,24 @@
 <div class="row" style="display:none;" id="table_container">   
 	<div class="col-md-6 col-xs-6 table-header text-left">The Search result is</div>             
 	<div class="col-sm-12">
-	    <table class="table table-bordered datatable" id="registration_table">
+	    <table class="table table-bordered table-striped datatable" id="registration_table">
+	    	<thead>
+	    		<tr>
+	    			<th>id</th><th>Registration No</th><th>Registration Date</th><th>Marriage Date</th><th>Husband Name</th><th>Wife Name</th>
+	    			<th>Is Certificate issued?</th><th>Status</th><th>Fee</th>
+	    		</tr>
+	    	</thead>
+	    	<tbody>
+	    	</tbody>
 		</table>
+	</div>
+</div>
+<div class="row hidden" id="btn_searchresults">
+	<div class="text-center">					
+		<button type="submit" class="btn btn-primary disabled" id="btn_viewdetails"><spring:message code="lbl.view.details"/></button>
+		<c:if test="${isCollectionOperator}">
+			<button type="submit" class="btn btn-primary disabled" id="btn_collectfee"><spring:message code="lbl.collect.fee"/></button>
+		</c:if>
 	</div>
 </div>
 						
@@ -140,3 +156,5 @@
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+
+<script src="<c:url value='/resources/js/app/registration.js'/> "></script>

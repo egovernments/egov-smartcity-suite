@@ -91,7 +91,7 @@
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 
-		<form:form role="form" action="/mrs/application/registration/workflow"
+		<form:form role="form" action="/mrs/registration/workflow"
 			modelAttribute="registration" id="form-registration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -115,20 +115,11 @@
 					    	<jsp:include page="viewgeneralinfo.jsp"></jsp:include>
 					    </div>
 					    <div id="witness-info" class="tab-pane fade">
-					    	<c:forEach items="${registration.witnesses}" varStatus="loop" var="w">
+					    	<%-- <c:forEach items="${registration.witnesses}" varStatus="loop" var="w"> --%>
 						    	<jsp:include page="viewwitnessinfo.jsp">
 									<jsp:param value="subheading.witness1.info" name="header" />
-									<jsp:param value="${loop.index}" name="index" />
-									<jsp:param value="${w.id}" name="witnessId" />
-					    			<jsp:param value="${w.name.firstName}" name="firstName" />
-					    			<jsp:param value="${w.name.middleName}" name="middleName" />
-					    			<jsp:param value="${w.name.lastName}" name="lastName" />
-					    			<jsp:param value="${w.occupation}" name="occupation" />
-					    			<jsp:param value="${w.age}" name="age" />
-					    			<jsp:param value="${w.contactInfo.residenceAddress}" name="residenceAddress" />
-					    			<jsp:param value="${w.contactInfo.officeAddress}" name="officeAddress" />
 								</jsp:include>
-					    	</c:forEach>					    	
+					    	<%-- </c:forEach> --%>					    	
 							<jsp:include page="viewpriestinfo.jsp"></jsp:include>
 					    </div>
 					    <div id="checklist" class="tab-pane fade">
@@ -142,20 +133,24 @@
 					  </ul>
 					  </div>
 				</div>
-			</div>	
-			<%-- <div class="row">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
-				<div class="col-sm-8 add-margin">
-					<form:textarea class="form-control" path="rejectionReason"  id="rejectionReason" name="rejectionReason" />
-				</div>
-			</div> --%>		
-			<c:set value="${registration.currentState.value}" var="stateValue"></c:set>
-			<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected'}">
-				<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
-			</c:if>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 			</div>
+			<c:choose>
+				<c:when test="${mode != 'view'}">			
+					<c:set value="${registration.currentState.value}" var="stateValue"></c:set>
+					<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected'}">
+						<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
+					</c:if>
+					<div class="buttonbottom" align="center">
+						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
+				</c:otherwise>
+			</c:choose>
+			<script>
+				
+			</script>
 		</form:form>
 		
 	</div>

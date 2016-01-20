@@ -52,5 +52,12 @@
     <bean id="RegistrationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="RegistrationPersistenceService"/>
     </bean>        
+    
+    <bean id="MRCollectionsInterface" class="org.egov.mrs.application.service.collection.MarriageFeeCollection" scope="prototype">
+    </bean>
+    
+   <!--  <bean id="mrsBillServiceImpl" class="org.egov.mrs.application.service.collection.MarriageBillService" scope="prototype" lazy-init="false">
+		<property name="propertyTaxCollection" ref="propertyTaxCollection" />
+	</bean> -->
 	
 </beans>

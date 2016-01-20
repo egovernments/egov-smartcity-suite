@@ -56,8 +56,7 @@
 			<spring:message code="lbl.submitted.by.couple"/>
 		</div>
 	</div>
-	<div class="col-sm-1"></div>
-	<div class="col-sm-1"></div>
+	<div class="col-sm-2"></div>
 </div>
 <div class="row">
 	<div class="col-sm-2"></div>
@@ -142,11 +141,9 @@
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 add-margin text-left">
-			<strong>
-				<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
-				<spring:message code="lbl.proof.note"/>
-			</strong>
+		<label class="col-sm-4 add-margin text-left view-content">
+			<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
+			<spring:message code="lbl.proof.note"/>
 		</label>
 		<div class="col-sm-4">
 		</div>
@@ -216,11 +213,9 @@
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 text-left">
-			<strong>
-				<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
-				<spring:message code="lbl.proof.note"/>
-			</strong>
+		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
+			<spring:message code="lbl.proof.note"/>
 		</label>
 		<div class="col-sm-4">
 		</div>

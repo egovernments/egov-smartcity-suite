@@ -47,18 +47,19 @@
 
 
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 control-label">
-			<strong><spring:message code="lbl.common.docs"/></strong>
+		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.common.docs"/>
 		</label>
-		<div class="col-sm-1 text-center">
-			<strong><spring:message code="lbl.submitted.by.couple"/></strong>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.submitted.by.couple"/>
 		</div>
-		<div class="col-sm-1"></div>
 	</div>
-	<div class="col-sm-3"></div>
+	<div class="col-sm-2"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.memo.of.marriage"/><span class="mandatory"></span>
@@ -67,11 +68,11 @@
 			<form:checkbox path="memorandumOfMarriage" required="required"/>
 			<form:errors path="memorandumOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-1"></div>
 	</div>
-	<div class="col-sm-3"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.court.fee.stamp"/><span class="mandatory"></span>
@@ -80,11 +81,11 @@
 			<form:checkbox path="courtFeeStamp" required="required"/>
 			<form:errors path="courtFeeStamp" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-1"></div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.court.affidavit"/>
@@ -93,11 +94,11 @@
 			<form:checkbox path="affidavit"/>
 			<form:errors path="affidavit" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-1"></div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.marriage.card"/>
@@ -106,25 +107,26 @@
 			<form:checkbox path="marriageCard" />
 			<form:errors path="marriageCard" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-1"></div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 text-left">
-			<strong><spring:message code="lbl.indi.docs"/></strong>
+		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.indi.docs"/>
 		</label>
-		<div class="col-sm-1 text-center">
-			<strong><spring:message code="lbl.husband"/></strong>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.husband"/>
 		</div>
-		<div class="col-sm-1 text-center">
-			<strong><spring:message code="lbl.wife"/></strong>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.wife"/>
 		</div>
 	</div>
-	<div class="col-sm-3"></div>
+	<div class="col-sm-1"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.photograph"/><span class="mandatory"></span>
@@ -138,15 +140,14 @@
 			<form:errors path="wife.proofsAttached.photograph" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 control-label text-left">
-			<strong>
-				<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
-				<spring:message code="lbl.proof.note"/>
-			</strong>
+		<label class="col-sm-4 control-label text-left view-content">
+			<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
+			<spring:message code="lbl.proof.note"/>
 		</label>
 		<div class="col-sm-4">
 		</div>
@@ -154,6 +155,7 @@
 	<div class="col-sm-2"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
 			<spring:message code="lbl.school.leaving.certificate"/>
@@ -167,9 +169,10 @@
 			<form:errors path="wife.proofsAttached.schoolLeavingCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
 			<spring:message code="lbl.birth.certificate"/>
@@ -183,9 +186,10 @@
 			<form:errors path="wife.proofsAttached.birthCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.divorce.certificate"/>
@@ -199,9 +203,10 @@
 			<form:errors path="wife.proofsAttached.divorceCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label">
 			<spring:message code="lbl.death.certificate"/>
@@ -215,16 +220,14 @@
 			<form:errors path="wife.proofsAttached.deaceasedDeathCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 text-left">
-			<strong>
-				<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
-				<spring:message code="lbl.proof.note"/>
-			</strong>
+		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
+			<spring:message code="lbl.proof.note"/>
 		</label>
 		<div class="col-sm-4">
 		</div>
@@ -232,6 +235,7 @@
 	<div class="col-sm-2"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
 			<spring:message code="lbl.school.leaving.certificate"/>
@@ -245,9 +249,10 @@
 			<form:errors path="wife.proofsAttached.passport" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
 			<spring:message code="lbl.birth.certificate"/>
@@ -261,9 +266,10 @@
 			<form:errors path="wife.proofsAttached.rationCard" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
 			<spring:message code="lbl.school.leaving.certificate"/>
@@ -277,9 +283,10 @@
 			<form:errors path="wife.proofsAttached.msebBill" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>
 <div class="row">
+	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
 			<spring:message code="lbl.birth.certificate"/>
@@ -293,5 +300,5 @@
 			<form:errors path="wife.proofsAttached.telephoneBill" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	<div class="col-sm-6"></div>
+	<div class="col-sm-4"></div>
 </div>

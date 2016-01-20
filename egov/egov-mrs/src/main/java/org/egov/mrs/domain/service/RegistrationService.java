@@ -40,13 +40,19 @@
 package org.egov.mrs.domain.service;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.mrs.application.service.RegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
+import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.repository.RegistrationRepository;
 import org.egov.mrs.masters.entity.Fee;
@@ -55,6 +61,9 @@ import org.egov.mrs.masters.service.FeeService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.elasticsearch.common.lang3.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,27 +74,34 @@ public class RegistrationService {
 
     private final RegistrationRepository registrationRepository;
     
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private Session getCurrentSession() {
+            return entityManager.unwrap(Session.class);
+    }
+
     @Autowired
     private ReligionService religionService;
-    
+
     @Autowired
     private ActService actService;
-    
+
     @Autowired
     private FeeService feeService;
-    
+
     @Autowired
     private RegistrationDemandService registrationDemandService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-    
+
     @Autowired
     private RegistrationWorkflowService workflowService;
-    
+
     @Autowired
     private MarriageRegistrationNoGenerator registrationNoGenerator;
 
@@ -103,22 +119,26 @@ public class RegistrationService {
     public Registration update(final Registration registraion) {
         return registrationRepository.saveAndFlush(registraion);
     }
-    
+
     public Registration get(Long id) {
         return registrationRepository.findById(id);
+    }
+    
+    public Registration get(String registrationNo) {
+        return registrationRepository.findByRegistrationNo(registrationNo);
     }
 
     @Transactional
     public void createRegistration(final Registration registration, WorkflowContainer workflowContainer) {
-        
+
         if (StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(applicationNumberGenerator.generate());
-        
+
         registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
-        //final Fee fee = feeService.getFeeForDate(registration.getDateOfMarriage());
+        // final Fee fee = feeService.getFeeForDate(registration.getDateOfMarriage());
         final Fee fee = feeService.getFee(1L);
         registration.setFeeCriteria(fee.getCriteria());
         registration.setFeePaid(fee.getFees());
@@ -131,29 +151,29 @@ public class RegistrationService {
             registration.setPriest(null);
 
         registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
-        
+
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
 
         create(registration);
     }
-    
+
     @Transactional
     public Registration forwardRegistration(Long id, WorkflowContainer workflowContainer) {
         Registration registration = get(id);
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         return update(registration);
     }
-    
+
     @Transactional
     public Registration approveRegistration(Long id, WorkflowContainer workflowContainer) {
         Registration registration = get(id);
         registration.setStatus(ApplicationStatus.Approved);
         registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-        
+
         return update(registration);
     }
-    
+
     @Transactional
     public Registration rejectRegistration(Long id, WorkflowContainer workflowContainer) {
         Registration registration = get(id);
@@ -161,8 +181,43 @@ public class RegistrationService {
         registration.setStatus(ApplicationStatus.Rejected);
         registration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-        
+
         return update(registration);
     }
+    
+    public List<Registration> getRegistrations() {
+        return registrationRepository.findAll();
+    }
+
+    public List<Registration> searchRegistration(SearchModel searchModel) {
+        Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
+        Criteria husbandCriteria = getCurrentSession().createCriteria(Applicant.class, "husband");
+        
+        if (StringUtils.isNotBlank(searchModel.getRegistrationNo()))
+            criteria.add(Restrictions.eq("registrationNo", searchModel.getRegistrationNo()));
+        
+        if (searchModel.getDateOfMarriage() != null)
+            criteria.add(Restrictions.eq("dateOfMarriage", searchModel.getDateOfMarriage()));
+        
+       // criteria.add(Restrictions.eq("husbandName.firstName", searchModel.getHusbandName()));
+        
+        if (StringUtils.isNotBlank(searchModel.getHusbandName())) 
+            criteria.createCriteria("husband").add(Restrictions.like("name.firstName", searchModel.getHusbandName()));
+        
+        if (StringUtils.isNotBlank(searchModel.getWifeName()))
+            criteria.createCriteria("wife").add(Restrictions.like("name.firstName", searchModel.getWifeName()));
+        
+        return criteria.list();
+    }
+
+    /*private static class RegistrationExpressions {
+        public static Expression withRegistrationNo(String registrationNo) {
+            return QRegistration.registration.registrationNo.eq(registrationNo);
+        }
+
+        public static Expression withDateOfMarrige(Date dateOfMarriage) {
+            return QRegistration.registration.dateOfMarriage.eq(dateOfMarriage);
+        }
+    }*/
 
 }

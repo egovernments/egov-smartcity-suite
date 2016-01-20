@@ -76,7 +76,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 
 @Controller
-@RequestMapping(value = "/application/registration")
+@RequestMapping(value = "/registration")
 public class NewRegistrationController extends GenericWorkFlowController {
 
     private final ReligionService religionService;
@@ -124,12 +124,12 @@ public class NewRegistrationController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/{registrationId}", method = RequestMethod.GET)
-    public String viewRegistration(@PathVariable final Long registrationId, final Model model) {
+    public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode, final Model model) {
         final Registration registration = registrationService.get(registrationId);
         model.addAttribute("registration", registration);
         model.addAttribute("husbandPhoto", Base64.getEncoder().encodeToString(registration.getHusband().getPhoto()));
         model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
-
+        model.addAttribute("mode", mode);
         int i = 0;
         for (Witness witness : registration.getWitnesses()) {
             model.addAttribute("witness" + (i++) + "Photo", Base64.getEncoder().encodeToString(witness.getPhoto()));

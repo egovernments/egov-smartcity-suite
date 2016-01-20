@@ -94,4 +94,85 @@ $(document).ready( function () {
 	});
 
 	$("input[id$='religionPractice1'").prop("checked", true);
+	
+	$('#table_search').keyup(function(){
+    	$('#registration_table').fnFilter(this.value);
+    });
+	
+	var registrationId;
+	$('body').on( 'click', 'tr', function () {
+		if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+            $('#btn_viewdetails').addClass('disabled');
+            $('#btn_collectfee').addClass('disabled');
+        } else {
+            $('#registration_table > tbody > tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            console.log('reg_table.fnSettings()' + reg_table.fnSettings());
+            var data = reg_table.fnSettings().aoData;
+            var selectedRowData = data[reg_table.$('tr.selected')[0]._DT_RowIndex];
+            registrationId = selectedRowData._aData[0];
+            var isFeeCollectionPending = selectedRowData._aData[9];
+            console.log('isFeeCollected= ' + isFeeCollectionPending);
+            console.log('click tr > registrationId = ' + registrationId);
+            $('#btn_viewdetails').removeClass('disabled');
+            
+            if (isFeeCollectionPending) {
+            	$('#btn_collectfee').removeClass('disabled');
+            } else {
+            	$('#btn_collectfee').addClass('disabled');
+            }
+        }
+    });
+	
+	$('#btn_viewdetails').click( function () {
+		console.log('registrationId = ' + registrationId);
+		window.open('/mrs/registration/' + registrationId + '?mode=view');
+	})
+	
+	$('#btn_collectfee').click( function () {
+		window.open('/mrs/collection/bill/' + registrationId);
+	})
 })
+
+var reg_table = null;
+$('#btnregistrationsearch').click( function () {
+
+	reg_table = $('#registration_table').dataTable({		 		        	        
+		columnDefs: [{
+               "targets": [ 0 ],
+               "visible": false,
+               "searchable": false
+           }, {
+               "targets": [ 9 ],
+               "visible": false,
+               "searchable": false
+           }
+		]
+    });
+	
+	$.ajax({
+		type : "POST",
+		contentType: "application/json",
+		accept: "application/json",
+		url : "http://localhost:9080/mrs/registration/search",
+		data : '{ "registrationNo": "'+$('#registrationNo').val()+'", "dateOfMarriage": "'+$('#dateOfMarriage').val()+'", "husbandName": "'+$('#husbandName').val()+'", "wifeName": "'+$('#wifeName').val()+'", "registrationDate": "'+$('#registrationDate').val()+'" }',
+		dataType : "json",
+		success : function (response, textStatus, xhr) {
+			var searchResults = response.data;
+			console.log('searchResults = ' + searchResults);
+			$.each(searchResults, function (index, result) {
+				var certificateIssued = result.certificateIssued ? 'Yes' : 'No';
+				reg_table.fnAddData([result.registrationId, result.registrationNo, result.registrationDate, result.dateOfMarriage, result.husbandName, result.wifeName, certificateIssued, result.status, result.feePaid, result.feeCollectionPending]);
+            });
+			$('#table_container').show();
+			$('#btn_searchresults').removeClass('hidden');
+			$('#btn_searchresults').addClass('show');
+			$('#registration_table_length').remove();				
+			$('#registration_table_filter').addClass('text-right');
+		},
+		error : function (xhr, textStatus, errorThrown) {
+			console.log ( 'errorThrown=' + errorThrown );
+		}
+	});
+});

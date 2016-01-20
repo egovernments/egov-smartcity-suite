@@ -60,6 +60,7 @@ public class RegistrationWorkflowService {
 
     private static final String REGISTRATION_ADDNL_RULE = "MARRIAGE REGISTRATION";
     private static final String STATE_NEW = "NEW";
+    private static final String STATE_END = "END";
     private static final String STATE_REJECTED = "Rejected";
     private static final String STEP_REJECT = "Reject";
     private static final String STEP_APPROVE = "Approve";
@@ -81,69 +82,76 @@ public class RegistrationWorkflowService {
         Registration, ReIssue
     }
 
-    public void transition(StateAware stateAware, WorkflowContainer workflowContainer, String approvalComent) {
+    public void transition(StateAware itemInWorkflow, WorkflowContainer workflowContainer, String approvalComent) {
 
         final User user = securityUtils.getCurrentUser();
         final String natureOfTask = "Marriage Registration :: New Registration";
 
-        String currentStateValue = stateAware.getCurrentState() == null ? null : stateAware.getCurrentState().getValue();
-
-        currentStateValue = workflowContainer.getWorkFlowAction().equalsIgnoreCase("reject") ? "Rejected" : currentStateValue;
+        /*
+         * String currentStateValue = stateAware.getCurrentState() == null ? null : stateAware.getCurrentState().getValue();
+         * currentStateValue = workflowContainer.getWorkFlowAction().equalsIgnoreCase("reject") ? "Rejected" : currentStateValue;
+         */
 
         WorkFlowMatrix workflowMatrix = null;
         Position nextStateOwner = null;
-        String currentState = null;
 
-        if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_FORWARD)) {
-            // FORWARD case, 2 states, when workflow is not started then NEW else next level user
-
-            nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
-
-            if (stateAware.getCurrentState() == null) 
-                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
-            else 
-                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, "Clerk approved", workflowContainer.getPendingActions());
-
-        } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_REJECT)) {
-
-            // Whatever the level of workflow, whenever rejected should come back to the initiator i.e., from where the workflow
-            // started
-            nextStateOwner = assignmentService
-                    .getPrimaryAssignmentForUser(stateAware.getStateHistory().get(0).getCreatedBy().getId()).getPosition();
+        if (workflowContainer == null) {
+            nextStateOwner = assignmentService.getPrimaryAssignmentForUser(itemInWorkflow.getCreatedBy().getId()).getPosition();
             workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
-                    REGISTRATION_ADDNL_RULE, STATE_REJECTED, workflowContainer.getPendingActions());
+                    REGISTRATION_ADDNL_RULE, itemInWorkflow.getCurrentState().getValue(), null);
+        } else {
 
-        } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
-            
-            nextStateOwner = assignmentService.getPrimaryAssignmentForUser(stateAware.getCreatedBy().getId()).getPosition();
-            workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
-                    REGISTRATION_ADDNL_RULE, stateAware.getCurrentState().getValue(), null);
+            if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_FORWARD)) {
+                // FORWARD case, 2 states, when workflow is not started then NEW else next level user
+
+                nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
+
+                if (itemInWorkflow.getCurrentState() == null)
+                    workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                            REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
+                else
+                    workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                            REGISTRATION_ADDNL_RULE, "Clerk approved", workflowContainer.getPendingActions());
+
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_REJECT)) {
+
+                // Whatever the level of workflow, whenever rejected should come back to the initiator i.e., from where the
+                // workflow
+                // started
+                nextStateOwner = assignmentService
+                        .getPrimaryAssignmentForUser(itemInWorkflow.getStateHistory().get(0).getCreatedBy().getId()).getPosition();
+                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                        REGISTRATION_ADDNL_RULE, STATE_REJECTED, workflowContainer.getPendingActions());
+
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
+
+                nextStateOwner = assignmentService.getPrimaryAssignmentForUser(itemInWorkflow.getCreatedBy().getId()).getPosition();
+                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                        REGISTRATION_ADDNL_RULE, itemInWorkflow.getCurrentState().getValue(), null);
+            }
         }
 
-        
-        if (stateAware.getState() == null)
-            stateAware.transition().start()
-                .withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(workflowMatrix.getNextState())
-                .withDateInfo(new Date())
-                .withOwner(nextStateOwner)
-                .withNextAction(workflowMatrix.getNextAction())
-                .withNatureOfTask(natureOfTask);
-        else if (stateAware.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-            stateAware.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent).withDateInfo(new Date());
+        if (itemInWorkflow.getState() == null)
+            itemInWorkflow.transition().start()
+                    .withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(workflowMatrix.getNextState())
+                    .withDateInfo(new Date())
+                    .withOwner(nextStateOwner)
+                    .withNextAction(workflowMatrix.getNextAction())
+                    .withNatureOfTask(natureOfTask);
+        else if (itemInWorkflow.getCurrentState().getNextAction().equalsIgnoreCase(STATE_END))
+            itemInWorkflow.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent).withDateInfo(new Date());
         else
-            stateAware.transition(true)
-                .withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(workflowMatrix.getNextState())
-                .withDateInfo(new Date())
-                .withOwner(nextStateOwner)
-                .withNextAction(workflowMatrix.getNextAction())
-                .withNatureOfTask(natureOfTask);
+            itemInWorkflow.transition(true)
+                    .withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(workflowMatrix.getNextState())
+                    .withDateInfo(new Date())
+                    .withOwner(nextStateOwner)
+                    .withNextAction(workflowMatrix.getNextAction())
+                    .withNatureOfTask(natureOfTask);
 
     }
 
