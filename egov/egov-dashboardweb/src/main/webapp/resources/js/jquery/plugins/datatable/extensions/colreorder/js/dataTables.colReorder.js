@@ -1256,7 +1256,7 @@ ColReorder.defaults = {
 	 *          "sDom": 'Rlfrtip',
 	 *          "oColReorder": {
 	 *              "fnReorderCallback": function () {
-	 *                  alert( 'Columns reordered' );
+	 *                  bootbox.alert( 'Columns reordered' );
 	 *              }
 	 *          }
 	 *      } );
@@ -1267,7 +1267,7 @@ ColReorder.defaults = {
 	 *
 	 *      new $.fn.dataTable.ColReorder( '#example', {
 	 *          "fnReorderCallback": function () {
-	 *              alert( 'Columns reordered' );
+	 *              bootbox.alert( 'Columns reordered' );
 	 *          }
 	 *      } );
 	 */
@@ -1325,7 +1325,7 @@ if ( typeof $.fn.dataTable == "function" &&
 	} );
 }
 else {
-	alert( "Warning: ColReorder requires DataTables 1.9.3 or greater - www.datatables.net/download");
+	bootbox.alert( "Warning: ColReorder requires DataTables 1.9.3 or greater - www.datatables.net/download");
 }
 
 

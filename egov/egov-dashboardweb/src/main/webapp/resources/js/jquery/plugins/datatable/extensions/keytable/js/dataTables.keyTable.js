@@ -244,7 +244,7 @@ KeyTable = function ( oInit )
 			}
 			else
 			{
-				alert( "Unhandable event type was added: x" +x+ "  y:" +y+ "  z:" +z );
+				bootbox.alert( "Unhandable event type was added: x" +x+ "  y:" +y+ "  z:" +z );
 			}
 		};
 	}
@@ -299,7 +299,7 @@ KeyTable = function ( oInit )
 			}
 			else
 			{
-				alert( "Unhandable event type was removed: x" +x+ "  y:" +y+ "  z:" +z );
+				bootbox.alert( "Unhandable event type was removed: x" +x+ "  y:" +y+ "  z:" +z );
 			}
 		};
 	}

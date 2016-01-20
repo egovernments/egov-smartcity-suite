@@ -347,7 +347,7 @@ function callAjax(paymentServiceId){
 		     	}//close If  
 			else
 		     	{
-		        	alert("<s:text name='onlineReceipts.transactionmessage.errormessage'/>");
+		        	bootbox.alert("<s:text name='onlineReceipts.transactionmessage.errormessage'/>");
 		        	document.getElementById('transactiondiv').style.display = 'none';
 		     	}
 	     	}//close If

@@ -59,7 +59,7 @@ FixedHeader = function ( mTable, oInit ) {
 	/* Sanity check - you just know it will happen */
 	if ( ! this instanceof FixedHeader )
 	{
-		alert( "FixedHeader warning: FixedHeader must be initialised with the 'new' keyword." );
+		bootbox.alert( "FixedHeader warning: FixedHeader must be initialised with the 'new' keyword." );
 		return;
 	}
 
@@ -170,7 +170,7 @@ FixedHeader.prototype = {
 
 		if ( oDtSettings.oScroll.sX !== "" || oDtSettings.oScroll.sY !== "" )
 		{
-			alert( "FixedHeader 2 is not supported with DataTables' scrolling mode at this time" );
+			bootbox.alert( "FixedHeader 2 is not supported with DataTables' scrolling mode at this time" );
 			return;
 		}
 

@@ -372,7 +372,7 @@ var makeBillDetailTable = function() {
 						check();
 					}
 					else{
-						alert("This row can not be deleted");
+						bootbox.alert("This row can not be deleted");
 					}
 				}
 					 
@@ -497,7 +497,7 @@ var makeBillDetailTable = function() {
 						}
 					}
 					else{
-						alert("This row can not be deleted");
+						bootbox.alert("This row can not be deleted");
 					}
 				}  
 		});

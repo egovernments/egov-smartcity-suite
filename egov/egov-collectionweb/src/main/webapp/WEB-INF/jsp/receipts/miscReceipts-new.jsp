@@ -392,7 +392,7 @@ var totaldbamt=0,totalcramt=0;
                     check();
                 }
                 else{
-                    alert("This row can not be deleted");
+                    bootbox.alert("This row can not be deleted");
                 }
             }
             
@@ -485,7 +485,7 @@ var totaldbamt=0,totalcramt=0;
                     check();
                 }
                 else{
-                    alert("This row can not be deleted");
+                    bootbox.alert("This row can not be deleted");
                 }
             }
             
@@ -590,7 +590,7 @@ var totaldbamt=0,totalcramt=0;
                     }
                 }
                 else{
-                    alert("This row can not be deleted");
+                    bootbox.alert("This row can not be deleted");
                 }
             }        
         });
