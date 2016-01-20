@@ -76,23 +76,23 @@ function validateData(name){
 
 	if(name == 'add') {
 		if(zoneId == -1){
-			bootbox.alert('Please select the Zone');
+			alert('Please select the Zone');
 			return false;
 		}
 		if(usageId == -1){
-			bootbox.alert('Please select the Nature of Building Use');
+			alert('Please select the Nature of Building Use');
 			return false;
 		} 
 		if(structureClassId == -1){
-			bootbox.alert('Please select the Classification of Building');
+			alert('Please select the Classification of Building');
 			return false;
 		}
 		if(taxAmount =='' || eval(taxAmount)==0){
-			bootbox.alert('Please enter the Unit Rate');
+			alert('Please enter the Unit Rate');
 			return false;
 		}
 		if(fromDate == ''){
-			bootbox.alert('Please enter the Effect From Date');
+			alert('Please enter the Effect From Date');
 			return false;
 		}
 
@@ -104,7 +104,7 @@ function validateData(name){
  	document.forms[0].action = 'unitRate-create.action';
 	} else if(name == 'update') {
 		if(taxAmount =='' || eval(taxAmount)==0){
-			bootbox.alert('Please enter the Unit Rate');
+			alert('Please enter the Unit Rate');
 			return false;
 		}
 		jQuery("#zoneId").removeAttr('disabled');
@@ -143,7 +143,7 @@ var checkResult='';
 	}	
 }
 categoryCheckFailure= function(){
-	bootbox.alert('Unable to check for existing category');
+	alert('Unable to check for existing category');
 }
 
 function makeReadyOnly() {
@@ -153,7 +153,15 @@ function makeReadyOnly() {
 		jQuery("#usageId").attr('disabled', 'disabled');
 		jQuery("#structureClassId").attr('disabled', 'disabled');
 		jQuery("#fromDate").attr('disabled', 'disabled');
-	}
+	} 
+	if(mode == 'view') {
+		jQuery("#zoneId").attr('disabled', 'disabled');
+		jQuery("#usageId").attr('disabled', 'disabled');
+		jQuery("#structureClassId").attr('disabled', 'disabled');
+		jQuery("#fromDate").attr('disabled', 'disabled');
+		jQuery("#categoryAmount").attr('disabled', 'disabled');
+		jQuery("")
+	} 
 }
 </script>
 </head> 
@@ -178,6 +186,9 @@ function makeReadyOnly() {
 	<s:if test="%{mode == 'edit'}">
 	<div class="headingbg"><s:text name="unit.rate.master.update.title"/></div>
 	</s:if>
+	<s:if test="%{mode == 'view'}">
+	<div class="headingbg"><s:text name="unit.rate.master.view.title"/></div>
+	</s:if>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td class="greybox" width="20%">&nbsp;</td>
@@ -193,7 +204,7 @@ function makeReadyOnly() {
 			</tr>
 			<tr>
 				<td class="greybox" width="20%">&nbsp;</td>
-				<td class="greybox" width="30%"><s:text name="unit.rate.usage"/><span class="mandatory1">*</span> :</td>
+				<td class="greybox" width="30%"><s:text name="unit.rate.usage"/><span id="spanMandatory" class="mandatory1">*</span> :</td>
 				<td class="greybox" width="30%">
 			   	<s:select headerKey="-1"
 					headerValue="%{getText('default.select')}" name="usageId"
@@ -237,22 +248,15 @@ function makeReadyOnly() {
         	<font size="2"><div align="right" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
 		    <div class="buttonbottom" align="center">	
 		    <s:if test="%{mode =='new'}">
-		    <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_PTADMINISTRATOR.toUpperCase())}">
 		    	<s:submit value="Add" name="Add"
 						id='Add' cssClass="buttonsubmit"  onclick="return validateData('add');" />  
 			
-				<s:submit value="Edit" name="Edit"
-						id='Edit' cssClass="buttonsubmit" onclick="return validateData('edit');" /> 
+				<s:submit value="Search" name="Search"
+						id='Search' cssClass="buttonsubmit" onclick="return validateData('search');" /> 
 			</s:if>
-				<s:submit value="View" name="view"
-						id='view' cssClass="buttonsubmit" onclick="return validateData('view');" />  
-						</s:if>
-					<s:elseif test="%{mode == 'edit'}">
-					<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_PTADMINISTRATOR.toUpperCase())}">
-						<s:submit value="Update" name="Update"
-						id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 
-					</s:if>
-						</s:elseif> 
+		    <s:elseif test="%{mode == 'edit'}">
+						<s:submit value="Update" name="Update" id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 
+		     </s:elseif> 
 				<input type="button" name="button2" id="button2" value="Close"  class="button" onclick="window.close();" />
 			</div>
 	</div>
