@@ -56,6 +56,10 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -84,9 +88,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author mani for Implementing New License action
@@ -109,16 +117,22 @@ import java.util.List;
                 params = {"namespace", "/transfer", "method", "beforeEdit"}),
         @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense",
                 params = {"namespace", "/transfer", "method", "showForApproval"}),
-        @Result(name = "approve", location = "newTradeLicense-new.jsp")})
+        @Result(name = "approve", location = "newTradeLicense-new.jsp"),
+        @Result(name = "report", location = "newTradeLicense-report.jsp") })
 public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
 
     protected WorkflowBean workflowBean = new WorkflowBean();
+    private final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private Integer reportId = -1;
     protected List<String> buildingTypeList;
     protected List<String> genderList;
     protected List<String> selectedCheckList;
     protected List<LicenseChecklistHelper> checkList;
     protected String roleName;
+    public static final String LICENSECERTIFICATE = "licenseCertificate";
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     protected LicenseUtils licenseUtils;
@@ -165,11 +179,59 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
         licenseService().licensePersitenceService().persist(license());
         // Generate PFA Certificate on final approval
+        String cityName="";
+        ReportRequest reportInput = null;
+        if(getSession().get("citymunicipalityname")!=null)
+        {
+             cityName=getSession().get("citymunicipalityname").toString();
+        }
         if (workflowBean.getWorkFlowAction().equalsIgnoreCase(
                 Constants.BUTTONAPPROVE)) {
-            return Constants.PFACERTIFICATE;
-        } else
-            return "message";
+            
+            reportInput = prepareReportInputData(reportInput,license(),cityName);
+                    try {
+                        reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
+                    } catch (final Exception e) {
+                        final String errMsg = "Error during report generation!";
+                       throw new ApplicationRuntimeException(errMsg, e);
+                    }
+                    return "report";
+                    //return Constants.PFACERTIFICATE;
+            } else
+                    return "message";
+    
+    }
+
+    private ReportRequest prepareReportInputData(ReportRequest reportInput,final License license,final String cityName) {
+        if (null != license) {
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            final Format formatterYear = new SimpleDateFormat("YYYY");
+            reportParams.put("applicationnumber", license.getApplicationNumber());
+            reportParams.put("applicantName", license.getLicensee().getApplicantName());
+            reportParams.put("licencenumber", license.getLicenseNumber());
+            reportParams.put("wardName", license.getBoundary().getName());
+            reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+            reportParams.put("licenceAddress", license.getAddress());
+            reportParams.put("municipality", cityName);
+            List<LicenseDemand>licDemandList=new ArrayList <LicenseDemand>(license.getDemandSet());
+            String startYear=formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
+            String EndYear=formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getToDate());
+            String installMentYear=startYear+"-"+EndYear;
+            reportParams.put("installMentYear", installMentYear);
+            reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+            BigDecimal demandamt=BigDecimal.ZERO;
+                    
+           for(EgDemandDetails deDet:license.getCurrentDemand().getEgDemandDetails()){
+               if(deDet.getAmount().compareTo(BigDecimal.ZERO)>0){
+                   demandamt=demandamt.add(deDet.getAmount());
+               }
+               
+           }
+           reportParams.put("demandTotalamt", demandamt);
+            reportInput = new ReportRequest(LICENSECERTIFICATE, license, reportParams);
+        }
+        
+        return reportInput;
     }
 
     @SkipValidation
@@ -749,4 +811,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                             .getOwnerPosition().getId());
         return wfInitiator;
     }
+
+    public Integer getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Integer reportId) {
+        this.reportId = reportId;
+    }
+    
 }
