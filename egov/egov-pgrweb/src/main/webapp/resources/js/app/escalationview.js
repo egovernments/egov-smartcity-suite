@@ -271,14 +271,14 @@ jQuery(document)
 				  
 			    if (fromName=="" || fromName==null)
 			    {
-			    	alert('Heirarchy From position is mandatory in the last row');
+			    	bootbox.alert('Heirarchy From position is mandatory in the last row');
 			    }else if(toName=="" || toName=="Select" || toName==null)
 			    	{
-			    	alert('Heirarchy to position is mandatory in the last row');
+			    	bootbox.alert('Heirarchy to position is mandatory in the last row');
 			    	}
 			    else if(fromName==toName)
 		    	{
-			    	alert('Heirarchy from position and To position are same in single line.');
+			    	bootbox.alert('Heirarchy from position and To position are same in single line.');
 		    			$('#positionHierarchyToPositionid'+(currentIndex - 2)).val('');	
 		    	}
 			    else	
@@ -418,7 +418,7 @@ function checkUniqueDesignationSelected() {
 	
 	
 	if (a.length != (totalTableRows - 1)) {
-		alert("From Position and complaint type should be unique.\nPosition and complaint type is same in multiple rows. Please redefine.");
+		bootbox.alert("From Position and complaint type should be unique.\nPosition and complaint type is same in multiple rows. Please redefine.");
 		return false;
 	}
 
@@ -426,7 +426,7 @@ function checkUniqueDesignationSelected() {
 	for (j = 0; j < (totalTableRows - 1); j++) {
 //	alert(totalTableRows - 1);
 		if($("#positionHierarchyFromPositionId"+j).val()==$("#positionHierarchyToPositionid"+j).val()){
-			alert('Heirarchy from position and To position are same in single line.');
+			bootbox.alert('Heirarchy from position and To position are same in single line.');
 		return false;
 		}
 		

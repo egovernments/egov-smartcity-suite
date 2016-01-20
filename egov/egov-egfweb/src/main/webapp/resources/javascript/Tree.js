@@ -269,23 +269,23 @@ this.loadFromXML = function (xmlFile){
 	if( document.implementation && document.implementation.createDocument) { //W3C spec implemented
 		xmlDoc = document.implementation.createDocument("","",null);
 		xmlDoc.load(xmlFile);
-alert('XML Loaded but not sure whether it completed or not. hence this alert. Press Ok after few seconds..');
+bootbox.alert('XML Loaded but not sure whether it completed or not. hence this alert. Press Ok after few seconds..');
 		//TO DO: How to check ready state and errors???
 	}else if ((typeof ActiveXObject) != "undefined"){ //IE 
 		xmlDoc = new ActiveXObject("msxml2.DOMDocument.4.0");
 		xmlDoc.async = false;
 		xmlDoc.load(xmlFile);
 		if (xmlDoc.parseError && xmlDoc.parseError.errorCode != 0){
-			alert('Error loading XML file ' +xmlFile +'. Reason is: ' + xmlDoc.parseError.reason);
+			bootbox.alert('Error loading XML file ' +xmlFile +'. Reason is: ' + xmlDoc.parseError.reason);
 			return false;
 		}
 	}else{
-		alert('Sorry, your browser doses not support XML Load.');
+		bootbox.alert('Sorry, your browser doses not support XML Load.');
 		return false;
 	}
 	var namtree = xmlDoc.documentElement;
 	var len = namtree.childNodes.length;
-//alert('XML Loaded to namtree namtree = ' + namtree + 'namTree has ' + namtree.childNodes.length + ' children');
+//bootbox.alert('XML Loaded to namtree namtree = ' + namtree + 'namTree has ' + namtree.childNodes.length + ' children');
 	for(i=0; i<len; i++){
 		var node = namtree.childNodes[i];
 	/*
@@ -356,7 +356,7 @@ this.sortBranch = function (parent,idx){
 		this.sortedNodes[idx] = node;
 		node.sortedIndex = idx;
 		idx++;
-//if (idx == 73) alert("I am in 73");
+//if (idx == 73) bootbox.alert("I am in 73");
 		if (node.childCount > 0) idx = this.sortBranch(node,idx);
 	}
 	return(idx);
@@ -374,7 +374,7 @@ this.search = function (strin){
 	else strin = this.searchString;
 	
 	if (strin == ''){
-		alert('No search string specified');
+		bootbox.alert('No search string specified');
 		return(false);
 	}
 	
@@ -396,7 +396,7 @@ this.search = function (strin){
 		}
 		//if we reach here, we have reached the end
 		if (restarted){
-			alert('No match found');
+			bootbox.alert('No match found');
 			return(false);
 		}
 		alert ('Reached end of tree. Going to start from beginning of tree');

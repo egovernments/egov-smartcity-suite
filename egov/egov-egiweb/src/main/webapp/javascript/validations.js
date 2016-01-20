@@ -177,20 +177,20 @@ function validateNotEmpty( strValue )
  	{
  		if(amt < 0  )
  		{
- 			alert("Please enter Integer for Cheque/DD No.");
+ 			bootbox.alert("Please enter Integer for Cheque/DD No.");
  			objt.value="";
  			objt.focus();
  		}
  		if(isNaN(amt))
  		{
- 			alert("Please enter a Integer for Cheque/DD No.");
+ 			bootbox.alert("Please enter a Integer for Cheque/DD No.");
  			objt.value="";
  			objt.focus();
  		}
  		var amtstr = new String(amt);
  		if(amtstr.indexOf(".") > -1)
  		{
- 			alert("Please enter a Integer for Cheque/DD No.");
+ 			bootbox.alert("Please enter a Integer for Cheque/DD No.");
  			objt.value="";
  			objt.focus();
  		}
@@ -213,14 +213,14 @@ function checkdecimalval(obj,amount)
 	{
 		if(amt < 0 )
 		{
-			alert("Please enter positive value for the amount paid");
+			bootbox.alert("Please enter positive value for the amount paid");
 			objt.focus();
 			return false;
 
 		}
 		if(isNaN(amt))
 		{
-			alert("Please enter a numeric value for the amount paid");
+			bootbox.alert("Please enter a numeric value for the amount paid");
 			objt.focus();
 			return false;
 
@@ -237,7 +237,7 @@ function checkdecimalvalwithneg(obj,amount)
 	{
 		if(isNaN(amt))
 		{
-			alert("Please enter a numeric value for the amount paid");
+			bootbox.alert("Please enter a numeric value for the amount paid");
 			objt.focus();
 			return false;
 
@@ -294,7 +294,7 @@ function checkfornumber(obj,val)
 	{
 	   if(isNaN(value))
 	   {
-		alert("Please enter a numeric value.");
+		   bootbox.alert("Please enter a numeric value.");
 		objt.focus();
 		return false;
 	   }
@@ -328,7 +328,7 @@ function checkward()
 	
  if(document.FindForm2.wardid2.value == 0)
  {
-   alert("Please select the Ward first");
+	 bootbox.alert("Please select the Ward first");
  }
  else
  {
@@ -340,7 +340,7 @@ function checkward1()
 	
  if(document.FindForm.wardid.value == 0)
  {
-   alert("Please select the Ward first");
+	 bootbox.alert("Please select the Ward first");
  }
  else
  {
@@ -353,7 +353,7 @@ function checkforward()
 {
   if(document.dateForm.wardid.value == 0)
  {
-   alert("Please select the Ward first");
+	  bootbox.alert("Please select the Ward first");
    return false;
  }
  else
@@ -415,7 +415,7 @@ function getWardValue()
   	
   	if(i==0)
   	{  	
-  		alert('Please choose the zone first.');
+  		bootbox.alert('Please choose the zone first.');
   	}
   	else
   	{	
@@ -450,7 +450,7 @@ function FindFormsubmit1()
 	}
 	else
 	{
-		alert("Please fill in all the values for this method");
+		bootbox.alert("Please fill in all the values for this method");
 		return false;
 	}
 	
@@ -475,7 +475,7 @@ function FindFormsubmit2()
 	}
 	else
 	{
-		alert("Please fill in all the values for this method");
+		bootbox.alert("Please fill in all the values for this method");
 		return false;
 	}
 	
@@ -496,7 +496,7 @@ function FindFormsubmit3()
 	}
 	else
 	{
-		alert("Please fill in all the values for this method");
+		bootbox.alert("Please fill in all the values for this method");
 		return false;
 	}	
 	
@@ -672,43 +672,43 @@ function submitpaymentCheck()
 
   if(document.payment.collectionLocation[0].checked == false && (document.payment.receiptNumber.value == "" && document.payment.challanNumber.value == ""))
   {
-    	alert("Please fill in the Receipt No./Challan No.");
+	  bootbox.alert("Please fill in the Receipt No./Challan No.");
         return false;  	
   }
   if(document.payment.arrearscollection.value=="" || document.payment.arrearsbalance.value=="" || document.payment.arrearspenaltycollection.value=="" || document.payment.arrearspenaltybalance.value=="" || document.payment.currentpenaltycollection.value=="" || document.payment.currentpenaltybalance.value=="" || document.payment.currentpaymentbalance.value=="" )
   {
-      alert("Please fill in the payment details");
+	  bootbox.alert("Please fill in the payment details");
       return false;
   }
   if(document.payment.totalcollection.value == "")
   {
-    alert("Please fill in the amount to be paid");
+	  bootbox.alert("Please fill in the amount to be paid");
     return false;
   }
   if(document.payment.arrearsduration[0].checked == false && document.payment.arrearsduration[1].checked == false )
   {
   	if(document.payment.duration[0].checked == false && document.payment.duration[1].checked == false && document.payment.duration[2].checked == false && document.payment.duration[3].checked == false)
   	{
-      alert("Please select the type of payment");
+  		bootbox.alert("Please select the type of payment");
       return false;
      } 
   }
   if(document.payment.modeOfPayment[0].checked == false && document.payment.modeOfPayment[1].checked == false && document.payment.modeOfPayment[2].checked == false )
   {
-    alert("Please select the payment type(Cash,Cheque or DD)");
+	  bootbox.alert("Please select the payment type(Cash,Cheque or DD)");
     return false;
   }
   if(document.payment.modeOfPayment[1].checked == true)
   {
   	if(document.payment.chequeno.value=="")
   	{
-  		alert("Please fill in the Cheque Number");
+  		bootbox.alert("Please fill in the Cheque Number");
   		document.payment.chequeno.focus();
     	return false;
   	}
   	if(document.payment.chequedate.value=="")
 	{
-		alert("Please fill in the date of cheque");
+  		bootbox.alert("Please fill in the date of cheque");
 		document.payment.chequeno.focus();
 		return false;
   	}
@@ -717,13 +717,13 @@ function submitpaymentCheck()
   {
   	if(document.payment.ddno.value=="")
   	{
-  		alert("Please fill in the DD Number");
+  		bootbox.alert("Please fill in the DD Number");
   		document.payment.ddno.focus();
     	return false;
   	}
   	if(document.payment.dddate.value=="")
 	{
-		alert("Please fill in the date of DD");
+  		bootbox.alert("Please fill in the date of DD");
 		document.payment.dddate.focus();
 		return false;
   	}
@@ -732,7 +732,7 @@ function submitpaymentCheck()
   {
 	if(document.payment.banksname.value=="")
 	{
-		alert("Please fill in the Name of bank where Cheque or DD was drawn");
+		bootbox.alert("Please fill in the Name of bank where Cheque or DD was drawn");
 		document.payment.banksname.focus();
 		return false;
 	}
@@ -780,7 +780,7 @@ function updateFinalVars()
 	//alert("eval(document.payment.totalcollection.value) :"+eval(document.payment.totalcollection.value));
 	if(totalAmtinHeads != totcoll)
 	  {
-	      alert("The Total amount collected does not match the collection break up.");
+		bootbox.alert("The Total amount collected does not match the collection break up.");
 	      return false;
 	  }
 	
@@ -889,7 +889,7 @@ function chequecancelreceipt()
 {
 	if (document.dateForm.receiptno.value == "")
 	{
-	 	alert("please enter a Receipt Number");
+		bootbox.alert("please enter a Receipt Number");
 	 	return false;
 	}
 	else
@@ -902,7 +902,7 @@ function chequecancelreceiptconfirm()
 {
 	if (document.ReceiptCancellationConfirm.reason.value == "")
 	{
-	 	alert("please enter a Reason for cancellation of receipt.");
+		bootbox.alert("please enter a Reason for cancellation of receipt.");
 	 	return false;
 	}
 	else

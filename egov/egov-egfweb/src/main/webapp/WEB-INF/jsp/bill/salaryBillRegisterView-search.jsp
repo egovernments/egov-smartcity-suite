@@ -69,15 +69,15 @@ function validateDates(){
 	var fromDate =  Date.parse(document.getElementById('fromDate').value);
 	var toDate = Date.parse(document.getElementById('toDate').value);
 	if(isNaN(toDate) || isNaN(fromDate)){
-		alert("Please enter valid dates")
+		bootbox.alert("Please enter valid dates")
 		return false;
 	}
 	if (toDate < fromDate){
-		alert("From date should be greater than To date")
+		bootbox.alert("From date should be greater than To date")
 		return false;
 	}
 	if(fromDate == '' || toDate == ''){
-		alert("Please select the dates")
+		bootbox.alert("Please select the dates")
 		return false;
 	}
 	return true;	

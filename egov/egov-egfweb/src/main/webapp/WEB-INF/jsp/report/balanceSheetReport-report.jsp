@@ -63,12 +63,12 @@ function disableAsOnDate(){
 function validateMandatoryFields(){
 	if(document.getElementById('period').value!="Date"){
 		if(document.getElementById('financialYear').value==0){
-			alert('Please select a Financial year');
+			bootbox.alert('Please select a Financial year');
 			return false;
 		}
 	}
 	if(document.getElementById('period').value=="Date" && document.getElementById('asOndate').value==""){
-		alert('Please enter As On Date');
+		bootbox.alert('Please enter As On Date');
 		return false;
 	}
 	return true;

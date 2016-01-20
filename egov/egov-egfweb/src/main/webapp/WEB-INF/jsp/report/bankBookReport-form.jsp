@@ -132,21 +132,21 @@ function validateData(){
 	var bankAccount = document.getElementById('accountNumber').value;
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	if(bankAccount == -1){
-		alert("Please select a Bank Account")
+		bootbox.alert("Please select a Bank Account")
 		return false;
 	}
 	var startDate =  Date.parse(document.getElementById('startDate').value);
 	if(isNaN(startDate)){
-		alert("Please enter a valid start date")
+		bootbox.alert("Please enter a valid start date")
 		return false;
 	}
 	var endDate =  Date.parse(document.getElementById('endDate').value);
 	if(isNaN(endDate)){
-		alert("Please enter a valid end date")
+		bootbox.alert("Please enter a valid end date")
 		return false;
 	}
 	return true;
@@ -156,7 +156,7 @@ function validateFund(){
 	var fund = document.getElementById('fundId').value;
 	var bank = document.getElementById('bank');
 	if(fund == -1 && bank.options.length==1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;
@@ -165,7 +165,7 @@ function validateFund(){
 function validateBank(){
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	return true;

@@ -128,7 +128,7 @@ function onBodyLoad()
 	                  {
 	                  	var codes2=req2.responseText;
 	                  	var a = codes2.split("^");
-						var codes = a[0]; //alert(acccodeArray);
+						var codes = a[0]; //bootbox.alert(acccodeArray);
 						acccodeArray=codes.split("+");
 						codeObj = new YAHOO.widget.DS_JSArray(acccodeArray);
 	                  }
@@ -166,7 +166,7 @@ function ButtonPress()
 		var fiscalYearStartDate="01/04/"+endDate.substr(endDate.length-4,4);
 		if(compareDate(fiscalYearStartDate,strtDate) == -1 )
 		{ 
-		   alert("Start Date and End Date should be in same financial year");
+			bootbox.alert("Start Date and End Date should be in same financial year");
 		   document.getElementById('startDate').focus();
 		   return;
 		} 
@@ -174,7 +174,7 @@ function ButtonPress()
 	/*To check whether Start Date is Greater than End Date*/
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 	{
-		alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 		document.getElementById('startDate').value='';
 		document.getElementById('endDate').value='';
 		document.getElementById('startDate').focus();
@@ -183,7 +183,7 @@ function ButtonPress()
 	   /*to check whether the End Date is greater than the Current Date*/
 		if( compareDate(formatDate6("<%=currDate%>"),formatDate6(endDate)) == 1 )
 		{
-			alert('End Date cannot be greater than Current Date');
+			bootbox.alert('End Date cannot be greater than Current Date');
 			document.getElementById('endDate').value='';
 			document.getElementById('endDate').focus();	
 			return;	
@@ -295,7 +295,7 @@ function autocompletecode(obj)
 	if(temp[1]==null && (neibrObj.value!='' || neibrObj.value!=null) ) {  return ;}
 	else 
 	{
-		//alert("Hi");
+		//bootbox.alert("Hi");
 		temp=temp[0].split("-$-");
 		obj.value=temp[0];
 		neibrObj.value = temp[1];
@@ -510,7 +510,7 @@ function afterRefreshPage(dc)
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -592,7 +592,7 @@ function afterRefreshPage(dc)
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

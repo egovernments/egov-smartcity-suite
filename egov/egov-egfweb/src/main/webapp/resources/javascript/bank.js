@@ -53,7 +53,7 @@ function checkUniqueBankCode(obj) {
 				}
 			},
 			failure : function(oResponse) {
-				alert("Server error occurred");
+				bootbox.alert(bootbox.alert("Server error occurred");
 			}
 		};
 		YAHOO.util.Connect.asyncRequest("GET", url, callback);
@@ -73,7 +73,7 @@ function checkUniqueBankName(obj) {
 				}
 			},
 			failure : function(oResponse) {
-				alert("Server error occurred");
+				bootbox.alert(bootbox.alert("Server error occurred");
 			}
 		};
 		YAHOO.util.Connect.asyncRequest("GET", url, callback);
@@ -95,7 +95,7 @@ function check_MICR(e) {
 			datatype : 'text',
 			success : function(data) {
 				if (data == 'false') {
-					alert('MICR code already exist');
+					bootbox.alert(bootbox.alert('MICR code already exist');
 					jQuery(e.target).val("");
 				}
 			}

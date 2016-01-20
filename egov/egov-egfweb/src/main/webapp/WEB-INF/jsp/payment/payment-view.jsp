@@ -405,7 +405,7 @@ var url="../voucher/common!showHistory.action?stateId="+stateId;
 		{
 			if(obj.value.length>1024)
 			{
-				alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+				bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 				obj.value = obj.value.substring(1,1024);
 			}
 		}
@@ -434,7 +434,7 @@ var url="../voucher/common!showHistory.action?stateId="+stateId;
 			{
 				if(parseFloat(document.getElementById('paymentAmountspan').innerHTML)>parseFloat(document.getElementById('balance').innerHTML))
 				{
-					alert('Insufficient bank balance');
+					bootbox.alert('Insufficient bank balance');
 					return false;
 				}
 			}
@@ -497,7 +497,7 @@ var url="../voucher/common!showHistory.action?stateId="+stateId;
         </s:if>
         <s:if test="%{balance=='-1'}">
           <script>
-	alert("FundFlow Report not Generated to check Bank Balance. Please generate Report First");
+	bootbox.alert("FundFlow Report not Generated to check Bank Balance. Please generate Report First");
 	for(var i=0;i<document.forms[0].length;i++)
 	if(document.forms[0].elements[i].id!='Close')
 		document.forms[0].elements[i].disabled =true;

@@ -149,7 +149,7 @@ var wincntr = 0;
 									};
 									YAHOO.util.Connect.asyncRequest("GET", sUrl, callback);
 								 } else {
-									alert("No History State is available !");
+									 bootbox.alert("No History State is available !");
 									document.getElementById('loadImg').style.display = 'none';
 								 }					 
 							}   

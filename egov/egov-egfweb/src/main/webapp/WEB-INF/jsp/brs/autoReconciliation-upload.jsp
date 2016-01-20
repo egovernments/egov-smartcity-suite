@@ -52,19 +52,19 @@
 	document.getElementById("Errors").innerHTML="";
 	
 		if (document.getElementById("bankId").value == "") {
-			alert("Select Bank");
+			bootbox.alert("Select Bank");
 			return false;
 		}
 		if (document.getElementById("branchId").value == "") {
-			alert("Select Branch");
+			bootbox.alert("Select Branch");
 			return false;
 		}
 		if (document.getElementById("accountId").value == "") {
-			alert("Select Account");
+			bootbox.alert("Select Account");
 			return false;
 		}
 		if (document.getElementById("bankStatmentInXls").value == "") {
-			alert("Select File to upload");
+			bootbox.alert("Select File to upload");
 			return false;
 		}
 		

@@ -574,7 +574,7 @@ function NamTreeMouseOver(div){
 	
 	
 	//var oldnode = tr.selectedNode;
-	//alert(oldnode.id);
+	//bootbox.alert(oldnode.id);
 	//if(oldnode != null )
 			
 		//if(node.id == oldnode.id)		
@@ -787,7 +787,7 @@ function NamTreeCreateNodes(obj)
     inp=n;
     for(var i=0;i<obj.childNodes.length;i++) 
      {	 	
-		//alert(obj.childNodes(i).getAttribute("id") + obj.childNodes(i).getAttribute("name"));
+		//bootbox.alert(obj.childNodes(i).getAttribute("id") + obj.childNodes(i).getAttribute("name"));
          this.createNode(++n,obj.childNodes(i).getAttribute("name"),inp,obj.childNodes(i).getAttribute("id"));
           this.createNodes(obj.childNodes[i]); 
      }  
@@ -823,7 +823,7 @@ function SearchNode(flag)
 			node	= gTree.nodes[a];			
 			nodename = node.name.toLowerCase();
 			str = str.toLowerCase();						
-			//alert(node.id);
+			//bootbox.alert(node.id);
 			if(nodename.indexOf(str) >= 0)			
 			{
 				curNodeId = node.id;
@@ -872,7 +872,7 @@ function SearchNode(flag)
 				
 				while(nodename != str1 || i <= curScrollPosition)
 				{	
-					//alert(len + ', ' + nodename + ', ' + str1);					
+					//bootbox.alert(len + ', ' + nodename + ', ' + str1);					
 					str1 = cells[i++].childNodes[3].innerText;														
 					str1 = str1.toLowerCase();
 				}		
@@ -883,12 +883,12 @@ function SearchNode(flag)
 				
 				break;
 			}//if closed
-			//if(node.id == nodes) alert("done ");
-			if(node.id == nodes) {gTree.selectedNode=null; alert("Not Found");curScrollPosition=0;}
+			//if(node.id == nodes) bootbox.alert("done ");
+			if(node.id == nodes) {gTree.selectedNode=null; bootbox.alert("Not Found");curScrollPosition=0;}
 		}//for closed			
 	}
 	else
 	{
-		alert('Search string is null');
+		bootbox.alert('Search string is null');
 	}
 }

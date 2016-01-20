@@ -60,7 +60,7 @@ var callback = {
 			},
 			failure: function(o) {
 			document.getElementById('loading').style.display ='none';
-			alert("Please generate Fund Flow Report ");
+			bootbox.alert("Please generate Fund Flow Report ");
 		    }
 		}
 function getData(){
@@ -94,20 +94,20 @@ function validateData(){
 	var bank = document.getElementById('bank').value;
 	var fund = document.getElementById('fundId').value;
 	if(fund == -1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	if(bankAccount == -1){
-		alert("Please select a Bank Account")
+		bootbox.alert("Please select a Bank Account")
 		return false;
 	}
 	var asOnDate =  Date.parse(document.getElementById('asOnDate').value);
 	if(isNaN(asOnDate)){
-		alert("Please enter a valid date")
+		bootbox.alert("Please enter a valid date")
 		return false;
 	}
 	return true;	
@@ -134,7 +134,7 @@ function computeBalance(index){
 function validateFund(){
 	var fund = document.getElementById('fundId').value;
 	if(fund == -1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;
@@ -143,7 +143,7 @@ function validateFund(){
 function validateBank(){
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	return true;

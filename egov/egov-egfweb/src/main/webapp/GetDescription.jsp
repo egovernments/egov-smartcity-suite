@@ -65,7 +65,7 @@ var values;
 
 			if (serviceID == null || keyValue == null || serviceID.length != keyValue.length) 
 			{
-				out.print("\n alert('Description service not invoked properly. serviceID and keyValue pairs are to be sent as paramaters');");		
+				out.print("\n bootbox.alert('Description service not invoked properly. serviceID and keyValue pairs are to be sent as paramaters');");		
 				out.print("\n </script></body></html>");		
 				return;
 			} 
@@ -78,8 +78,8 @@ var values;
 
 			if (dc.getSevirity() > Messages.WARNING)
 			{ // error
-				out.print("\nalert('Exility Error: Description Service did not succeed.');");		
-				out.print("\nalert('" + SafeJSString.escape(dc.getMessageText()) +"');");
+				out.print("\nbootbox.alert('Exility Error: Description Service did not succeed.');");		
+				out.print("\nbootbox.alert('" + SafeJSString.escape(dc.getMessageText()) +"');");
 				out.print("\n </script></body></html>");		
 				return;
 			}

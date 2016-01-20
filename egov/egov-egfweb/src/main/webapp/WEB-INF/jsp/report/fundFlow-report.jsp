@@ -65,12 +65,12 @@
     
 /*    if(document.getElementById("fund").value=="")
     {
-     alert("Select Fund");
+     bootbox.alert("Select Fund");
      return false;
      } */
      if(document.getElementById("asOnDate").value=="")
      {
-     alert("Select Date");
+     bootbox.alert("Select Date");
      return false;
      }
      return true;

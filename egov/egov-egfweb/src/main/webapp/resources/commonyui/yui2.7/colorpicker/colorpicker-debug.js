@@ -798,7 +798,7 @@ YAHOO.util.Color = function() {
         _getCommand : function(e) {
             var c = Event.getCharCode(e);
 
-            //alert(Event.getCharCode(e) + ", " + e.keyCode + ", " + e.charCode);
+            //bootbox.alert(Event.getCharCode(e) + ", " + e.keyCode + ", " + e.charCode);
 
             // special keys
             if (c === 38) { // up arrow

@@ -955,8 +955,8 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
  * A.prototype.foo = 'foo';
  * var a = new A();
  * a.foo = 'foo';
- * alert(a.hasOwnProperty('foo')); // true
- * alert(YAHOO.lang.hasOwnProperty(a, 'foo')); // false when using fallback
+ * bootbox.alert(a.hasOwnProperty('foo')); // true
+ * bootbox.alert(YAHOO.lang.hasOwnProperty(a, 'foo')); // false when using fallback
  * </pre>
  * @method hasOwnProperty
  * @param {any} o The object being testing

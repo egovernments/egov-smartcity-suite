@@ -140,7 +140,7 @@ function	onLoadTask_new()
 	
 	if(document.getElementById("Errors").innerHTML=='')  
 	{
-	alert('<s:text name="contra.transaction.succcess"/>');
+	bootbox.alert('<s:text name="contra.transaction.succcess"/>');
 		
 	if(button=="Save_Close")
 	{

@@ -176,7 +176,7 @@ success: function(o) {
 		populateschemeid({fundId:fundid})
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 

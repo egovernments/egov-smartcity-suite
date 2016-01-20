@@ -252,7 +252,7 @@ function validateInput(){
 		{
 			if(document.getElementById('bankBalanceMandatory').value=='true')
 			{
-				alert('There is no sufficient bank balance');
+				bootbox.alert('There is no sufficient bank balance');
 				return false;
 			}
 			else

@@ -83,7 +83,7 @@
 		
 	    <script type="text/javascript" src="<c:url value='/resources/js/ajax-script.js'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	    
+	    <script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
         <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
         <script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>

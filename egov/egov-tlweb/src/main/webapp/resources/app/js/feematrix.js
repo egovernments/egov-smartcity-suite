@@ -29,7 +29,7 @@ $( "#search" ).click(function( event ) {
 	var valid = $('#feematrix-new').validate().form();
 	if(!valid)
 		{
-		alert("Please fill mandatory fields");
+		bootbox.alert("Please fill mandatory fields");
 		return false;
 		}
 	var r = confirm("This will clear all data from search result and fetch the data for selected combination.Press OK to Continue. ");
@@ -62,7 +62,7 @@ $( "#search" ).click(function( event ) {
 });
 
 $( "#add-row" ).click(function( event ) {
-	  alert( "add-row event called." );
+	bootbox.alert( "add-row event called." );
 	  $(this).closest("tr").remove(); // remove row
 	    return false;
 });
@@ -104,7 +104,7 @@ var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
 					 $('#natureOfBusiness').attr("disabled", true); 
 				 if(licenseAppTypeDisabled)
 					 $('#licenseAppType').attr("disabled", true); 
-				 alert("Details saved Successfully");
+				 bootbox.alert("Details saved Successfully");
 					
 			}, 
 			error: function (response) {
@@ -113,7 +113,7 @@ var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
 					$('#natureOfBusiness').attr("disabled", true); 
 				if(licenseAppTypeDisabled)
 					$('#licenseAppType').attr("disabled", true); 
-				 alert("Failed to Save Details");
+				bootbox.alert("Failed to Save Details");
 
 				
 			}

@@ -231,7 +231,7 @@
  					var oRow = src.parentNode.parentNode;
  					if (oRow.rowIndex == 2) 
  					{
- 						alert("Can not delete the first row!");
+ 						bootbox.alert("Can not delete the first row!");
  						return;
  					}
  					else
@@ -245,7 +245,7 @@
 			
 			function checkLength(obj,val){
 				if(obj.value.length>val) {
-					alert('Max '+val+' digits allowed')
+					bootbox.alert('Max '+val+' digits allowed')
 					obj.value = obj.value.substring(0,val);
 				}
 			}	

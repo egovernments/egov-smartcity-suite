@@ -88,7 +88,7 @@ $(document).ready(function(){
          //	alert(msg(0)+msg(1));
          },
          error: function() {
-         	alert("Internal server error occurred, please try after sometime.");
+        	 bootbox.alert("Internal server error occurred, please try after sometime.");
          }
  }); 
 	}

@@ -150,7 +150,7 @@ function ButtonPress()
 	{	
 		if(document.getElementById('asOnDate').value=='')
 		{
-			alert("AsOn date is Required!");
+			bootbox.alert("AsOn date is Required!");
 		   document.getElementById('asOnDate').focus();
 		   return;
 		}
@@ -170,19 +170,19 @@ function ButtonPress()
 	{
 		if(document.getElementById('trFund_id').value=='')
 		{
-			alert("Fund is Required!");
+			bootbox.alert("Fund is Required!");
 		   document.getElementById('trFund_id').focus();
 		   return;
 		}
 		if(document.getElementById('startDate').value=='')
 		{
-			alert("Start Date is Required!");
+			bootbox.alert("Start Date is Required!");
 		   document.getElementById('startDate').focus();
 		   return;
 		}
 		if(document.getElementById('toDate').value=='')
 		{
-			alert("To Date is Required!");
+			bootbox.alert("To Date is Required!");
 		   document.getElementById('toDate').focus();
 		   return;
 		}
@@ -202,14 +202,14 @@ function ButtonPress()
 		var fiscalYearStartDate="01/04/"+endDate.substr(endDate.length-4,4);
 		if(compareDate(fiscalYearStartDate,startDate) == -1 )
 		{ 
-		   alert("Start Date and End Date should be in same financial year");
+			bootbox.alert("Start Date and End Date should be in same financial year");
 		   document.getElementById('startDate').focus();
 		   return;
 		}
 		 /*to check whether the Start Date is greater than the End Date*/
 		if( compareDate(formatDate6(startDate),formatDate6(endDate)) == -1 )
 			{
-				alert('Start Date cannot be greater than End Date');
+			bootbox.alert('Start Date cannot be greater than End Date');
 				document.getElementById('startDate').value='';
 				document.getElementById('toDate').value='';
 				document.getElementById('startDate').focus();
@@ -219,7 +219,7 @@ function ButtonPress()
 		   /*to check whether the End Date is greater than the Current Date*/
 		if( compareDate(formatDate6("<%=currDate%>"),formatDate6(endDate)) == 1 )
 		{
-			alert('End Date cannot be greater than Current Date');
+			bootbox.alert('End Date cannot be greater than Current Date');
 			document.getElementById('toDate').value='';
 			document.getElementById('toDate').value='';
 		
@@ -229,7 +229,7 @@ function ButtonPress()
 	 deptObj=document.getElementById('departmentId');
 	 if(deptObj.value!='' && deptObj.selectedIndex!=-1){
 			//deptName=deptObj.options[deptObj.selectedIndex].text;
-			//alert("DepartmentName="+deptName);
+			//bootbox.alert("DepartmentName="+deptName);
 			 document.getElementById('dept_name_for').value=' in '+deptObj.options[deptObj.selectedIndex].text+ ' Department';
 			deptObj=deptObj.options[deptObj.selectedIndex].value;
 		}else{
@@ -239,7 +239,7 @@ function ButtonPress()
 		functionaryObj=document.getElementById('functionaryId');
 		if(functionaryObj.value!='' && functionaryObj.selectedIndex!=-1){
 			//functionaryName=functionaryObj.options[functionaryObj.selectedIndex].text;
-			//alert("functionaryName="+functionaryName);
+			//bootbox.alert("functionaryName="+functionaryName);
 			//subtitle=" in "+functionaryName+" Functionary";
 			document.getElementById('functionary_name_in').value=' in '+functionaryObj.options[functionaryObj.selectedIndex].text+' functionary';
 			functionaryObj=functionaryObj.options[functionaryObj.selectedIndex].value;
@@ -251,7 +251,7 @@ function ButtonPress()
 			//fieldObj=fieldObj.options[fieldObj.selectedIndex].value;
 			document.getElementById('field_name_in').value=' in '+fieldObj.options[fieldObj.selectedIndex].text+' ';
 			//fieldName=fieldObj.options[fieldObj.selectedIndex].text;
-			//alert("fieldName="+fieldName);
+			//bootbox.alert("fieldName="+fieldName);
 			//subtitle=" under "+fieldName+" Field";
 		}else{
 		document.getElementById('field_name_in').value='';
@@ -602,7 +602,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('asOnDate',null);
 		 </script>
 		 <%
@@ -741,7 +741,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('asOnDate',null);
 		 </script>
 		 <%

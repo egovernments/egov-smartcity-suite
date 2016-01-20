@@ -48,7 +48,7 @@
 </head>
 <script>
 function loadBank(fund){
-	//alert(fund.value);
+	//bootbox.alert(fund.value);
 	if(fund.value!=-1){
 		populatebank({fundId:fund.options[fund.selectedIndex].value})   
 	}
@@ -62,7 +62,7 @@ function validateFund(){
 	var fund = document.getElementById('fund').value;
 	var bank = document.getElementById('bank');
 	if(fund == -1 && bank.options.length==1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;
@@ -71,7 +71,7 @@ function validateFund(){
 function validateBank(){
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	return true;
@@ -83,15 +83,15 @@ function validateMandatoryFields(){
 		var accountNo="";
 		
 		if(fund == -1){
-			alert("Please select a Fund")
+			bootbox.alert("Please select a Fund")
 			return false;
 		}
 		if(bank == -1){
-			alert("Please select a Bank")
+			bootbox.alert("Please select a Bank")
 			return false;
 		}
 		if(bankAccount == -1){
-			alert("Please select a Bank Account")
+			bootbox.alert("Please select a Bank Account")
 			return false;
 		}else{
 			accountNo=document.getElementById("accountNumber").options[document.getElementById("accountNumber").selectedIndex].text
@@ -99,12 +99,12 @@ function validateMandatoryFields(){
 		}
 		var stDate =  Date.parse(document.getElementById('startDate').value);
 		if(isNaN(stDate)){
-			alert("Please enter a valid start date")
+			bootbox.alert("Please enter a valid start date")
 			return false;
 		}
 		var endDate =  Date.parse(document.getElementById('endDate').value);
 		if(isNaN(endDate)){
-			alert("Please enter a valid end date")
+			bootbox.alert("Please enter a valid end date")
 			return false;
 		}
 		return true;	

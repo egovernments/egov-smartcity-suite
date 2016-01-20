@@ -108,7 +108,7 @@ function checkAlphaNumeric(obj)
  	
  	if(isNotAlphaNumric=="true")
  	{
- 		alert("Please enter a valid character!!");
+ 		bootbox.alert("Please enter a valid character!!");
  		//obj.value=trimAll(str.substr(0,j));
  		obj.value=str.substr(0,j);
  		//alert("SubString="+obj.value);
@@ -148,7 +148,7 @@ function validVocNumber(obj)
       }
      if(blnResult==false)
      {
-     	alert("Please enter a valid voucher number!!");
+    	 bootbox.alert("Please enter a valid voucher number!!");
      	obj.value=strString.substr(0,j);
      	return false;
      }
@@ -172,7 +172,7 @@ function checkZero(obj)
 			//alert("val="+val);
 			if(val==0)
 			{
-				alert("Series of Zeroes is Not a Valid voucher Number!!");
+				bootbox.alert("Series of Zeroes is Not a Valid voucher Number!!");
 				obj.value="";
 				obj.focus();
 				return false;
@@ -211,7 +211,7 @@ function checkNumber(obj)
     {
 	    if(isNaN(obj.value))
 	    {
-	    alert('Please Enter Only Numeric Value');
+	    	bootbox.alert('Please Enter Only Numeric Value');
 	    obj.value="";
 	    obj.focus();
 	    return false;
@@ -248,7 +248,7 @@ function validNumber(obj)
       }
      if(blnResult==false)
      {
-     	alert("Please enter a valid number!!");
+    	 bootbox.alert("Please enter a valid number!!");
      	obj.value=strString.substr(0,j);
      	return false;
      }
@@ -333,7 +333,7 @@ function checkNotNumber(obj)
  	
  	if(isnumber=="true")
  	{
- 		alert("Please enter a valid character!!");
+ 		bootbox.alert("Please enter a valid character!!");
  		//obj.value=trimAll(str.substr(0,j));
  		obj.value=str.substr(0,j);
  		//alert("SubString="+obj.value);
@@ -584,7 +584,7 @@ function validateNotEmpty(obj)
    //alert('length :'+strTemp.length);
    if(strTemp.length <= 0)
    {
-      alert('Please Fill in the value');
+	   bootbox.alert('Please Fill in the value');
       obj.focus();
       return false;
    }
@@ -674,7 +674,7 @@ function checkAlphabet(obj)
    {
 	   if(!objRegExp.test(obj.value))
 	   {
-		   alert('Please Enter Only Alphabets');
+		   bootbox.alert('Please Enter Only Alphabets');
 		   obj.value="";
 		   obj.focus();
 		   return false;
@@ -690,14 +690,14 @@ function checkNumberMandatory(obj)
 
     if ( obj.value =="" )
     {
-    alert('should not blank');
+    	bootbox.alert('should not blank');
     obj.focus();
     return false;
     }
 
     else  if(isNaN(obj.value))
     {
-    alert('Enter only numeric value.');
+    	bootbox.alert('Enter only numeric value.');
     obj.value="";
     obj.focus();
     return false;
@@ -716,7 +716,7 @@ function validateEmail( obj)
           {
           if(!objRegExp.test(obj.value))
           {
-          alert('Please Enter Valid Email Address');
+        	  bootbox.alert('Please Enter Valid Email Address');
           obj.value="";
           obj.focus();
           return false;
@@ -750,7 +750,7 @@ function validatingYear(obj)
 
 	if(Year!="" && ((Year<1900) || (Year>curr_date)))
 	{
-		alert("Not A ValidYear!! Pls Enter the year between 1900 And "+ curr_date);
+		bootbox.alert("Not A ValidYear!! Pls Enter the year between 1900 And "+ curr_date);
 		//obj.value="";
 		obj.focus(); //+documnet.viewPropertyForm.yrOfConstr.focus);
 		return false;
@@ -785,7 +785,7 @@ function deleteOwner(obj)
 
     if(rowo<=2)
 	{
-		alert("This Owner can not be deleted");
+    	bootbox.alert("This Owner can not be deleted");
 		return false;
 	}
 	else
@@ -862,7 +862,7 @@ function addOwner()
 	}
 	else
 	{
-	alert("Im in else");
+		bootbox.alert("Im in else");
 		//var tbl = document.getElementById('nameTable');
 		var lastRow = tbl.rows.length;
 		var txt1 = 'firstName';
@@ -1048,7 +1048,7 @@ function addPropOwner()
 	}
 	else
 	{
-	alert("Im in else");		
+		bootbox.alert("Im in else");		
 		var lastRow = tbl.rows.length;
 		var txt1 = 'firstName';
 		var txt2 = 'middleName';
@@ -1078,7 +1078,7 @@ function deleteSpecificOwner(obj)
 	  return true;
 	}
 	else
-	alert("This Owner can not be deleted");
+		bootbox.alert("This Owner can not be deleted");
 
 }
 

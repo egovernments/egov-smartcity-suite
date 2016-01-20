@@ -105,7 +105,7 @@ $(document).ready(function(){
 		if($.inArray(ext, fileformats) > -1){
 			//do something    
 			}else{
-			alert(ext+" file format is not allowed");
+				bootbox.alert(ext+" file format is not allowed");
 			return;
 		}
 		

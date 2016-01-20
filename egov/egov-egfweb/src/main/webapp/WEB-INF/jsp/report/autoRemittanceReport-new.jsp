@@ -104,7 +104,7 @@ function validateFund(){
 	var fund = document.getElementById('fund').value;
 	var bank = document.getElementById('bank');
 	if(fund == -1 && bank.options.length==1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;
@@ -124,7 +124,7 @@ function populateDO(){
 function validateBank(){
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	return true;
@@ -133,18 +133,18 @@ function validateBank(){
 	var oAutoCompEntityForJV;
 	function autocompleteEntities12By20(obj,type)
 	{
-		//alert("in side fun");
+		//bootbox.alert("in side fun");
 	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadEntitesBy20.action", [ "~^"]);
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 		   oACDS.scriptQueryParam = "startsWith";
-		 //  alert("in side fun2"); 
+		 //  bootbox.alert("in side fun2"); 
 		   
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
 		   oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
 			   loadWaitingImage(); 
 			   return sQuery+"&accountDetailType="+type;
 		   } 
-		  // alert("in side fun3"); 
+		  // bootbox.alert("in side fun3"); 
 		   oAutoCompEntityForJV.queryDelay = 0.5;
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
@@ -192,18 +192,18 @@ function validateBank(){
 		var department = document.getElementById("department").value;
 		var remittancecoc = document.getElementById("recovery").value;
 		if(level == -1){
-			alert("Please select a level")
+			bootbox.alert("Please select a level")
 			return false;
 			}
 		if(level=="atdepartment"){
 			if(department == -1){
-				alert("Please select a Department")
+				bootbox.alert("Please select a Department")
 				return false;
 				}
 			}
 		if(level=="atcoc"){
 			if(remittancecoc == -1){
-				alert("Please select a Remittance CoA")
+				bootbox.alert("Please select a Remittance CoA")
 				return false;
 				}
 			}
@@ -212,18 +212,18 @@ function validateBank(){
 	}
 	function autocompleteRTGSNumbers(obj)
 	{
-		//alert(obj.name);
+		//bootbox.alert(obj.name);
 	  	   oACDS = new YAHOO.widget.DS_XHR(path+"/EGF/voucher/common!ajaxLoadRTGSNumberBy20.action", [ "~^"]);
 		   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 		   oACDS.scriptQueryParam = "startsWith";
-		 //alert("in side fun2"); 
+		 //bootbox.alert("in side fun2"); 
 		   
 		   oAutoCompEntityForJV = new YAHOO.widget.AutoComplete(obj.name,'codescontainer',oACDS);
 		   oAutoCompEntityForJV.doBeforeSendQuery = function(sQuery){
 			   loadWaitingImage(); 
 			   return sQuery+"&bankaccountId="+document.getElementById('bankaccount').value+"&rtgsNumber="+document.getElementById('instrumentnumber').value;
 		   } 
-		 // alert(document.getElementById('accountNumber').value); 
+		 // bootbox.alert(document.getElementById('accountNumber').value); 
 		   oAutoCompEntityForJV.queryDelay = 0.5;
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";

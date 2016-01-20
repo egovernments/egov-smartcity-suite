@@ -57,7 +57,7 @@
 			{
 				if(document.forms[0].actualAmount[j].value ==""){
 					
-					alert("Please choose its previos Installments. Random selection not allowed.");
+					bootbox.alert("Please choose its previos Installments. Random selection not allowed.");
 					obj.value="";
 					return false;
 				}
@@ -94,7 +94,7 @@
 			for(var j=0;j<=rowobj-2;j++)
 			{
 				if(document.forms[0].actualCollection[j].value == ""){
-					alert("Please choose its previos Installments. Random selection not allowed.");
+					bootbox.alert("Please choose its previos Installments. Random selection not allowed.");
 					obj.value="";
 					return false;
 				}
@@ -110,7 +110,7 @@
 			  var actamount = $this.find("#actualAmount").val();
 			  var actcollection = $this.find("#actualCollection").val();
 			  if( actcollection > 0 && actamount == 0 ){
-				  alert('please fill actual amount');
+				  bootbox.alert('please fill actual amount');
 				  e.preventDefault();
 				  return false;
 			  }
@@ -118,14 +118,14 @@
 				  j++;
 			  }
 			  if(parseInt(actcollection) > parseInt(actamount)){
-				  alert('Collection should not be greater than actual amount');
+				  bootbox.alert('Collection should not be greater than actual amount');
 				  e.preventDefault();
 				  return false;
 			  }
 			});
 			if(i==j)
 			  {
-				alert('Enter atleast one demand and collection');
+				bootbox.alert('Enter atleast one demand and collection');
 				  e.preventDefault();
 				  return false;
 			  }

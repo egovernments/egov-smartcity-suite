@@ -103,7 +103,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -236,7 +236,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -386,7 +386,7 @@ function createCheckboxFieldFormatterNew(tableType,prefix,suffix,type){
 	return function(el, oRecord, oColumn, oData) {
 		var tableIndex=getIndexForTableType(tableType);
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-	//salert(value);
+	//sbootbox.alert(value);
 		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+tableIndex+"]"+suffix+"' name='"+prefix+"["+tableIndex+"]"+suffix+"' style='width:90px'  onclick='extendFixedDeposit(this);'/>";
 	}                          
 }    
@@ -395,7 +395,7 @@ function checkDate(obj)
 		var dat=validateDate(obj.value);
 		if (!dat && dat!=null) 
 		{
-			alert('Invalid date format : Enter Date as dd/mm/yyyy');
+			bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 			obj.value="";
 			return;
 		}
@@ -462,7 +462,7 @@ function checkDate(obj)
 			}                   
 		},
 		failure: function(o) {
-			alert('Cannot fetch Funding Agency Grant Amount');
+			bootbox.alert('Cannot fetch Funding Agency Grant Amount');
 		}
 	}
  
@@ -484,7 +484,7 @@ function checkDate(obj)
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}                 
 	}
 	function getbranchAccountId(obj){
@@ -502,9 +502,9 @@ function checkDate(obj)
 				var docs=o.responseText;               
 				res=docs.split("$");
 				var accNumid=selectedname;
-				//alert(docs);
+				//bootbox.alert(docs);
 				accNumid=accNumid.replace('Branch','Account');
-				//alert(accNumid.value);
+				//bootbox.alert(accNumid.value);
 				var x=document.getElementById(accNumid);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
@@ -520,7 +520,7 @@ function checkDate(obj)
 			}
 		},                                         
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	            
@@ -585,7 +585,7 @@ function getAccountId(obj){
 	
 		
 		<s:iterator var="p" value="fixedDepositList" status="fixedDep_staus">
-		//alert('<s:property value="#fixedDep_staus.index"/>'+"   "+ind);
+		//bootbox.alert('<s:property value="#fixedDep_staus.index"/>'+"   "+ind);
 		
 		if('<s:property value="#fixedDep_staus.index"/>'==ind){
 		
@@ -596,7 +596,7 @@ function getAccountId(obj){
 			 {
 				res1[i]=new Array(accSize);
 				resId[i]=new Array(accSize);
-				///alert(accSize);
+				///bootbox.alert(accSize);
 				
 				if(j<accSize){
 					res1[i][j]='<s:property value="accountnumber"/>'+"-"+'<s:property value="%{chartofaccounts.glcode}"/>';
@@ -609,14 +609,14 @@ function getAccountId(obj){
 		
 		}
 		</s:iterator>    
-		//alert(res1.length);
+		//bootbox.alert(res1.length);
 		var accNumid1=selectedname;
 		accNumid1=accNumid1.replace('Branch','Account');
-		//alert("accnum "+accNumid);
+		//bootbox.alert("accnum "+accNumid);
 		var x=document.getElementById(accNumid1);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
-				//alert(res1);     
+				//bootbox.alert(res1);     
 				var k=0;    
  							for(var i=0;i<res1.length;i++)
  							{ 
@@ -676,13 +676,13 @@ if(obj.checked){
       	for(i=0;i<len;i++){
      		document.getElementById(childBankAccount).options[0]=new Option(selAccount[i].text,selAccount[i].value);  		
      	}
-     		//alert(parentaccId);
+     		//bootbox.alert(parentaccId);
      		document.getElementById(childBankAccount).value=parentaccId; 
      		
 	}chldIndex++;
  }
  else if(!obj.checked){
-// alert("unchecked");
+// bootbox.alert("unchecked");
  	  chldIndex--;
  	  document.getElementsByName(fdExtend)[0].value=false;
  }

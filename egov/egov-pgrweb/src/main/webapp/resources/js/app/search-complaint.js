@@ -117,7 +117,7 @@
         			});
         		});
     		}else{
-    			alert('Enter valid Email ID!');
+    			bootbox.alert('Enter valid Email ID!');
     		}
     	}
 	});
@@ -240,7 +240,7 @@
 					ValidRange(start, end);
 				}
 				}else{
-				alert("Select the date");
+					bootbox.alert("Select the date");
 			}
 			
 			event.preventDefault();

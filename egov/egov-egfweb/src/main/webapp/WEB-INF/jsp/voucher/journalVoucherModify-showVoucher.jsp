@@ -284,13 +284,13 @@ function validateJV(saveMode)
 		var cgn = '<s:property value='%{cgn}'/>' ;
 		if(target == 'success' ){
 			if(saveMode == 'saveclose'){
-				alert("Voucher modified sucessfully with voucher number =  "+voucherNumber );
+				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber );
 				window.close();
 			}else if(saveMode == 'saveview'){
-				alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
+				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
 				window.open('preApprovedVoucher!loadvoucherview.action?vhid=<s:property value='%{voucherHeader.id}'/>','Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}else if(saveMode == 'saveprint'){
-				alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
+				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
 				window.open('journalVoucherPrint!print.action?id=<s:property value='%{voucherHeader.id}'/>','','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}
 		}

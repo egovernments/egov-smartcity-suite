@@ -51,7 +51,7 @@ $('#metercurrentReadingDate').on('change', function(){
 					dataType: "json",
 			}).done(function(value) {
 				 if(value == true) {
-					 alert('Entered Metered Reading Date Allready Exist');
+					 bootbox.alert('Entered Metered Reading Date Allready Exist');
 					 $('#metercurrentReadingDate').val('');
 					 return false;
 				 } else {
@@ -79,11 +79,11 @@ $('#metercurrentReadingDate').on('change', function(){
 		var currentMeterDate = $('#metercurrentReadingDate').val();
 		var previousMeterDate = $('#previousreadingDate').val();
 		if ($('#metercurrentReading').val() == '') {
-			alert('Current Meter Reading is required');
+			bootbox.alert('Current Meter Reading is required');
 			return false;
 		}
 		else if ((currentReading - previousReading) < 0) {
-			alert('Current Meter Reading should not be less than Previous Meter Reading');
+			bootbox.alert('Current Meter Reading should not be less than Previous Meter Reading');
 			$('#metercurrentReading').val('');
 			return false;
 		}
@@ -94,7 +94,7 @@ $('#metercurrentReadingDate').on('change', function(){
 		}
 		if (currentMeterDate != undefined && previousMeterDate != undefined) {
 			if (!validateCurrentAndExecutionDateRange(previousMeterDate, currentMeterDate)) {
-				alert("Current Meter Reading Date should not be less than Previous Meter Reading Date");
+				bootbox.alert("Current Meter Reading Date should not be less than Previous Meter Reading Date");
 				$('#metercurrentReadingDate').val('');
 				return false;
 			}
@@ -132,7 +132,7 @@ $('#metercurrentReadingDate').on('change', function(){
 		var executionDate = $('#executionDate').val();
 		if(metercurrentdate !='' && executionDate != '') {
 			if(!validateCurrentAndExecutionDateRange(executionDate,metercurrentdate)) {
-				alert("The Current Meter Reading Date can not be less than the Date of Execution.");
+				bootbox.alert("The Current Meter Reading Date can not be less than the Date of Execution.");
 				$('#metercurrentReadingDate').val('');
 				return false;			
 			}

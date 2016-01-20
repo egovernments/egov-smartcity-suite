@@ -95,7 +95,7 @@ function ButtonPress()
 
 		if( compareDate(formatDate6(voucherDateFrom),formatDate6(voucherDateTo)) == -1 )
 		{
-		  				alert('Start Date cannot be greater than End Date');
+			bootbox.alert('Start Date cannot be greater than End Date');
 		  				document.getElementById('voucherDateFrom').focus();
 		  				return false;
 		}
@@ -428,7 +428,7 @@ function onloadTasks()
 	}
 
 	//var table=document.getElementById('journalSearchGrid');
-	//alert(table);
+	//bootbox.alert(table);
 }
 
 function ModeChangeGrid(){
@@ -586,7 +586,7 @@ function beforeRefreshPage(dc){
 	var tabObj=dc.grids['journalSearchGrid'];
 	if(!tabObj)	return false;
 	if(tabObj.length<2){
-			alert("No Data");
+			bootbox.alert("No Data");
 	}
 	if(t && (t=='Voucher Date' || t=='Pay-In Slip Date')||d=='Voucher Date' ){
 	 	for(var i=1;i<tabObj.length;i++){
@@ -636,7 +636,7 @@ function beforeRefreshPage(dc){
 function changeColor(){
 	var table=document.getElementById('journalSearchGrid');
 	var j=0;
-	for(var i=0;table.rows[0].cells.length;i++){//alert((table.rows[0].cells[5].innerHTML).toUpperCase());
+	for(var i=0;table.rows[0].cells.length;i++){//bootbox.alert((table.rows[0].cells[5].innerHTML).toUpperCase());
 		var oo=table.rows[0].cells[i]
 		if((oo.innerHTML).toUpperCase()=='STATUS')
 		{ j=i; break;}
@@ -644,8 +644,8 @@ function changeColor(){
 	
 	
 	for(var i=1;i<table.rows.length;i++){
-			var statusObj=PageManager.DataService.getControlInBranch(table.rows[i],"cgn"); //alert(statusObj);
- 			var status=table.rows[i].cells[j]; alert(status.innerHTML);//.innerHTML; 
+			var statusObj=PageManager.DataService.getControlInBranch(table.rows[i],"cgn"); //bootbox.alert(statusObj);
+ 			var status=table.rows[i].cells[j]; bootbox.alert(status.innerHTML);//.innerHTML; 
  			if(status.innerHTML=='Reversed')
  			{
 				var trObj=PageManager.DataService.getRow(statusObj);
@@ -1040,7 +1040,7 @@ function getDetails(obj,cgn,vStatus,v2,v3,v4){
 				%>
 				
 					<script>
-						var table=document.getElementById('journalSearchGrid');  //alert(table.innerHTML);
+						var table=document.getElementById('journalSearchGrid');  //bootbox.alert(table.innerHTML);
 						for (var i=0;i<table.rows.length;i++)
 						{	var k=0;
 							for (var j=table.rows[i].cells.length-1; j >= k ; j--)
@@ -1054,7 +1054,7 @@ function getDetails(obj,cgn,vStatus,v2,v3,v4){
 						//changeColor();
 						var table=document.getElementById('journalSearchGrid');
 						var j=0;
-						for(var i=0;table.rows[0].cells.length;i++){//alert((table.rows[0].cells[5].innerHTML).toUpperCase());
+						for(var i=0;table.rows[0].cells.length;i++){//bootbox.alert((table.rows[0].cells[5].innerHTML).toUpperCase());
 							var oo=table.rows[0].cells[i]
 							if((oo.innerHTML).toUpperCase()=='STATUS')
 							{ j=i; break;}
@@ -1062,12 +1062,12 @@ function getDetails(obj,cgn,vStatus,v2,v3,v4){
 						
 						
 						for(var i=1;i<table.rows.length;i++){
-								var statusObj=PageManager.DataService.getControlInBranch(table.rows[i],"cgn"); //alert(statusObj);
-					 			var status=table.rows[i].cells[j];// alert(status.innerHTML);//.innerHTML; 
+								var statusObj=PageManager.DataService.getControlInBranch(table.rows[i],"cgn"); //bootbox.alert(statusObj);
+					 			var status=table.rows[i].cells[j];// bootbox.alert(status.innerHTML);//.innerHTML; 
 					 			if(status.innerHTML=='Reversed')
 					 			{
 									var trObj=PageManager.DataService.getRow(statusObj);
-					 				table.rows[i].className='rowRev'; //alert(table.rows[i]);
+					 				table.rows[i].className='rowRev'; //bootbox.alert(table.rows[i]);
 					 			}
 					 			else if(status.innerHTML=='Reversal')
 					 			{

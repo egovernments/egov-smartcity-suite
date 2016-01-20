@@ -121,7 +121,7 @@
 <script>
 
 if($('#validationMessage').val()!='')
-	alert($('#validationMessage').val());
+	bootbox.alert($('#validationMessage').val());
 function validate(){
 	//alert(document.forms[0].action);
 

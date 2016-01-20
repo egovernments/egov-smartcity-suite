@@ -130,7 +130,7 @@ jQuery(document).ready(function($)
 
 										if (!checkUniqueDesignationSelected()) {
 											
-											alert("Same designation selected in multiple row. Select unique designation.");
+											bootbox.alert("Same designation selected in multiple row. Select unique designation.");
 											 e.preventDefault();
 										}else{	
 											$('#saveEscalationTimeForm').attr(
@@ -311,7 +311,7 @@ jQuery(document).ready(function($)
 					}).on('typeahead:selected', function(event, data) {
 						$("#escalationFormId").val(data.value);
 					}).on('change', function(event, data) {
-						alert($('.escalationDescription').val());
+						bootbox.alert($('.escalationDescription').val());
 						if ($('.escalationDescription').val() == '') {
 							$("#escalationFormId").val('');
 						}

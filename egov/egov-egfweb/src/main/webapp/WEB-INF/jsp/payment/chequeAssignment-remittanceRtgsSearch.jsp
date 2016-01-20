@@ -191,7 +191,7 @@
 					if(obj.options[obj.selectedIndex].value!=-1)
 					{
 						var x=	obj.options[obj.selectedIndex].value.split("-");
-						//alert("heelo"+x);                            
+						//bootbox.alert("heelo"+x);                            
 						document.getElementById("bankbranch").value=x[1];
 						populatebankaccount({branchId:x[1]+'&asOnDate='+date,fundId:fund.options[fund.selectedIndex].value});
 					}
@@ -200,7 +200,7 @@
 				function setRecoveryCode()
 				{
 
-					//alert(jQuery('#recoveryId option:selected').text());
+					//bootbox.alert(jQuery('#recoveryId option:selected').text());
 				if(jQuery('#recoveryId option:selected').text()=="350200301" || jQuery('#recoveryId option:selected').text()=="350200302")
 					{
 					document.getElementById("recoveryCode").value=jQuery('#recoveryId option:selected').text();

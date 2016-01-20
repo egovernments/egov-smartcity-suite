@@ -42,40 +42,40 @@
 
 
 var urlStr = document.location.href;
-//alert("urlStr = " + urlStr);
+//bootbox.alert("urlStr = " + urlStr);
 urlLen = urlStr.length;
 
 
 if(urlStr.indexOf("http://") > -1)
 		{
 			urlStr = urlStr.substring(urlStr.indexOf("http://")+"http://".length,urlLen);
-			//alert("urlStr AGAIN" + urlStr);
+			//bootbox.alert("urlStr AGAIN" + urlStr);
 			urlLenHTTP = urlStr.indexOf("http://");
-			//alert("urlLenHTTP : " + urlLenHTTP);
+			//bootbox.alert("urlLenHTTP : " + urlLenHTTP);
 			urlLenHTTP = urlStr.indexOf("/");
 			
 			urlStr = urlStr.substring(urlStr.indexOf("/")+"/".length,urlLen);
 			urlStr = urlStr.substring(urlStr.indexOf("/")+"/".length,urlLen);
-			//alert("urlStr finally : " + urlStr);
+			//bootbox.alert("urlStr finally : " + urlStr);
 		}
 if(urlStr.indexOf("https://") > -1)
 		{
 			urlStr = urlStr.substring(urlStr.indexOf("https://")+"https://".length,urlLen);
-			//alert("urlStr AGAIN" + urlStr);
+			//bootbox.alert("urlStr AGAIN" + urlStr);
 			urlLenHTTP = urlStr.indexOf("https://");
-			//alert("urlLenHTTP : " + urlLenHTTP);
+			//bootbox.alert("urlLenHTTP : " + urlLenHTTP);
 			urlLenHTTP = urlStr.indexOf("/");
 			
 			urlStr = urlStr.substring(urlStr.indexOf("/")+"/".length,urlLen);
 			urlStr = urlStr.substring(urlStr.indexOf("/")+"/".length,urlLen);
-			//alert("urlStr finally : " + urlStr);
+			//bootbox.alert("urlStr finally : " + urlStr);
 		}
 
 var totOcc = 0;
 var urlLn=0;
 urlLn=urlStr.indexOf("?");
 if (urlLn==-1) urlLn=urlStr.length;
-//alert("&:"+urlLn);
+//bootbox.alert("&:"+urlLn);
 for (var p=1;p<urlLn;p++)
 {
 	var x=urlStr.charAt(p);
@@ -84,7 +84,7 @@ for (var p=1;p<urlLn;p++)
 		totOcc++;
 	}	
 }
-//alert(totOcc);
+//bootbox.alert(totOcc);
 
 
 var exilParms = new Object(); 
@@ -93,7 +93,7 @@ for (var i=1;i<totOcc;i++ )
 {
 	pathResol = pathResol+ pathResol;
 }
-//alert(pathResol);
+//bootbox.alert(pathResol);
 
 //All Descriotion Service will be requested to this URL
 exilParms.descServiceName	= pathResol+"GetDescription.jsp";

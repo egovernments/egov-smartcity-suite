@@ -94,7 +94,7 @@ function loadWorkOrderData(obj){
 }
 
 function onLoadTasks() {
-	//alert("loading");
+	//bootbox.alert("loading");
 	PageValidator.addCalendars();
 	// added by iliyaraja
 	var formSubmitted='<%= request.getParameter("formSubmitted") %>';
@@ -103,11 +103,11 @@ function onLoadTasks() {
 	insertDates1('voucherHeader_voucherDate');
  	var drillDownCgno=PageManager.DataService.getQueryField('drillDownCgn');
 	sm=PageManager.DataService.getQueryField('showMode');
-	//alert("mode:"+sm+" drill "+drillDownCgno);
+	//bootbox.alert("mode:"+sm+" drill "+drillDownCgno);
 	hideColumn(13,true);
 	hideColumn(3,true);
 	if(drillDownCgno )
-	{ //alert(sm+"111");
+	{ //bootbox.alert(sm+"111");
 		if(sm=="edit"){
 		document.getElementById('filterRow3').style.display ="none";
 		document.getElementById('filterRow4').style.display ="none";
@@ -152,7 +152,7 @@ function onLoadTasks() {
 				//wObj.setAttribute('exilListSource','worksDetail_id');
 				//santhu
 			document.getElementById('bankbal').style.display='block';
-			//alert(document.getElementById('bankbal').style.display);
+			//bootbox.alert(document.getElementById('bankbal').style.display);
 			document.getElementById('submitGrid').style.display ="none";
 			document.getElementById('saveandnew').style.display ="none";
 			var rowsToHide=document.getElementById('filterRow1');
@@ -245,14 +245,14 @@ function onLoadTasks() {
 				document.getElementById('payTo').style.display='none';
 				document.getElementById('fundSource_name').style.display='none';
 
-				field12='<%=request.getParameter("inputField12") %>'; //alert("field12:"+field12);
+				field12='<%=request.getParameter("inputField12") %>'; //bootbox.alert("field12:"+field12);
 				if(field12!=null && field12!='null' )
 				{
 					var a=new Array();
 					a=field12.split("`--`");
 				 	if(a[0] && a[0] !='null' ) document.getElementById('voucherDateFrom').value=formatDateToDDMMYYYY5(a[0]);
 					if(a[1] && a[1] !='null' ) document.getElementById('voucherDateTo').value=formatDateToDDMMYYYY5(a[1]);
-					if(a[2] && a[2] !='null' ) document.getElementById('SupConType').selectedIndex=a[2];//alert("field12:"+field12);
+					if(a[2] && a[2] !='null' ) document.getElementById('SupConType').selectedIndex=a[2];//bootbox.alert("field12:"+field12);
 					//if(a[4] && a[4] !='null' ) document.getElementById('subledgerPay_fund').selectedIndex=a[2];
 					globalA4=a[4];
 					PageManager.DataService.setQueryField('SupConTypeCode',a[2]);
@@ -267,7 +267,7 @@ function onLoadTasks() {
 			window.searchData=false;
 			PageManager.DataService.setQueryField('type','Cashier');
 			var type_code = PageManager.DataService.getQueryField('chk_type');
-			//alert(type_code);
+			//bootbox.alert(type_code);
 			if (!type_code) type_code="Contractor";
 			var obj=document.getElementsByName("pay_type")
 			for(var i=0;i<obj.length;i++) {
@@ -280,7 +280,7 @@ function onLoadTasks() {
 
 			PageManager.DataService.setQueryField('tableNameForId','relation');
 			if(sm=="createPay" && typeval=='Contractor'){
-			//alert(typeval);
+			//bootbox.alert(typeval);
 			PageManager.DataService.setQueryField('relationTypeId',"2");
 			}
 			else
@@ -349,7 +349,7 @@ function onLoadTasks() {
 		}
 
 		if(dc.values['serviceID']=="AccountFundMap1")
-		{//alert("service id:"+dc.values['fund1_id']);
+		{//bootbox.alert("service id:"+dc.values['fund1_id']);
 		   document.getElementById("fundSub_id").value=dc.values['fund1_id'];
 			//PageManager.DataService.setQueryField('fund1_id',;
 		}
@@ -379,7 +379,7 @@ function onLoadTasks() {
 			{
 				document.getElementById("oldVoucherDate").value=formatDateToDDMMYYYY6(dc.values['voucherHeader_voucherDate']);
 		 	}
-		 	//alert(document.getElementById("oldVoucherDate").value);
+		 	//bootbox.alert(document.getElementById("oldVoucherDate").value);
 		}
 
 		addSlNo();
@@ -388,11 +388,11 @@ function onLoadTasks() {
 		{
 			var dt=dc.values['databaseDate']
 			document.getElementById('voucherHeader_voucherDate').value=dt;
-			//alert(dc.values['relationTypeId']);
+			//bootbox.alert(dc.values['relationTypeId']);
 			document.getElementById('relationTypeId').value=dc.values['relationTypeId'];
 
 			//filling fundsource dropdown
-			var fsReq='<%=request.getParameter("fundSource_name1")%>'; 			//alert("fsReq:"+fsReq);
+			var fsReq='<%=request.getParameter("fundSource_name1")%>'; 			//bootbox.alert("fsReq:"+fsReq);
 			var fsobj=document.getElementById('fundSource_name');
 			clearCombo('fundSource_name');
 			var fs=new Array();
@@ -410,7 +410,7 @@ function onLoadTasks() {
 			clearCombo('subledgerPay_fund');
 			var fsList=new Array();
 			fsList=dc.grids['fundNameList'];
-			fsobj.selectedIndex=0; //alert("a4:"+a4);
+			fsobj.selectedIndex=0; //bootbox.alert("a4:"+a4);
 			for(var i=1;i<=fsList.length;i++)
 			{
 				fsobj.options[i]=new Option(fsList[i-1][1],fsList[i-1][0]);
@@ -442,7 +442,7 @@ function onLoadTasks() {
 		if(drillDownCgno && (dc.values['serviceID']=="loadSubLedgerData"))
 		{
 			var paymentType=dc.values['pay_type'];
-			//alert(paymentType);
+			//bootbox.alert(paymentType);
 			var obj=document.getElementsByName("pay_type");
 			for(var i=0;i<obj.length;i++) {
 					if(paymentType==obj[i].value.toLowerCase())	{
@@ -532,7 +532,7 @@ function onLoadTasks() {
 							}
 						} else {
 							obj.style.display="none";
-							alert('No Bills to pay');
+							bootbox.alert('No Bills to pay');
 						}
 					}
 		}
@@ -570,7 +570,7 @@ function onLoadTasks() {
 
 					if(dc.grids['Data_Grid'].length==2)
 					{
-							//alert("grid length is 1");
+							//bootbox.alert("grid length is 1");
 
 							subLedgerPayment_Header.billSelect.disabled=true;
 
@@ -647,7 +647,7 @@ function clearCombo(cId)
 					var vhDate=document.getElementById('voucherDateTo').value;
 					if(compareDate(formatDateToDDMMYYYY1(vhDate),formatDateToDDMMYYYY1(dbDate)) == -1 )
 					{
-					alert('Bill Date to should be less than or equal to '+dbDate);
+						bootbox.alert('Bill Date to should be less than or equal to '+dbDate);
 					document.getElementById('voucherDateTo').focus();
 					return false;
 					}
@@ -656,7 +656,7 @@ function clearCombo(cId)
 					if(strtDate.length !=0 && endDate.length !=0)
 					{
 							if( compareDate(formatDateToDDMMYYYY1(strtDate),formatDateToDDMMYYYY1(endDate)) == -1 ){
-							alert('Voucher Date From cannot be greater than Voucher Date To');
+								bootbox.alert('Voucher Date From cannot be greater than Voucher Date To');
 							document.getElementById('voucherDateFrom').focus();
 							return false;
 	   				}
@@ -676,7 +676,7 @@ function clearCombo(cId)
 	if(subLedgerPayment_Header.voucherDateTo.value !='')  t2=formatDate1(subLedgerPayment_Header.voucherDateTo.value);
 	if(subLedgerPayment_Header.SupConType.value !='')  t3=subLedgerPayment_Header.SupConType.value;
 	if(id !='') t4=id;
-	if(subLedgerPayment_Header.subledgerPay_fund.value !='')  t5=subLedgerPayment_Header.subledgerPay_fund.value; //alert("t5:"+t5);
+	if(subLedgerPayment_Header.subledgerPay_fund.value !='')  t5=subLedgerPayment_Header.subledgerPay_fund.value; //bootbox.alert("t5:"+t5);
 	subLedgerPayment_Header.inputField12.value=t1+"`--`"+t2+"`--`"+t3+"`--`"+t4+"`--`"+t5;
 	subLedgerPayment_Header.displayCondition.value=1;
 	document.getElementById('paySupConHeader').style.display='block';
@@ -779,13 +779,13 @@ function clearCombo(cId)
 		var net=PageManager.DataService.getControlInBranch(table.rows[row.rowIndex],"net");
 		var ePay=PageManager.DataService.getControlInBranch(table.rows[row.rowIndex],"earlierPayment");
 		if(parseFloat(obj.value) > (parseFloat(net.innerHTML)-parseFloat(ePay.innerHTML))) {
-			alert('Cannot pay Amount more than : '+(parseFloat(net.innerHTML)-parseFloat(ePay.innerHTML)));
+			bootbox.alert('Cannot pay Amount more than : '+(parseFloat(net.innerHTML)-parseFloat(ePay.innerHTML)));
 			obj.value=parseFloat(net.innerHTML)-parseFloat(ePay.innerHTML);
 			obj.focus();
 			return;
 		}
 		if(parseFloat(obj.value)<=0) {
-			alert('Enter amount greater than zero');
+			bootbox.alert('Enter amount greater than zero');
 			obj.value=parseFloat(net.innerHTML)-parseFloat(ePay.innerHTML);
 			obj.focus();
 			return;
@@ -812,7 +812,7 @@ function clearCombo(cId)
 	function ButtonPress(name) {
 		document.getElementById('payTo').disabled="false";
 		 var sm=PageManager.DataService.getQueryField('showMode');
-		 //alert(sm)
+		 //bootbox.alert(sm)
 		 if(sm!='modify')
 		 {
 			 if(!checkFund())
@@ -842,19 +842,19 @@ function clearCombo(cId)
 						if(!checkChequeDate("chequeDetail_chequeDate"))return;
 					}
 					if(subLedgerPayment_Header.subLedger_narration.value.length>250) {
-							alert('Enter Narration less than 250 Charaters');
+						bootbox.alert('Enter Narration less than 250 Charaters');
 							subLedgerPayment_Header.subLedger_narration.focus();
 							return;
 					}
 					if(parseFloat(subLedgerPayment_Header.total.value)<=0) {
-						alert("Select some bills to pay");
+						bootbox.alert("Select some bills to pay");
 						return;
 					}
 
 			}
 		}
 		catch(e)
-		{alert('Nothing to Pay'); return;}
+		{bootbox.alert('Nothing to Pay'); return;}
 		if(drillDownCgno)
 		{
 						disableControls(0,false);
@@ -865,7 +865,7 @@ function clearCombo(cId)
 				var vhDate=document.getElementById('voucherHeader_voucherDate').value;
 				if(compareDate(formatDateToDDMMYYYY1(vhDate),formatDateToDDMMYYYY1(dbDate)) == -1 )
 				{
-				alert('Voucher Date should be less than or equal to '+dbDate);
+					bootbox.alert('Voucher Date should be less than or equal to '+dbDate);
 				document.getElementById('voucherHeader_voucherDate').focus();
 				return false;
 				}
@@ -874,14 +874,14 @@ function clearCombo(cId)
 				{
 				var effDate=document.getElementById('voucherHeader_effDate').value;
 				if(compareDate(formatDateToDDMMYYYY1(effDate),formatDateToDDMMYYYY1(dbDate)) == -1 ){
-				alert('Voucher Date should be less than or equal to '+dbDate);
+					bootbox.alert('Voucher Date should be less than or equal to '+dbDate);
 				document.getElementById('voucherHeader_effDate').focus();
 				return false;
 				}
 				}
 			document.getElementById('pay_hide').value=getSelectedRadioValue(document.getElementsByName('pay_type'));
 		PageManager.UpdateService.submitForm('subLedgerPaymentHeader');
-		//alert(PageManager.DataService.getQueryField('typeval'));
+		//bootbox.alert(PageManager.DataService.getQueryField('typeval'));
 		//PageManager.DataService.setQueryField('pay_type',PageManager.DataService.setQueryField('typeval'));
 	}
 	function afterUpdateService(dc)	{
@@ -945,10 +945,10 @@ function clearCombo(cId)
 					var accNumberType=accNumberObj.options[accNumberObj.selectedIndex].value
 					PageManager.DataService.setQueryField("accountNumberId",accNumberType);
 					var payType=document.getElementById("pay_type").value;
-					//alert(payType+"gl");
+					//bootbox.alert(payType+"gl");
 					PageManager.DataService.setQueryField("fund_id",document.getElementById("fund_id").value);
 					PageManager.DataService.setQueryField("fund1_id",document.getElementById("fundSub_id").value);
-					//alert(document.getElementById("fundSub_id").value+"FUND1_ID");
+					//bootbox.alert(document.getElementById("fundSub_id").value+"FUND1_ID");
 					PageManager.DataService.setQueryField("pay_type",payType);
 					PageManager.DataService.callDataService('subLedgerPaymentHeader');
 				}
@@ -1100,19 +1100,19 @@ function setPaymentValues()
 			{
 				if(id != PageManager.DataService.getControlInBranch(table.rows[i],"id").innerHTML)
 				{
-					alert('Please Select Bills For Same Contractor/Supplier');
+					bootbox.alert('Please Select Bills For Same Contractor/Supplier');
 					return false;
 				}
 				if(fundid != PageManager.DataService.getControlInBranch(table.rows[i],"fundid").innerHTML)
 				{
-						alert('Please Select Bills For Same Fund');
+					bootbox.alert('Please Select Bills For Same Fund');
 						return false;
 				}
 				if(fundsourceid != PageManager.DataService.getControlInBranch(table.rows[i],"fundsourceid").innerHTML)
 				{
-					//alert(fundsourceid);
+					//bootbox.alert(fundsourceid);
 					fundsourceid="";
-						//alert('Please Select Bills For Same Fundsource');
+						//bootbox.alert('Please Select Bills For Same Fundsource');
 						//return false;
 				}
 
@@ -1129,13 +1129,13 @@ function setPaymentValues()
 			var dt1=formatDate5(subLedgerPayment_Header.voucherDateFrom.value);
 			if(subLedgerPayment_Header.voucherDateTo.value!=="")
 			var dt2=formatDate5(subLedgerPayment_Header.voucherDateTo.value);
-			//alert("id "+id+" type "+type +"fundid "+fundid+"fundsourceid"+fundsourceid);
-			//alert("worksid  "+worksid);
+			//bootbox.alert("id "+id+" type "+type +"fundid "+fundid+"fundsourceid"+fundsourceid);
+			//bootbox.alert("worksid  "+worksid);
 			cWind=window.open("SubLedgerPayment.jsp?conorsupid="+id+"&worksdetaild="+worksid+"&funid="+fundid+"&fundSource_name1="+fundsourceid+"&typeval="+type+"&conorsupidname="+conorsupidname+"&fundname="+fundname+"&fsname="+fsname+"&showMode="+mode+"&dt1="+dt1+"&dt2="+dt2+"&formSubmitted=1","","height=650,width=900,scrollbars=yes,left=20,top=20,status=yes");
 		}
 		else
 		{
-			alert('Select Bills To Pay');
+			bootbox.alert('Select Bills To Pay');
 
 		}
 
@@ -1149,11 +1149,11 @@ function loadBankBalance()
 {
 	var ctr= document.getElementById('subLedgerPaymentHeader_branchAccountId');
 	loadFund(ctr);//Get the Fund related to this id
-	//alert("getting fund 4 id:"+document.getElementById("fund1_id").value);
+	//bootbox.alert("getting fund 4 id:"+document.getElementById("fund1_id").value);
 	var voucherHeader_voucherDate=document.getElementById('voucherHeader_voucherDate').value;
 	    if(!voucherHeader_voucherDate)
 	   {
-	    	alert("Please select the Voucher Date ");
+	    	bootbox.alert("Please select the Voucher Date ");
 	    	return;
 	   }
 	   if(ctr.selectedIndex != -1){
@@ -1192,7 +1192,7 @@ function checkFund()
 			    return false;
 		else{
 			if(document.getElementById("jv_voucherNumber").value.length==0){
-				alert("Enter value for Journal Voucher Number..");
+				bootbox.alert("Enter value for Journal Voucher Number..");
 				return false;
 			}
 		}
@@ -1201,7 +1201,7 @@ function checkFund()
 }
 function accntMod(obj)
 {
-	try{//alert("in mod:"+PageManager.DataService.getQueryField("fund1_id"));
+	try{//bootbox.alert("in mod:"+PageManager.DataService.getQueryField("fund1_id"));
 	if(obj.selectedIndex==-1)	 return;
 	 if(sIndex!=null)
 	{
@@ -1229,7 +1229,7 @@ function loadFund(obj)
 	if(obj.selectedIndex==-1) return;
 //	accntMod(obj);
 	var accId=obj.options[obj.selectedIndex].value;
-	//alert(accId+"text"+obj.options[obj.selectedIndex].text);
+	//bootbox.alert(accId+"text"+obj.options[obj.selectedIndex].text);
 	PageManager.DataService.setQueryField('bankIdForFund',accId);
 	PageManager.DataService.callDataService('AccountFundMap1');
 }
@@ -1238,7 +1238,7 @@ function checkFundReverse()
     if(document.getElementById('fund_id').value!=document.getElementById('fund1_id').value)
     {
 		if(document.getElementById("voucherHeader_newJVcNo").value.length==0){
-			alert("Enter value for Journal Voucher Number.");
+			bootbox.alert("Enter value for Journal Voucher Number.");
 			document.getElementById("voucherHeader_newJVcNo").focus();
 			return false;
 		}
@@ -1252,10 +1252,10 @@ function checkFundReverse()
 //TO SHOW JOURNAL VOUCHER GL-ENTRY
 function showJVglEntry()
 {
-//alert("WO Fund:"+document.getElementById('fund_id').value+" Bank Fund:"+bankFundis)
+//bootbox.alert("WO Fund:"+document.getElementById('fund_id').value+" Bank Fund:"+bankFundis)
 	 if(document.getElementById('fund_name').value==document.getElementById('fund1_name').value)
 	 {
-		alert("There is no Journal Entry passed.");
+		 bootbox.alert("There is no Journal Entry passed.");
 		hideColumns(1);
 		hideColumns(2);
 		hideColumns(3);
@@ -1301,13 +1301,13 @@ function nextChqNo()
 	var bankBr=document.getElementById("subLedgerPaymentHeader_bankId");
 	if( bankBr.selectedIndex==-1)
 	{
-	  alert("Select Bank Branch and Account No!!");
+		bootbox.alert("Select Bank Branch and Account No!!");
 	  return;
 	}
 
 	if(obj.selectedIndex==-1)
 	{
-	  alert("Select Account No!!");
+		bootbox.alert("Select Account No!!");
 	  return;
 	}
 	var accNo=obj.options[obj.selectedIndex].text;

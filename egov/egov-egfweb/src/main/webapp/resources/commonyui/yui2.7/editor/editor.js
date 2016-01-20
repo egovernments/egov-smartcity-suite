@@ -2070,7 +2070,7 @@ var Dom = YAHOO.util.Dom,
 * ]</pre>
 * </code>
 * With the valueClick event you could subscribe to this buttons click event with this:
-* tbar.in('testButtonClick', function() { alert('test button clicked'); })
+* tbar.in('testButtonClick', function() { bootbox.alert('test button clicked'); })
 * @type YAHOO.util.CustomEvent
 */
 /**

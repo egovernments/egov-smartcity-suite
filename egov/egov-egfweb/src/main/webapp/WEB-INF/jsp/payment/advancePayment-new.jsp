@@ -117,7 +117,7 @@ function validateAppoveUser(name,value){
 	</s:if>
 	<s:else>
 		if( (value == 'Approve' || value == 'Forward' || value=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-			alert('<s:text name="arf.approver.required"/>');
+			bootbox.alert('<s:text name="arf.approver.required"/>');
 			return false;
 		}
 	</s:else>

@@ -106,16 +106,16 @@
 
 								if(o.responseText=='successful')
 								{
-								     alert("Deletion success");
+								     bootbox.alert("Deletion success");
 								}else
 								{
-								     alert("Deletion failed");
+								     bootbox.alert("Deletion failed");
 								}
 
 
 								 },
 							     failure: function(o) {
-								     alert("Deletion failed");
+								     bootbox.alert("Deletion failed");
 							     }
 						} 
 						function deleteBudgetDetail(re, be,obj,bename,rename){
@@ -128,10 +128,10 @@
 								{
 								table.deleteRow(rownum.rowIndex);
 								} 
-							alert("Sending Request to server Please wait for Confirmation");
+							bootbox.alert("Sending Request to server Please wait for Confirmation");
 							var transaction = YAHOO.util.Connect.asyncRequest('POST', 'budgetProposal!ajaxDeleteBudgetDetail.action?bpBean.id='+re+'&bpBean.nextYrId='+be, callback, null);
 						}else{
-							alert("This Budget detail cannot be deleted ");
+							bootbox.alert("This Budget detail cannot be deleted ");
 						}  
 						}
 						</script>
@@ -166,7 +166,7 @@
 									var len = <s:property value="savedbudgetDetailList.size"/>;
 									for(i=0;i<len;i++){
 										if(document.getElementById('savedbudgetDetailList['+i+'].approvedAmount') && document.getElementById('savedbudgetDetailList['+i+'].approvedAmount').value == ''){
-											alert("Enter approved amount");
+											bootbox.alert("Enter approved amount");
 											return false;
 										}
 									}
@@ -181,7 +181,7 @@
 									</s:if>
 									<s:else>
 										if( (value == 'forward' || value == 'Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-											alert("Please select User");
+											bootbox.alert("Please select User");
 											return false;
 										}
 									</s:else>
@@ -286,13 +286,13 @@
 
 		<script>
 	if(document.getElementById("approve")){
-		//alert("-----"+document.getElementById("approve").value);
+		//bootbox.alert("-----"+document.getElementById("approve").value);
 		document.getElementById("approvalDetails").style.display = 'none';
 	}
 	<s:if test='%{isHod()}'>
 		<s:if test="%{!isAllfunctionsArrived()}">
-		   alert("Not All function Centers Received , Forward Not allowed ");
-		   alert('List of functions not yet Received are : <s:property value="functionsNotYetReceiced"/>');
+		   bootbox.alert("Not All function Centers Received , Forward Not allowed ");
+		   bootbox.alert('List of functions not yet Received are : <s:property value="functionsNotYetReceiced"/>');
 		   if(document.getElementById("forward"))
 			document.getElementById("forward").style.display = 'none';
 		</s:if>

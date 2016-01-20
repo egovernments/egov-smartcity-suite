@@ -50,9 +50,9 @@
 							var success = '<s:property value="success"/>';
 
 							if (success == 'yes') {
-								alert("PartyType Created Successfully");
+								bootbox.alert("PartyType Created Successfully");
 								} else if((success == 'no')){
-									alert("PartyType Could Not be Created");
+									bootbox.alert("PartyType Could Not be Created");
 									}
 												
 							if (close == 'true') {
@@ -62,11 +62,11 @@
 
 						function validate(){
 							if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-								alert("Please enter Party Type Code");
+								bootbox.alert("Please enter Party Type Code");
 								return false;
 							}
 							if(document.getElementById('description').value == null || document.getElementById('description').value==''){
-								alert("Please enter Description");
+								bootbox.alert("Please enter Description");
 								return false;
 							}
 							return true;

@@ -151,19 +151,19 @@ function validateBeforeSubmit(){
 		var fiscalYearStartDate="01/04/"+endDate.split('/')[2];
 	if(compareDate(fiscalYearStartDate,startDate) == -1 )
 	{ 
-	   alert("Start Date and End Date should be in same financial year");
+		bootbox.alert("Start Date and End Date should be in same financial year");
 	   document.getElementById('startDate').focus();
 	   return false;
 	}
 	if(compareDate(formatDate6(startDate),formatDate6(endDate)) == -1 )
 	{
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}
 	if(document.getElementById('amountIn').value==0)
 	{
-		alert("Choose Rupees");
+		bootbox.alert("Choose Rupees");
 		return false;
 	}
 	return true;
@@ -285,7 +285,7 @@ function fillNeibrAfterSplitFunction(obj,neibrObjName)
 					}
 					else
 					{
-						alert('Invalid Code\nPlease use autocomplete option');
+						bootbox.alert('Invalid Code\nPlease use autocomplete option');
 						neibrObj.value='';
 						obj.value='';
 						return;
@@ -300,7 +300,7 @@ function fillNeibrAfterSplitFunction(obj,neibrObjName)
  	{
 		if(obj.value!='' && temp.length<2)
 		{
-			alert('Invalid Code\nPlease use autocomplete option');
+			bootbox.alert('Invalid Code\nPlease use autocomplete option');
 			neibrObj.value='';
 			obj.value='';	
 			return;

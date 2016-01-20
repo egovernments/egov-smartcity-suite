@@ -62,20 +62,20 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 
 	if((fdateObj.value == "" || tdateObj.value == "") && dateSelObj.value == "3")
 	{
-		alert("Please fill the date parameters correctly");
+		bootbox.alert("Please fill the date parameters correctly");
 		fdateObj.focus();
 		return false;
 	}
 	if(tdateObj.value == "" && dateSelObj.value == "1")
 	{
-		alert("To date is necessary");
+		bootbox.alert("To date is necessary");
 		tdateObj.focus();
 		return false;
 	}
 
 	if(fdateObj.value == ""  && dateSelObj.value == "2")
 	{
-		alert("From date is necessary");
+		bootbox.alert("From date is necessary");
 		fdateObj.focus();
 		return false;
 	}
@@ -87,7 +87,7 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		rType=validateDate(tdateObj.value);
 		if(rType==false)
 		{
-			alert('Please enter the valid To-date');
+			bootbox.alert('Please enter the valid To-date');
 			tdateObj.value="";
 			tdateObj.focus();
 			return false;
@@ -99,7 +99,7 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		rType=validateDate(fdateObj.value);
 		if(rType==false)
 		{
-			alert('Please enter the valid From-date');
+			bootbox.alert('Please enter the valid From-date');
 			fdateObj.value="";
 			fdateObj.focus();
 			return false;
@@ -114,7 +114,7 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		//alert('I m here');
 		if(rFrom==false || rTo==false)
 		{
-			alert('Please Enter Valid Date');
+			bootbox.alert('Please Enter Valid Date');
 			if(rFrom==false)
 			{
 				fdateObj.value="";
@@ -135,7 +135,7 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 			rTF=checkFdateTdate(fdateObj.value,tdateObj.value);
 			if(rTF==false)
 			{
-				alert('From date should be less than or equal to To Date');
+				bootbox.alert('From date should be less than or equal to To Date');
 				//fdateObj.value="";
 				fdateObj.focus();
 				return false;
@@ -160,14 +160,14 @@ function myFromDate(dateSelObj)
 
 	if(dateSelObj.value == "-1")
 	{
-		alert("Please select the date");
+		bootbox.alert("Please select the date");
 		dateSelObj.focus();
 		return false;
 	}
 	if(dateSelObj.value == "0")
 	{
 		
-		alert("From Date is not necessary when Date Selection is All Dates");
+		bootbox.alert("From Date is not necessary when Date Selection is All Dates");
 		dateSelObj.focus();
 		return false;
 	}
@@ -175,13 +175,13 @@ function myFromDate(dateSelObj)
 	else if(dateSelObj.value == "4")
 	{
 			
-			alert("From Date is not necessary when Date Selection is Current Date");
+		bootbox.alert("From Date is not necessary when Date Selection is Current Date");
 			dateSelObj.focus();
 			return false;
 	}
 	else if(dateSelObj.value == "1")
 	{
-			alert("From Date is not necessary when Date Selection is Before");
+		bootbox.alert("From Date is not necessary when Date Selection is Before");
 			dateSelObj.focus();
 			return false;
 		
@@ -198,28 +198,28 @@ function myToDate(dateSelObj)
 {
 	if(dateSelObj.value == "-1")
 	{
-		alert("Please select the date");
+		bootbox.alert("Please select the date");
 		dateSelObj.focus();
 		return false;
 	}
 
 	if(dateSelObj.value == "0")
 	{		
-		alert("To Date is not necessary when Date Selection is  All Dates");
+		bootbox.alert("To Date is not necessary when Date Selection is  All Dates");
 		dateSelObj.focus();
 		return false;
 	}
 	
 	else if(dateSelObj.value == "4")
 	{			
-		alert("To Date is not necessary when Date Selection is  Current Date");
+		bootbox.alert("To Date is not necessary when Date Selection is  Current Date");
 		dateSelObj.focus();
 		return false;
 	}
 	else if(dateSelObj.value == "2")
 	{
 					
-		alert("To Date is not necessary when Date Selection is After");
+		bootbox.alert("To Date is not necessary when Date Selection is After");
 		dateSelObj.focus();
 		return false;
 	}
@@ -624,7 +624,7 @@ function validateDateJS(obj)
         //If entered year is greater than the current year return false
         else if ( strValue.substr(6,4) > year)
         {
-            alert('pls enter the valid date');
+        	bootbox.alert('pls enter the valid date');
             obj.focus();
             return false;
         }
@@ -637,14 +637,14 @@ function validateDateJS(obj)
             }
             if(strValue.substr(3,2)> (month+1))
             {
-            	alert('pls enter the valid date');
+            	bootbox.alert('pls enter the valid date');
             	obj.focus();
                 return false;
             }
            
            if (strValue.substr(3,2) == (month+1) && strValue.substr(0,2)>day)
             {
-            	alert('pls enter the valid date');
+        	   bootbox.alert('pls enter the valid date');
             	obj.focus();
             	return false;
             }
@@ -698,7 +698,7 @@ if(dt!="" && dt!=null)
 	
 	if(invalid==true)
 	{
-		alert("Please enter the valid characters");
+		bootbox.alert("Please enter the valid characters");
 		obj.value="";
 		obj.focus();
 	}
@@ -836,7 +836,7 @@ function validateDateFormat(obj)
    //alert("valid="+valid+" oth_valid="+oth_valid+" validDate="+validDate);
     if(valid==false || oth_valid==false || validDate==false)
     {
-    	alert("Please enter the valid date in the dd/MM/yyyy Format only");
+    	bootbox.alert("Please enter the valid date in the dd/MM/yyyy Format only");
     	obj.value="";
     	obj.focus();
     	Ret=false;

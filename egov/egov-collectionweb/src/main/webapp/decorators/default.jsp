@@ -60,6 +60,7 @@
 		
 	<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js?${app_release_no}"></script>
 	
 	<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>

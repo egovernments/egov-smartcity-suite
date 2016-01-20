@@ -248,7 +248,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		  %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('asOnDate',null);
 		 </script>
 		 <%
@@ -304,7 +304,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		  %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('asOnDate',null);
 		 </script>
 		 <%

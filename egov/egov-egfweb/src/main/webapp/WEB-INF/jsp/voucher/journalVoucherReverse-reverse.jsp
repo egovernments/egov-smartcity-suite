@@ -139,7 +139,7 @@
 					updateDebitAmountJV();updateCreditAmountJV();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -227,7 +227,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -299,11 +299,11 @@
 			var button = '<s:property value="button"/>';
 			if (button != null && button != "") {
 				var trgtmsg = '<s:property value="target"/>';
-				//alert(trgtmsg);
+				//bootbox.alert(trgtmsg);
 				if (button == "Reverse_Close") {
 					var message = '<s:property value="message"/>';
 					if(trgtmsg == "success") {
-						alert(message);
+						bootbox.alert(message);
 						window.close();
 					} else {
 						disableControls(0,true);
@@ -321,7 +321,7 @@
 					var vhid = document.getElementById('voucherHeader.id').value;
 					var url = 'preApprovedVoucher!loadvoucherview.action?vhid='+ vhid;
 					if(trgtmsg == "success") {
-						alert(message);
+						bootbox.alert(message);
 						window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 					} else {
 						disableControls(0,true);

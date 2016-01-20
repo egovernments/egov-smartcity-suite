@@ -55,15 +55,15 @@
 	    		return false;
 	            }
 			 if(!validateDate(document.getElementById('validfrom').value)){
-					alert("Invalid Date! valid from date is greater than current date");
+					bootbox.alert("Invalid Date! valid from date is greater than current date");
 					return false;
 			}
 			 else if (Date.parse(document.getElementById('validfrom').value) > Date.parse(document.getElementById('validtoId').value)) {
-					alert("Invalid Date Range! valid from date cannot be after valid to date!")
+					bootbox.alert("Invalid Date Range! valid from date cannot be after valid to date!")
 					return false;
 					} 
 			if(isNaN(document.getElementById('initialEstimateAmount').value)){
-				alert("Please enter valid Initial Eastimate Amount");
+				bootbox.alert("Please enter valid Initial Eastimate Amount");
 				return false;
 			}
 			var showMode = document.getElementById('showMode').value;

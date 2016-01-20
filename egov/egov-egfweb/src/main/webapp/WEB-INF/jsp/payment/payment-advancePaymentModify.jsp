@@ -363,7 +363,7 @@
 			</s:if>
 			<s:else>
 				if( (value == 'Approve' || value == 'Save And Forward' || value == 'Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("please select User");
+					bootbox.alert("please select User");
 					//document.getElementById('lblError').innerHTML ="Please Select the user";
 					return false;
 				}
@@ -376,25 +376,25 @@
 		function validate(name,value){
 		
 			if(dom.get('vouchernumber') && dom.get('vouchernumber').value==''){
-				alert('Please Enter voucher number');
+				bootbox.alert('Please Enter voucher number');
 				return false;
 			}
 			if(dom.get('paymentheader.voucherheader.voucherDate').value==''){
-				alert("Please Select the Voucher Date!!");
+				bootbox.alert("Please Select the Voucher Date!!");
 				return false;
 			}
 		
 			if(dom.get('bankbranch').options[dom.get('bankbranch').selectedIndex].value==-1){
-				alert("Please Select the Bank!!");
+				bootbox.alert("Please Select the Bank!!");
 				return false;
 			}
 			if(dom.get('bankaccount').options[dom.get('bankaccount').selectedIndex].value==-1){
-				alert("Please Select the Bank Account");
+				bootbox.alert("Please Select the Bank Account");
 				return false;
 			}
 		
 			if(document.getElementById('grandTotal').value==0){
-				alert('Payment Amount should be greater than zero!');
+				bootbox.alert('Payment Amount should be greater than zero!');
 				dom.get('tabber1').onclick();
 				return false;
 			}
@@ -406,7 +406,7 @@
 		function checkLength(obj){
 			if(obj.value.length>250)
 			{
-				alert('Max 250 characters are allowed for comments. Remaining characters are truncated.')
+				bootbox.alert('Max 250 characters are allowed for comments. Remaining characters are truncated.')
 				obj.value = obj.value.substring(1,250);
 			}
 		}
@@ -423,7 +423,7 @@
 			var index = obj.id.substring(10,obj.id.length);	
 			if(obj.value>parseFloat(document.getElementById('payableAmt'+index).value))
 			{
-				alert('Payment amount should not be greater than payable amount');
+				bootbox.alert('Payment amount should not be greater than payable amount');
 				obj.value=parseFloat(document.getElementById('hiddenText').value);
 				document.getElementById('grandTotal').value = parseFloat(document.getElementById('grandTotal').value) - parseFloat(document.getElementById('hiddenText').value) + parseFloat(obj.value);
 				return;

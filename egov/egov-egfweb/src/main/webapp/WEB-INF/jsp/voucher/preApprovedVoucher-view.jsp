@@ -269,7 +269,7 @@
 	function openSource()
 	{
 		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
-			alert('Source is not available');
+			bootbox.alert('Source is not available');
 		else{
 			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>' + '&showMode=view'
 			window.open(url,'width=900, height=700')
@@ -281,7 +281,7 @@
 	{
 		if(obj.value.length>1024)
 		{
-			alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+			bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 			obj.value = obj.value.substring(1,1024);
 		}
 	}

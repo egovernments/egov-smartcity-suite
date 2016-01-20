@@ -270,7 +270,7 @@
 		        var counts = lastRow - 1;
 		         if(lastRow ==1)
 		      	{
-		     		 alert('Cannot delete this row');
+		        	 bootbox.alert('Cannot delete this row');
 		   			
 		      	     return false;
 		        }

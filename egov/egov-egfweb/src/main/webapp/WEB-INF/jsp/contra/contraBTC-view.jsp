@@ -112,7 +112,7 @@ function onloadTask(){
 function showMessage(message){
 	var close = <s:property value="close"/>;
 	var voucherHeaderId = <s:property value="voucherHeader.id"/>;
-	alert(message);
+	bootbox.alert(message);
 	if(close == true){
 		self.close();
 	}

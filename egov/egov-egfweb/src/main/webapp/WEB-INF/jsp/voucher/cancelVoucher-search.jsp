@@ -262,7 +262,7 @@ function loadNamesForSelectedType()
 		}                                      
 		</s:iterator> 
 		if(queryParams==""){
-			alert("Alert please select atleast one voucher to cancel");
+			bootbox.alert("Alert please select atleast one voucher to cancel");
 			return false;
 		}else{            
 			document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-update.action?"+queryParams;
@@ -282,12 +282,12 @@ function doAfterSubmit(){
 
 var callback = {
 		success: function(o){
-			alert("Vouchers cancelled succesfully");
+			bootbox.alert("Vouchers cancelled succesfully");
 			document.getElementById('listid').style.display ='none';
 			},
 		failure: function(o) {
 			document.getElementById('loading').style.display ='none';
-			alert("Search failed! Please try again");
+			bootbox.alert("Search failed! Please try again");
 			}
 }
 function loadSearch(){

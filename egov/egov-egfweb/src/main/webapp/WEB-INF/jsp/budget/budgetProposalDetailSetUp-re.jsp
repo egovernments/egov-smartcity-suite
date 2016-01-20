@@ -264,7 +264,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});

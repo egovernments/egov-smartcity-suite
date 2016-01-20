@@ -258,9 +258,9 @@
 				}
 			}	
 			function validateApproverUser(name,value){
-				//alert("action name"+name);     
+				//bootbox.alert("action name"+name);     
 				document.getElementById("actionName").value= name;
-				//alert("button value"+value);  
+				//bootbox.alert("button value"+value);  
 				<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 					if(!validateUser(name,value)){ return false; }
 				</s:if>
@@ -278,8 +278,8 @@
 	}
 	function validateJV(btnval,name,value)
 	{
-	 // alert("inside validate jv");  
-	// alert(document.getElementById('billDetailTable'));
+	 // bootbox.alert("inside validate jv");  
+	// bootbox.alert(document.getElementById('billDetailTable'));
 	
 	   document.getElementById("buttonValue").value=btnval;
 		document.getElementById('lblError').innerHTML ="";
@@ -430,7 +430,7 @@ function showMessage(message){
 		if( document.forms[0].elements[i].id!='Close')
 		document.forms[0].elements[i].disabled =true;
 	} 
-	alert(message);
+	bootbox.alert(message);
 	var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
 	document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
 	document.forms[0].submit();      

@@ -117,7 +117,7 @@ function isValidFile(file,basic) {
 			}
 		};
 		parentNode.replaceChild(fileInput,file);
-		alert("File is invalid, Please select a valid file.");
+		bootbox.alert("File is invalid, Please select a valid file.");
 		return false;
 	}
 	return true;

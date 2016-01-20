@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 		var modeval=$('#mode').val();
 		var validmessage=$('#validMessage').val()
 			if(modeval!='' && modeval=='errorMode' && validmessage!='' ){
-				alert($('#validMessage').val());
+				bootbox.alert($('#validMessage').val());
 				$('#consumerCode').val('');
 				return false;
 			}

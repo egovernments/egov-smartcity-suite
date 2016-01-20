@@ -88,7 +88,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -190,7 +190,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -380,7 +380,7 @@
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch Funding Agency Grant Amount');
+			bootbox.alert('Cannot fetch Funding Agency Grant Amount');
 		}
 	}
 	//Populating Grant Amount and Subledger name for EntertainmentTax
@@ -396,7 +396,7 @@
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch GrantAmount and Subledger');
+			bootbox.alert('Cannot fetch GrantAmount and Subledger');
 		}
 	}
 	var chequeNoAndDate={
@@ -410,7 +410,7 @@
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	function createTextFieldFormatterWithStyle(tableType,prefix,suffix,style){
@@ -463,7 +463,7 @@
 		var dat=validateDate(obj.value);
 		if (!dat && dat!=null) 
 		{
-			alert('Invalid date format : Enter Date as dd/mm/yyyy');
+			bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 			obj.value="";
 			return;
 		}
@@ -482,35 +482,35 @@
 			var obj7=document.getElementById(GRANTLIST+'['+i+'].receiptVoucher.voucherNumber');
 			var obj8=document.getElementById(GRANTLIST+'['+i+'].department.id');
 			if(obj8==null || obj8.value==-1  || obj8.value==0 || obj8.value==''){
-				alert("Select Department in Row "+(i+1));
+				bootbox.alert("Select Department in Row "+(i+1));
 				return false;
 			}
 			if(obj1==null || obj1.value==-1  || obj1.value==0 || obj1.value==''){
-				alert("Select Financial Year in Row "+(i+1));
+				bootbox.alert("Select Financial Year in Row "+(i+1));
 				return false;
 			}
 			if(obj2==null || obj2.value==-1  || obj2.value==0 || obj2.value==''){
-				alert("Select Period in Row "+(i+1));
+				bootbox.alert("Select Period in Row "+(i+1));
 				return false;
 			}
 			if(obj3==null || obj3.value==-1  || obj3.value==0 || obj3.value==''){
-				alert("Enter Proceedings No. in Row "+(i+1));
+				bootbox.alert("Enter Proceedings No. in Row "+(i+1));
 				return false;
 			}
 			if(obj4==null || obj4.value==-1  || obj4.value==0 || obj4.value==''){
-				alert("Enter Proceedings Date in Row "+(i+1));
+				bootbox.alert("Enter Proceedings Date in Row "+(i+1));
 				return false;
 			}
 			if(obj5==null || obj5.value==-1  || obj5.value==0 || obj5.value==''){
-				alert("Link Accrual GJV in Row "+(i+1));
+				bootbox.alert("Link Accrual GJV in Row "+(i+1));
 				return false;
 			}
 			if((obj6==null || obj6.value==-1  || obj6.value==0 || obj6.value=='') && (obj7==null || obj7.value==-1  || obj7.value==0 || obj7.value=='')){
-				alert("Link GJV or Receipt in Row "+(i+1));
+				bootbox.alert("Link GJV or Receipt in Row "+(i+1));
 				return false;
 			}
 			if(!(obj6==null || obj6.value==-1  || obj6.value==0 || obj6.value=='') && !(obj7==null || obj7.value==-1  || obj7.value==0 || obj7.value=='')){
-				alert("You have linked both GJV and Receipt in Row "+(i+1));
+				bootbox.alert("You have linked both GJV and Receipt in Row "+(i+1));
 				obj6.value="";
 				obj7.value="";	
 				return false;
