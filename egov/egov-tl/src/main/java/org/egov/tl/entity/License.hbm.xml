@@ -68,7 +68,7 @@
 		<property name="tempLicenseNumber" column="TEMP_LICENSE_NUMBER" />
 		<property name="officeEmailId" column="OFFICE_EMAILID"/>
 		<property name="propertyNo" column="PROPERTY_NO" type="java.lang.String"/>
-		<property name="startDate" column="START_DATE" />
+		<property name="startDate" column="STARTDATE" />
 		<property name="ownershipType" column="OWNERSHIP_TYPE" type="java.lang.String" not-null="true" />
 		<many-to-one name="category" class="org.egov.tl.entity.LicenseCategory" fetch="select" not-null="true" >
 			<column name="ID_CATEGORY" precision="22" scale="0" />
