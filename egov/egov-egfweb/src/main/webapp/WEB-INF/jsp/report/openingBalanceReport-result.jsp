@@ -58,7 +58,7 @@
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Fund" style="width:6%;text-align:center" property="fund" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="GlCode" style="width:6%;text-align:center" property="accCode" />
+			title="GL Code" style="width:6%;text-align:center" property="accCode" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Account Head" style="width:8%;text-align:left"
 			property="accName" />
@@ -66,9 +66,9 @@
 			title="Description" style="width:5%;text-align:left"
 			property="description" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Debit(Rs.)" style="width:6%;text-align:right" property="debit" />
+			title="Debit (Rs.)" style="width:6%;text-align:right" property="debit" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Credit(Rs.)" style="width:6%;text-align:right"
+			title="Credit (Rs.)" style="width:6%;text-align:right"
 			property="credit" />
 		<display:caption media="pdf">
 			<div align="left" style="text-align: left;">
