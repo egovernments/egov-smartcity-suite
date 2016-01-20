@@ -89,4 +89,9 @@ public class AdvertisementTaxConstants {
     public static final String ADDRESSTYPEASOWNER = "OWNER";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String WF_PERMITORDER_BUTTON = "GENERATE PERMIT ORDER";
+    public static final String WORKFLOW_ACTION ="workFlowAction";
+    public static final String PERMITORDER = "permitOrder";
+    public static final String WF_DEMANDNOTICE_BUTTON = "GENERATE DEMAND NOTICE";
+    public static final String COLLECTION_REMARKS ="Collection done";
+    
 }

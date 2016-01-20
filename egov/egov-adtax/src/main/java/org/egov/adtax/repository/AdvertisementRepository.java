@@ -39,6 +39,7 @@
 package org.egov.adtax.repository;
 
 import org.egov.adtax.entity.Advertisement;
+import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -46,4 +47,6 @@ import org.springframework.stereotype.Repository;
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long>, AdvertisementRepositoryCustom {
 
     Advertisement findByAdvertisementNumber(String advertisementNumber);
+    
+    Advertisement findByDemandId(EgDemand egDemand);
 }

@@ -41,17 +41,14 @@ package org.egov.adtax.workflow;
 
 import javax.transaction.Transactional;
 
-import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;;
+import org.egov.adtax.entity.AdvertisementPermitDetail;;
 
 /**
  * The Class ApplicationCommonWorkflow.
  */
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
+public class AdtaxWorkflowCustomDefaultImpl extends AdtaxWorkflowCustomImpl {
 
-    public ApplicationWorkflowCustomDefaultImpl() {
+    public AdtaxWorkflowCustomDefaultImpl() {
         // TODO Auto-generated constructor stub
     }
 

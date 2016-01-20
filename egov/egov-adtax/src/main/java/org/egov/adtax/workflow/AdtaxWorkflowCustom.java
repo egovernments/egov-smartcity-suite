@@ -44,7 +44,7 @@ import org.egov.adtax.entity.AdvertisementPermitDetail;
 /**
  * The Interface ApplicationCommonWorkflow.
  */
-public interface ApplicationWorkflowCustom {
+public interface AdtaxWorkflowCustom {
 	
     
     /**

@@ -117,7 +117,9 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                     redirAttrib.addFlashAttribute("approverName", wfInitiator.getEmployee().getName());
                     redirAttrib.addFlashAttribute("nextDesign", wfInitiator.getDesignation().getName());
                 }
-            }
+            } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
+                return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
+
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());

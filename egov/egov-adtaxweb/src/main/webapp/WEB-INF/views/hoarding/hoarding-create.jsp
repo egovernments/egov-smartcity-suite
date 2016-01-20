@@ -60,14 +60,14 @@
 			<div class="tab-content">
 				<div class="tab-pane fade active in" id="hoardingdetails">	
 					<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
-					<jsp:include page="document-create.jsp"></jsp:include>
+					<jsp:include page="document-update.jsp"></jsp:include>
 				
 				</div>
 			</div>
 		</div>
-		<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
 		<div class="buttonbottom" align="center">
-			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 		</div>
 	</form:form>
 	</div>

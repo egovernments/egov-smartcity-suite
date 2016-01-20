@@ -53,7 +53,7 @@ import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.utils.AdTaxNumberGenerator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
-import org.egov.adtax.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -88,7 +88,7 @@ public class AdvertisementPermitDetailService {
     private AdvertisementDemandService advertisementDemandService;
 
     @Autowired
-    private ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl;
+    private AdtaxWorkflowCustomDefaultImpl adtaxWorkflowCustomDefaultImpl;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -121,30 +121,31 @@ public class AdvertisementPermitDetailService {
 
         if (approvalPosition != null && approvalPosition > 0 && additionalRule != null
                 && StringUtils.isNotEmpty(workFlowAction))
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
+            adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         return advertisementPermitDetail;
     }
 
     @Transactional
-    public AdvertisementPermitDetail updateAdvertisementPermitDetailForLegacy(final AdvertisementPermitDetail advertisementPermitDetail
-          ) throws HoardingValidationError {
+    public AdvertisementPermitDetail updateAdvertisementPermitDetailForLegacy(
+            final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
 
         advertisementDemandService.updateDemandForLegacyEntry(advertisementPermitDetail, advertisementPermitDetail
                 .getAdvertisement().getDemandId());
-        
+
         roundOfAllTaxAmount(advertisementPermitDetail);
-        
+
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
         return advertisementPermitDetail;
     }
+
     @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) throws HoardingValidationError {
         final boolean anyDemandPendingForCollection = advertisementDemandService
                 .anyDemandPendingForCollection(advertisementPermitDetail);
-    
+
         /*
          * if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection) throw
          * new HoardingValidationError("agency", "ADTAX.001");
@@ -174,8 +175,8 @@ public class AdvertisementPermitDetailService {
                     advertisementPermitDetail.getAdvertisement().getDemandId());
         roundOfAllTaxAmount(advertisementPermitDetail);
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
+        if (approvalPosition != null && additionalRule != null && org.apache.commons.lang.StringUtils.isNotEmpty(workFlowAction))
+            adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         return advertisementPermitDetail;
     }
@@ -273,9 +274,10 @@ public class AdvertisementPermitDetailService {
         return hoardingSearchResults;
 
     }
+
     public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch) {
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailLike(hoardingSearch,null);
+                .searchAdvertisementPermitDetailLike(hoardingSearch, null);
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
         advPermitDtl.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
@@ -288,9 +290,10 @@ public class AdvertisementPermitDetailService {
         });
         return hoardingSearchResults;
     }
-    public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch,String hoardingType) {
+
+    public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch, final String hoardingType) {
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailLike(hoardingSearch,hoardingType);
+                .searchAdvertisementPermitDetailLike(hoardingSearch, hoardingType);
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
         advPermitDtl.forEach(result -> {
             final HoardingSearch hoardingSearchResult = new HoardingSearch();
@@ -307,5 +310,12 @@ public class AdvertisementPermitDetailService {
 
     public Assignment getWfInitiator(final AdvertisementPermitDetail advertisementPermitDetail) {
         return assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
+    }
+
+    public void getWorkflow(final AdvertisementPermitDetail advertisementPermitDetail, final Long approvalPosition,
+            final String approvalComent, final String additionalRule, final String workFlowAction) {
+        if (approvalPosition != null && additionalRule != null && org.apache.commons.lang.StringUtils.isNotEmpty(workFlowAction))
+            adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
+                    approvalPosition, approvalComent, additionalRule, workFlowAction);
     }
 }

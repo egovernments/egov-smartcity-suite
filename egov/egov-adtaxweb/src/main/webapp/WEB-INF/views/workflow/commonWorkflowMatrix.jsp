@@ -40,7 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:if test="${nextAction !='END'}" > 
+<c:if test="${nextAction != 'END' && (currentState != 'Created' && currentState != 'Commissioner Approved')}" > 
 		<div class="panel panel-primary" data-collapsed="0" >				
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -49,19 +49,18 @@
 			</div>
 			<div class="panel-body">
 	
- <c:if test="${currentState!= 'null' && !'Closed'.equalsIgnoreCase(currentState)}">
-	<form:hidden path="" id="currentState" name="currentState" value="${currentState}"/>
-</c:if> 
- <c:if test="${currentState!= 'null' && 'Closed'.equalsIgnoreCase(currentState)}">
-	<form:hidden path="" id="currentState" name="currentState" value=""/>
-</c:if> 
-																																																									
-
+	<c:if test="${currentState!= 'null' && !'Closed'.equalsIgnoreCase(currentState)}">
+		<form:hidden path="" id="currentState" name="currentState" value="${currentState}"/>
+	</c:if> 
+	<c:if test="${currentState!= 'null' && 'Closed'.equalsIgnoreCase(currentState)}">
+		<form:hidden path="" id="currentState" name="currentState" value=""/>
+	</c:if> 
 <form:hidden path="" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 <form:hidden path="" id="additionalRule" name="additionalRule" value="${additionalRule}"/>
 <form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
 <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
+<form:hidden path="" id="nextAction" name="currentState" value="${currentState}"/>
 <form:hidden path="" id="approverName" name="approverName"/>
 <form:hidden path="" id="nextDesignation" name="nextDesignation"/>
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>

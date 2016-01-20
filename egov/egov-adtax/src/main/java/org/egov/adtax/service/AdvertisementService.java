@@ -56,6 +56,7 @@ import org.egov.adtax.search.contract.HoardingDcbReport;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.hibernate.Session;
@@ -218,5 +219,9 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoar
     }
     public Advertisement findBy(final Long hoardingId) {
         return advertisementRepository.findOne(hoardingId);
+    }
+    
+    public Advertisement getAdvertisementByDemand(final EgDemand demand) {
+        return advertisementRepository.findByDemandId(demand);
     }
 }

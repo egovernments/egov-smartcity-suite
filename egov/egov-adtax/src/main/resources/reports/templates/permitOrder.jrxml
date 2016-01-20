@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-01-18T12:42:30 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="528"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="municipality" class="java.lang.String"/>
+	<parameter name="district" class="java.lang.String"/>
+	<parameter name="advertisementtitle" class="java.lang.String"/>
+	<parameter name="applicantname" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="workFlowAction" class="java.lang.String"/>
+	<parameter name="category" class="java.lang.String"/>
+	<parameter name="currdate" class="java.lang.String"/>
+	<parameter name="measurement" class="java.lang.Long"/>
+	<parameter name="length" class="java.lang.Long"/>
+	<parameter name="width" class="java.lang.Long"/>
+	<parameter name="height" class="java.lang.Long"/>
+	<parameter name="breadth" class="java.lang.Long"/>
+	<parameter name="permitStartDate" class="java.lang.String"/>
+	<parameter name="permitEndDate" class="java.lang.String"/>
+	<parameter name="unitofmeasure" class="java.lang.String"/>
+	<background>
+		<band height="780" splitType="Stretch">
+			<rectangle>
+				<reportElement x="7" y="5" width="540" height="349" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="7" y="379" width="540" height="400" uuid="2781f9f9-9612-497c-85d7-5e83a8d360fa"/>
+			</rectangle>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" x="19" y="40" width="517" height="300" uuid="27a98bab-d01e-4a95-adf7-8e0ef5518dd2"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="19" y="443" width="517" height="324" uuid="8ebea2f7-0232-41c1-be72-1826d5ac648b"/>
+			</rectangle>
+		</band>
+	</background>
+	<detail>
+		<band height="501" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="42" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Permit Order For "+$P{advertisementtitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="27" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="12" width="555" height="15" uuid="e5a39ba9-b981-4b8a-9f6e-3ef8b5e337d2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="70" y="119" width="435" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Advertisement Tax - "+$P{municipality}+", Permit order for Advertisement</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="119" width="42" height="15" uuid="3c551f20-c6f7-44df-a210-5fbd222c62bc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Subject :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="282" width="132" height="15" uuid="308016cd-d5f2-4be2-a19b-b9e9d6807f48"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date :"+$P{currdate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="302" width="164" height="15" uuid="0ffe897f-e02e-4bd2-862a-df68075566ef"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="27" y="242" width="316" height="15" uuid="3268191a-38ec-4d90-b429-ad1adc3947bc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[** With Orders of ChairPerson / Mayor **]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="282" width="100" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Commissioner]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="29" y="139" width="491" height="15" uuid="48973e99-8221-4fa9-8dc0-7703f4302997"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Advertisement with measurement :"+$P{measurement} +",unit of measurement :"+$P{unitofmeasure}+",length :"+$P{length}+", width:"+$P{width}+", total height:"+$P{height} +", breadth:"+$P{breadth}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="68" width="190" height="15" uuid="f837c596-4af8-4442-a7b8-e9695e314b59"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Name of the Applicant : <style isBold=\"true\">"+$P{applicantname}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="29" y="83" width="497" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Address : <style isBold=\"true\">"+$P{address}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="27" y="154" width="490" height="17" uuid="08194b59-1e80-46ec-9f8b-93abe753c238"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="8" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Location of display/exhibition"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="28" y="209" width="492" height="29" uuid="52141567-b473-460a-bf85-9348172ff125"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="8" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["The advertiser shall abide by the statutory provisions of the Andhra Pradseh Municipalities Act, 1965 and the Rules and by-laws made there under"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="98" width="190" height="15" uuid="85b11de5-e4aa-40f0-9a32-d668a72eed14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Classification of advertisement : <style isBold=\"true\">"+$P{category}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="172" width="491" height="17" uuid="5e5c27ff-cc4c-4383-a206-f0211fe4f512"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Starting date of the advertisement :"+$P{permitStartDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="28" y="190" width="487" height="19" uuid="2ec2d521-dc74-43ac-920f-88d614fdf1c4"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Closing date of the advertisement:"+$P{permitEndDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

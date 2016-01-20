@@ -50,7 +50,7 @@
 
     <context:component-scan base-package="org.egov.adtax" />
 	
-	<bean id="applicationWorkflowCustomDefaultImpl" class="org.egov.adtax.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype"/>
+	<bean id="adtaxWorkflowCustomDefaultImpl" class="org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl" scope="prototype"/>
 	
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>
