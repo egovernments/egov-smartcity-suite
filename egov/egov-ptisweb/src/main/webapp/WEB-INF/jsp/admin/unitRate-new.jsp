@@ -76,23 +76,23 @@ function validateData(name){
 
 	if(name == 'add') {
 		if(zoneId == -1){
-			alert('Please select the Zone');
+			bootbox.alert('Please select the Zone');
 			return false;
 		}
 		if(usageId == -1){
-			alert('Please select the Nature of Building Use');
+			bootbox.alert('Please select the Nature of Building Use');
 			return false;
 		} 
 		if(structureClassId == -1){
-			alert('Please select the Classification of Building');
+			bootbox.alert('Please select the Classification of Building');
 			return false;
 		}
 		if(taxAmount =='' || eval(taxAmount)==0){
-			alert('Please enter the Unit Rate');
+			bootbox.alert('Please enter the Unit Rate');
 			return false;
 		}
 		if(fromDate == ''){
-			alert('Please enter the Effect From Date');
+			bootbox.alert('Please enter the Effect From Date');
 			return false;
 		}
 
@@ -104,7 +104,7 @@ function validateData(name){
  	document.forms[0].action = 'unitRate-create.action';
 	} else if(name == 'update') {
 		if(taxAmount =='' || eval(taxAmount)==0){
-			alert('Please enter the Unit Rate');
+			bootbox.alert('Please enter the Unit Rate');
 			return false;
 		}
 		jQuery("#zoneId").removeAttr('disabled');
@@ -143,7 +143,7 @@ var checkResult='';
 	}	
 }
 categoryCheckFailure= function(){
-	alert('Unable to check for existing category');
+	bootbox.alert('Unable to check for existing category');
 }
 
 function makeReadyOnly() {

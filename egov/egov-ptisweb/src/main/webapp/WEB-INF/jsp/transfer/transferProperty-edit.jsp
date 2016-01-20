@@ -324,7 +324,7 @@
 							if (value == "true") {
 								deleteOwner(obj);
 							} else {
-								alert("Could not delete this Transferee Info");
+								bootbox.alert("Could not delete this Transferee Info");
 							}
 						});
 
@@ -333,7 +333,7 @@
 					deleteOwner(obj);
 				}
 			} else {
-				alert("Atleast one owner details is mandatory!");
+				bootbox.alert("Atleast one owner details is mandatory!");
 			}
 		}
 	</script>

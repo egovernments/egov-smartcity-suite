@@ -122,7 +122,7 @@
 	}
 
 	function populateDesignations() {
- 	//alert(document.getElementById("egwStatuscode").value);
+ 	//bootbox.alert(document.getElementById("egwStatuscode").value);
 		populatedesignationId( {
 			departmentId : document.getElementById("departmentId").value,
 			currentStatusCode : document.getElementById("egwStatuscode").value

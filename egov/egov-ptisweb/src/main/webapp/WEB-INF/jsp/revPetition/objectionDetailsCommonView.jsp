@@ -42,7 +42,7 @@
 <!--View Property Details -  Start   -->
 <script>
   function generateRejectionLetter(){ 
-	alert("Generating Rejection Letter");
+	bootbox.alert("Generating Rejection Letter");
 	window.location = "${pageContext.request.contextPath}/objection/rejectionLetter-print.action?model.id="+'<s:property value="objection.id"/>';
 	}
 	</script>

@@ -85,7 +85,7 @@
 				error: function (response) {
 					console.log("failed");
 					jQuery('#blockId').html("");
-					alert("No block details mapped for ward")
+					bootbox.alert("No block details mapped for ward")
 				}
 			});
 		}

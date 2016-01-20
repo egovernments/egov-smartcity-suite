@@ -50,7 +50,7 @@ function getUsersByDesignationAndDept() {
 function callAlertForDepartment() {
     var value=document.getElementById("approverDepartment").value;
 	if(value=="-1") {
-		alert("Please select the Approver Department");
+		bootbox.alert("Please select the Approver Department");
 		document.getElementById("approverDepartment").focus();
 		return false;
 	}
@@ -59,7 +59,7 @@ function callAlertForDepartment() {
 function callAlertForDesignation() {
 	var value=document.getElementById("approverDesignation").value;
 	if(value=="-1") {
-		alert("Please select the approver designation");
+		bootbox.alert("Please select the approver designation");
 		document.getElementById("approverDesignation").focus();
 		return false;
 	}
