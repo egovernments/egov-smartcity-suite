@@ -99,7 +99,7 @@ public class CategoryMasterController {
         if (resultBinder.hasErrors())
             return "category-master";
         PropertyCategory propertycategory = new PropertyCategory();
-        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(propertyCategory.getPropertyType(),connectionCategoryService.findByName(propertyCategory.getConnectionCategory().getName()));
+        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(propertyCategory.getPropertyType(),connectionCategoryService.findByCode(propertyCategory.getConnectionCategory().getName().toUpperCase()));
         if (propertycategory!=null){
             redirectAttrs.addFlashAttribute("propertyCategory", propertycategory);
             model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
