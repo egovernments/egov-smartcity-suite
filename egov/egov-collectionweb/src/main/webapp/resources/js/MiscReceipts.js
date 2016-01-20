@@ -715,7 +715,7 @@ function createDropdownFormatterDetailCode(prefix){
 		}
 	    },
 	    failure: function(o) {
-	    	alert('failure');
+	    	alert('unable to load subledger details');
 	    }
 	}	
 
@@ -917,7 +917,7 @@ success: function(o) {
 	}
     },
     failure: function(o) {
-    	alert('failure');
+    	alert('unable to load subledger details');
     }
 }
 function getDetailType(val){
@@ -1042,7 +1042,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	alert('unable to load subledger details');
     }
 }
 function loaddropdown(){
@@ -1127,7 +1127,7 @@ var callbackCode = {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	alert('unable to load subledger details');
     }
 }
 

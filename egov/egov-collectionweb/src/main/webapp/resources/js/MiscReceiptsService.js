@@ -101,10 +101,6 @@ success: function(o) {
 				}
 				
 		}
-		
-    },
-    failure: function(o) {
-    	alert('failure');
     }
 }
 
@@ -220,7 +216,7 @@ loadFinAccSuccessHandler=function(req,res){
 		 document.getElementById('totalcramount').value=totalcramt;
     }
  loadFinAccFailureHandler=function(){
-  alert('failure');
+  alert('unable to load Function');
 }
 
 
@@ -270,5 +266,5 @@ loadFinSubledgerSuccessHandler=function(req,res){
 }
 
  loadFinSubledgerFailureHandler=function(){
-  alert('failure');
+  alert('Unable to load Sub Ledger');
 }

@@ -798,6 +798,7 @@ public class ReceiptAction extends BaseFormAction {
                 receiptHeader.setVoucherNum(voucherNum);
                 receiptHeader.setIsReconciled(Boolean.TRUE);
                 receiptHeader.setManualreceiptdate(manualReceiptDate);
+                receiptHeader.setPayeeName(StringEscapeUtils.unescapeHtml(paidBy));
 
             } else {
                 receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
