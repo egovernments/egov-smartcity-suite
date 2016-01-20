@@ -102,25 +102,28 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON.equalsIgnoreCase(workFlowAction))
+                return "redirect:/advertisement/demandNotice?pathVar=" + advertisementPermitDetail.getId();
+            else {
+                updateHoardingDocuments(advertisementPermitDetail);
+                advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
+                        approvalComment, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
+                if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction))
+                    redirAttrib.addFlashAttribute("message", "msg.success.approved");
+                else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+                    final Assignment wfInitiator = advertisementPermitDetailService.getWfInitiator(advertisementPermitDetail);
+                    if (EgovThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId()))
+                        redirAttrib.addFlashAttribute("message", "msg.success.cancelled");
+                    else {
+                        redirAttrib.addFlashAttribute("message", "msg.success.reject");
+                        redirAttrib.addFlashAttribute("approverName", wfInitiator.getEmployee().getName());
+                        redirAttrib.addFlashAttribute("nextDesign", wfInitiator.getDesignation().getName());
+                    }
+                } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
+                    return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
 
-            updateHoardingDocuments(advertisementPermitDetail);
-            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
-                    approvalComment, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
-            if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction))
-                redirAttrib.addFlashAttribute("message", "msg.success.approved");
-            else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-                final Assignment wfInitiator = advertisementPermitDetailService.getWfInitiator(advertisementPermitDetail);
-                if (EgovThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId()))
-                    redirAttrib.addFlashAttribute("message", "msg.success.cancelled");
-                else {
-                    redirAttrib.addFlashAttribute("message", "msg.success.reject");
-                    redirAttrib.addFlashAttribute("approverName", wfInitiator.getEmployee().getName());
-                    redirAttrib.addFlashAttribute("nextDesign", wfInitiator.getDesignation().getName());
-                }
-            } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
-                return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
-
-            return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+                return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+            }
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return "hoarding-update";

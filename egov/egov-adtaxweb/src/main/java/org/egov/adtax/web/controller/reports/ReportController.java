@@ -40,6 +40,7 @@
 package org.egov.adtax.web.controller.reports;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,16 +78,16 @@ public class ReportController {
     public @ResponseBody ResponseEntity<byte[]> generatePermitOrder(final HttpServletRequest request,
             final HttpSession session) {
         final String errorMessage = "";
-        String workFlowAction = "";
+        final String workFlowAction = "";
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
                 .findBy(Long.valueOf(request.getParameter("pathVar")));
-        
+
         if (!errorMessage.isEmpty())
             return redirect(errorMessage);
         return generatePermitOrder(advertisementPermitDetail, session, workFlowAction);
     }
 
-    /*@RequestMapping(value = "/demandNotice", method = RequestMethod.GET)
+    @RequestMapping(value = "/demandNotice", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateDemandNotice(final HttpServletRequest request,
             final HttpSession session) {
         final String errorMessage = "";
@@ -94,12 +95,12 @@ public class ReportController {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
                 .findBy(Long.valueOf(request.getParameter("pathVar")));
         workFlowAction = (String) session.getAttribute(AdvertisementTaxConstants.WORKFLOW_ACTION);
-       
+
         if (!errorMessage.isEmpty())
             return redirect(errorMessage);
         return generateDemandNotice(advertisementPermitDetail, session, workFlowAction);
-    }*/
-    
+    }
+
     private ResponseEntity<byte[]> generatePermitOrder(final AdvertisementPermitDetail advertisementPermitDetail,
             final HttpSession session, final String workFlowAction) {
         ReportRequest reportInput = null;
@@ -112,17 +113,22 @@ public class ReportController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("permitNumber", advertisementPermitDetail.getPermissionNumber());
-            reportParams.put("applicantname", advertisementPermitDetail.getOwnerDetail());
+            reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
             reportParams.put("address", advertisementPermitDetail.getAdvertisement().getAddress());
             reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
             reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
             reportParams.put("unitofmeasure", advertisementPermitDetail.getUnitOfMeasure());
-            reportParams.put("measurement", advertisementPermitDetail.getMeasurement());
-            reportParams.put("length", advertisementPermitDetail.getLength());
-            reportParams.put("breadth", advertisementPermitDetail.getBreadth());
-            reportParams.put("height", advertisementPermitDetail.getTotalHeight());
+            reportParams.put("measurement", advertisementPermitDetail.getMeasurement() == null ? Long.valueOf(0)
+                    : advertisementPermitDetail.getMeasurement());
+            reportParams.put("length",
+                    advertisementPermitDetail.getLength() == null ? Long.valueOf(0) : advertisementPermitDetail.getLength());
+            reportParams.put("breadth",
+                    advertisementPermitDetail.getBreadth() == null ? Long.valueOf(0) : advertisementPermitDetail.getBreadth());
+            reportParams.put("height", advertisementPermitDetail.getTotalHeight() == null ? Long.valueOf(0)
+                    : advertisementPermitDetail.getTotalHeight());
             reportParams.put("permitStartDate", advertisementPermitDetail.getPermissionstartdate());
             reportParams.put("permitEndDate", advertisementPermitDetail.getPermissionenddate());
+            reportParams.put("currdate", formatter.format(new Date()));
             reportInput = new ReportRequest(AdvertisementTaxConstants.PERMITORDER, advertisementPermitDetail, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
@@ -131,8 +137,8 @@ public class ReportController {
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
-    
-    /*private ResponseEntity<byte[]> generateDemandNotice(final AdvertisementPermitDetail advertisementPermitDetail,
+
+    private ResponseEntity<byte[]> generateDemandNotice(final AdvertisementPermitDetail advertisementPermitDetail,
             final HttpSession session, final String workFlowAction) {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
@@ -140,29 +146,38 @@ public class ReportController {
             final Map<String, Object> reportParams = new HashMap<String, Object>();
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
-            reportParams.put("advertisementtitle", WordUtils.capitalize("Advertisement Demand Notice"));
+            reportParams.put("advertisementtitle", WordUtils.capitalize("Advertisement Permit Order"));
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             reportParams.put("workFlowAction", workFlowAction);
-            reportParams.put("permitNumber", advertisementPermitDetail.getPermissionNumber());
-            reportParams.put("applicantname", advertisementPermitDetail.getOwnerDetail());
+            reportParams.put("advertisementnumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
+            reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
             reportParams.put("address", advertisementPermitDetail.getAdvertisement().getAddress());
             reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
             reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
             reportParams.put("unitofmeasure", advertisementPermitDetail.getUnitOfMeasure());
-            reportParams.put("measurement", advertisementPermitDetail.getMeasurement());
-            reportParams.put("length", advertisementPermitDetail.getLength());
-            reportParams.put("breadth", advertisementPermitDetail.getBreadth());
-            reportParams.put("height", advertisementPermitDetail.getTotalHeight());
+            reportParams.put("measurement", advertisementPermitDetail.getMeasurement() == null ? Long.valueOf(0)
+                    : advertisementPermitDetail.getMeasurement());
+            reportParams.put("length",
+                    advertisementPermitDetail.getLength() == null ? Long.valueOf(0) : advertisementPermitDetail.getLength());
+            reportParams.put("breadth",
+                    advertisementPermitDetail.getBreadth() == null ? Long.valueOf(0) : advertisementPermitDetail.getBreadth());
+            reportParams.put("height", advertisementPermitDetail.getTotalHeight() == null ? Long.valueOf(0)
+                    : advertisementPermitDetail.getTotalHeight());
             reportParams.put("permitStartDate", advertisementPermitDetail.getPermissionstartdate());
             reportParams.put("permitEndDate", advertisementPermitDetail.getPermissionenddate());
-            reportInput = new ReportRequest(AdvertisementTaxConstants.PERMITORDER, advertisementPermitDetail, reportParams);
+            reportParams.put("currdate", formatter.format(new Date()));
+            reportParams.put("taxamount", advertisementPermitDetail.getTaxAmount() == null ? Long.valueOf(0)
+                    : advertisementPermitDetail.getTaxAmount());
+            reportParams.put("encroachmentfee", advertisementPermitDetail.getEncroachmentFee() == null ? Long.valueOf(0)
+                    : advertisementPermitDetail.getEncroachmentFee());
+            reportInput = new ReportRequest(AdvertisementTaxConstants.DEMANDNOTICE, advertisementPermitDetail, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Work Order.pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }*/
+    }
 
     private ResponseEntity<byte[]> redirect(String errorMessage) {
         errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage

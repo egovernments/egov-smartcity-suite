@@ -92,6 +92,7 @@ public class AdvertisementTaxConstants {
     public static final String WORKFLOW_ACTION ="workFlowAction";
     public static final String PERMITORDER = "permitOrder";
     public static final String WF_DEMANDNOTICE_BUTTON = "GENERATE DEMAND NOTICE";
-    public static final String COLLECTION_REMARKS ="Collection done";
+    public static final String COLLECTION_REMARKS = "Collection done";
+    public static final String DEMANDNOTICE = "demandNotice";
     
 }

@@ -60,7 +60,7 @@
 			<div class="tab-content">
 				<div class="tab-pane fade active in" id="hoardingdetails">	
 					<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
-					<jsp:include page="document-update.jsp"></jsp:include>
+					<jsp:include page="document-create.jsp"></jsp:include>
 				
 				</div>
 			</div>
