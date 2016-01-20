@@ -233,6 +233,9 @@ public class UnitRateAction extends BaseFormAction {
                 query.setLong("stucture", structureClassId);
             }
             bndryCatList = query.list();
+            if (bndryCatList.isEmpty()) {
+                addActionError(getText("no.unit.rate.exists"));
+            }
             return SEARCH_FORM;
         }
     }
@@ -253,45 +256,56 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-update")
     public String update() {
         Category catFromDb = null;
-        if (category != null && category.getId() != null && category.getId() != -1) {
-            catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
-        }
-        if (catFromDb != null) {
-            catFromDb.setIsHistory('Y');
-            Date toDate = catFromDb.getToDate();
-            if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
-                Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
-                catFromDb.setToDate(newToDate);
+        Category existingCategory = (Category) getPersistenceService()
+                .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
+                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? ",
+                        zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
+        if (existingCategory != null) {
+            getPersistenceService().update(existingCategory);
+            setAckMessage("Unit Rate is updated successfully!");
+            return RESULT_ACK;
+        } else {
+            if (category != null && category.getId() != null && category.getId() != -1) {
+                catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
             }
+            if (catFromDb != null) {
+                catFromDb.setIsHistory('Y');
+                Date toDate = catFromDb.getToDate();
+                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
+                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
+                    catFromDb.setToDate(newToDate);
+                }
+            }
+            Category categoryObj = new Category();
+            categoryObj.setCategoryAmount(category.getCategoryAmount());
+            categoryObj.setFromDate(category.getFromDate());
+            PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
+                    usageId);
+            StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
+                    "from StructureClassification where id = ? ", structureClassId);
+            Boundary zone = boundaryService.getBoundaryById(zoneId);
+            categoryObj.setPropUsage(usage);
+            categoryObj.setStructureClass(structureClass);
+            categoryObj.setIsHistory('N');
+            categoryObj.setToDate(catFromDb.getToDate());
+            categoryObj.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
+                    .concat("-").concat(categoryObj.getCategoryAmount().toString()));
+
+            BoundaryCategory boundaryCategory = new BoundaryCategory();
+            boundaryCategory.setCategory(categoryObj);
+            boundaryCategory.setBndry(zone);
+            boundaryCategory.setFromDate(categoryObj.getFromDate());
+            boundaryCategory.setToDate(categoryObj.getFromDate());
+
+            Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
+            boundaryCategorySet.add(boundaryCategory);
+
+            categoryObj.setCatBoundaries(boundaryCategorySet);
+            getPersistenceService().persist(categoryObj);
+            getPersistenceService().update(catFromDb);
+            setAckMessage("Unit Rate is updated successfully!");
+            return RESULT_ACK;
         }
-        Category categoryObj = new Category();
-        categoryObj.setCategoryAmount(category.getCategoryAmount());
-        categoryObj.setFromDate(category.getFromDate());
-        PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ", usageId);
-        StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
-                "from StructureClassification where id = ? ", structureClassId);
-        Boundary zone = boundaryService.getBoundaryById(zoneId);
-        categoryObj.setPropUsage(usage);
-        categoryObj.setStructureClass(structureClass);
-        categoryObj.setIsHistory('N');
-        categoryObj.setToDate(catFromDb.getToDate());
-        categoryObj.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
-                .concat("-").concat(categoryObj.getCategoryAmount().toString()));
-
-        BoundaryCategory boundaryCategory = new BoundaryCategory();
-        boundaryCategory.setCategory(categoryObj);
-        boundaryCategory.setBndry(zone);
-        boundaryCategory.setFromDate(categoryObj.getFromDate());
-        boundaryCategory.setToDate(categoryObj.getFromDate());
-
-        Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
-        boundaryCategorySet.add(boundaryCategory);
-
-        categoryObj.setCatBoundaries(boundaryCategorySet);
-        getPersistenceService().persist(categoryObj);
-        getPersistenceService().update(catFromDb);
-        setAckMessage("Unit Rate is updated successfully!");
-        return RESULT_ACK;
     }
 
     @Override
