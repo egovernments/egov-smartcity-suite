@@ -37,59 +37,22 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<html>
+<body>
 
-<style type="text/css">
-.yui-dt table{
-  width:100%;
-}
-.yui-dt-col-Add{
-  width:5%;
-}
-.yui-dt-col-Delete{
-  width:5%;
-}
+<%@ include file="/includes/taglibs.jsp"%>
+	
+<div class="new-page-header">
+	<s:text name="sor.viewSor.view" />
+</div>
 
-body
-{
-  font-size: 14px;
-  font-family:regular;
-}
-</style>
-<html>  
-<head>  
-    <title><s:text name="sor.master.title" /></title>  
-</head>  
-<body onload="validateInput();">
-	<s:if test="%{hasErrors()}">
-        <div class="errorstyle">
-          <s:actionerror/>
-          <s:fielderror/>
-        </div>
-    </s:if>
-	<s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
-        	<s:actionmessage theme="simple"/>
-        </div>
-    </s:if>
+<%@ include file='scheduleofrate-commonView.jsp'%>
 
-<s:form action="scheduleOfRate-save" theme="simple" name="scheduleOfRate" onsubmit="return validateSORFormAndSubmit();" cssClass="form-horizontal form-groups-bordered"><s:token/> 
-<s:hidden name="mode" id="mode" />
-<s:hidden  name="model.id" id="id"/> 
-	
-	<%@ include file='scheduleOfRate-form.jsp'%>
-	
-<p class="text-center">
-<s:if test="%{model.id!=null && mode != 'view'}">
-	<s:submit type="submit" cssClass="btn btn-primary" value="Modify" id="saveButton" name="button" method="save"  />&nbsp;
-</s:if>
-<s:if test="%{model.id==null}">
-	<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"  />&nbsp;
-	<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();" onclick="validateSORFormAndSubmit();"> &nbsp;
-</s:if>
-	<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
-</p>
-	
-</s:form>    
-</body>  
+<div class="row text-center">
+	<div class="add-margin">
+		<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+	</div>
+</div>
+
+</body>
 </html>

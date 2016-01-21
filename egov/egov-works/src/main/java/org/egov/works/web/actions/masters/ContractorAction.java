@@ -102,7 +102,7 @@ public class ContractorAction extends SearchFormAction {
     private List<ContractorDetail> actionContractorDetails = new LinkedList<ContractorDetail>();
     private Long id;
     private String mode;
-
+    
     @Autowired
     private UserService userService;
     private WorksService worksService;
@@ -187,8 +187,8 @@ public class ContractorAction extends SearchFormAction {
         // below line of code
         contractorService.persist(contractor);
         if (StringUtils.isBlank(mode))
-            addActionMessage(getText("contractor.save.success"));
-        else
+            addActionMessage(getText("contractor.save.success", new String[] {contractor.getCode()}));
+            else
             addActionMessage(getText("contractor.modified.success"));
         return SUCCESS;
 
@@ -356,7 +356,7 @@ public class ContractorAction extends SearchFormAction {
     public void setSearchDate(final Date searchDate) {
         this.searchDate = searchDate;
     }
-
+    
     public Map<String, String> getExmptionMap() {
         return exmptionMap;
     }

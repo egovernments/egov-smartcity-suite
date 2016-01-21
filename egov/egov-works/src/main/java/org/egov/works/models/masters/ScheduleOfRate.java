@@ -53,12 +53,15 @@ import org.egov.common.entity.UOM;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
+@Unique(fields = { "code" }, id = "id", tableName = "EGW_SCHEDULEOFRATE", columnName = {
+        "CODE" }, message = "sor.code.isunique")
 public class ScheduleOfRate extends BaseModel {
     private static final long serialVersionUID = -7797787370112941401L;
     private static final Logger logger = Logger.getLogger(ScheduleOfRate.class);
@@ -271,7 +274,7 @@ public class ScheduleOfRate extends BaseModel {
                 // existing periods.
                 if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)
                         || checkEndDate != null && isWithin(existingPeriod, checkEndDate) || existingEndDate != null
-                                && isWithin(checkPeriod1, existingEndDate)) {
+                        && isWithin(checkPeriod1, existingEndDate)) {
                     flag1 = false;
                     break;
                 } else if (checkEndDate != null && existingEndDate != null
@@ -384,7 +387,7 @@ public class ScheduleOfRate extends BaseModel {
                 // existing periods.
                 if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)
                         || checkEndDate != null && isWithin(existingPeriod, checkEndDate) || existingEndDate != null
-                                && isWithin(checkPeriod1, existingEndDate)) {
+                        && isWithin(checkPeriod1, existingEndDate)) {
                     flag1 = false;
                     break;
                 } else if (checkEndDate != null && existingEndDate != null
