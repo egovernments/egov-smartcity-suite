@@ -720,7 +720,7 @@ strong {
   padding-bottom: 5px;
 }
 .page-container .main-content .login-content-margin {
-  margin: 4% auto 2% auto;
+  margin: 1% auto 0% auto;
 }
 .page-container .main-content .citizen-screens .padding-tb {
   padding: 10px 0px;
@@ -1396,7 +1396,6 @@ strong {
 .page-container .main-content td.greybox.setborder {
   border: 1px solid #84B1AD;
   border-top: 0;
-  border-left: 0;
 }
 @media (max-width: 1199px) {
   .page-container .with-hr-menu {
