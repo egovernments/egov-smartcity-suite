@@ -84,12 +84,6 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
 
     @Autowired
     private TradeLicenseService tradeLicenseService;
-    @Autowired
-    private BoundaryService boundaryService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private SecurityUtils securityUtils;
 
     private Long licenseId;
 
@@ -134,7 +128,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     @SkipValidation
     @Action(value = "/transfer/transferTradeLicense-newForm")
     public String newForm() {
-        this.tl = this.tradeLicenseService.licensePersitenceService().find("from TradeLicense where id=?", this.licenseId);
+        this.tl = this.tradeLicenseService.getLicenseById(this.licenseId);
         // tl.setLicenseeZoneId(Long.valueOf(tl.getLicensee().getBoundary().getParent().getId()));
         List cityZoneList = new ArrayList();
         cityZoneList = this.licenseUtils.getAllZone();
@@ -146,7 +140,6 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
         return "transfer";
     }
 
-    @Override
     @ValidationErrorPage("transfer")
     @Action(value = "/transfer/transferTradeLicense-create")
     public String create() {
@@ -156,7 +149,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
             this.tl.getLicenseTransfer().setBoundary(licenseeboundary);
         }
         LicenseTransfer licenseTransfer = this.tl.getLicenseTransfer();
-        this.tl = (TradeLicense) this.persistenceService.find("from TradeLicense where id=?", this.tl.getId());
+        this.tl = this.tradeLicenseService.getLicenseById(this.tl.getId());
         this.tradeLicenseService.transferLicense(this.tl, licenseTransfer);
         try {
             //ts.initiateWorkFlowForTransfer(license(), workflowBean);
@@ -183,7 +176,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
             this.tl.getLicenseTransfer().setBoundary(licenseeboundary);
         }
         LicenseTransfer licenseTransfer = this.tl.getLicenseTransfer();
-        this.tl = (TradeLicense) this.persistenceService.find("from TradeLicense where id=?", this.tl.getId());
+        this.tl = this.tradeLicenseService.getLicenseById(this.tl.getId());
         licenseTransfer.setLicense(this.tl);
         this.tl.setLicenseTransfer(licenseTransfer);
         this.persistenceService.persist(this.tl);
@@ -197,7 +190,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
     @Override
     public String approve() {
         TransferTradeLicenseAction.LOGGER.debug("Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + this.tl);
-        this.tl = (TradeLicense) this.persistenceService.find("from TradeLicense where id=?", this.tl.getId());
+        this.tl = this.tradeLicenseService.getLicenseById(this.tl.getId());
         this.tradeLicenseService.processWorkFlowForTransfer(this.license(), this.workflowBean);
         /*
          * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) doAuditing(AuditModule.TL,
@@ -277,7 +270,7 @@ public class TransferTradeLicenseAction extends BaseLicenseAction {
                 this.getSession().remove("model.id");
             } else
                 id = this.tl.getId();
-        this.tl = (TradeLicense) this.persistenceService.find("from TradeLicense where id=?", id);
+        this.tl = this.tradeLicenseService.getLicenseById(id);
         System.out.println(this.tl.getLicenseTransfer().getBoundary().getId());
         System.out.println(this.tl.getLicenseTransfer().getBoundary().getName());
         this.loadAjaxedDropDowns();

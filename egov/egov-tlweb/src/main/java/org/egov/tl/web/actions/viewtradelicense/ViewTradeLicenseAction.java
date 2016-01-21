@@ -71,14 +71,15 @@ import javax.servlet.http.HttpSession;
         @Result(name = Constants.PFACERTIFICATE, location = "viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp")
 })
 public class ViewTradeLicenseAction extends BaseLicenseAction implements ServletRequestAware {
-    private static final Logger LOGGER = Logger.getLogger(ViewTradeLicenseAction.class);
     private static final long serialVersionUID = 1L;
+
     private final String CITIZENUSER = "citizenUser";
     protected TradeLicense tradeLicense = new TradeLicense();
     private String rejectreason;
     private HttpSession session;
     private HttpServletRequest requestObj;
     private Long userId;
+
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -105,13 +106,13 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     @Override
     @Action(value = "/viewtradelicense/viewTradeLicense-showForApproval")
     public String showForApproval() {
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return super.showForApproval();
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-view")
     public String view() {
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return Constants.VIEW;
     }
 
@@ -122,7 +123,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         this.userId = user.getId();
         EgovThreadLocals.setUserId(this.userId);
         this.session.setAttribute("com.egov.user.LoginUserName", user.getName());
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return Constants.VIEW;
     }
 
@@ -130,7 +131,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     public String generateCertificate() {
         String certificate = Constants.CNCCERTIFICATE;
         this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         /*
          * if (this.documentManagerService.getDocumentObject(this.tradeLicense.getApplicationNumber(), "egtradelicense") == null)
          * { ViewTradeLicenseAction.LOGGER.debug("Creating Certificate object for DMS"); final Notice notice = new Notice();
@@ -151,16 +152,15 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
 
     public String generateNoc() {
         this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = (TradeLicense) this.persistenceService.find("from TradeLicense where id=?", this.tradeLicense.getId());
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.tradeLicense.getId());
         return "noc";
     }
 
     @SuppressWarnings("unchecked")
     public String createNoc() {
-        this.persistenceService.setType(TradeLicense.class);
         this.setLicenseIdIfServletRedirect();
         TradeLicense modifiedTL = this.tradeLicense;
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         this.tradeLicense.setSandBuckets(modifiedTL.getSandBuckets());
         this.tradeLicense.setWaterBuckets(modifiedTL.getWaterBuckets());
         this.tradeLicense.setDcpExtinguisher(modifiedTL.getDcpExtinguisher());
@@ -170,7 +170,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         LicenseStatus activeStatus = (LicenseStatus) this.persistenceService
                 .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
         this.tradeLicense.setStatus(activeStatus);
-        this.persistenceService.update(this.tradeLicense);
+        this.tradeLicenseService.licensePersitenceService().update(this.tradeLicense);
         return "createnoc";
     }
 
@@ -180,7 +180,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
 
     public String generateDuplicateNoc() {
         this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return "createnoc";
     }
 
@@ -196,7 +196,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     @Action(value = "/viewtradelicense/viewTradeLicense-generateRejCertificate")
     public String generateRejCertificate() {
         this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return "rejCertificate";
     }
 
@@ -204,7 +204,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
     @Action(value = "/viewtradelicense/viewTradeLicense-certificateForRej")
     public String certificateForRej() {
         this.getSession().get("model.id");
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return "certificateForRej";
     }
 
@@ -236,7 +236,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         Long userId = this.securityUtils.getCurrentUser().getId();
         if (userId != null)
             this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
-        this.tradeLicense = tradeLicenseService.licensePersitenceService().findById(this.license().getId(), false);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return super.approveRenew();
     }
 

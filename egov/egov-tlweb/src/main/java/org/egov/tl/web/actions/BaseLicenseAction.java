@@ -57,6 +57,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -65,7 +66,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.NumberToWord;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
@@ -118,21 +118,19 @@ import java.util.Map;
         @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense",
                 params = {"namespace", "/transfer", "method", "showForApproval"}),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
-        @Result(name = "report", location = "newTradeLicense-report.jsp") })
+        @Result(name = "report", location = "newTradeLicense-report.jsp")})
 public abstract class BaseLicenseAction extends GenericWorkFlowAction {
+    public static final String LICENSECERTIFICATE = "licenseCertificate";
     private static final long serialVersionUID = 1L;
 
+    protected final Map<String, Object> reportParams = new HashMap<String, Object>();
     protected WorkflowBean workflowBean = new WorkflowBean();
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private Integer reportId = -1;
     protected List<String> buildingTypeList;
     protected List<String> genderList;
     protected List<String> selectedCheckList;
     protected List<LicenseChecklistHelper> checkList;
     protected String roleName;
-    public static final String LICENSECERTIFICATE = "licenseCertificate";
-    @Autowired
-    private ReportService reportService;
+    protected Integer reportId = -1;
 
     @Autowired
     protected LicenseUtils licenseUtils;
@@ -159,6 +157,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     @Autowired
     @Qualifier("unitOfMeasurementService")
     protected UnitOfMeasurementService unitOfMeasurementService;
+    @Autowired
+    private ReportService reportService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -172,97 +172,77 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     protected abstract License license();
 
     protected abstract AbstractLicenseService licenseService();
-    
+
+    @ValidationErrorPage(Constants.NEW)
+    public String create(TradeLicense license) {
+        try {
+            this.setCheckList();
+            populateWorkflowBean();
+            licenseService().create(license, workflowBean);
+        } catch (RuntimeException e) {
+            loadAjaxedDropDowns();
+            throw e;
+        }
+        addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
+        return Constants.ACKNOWLEDGEMENT;
+    }
+
+    @ValidationErrorPage(Constants.NEW)
+    public String enterExisting(TradeLicense license) {
+        this.setCheckList();
+        licenseService().enterExistingLicense(license);
+        addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
+
+        return "viewlicense";
+    }
+
     // sub class should get the object of the model and set to license()
     public String approve() {
         processWorkflow(NEW);
-
         licenseService().licensePersitenceService().persist(license());
         // Generate PFA Certificate on final approval
-        String cityName="";
-        ReportRequest reportInput = null;
-        if(getSession().get("citymunicipalityname")!=null)
-        {
-             cityName=getSession().get("citymunicipalityname").toString();
-        }
-        if (workflowBean.getWorkFlowAction().equalsIgnoreCase(
-                Constants.BUTTONAPPROVE)) {
-            
-            reportInput = prepareReportInputData(reportInput,license(),cityName);
-                    try {
-                        reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
-                    } catch (final Exception e) {
-                        final String errMsg = "Error during report generation!";
-                       throw new ApplicationRuntimeException(errMsg, e);
-                    }
-                    return "report";
-                    //return Constants.PFACERTIFICATE;
-            } else
-                    return "message";
-    
+        if (Constants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            reportId = ReportViewerUtil.addReportToSession(reportService.createReport(prepareReportInputData(license())), getSession());
+            return "report";
+            //return Constants.PFACERTIFICATE;
+        } else
+            return "message";
+
     }
 
-    private ReportRequest prepareReportInputData(ReportRequest reportInput,final License license,final String cityName) {
-        if (null != license) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final Format formatterYear = new SimpleDateFormat("YYYY");
-            reportParams.put("applicationnumber", license.getApplicationNumber());
-            reportParams.put("applicantName", license.getLicensee().getApplicantName());
-            reportParams.put("licencenumber", license.getLicenseNumber());
-            reportParams.put("wardName", license.getBoundary().getName());
-            reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
-            reportParams.put("licenceAddress", license.getAddress());
-            reportParams.put("municipality", cityName);
-            List<LicenseDemand>licDemandList=new ArrayList <LicenseDemand>(license.getDemandSet());
-            String startYear=formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
-            String EndYear=formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getToDate());
-            String installMentYear=startYear+"-"+EndYear;
-            reportParams.put("installMentYear", installMentYear);
-            reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
-            BigDecimal demandamt=BigDecimal.ZERO;
-                    
-           for(EgDemandDetails deDet:license.getCurrentDemand().getEgDemandDetails()){
-               if(deDet.getAmount().compareTo(BigDecimal.ZERO)>0){
-                   demandamt=demandamt.add(deDet.getAmount());
-               }
-               
-           }
-           reportParams.put("demandTotalamt", demandamt);
-            reportInput = new ReportRequest(LICENSECERTIFICATE, license, reportParams);
+    private ReportRequest prepareReportInputData(License license) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Format formatterYear = new SimpleDateFormat("YYYY");
+        reportParams.put("applicationnumber", license.getApplicationNumber());
+        reportParams.put("applicantName", license.getLicensee().getApplicantName());
+        reportParams.put("licencenumber", license.getLicenseNumber());
+        reportParams.put("wardName", license.getBoundary().getName());
+        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+        reportParams.put("licenceAddress", license.getAddress());
+        reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
+        List<LicenseDemand> licDemandList = new ArrayList<LicenseDemand>(license.getDemandSet());
+        String startYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
+        String EndYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getToDate());
+        String installMentYear = startYear + "-" + EndYear;
+        reportParams.put("installMentYear", installMentYear);
+        reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+        BigDecimal demandamt = BigDecimal.ZERO;
+
+        for (EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails()) {
+            if (deDet.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                demandamt = demandamt.add(deDet.getAmount());
+            }
+
         }
-        
-        return reportInput;
+        reportParams.put("demandTotalamt", demandamt);
+        return new ReportRequest(LICENSECERTIFICATE, license, reportParams);
     }
 
     @SkipValidation
     public String approveRenew() {
         processWorkflow("Renew");
         return "message";
-    }
-
-    public String create() {
-
-        return "";
-    }
-
-    @SuppressWarnings("unchecked")
-    @ValidationErrorPage(Constants.NEW)
-    public String create(TradeLicense license) {
-        try {
-            this.setCheckList();
-            licenseService().processAndStoreDocument(license().getDocuments());
-            licenseService().create(license);
-            populateWorkflowBean();
-            licenseService().transitionWorkFlow(license(), workflowBean);
-            persistenceService.applyAuditing(license().getState());
-            licenseService().licensePersitenceService().create(license);
-        } catch (final RuntimeException e) {
-            loadAjaxedDropDowns();
-            throw e;
-        }
-        addActionMessage(this.getText("license.submission.succesful")
-                + license().getApplicationNumber());
-        return Constants.ACKNOWLEDGEMENT;
     }
 
     protected void populateWorkflowBean() {
@@ -280,7 +260,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
             // initiateWorkFlowForLicense();
             persistenceService.getSession().flush();
-        } catch (final RuntimeException e) {
+        } catch (RuntimeException e) {
             loadAjaxedDropDowns();
             throw e;
         }
@@ -303,7 +283,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             // initiateWorkFlowForRenewLicense();
             addActionMessage(this.getText("license.renew.submission.succesful")
                     + license().getLicenseNumber());
-        } catch (final RuntimeException e) {
+        } catch (RuntimeException e) {
             loadAjaxedDropDowns();
             throw e;
         }
@@ -316,7 +296,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             licenseService().createDemandForViolationFee(license());
             addActionMessage(this.getText("license.violation.fee.save")
                     + license().getLicenseNumber());
-        } catch (final RuntimeException e) {
+        } catch (RuntimeException e) {
             loadAjaxedDropDowns();
             throw e;
         }
@@ -327,7 +307,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public void setCheckList() {
         String str = "";
         if (selectedCheckList != null)
-            for (final Object obj : selectedCheckList) {
+            for (Object obj : selectedCheckList) {
                 if (selectedCheckList.size() > 1
                         && !selectedCheckList.get(selectedCheckList.size() - 1)
                         .equals(obj.toString()))
@@ -336,23 +316,6 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                     str = str.concat(obj.toString());
                 license().setLicenseCheckList(str);
             }
-    }
-
-    /**
-     * @param license
-     * @return
-     * @description called from Data Entry Screen
-     */
-    @SuppressWarnings("unchecked")
-    @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(TradeLicense license) {
-        this.setCheckList();
-        licenseService().processAndStoreDocument(license().getDocuments());
-        licenseService().enterExistingLicense(license);
-        addActionMessage(this.getText("license.entry.succesful") + "  "
-                + license().getLicenseNumber());
-
-        return "viewlicense";
     }
 
     @SkipValidation
@@ -368,35 +331,17 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     // create workflow and pushes to drafts
     public void initiateWorkFlowForLicense() {
         // licenseService().initiateWorkFlowForLicense(license(), workflowBean);
-        final Position position = positionMasterService
+        Position position = positionMasterService
                 .getCurrentPositionForUser(EgovThreadLocals.getUserId());
         if (position != null)
             addActionMessage(this.getText("license.saved.in.inbox"));
     }
 
-	/*
-     * public void endWorkFlowForLicense() {
-	 * licenseService().endWorkFlowForLicense(license()); }
-	 */
-
-    // create workflow and pushes to drafts
-	/*
-	 * public void initiateWorkFlowForLicenseDraft() {
-	 * licenseService().initiateWorkFlowForLicenseDraft(license(), workflowBean);
-	 * addActionMessage(this.getText("license.saved.in.draft")); }
-	 */
-
-	/*
-	 * public void initiateWorkFlowForRenewLicense() {
-	 * licenseService().initiateWorkFlowForRenewLicense(license(), workflowBean);
-	 * addActionMessage(this.getText("license.saved.in.inbox")); }
-	 */
-
     public List<String> getBuildingTypeList() {
         return buildingTypeList;
     }
 
-    public void setBuildingTypeList(final List<String> buildingTypeList) {
+    public void setBuildingTypeList(List<String> buildingTypeList) {
         this.buildingTypeList = buildingTypeList;
     }
 
@@ -404,7 +349,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return genderList;
     }
 
-    public void setGenderList(final List<String> genderList) {
+    public void setGenderList(List<String> genderList) {
         this.genderList = genderList;
     }
 
@@ -424,7 +369,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     public void prepareNewForm() {
-        super.prepare();
+        this.prepare();
         buildingTypeList = new ArrayList<String>();
         buildingTypeList.add(Constants.BUILDINGTYPE_OWN_BUILDING);
         buildingTypeList.add(Constants.BUILDINGTYPE_RENTAL_AGREEMANT);
@@ -461,7 +406,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
      * should be called from the second level only Approve will not end workflow
      * instead it sends to the creator in approved state
      */
-    public void processWorkflow(final String processType) {
+    public void processWorkflow(String processType) {
         populateWorkflowBean();
         if (processType.equalsIgnoreCase(NEW)) {
             licenseService().transitionWorkFlow(license(), workflowBean);
@@ -470,7 +415,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
         }
         User user = null;
-        for (final StateHistory state : license().getState().getHistory())
+        for (StateHistory state : license().getState().getHistory())
             if (state != null && state.getCreatedBy() != null)
                 if (state.getValue().equals(Constants.WORKFLOW_STATE_NEW)) {
                     user = state.getCreatedBy();
@@ -490,7 +435,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(
                 Constants.BUTTONFORWARD)) {
-            final String userName = assignmentService
+            String userName = assignmentService
                     .getPrimaryAssignmentForPositon(
                             workflowBean.getApproverPositionId()).getEmployee()
                     .getUsername();
@@ -507,15 +452,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                         + license().getApplicationNumber());
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(
                 Constants.BUTTONGENERATEDCERTIFICATE))
-            addActionMessage(this
-                    .getText("license.certifiacte.print.complete.recorded"));
+            addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
         else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(
                 Constants.BUTTONPRINTCOMPLETED))
-            addActionMessage(this
-                    .getText("license.rejection.certifiacte.print.complete.recorded"));
+            addActionMessage(this.getText("license.rejection.certifiacte.print.complete.recorded"));
     }
 
-    public void setLicenseUtils(final LicenseUtils licenseUtils) {
+    public void setLicenseUtils(LicenseUtils licenseUtils) {
         this.licenseUtils = licenseUtils;
     }
 
@@ -523,7 +466,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return selectedCheckList;
     }
 
-    public void setSelectedCheckList(final List<String> selectedCheckList) {
+    public void setSelectedCheckList(List<String> selectedCheckList) {
         this.selectedCheckList = selectedCheckList;
     }
 
@@ -531,7 +474,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return checkList;
     }
 
-    public void setCheckList(final List<LicenseChecklistHelper> checkList) {
+    public void setCheckList(List<LicenseChecklistHelper> checkList) {
         this.checkList = checkList;
     }
 
@@ -539,7 +482,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return roleName;
     }
 
-    public void setRoleName(final String roleName) {
+    public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 
@@ -551,7 +494,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String showForApproval() {
         getSession().put("model.id", license().getId());
         String result = "approve";
-        final Long userId = securityUtils.getCurrentUser().getId();
+        Long userId = securityUtils.getCurrentUser().getId();
         if (userId != null)
             setRoleName(licenseUtils.getRolesForUserId(userId));
         if (license().getState().getValue()
@@ -599,7 +542,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     public void loadAjaxedDropDowns() {
-        final CommonAjaxAction commonAjaxAction = new CommonAjaxAction();
+        CommonAjaxAction commonAjaxAction = new CommonAjaxAction();
         commonAjaxAction.setLicenseUtils(licenseUtils);
         commonAjaxAction.setBoundaryService(boundaryService);
         commonAjaxAction.setEisCommonService(eisCommonService);
@@ -658,7 +601,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public String getCollectedDemandAmountInWords() {
         // this below api will give you the current year Demand from database
-        final LicenseDemand currentYearDemand = licenseService().getCurrentYearDemand(
+        LicenseDemand currentYearDemand = licenseService().getCurrentYearDemand(
                 license());
         return NumberToWord.amountInWords(currentYearDemand.getAmtCollected()
                 .doubleValue());
@@ -670,9 +613,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         return checkList;
     }
 
-    public boolean isCurrent(final EgDemandDetails dd) {
+    public boolean isCurrent(EgDemandDetails dd) {
         boolean isCurrent = false;
-        final Installment currInstallment = licenseUtils.getCurrInstallment(dd
+        Installment currInstallment = licenseUtils.getCurrInstallment(dd
                 .getEgDemandReason().getEgDemandReasonMaster().getEgModule());
         if (currInstallment.getId().intValue() == dd.getEgDemandReason()
                 .getEgInstallmentMaster().getId().intValue())
@@ -681,11 +624,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     }
 
-    public BigDecimal getAapplicableDemand(final EgDemand demand) {
+    public BigDecimal getAapplicableDemand(EgDemand demand) {
         // TODO: Code was reviewed by Satyam, No changes required
         BigDecimal total = BigDecimal.ZERO;
         if (demand.getIsHistory().equals("N"))
-            for (final EgDemandDetails details : demand.getEgDemandDetails()) {
+            for (EgDemandDetails details : demand.getEgDemandDetails()) {
                 total = total.add(details.getAmount());
                 total = total.subtract(details.getAmtRebate());
             }
@@ -693,113 +636,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     public boolean isCitizen() {
-        return positionMasterService.getCurrentPositionForUser(EgovThreadLocals
-                .getUserId()) == null;
+        return securityUtils.currentUserType().equals(UserType.CITIZEN);
     }
 
-	/*
-	 * public void setAuditEventService(final AuditEventService
-	 * auditEventService) { this.auditEventService = auditEventService; } public
-	 * AuditEntity getAuditEntityFromModule(final String module) { AuditEntity
-	 * entity = null; if (module.equals(Constants.ELECTRICALLICENSE_MODULENAME))
-	 * entity = AuditEntity.ECL_LIC; else if
-	 * (module.equals(Constants.HOSPITALLICENSE_MODULENAME)) entity =
-	 * AuditEntity.HPL_LIC; else if
-	 * (module.equals(Constants.HAWKERLICENSE_MODULENAME)) entity =
-	 * AuditEntity.HWKL_LIC; else if
-	 * (module.equals(Constants.TRADELICENSE_MODULENAME)) entity =
-	 * AuditEntity.TL_LIC; else if
-	 * (module.equals(Constants.PWDLICENSE_MODULENAME)) entity =
-	 * AuditEntity.PWDL_LIC; else if
-	 * (module.equals(Constants.VETLICENSE_MODULENAME)) entity =
-	 * AuditEntity.VETL_LIC; else if
-	 * (module.equals(Constants.WATERWORKSLICENSE_MODULENAME)) entity =
-	 * AuditEntity.WWL_LIC; return entity; } public AuditModule
-	 * getAuditModuleFromLicModule(final String module) { AuditModule
-	 * auditModule = null; if
-	 * (module.equals(Constants.ELECTRICALLICENSE_MODULENAME)) auditModule =
-	 * AuditModule.ECL; else if
-	 * (module.equals(Constants.HOSPITALLICENSE_MODULENAME)) auditModule =
-	 * AuditModule.HPL; else if
-	 * (module.equals(Constants.HAWKERLICENSE_MODULENAME)) auditModule =
-	 * AuditModule.HWKL; else if
-	 * (module.equals(Constants.TRADELICENSE_MODULENAME)) auditModule =
-	 * AuditModule.TL; else if (module.equals(Constants.PWDLICENSE_MODULENAME))
-	 * auditModule = AuditModule.PWDL; else if
-	 * (module.equals(Constants.VETLICENSE_MODULENAME)) auditModule =
-	 * AuditModule.VETL; else if
-	 * (module.equals(Constants.WATERWORKSLICENSE_MODULENAME)) auditModule =
-	 * AuditModule.WWL; return auditModule; } protected void doAuditing(final
-	 * AuditModule auditModule, final AuditEntity auditEntity, final String
-	 * action, final String details) { final License license = (License)
-	 * getModel(); final AuditEvent auditEvent = new AuditEvent(auditModule,
-	 * auditEntity, action, license().getLicenseNumber(), details);
-	 * auditEvent.setPkId(license.getId());
-	 * auditEvent.setDetails2(workflowBean.getActionName());
-	 * auditEventService.createAuditEvent(auditEvent, license().getClass()); }
-	 */
-
-    @SkipValidation
-    public String auditReport() {
-        return "auditReport";
-    }
-
-	/*
-	 * public void transitionWorkFlow(final License license) { final DateTime
-	 * currentDate = new DateTime(); final User user =
-	 * securityUtils.getCurrentUser(); final Assignment userAssignment =
-	 * assignmentService.getPrimaryAssignmentForUser(user.getId()); Position pos
-	 * = null; Assignment wfInitiator = null;
-	 * 
-	 * if (null != license.getId()) wfInitiator = getWorkflowInitiator(license);
-	 * 
-	 * if (BUTTONREJECT.equalsIgnoreCase(workFlowAction)) { if
-	 * (wfInitiator.equals(userAssignment)) {
-	 * license.transition(true).end().withSenderName
-	 * (user.getName()).withComments(approverComments)
-	 * .withDateInfo(currentDate.toDate()); } else { final String stateValue =
-	 * license.getCurrentState().getValue();
-	 * license.transition(true).withSenderName
-	 * (user.getName()).withComments(approverComments)
-	 * .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-	 * .withOwner(wfInitiator.getPosition()).withNextAction(
-	 * "Assistant Health Officer approval pending"); }
-	 * 
-	 * } else { if (null != approverPositionId && approverPositionId != -1) pos
-	 * = (Position) persistenceService.find("from Position where id=?",
-	 * approverPositionId); else if
-	 * (BUTTONAPPROVE.equalsIgnoreCase(workFlowAction)) pos =
-	 * wfInitiator.getPosition(); if (null == license.getState()) { final
-	 * WorkFlowMatrix wfmatrix =
-	 * licenseWorkflowService.getWfMatrix(license.getStateType(), null, null,
-	 * null, currentState, null);
-	 * license.transition().start().withSenderName(user
-	 * .getName()).withComments(approverComments)
-	 * .withStateValue(wfmatrix.getNextState
-	 * ()).withDateInfo(currentDate.toDate()).withOwner(pos)
-	 * .withNextAction(wfmatrix.getNextAction()); } else if
-	 * (license.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-	 * license
-	 * .transition(true).end().withSenderName(user.getName()).withComments
-	 * (approverComments) .withDateInfo(currentDate.toDate()); else { final
-	 * WorkFlowMatrix wfmatrix =
-	 * licenseWorkflowService.getWfMatrix(license.getStateType(), null, null,
-	 * null, license.getCurrentState().getValue(), null);
-	 * license.transition(true
-	 * ).withSenderName(user.getName()).withComments(approverComments)
-	 * .withStateValue
-	 * (wfmatrix.getNextState()).withDateInfo(currentDate.toDate()
-	 * ).withOwner(pos) .withNextAction(wfmatrix.getNextAction()); } } if
-	 * (approverName != null && !approverName.isEmpty() &&
-	 * !approverName.equalsIgnoreCase("----Choose----")) { final String
-	 * approvalmesg = " Succesfully Forwarded to : "; ackMessage = ackMessage ==
-	 * null ? approvalmesg : ackMessage + approvalmesg; } else if
-	 * (workFlowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
-	 * final String approvalmesg = " Succesfully Cancelled."; ackMessage =
-	 * ackMessage == null ? approvalmesg : ackMessage + approvalmesg; } }
-	 */
-
-    protected Assignment getWorkflowInitiator(final License license) {
+    protected Assignment getWorkflowInitiator(License license) {
         Assignment wfInitiator;
         if (!license.getStateHistory().isEmpty())
             wfInitiator = assignmentService
@@ -819,5 +659,5 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public void setReportId(Integer reportId) {
         this.reportId = reportId;
     }
-    
+
 }

@@ -57,9 +57,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TradeRenewalNoticeAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
-    /* to log errors and debugging information */
-    private final Logger LOGGER = Logger.getLogger(this.getClass());
+
     protected TradeLicense tradeLicense = new TradeLicense();
+
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -80,9 +80,7 @@ public class TradeRenewalNoticeAction extends BaseLicenseAction {
 
     @Action(value = "/renew/tradeRenewalNotice-renewalNotice")
     public String renewalNotice() {
-        this.LOGGER.debug("Trade License Renewal Notice Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + this.tradeLicense);
-        this.tradeLicense = (TradeLicense) this.persistenceService.find("from TradeLicense where id=?", this.tradeLicense.getId());
-        this.LOGGER.debug("Exiting from the renewalNotice method:<<<<<<<<<<>>>>>>>>>>>>>:");
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.tradeLicense.getId());
         return Constants.RENEWALNOTICE;
     }
 

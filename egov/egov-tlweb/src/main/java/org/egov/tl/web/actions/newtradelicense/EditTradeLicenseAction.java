@@ -59,12 +59,8 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
-import org.egov.tl.web.actions.domain.CommonTradeLicenseAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -88,8 +84,8 @@ import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 })
 public class EditTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
-    /* to log errors and debugging information */
-    private final Logger LOGGER = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = Logger.getLogger(EditTradeLicenseAction.class);
+
     private TradeLicense tradeLicense = new TradeLicense();
     private boolean isOldLicense;
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
@@ -98,18 +94,11 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     private BigDecimal totalAmount = BigDecimal.ZERO;
     private List<MotorDetails> installedMotorList = new ArrayList<MotorDetails>();
     private Long id;
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
-    @Autowired
-    @Qualifier("licenseCategoryService")
-    private LicenseCategoryService licenseCategoryService;
-    @Autowired
-    @Qualifier("licenseSubCategoryService")
-    private LicenseSubCategoryService licenseSubCategoryService;
-    @Autowired
-    @Qualifier("unitOfMeasurementService")
-    private UnitOfMeasurementService unitOfMeasurementService;
+
     @Autowired
     private FeeMatrixService feeMatrixService;
 
@@ -127,7 +116,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     }
 
     public void prepareBeforeEdit() {
-        this.LOGGER.debug("Entering in the prepareBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
         this.prepareNewForm();
         this.setDocumentTypes(this.tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         Long id = null;
@@ -139,7 +127,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
                 id = this.tradeLicense.getId();
         else
             id = this.tradeLicense.getId();
-        this.tradeLicense = (TradeLicense) this.persistenceService.find("from TradeLicense where id = ?", id);
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(id);
         if (this.tradeLicense.getOldLicenseNumber() != null)
             this.isOldLicense = StringUtils.isNotBlank(this.tradeLicense.getOldLicenseNumber());
         Boundary licenseboundary = this.boundaryService.getBoundaryById(this.tradeLicense.getBoundary().getId());
@@ -157,8 +145,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         if (userId != null)
             this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
 
-        this.LOGGER.debug("Exiting from the prepareBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
-
         this.setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
         List<Boundary> localityList = this.boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
@@ -166,24 +152,9 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         this.addDropdownData("tradeTypeList", this.tradeLicenseService.getAllNatureOfBusinesses());
         this.addDropdownData("categoryList", this.licenseCategoryService.findAll());
         this.addDropdownData("uomList", this.unitOfMeasurementService.findAllActiveUOM());
+        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
+                licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
 
-        CommonTradeLicenseAjaxAction ajaxTradeLicenseAction = new CommonTradeLicenseAjaxAction();
-        this.populateSubCategoryList(ajaxTradeLicenseAction, this.tradeLicense.getCategory() != null);
-
-    }
-
-    /**
-     * @param ajaxTradeLicenseAction
-     * @param categoryPopulated
-     */
-    protected void populateSubCategoryList(CommonTradeLicenseAjaxAction ajaxTradeLicenseAction, boolean categoryPopulated) {
-        if (categoryPopulated) {
-            ajaxTradeLicenseAction.setCategoryId(this.tradeLicense.getCategory().getId());
-            ajaxTradeLicenseAction.setLicenseSubCategoryService(this.licenseSubCategoryService);
-            ajaxTradeLicenseAction.populateSubCategory();
-            this.addDropdownData("subCategoryList", ajaxTradeLicenseAction.getSubCategoryList());
-        } else
-            this.addDropdownData("subCategoryList", Collections.emptyList());
     }
 
 
@@ -195,16 +166,14 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
     }
 
     public void setupBeforeEdit() {
-        this.LOGGER.debug("Entering in the setupBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
         this.prepareBeforeEdit();
         this.setupWorkflowDetails();
-        this.LOGGER.debug("Exiting from the setupBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
     }
 
     @Override
     public void prepare() {
         if (this.id != null) {
-            this.tradeLicense = this.tradeLicenseService.licensePersitenceService().findById(this.id, false);
+            this.tradeLicense = this.tradeLicenseService.getLicenseById(this.id);
         }
     }
 
@@ -212,7 +181,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             action = "edit", makeCall = true, toMethod = "setupBeforeEdit")
     @Action(value = "/newtradelicense/editTradeLicense-edit")
     public String edit() {
-        this.LOGGER.debug("Edit Trade License Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + this.tradeLicense);
         if (this.tradeLicense.getState() == null && !this.isOldLicense)
             this.tradeLicenseService.transitionWorkFlow(this.tradeLicense, this.workflowBean);
         if (!this.isOldLicense)

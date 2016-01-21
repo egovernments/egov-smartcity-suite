@@ -67,7 +67,6 @@ import java.util.Date;
 public class RevokeSuspensionAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(RevokeSuspensionAction.class);
 
     private Long licenseId;
     private TradeLicense license = new TradeLicense();
@@ -97,7 +96,7 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
     @SkipValidation
     @Action(value = "/revokesuspension/revokeSuspension-newForm")
     public String newForm() {
-        this.license = (TradeLicense) this.persistenceService.find("from License where id=?", this.licenseId);
+        this.license = this.tradeLicenseService.getLicenseById(this.licenseId);
         return Constants.NEW;
     }
 
@@ -123,8 +122,7 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
                     fieldName = "revokeDate", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "remarks", message = "", key = Constants.REQUIRED)})
     public String confirmRevokeSuspension() {
-        RevokeSuspensionAction.LOGGER.debug("Revoke Suspension Action Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + this.toString());
-        this.license = (TradeLicense) this.persistenceService.find("from License where id=?", this.licenseId);
+        this.license = this.tradeLicenseService.getLicenseById(this.licenseId);
         LicenseStatusValues licenseStatusValues = this.licenseUtils.getCurrentStatus(this.license);
         if (licenseStatusValues != null)
             licenseStatusValues.setActive(false);
@@ -134,7 +132,6 @@ public class RevokeSuspensionAction extends BaseLicenseAction {
         newLicenseStatusValues.setPreviousStatusVal(licenseStatusValues);
         this.tradeLicenseService.revokeSuspendedLicense(this.license, this.licenseUtils, newLicenseStatusValues);
         this.addActionMessage(getText("license.revoke.succesful"));
-        RevokeSuspensionAction.LOGGER.debug("Revoke Suspension Action License Number:<<<<<<<<<<>>>>>>>>>>>>>:" + this.license.getLicenseNumber());
         return "message";
     }
 

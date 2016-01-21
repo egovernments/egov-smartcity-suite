@@ -110,7 +110,6 @@ public class EnterTradeLicenseAction extends BaseLicenseAction {
         return super.newForm();
     }
 
-    @Override
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/entertradelicense/enterTradeLicense-enterExisting")
     public String create() {
@@ -125,7 +124,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction {
     public void prepareNewForm() {
         super.prepareNewForm();
         if (license() != null && license().getId() != null)
-            tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", license().getId());
+            tradeLicense = this.tradeLicenseService.getLicenseById(license().getId());
         setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
         tradeLicense.setHotelSubCatList(this.tradeLicenseService.getHotelCategoriesForTrade());

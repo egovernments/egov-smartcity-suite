@@ -74,7 +74,6 @@ import java.util.Map;
         @Result(name = Constants.CANCEL_Result_MSG_PAGE, location = "cancelLicense-cancelResultMsg.jsp"),
         @Result(name = CancelLicenseAction.SUCCESS, type = "redirectAction", location = "CancelLicense.action")})
 public class CancelLicenseAction extends BaseFormAction {
-    private static final Logger LOGGER = Logger.getLogger(CancelLicenseAction.class);
     private static final long serialVersionUID = 1L;
     protected WorkflowBean workflowBean = new WorkflowBean();
     private Integer reasonForCancellation;
@@ -86,13 +85,13 @@ public class CancelLicenseAction extends BaseFormAction {
     private String wardName;
     private Integer licenseId;
     private TradeLicense license = new TradeLicense();
+
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private LicenseUtils licenseUtils;
     @Autowired
     private TradeLicenseService tradeLicenseService;
-
 
     public CancelLicenseAction() {
         addRelatedEntity("boundary", Boundary.class);
@@ -116,7 +115,7 @@ public class CancelLicenseAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/cancellation/cancelLicense-newForm")
     public String newForm() {
-        this.license = this.tradeLicenseService.licensePersitenceService().findById(this.licenseId.longValue(), false);
+        this.license = this.tradeLicenseService.getLicenseById(this.licenseId.longValue());
         return Constants.NEW;
     }
 
@@ -131,7 +130,7 @@ public class CancelLicenseAction extends BaseFormAction {
         // Fetch Zone Dropdown List
         this.addDropdownData(Constants.DROPDOWN_ZONE_LIST, this.licenseUtils.getAllZone());
         this.addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, this.licenseUtils.getAllTradeNames("TradeLicense"));
-        this.license = this.tradeLicenseService.licensePersitenceService().findById(this.licenseId.longValue(), false);
+        this.license = this.tradeLicenseService.getLicenseById(this.licenseId.longValue());
         // To load zone and ward for a locality
         if (this.license != null) {
             Boundary localityBndry = this.tradeLicenseService.blockByLocality(this.license.getBoundary().getId());
@@ -154,8 +153,6 @@ public class CancelLicenseAction extends BaseFormAction {
             @RequiredFieldValidator(fieldName = "refernceno", message = "", key = Constants.REQUIRED)})
     @Action(value = "/cancellation/cancelLicense-confirmCancellation")
     public String confirmCancellation() {
-        if (CancelLicenseAction.LOGGER.isDebugEnabled())
-            CancelLicenseAction.LOGGER.debug("Cancel Trade License Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + this.toString());
         this.license.setActive(false);
         this.license.setStatus(this.licenseUtils.getLicenseStatusbyCode("CAN"));
         LicenseStatusValues licenseStatusValues = this.licenseUtils.getCurrentStatus(this.license);
@@ -177,63 +174,37 @@ public class CancelLicenseAction extends BaseFormAction {
 
         this.license.addLicenseStatusValuesSet(newLicenseStatusValues);
         this.tradeLicenseService.licensePersitenceService().update(this.license);
-        if (CancelLicenseAction.LOGGER.isDebugEnabled())
-            CancelLicenseAction.LOGGER.debug("Cancel Trade License Name of Establishment:<<<<<<<<<<>>>>>>>>>>>>>:" + this.license.getNameOfEstablishment());
         return Constants.CANCEL_Result_MSG_PAGE;
     }
 
-    /**
-     * @return the reasonForCancellation
-     */
     public Integer getReasonForCancellation() {
         return this.reasonForCancellation;
     }
 
-    /**
-     * @param reasonForCancellation the reasonForCancellation to set
-     */
     public void setReasonForCancellation(Integer reasonForCancellation) {
         this.reasonForCancellation = reasonForCancellation;
     }
 
-    /**
-     * @return the refernceno
-     */
     public String getRefernceno() {
         return this.refernceno;
     }
 
-    /**
-     * @param refernceno the refernceno to set
-     */
     public void setRefernceno(String refernceno) {
         this.refernceno = refernceno;
     }
 
-    /**
-     * @return the commdateApp
-     */
     public Date getCommdateApp() {
         return this.commdateApp;
     }
 
-    /**
-     * @param commdateApp the commdateApp to set
-     */
     public void setCommdateApp(Date commdateApp) {
         this.commdateApp = commdateApp;
     }
 
-    /**
-     * @return the cancelInforemarks
-     */
     public String getCancelInforemarks() {
         return this.cancelInforemarks;
     }
 
-    /**
-     * @param cancelInforemarks the cancelInforemarks to set
-     */
     public void setCancelInforemarks(String cancelInforemarks) {
         this.cancelInforemarks = cancelInforemarks;
     }
@@ -243,38 +214,14 @@ public class CancelLicenseAction extends BaseFormAction {
         return this.license;
     }
 
-    /**
-     * @return the reasonMap
-     */
     public Map getReasonMap() {
 
         this.reasonMap = this.licenseUtils.getCancellationReasonMap();
         return this.reasonMap;
     }
 
-    /**
-     * @param reasonMap the reasonMap to set
-     */
     public void setReasonMap(Map reasonMap) {
         this.reasonMap = this.licenseUtils.getCancellationReasonMap();
-    }
-
-
-    /*
-     * public void setAuditEventService(AuditEventService auditEventService) { this.auditEventService = auditEventService; }
-     */
-
-    /*
-     * protected void doAuditing(String action, String details) { License license = (License) this.getModel(); final AuditEvent
-     * auditEvent = new AuditEvent(AuditModule.HPL, AuditEntity.HPL_LIC, action, this.license.getLicenseNumber(), details);
-     * auditEvent.setPkId(license.getId());
-     * auditEvent.setDetails2(this.workflowBean.getActionName()==null?"":this.workflowBean.getActionName());
-     * this.auditEventService.createAuditEvent(auditEvent, this.license.getClass()); }
-     */
-
-    @SkipValidation
-    public String auditReport() {
-        return "auditReport";
     }
 
     public String getCancellationDetails() {

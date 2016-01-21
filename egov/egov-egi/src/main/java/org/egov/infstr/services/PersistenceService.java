@@ -247,7 +247,6 @@ public class PersistenceService<T, ID extends Serializable> {
     }
 
     @Transactional
-
     public T create(final T entity) {
         validate(entity);
         final Long id = (Long) getSession().save(entity);
@@ -257,8 +256,8 @@ public class PersistenceService<T, ID extends Serializable> {
     public T load(final Serializable id, Class cls) {
         return (T) getSession().load(cls, id);
     }
+
     @Transactional
-  
     public void delete(final T entity) {
         getSession().delete(entity);
     }
