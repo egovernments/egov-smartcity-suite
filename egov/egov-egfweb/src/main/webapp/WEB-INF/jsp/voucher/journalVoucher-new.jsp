@@ -397,10 +397,13 @@ function showMessage(message){
 		if( document.forms[0].elements[i].id!='Close')
 		document.forms[0].elements[i].disabled =true;
 	} 
-	bootbox.alert(message);
-	var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
-	document.forms[0].action = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
-	document.forms[0].submit();      
+	//bootbox.alert(message);
+	bootbox.alert(message, function() {
+		var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
+		document.forms[0].action = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
+		document.forms[0].submit(); 
+	});
+	     
 	
 }
 

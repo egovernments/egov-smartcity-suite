@@ -40,14 +40,19 @@
 package org.egov.web.actions.masters;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -135,17 +140,25 @@ public class BankBranchAction extends JQueryGridActionSupport {
 
     private void listAllBankBranches() {
         final List<Bankbranch> bankBranches = getPagedResult(Bankbranch.class, "bank.id", bankId).getList();
-        final String jsonString = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(final FieldAttributes arg0) {
-                return arg0.getName().equals("bankaccounts") || arg0.getName().equals("bank");
-            }
+        final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 
-            @Override
-            public boolean shouldSkipClass(final Class<?> arg0) {
-                return false;
+        for (final Bankbranch bankbranch : bankBranches)
+            try {
+                final JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", bankbranch.getId());
+                jsonObject.put("branchname", bankbranch.getBranchname());
+                jsonObject.put("branchcode", bankbranch.getBranchcode());
+                jsonObject.put("branchMICR", bankbranch.getBranchMICR());
+                jsonObject.put("branchaddress1", bankbranch.getBranchaddress1());
+                jsonObject.put("contactperson", bankbranch.getContactperson());
+                jsonObject.put("branchphone", bankbranch.getBranchphone());
+                jsonObject.put("narration", bankbranch.getNarration());
+                jsonObject.put("isActive", bankbranch.getIsactive() == 1 ? "Y" : "N");
+                jsonObjects.add(jsonObject);
+            } catch (final JSONException e) {
+                sendAJAXResponse("error");
             }
-        }).create().toJson(bankBranches).replaceAll("true", "\"Y\"").replaceAll("false", "\"N\"");
+        final String jsonString = new GsonBuilder().create().toJson(jsonObjects);
         sendAJAXResponse(constructJqGridResponse(jsonString));
     }
 

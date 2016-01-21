@@ -103,22 +103,20 @@ public class BankAccountAction extends JQueryGridActionSupport {
         final Bankaccount bankAccount = new Bankaccount();
         final HttpServletRequest request = ServletActionContext.getRequest();
         bankAccount.setBankbranch(bankBranch);
-        bankAccount.setCurrentbalance(BigDecimal.ZERO);
         try {
             if (!request.getParameter("glcode").equalsIgnoreCase("")) {
                 glCode = request.getParameter("glcode");
                 validateGlCode(glCode);
+                CChartOfAccounts COA = chartOfAccountsService.find("select coa from CChartOfAccounts coa where coa.glcode = ?",
+                        glCode);
+                bankAccount.setChartofaccounts(COA);
             }
         } catch (final Exception e) {
             sendAJAXResponse(e.getMessage());
             throw new ApplicationRuntimeException(e.getMessage());
         }
-        if (coaID != null && coaID.length() > 0) {
-            final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService.getSession().load(
-                    CChartOfAccounts.class, Long.parseLong(coaID));
-            bankAccount.setChartofaccounts(chartofaccounts);
-        }
         populateBankAccountDetail(bankAccount);
+        bankAccountService.applyAuditing(bankAccount);
         bankAccountService.persist(bankAccount);
     }
 
@@ -134,6 +132,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
             throw new ApplicationRuntimeException("Given glcode should not be a control code");
         else if (COA.getType() != null && !COA.getType().equals('A')) {
             throw new ApplicationRuntimeException("Given glcode should be of type Assets");
+        } else if (COA.getPurposeId() == null) {
+                throw new ApplicationRuntimeException("Given glcode is not mapped with any purpose ");
         } else if (COA.getPurposeId() != null) {
             purpose = (AccountCodePurpose) persistenceService.find(
                     "select purpose from AccountCodePurpose purpose where purpose.id = ?", COA.getPurposeId());
@@ -159,6 +159,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
         final Bankaccount bankAccount = (Bankaccount) bankAccountService.getSession().get(Bankaccount.class,
                 id.longValue());
         populateBankAccountDetail(bankAccount);
+        bankAccountService.applyAuditing(bankAccount);
         bankAccountService.update(bankAccount);
     }
 

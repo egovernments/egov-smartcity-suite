@@ -144,7 +144,7 @@ function initializeGrid() {
 						             {name : 'contactperson', index : 'contactperson', width : 80, editable : true, editoptions : {size : 25}}, 
 						             {name : 'branchphone', index : 'branchphone', width : 80, editable : true, editoptions : {size : 25}}, 
 						             {name : 'narration', index : 'narration', width : 80, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}}, 
-						             {name : 'isActive', index : 'isActive', width : 80, sortable : false, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "1:0"}} 
+						             {name : 'isActive', index : 'isActive', width : 80, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}} 
 						            ],
 						rowNum : 20,
 						rowList : [ 20, 30, 40, 50 ],
