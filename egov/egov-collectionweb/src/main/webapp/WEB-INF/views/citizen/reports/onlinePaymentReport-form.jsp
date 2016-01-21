@@ -124,8 +124,13 @@
         		
         		</div>
 		</form:form>
+		
+		<div class="text-bold" id="resultinfo"></div>
+		 <br/>
+		
 		<table class="table table-bordered datatable dt-responsive table-hover" id="onlinePaymentReport-table">
 		</table>
+		
 	</div>
 </div>
 
