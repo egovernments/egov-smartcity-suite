@@ -50,7 +50,6 @@ import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.repository.AdvertisementRateDetailRepository;
 import org.egov.adtax.repository.AdvertisementRateRepository;
-import org.egov.adtax.repository.AdvertisementRateSearch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.repository.CFinancialYearRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,21 +126,21 @@ public class AdvertisementRateService {
         return rate;
     }
 
-    public List<AdvertisementRateSearch> getScheduleOfRateSearchResult(final Long category, final Long subCategory,
+    public List<AdvertisementRatesDetails> getScheduleOfRateSearchResult(final Long category, final Long subCategory,
             final Long unitOfMeasure, final Long classtype, final Long finyear) {
         final List<AdvertisementRatesDetails> rateDetails = rateDetailRepository
                 .findScheduleOfRateDetailsByCategorySubcategoryUomAndClassId(category, subCategory, unitOfMeasure, classtype,
                         finyear);
-        final List<AdvertisementRateSearch> advertisementSearchResults = new ArrayList<AdvertisementRateSearch>();
+        final List<AdvertisementRatesDetails> advertisementRatesDetailsList = new ArrayList<AdvertisementRatesDetails>();
         rateDetails.forEach(result -> {
-            final AdvertisementRateSearch advertisementSearchResult = new AdvertisementRateSearch();
-            advertisementSearchResult.setUnitFrom(result.getUnitFrom());
-            advertisementSearchResult.setUnitTo(result.getUnitTo());
-            advertisementSearchResult.setAmount(result.getAmount());
+            final AdvertisementRatesDetails advertisementRatesDetails = new AdvertisementRatesDetails();
+            advertisementRatesDetails.setUnitFrom(result.getUnitFrom());
+            advertisementRatesDetails.setUnitTo(result.getUnitTo());
+            advertisementRatesDetails.setAmount(result.getAmount());
 
-            advertisementSearchResults.add(advertisementSearchResult);
+            advertisementRatesDetailsList.add(advertisementRatesDetails);
         });
-        return advertisementSearchResults;
+        return advertisementRatesDetailsList;
     }
 
     public List<CFinancialYear> getAllFinancialYears() {
