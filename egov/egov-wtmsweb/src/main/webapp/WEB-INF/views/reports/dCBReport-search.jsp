@@ -206,8 +206,7 @@
 			<thead>
 				<tr>
 					<th rowspan="2"><spring:message code="lbl.number" /> </th>
-					<th colspan="1"><spring:message code="lbl.userName" /> </th>
-					<th colspan="3"><spring:message code="lbl.demand" /> </th>
+					<th colspan="4"><spring:message code="lbl.demand" /> </th>
 					<th colspan="3"><spring:message code="lbl.collection" /></th>
 					<th colspan="3"><spring:message code="lbl.balance" /> </th>
 				</tr>
