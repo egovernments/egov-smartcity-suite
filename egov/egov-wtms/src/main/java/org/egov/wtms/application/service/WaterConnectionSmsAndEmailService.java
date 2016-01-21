@@ -720,7 +720,7 @@ public class WaterConnectionSmsAndEmailService {
         else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEAPPROVE.equalsIgnoreCase(type))
             smsMsg = messageSource.getMessage(
                     code,
-                    new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
+                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                             waterTaxUtils.getMunicipalityName() }, null);
         else if (WaterTaxConstants.SMSEMAILTYPECHANGEOFUSENOTICE.equalsIgnoreCase(type))
             if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
