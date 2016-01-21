@@ -120,25 +120,15 @@ function showSORTab(){
   document.getElementById('sorTable').style.display='';
   document.getElementById('nonSorHeaderTable').style.display='';
   document.getElementById('nonSorTable').style.display='';
-/*   document.getElementById('sorTab').setAttribute('class','Active');
-  document.getElementById('sorTab').setAttribute('className','Active');    */
   hideHeaderTab();
   hideOverheadsTab();
   hideAssetTab();
-  /* setCSSClasses('assetTab','Last');
-  setCSSClasses('sorTab','Active');
-  setCSSClasses('headerTab','First BeforeActive');
-  setCSSClasses('overheadsTab',''); */
   disableTables();
 }
 
 function showHeaderTab(){
   var hiddenid = document.forms[0].id.value;
   document.getElementById('estimate_header').style.display='';
- /*  setCSSClasses('assetTab','Last');
-  setCSSClasses('sorTab','');
-  setCSSClasses('headerTab','First Active');
-  setCSSClasses('overheadsTab',''); */
   hideSORTab();
   hideOverheadsTab();
   hideAssetTab();
@@ -158,10 +148,6 @@ function showOverheadsTab(){
   	 	showMessage('overheads_error','Fill in the estimate date before adding over head details');
   }
     document.getElementById('estimate_overheads').style.display='';
-   /*  setCSSClasses('headerTab','First');
-    setCSSClasses('sorTab','BeforeActive');
-    setCSSClasses('overheadsTab','Active');
-	setCSSClasses('assetTab','Last'); */
 	document.getElementById('overheadsHeaderTable').style.display='';
     document.getElementById('overheadTable').style.display='';
     disableTables();    
@@ -177,12 +163,6 @@ function showAssetTab(){
   	 	showMessage('asset_error','Select the nature of work before adding asset details');
   }
     document.getElementById('estimate_asset').style.display='';
-    /* setCSSClasses('headerTab','First');
-    setCSSClasses('sorTab','');
-    
-    setCSSClasses('overheadsTab','BeforeActive');
-    setCSSClasses('assetTab','Last Active ActiveLast');
-     */
 	document.getElementById('assetsHeaderTable').style.display='';
     document.getElementById('assetTable').style.display='';
 	setAssetTableMessage();
@@ -230,22 +210,8 @@ function enableFields(){
 	setAssetStatusHiddenField();
 }
 
-function refreshInbox() {
-		//TODO:Fixme - commented out for time being
-       /* var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();*/
-}
-
 function setCurrentdate(){
 	
-    <s:if test="%{sourcepage!='search'}">
-    	//TODO:Fixme - commented out for time being
-		//populateDesignation();
-	</s:if>	
 	var estdate=document.getElementById('estimateDate').value;
 	if(estdate=='') {
 		document.getElementById('estimateDate').value='<%=new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())%>';
@@ -296,10 +262,7 @@ function validate(text){
 			return false;	
 		}
 	}
-	/*if(!validateUser(text))
-		return false;*/
 	enableFields();
-	//setDocumentValues();
 	document.abstractEstimateForm.action='${pageContext.request.contextPath}/estimate/abstractEstimate-save.action';
 	document.abstractEstimateForm.submit();
 	return true;
@@ -507,34 +470,20 @@ jQuery(document).ready(function(e){
 		  <s:if test="%{sourcepage!='search'}">
 				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%> 
 				<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-		         <!--%@ include file="workflowApproval.jsp"% -->   
 		  </s:if>
 </div>
 
 <div class="buttonholderwk">
 
-<input type="hidden" name="actionName" id="actionName"/> 
 <!-- Action buttons have to displayed only if the page is directed from the inbox -->	
-<s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
+<%-- <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || model.egwStatus.code=='NEW' 
 || model.egwStatus.code=='REJECTED') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
-<!-- TODO:Fixeme - hard coded save button for time being till we implement common workflow -->
-<!--<input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.abstractEstimateForm.actionName.value='save';return validate('save');" />	  
-<input type="submit" class="buttonfinal" value="SAVE & SUBMIT" id="submit_for_approval" name="submit_for_approval" onclick="document.abstractEstimateForm.actionName.value='submit_for_approval';return validate('submit_for_approval');" />		
-	<s:iterator value="%{validActions}"> 
-	  <s:if test="%{description!=''}">
-	  	<s:if test="%{description=='CANCEL' && model.estimateNumber!=null}">
-			<s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="cancel" onclick="return validateCancel();document.abstractEstimateForm.actionName.value='%{name}'"/>
-	  	</s:if>
-	    <s:else>
-	  	  <s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="moveEstimate" onclick="document.abstractEstimateForm.actionName.value='%{name}';return validate('%{name}');"/>	  	  
-	  </s:else>
-	  </s:if>
-	</s:iterator> -->
+
 	<s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' || model.egwStatus.code=='REJECTED') && 
 	(model.currentState.nextAction=='Pending Budgetary Appropriation' || model.currentState.nextAction=='Pending Deposit Code Appropriation') }">
 		 	<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!add.action?estimateId=<s:property value='%{model.id}'/>&sourcepage=<s:property value='%{sourcepage}'/>&source=UpdateFinancialDetail', '_self');" class="btn btn-primary" value="Update Financial Details " id="updateFinancialDetailButton" name="updateFinancialDetailButton"/>&nbsp;
   </s:if>
-</s:if>
+</s:if> --%>
 <%-- 
 <s:if test="%{model.id==null}">
 	  <input type="button" class="buttonfinal" value="CLEAR" id="button" name="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-newform.action','_self');"/>
@@ -556,7 +505,7 @@ jQuery(document).ready(function(e){
   <s:else>
   	<input type="submit" class="buttonadd" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();return false;" />
   </s:else> --> 
- <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' && (model.currentState.nextAction!='Pending Budgetary Appropriation' 
+ <%-- <s:if test="%{(model.egwStatus.code=='TECH_SANCTIONED' && (model.currentState.nextAction!='Pending Budgetary Appropriation' 
  || model.currentState.nextAction=='Pending Deposit Code Appropriation')) || 
  
  (model.egwStatus.code=='RESUBMITTED' && (model.currentState.nextAction=='Pending Budgetary Appropriation Check' || model.currentState.nextAction=='Pending Budgetary Appropriation Approval' 
@@ -588,8 +537,8 @@ jQuery(document).ready(function(e){
   <s:else> <input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/financialDetail!viewBudgetFolio.action?estimateId=<s:property value='%{model.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="btn btn-primary" 
      value="View Budget Folio" id="viewBudgetFolio" name="viewBudgetFolio"/>&nbsp;
  </s:else>   
-	
- </s:if>
+	 
+ </s:if>--%>
    <s:if test="%{sourcepage=='search'}">
    		<input type="button" onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId=<s:property value='%{state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" class="btn btn-primary" value="History" id="history" name="History"/>
    </s:if>
