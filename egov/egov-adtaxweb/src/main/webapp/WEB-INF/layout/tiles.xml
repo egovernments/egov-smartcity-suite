@@ -236,4 +236,8 @@
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-success.jsp"/>
     </definition>
     
+    <definition name="scheduleOfRate-search" extends="base_layout">
+	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-search.jsp"/>
+    </definition>
 </tiles-definitions>
