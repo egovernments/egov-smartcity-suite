@@ -39,6 +39,15 @@
  */
 package org.egov.tl.web.actions;
 
+import java.math.BigDecimal;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -56,7 +65,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -73,7 +81,6 @@ import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
@@ -86,15 +93,6 @@ import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.math.BigDecimal;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author mani for Implementing New License action
@@ -119,7 +117,7 @@ import java.util.Map;
                 params = {"namespace", "/transfer", "method", "showForApproval"}),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
         @Result(name = "report", location = "newTradeLicense-report.jsp")})
-public abstract class BaseLicenseAction extends GenericWorkFlowAction {
+public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     public static final String LICENSECERTIFICATE = "licenseCertificate";
     private static final long serialVersionUID = 1L;
 
@@ -169,12 +167,12 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
     }
 
-    protected abstract License license();
+    protected abstract T license();
 
-    protected abstract AbstractLicenseService licenseService();
+    protected abstract AbstractLicenseService<T> licenseService();
 
     @ValidationErrorPage(Constants.NEW)
-    public String create(TradeLicense license) {
+    public String create(T license) {
         try {
             this.setCheckList();
             populateWorkflowBean();
@@ -188,9 +186,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(TradeLicense license) {
+    public String enterExisting(T license, Map<Integer, Double> legacyInstallmentwiseFees) {
         this.setCheckList();
-        licenseService().enterExistingLicense(license);
+        licenseService().enterExistingLicense(license, legacyInstallmentwiseFees);
         addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
 
         return "viewlicense";
@@ -377,19 +375,19 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         genderList.add(Constants.GENDER_MALE);
         genderList.add(Constants.GENDER_FEMALE);
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSE,
-                Collections.EMPTY_LIST);
+                Collections.emptyList());
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSEE,
-                Collections.EMPTY_LIST);
+                Collections.emptyList());
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE,
-                Collections.EMPTY_LIST);
+                Collections.emptyList());
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE,
-                Collections.EMPTY_LIST);
+                Collections.emptyList());
         // addDropdownData(Constants.DROPDOWN_ZONE_LIST,
         // licenseUtils.getAllZone());
         if (getModel().getClass().getSimpleName()
                 .equalsIgnoreCase(Constants.ELECTRICALLICENSE_LICENSETYPE))
             addDropdownData(Constants.DROPDOWN_TRADENAME_LIST,
-                    Collections.EMPTY_LIST);
+                    Collections.emptyList());
         else
             addDropdownData(Constants.DROPDOWN_TRADENAME_LIST,
                     licenseUtils.getAllTradeNames(getModel().getClass()
@@ -580,8 +578,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void setupWorkflowDetails() {
         workflowBean.setDepartmentList(licenseUtils.getAllDepartments());
-        workflowBean.setDesignationList(Collections.EMPTY_LIST);
-        workflowBean.setAppoverUserList(Collections.EMPTY_LIST);
+        workflowBean.setDesignationList(Collections.emptyList());
+        workflowBean.setAppoverUserList(Collections.emptyList());
     }
 
     // this will give current Demand only while saving or immediate after create

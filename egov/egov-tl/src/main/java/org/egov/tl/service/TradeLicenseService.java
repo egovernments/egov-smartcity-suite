@@ -39,6 +39,12 @@
  */
 package org.egov.tl.service;
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+
+import java.util.List;
+import java.util.Set;
+
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
@@ -59,12 +65,6 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 

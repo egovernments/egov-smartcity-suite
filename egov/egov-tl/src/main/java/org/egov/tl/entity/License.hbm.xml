@@ -77,7 +77,6 @@
 		<many-to-one name="uom" class="org.egov.tl.entity.UnitOfMeasurement" fetch="select" not-null="true" >
 			<column name="ID_UOM" precision="22" scale="0" />
 		</many-to-one>
-		<property name="workersCapacity" column="WORKERS_CAPACITY" type="java.math.BigDecimal" />
 		<property  name="address" column="address" type="java.lang.String"  length="250" not-null="true" />
 		<bag name="objections" inverse="true" table="EGTL_OBJECTION" fetch="select">
 			<key>

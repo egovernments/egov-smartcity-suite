@@ -39,6 +39,22 @@
  */
 package org.egov.tl.service;
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -54,6 +70,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.ModuleRepository;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -81,21 +98,6 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 /**
  * @author mani
@@ -140,7 +142,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected DemandGenericHibDao demandGenericDao;
-
+  
     protected SimpleWorkflowService<T> licenseWorkflowService;
 
     protected SimpleWorkflowService<LicenseTransfer> transferWorkflowService;
@@ -200,12 +202,7 @@ public abstract class AbstractLicenseService<T extends License> {
         LicenseDemand ld = new LicenseDemand();
         Module moduleName = getModuleName();
         BigDecimal totalAmount = BigDecimal.ZERO;
-        Installment installment = installmentDao
-                .getInsatllmentByModuleForGivenDate(moduleName, license.getApplicationDate());
-        EgReasonCategory reasonCategory = (EgReasonCategory) persistenceService
-                .find("from org.egov.demand.model.EgReasonCategory where name='Fee'");
-        Set<EgDemandReasonMaster> egDemandReasonMasters = reasonCategory.getEgDemandReasonMasters();
-
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(moduleName, license.getApplicationDate());
         ld.setIsHistory("N");
         ld.setEgInstallmentMaster(installment);
         ld.setCreateDate(new Date());
@@ -301,11 +298,10 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void enterExistingLicense(T license) {
+    public void enterExistingLicense(T license, Map<Integer, Double> legacyInstallmentwiseFees) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber()).isEmpty())
             throw new ApplicationRuntimeException("license.number.exist");
-        // TODO create demand
-        //this.raiseNewDemand(license);
+        addLegacyDemand(legacyInstallmentwiseFees, license);
         this.processAndStoreDocument(license.getDocuments());
         LicenseAppType newAppType = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
         license.setLicenseAppType(newAppType);
@@ -317,6 +313,34 @@ public abstract class AbstractLicenseService<T extends License> {
         setAuditEntries(license);
         license.setLegacy(true);
         this.licensePersitenceService.persist(license);
+    }
+
+    private void addLegacyDemand(Map<Integer, Double> legacyInstallmentwiseFees, T license) {
+        final Module moduleName = getModuleName();
+        license.setDemandSet(new HashSet<>());
+        for (Map.Entry<Integer, Double> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet()) {
+            if (legacyInstallmentwiseFee.getValue().doubleValue() > 0) {
+                Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
+                        new DateTime().withYear(legacyInstallmentwiseFee.getKey()).withMonthOfYear(4).withDayOfMonth(1).toDate());
+                EgDemandReasonMaster reasonMaster = demandGenericDao.getDemandReasonMasterByCode("License Fee", moduleName);
+                EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment,
+                        moduleName);
+                if (reason != null) {
+                    LicenseDemand licenseDemand = new LicenseDemand();
+                    licenseDemand.setIsHistory("N");
+                    licenseDemand.setEgInstallmentMaster(installment);
+                    licenseDemand.setCreateDate(new Date());
+                    licenseDemand.setLicense(license);
+                    licenseDemand.setIsLateRenewal('0');
+                    BigDecimal licenseFee = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue());
+                    licenseDemand.getEgDemandDetails()
+                            .add(EgDemandDetails.fromReasonAndAmounts(licenseFee, reason, BigDecimal.ZERO));
+                    licenseDemand.setBaseDemand(licenseFee);
+                    license.getDemandSet().add(licenseDemand);
+                }
+
+            }
+        }
     }
 
     public LicenseDemand getCurrentYearDemand(T license) {
@@ -708,4 +732,9 @@ public abstract class AbstractLicenseService<T extends License> {
         return blockBoundary;
 
     }
+    
+    public List<Installment> getAllInstallmentsForLicense() {
+        return installmentDao.getInsatllmentByModule(getModuleName());
+    }
+    
 }
