@@ -50,7 +50,7 @@
 				//bootbox.alert('filter='+filter);
 				tempObj=null;
 				if(!filter){
-					bootbox.alert(bootbox.alert("select account code first");
+					bootbox.alert("select account code first");
 					return;
 				}
 				//  bootbox.alert("before oldlist"+trObj.rowIndex+gn+prefix);
@@ -388,13 +388,13 @@
 					// if only payee details entered and amount is not entered
 							if(eval(dedAmount1)<eval(entitytotal1))
 								{
-								bootbox.alert(bootbox.alert(" amount should be equal to the total payee amount in Row "+ i);
+								bootbox.alert(" amount should be equal to the total payee amount in Row "+ i);
 									PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
 									return false;
 								}
 							else if((eval(entitytotal1)!=0)&&eval(dedAmount1)>eval(entitytotal1))
 								{
-								bootbox.alert(bootbox.alert(" amount should be equal to the total payee amount in Row "+ i);
+								bootbox.alert(" amount should be equal to the total payee amount in Row "+ i);
 									PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
 									return false;
 								}
@@ -406,7 +406,7 @@
 						{
 							if(eval(dedAmount1) > eval(entitytotal1) || eval(dedAmount1) < eval(entitytotal1) && entitytotal1!= "-0")
 							{
-								bootbox.alert(bootbox.alert("Payees amount should be equal to the total amount in Row "+ i);
+								bootbox.alert("Payees amount should be equal to the total amount in Row "+ i);
 								PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
 								return false;
 							}

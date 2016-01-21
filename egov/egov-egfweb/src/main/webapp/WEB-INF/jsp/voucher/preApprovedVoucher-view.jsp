@@ -199,34 +199,20 @@
 					</table>
 				</div>
 			</s:if>
-			<div id="commentsdiv">
-				<td class="bluebox" id="commentslabel"><strong>Comments</strong></td>
-				<td class="bluebox" colspan="4"><s:textarea name="comments"
-						id="comments" cols="100" rows="3" onblur="checkLength(this)" /></td>
-			</div>
+			
 			<div id="wfHistoryDiv">
 				<s:if test="%{from=='Receipt'}">
 					<s:if test="%{receiptVoucher.state.id!=null}">
-						<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
-							context="/egi">
-							<c:param name="stateId" value="${receiptVoucher.state.id}"></c:param>
-						</c:import>
-					</s:if>
+							<jsp:include page="../workflow/workflowHistory.jsp"/>					</s:if>
 				</s:if>
 				<s:if test="%{from=='Contra'}">
 					<s:if test="%{contraVoucher.state.id!=null}">
-						<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
-							context="/egi">
-							<c:param name="stateId" value="${contraVoucher.state.id}"></c:param>
-						</c:import>
-					</s:if>
+							<jsp:include page="../workflow/workflowHistory.jsp"/>					</s:if>
 				</s:if>
 				<s:if test="%{from=='Journal Voucher'}">
 					<s:if test="%{voucherHeader.state.id!=null}">
-						<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
-							context="/egi">
-							<c:param name="stateId" value="${voucherHeader.state.id}"></c:param>
-						</c:import>
+							<jsp:include page="../workflow/workflowHistory.jsp"/>
+					
 					</s:if>
 				</s:if>
 			</div>

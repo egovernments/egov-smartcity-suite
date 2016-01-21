@@ -45,15 +45,16 @@
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
 
 <script>
 function printEJV(){
 	var id = '<s:property value="voucherHeader.id"/>';
-	window.open("${pageContext.request.contextPath}/report/expenseJournalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+	window.open("${pageContext.request.contextPath}/report/expenseJournalVoucherPrint-print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 function printJV(){
 	var id = '<s:property value="voucherHeader.id"/>';
-	window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+	window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint-print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
 function openSource(){
 	if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
@@ -77,6 +78,12 @@ function validate(name,value){
 </s:if>
 	return true;
 }
+function onSubmit()
+{
+			document.forms[0].action='${pageContext.request.contextPath}/voucher/preApprovedVoucher-update.action';
+    		document.forms[0].submit();
+			
+}
 </script>
 
 <meta http-equiv="Content-Type"
@@ -98,7 +105,7 @@ function validate(name,value){
 		<font style='color: red;'>
 			<p class="error-block" id="lblError" style="font: bold"></p>
 		</font>
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 		<s:if test="%{type=='default'}">
 			<div class="formmainbox">
@@ -168,16 +175,16 @@ function validate(name,value){
 							</tr>
 							<s:iterator var="p" value="%{billDetails.tempList}" status="s">
 								<tr>
-									<td width="18%" class="bluebox"><s:property
+									<td width="18%" class="bluebox setborder"><s:property
 											value="function" /></td>
-									<td width="17%" class="bluebox"><s:property value="glcode" /></td>
-									<td width="19%" class="bluebox"><s:property
+									<td width="17%" class="bluebox setborder"><s:property value="glcode" /></td>
+									<td width="19%" class="bluebox setborder"><s:property
 											value="accounthead" /></td>
-									<td width="17%" class="bluebox" style="text-align: right"><s:text
+									<td width="17%" class="bluebox setborder" style="text-align: right"><s:text
 											name="format.number">
 											<s:param value="%{debitamount}" />
 										</s:text></td>
-									<td width="16%" class="bluebox" style="text-align: right"><s:text
+									<td width="16%" class="bluebox setborder" style="text-align: right"><s:text
 											name="format.number">
 											<s:param value="%{creditamount}" />
 										</s:text></td>
@@ -211,12 +218,12 @@ function validate(name,value){
 							<s:iterator var="p" value="%{getMasterName().tempList}"
 								status="s">
 								<tr>
-									<td width="18%" class="bluebox"><s:property value="glcode" /></td>
-									<td width="18%" class="bluebox"><s:property
+									<td width="18%" class="bluebox setborder"><s:property value="glcode" /></td>
+									<td width="18%" class="bluebox setborder"><s:property
 											value="detailtype" /></td>
-									<td width="18%" class="bluebox"><s:property
+									<td width="18%" class="bluebox setborder"><s:property
 											value="detailkey" /></td>
-									<td width="18%" class="bluebox" style="text-align: right"><s:text
+									<td width="18%" class="bluebox setborder" style="text-align: right"><s:text
 											name="format.number">
 											<s:param value="%{amount}" />
 										</s:text></td>
@@ -227,31 +234,15 @@ function validate(name,value){
 					<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 						<%@include file="workflowApproval.jsp"%>
 					</s:if>
-					<div align="center">
-						<table border="0" width="100%">
-							<tr>
-								<td class="bluebox">Comments</td>
-								<td class="bluebox"><s:textarea name="comments"
-										id="comments" cols="150" rows="3" onblur="checkLength(this)" /></td>
-							</tr>
-							<br />
-						</table>
-					</div>
 
 
 					<div id="wfHistoryDiv">
-						<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
-							context="/egi">
-							<c:param name="stateId" value="${voucherHeader.state.id}"></c:param>
-						</c:import>
+						<jsp:include page="../workflow/workflowHistory.jsp"/>
 					</div>
+					<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 					<div class="buttonbottom" id="buttondiv">
-						<s:iterator value="%{getValidActions('')}" var="p">
-							<s:submit type="submit" cssClass="buttonsubmit"
-								value="%{description}" id="%{name}" name="%{name}"
-								method="update"
-								onclick="return validate('%{name}','%{description}')" />
-						</s:iterator>
+					
 						<s:if test="%{type == finConstExpendTypeContingency}">
 							<input type="button" class="button" id="print"
 								value="Print Preview" action="expenseJournalVoucherPrint"
@@ -263,8 +254,6 @@ function validate(name,value){
 								method="print" onclick="printJV()" />
 						</s:else>
 
-						<input type="button" value="Close"
-							onclick="javascript:window.close()" class="button" />
 					</div>
 
 				</div>

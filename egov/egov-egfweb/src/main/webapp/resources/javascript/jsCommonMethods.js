@@ -54,7 +54,7 @@ function topmenu(){
 	document.write("<span class='style5'><div name='title' id='title'></span></td>");
 	document.write("<td width='60%'  height=52 valign='bottom' align='left' class='normaltext'><span><div name='username' id='username'>User:&nbsp;</span></td>");
 	document.write("<td width='30%' height=52 valign='bottom' nowrap class='banner'><a class='footerlocallink'  onClick='gotoHomePage()' href='#'>Home</a>&nbsp;&nbsp;");
-	<!--document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");-->
+	/*document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");*/
 	document.write("<a class='footerlocallink' href='#'>Help</a>&nbsp; <a class='footerlocallink' onClick='changePassword()' href='#'>ChangePassword</a>&nbsp;<a class='footerlocallink' onClick='logOut()' href='#'>Logout</a>");
 	document.write("<td width='9%'><div align='right'><input name='imageField2' type='image' src='/egi/resources/erp2/images/eGovLogo.jpg' align='top' width='80' height='60' border='0'></div></td></tr>");
 	document.write("</table>");
@@ -535,14 +535,14 @@ function deleteRowTable(obj)
 			}
 			else
 			{			 
-				bootbox.alert(bootbox.alert("You cannot delete this row"); 
+				bootbox.alert("You cannot delete this row"); 
 			 return false;
 			}
 		}
 	 } 
 	 if(!isSelected)
 	 {
-		 bootbox.alert(bootbox.alert("Select the row to be deleted.");
+		 bootbox.alert("Select the row to be deleted.");
 	 return;
 	 }
    
@@ -672,7 +672,7 @@ function getSelectedRadioValue(buttonGroup) {
 		 {
 				var narration=document.getElementById(ctrlName);
 				if(narration.value.length>g_maxOfNarration){
-					bootbox.alert(bootbox.alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
+					bootbox.alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
 				  narration.focus();
 				  return false;
 				}
@@ -685,7 +685,7 @@ function chkNarration(ctrlName)
 	{
 		var narration=document.getElementById(ctrlName);
 		if(narration.value.length>=g_maxOfNarration){
-			bootbox.alert(bootbox.alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
+			bootbox.alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
 		 event.returnValue=false;
 		}
 	}
@@ -767,7 +767,7 @@ function checkBackDate(eleObj,currentDate,msgText)
 		  //testDateAry contains date to check and curDateAry contains current date
           if(parseInt(testDateAry[5]) > parseInt(curDateAry[5]))
           {
-        	  bootbox.alert(bootbox.alert("Not a valid  "+msgText+" date");
+        	  bootbox.alert("Not a valid  "+msgText+" date");
 			  eleObj.focus();
               return false;
           }    
@@ -775,7 +775,7 @@ function checkBackDate(eleObj,currentDate,msgText)
           {
                 if(vDate.getMonth()> currentDate.getMonth())
                 {
-                	bootbox.alert(bootbox.alert("Not a valid  "+msgText+" date");
+                	bootbox.alert("Not a valid  "+msgText+" date");
 						eleObj.focus();
                         return false;
                 }
@@ -783,7 +783,7 @@ function checkBackDate(eleObj,currentDate,msgText)
                 {
                         if(parseInt(testDateAry[2]) > parseInt(curDateAry[2]))
                         {
-                        	bootbox.alert(bootbox.alert("Not a valid  "+msgText+" date");
+                        	bootbox.alert("Not a valid  "+msgText+" date");
 							  eleObj.focus();
                               return false;
                         }
@@ -811,7 +811,7 @@ function checkFrontDate(eleObj,currentDate,msgText)
 		  //testDateAry contains date to check and curDateAry contains current date
 		  if(parseInt(testDateAry[5]) < parseInt(curDateAry[5]))
           {
-			  bootbox.alert(bootbox.alert("Not a valid "+msgText+" date");
+			  bootbox.alert("Not a valid "+msgText+" date");
 			  eleObj.focus();
               return false;
           }    
@@ -819,7 +819,7 @@ function checkFrontDate(eleObj,currentDate,msgText)
           {
                 if(vDate.getMonth()< currentDate.getMonth())
                 {
-                	bootbox.alert(bootbox.alert("Not a valid  "+msgText+" date");
+                	bootbox.alert("Not a valid  "+msgText+" date");
 						eleObj.focus();
                         return false;
                 }
@@ -827,7 +827,7 @@ function checkFrontDate(eleObj,currentDate,msgText)
                 {
                         if(parseInt(testDateAry[2]) < parseInt(curDateAry[2]))
                         {
-                        	bootbox.alert(bootbox.alert("Not a valid  "+msgText+" date");
+                        	bootbox.alert("Not a valid  "+msgText+" date");
 							  eleObj.focus();
                               return false;
                         }
@@ -852,7 +852,7 @@ function isValidUser(level, role){
 	}
 	
 	if (ret == false)
-		bootbox.alert(bootbox.alert('Permission denied. Contact administrator');
+		bootbox.alert('Permission denied. Contact administrator');
 	return ret;
 }
 
@@ -1717,7 +1717,7 @@ function checkDate(obj)
 	var dat=validateDate(obj.value);
 	if (!dat) 
 	{
-		bootbox.alert(bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
+		bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 		obj.focus();
 		return;
 	}
@@ -1758,7 +1758,7 @@ function getRow(obj)
 	    }	
 	    else if(result[0]=="false")
 	    {
-	    	bootbox.alert(bootbox.alert("Entered "+fieldname+" already exists");	
+	    	bootbox.alert("Entered "+fieldname+" already exists");	
 		isUnique="false";
 	    }		
 
@@ -1850,7 +1850,7 @@ function checkForFunction_AccountCode(table,funId,glCode){ //,checkEntityDuplica
 			//bootbox.alert("funcIdtemp1:"+funcIdtemp1.value+";;;"+"funcIdtemp2:"+funcIdtemp2.value);
 			glcodeTemp2=getControlInBranch(tableObj.rows[j],glCode);
 			 if((glcodeTemp1.value  == glcodeTemp2.value)  && (funcIdtemp1.value == funcIdtemp2.value)){
-				 bootbox.alert(bootbox.alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
+				 bootbox.alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
 				return false;
 	  		}
 	 	}
@@ -1882,12 +1882,12 @@ function checkForFunction_AccountCode_dedGrid(table,funId,glCode,tdsCode){ //,ch
 			tds2=getControlInBranch(tableObj.rows[j],tdsCode);
 			if(tds1!=null && tds1.value!=''){
 				if((tds1.value  == tds2.value)  && (funcIdtemp1.value == funcIdtemp2.value)){
-					bootbox.alert(bootbox.alert('Same tds Code & Function Name can not appear more than once...CHECK type : ' + tds1.value);
+					bootbox.alert('Same tds Code & Function Name can not appear more than once...CHECK type : ' + tds1.value);
 					return false;
 				}
 			}else{
 				if((glcodeTemp1.value  == glcodeTemp2.value)  && (funcIdtemp1.value == funcIdtemp2.value)){
-					bootbox.alert(bootbox.alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
+					bootbox.alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
 					return false;
 				}
 			}
@@ -1918,7 +1918,7 @@ function validateNames(obj)
 			{
 			if(x.charAt(i)==regex.charAt(j))
 			{
-				bootbox.alert(bootbox.alert("Please Enter only A-Z,a-z,0-9,.");
+				bootbox.alert("Please Enter only A-Z,a-z,0-9,.");
 			obj.focus();
 			return;
 			}
@@ -1950,7 +1950,7 @@ function convertDate(obj)
 	}
 	else
 	{
-		bootbox.alert(bootbox.alert('Invalid date');
+		bootbox.alert('Invalid date');
 		return;
 	}	
 }
@@ -1986,7 +1986,7 @@ function validateDigitsAndDecimal(obj)
 {
 	if(isNaN(obj.value.trim()))
 	{
-		bootbox.alert(bootbox.alert("Invalid Amount")
+		bootbox.alert("Invalid Amount")
 		obj.value=0;
 		obj.focus();
 	}
@@ -1994,7 +1994,7 @@ function validateDigitsAndDecimal(obj)
 	{
 		if(parseFloat(obj.value.trim())<0)
 		{
-			bootbox.alert(bootbox.alert("Negetive Amount is not allowed");
+			bootbox.alert("Negetive Amount is not allowed");
 			obj.value=0;
 			obj.focus();
 		}

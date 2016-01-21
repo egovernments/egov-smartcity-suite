@@ -164,20 +164,20 @@
 		var year = document.getElementById('year').value;
 		if(fromDate == "" && toDate == ""){
 			if(month == "" || year == ""){
-				bootbox.alert(bootbox.alert("Enter the month and year or date range");
+				bootbox.alert("Enter the month and year or date range");
 			 return false;
 			}
 		}
 		if(month == "" && year == ""){
 			if(fromDate == "" || toDate == ""){
-				bootbox.alert(bootbox.alert("Enter the month and year or date range");
+				bootbox.alert("Enter the month and year or date range");
 			 return false;
 			}
 		}
 		
 		if(month!=""){
 			if(year == ""){
-				bootbox.alert(bootbox.alert("Please select Year");
+				bootbox.alert("Please select Year");
 			  return false;
 			}
 		}

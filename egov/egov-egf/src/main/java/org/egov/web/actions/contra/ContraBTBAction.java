@@ -77,6 +77,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -575,7 +576,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA);
         if (voucherHeader.getName() == null

@@ -86,6 +86,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -170,7 +171,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         return voucherHeader;
 
@@ -1091,8 +1092,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return paymentWorkflowService.getValidActions(getPayment());
+    public List<String> getValidActions() {
+        return null;
     }
 
     public Paymentheader getPayment() {

@@ -66,7 +66,7 @@ function populateNarration(accnumObj){
 function populateAvailableBalance(accnumObj){
 	if(document.getElementById('voucherDate').value=='')
 	{
-		bootbox.alert(bootbox.alert("Please Select the Voucher Date!!");
+		bootbox.alert("Please Select the Voucher Date!!");
 		accnumObj.options.value=-1;
 		return;
 	}
@@ -79,7 +79,7 @@ function populateAvailableBalance(accnumObj){
 
 var callback = {
 		success: function(o){
-			bootbox.alert(bootbox.alert(o.responseText.value);
+			bootbox.alert(o.responseText.value);
 			document.getElementById('availableBalance').value=o.responseText;
 			},
 			failure: function(o) {
@@ -91,7 +91,7 @@ success: function(o) {
 		document.getElementById('accnumnar').value= o.responseText;
 		},
     failure: function(o) {
-    	bootbox.alert(bootbox.alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -128,7 +128,7 @@ function balanceCheck(obj, name, value)
 			{
 				if(parseFloat(document.getElementById('amount').value)>parseFloat(document.getElementById('availableBalance').value))
 				{
-					bootbox.alert(bootbox.alert(insuffiecientBankBalance);
+					bootbox.alert(insuffiecientBankBalance);
 					return false;
 				}
 			}

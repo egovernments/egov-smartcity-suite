@@ -42,7 +42,7 @@
 				var glObj= PageManager.DataService.getControlInBranch(trObj,ctrlName);
 				var filter=glObj.value;
 				if(!filter){
-					bootbox.alert(bootbox.alert("select account code first");
+					bootbox.alert("select account code first");
 					return;
 				} 
 				var oldList=getOldList(trObj.rowIndex);

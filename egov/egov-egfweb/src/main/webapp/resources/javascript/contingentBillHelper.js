@@ -67,7 +67,7 @@ function validate(name,value)
 	}
 	else
 	{
-		bootbox.alert(bootbox.alert("No Account code is selected for Save . Please add Account code and click done and then try to save again");	
+		bootbox.alert("No Account code is selected for Save . Please add Account code and click done and then try to save again");	
 		undoLoadingMask() ;
 		return false;
 	}
@@ -98,7 +98,7 @@ function load_COA_Entities(obj)
 	//loadDropDownCodesForEntities(obj);   
 }
 function functionFormatter1(tableName,columnName,type){
-	bootbox.alert(bootbox.alert("<input type='"+type+"'  id='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' name='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' onkeyup='autocompletecode(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitGlcode(this)' ");
+	bootbox.alert("<input type='"+type+"'  id='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' name='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' onkeyup='autocompletecode(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitGlcode(this)' ");
 	}
 		
 
@@ -233,7 +233,7 @@ function validateNetPaySubledgerAndDetailTypes()
 		}
 		if(found==false)
 		{
-			bootbox.alert(bootbox.alert("Selected net payable's detailtypes and selected subledgertype does not match ");
+			bootbox.alert("Selected net payable's detailtypes and selected subledgertype does not match ");
 			return false;
 		}
 	}else
@@ -246,13 +246,13 @@ function updateTabels()
 {
 	if(document.getElementById('billDetailsTableNet[0].debitAmountDetail').value<0)
 	{
-		bootbox.alert(bootbox.alert('Negative Net payable is not allowed');
+		bootbox.alert('Negative Net payable is not allowed');
 		return false;
 	}                           
 var netpayablevalue=document.getElementById("billDetailsTableNet[0].glcodeDetail").value
 
 	if(netpayablevalue=="-1"){
-		bootbox.alert(bootbox.alert('Please Select a  Net payable Code');
+		bootbox.alert('Please Select a  Net payable Code');
 		return false;
 	}
 var debitTable=document.getElementById('billDetailTable').getElementsByTagName('table')[0];
@@ -267,7 +267,7 @@ if(document.getElementById("billDetailsTableNet[0].isSubledger").value=='true')
 {
 	if(document.getElementById("detailCode").value.trim()=="")
 	{
-		bootbox.alert(bootbox.alert("Subledger is not selected for net payable");
+		bootbox.alert("Subledger is not selected for net payable");
 		return false;
 	}
 }
@@ -589,7 +589,7 @@ function calculateNet(obj)
 
 	if(isNaN(obj.value))
 	{
-		bootbox.alert(bootbox.alert(amountshouldbenumeric);
+		bootbox.alert(amountshouldbenumeric);
 		obj.value="";
 		return false;
 	}
@@ -756,7 +756,7 @@ function disableYUIAddDeleteButtons(value)
 function checkLength(obj){
 	if(obj.value.length>1024)
 	{
-		bootbox.alert(bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,1024);
 	}
 }
@@ -768,7 +768,7 @@ function openSearchWindow(obj, type) {
 		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailType;
 		window.open(url, 'Search','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
-		bootbox.alert(bootbox.alert("Select the Subledger Type.");
+		bootbox.alert("Select the Subledger Type.");
 	}
 }
 
@@ -788,7 +788,7 @@ function popupCallback(arg0, srchType) {
 		}
 		else
 		{
-			bootbox.alert(bootbox.alert(invalidEntityselected);
+			bootbox.alert(invalidEntityselected);
 			document.getElementById("commonBean.payto").value="";
 			document.getElementById("detailName").value="";
 			document.getElementById("detailKey").value="";
@@ -811,7 +811,7 @@ function splitEntitiesForGrid(obj) {
 			document.getElementById(detailname).value = entity_array[0].split("`-`")[1];
 			document.getElementById(detailkey).value = entity_array[1];
 		} else {
-			bootbox.alert(bootbox.alert(invalidEntityselected);
+			bootbox.alert(invalidEntityselected);
 			obj.value = "";
 			var detailname = obj.name;
 			var detailkey = obj.name;
@@ -826,7 +826,7 @@ function splitEntitiesForGrid(obj) {
 function calculateNetForGrid(obj) {
 	var amountshouldbenumeric = "Amount should be numeric";
 	if (isNaN(obj.value)) {
-		bootbox.alert(bootbox.alert(amountshouldbenumeric);
+		bootbox.alert(amountshouldbenumeric);
 		obj.value = "";
 		return false;
 	}

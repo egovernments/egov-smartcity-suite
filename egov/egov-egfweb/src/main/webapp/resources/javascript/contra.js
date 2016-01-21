@@ -66,7 +66,7 @@ var postType = {
 				}
 		    },
 		    failure: function(o) {
-		    	bootbox.alert(bootbox.alert('Failure');
+		    	bootbox.alert('Failure');
 		    }
 	}
 
@@ -98,12 +98,12 @@ function nextChqNo(){
 	var obj=document.getElementById("accountNumber");
 	var bankBr=document.getElementById("bankId");
 	if( bankBr.selectedIndex==-1){
-		bootbox.alert(bootbox.alert("Select Bank Branch and Account No!!");
+		bootbox.alert("Select Bank Branch and Account No!!");
 	  return;
 	}
 
 	if(obj.selectedIndex==-1){
-		bootbox.alert(bootbox.alert("Select Account No!!");
+		bootbox.alert("Select Account No!!");
 	  return;
 	}
 	var accNo=obj.options[obj.selectedIndex].text;

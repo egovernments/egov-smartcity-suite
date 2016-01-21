@@ -66,13 +66,13 @@ function newComputeAvailable(prefix,index){
 	if(delta == undefined)
 		delta = "0.00";
 	else if(isNaN(delta)){
-		bootbox.alert(bootbox.alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	if(planning == undefined)
 		planning = "0.00";
 	else if(isNaN(planning)){
-		bootbox.alert(bootbox.alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	newelement = document.getElementById(prefix+'['+index+'].planningBudgetApproved');
@@ -98,13 +98,13 @@ function computeAvailable(prefix,index){
 	if(newavailable == undefined)
 		newavailable = "0.00";
 	else if(isNaN(available)){
-		bootbox.alert(bootbox.alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	if(delta == undefined)
 		delta = "0.00";
 	else if(isNaN(delta)){
-		bootbox.alert(bootbox.alert("Please enter a valid number");
+		bootbox.alert("Please enter a valid number");
 		return;
 	}
 	element = document.getElementById(prefix+'['+index+'].remainingAmount');

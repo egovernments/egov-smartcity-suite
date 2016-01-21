@@ -67,7 +67,7 @@ var dbcr=debit-credit;
 var amt=document.getElementById('amount').value;
 if(isNaN(amt))
 {
-	bootbox.alert(bootbox.alert(amountshouldbenumeric);
+	bootbox.alert(amountshouldbenumeric);
 	return false;
 }
 //document.getElementById('amount').value=debit-credit;
@@ -121,7 +121,7 @@ function loadDocumentNoAndDate(billVhId){
 function populateAvailableBalance(accnumObj){
 	if(document.getElementById('voucherDate').value=='')
 	{
-		bootbox.alert(bootbox.alert("Please Select the Voucher Date!!");
+		bootbox.alert("Please Select the Voucher Date!!");
 		accnumObj.options.value=-1;
 		return;
 	}
@@ -145,7 +145,7 @@ success: function(o) {
 		document.getElementById('accnumnar').value= o.responseText;
 		},
     failure: function(o) {
-    	bootbox.alert(bootbox.alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -159,7 +159,7 @@ var documentNoAndDateTypeFrom={
 	}
 	},
 failure: function(o) {
-	bootbox.alert(bootbox.alert('Cannot fetch Document Number and Date');
+	bootbox.alert('Cannot fetch Document Number and Date');
 }
 }
 
@@ -198,7 +198,7 @@ function balanceCheck(obj, name, value)
 			{
 				if(parseFloat(document.getElementById('amount').value)>parseFloat(document.getElementById('availableBalance').value))
 				{
-					bootbox.alert(bootbox.alert(insuffiecientBankBalance);
+					bootbox.alert(insuffiecientBankBalance);
 					return false;
 				}
 			}

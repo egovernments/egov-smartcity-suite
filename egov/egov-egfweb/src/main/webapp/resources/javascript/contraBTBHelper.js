@@ -123,7 +123,7 @@ success: function(o) {
 		document.getElementById('fromAccnumnar').value=fromNarration;	
 		},
     failure: function(o) {
-    	bootbox.alert(bootbox.alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -134,7 +134,7 @@ success: function(o) {
 		document.getElementById('toAccnumnar').value=toNarration;	
 		},
     failure: function(o) {
-    	bootbox.alert(bootbox.alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -144,12 +144,12 @@ success: function(o) {
 		var obj = document.getElementById("fromAccountNumber");
 		var bankBr = document.getElementById("fromBankId");
 		if (bankBr.selectedIndex == -1) {
-			bootbox.alert(bootbox.alert("Select Bank Branch and Account No!!");
+			bootbox.alert("Select Bank Branch and Account No!!");
 			return;
 		}
 
 		if (obj.selectedIndex == -1) {
-			bootbox.alert(bootbox.alert("Select Account No!!");
+			bootbox.alert("Select Account No!!");
 			return;
 		}
 		var accNo = obj.options[obj.selectedIndex].text;
@@ -199,7 +199,7 @@ function checkInterFund(){
 		{
 			if(document.getElementById('voucherDate').value=='')
 			{
-				bootbox.alert(bootbox.alert("Please Select the Voucher Date!!");
+				bootbox.alert("Please Select the Voucher Date!!");
 				obj.options.value=-1;
 				return;
 			}
@@ -217,7 +217,7 @@ function checkInterFund(){
 		{
 			if(document.getElementById('voucherDate').value=='')
 			{
-				bootbox.alert(bootbox.alert("Please Select the Voucher Date!!");
+				bootbox.alert("Please Select the Voucher Date!!");
 				obj.options.value=-1;
 				return;
 			}
@@ -265,11 +265,11 @@ function checkInterFund(){
 					{
 						
 						if(fundFlowNotGeneratedAlert!=''){
-							bootbox.alert(bootbox.alert(fundFlowNotGeneratedAlert);
+							bootbox.alert(fundFlowNotGeneratedAlert);
 							return false;
 						}else{
 							if(document.getElementById('bankBalanceMandatory').value)
-								bootbox.alert(bootbox.alert(insuffientAlert);
+								bootbox.alert(insuffientAlert);
 							return false;
 						}
 					}else{
@@ -287,7 +287,7 @@ function checkInterFund(){
 				}
 				var Amount = document.getElementById("amount").value;
 				if(Amount<=0){
-					bootbox.alert(bootbox.alert("Amount should be greater than zero ");
+					bootbox.alert("Amount should be greater than zero ");
 					return false;
 				}
 				document.getElementById("fromFundId").disabled=false;

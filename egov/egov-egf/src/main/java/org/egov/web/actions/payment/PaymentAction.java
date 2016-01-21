@@ -80,6 +80,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -319,7 +320,7 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType("Payment");
         return voucherHeader;
@@ -998,11 +999,11 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<String> getValidActions() {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getValidActions...");
-        return paymentWorkflowService.getValidActions(getPayment());
+        return null;
     }
 
     @SkipValidation
@@ -1428,8 +1429,8 @@ public class PaymentAction extends BasePaymentAction {
                     userId = Integer.valueOf(parameters.get("approverUserId")[0]);
                 else
                     userId = EgovThreadLocals.getUserId().intValue();
-                paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader,
-                        paymentheader.getVoucherheader().getDescription());
+               /* paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader,
+                        paymentheader.getVoucherheader().getDescription());*/
                 addActionMessage(getMessage("payment.voucher.approved",
                         new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
                 loadApproverUser(voucherHeader.getType());

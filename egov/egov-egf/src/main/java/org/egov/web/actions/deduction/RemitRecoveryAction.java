@@ -90,6 +90,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -181,7 +182,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         return voucherHeader;
@@ -451,8 +452,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return paymentWorkflowService.getValidActions(getPayment());
+    public List<String> getValidActions() {
+        return null;
     }
 
     @SuppressWarnings(UNCHECKED)
