@@ -44,14 +44,8 @@
 <head>
 <script type="text/javascript">
 	function submitForm() {
-		var mode = '<s:property value="%{mode}"/>';
-		if (mode == 'view') {
-			document.forms[0].action = 'unitRate-view.action';
-		} else {
-			document.forms[0].action = 'unitRate-search.action';
-		}
-
-		document.forms[0].submit;
+		document.forms[0].action = 'unitRate-search.action';
+		document.forms[0].submit;       
 		return true;
 	}
 	
@@ -143,7 +137,7 @@
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="text-align:left" />
 								id<s:property value="%{category.id}"/>
-							<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_PTADMINISTRATOR.toUpperCase())}">
+							<s:if test="%{mode == 'edit'}">
 							  <display:column title=""
 									 media="html"
 									headerClass="bluebgheadtd" class="blueborderfortd"
@@ -151,12 +145,14 @@
 									<a href="../admin/unitRate-newForm.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=edit"> Edit</a>
 									</display:column> 
 									</s:if>
+							<s:if test="%{mode == 'view'}">
 							 <display:column title=""
 									 media="html"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center">
 									<a href="../admin/unitRate-view.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=view"> View</a>
 									</display:column> 
+									</s:if>
 
 							<display:setProperty name="export.pdf" value="true" />
 							<display:setProperty name="export.rtf" value="false" />

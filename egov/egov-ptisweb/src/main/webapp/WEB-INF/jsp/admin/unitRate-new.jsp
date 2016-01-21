@@ -251,8 +251,6 @@ function makeReadyOnly() {
 		    	<s:submit value="Add" name="Add"
 						id='Add' cssClass="buttonsubmit"  onclick="return validateData('add');" />  
 			
-				<s:submit value="Search" name="Search"
-						id='Search' cssClass="buttonsubmit" onclick="return validateData('search');" /> 
 			</s:if>
 		    <s:elseif test="%{mode == 'edit'}">
 						<s:submit value="Update" name="Update" id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 

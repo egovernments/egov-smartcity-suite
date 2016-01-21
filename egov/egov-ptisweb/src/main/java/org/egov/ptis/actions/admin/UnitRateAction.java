@@ -261,9 +261,9 @@ public class UnitRateAction extends BaseFormAction {
                         + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? ",
                         zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
         if (existingCategory != null) {
-            getPersistenceService().update(existingCategory);
-            setAckMessage("Unit Rate is updated successfully!");
-            return RESULT_ACK;
+            addActionError(getText("unit.rate.exists.for.combination"));
+            mode = EDIT;
+            return RESULT_NEW;
         } else {
             if (category != null && category.getId() != null && category.getId() != -1) {
                 catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
