@@ -77,7 +77,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 	// 3 = dd/mm/yyyy
 	//Enter a tilde sign for the first number and you can check the variable information.
 	if (vDateValue == "~") {
-		alert(bootbox.alert("AppVersion = "+navigator.appVersion+" \nNav. 4 Version = "+isNav4+" \nNav. 5 Version = "+isNav5+" \nIE Version = "+isIE4+" \nYear Type = "+vYearType+" \nDate Type = "+vDateType+" \nSeparator = "+strSeperator);
+		alert(bootbox.alert("AppVersion = "+navigator.appVersion+" \nNav. 4 Version = "+isNav4+" \nNav. 5 Version = "+isNav5+" \nIE Version = "+isIE4+" \nYear Type = "+vYearType+" \nDate Type = "+vDateType+" \nSeparator = "+strSeperator));
 		vDateName.value = "";
 		vDateName.focus();
 		return true;
