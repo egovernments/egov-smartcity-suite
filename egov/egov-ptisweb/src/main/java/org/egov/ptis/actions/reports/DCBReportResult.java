@@ -40,6 +40,7 @@ public class DCBReportResult {
     private BigDecimal clctn_currentST = BigDecimal.ZERO;
     private BigDecimal clctn_currentVLT = BigDecimal.ZERO;
     private BigDecimal clctn_currentPSCT = BigDecimal.ZERO;
+    private String houseNo;
 
     public String getBoundaryName() {
         return boundaryName;
@@ -364,4 +365,12 @@ public class DCBReportResult {
     public void setBoundaryId(final Integer boundaryId) {
         this.boundaryId = boundaryId;
     }
+
+	public String getHouseNo() {
+		return houseNo;
+	}
+
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
+	}
 }
