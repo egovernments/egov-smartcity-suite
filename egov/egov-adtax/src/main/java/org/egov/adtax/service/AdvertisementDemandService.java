@@ -68,6 +68,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +89,8 @@ public class AdvertisementDemandService {
     @PersistenceContext
     private EntityManager entityManager;
     
+    @Autowired
+    AdvertisementPenaltyRatesService advertisementPenaltyRatesService;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -325,20 +328,59 @@ public class AdvertisementDemandService {
         return noOfMonths;
 
     }
-    
-    private BigDecimal calculatePenalty(BigDecimal penaltyAmt,final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
-        int noofmonths = 0;
+   
+  /**
+   * Calculate Penalty 
+   * @param penaltyAmt
+   * @param demandDtl
+   * @param amount
+   * @param penaltyCalculationDate
+   * @return
+   */
+    private BigDecimal calculatePenalty(BigDecimal penaltyAmt, final EgDemandDetails demandDtl,
+            final BigDecimal amount, Date penaltyCalculationDate) {
+        double percentage = 0;
+        int days = 0;
 
-        if (penaltyCalculationDate != null)
-            noofmonths = (noOfMonths(penaltyCalculationDate, new Date())); 
-        else
-            noofmonths = (noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
-                    new Date()));
-      
-        if (noofmonths > 0) {
-            penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(noofmonths))
-                    .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+        if (demandDtl != null && (amount).compareTo(BigDecimal.ZERO) > 0) {
+            // Eg: Next year installment
+            if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate().after(new Date())) {
+                days = Days.daysBetween(
+                        new DateTime(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()),
+                        new DateTime(new Date())).getDays();
+
+            } else if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate().before(new Date())) {
+                // Penalty calculation date or application date in current year.
+                // Decided based on penalty calculation date
+                if (penaltyCalculationDate != null
+                        && demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                                .before(penaltyCalculationDate)
+                        && demandDtl.getEgDemandReason().getEgInstallmentMaster().getToDate()
+                                .after(penaltyCalculationDate)) {
+                    days = Days.daysBetween(new DateTime(penaltyCalculationDate), new DateTime(new Date())).getDays();
+
+                } else {
+                    days = Days.daysBetween(
+                            new DateTime(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()),
+                            new DateTime(new Date())).getDays();
+
+                }
+
+            }
+
+            percentage = advertisementPenaltyRatesService.findPenaltyRatesByNumberOfDays(Long.valueOf(days));
+            /*
+             * if (penaltyCalculationDate != null) noofmonths =
+             * (noOfMonths(penaltyCalculationDate, new Date())); else noofmonths
+             * =
+             * (noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster
+             * ().getFromDate(), new Date()));
+             */
+            if (percentage > 0) {
+                penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(percentage))
+                        .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
+                        .setScale(0, BigDecimal.ROUND_HALF_UP));
+            }
         }
         return penaltyAmt;
     }
