@@ -133,6 +133,7 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
+    document.getElementById("voucherDate").disabled=true;
     if(document.getElementById("deptId")!=null){
         document.getElementById("deptId").disabled=true;
     }
@@ -343,6 +344,17 @@ var valid=true;
                 }
                 
             </s:if>
+
+            if(null != document.getElementById('serviceCategoryid') && document.getElementById('serviceCategoryid').value == -1){
+
+                document.getElementById("receipt_error_area").innerHTML+='<s:text name="error.select.service.category" />'+ "<br>";
+                valid=false;
+            }
+            if(null != document.getElementById('serviceId') && document.getElementById('serviceId').value == -1){
+
+                document.getElementById("receipt_error_area").innerHTML+='<s:text name="error.select.service.type" />'+ "<br>";
+                valid=false;
+            }
             
             
         
@@ -365,7 +377,7 @@ var totaldbamt=0,totalcramt=0;
             {key:"glcodeid",hidden:true,width:10, formatter:createTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".glcodeIdDetail","hidden",VOUCHERCREDITDETAILTABLE)},
             {key:"accounthead", label:'Account Head <span class="mandatory"></span>',formatter:createLongTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".accounthead",VOUCHERCREDITDETAILTABLE)},               
             {key:"glcode",label:'Account Code ', formatter:createTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".glcodeDetail","text",VOUCHERCREDITDETAILTABLE)},
-            {key:"creditamount",label:'Credit Amount (Rs.)', formatter:createAmountFieldFormatterRebate(VOUCHERCREDITDETAILLIST,".creditAmountDetail","updateCreditAmount()",VOUCHERCREDITDETAILTABLE)},
+            {key:"creditamount",label:'Amount (Rs.)', formatter:createAmountFieldFormatterRebate(VOUCHERCREDITDETAILLIST,".creditAmountDetail","updateCreditAmount()",VOUCHERCREDITDETAILTABLE)},
             {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
             {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
         ];
@@ -631,13 +643,13 @@ var totaldbamt=0,totalcramt=0;
  
      <tr>
           <td width="4%" class="bluebox2">&nbsp;</td>
-         <td width="21%" class="bluebox2"><s:text name="miscreceipt.voucher.date"/><span class="mandatory"/></td>
+         <td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptdate"/><span class="mandatory"/></td>
                   <s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/>
           <td width="24%" class="bluebox2">
                 <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
+               <!--  <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;" >
                 <img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-                </a><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
+                </a> --><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
           </td>
                
            <s:if test="%{shouldShowHeaderField('field')}">
@@ -659,10 +671,10 @@ var totaldbamt=0,totalcramt=0;
         <tr>
         <td width="4%" class="bluebox">&nbsp;</td>
          
-        <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /> </td>
-        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" /> 
+        <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
+        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" />
        	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
-        <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /> </td>
+        <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="service.id" id="serviceId" cssClass="selectwk"
 	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{service.id}" onchange="loadFinDetails(this);"/>
         </td>
