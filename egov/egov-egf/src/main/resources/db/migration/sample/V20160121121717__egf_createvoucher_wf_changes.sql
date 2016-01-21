@@ -11,7 +11,6 @@ INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatu
 
 
 --Userrole mapping
-Insert into eg_userrole values((select id from eg_role  where name  = 'Voucher Creator'),(select id from eg_user where username ='reesha'));
 Insert into eg_userrole values((select id from eg_role  where name  = 'Voucher Approver'),(select id from eg_user where username ='EOA'));
 
 Insert into eg_userrole values((select id from eg_role  where name  = 'Voucher Approver'),(select id from eg_user where username ='satyam'));
