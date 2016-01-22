@@ -41,14 +41,12 @@ package org.egov.eis.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.repository.DesignationRepository;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,5 +98,9 @@ public class DesignationService {
 
     public List<Designation> getAllDesignationByDepartment(final Long id, final Date givenDate) {
         return designationRepository.getAllDesignationsByDepartment(id, givenDate);
+    }
+
+    public Set<Role> getRolesByDesignation(final String designationName) {
+        return designationRepository.getRolesByDesignation(designationName);
     }
 }
