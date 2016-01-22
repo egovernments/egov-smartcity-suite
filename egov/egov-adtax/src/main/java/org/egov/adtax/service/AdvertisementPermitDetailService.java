@@ -310,9 +310,9 @@ public class AdvertisementPermitDetailService {
         return assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
     }
 
-    public void getWorkflow(final AdvertisementPermitDetail advertisementPermitDetail, final Long approvalPosition,
+    public void updateStateTransition(final AdvertisementPermitDetail advertisementPermitDetail, final Long approvalPosition,
             final String approvalComent, final String additionalRule, final String workFlowAction) {
-        if (approvalPosition != null && additionalRule != null && org.apache.commons.lang.StringUtils.isNotEmpty(workFlowAction))
+        if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
     }

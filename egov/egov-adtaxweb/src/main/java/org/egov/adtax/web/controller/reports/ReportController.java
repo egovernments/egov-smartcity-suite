@@ -54,6 +54,7 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infstr.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -113,7 +114,14 @@ public class ReportController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("permitNumber", advertisementPermitDetail.getPermissionNumber());
-            reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
+            if (advertisementPermitDetail.getAgency() != null && StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
+                reportParams.put("agencyname",
+                        advertisementPermitDetail.getAgency().getName() + "/" + advertisementPermitDetail.getOwnerDetail());
+            else if (advertisementPermitDetail.getAgency() != null && StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
+                reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
+            else
+                reportParams.put("agencyname", advertisementPermitDetail.getOwnerDetail());
+
             reportParams.put("address", advertisementPermitDetail.getAdvertisement().getAddress());
             reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
             reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
