@@ -59,6 +59,9 @@ var regexp_number = /[^0-9]/g ;
 //This will allow you to enter alphabets and numbers with or without space. (eg: data-pattern="alphanumericwithspace")
 var regexp_alphanumeric = /[^a-zA-Z0-9 ]/g ;
 
+//This will allow you to enter alphabets and numbers with or without space and dot(.). (eg: data-pattern="alphanumericwithspaceanddot")
+var regexp_alphanumericdot = /[^a-zA-Z0-9 .]/g ;
+
 //This will allow you to enter alphabets and numbers with specified special characters like dot(.), slash(/), hash(#), ampersand(&), plus(+), minus(-). If you need some additional special characters, add those characters to the corresponding regular expression. (eg: data-pattern="alphanumericwithspecialcharacters")
 var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g ;
 
@@ -165,6 +168,12 @@ function alphanumericwithhyphen(obj){
 function numericslashhyphen(obj){
 	if(jQuery(obj).val().match(regexp_numericslashhyphen)){
 		jQuery(obj).val( jQuery(obj).val().replace(regexp_numericslashhyphen,'') );
+	}
+}
+
+function alphanumericwithspaceanddot(obj){
+	if(jQuery(obj).val().match(regexp_alphanumericdot)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericdot,'') );
 	}
 }
 
