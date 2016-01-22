@@ -150,7 +150,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
      */
     private void updateAgencyWiseCollectionOnCreate(final BillReceiptInfo billRcptInfo,
             final AgencyWiseCollection agencyWiseCollection, final BigDecimal totalAmount) {
-        for (final AgencyWiseCollectionDetail agencyDtl : agencyWiseCollection.getAgencyWiseCollectionDetails())
+        for (final AgencyWiseCollectionDetail agencyDtl : agencyWiseCollection.getAgencyWiseCollectionDetails()) {
             if (agencyDtl.getDemandDetail() != null) {
                 agencyDtl.getDemandDetail().setAmtCollected(
                         agencyDtl.getDemandDetail().getAmtCollected().add(agencyDtl.getAmount()));
@@ -184,6 +184,14 @@ public class AdvertisementTaxCollection extends TaxCollection {
                             billRcptInfo.getReceiptDate(), agencyDtl.getAmount());
                 }
             }
+            /**
+             * If for new application, commissioner approved record and payment
+             * collection is pending. If user using agency wise collection
+             * screen then we need to update workflow.
+             */
+            if (agencyDtl.getDemand() != null)
+                updateWorkflowState(agencyDtl.getDemand());
+        }
     }
 
     /**
@@ -380,12 +388,27 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     @Transactional
     private void updateWorkflowState(final EgDemand demand) {
-        final AdvertisementPermitDetail advertisementPermitDetail = advertisementService.getAdvertisementByDemand(demand)
-                .getActiveAdvertisementPermit();
-        advertisementPermitDetailService.updateStateTransition(advertisementPermitDetail, Long.valueOf(0),
-                AdvertisementTaxConstants.COLLECTION_REMARKS,
-                AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON);
-        advertisementPermitDetailRepository.saveAndFlush(advertisementPermitDetail);
+
+        if (demand != null) {
+            AdvertisementPermitDetail advertisementPermitDetail = advertisementService.getAdvertisementByDemand(demand)
+                    .getActiveAdvertisementPermit();
+            /**
+             * If the current status of advertisement permit is approved, then
+             * only call next level workflow. Assumption: Payment collection is
+             * pending in this stage.
+             */
+            if (advertisementPermitDetail != null
+                    && advertisementPermitDetail.getState() != null
+                    && advertisementPermitDetail.getStatus() != null
+                    && advertisementPermitDetail.getStatus().getCode()
+                            .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
+
+                advertisementPermitDetailService.updateStateTransition(advertisementPermitDetail, Long.valueOf(0),
+                        AdvertisementTaxConstants.COLLECTION_REMARKS, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
+                        AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON);
+                advertisementPermitDetailRepository.saveAndFlush(advertisementPermitDetail);
+            }
+        }
     }
 
 }
