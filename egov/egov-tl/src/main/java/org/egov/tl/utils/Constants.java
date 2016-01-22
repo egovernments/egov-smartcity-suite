@@ -724,4 +724,6 @@ public class Constants {
 	public static final String LOCALITY = "locality";
 	public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
 	public static final String LICENSE_BILLNO_SEQ = "SEQ_BILLNO_";
+	
+	public static final String LICENSE_FEE_TYPE="License Fee";
 }

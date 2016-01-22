@@ -39,6 +39,12 @@
  */
 package org.egov.tl.entity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
@@ -52,7 +58,7 @@ public class LicenseSubCategory extends BaseModel {
     private static final long serialVersionUID = 1L;
     private LicenseCategory category;
     @Required(message = "tradelic.master.tradesubcategorycode.null")
-    @Length(max = 32, message = "tradelic.master.tradesubcategorycode.length")
+    @Length(max = 32, message = "tradelic.master.tradesubcategorycode.length")  
     private String code;
     
     @Required(message = "tradelic.master.tradesubcategoryname.null")
@@ -69,7 +75,8 @@ public class LicenseSubCategory extends BaseModel {
     private String sectionApplicable;
     private LicenseSubType licenseSubType;
     private Boolean nocApplicable;
-
+    
+    private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<LicenseSubCategoryDetails>();
 
     public LicenseCategory getCategory() {
         return category;
@@ -180,6 +187,20 @@ public class LicenseSubCategory extends BaseModel {
 
     public void setNocApplicable(Boolean nocApplicable) {
         this.nocApplicable = nocApplicable;
+    }
+
+   
+    public void addLicenseSubCategoryDetails(LicenseSubCategoryDetails licenseSubCategoryDetail)
+    {                       
+        getLicenseSubCategoryDetails().add(licenseSubCategoryDetail); 
+    }
+
+    public List<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
+        return licenseSubCategoryDetails;
+    }
+
+    public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
+        this.licenseSubCategoryDetails = licenseSubCategoryDetails;
     }
 
 }

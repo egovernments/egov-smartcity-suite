@@ -56,6 +56,7 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.FeeMatrixRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,7 +221,7 @@ public class FeeMatrixService<T extends License>  {
 				
 			  	
 			}
-		}
+		}     
 		
 	    return feeMatrixDetailList;	
 	}
@@ -230,5 +231,9 @@ public class FeeMatrixService<T extends License>  {
 		    return license.getBuildingType().getId()+"-"+license.getLicenseAppType().getId()+"-"+license.getCategory().getId()
 		    +"-"+license.getTradeName().getId();
 		
+	}
+	
+	public  List<FeeMatrix> findBySubCategory(LicenseSubCategory subCategory){
+	    return feeMatrixRepository.findBySubCategory(subCategory);
 	}
 }
