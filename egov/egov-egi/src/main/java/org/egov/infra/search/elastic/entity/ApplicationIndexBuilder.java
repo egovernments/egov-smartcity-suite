@@ -92,6 +92,11 @@ public class ApplicationIndexBuilder {
         return this;
     }
 
+    public ApplicationIndexBuilder elapsedDays(final Integer numberOfDays) {
+        applicationIndex.setElapsedDays(numberOfDays);
+        return this;
+    }
+
     public ApplicationIndex build() throws ApplicationRuntimeException {
         validate();
         return applicationIndex;
