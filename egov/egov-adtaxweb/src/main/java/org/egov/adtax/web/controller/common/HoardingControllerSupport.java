@@ -157,9 +157,9 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
             else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
             index++;
         }
     }
@@ -167,12 +167,12 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0){
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.mandatory");
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
                 redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
             }
             else if (document.isEnclosed() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0)
             {
-                resultBinder.rejectValue("documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
+                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
                 redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
             }
                 index++;
