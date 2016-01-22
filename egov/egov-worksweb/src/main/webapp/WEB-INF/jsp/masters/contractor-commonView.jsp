@@ -140,7 +140,7 @@
 					<div class="col-xs-3 add-margin">
 						<s:text name="contractor.exemptionFrom" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id="exemptionForm">
 						<s:property value="%{exemptionForm}" />
 					</div>
 				</div>
@@ -183,3 +183,10 @@
 		</table>
 	</div>
 </div>
+<script type="text/javascript">
+function replaceExemptionFormChar() {
+	var exemption = document.getElementById('exemptionForm').innerHTML;
+	exemption = exemption.replace(/_/g, " ");
+    document.getElementById("exemptionForm").innerHTML = exemption;
+}
+</script>

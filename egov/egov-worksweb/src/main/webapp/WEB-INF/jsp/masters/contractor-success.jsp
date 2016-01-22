@@ -48,7 +48,7 @@ ul {
 }
 </style>
 </head>
-<body>
+<body onload="replaceExemptionFormChar();">
 
 <s:if test="%{hasActionMessages()}">
 <div id="msgsDiv" class="new-page-header">
