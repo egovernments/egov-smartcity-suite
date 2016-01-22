@@ -132,7 +132,7 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
           final Criteria hoardingCriteria = entityManager.unwrap(Session.class).createCriteria(AdvertisementPermitDetail.class, "permit")
                   .createAlias("permit.advertisement", "advertisement")
                   .createAlias("advertisement.category", "category").createAlias("advertisement.subCategory", "subCategory")
-                  .createAlias("advertisement.revenueInspector", "revenueInspector").createAlias("permit.agency", "agency");
+                  .createAlias("advertisement.revenueInspector", "revenueInspector");
         
  if(advertisementPermitDetail.getAdvertisement()!=null ){    
         if ( advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getAdvertisementNumber()!=null
