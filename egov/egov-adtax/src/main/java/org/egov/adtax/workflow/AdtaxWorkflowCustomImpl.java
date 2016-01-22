@@ -161,8 +161,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
             advertisementPermitDetail.setStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
-                            AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
-            // advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
+                            wfmatrix.getNextStatus()));
             advertisementPermitDetail.transition(true)
                     .withSenderName(wfInitiator.getEmployee().getUsername() + AdvertisementTaxConstants.COLON_CONCATE
                             + wfInitiator.getEmployee().getName())
