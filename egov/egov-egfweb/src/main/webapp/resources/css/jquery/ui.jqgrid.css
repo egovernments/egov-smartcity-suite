@@ -1,6 +1,6 @@
 /*Grid*/
 .ui-jqgrid {position: relative;}
-.ui-jqgrid .ui-jqgrid-view {position: relative;left:0; top: 0; padding: 0; font-size:11px;}
+.ui-jqgrid .ui-jqgrid-view {position: relative;left:0; top: 0; padding: 0; font-size:13px;}
 /* caption*/
 .ui-jqgrid .ui-jqgrid-titlebar {padding: .3em .2em .2em .3em; position: relative; border-left: 0 none;border-right: 0 none; border-top: 0 none;}
 .ui-jqgrid .ui-jqgrid-title { float: left; margin: .1em 0 .2em; }
@@ -49,7 +49,7 @@ tr.ui-search-toolbar select {margin: 1px 0 0 0}
 .ui-jqgrid tr.footrow-ltr td {text-align:left;border-right-width: 1px; border-right-color: inherit; border-right-style: solid;}
 .ui-jqgrid tr.footrow-rtl td {text-align:right;border-left-width: 1px; border-left-color: inherit; border-left-style: solid;}
 /* Pager*/
-.ui-jqgrid .ui-jqgrid-pager { border-left: 0 none !important;border-right: 0 none !important; border-bottom: 0 none !important; margin: 0 !important; padding: 0 !important; position: relative; height: 25px;white-space: nowrap;overflow: hidden;font-size:11px;}
+.ui-jqgrid .ui-jqgrid-pager { border-left: 0 none !important;border-right: 0 none !important; border-bottom: 0 none !important; margin: 0 !important; padding: 0 !important; position: relative; height: 25px;white-space: nowrap;overflow: hidden;font-size:13px;}
 .ui-jqgrid .ui-pager-control {position: relative;}
 .ui-jqgrid .ui-pg-table {position: relative; padding-bottom:2px; width:auto; margin: 0;}
 .ui-jqgrid .ui-pg-table td {font-weight:normal; vertical-align:middle; padding:1px;}
@@ -57,8 +57,8 @@ tr.ui-search-toolbar select {margin: 1px 0 0 0}
 .ui-jqgrid .ui-pg-button span { display: block; margin: 1px; float:left;}
 .ui-jqgrid .ui-pg-button:hover { padding: 0; }
 .ui-jqgrid .ui-state-disabled:hover {padding:1px;}
-.ui-jqgrid .ui-pg-input { height:13px;font-size:.8em; margin: 0;}
-.ui-jqgrid .ui-pg-selbox {font-size:.8em; line-height:18px; display:block; height:18px; margin: 0;}
+.ui-jqgrid .ui-pg-input { height:13px;font-size:1em; margin: 0;}
+.ui-jqgrid .ui-pg-selbox {font-size:1em; line-height:18px; display:block; height:18px; margin: 0;}
 .ui-jqgrid .ui-separator {height: 18px; border-left: 1px solid #ccc ; border-right: 1px solid #ccc ; margin: 1px; float: right;}
 .ui-jqgrid .ui-paging-info {font-weight: normal;height:19px; margin-top:3px;margin-right:4px;}
 .ui-jqgrid .ui-jqgrid-pager .ui-pg-div {padding:1px 0;float:left;position:relative;}
@@ -79,7 +79,7 @@ tr.ui-search-toolbar select {margin: 1px 0 0 0}
 .ui-jqgrid .ui-subgrid td.subgrid-cell {border-width: 0 0 1px 0;}
 .ui-jqgrid .ui-th-subgrid {height:20px;}
 /* loading */
-.ui-jqgrid .loading {position: absolute; top: 45%;left: 45%;width: auto;z-index:101;padding: 6px; margin: 5px;text-align: center;font-weight: bold;display: none;border-width: 2px !important; font-size:11px;}
+.ui-jqgrid .loading {position: absolute; top: 45%;left: 45%;width: auto;z-index:101;padding: 6px; margin: 5px;text-align: center;font-weight: bold;display: none;border-width: 2px !important; font-size:13px;}
 .ui-jqgrid .jqgrid-overlay {display:none;z-index:100;}
 * html .jqgrid-overlay {width: expression(this.parentNode.offsetWidth+'px');height: expression(this.parentNode.offsetHeight+'px');}
 * .jqgrid-overlay iframe {position:absolute;top:0;left:0;z-index:-1;width: expression(this.parentNode.offsetWidth+'px');height: expression(this.parentNode.offsetHeight+'px');}
@@ -87,7 +87,7 @@ tr.ui-search-toolbar select {margin: 1px 0 0 0}
 /* toolbar */
 .ui-jqgrid .ui-userdata {border-left: 0 none;    border-right: 0 none;	height : 21px;overflow: hidden;	}
 /*Modal Window */
-.ui-jqdialog { display: none; width: 300px; position: absolute; padding: .2em; font-size:11px; overflow:visible;}
+.ui-jqdialog { display: none; width: 300px; position: absolute; padding: .2em; font-size:13px; overflow:visible;}
 .ui-jqdialog .ui-jqdialog-titlebar { padding: .3em .2em; position: relative;  }
 .ui-jqdialog .ui-jqdialog-title { margin: .1em 0 .2em; } 
 .ui-jqdialog .ui-jqdialog-titlebar-close { position: absolute;  top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; cursor:pointer;}
