@@ -198,7 +198,7 @@ $(document).ready(function(){
 	var datadcbtbl = $('#search-dcbresult-table');
 	$('#search-dcb').click(function(e){
 		datadcbtbl.dataTable({
-			"ajax": {url:"/adtax/hoarding/search-for-dcbreport?"+$("#hoardingsearchform").serialize(),
+			"ajax": {url:"/adtax/reports/search-for-dcbreport?"+$("#hoardingsearchform").serialize(),
 				type:"POST"
 			},
 			"sPaginationType": "bootstrap",
