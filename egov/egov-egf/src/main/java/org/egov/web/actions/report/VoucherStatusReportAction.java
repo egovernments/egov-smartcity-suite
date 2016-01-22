@@ -521,9 +521,9 @@ private FinancialYearDAO financialYearDAO;
     }
 
     private String getUserNameForPosition(final Integer posId) {
-        final String query = "select 	emp.userMaster  from org.egov.pims.model.EmployeeView emp where emp.position.id = ? ";
-        final User user = (User) persistenceService.find(query, posId);
-        return user.getUsername();
+        final String query = "select 	emp.username  from org.egov.pims.model.EmployeeView emp where emp.position.id = ? ";
+        final String userName = (String) persistenceService.find(query, posId);
+        return userName;
     }
 
     public void setParamMap()
