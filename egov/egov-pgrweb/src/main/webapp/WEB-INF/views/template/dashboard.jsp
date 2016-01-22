@@ -56,7 +56,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
        
         <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-        <link rel="stylesheet" href="<c:url value='/resources/css/global.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/css/global.css?rnd=${app_release_no}' context='/dashboard'/>">
         <link rel="stylesheet" href="<c:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
         <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.css' context='/egi'/>">
         <link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
@@ -152,6 +152,6 @@
 	<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 	<script src="<c:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js' context='/dashboard'/>"></script>
 	<script src='<c:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js' context='/dashboard'/>'></script>
-	<script src="<c:url value='/resources/js/global.js' context='/dashboard'/>"></script>
-	<script src='../resources/js/app/dashboard.js'></script>
+	<script src="<c:url value='/resources/js/global.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
+	<script src='../resources/js/app/dashboard.js?rnd=${app_release_no}'></script>
 </html>
