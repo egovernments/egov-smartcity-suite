@@ -101,8 +101,8 @@ function setApprover() {
 } 
 </script>
 <s:if test="%{getNextAction()!='END'}">
-<s:if test="%{!'Closed'.equalsIgnoreCase(state.value)}">
-	<s:hidden id="currentState" name="currentState" value="%{state.value}"/>
+<s:if test="%{!'Closed'.equalsIgnoreCase(model.state.value)}">
+	<s:hidden id="currentState" name="currentState" value="%{model.state.value}"/>
 </s:if>
 <s:else>
 	<s:hidden id="currentState" name="currentState" value=""/>

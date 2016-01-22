@@ -124,4 +124,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/app/helper.js' context='/wtms'/>"></script>
+<script src="<c:url value='/resources/js/app/helper.js?rnd=${app_release_no}' context='/wtms'/>"></script>

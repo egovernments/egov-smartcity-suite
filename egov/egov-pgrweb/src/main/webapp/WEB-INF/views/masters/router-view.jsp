@@ -126,5 +126,5 @@
 		$("#boundaryId").val(boundaryId);    
 	}
 </script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouting.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouting.js?rnd=${app_release_no}'/>"></script>
 		

@@ -118,6 +118,6 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 	
 </form:form>
-<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
-<script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

@@ -53,6 +53,7 @@ import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,7 +130,7 @@ public abstract class License extends StateAware {
 
     public abstract String generateApplicationNumber(String runningNumber);
 
-    public abstract String generateLicenseNumber(String runningNumber);
+    public abstract String generateLicenseNumber(Serializable runningNumber);
 
     public abstract void setCreationAndExpiryDate();
 

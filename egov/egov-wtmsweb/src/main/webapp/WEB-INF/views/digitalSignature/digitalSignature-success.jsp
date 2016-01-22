@@ -67,4 +67,4 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="<c:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/digitalSignatureReport.js?rnd=${app_release_no}'/>"></script>

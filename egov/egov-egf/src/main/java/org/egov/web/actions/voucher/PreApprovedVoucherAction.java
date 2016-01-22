@@ -125,7 +125,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private static final String EMPTY_STRING = "";
     private static final long serialVersionUID = 1L;
     private VoucherService voucherService;
-    private CVoucherHeader voucherHeader;
+    private CVoucherHeader voucherHeader = new CVoucherHeader();
     private EgBillregister egBillregister = new EgBillregister();
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     protected WorkflowBean workflowBean = new WorkflowBean();
@@ -1381,5 +1381,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     public void setSecurityUtils(SecurityUtils securityUtils) {
         this.securityUtils = securityUtils;
     }
+    
 
 }

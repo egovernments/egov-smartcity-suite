@@ -39,6 +39,7 @@
  */
 package org.egov.tl.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,8 +53,9 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.tl.utils.Constants;
+import org.joda.time.LocalDate;
 
 public class TradeLicense extends License {
     private static final Logger LOGGER = Logger.getLogger(TradeLicense.class);
@@ -123,17 +125,11 @@ public class TradeLicense extends License {
     }
 
     @Override
-    public String generateLicenseNumber(final String runningNumber) {
-        LOGGER.debug("Generating License Number...");
-        final StringBuilder licenseNumber = new StringBuilder(32);
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(super.getApplicationDate());
-        licenseNumber.append("TL").append(Constants.BACKSLASH).append(runningNumber).append(Constants.BACKSLASH)
-                .append(Constants.monthName[cal.get(Calendar.MONTH)]).append("-").append(cal.get(Calendar.YEAR));
-        setLicenseNumber(licenseNumber.toString());
-        LOGGER.debug("Generated License Number =" + licenseNumber.toString());
-        LOGGER.debug("Generating License Number completed.");
-        return licenseNumber.toString();
+    public String generateLicenseNumber(final Serializable runningNumber) {
+        this.licenseNumber = String.format("TL/%05d/%s", runningNumber, DateUtils.currentDateToYearFormat());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Generated License Number : "+this.licenseNumber);
+        return this.licenseNumber;
     }
 
     public String generateNocNumber(final String runningNumber) {
@@ -342,7 +338,7 @@ public class TradeLicense extends License {
     public String getAuditDetails() {
         return new StringBuffer("[Name of the Establishment : ").
                 append(getNameOfEstablishment()).append(", Applicant Name : ").append(getLicensee().getApplicantName()).
-                append(", Application Date : ").append(DateUtils.getDefaultFormattedDate(getApplicationDate())).
+                append(", Application Date : ").append(DateUtils.toDefaultDateFormat(new LocalDate(getApplicationDate()))).
                 append(", Address : ").append(licensee.getAddress())
                 .append(", Trade Name : ").append(getTradeName().getName()).append(" ]").toString();
 

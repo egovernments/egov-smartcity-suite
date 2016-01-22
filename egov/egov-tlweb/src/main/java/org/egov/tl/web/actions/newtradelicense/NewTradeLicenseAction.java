@@ -39,7 +39,19 @@
  */
 package org.egov.tl.web.actions.newtradelicense;
 
-import org.apache.log4j.Logger;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -50,11 +62,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.Licensee;
-import org.egov.tl.entity.MotorDetails;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
@@ -63,20 +73,6 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 @ParentPackage("egov")
 @Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
@@ -126,7 +122,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             license().setCreationAndExpiryDate();
             if (license().getTempLicenseNumber() == null) {
                 String nextRunningLicenseNumber = tradeLicenseService.getNextRunningLicenseNumber(
-                        "egtl_license_number");
+                        "egtl_license_number").toString();
                 license().generateLicenseNumber(nextRunningLicenseNumber);
             }
             LicenseStatus activeStatus = (LicenseStatus) persistenceService

@@ -109,18 +109,28 @@
 											<table class="table table-bordered">
 												<thead>
 													<tr>
-														<th>Financial Year</th>
-														<th>Amount</th>
+														<th><s:text name='license.fin.year'/></th>
+														<th><s:text name='license.fee.amount'/></th>
 													</tr>
 												</thead>
 												<tbody>
 												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="status">
 													<tr>
-														<td><s:textfield  name="" cssClass="form-control" readonly="true" value="%{#attr.LIFee.key}"/></td>
+														<c:set value="${LIFee.key}-${fn:substring(LIFee.key+1,2, 4)}" var="finyear"/>
+														<td><s:textfield  name="" cssClass="form-control" readonly="true" value="%{#attr.finyear}" tabindex="-1"/></td>
 														<td><s:textfield name="legacyInstallmentwiseFees[%{#attr.LIFee.key}]" cssClass="form-control patternvalidation" value="%{#attr.LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>
+												<tfoot>
+													<tr>
+														<td class="error-msg" colspan="2">
+															<s:text  name="license.legacy.info">
+																<s:param>${finyear}</s:param>
+															</s:text>
+														</td>
+													</tr>
+												</tfoot>
 											</table>
 											</div>
 											
