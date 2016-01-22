@@ -90,7 +90,7 @@ function validateAppoveUser(actionName,actionDescription){
 	</s:if>
 	<s:else>
 		if( (actionDescription == 'Approve' || actionDescription == 'Forward' || actionDescription=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-			alert('<s:text name="arf.approver.required"/>');
+			bootbox.alert('<s:text name="arf.approver.required"/>');
 			return false;
 		}
 	</s:else>
@@ -120,7 +120,7 @@ function balanceCheck(obj, actionName,actionDescription) {
 		return true;
 	if(document.getElementById('bankAccountBalance')) {
 		if(parseFloat(eval('<s:property value="paymentheader.paymentAmount"/>'))>parseFloat(eval(document.getElementById('bankAccountBalance').innerHTML))) {
-			alert(insuffiecientBankBalance);
+			bootbox.alert(insuffiecientBankBalance);
 			return false;
 		}
 	}
@@ -349,7 +349,7 @@ function balanceCheck(obj, actionName,actionDescription) {
 						}  
 				</s:if>
 				<s:if test="%{balance=='-1'}">
-					alert('<s:text name="validation.message.fundflow.report.notgenerated" />');
+					bootbox.alert('<s:text name="validation.message.fundflow.report.notgenerated" />');
 					for(var i=0;i<document.forms[0].length;i++)
 					if(document.forms[0].elements[i].id!='Close')
 						document.forms[0].elements[i].disabled =true;   

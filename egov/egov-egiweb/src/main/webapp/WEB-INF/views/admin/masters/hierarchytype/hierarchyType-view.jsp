@@ -99,7 +99,6 @@
 </div>
 
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-<script src="<c:url value='/resources/js/app/hierarchytype.js'/>"></script>
+<script src="<c:url value='/resources/js/app/hierarchytype.js?rnd=${app_release_no}'/>"></script>
 

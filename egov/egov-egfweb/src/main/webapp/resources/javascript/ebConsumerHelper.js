@@ -54,7 +54,7 @@
 	  var ward = document.getElementById('ward').value;
 	  var oddOrEvenBilling = document.getElementById('oddOrEvenBilling').value;
 	  if(consumerNo == "" && accountNo == "" && targetArea == "" && ward == "" && oddOrEvenBilling == "" && region == ""){
-		  alert("You need to select at least one search criteria");
+		  bootbox.alert("You need to select at least one search criteria");
 		  return false;
 	  }
 	  return true;

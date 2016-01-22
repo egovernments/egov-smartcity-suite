@@ -264,7 +264,7 @@ if(dt!="" && dt!=null)
 	
 	if(invalid==true)
 	{
-		alert("Please enter the valid characters");
+		bootbox.alert("Please enter the valid characters");
 		obj.value="";
 		obj.focus();
 	}

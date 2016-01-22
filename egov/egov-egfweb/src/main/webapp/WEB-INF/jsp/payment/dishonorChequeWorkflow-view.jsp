@@ -69,7 +69,7 @@
 	}
 	function onloadDishonorCheque() {
 		var modeval = document.getElementById('mode').value;
-		//alert("mode value is");
+		//bootbox.alert("mode value is");
 		if (modeval != null && modeval == 'print') {
 			var reversalVhId = '<s:property value="%{paymentVoucher.id}"/>';
 			var bankChargesVhId = '<s:property value="%{bankChargesReversalVoucher.id}"/>';
@@ -118,25 +118,25 @@
 	}
 	function populateActionName(name) {
 		document.getElementById('actionName').value = name;
-		//alert("actionanem"+name);        
+		//bootbox.alert("actionanem"+name);        
 		<s:if test="%{getNextAction()!='END'}">
 		var value=document.getElementById("approverDepartment").value;
 		if((name=="Forward" || name=="forward") && value=="-1")
 		{
-			alert("Please select the Approver Department");
+			bootbox.alert("Please select the Approver Department");
 			document.getElementById("approverDepartment").focus();
 			return false;
 		}
 		var value=document.getElementById("approverDesignation").value;
 		if((name=="Forward" || name=="forward") && value=="-1")
 		{
-			alert("Please select the approver designation");
+			bootbox.alert("Please select the approver designation");
 			document.getElementById("approverDesignation").focus();
 			return false;
 		}
 	    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1")
 	    {
-	    	alert("Please Select the Approver");
+	    	bootbox.alert("Please Select the Approver");
 			document.getElementById("approverPositionId").focus();
 			return false;
 	    }

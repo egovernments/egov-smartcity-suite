@@ -62,7 +62,7 @@ $(document).ready(function(){
 	            dataType : 'json',
 	            success: function (response) {
 	    			console.log("success"+response);
-	    			//alert("response"+response);
+	    			//bootbox.alert("response"+response);
 	    			if(response > 0){
 	    				if(!overwritedonation(response))
 	    				return false;
@@ -118,7 +118,7 @@ function overwritedonation(res)
 	var todaysDate=getTodayDate();
 	if(compareDate(formdate,todaysDate) == 1  )
 	{		
-		alert('Effective Date should not be less than todays date');
+		bootbox.alert('Effective Date should not be less than todays date');
 		obj.value="";
 		return false;
 		}

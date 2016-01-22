@@ -42,7 +42,7 @@ function validatePan(panField) {
 	var regex1=/^[A-Z]{5}\d{4}[A-Z]{1}$/;
 	
 	if(!regex1.test(panValue)) {
-	  alert('Please enter a valid PAN');
+		bootbox.alert('Please enter a valid PAN');
 	  panField.value = "";
 	  return false;
 	}
@@ -205,7 +205,7 @@ function lessThanOrEqualToCurrentDate(dt) {
 	var currentDate = new Date();
 	var date = new Date(selectedDate[2],eval(selectedDate[1]-1),selectedDate[0],currentDate.getHours(),currentDate.getMinutes(),currentDate.getSeconds() ,currentDate.getMilliseconds())
 	if(date >  currentDate ) {
-		alert("Application Date should be less than or equal to today!");
+		bootbox.alert("Application Date should be less than or equal to today!");
 		dt.value = "";
 		return false;
 	}

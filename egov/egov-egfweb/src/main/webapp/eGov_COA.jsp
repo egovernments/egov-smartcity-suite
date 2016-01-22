@@ -43,7 +43,7 @@
 	{
 	    var myPopupWindow = '';
 	  
-		//alert('In openpopup url '+url+' name '+name+' width '+width+' height '+height);
+		//bootbox.alert('In openpopup url '+url+' name '+name+' width '+width+' height '+height);
 	    //Remove special characters from name
 	    name = name.replace(/\/|\-|\./gi, "");
 	
@@ -72,7 +72,7 @@
 function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
 {
 	
-	// alert("loadSelectDataForChartOfacounts");
+	// bootbox.alert("loadSelectDataForChartOfacounts");
 	
 
 		var link=url;
@@ -81,13 +81,13 @@ function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
 		request.send(null);		
 		if (request.status == 200) 
 		{
-			//alert('Got response');
+			//bootbox.alert('Got response');
 			var response=request.responseText.split("^");
-			//alert('Got response'+response);
+			//bootbox.alert('Got response'+response);
 			var id = response[1].split("\+");
 			var name = response[2].split("+");
 			var actionurl = response[4].split("+");
-			//alert("Action Url "+actionurl);
+			//bootbox.alert("Action Url "+actionurl);
 			var menuObj = destobj;
 			menuObj.length = id.length;
 			menuObj.length = 0;
@@ -133,7 +133,7 @@ function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
       function buildTree(tree){
       
       //var userid = 133;
-      //alert(typeof(userid));
+      //bootbox.alert(typeof(userid));
       if (typeof(userid) != "undefined"){ 
 	    
 	     tree.setDynamicLoad(loadNodeData);   
@@ -177,10 +177,10 @@ function loadNodeData(node, fnLoadComplete){
 	var nodeLabel = encodeURI(node.label);
 	var nodeId = encodeURI(node.data.id);
 	var nodeUrl =  node.data.url;
-	//alert(nodeUrl);
+	//bootbox.alert(nodeUrl);
 	var url = '/EGF/voucher/common-ajaxloadcoa.action';
 	var moduleQuery = url+'?glCode='+nodeId;
-	//alert(moduleQuery);
+	//bootbox.alert(moduleQuery);
 	//var actionId=449;
 	url="/EGF/masters/chartOfAccounts-view.action?model.id="+nodeId;
 				//window.open("/EGF/masters/chartOfAccounts.action?chartOfAccounts_glCode="+nodeUrl+"&actionId="+actionId,"mainFrame");
@@ -202,7 +202,7 @@ function loadNodeData(node, fnLoadComplete){
 			var actionurl = response[4].split("+");
 			
 			var nodeurl = null;
-			//alert('Number of children '+id.length+""+actionurl);
+			//bootbox.alert('Number of children '+id.length+""+actionurl);
 			
 			for(var i = 0 ; i < id.length  ; i++)
 			{
@@ -215,7 +215,7 @@ function loadNodeData(node, fnLoadComplete){
 				if ((name[i] != null) && (name[i].length > 0)){
 				
 					var menuItem =  { label: name[i], id: id[i], url: nodeurl } ;
-					////alert('node url '+nodeurl);
+					////bootbox.alert('node url '+nodeurl);
 					var tempNode = new YAHOO.widget.TextNode(menuItem, node, false);
 					tempNode.onLabelClick = onLabelClick
 					if( nodeurl.length<parseInt(coaDetailLength)) 
@@ -237,7 +237,7 @@ function loadNodeData(node, fnLoadComplete){
 		//fire the TreeView callback and let the Tree
 		//proceed with its business.
 		failure: function(oResponse) {
-			////alert('Failed to process XHR transaction.');
+			////bootbox.alert('Failed to process XHR transaction.');
 			oResponse.argument.fnLoadComplete();
 		},		
 		//our handlers for the XHR response will need the same

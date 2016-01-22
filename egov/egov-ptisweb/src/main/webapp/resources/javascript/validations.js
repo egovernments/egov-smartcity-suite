@@ -61,7 +61,7 @@ function validNumber(obj)
    for (i = 0; i < strString.length && blnResult == true; i++)
    {
       	strChar = strString.charAt(i);
-      	//alert("Char="+strChar);
+      	//bootbox.alert("Char="+strChar);
       	j=j+1;
       	
       	if (strValidChars.indexOf(strChar) == -1)
@@ -72,7 +72,7 @@ function validNumber(obj)
    
    if(blnResult==false)
    {
-     	alert("Please enter a valid number!!");
+     	bootbox.alert("Please enter a valid number!!");
      	obj.value=strString.substr(0,j);
      	return false;
    }
@@ -135,11 +135,11 @@ function validateIP(obj)
 				{
 					dot++;
 					endI=eval(i)-eval(startI);
-					//alert("StartI="+startI+" endI="+endI);
+					//bootbox.alert("StartI="+startI+" endI="+endI);
 					str=ipStr.substr(startI,endI);
 					partStr=ipStr.substr(startI,eval(endI));
 					startI=eval(i)+eval(1);
-					//alert("str="+str+" partStr="+partStr);
+					//bootbox.alert("str="+str+" partStr="+partStr);
 					
 					if(str.length>3 || str.length<=0 || str>255)
 					{
@@ -154,7 +154,7 @@ function validateIP(obj)
 		
 			if(invalid=="true" || strlenGL=="true")
 			{
-				alert("Invalid IP Address  "+obj.value);
+				bootbox.alert("Invalid IP Address  "+obj.value);
 				obj.value="";
 				obj.focus();
 				//return false;
@@ -176,20 +176,20 @@ function validateIP(obj)
     {
         if(amt < 0  )
         {
-            alert("Please enter Integer for Cheque/DD/Card No.");
+            bootbox.alert("Please enter Integer for Cheque/DD/Card No.");
             objt.value="";
             objt.focus();
         }
         if(isNaN(amt))
         {
-            alert("Please enter a Integer for Cheque/DD/Card No.");
+            bootbox.alert("Please enter a Integer for Cheque/DD/Card No.");
             objt.value="";
             objt.focus();
         }
         var amtstr = new String(amt);
         if(amtstr.indexOf(".") > -1)
         {
-            alert("Please enter a Integer for Cheque/DD/Card No.");
+            bootbox.alert("Please enter a Integer for Cheque/DD/Card No.");
             objt.value="";
             objt.focus();
         }
@@ -212,14 +212,14 @@ function checkdecimalval(obj,amount)
     {
         if(amt < 0 )
         {
-            alert("Please enter positive value for the amount paid");
+            bootbox.alert("Please enter positive value for the amount paid");
             objt.focus();
             return false;
 
         }
         if(isNaN(amt))
         {
-            alert("Please enter a numeric value for the amount paid");
+            bootbox.alert("Please enter a numeric value for the amount paid");
             objt.focus();
             return false;
 
@@ -236,7 +236,7 @@ function checkdecimalvalwithneg(obj,amount)
     {
         if(isNaN(amt))
         {
-            alert("Please enter a numeric value for the amount paid");
+            bootbox.alert("Please enter a numeric value for the amount paid");
             objt.focus();
             return false;
 
@@ -265,34 +265,34 @@ function validateDateFor6MonthsCurrDate(strValue)
  	//today.setMonth(today.getMonth()+7);
  
  	//thisdate = today.getDate();
- 	//alert("thisdate"+thisdate);
+ 	//bootbox.alert("thisdate"+thisdate);
  	//thismonth = today.getMonth()+1;
- 	//alert("thismonth"+thismonth);
+ 	//bootbox.alert("thismonth"+thismonth);
  	 //thisyear = today.getYear();
- 	 //alert("thisyear"+thisyear);
+ 	 //bootbox.alert("thisyear"+thisyear);
  	
  	//today1 = new Date(thisyear,thismonth-1,thisdate);
- 	//alert("today1" + today1);
+ 	//bootbox.alert("today1" + today1);
  	
  	todayNew = new Date();
  	//set lower limit to be 5 months before current date
  	todayNew.setMonth(todayNew.getMonth()-6);
 
 	thisdate1 = todayNew.getDate();
-	//alert("thisdate1"+thisdate1);
+	//bootbox.alert("thisdate1"+thisdate1);
 	thismonth1 = todayNew.getMonth()+1;
-	//alert("thismonth1"+thismonth1);
+	//bootbox.alert("thismonth1"+thismonth1);
 	thisyear1 = todayNew.getYear();
-	 //alert("thisyear1"+thisyear1);
+	 //bootbox.alert("thisyear1"+thisyear1);
  	
 	
 	today2 = new Date(thisyear1,thismonth1-1,thisdate1);
- 	//alert('today2'+today2);
- 	//alert("entereddate1"+entereddate1);
+ 	//bootbox.alert('today2'+today2);
+ 	//bootbox.alert("entereddate1"+entereddate1);
  
  	if(entereddate1 < today2)
  	{
- 		//alert("Please enter valid Date");
+ 		//bootbox.alert("Please enter valid Date");
  		return false;
  	}
  	else
@@ -346,7 +346,7 @@ function checkfornumber(obj,val)
     {
        if(isNaN(value))
        {
-        alert("Please enter a numeric value.");
+        bootbox.alert("Please enter a numeric value.");
         objt.value="";
         objt.focus();
         return false;
@@ -381,7 +381,7 @@ function checkward()
     
  if(document.FindForm2.wardid2.value == 0)
  {
-   alert("Please select the Ward first");
+   bootbox.alert("Please select the Ward first");
  }
  else
  {
@@ -393,7 +393,7 @@ function checkward1()
     
  if(document.FindForm.wardid.value == 0)
  {
-   alert("Please select the Ward first");
+   bootbox.alert("Please select the Ward first");
  }
  else
  {
@@ -406,7 +406,7 @@ function checkforward()
 {
   if(document.dateForm.wardid.value == 0)
  {
-   alert("Please select the Ward first");
+   bootbox.alert("Please select the Ward first");
    return false;
  }
  else
@@ -458,7 +458,7 @@ function fnCheckAccount()
     
  if(document.BankAccountForm.selBranchName.value == 0)
  {
-   alert("Please select the Branch Name first");
+   bootbox.alert("Please select the Branch Name first");
  }
  else
  {
@@ -500,7 +500,7 @@ function FindFormsubmit1()
     }
     else
     {
-        alert("Please fill in all the values for this method");
+        bootbox.alert("Please fill in all the values for this method");
         return false;
     }
     
@@ -512,7 +512,7 @@ function FindFormsubmit2()
     
     if(document.FindForm2.streetid.value != "" && !(validatePhoneNo(document.FindForm2.streetid.value)))
     {
-        alert("Please enter Numeric StreetID");
+        bootbox.alert("Please enter Numeric StreetID");
         document.FindForm2.streetid.value = "";
         document.FindForm2.streetid.focus();
         return false;
@@ -535,7 +535,7 @@ function FindFormsubmit2()
     }
     else
     {
-        alert("Please fill in all the values for this method");
+        bootbox.alert("Please fill in all the values for this method");
         return false;
     }
     
@@ -556,7 +556,7 @@ function FindFormsubmit3()
     }
     else
     {
-        alert("Please fill in all the values for this method");
+        bootbox.alert("Please fill in all the values for this method");
         return false;
     }   
     
@@ -598,7 +598,7 @@ function calculator()
 
             var   m_currentbalance = eval(document.payment.currentbalance.value);
             var   m_totalamtpaid= 0.00;
-                //alert('arrpntydmd'+arrtot);
+                //bootbox.alert('arrpntydmd'+arrtot);
 
             //When a collection is made the collected amt is distributed as Arrears,Penalty(arr),Penalty(curr)and finally PT
             //listed asper priority i.e whatever is the collnAmt first its taken for Arrears and then for penaltyArrs and so on..
@@ -663,41 +663,41 @@ function calculator()
         // The current payment balance will become zero and the collection value shud be negative
         if((collection + tempTotalCurrent > dmdpttot) && (collection>0))
         {
-            //alert('>>document.payment.currentpaymentcollection.value 1:' + dmdpttot);
+            //bootbox.alert('>>document.payment.currentpaymentcollection.value 1:' + dmdpttot);
             document.payment.currentpaymentcollection.value =roundoff(dmdpttot);
             m_totalamtpaid +=dmdpttot;
             //collection = collection-dmdpttot + m_currentcollection;
             collection = collection-(dmdpttot - tempTotalCurrent);
-            //alert('collection-(dmdpttot - tempTotalCurrent) : '+collection-(dmdpttot - tempTotalCurrent));
+            //bootbox.alert('collection-(dmdpttot - tempTotalCurrent) : '+collection-(dmdpttot - tempTotalCurrent));
             document.payment.currentpaymentbalance.value ="0.00";
         }
         else //     If the amount collected is less than the demand total all the reamining money goes to demand and collection becomes 0
         {
-            //alert('>>document.payment.currentpaymentcollection.value 2:' + roundoff(collection + tempTotalCurrent));
+            //bootbox.alert('>>document.payment.currentpaymentcollection.value 2:' + roundoff(collection + tempTotalCurrent));
             document.payment.currentpaymentcollection.value= roundoff(collection + tempTotalCurrent);
             m_totalamtpaid += collection;
             //document.payment.currentpaymentbalance.value=roundoff(dmdpttot- collection - m_currentcollection);
-            //alert('roundoff(dmdpttot- collection - tempTotalCurrent) : '+roundoff(dmdpttot- collection - tempTotalCurrent));
+            //bootbox.alert('roundoff(dmdpttot- collection - tempTotalCurrent) : '+roundoff(dmdpttot- collection - tempTotalCurrent));
             document.payment.currentpaymentbalance.value=roundoff(dmdpttot- collection - tempTotalCurrent);
             collection = 0;
         }
 
         if (m_totalbalanceamt < 0)
         {
-            //alert('>>1 totaldemandamt'+totaldemandamt);
-            //alert('>>1 m_totalbalanceamt'+m_totalbalanceamt);         
-            //alert('>>1 m_totalamtpaid'+m_totalamtpaid);
-            //alert('>>1 collection'+collection);           
-            //alert('>>1 tempTotalCurrent'+tempTotalCurrent);           
+            //bootbox.alert('>>1 totaldemandamt'+totaldemandamt);
+            //bootbox.alert('>>1 m_totalbalanceamt'+m_totalbalanceamt);         
+            //bootbox.alert('>>1 m_totalamtpaid'+m_totalamtpaid);
+            //bootbox.alert('>>1 collection'+collection);           
+            //bootbox.alert('>>1 tempTotalCurrent'+tempTotalCurrent);           
             
             document.payment.totalbalance.value =  roundoff(m_totalbalanceamt - collection);        
         }
         else
         {
-            //alert('>>2 totaldemandamt'+totaldemandamt);
-            //alert('>>2 m_totalamtpaid'+m_totalamtpaid);
-            //alert('>>2 collection'+collection);           
-            //alert('>>2 tempTotalCurrent'+tempTotalCurrent);           
+            //bootbox.alert('>>2 totaldemandamt'+totaldemandamt);
+            //bootbox.alert('>>2 m_totalamtpaid'+m_totalamtpaid);
+            //bootbox.alert('>>2 collection'+collection);           
+            //bootbox.alert('>>2 tempTotalCurrent'+tempTotalCurrent);           
             if(collection==0)
             {           
                 document.payment.totalbalance.value =  roundoff(totaldemandamt - m_totalamtpaid - collection - tempTotalCurrent);       
@@ -714,7 +714,7 @@ function calculator()
 function trimalltext(allelemobj)
 {
     
-    //alert("in trimall"+allelemobj.length);
+    //bootbox.alert("in trimall"+allelemobj.length);
     for(var i=0; i<allelemobj.length; i++)
     {
         if(allelemobj[i].type == "text")
@@ -733,7 +733,7 @@ function submitpaymentCheck()
 {
     if(document.payment.assesementYear.value == 0)
     {
-        alert('Please choose the Assessment year');
+        bootbox.alert('Please choose the Assessment year');
         document.payment.assesementYear.focus();
         return false;
     }   
@@ -743,7 +743,7 @@ function submitpaymentCheck()
     {
         if(!validateDate(document.payment.fldcollectionDate.value) ) 
         {
-            alert('Invalid Collection Date');
+            bootbox.alert('Invalid Collection Date');
             document.payment.fldcollectionDate.focus();
             return false;
         }           
@@ -751,7 +751,7 @@ function submitpaymentCheck()
         var fldCollectionDate = document.payment.fldcollectionDate.value; 
         if (!validateFinancialYear(assesementYear,fldCollectionDate))
         {
-            alert('Not A Collection Valid Date');
+            bootbox.alert('Not A Collection Valid Date');
             document.payment.fldcollectionDate.focus();
             return false;
         }
@@ -761,16 +761,16 @@ function submitpaymentCheck()
     {
         if(!validateDate(document.payment.bankcollectionDate.value) ) 
         {
-            alert('Invalid BankCollection Date');
+            bootbox.alert('Invalid BankCollection Date');
             document.payment.bankcollectionDate.focus();
             return false;
         }           
         var assesementYear =document.payment.assesementYear.value;
-        //alert(">>>>assesementYear :"+assesementYear)
+        //bootbox.alert(">>>>assesementYear :"+assesementYear)
         var bankcollectionDate = document.payment.bankcollectionDate.value; 
         if (!validateFinancialYear(assesementYear,bankcollectionDate))
         {
-            alert('Not A Valid BankCollection Date');
+            bootbox.alert('Not A Valid BankCollection Date');
             document.payment.bankcollectionDate.focus();
             return false;
         }
@@ -780,24 +780,24 @@ function submitpaymentCheck()
   
   if(document.payment.collectionLocation[0].checked == false && (document.payment.receiptNumber.value == "" && document.payment.challanNumber.value == ""))
   {
-        alert("Please fill in the Receipt No./Challan No.");
+        bootbox.alert("Please fill in the Receipt No./Challan No.");
         //document.payment.receiptNumber.focus();
         return false;   
   }
   if(document.payment.collectionLocation[0].checked == false && (document.payment.fldcollectionDate.value == "" && document.payment.bankcollectionDate.value == ""))
   {
-    alert("Please fill in the Collection Date");
+    bootbox.alert("Please fill in the Collection Date");
     document.payment.fldcollectionDate.focus();
       return false;     
   }
   if(document.payment.arrearscollection.value=="" || document.payment.arrearsbalance.value=="" || document.payment.arrearspenaltycollection.value=="" || document.payment.arrearspenaltybalance.value=="" || document.payment.currentpenaltycollection.value=="" || document.payment.currentpenaltybalance.value=="" || document.payment.currentpaymentbalance.value=="" )
   {
-      alert("Please fill in the payment details");
+      bootbox.alert("Please fill in the payment details");
       return false;
   }
   if(document.payment.totalcollection.value == "")
   {
-    alert("Please fill in the amount to be paid");
+    bootbox.alert("Please fill in the amount to be paid");
     document.payment.totalcollection.focus();
     return false;
   }
@@ -805,26 +805,26 @@ function submitpaymentCheck()
   {
     if(document.payment.duration[0].checked == false && document.payment.duration[1].checked == false && document.payment.duration[2].checked == false && document.payment.duration[3].checked == false)
     {
-      alert("Please select the type of payment");
+      bootbox.alert("Please select the type of payment");
       return false;
      } 
   }
   if(document.payment.modeOfPayment[0].checked == false && document.payment.modeOfPayment[1].checked == false && document.payment.modeOfPayment[2].checked == false && document.payment.modeOfPayment[3].checked == false && document.payment.modeOfPayment[4].checked == false )
   {
-    alert("Please select the payment type(Cash,Cheque,DD,Credit/Debit Card)");
+    bootbox.alert("Please select the payment type(Cash,Cheque,DD,Credit/Debit Card)");
     return false;
   }
   if(document.payment.modeOfPayment[1].checked == true)
   {
     if(document.payment.chequeno.value=="")
     {
-        alert("Please fill in the Cheque Number");
+        bootbox.alert("Please fill in the Cheque Number");
         document.payment.chequeno.focus();
         return false;
     }
     if(document.payment.chequedate.value=="")
     {
-        alert("Please fill in the date of cheque");
+        bootbox.alert("Please fill in the date of cheque");
         document.payment.chequedate.focus();
         return false;
     }
@@ -833,13 +833,13 @@ function submitpaymentCheck()
   {
     if(document.payment.ddno.value=="")
     {
-        alert("Please fill in the DD Number");
+        bootbox.alert("Please fill in the DD Number");
         document.payment.ddno.focus();
         return false;
     }
     if(document.payment.dddate.value=="")
     {
-        alert("Please fill in the date of DD");
+        bootbox.alert("Please fill in the date of DD");
         document.payment.dddate.focus();
         return false;
     }
@@ -848,7 +848,7 @@ function submitpaymentCheck()
   {
     if(document.payment.banksname.value=="")
     {
-        alert("Please fill in the Name of bank where Cheque or DD was drawn");
+        bootbox.alert("Please fill in the Name of bank where Cheque or DD was drawn");
         document.payment.banksname.focus();
         return false;
     }
@@ -858,7 +858,7 @@ function submitpaymentCheck()
   {
   		/*if(document.payment.cardNo.value=="")
 	    {
-	        alert("Please fill in the Card Number");
+	        bootbox.alert("Please fill in the Card Number");
 	        document.payment.cardNo.focus();
 	        return false;
 	    }
@@ -869,19 +869,19 @@ function submitpaymentCheck()
 	    }*/
 	    if(document.payment.authorizationCode.value=="")
 	    {
-	        alert("Please fill in the Authorization Code");
+	        bootbox.alert("Please fill in the Authorization Code");
 	        document.payment.authorizationCode.focus();
 	        return false;
     	}
     	else if(document.payment.authorizationCode.value.length <5)
 		{
-			alert('Authorization Code Should be of 5 or more Character/Digits');
+			bootbox.alert('Authorization Code Should be of 5 or more Character/Digits');
 			 document.payment.authorizationCode.focus();
 				return false;
 	    }
     	if(document.payment.cardType.value==0)
 		{
-			alert("Please Select Card Type");
+			bootbox.alert("Please Select Card Type");
 			document.payment.cardType.focus();
 			return false;
     	}
@@ -891,7 +891,7 @@ function submitpaymentCheck()
   if(document.payment.arryear.value!="" && !validateArrearyear(document.payment.arryear.value))
   {
        
-      alert("Please Enter a Valid Arrears Paid for the Year");
+      bootbox.alert("Please Enter a Valid Arrears Paid for the Year");
       document.payment.arryear.value="";
       document.payment.arryear.focus();
       return false;
@@ -900,7 +900,7 @@ function submitpaymentCheck()
   if(document.payment.totalbalance.value < 0)
  {
     
-    alert('Balance should not be Negative');
+    bootbox.alert('Balance should not be Negative');
     document.payment.totalbalance.value = "";
     document.payment.totalbalance.focus();
     return false;
@@ -924,7 +924,7 @@ function submitpaymentCheck()
    // {
         if(totBal != sum) 
         {
-            alert("Sum of individual Balances is not equal to TotalBalance");
+            bootbox.alert("Sum of individual Balances is not equal to TotalBalance");
             document.payment.totalbalance.focus();
             return false;
 
@@ -937,10 +937,10 @@ function submitpaymentCheck()
 //This method is for pastyearpayment 
 function submitpaymentCheckForPastYr()
 {
-    //alert('here in past payment');
+    //bootbox.alert('here in past payment');
     if(document.payment.assesementYear.value == 0)
     {
-        alert('Please choose the Assessment year');
+        bootbox.alert('Please choose the Assessment year');
         document.payment.assesementYear.focus();
         return false;
     }   
@@ -950,7 +950,7 @@ function submitpaymentCheckForPastYr()
     {
         if(!validateDate(document.payment.fldcollectionDate.value) ) 
         {
-            alert('Invalid Collection Date');
+            bootbox.alert('Invalid Collection Date');
             document.payment.fldcollectionDate.focus();
             return false;
         }           
@@ -958,7 +958,7 @@ function submitpaymentCheckForPastYr()
         var fldCollectionDate = document.payment.fldcollectionDate.value; 
         if (!validateFinancialYear(assesementYear,fldCollectionDate))
         {
-            alert('Not A Collection Valid Date');
+            bootbox.alert('Not A Collection Valid Date');
             document.payment.fldcollectionDate.focus();
             return false;
         }
@@ -968,7 +968,7 @@ function submitpaymentCheckForPastYr()
     {
         if(!validateDate(document.payment.bankcollectionDate.value) ) 
         {
-            alert('Invalid BankCollection Date');
+            bootbox.alert('Invalid BankCollection Date');
             document.payment.bankcollectionDate.focus();
             return false;
         }           
@@ -976,7 +976,7 @@ function submitpaymentCheckForPastYr()
         var bankcollectionDate = document.payment.bankcollectionDate.value; 
         if (!validateFinancialYear(assesementYear,bankcollectionDate))
         {
-            alert('Not A Valid BankCollection Date');
+            bootbox.alert('Not A Valid BankCollection Date');
             document.payment.bankcollectionDate.focus();
             return false;
         }
@@ -986,24 +986,24 @@ function submitpaymentCheckForPastYr()
   
   if(document.payment.collectionLocation[0].checked == false && (document.payment.receiptNumber.value == "" && document.payment.challanNumber.value == ""))
   {
-        alert("Please fill in the Receipt No./Challan No.");
+        bootbox.alert("Please fill in the Receipt No./Challan No.");
         //document.payment.receiptNumber.focus();
         return false;   
   }
   if(document.payment.collectionLocation[0].checked == false && (document.payment.fldcollectionDate.value == "" && document.payment.bankcollectionDate.value == ""))
   {
-    alert("Please fill in the Collection Date");
+    bootbox.alert("Please fill in the Collection Date");
     document.payment.fldcollectionDate.focus();
       return false;     
   }
   if(document.payment.arrearscollection.value=="" || document.payment.arrearsbalance.value=="" || document.payment.arrearspenaltycollection.value=="" || document.payment.arrearspenaltybalance.value=="" || document.payment.currentpenaltycollection.value=="" || document.payment.currentpenaltybalance.value=="" || document.payment.currentpaymentbalance.value=="" )
   {
-      alert("Please fill in the payment details");
+      bootbox.alert("Please fill in the payment details");
       return false;
   }
   if(document.payment.totalcollection.value == "")
   {
-    alert("Please fill in the amount to be paid");
+    bootbox.alert("Please fill in the amount to be paid");
     document.payment.totalcollection.focus();
     return false;
   }
@@ -1011,26 +1011,26 @@ function submitpaymentCheckForPastYr()
   {
     if(document.payment.duration[0].checked == false && document.payment.duration[1].checked == false && document.payment.duration[2].checked == false && document.payment.duration[3].checked == false)
     {
-      alert("Please select the type of payment");
+      bootbox.alert("Please select the type of payment");
       return false;
      } 
   }
   if(document.payment.modeOfPayment[0].checked == false && document.payment.modeOfPayment[1].checked == false && document.payment.modeOfPayment[2].checked == false )
   {
-    alert("Please select the payment type(Cash,Cheque or DD)");
+    bootbox.alert("Please select the payment type(Cash,Cheque or DD)");
     return false;
   }
   if(document.payment.modeOfPayment[1].checked == true)
   {
     if(document.payment.chequeno.value=="")
     {
-        alert("Please fill in the Cheque Number");
+        bootbox.alert("Please fill in the Cheque Number");
         document.payment.chequeno.focus();
         return false;
     }
     if(document.payment.chequedate.value=="")
     {
-        alert("Please fill in the date of cheque");
+        bootbox.alert("Please fill in the date of cheque");
         document.payment.chequedate.focus();
         return false;
     }
@@ -1039,13 +1039,13 @@ function submitpaymentCheckForPastYr()
   {
     if(document.payment.ddno.value=="")
     {
-        alert("Please fill in the DD Number");
+        bootbox.alert("Please fill in the DD Number");
         document.payment.ddno.focus();
         return false;
     }
     if(document.payment.dddate.value=="")
     {
-        alert("Please fill in the date of DD");
+        bootbox.alert("Please fill in the date of DD");
         document.payment.dddate.focus();
         return false;
     }
@@ -1054,7 +1054,7 @@ function submitpaymentCheckForPastYr()
   {
     if(document.payment.banksname.value=="")
     {
-        alert("Please fill in the Name of bank where Cheque or DD was drawn");
+        bootbox.alert("Please fill in the Name of bank where Cheque or DD was drawn");
         document.payment.banksname.focus();
         return false;
     }
@@ -1066,7 +1066,7 @@ function submitpaymentCheckForPastYr()
   if(document.payment.arryear.value!="" && !validateArrearyear(document.payment.arryear.value))
   {
        
-      alert("Please Enter a Valid Arrears Paid for the Year");
+      bootbox.alert("Please Enter a Valid Arrears Paid for the Year");
       document.payment.arryear.value="";
       document.payment.arryear.focus();
       return false;
@@ -1075,7 +1075,7 @@ function submitpaymentCheckForPastYr()
   if(document.payment.totalbalance.value < 0)
  {
     
-    alert('Balance should not be Negative');
+    bootbox.alert('Balance should not be Negative');
     document.payment.totalbalance.value = "";
     document.payment.totalbalance.focus();
     return false;
@@ -1099,7 +1099,7 @@ function submitpaymentCheckForPastYr()
    // {
         if(totBal != sum) 
         {
-            alert("Sum of individual Balances is not equal to TotalBalance");
+            bootbox.alert("Sum of individual Balances is not equal to TotalBalance");
             document.payment.totalbalance.focus();
             return false;
 
@@ -1115,8 +1115,8 @@ function submitpaymentCheckForPastYr()
     var month = dateObj.substr(3,2);
     var year = dateObj.substr(9,1);
     var nextYear = null;
-    alert("financialYear");
-    alert(parseInt(financialYear)+1);
+    bootbox.alert("financialYear");
+    bootbox.alert(parseInt(financialYear)+1);
     if ( month>3)
     {
         nextYear = eval(parseInt(financialYear) + 1);
@@ -1126,9 +1126,9 @@ function submitpaymentCheckForPastYr()
     {
         financialYear = "0"+financialYear;
     }
-    alert("nextYear");
-    alert(nextYear);
-    alert("nextYear1");
+    bootbox.alert("nextYear");
+    bootbox.alert(nextYear);
+    bootbox.alert("nextYear1");
     if((year == financialYear) || (year == nextYear))
     {
         return true;
@@ -1137,19 +1137,19 @@ function submitpaymentCheckForPastYr()
     {
         return false;
     }
-    alert("4");
+    bootbox.alert("4");
 }*/
 
 //Validates that the Date entered belongs to the givenfinancial year 
 function validateFinancialYear(financialYear, collDateObj)
 {
-    //alert('Inside validateFinancialYear'+financialYear);
+    //bootbox.alert('Inside validateFinancialYear'+financialYear);
     var collMonth = eval(collDateObj.substr(3,2));
     var collYear = eval(collDateObj.substr(8,2));
     var finYear = eval(financialYear);
-    //alert('collYear'+collYear);
-   // alert('collMonth'+collMonth);
-  //  alert('finYear'+finYear);
+    //bootbox.alert('collYear'+collYear);
+   // bootbox.alert('collMonth'+collMonth);
+  //  bootbox.alert('finYear'+finYear);
     
     //if(collMonth <= 3 && finYear == (collYear -1))
     
@@ -1166,13 +1166,13 @@ function validateFinancialYear(financialYear, collDateObj)
 //Temporarily validation of Financial year is been relaxed from 1st April to 1st Jan
 function validateFinancialYearTemp(financialYear, collDateObj)
 {
-    //alert('Inside validateFinancialYear'+collYear);
+    //bootbox.alert('Inside validateFinancialYear'+collYear);
     var collMonth = eval(collDateObj.substr(3,2));
     var collYear = eval(collDateObj.substr(8,2));
     var finYear = eval(financialYear);
-    //alert('collYear'+collYear);
-    //alert('collMonth'+collMonth);
-    //alert('finYear'+finYear);
+    //bootbox.alert('collYear'+collYear);
+    //bootbox.alert('collMonth'+collMonth);
+    //bootbox.alert('finYear'+finYear);
     
     //if(collMonth <= 3 && finYear == (collYear -1))
     
@@ -1221,7 +1221,7 @@ function updateFinalVars()
       {
           //disabled temporarily.because the data is in such a bad state it is very
           //hard to debug and alter the script code and test all the 101 cases again.
-          alert("The Total amount collected does not match the collection break up.");
+          bootbox.alert("The Total amount collected does not match the collection break up.");
           return false;         
           
          //return true;
@@ -1295,7 +1295,7 @@ function enabletext()
 		
 		/*if(document.payment.totalcollection.value < 100)
 		{	
-			alert('Credit/Debit Card is not Accepted for Payment of Less than 100 Rs.');
+			bootbox.alert('Credit/Debit Card is not Accepted for Payment of Less than 100 Rs.');
 			
 			//document.payment.modeOfPayment[3].checked = false;
 		}*/
@@ -1320,10 +1320,10 @@ function enabletext()
 ///////For Past Payment
   function enabletextForPastYrPayment()
   {
-     // alert('Hi ');
+     // bootbox.alert('Hi ');
       if(document.payment.modeOfPayment[0].checked == true)
       {
-         //alert('cash checked');
+         //bootbox.alert('cash checked');
          document.payment.ddno.value="";
           document.payment.dddate.value="";
           document.payment.chequedate.value="";
@@ -1337,7 +1337,7 @@ function enabletext()
       }
       if(document.payment.modeOfPayment[1].checked == true)
       {
-        // alert('chq checked');
+        // bootbox.alert('chq checked');
          document.payment.ddno.value="";
           document.payment.dddate.value="";
           document.payment.chequedate.disabled = false;
@@ -1348,7 +1348,7 @@ function enabletext()
       }
       if(document.payment.modeOfPayment[2].checked == true)
       {
-        // alert('DD checked');
+        // bootbox.alert('DD checked');
          document.payment.chequedate.value="";
           document.payment.chequeno.value="";
           document.payment.chequedate.disabled = true;
@@ -1418,7 +1418,7 @@ function chequecancelreceipt()
 {
     if (document.dateForm.receiptno.value == "")
     {
-        alert("please enter a Receipt Number");
+        bootbox.alert("please enter a Receipt Number");
         return false;
     }
     else
@@ -1431,7 +1431,7 @@ function chequecancelreceiptconfirm()
 {
     if (document.ReceiptCancellationConfirm.reason.value == "")
     {
-        alert("please enter a Reason for cancellation of receipt.");
+        bootbox.alert("please enter a Reason for cancellation of receipt.");
         return false;
     }
     else
@@ -1550,12 +1550,12 @@ function validateDateForNext6Months(strValue)
 	thisyear1 = todayNew.getYear();
 	
 	today2 = new Date(thisyear1,thismonth1-1,thisdate1);
- 	//alert('today2'+today2);
+ 	//bootbox.alert('today2'+today2);
  	
  
  	if(entereddate1 > today1 || entereddate1 < today2)
  	{
- 		//alert("Please enter valid Date");
+ 		//bootbox.alert("Please enter valid Date");
  		return false;
  	}
  	else
@@ -1596,12 +1596,12 @@ function validateDateForNext6Months(strValue)
  	thisyear1 = todayNew.getYear();
  	
  	today2 = new Date(thisyear1,thismonth1-1,thisdate1);
-  	//alert('today2'+today2);
+  	//bootbox.alert('today2'+today2);
   
   
   	if(entereddate1 > today1 || entereddate1 < today2)
   	{
-  		//alert("Please enter valid Date");
+  		//bootbox.alert("Please enter valid Date");
   		return false;
   	}
   	else
@@ -1618,7 +1618,7 @@ function validateArrearyear(strValue)
  }
 function validateAlphaNumeric(strValue)
 {
-    //alert("dfgdf");
+    //bootbox.alert("dfgdf");
     var objRegExp  = /^([a-zA-Z0-9\ ]+)$/i;
     return objRegExp.test(strValue)
 }
@@ -1656,7 +1656,7 @@ function chkBoxValidate()
             }
             else if(!document.editPaymentPage.edit[i].checked)
             {
-                //alert('Here111'+i);//+document.editPaymentPage.delete[i].value);
+                //bootbox.alert('Here111'+i);//+document.editPaymentPage.delete[i].value);
                 document.editPaymentPage.deleteIt[i].disabled = false;
                 document.editPaymentPage.receiptNo[i].disabled = true;
                 document.editPaymentPage.dateOfPayment[i].disabled = true;
@@ -1723,7 +1723,7 @@ function chkBoxValidate1()
         {
             if(document.editPaymentPage.deleteIt[i].checked)
             {
-                //alert('Here111'+i);//+document.editPaymentPage.delete[i].value);
+                //bootbox.alert('Here111'+i);//+document.editPaymentPage.delete[i].value);
                 document.editPaymentPage.edit[i].disabled = true;
             }
             else if(!document.editPaymentPage.deleteIt[i].checked)
@@ -1751,7 +1751,7 @@ function chkBoxValidate1()
 function validateEditPaymentForm()
 {
     var temp = 0;
-    //alert('temp :'+temp);
+    //bootbox.alert('temp :'+temp);
     if(document.editPaymentPage.edit.length >0)
     {
         
@@ -1766,7 +1766,7 @@ function validateEditPaymentForm()
                     //if(!validateNotEmpty(receiptNo)
                     if(trim(receiptNoObj,receiptNoObj.value) == "")
                     {
-                        alert('Plase Enter ReceiptNo');
+                        bootbox.alert('Plase Enter ReceiptNo');
                         //document.editPaymentPage.receiptNo[i].value="";
                         document.editPaymentPage.receiptNo[i].focus();
                         return false;
@@ -1779,21 +1779,21 @@ function validateEditPaymentForm()
                     var dateOfPaymentObj = document.editPaymentPage.dateOfPayment[i];
                     if(trim(dateOfPaymentObj,dateOfPaymentObj.value) == "")
                     {
-                        alert('Plase Enter Date Of Payment');
+                        bootbox.alert('Plase Enter Date Of Payment');
                         document.editPaymentPage.dateOfPayment[i].focus();
                         return false;
                     
                     }
                     if(!validateEnteredDate(document.editPaymentPage.dateOfPayment[i].value))
                     {
-                        alert('Plase Enter Valid Date Of Payment');
+                        bootbox.alert('Plase Enter Valid Date Of Payment');
                         document.editPaymentPage.dateOfPayment[i].value="";
                         document.editPaymentPage.dateOfPayment[i].focus();
                         return false;
                     }
                     if(!validateDate(document.editPaymentPage.dateOfPayment[i].value))
 		    {
-			alert('Date Of Payment should not be higher than Current Date');
+			bootbox.alert('Date Of Payment should not be higher than Current Date');
 			document.editPaymentPage.dateOfPayment[i].value="";
 			document.editPaymentPage.dateOfPayment[i].focus();
 			return false;
@@ -1803,7 +1803,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.ptCurr[i].value))
                     {
-                        alert('Current PT Should be Numeric');
+                        bootbox.alert('Current PT Should be Numeric');
                         document.editPaymentPage.ptCurr[i].value="";
                         document.editPaymentPage.ptCurr[i].focus();
                        return false;
@@ -1814,7 +1814,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.cessCurr[i].value))
                     {
-                        alert('Current Cess Should be Numeric');
+                        bootbox.alert('Current Cess Should be Numeric');
                         document.editPaymentPage.cessCurr[i].value="";
                         document.editPaymentPage.cessCurr[i].focus();
                         return false;
@@ -1825,7 +1825,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.totalCurrent[i].value))
                     {
-                        alert('Current Total Should be Numeric');
+                        bootbox.alert('Current Total Should be Numeric');
                         document.editPaymentPage.totalCurrent[i].value="";
                         document.editPaymentPage.totalCurrent[i].focus();
                         return false;
@@ -1835,10 +1835,10 @@ function validateEditPaymentForm()
                 }
                 if(document.editPaymentPage.ptArr[i].disabled==false && document.editPaymentPage.ptArr[i].value!="")
                 {
-                    //alert('here '+document.editPaymentPage.ptArr[i].value);
+                    //bootbox.alert('here '+document.editPaymentPage.ptArr[i].value);
                     if(isNaN(document.editPaymentPage.ptArr[i].value))
                     {
-                        alert('Arrears PT Should be Numeric');
+                        bootbox.alert('Arrears PT Should be Numeric');
                         document.editPaymentPage.ptArr[i].value="";
                         document.editPaymentPage.ptArr[i].focus();
                         return false;
@@ -1850,7 +1850,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.cessArr[i].value))
                     {
-                        alert('Arrears Cess Should be Numeric');
+                        bootbox.alert('Arrears Cess Should be Numeric');
                         document.editPaymentPage.cessArr[i].value="";
                         document.editPaymentPage.cessArr[i].focus();
                         return false;
@@ -1861,7 +1861,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.totalArrears[i].value))
                     {
-                        alert('ArrearsTotal Should be Numeric');
+                        bootbox.alert('ArrearsTotal Should be Numeric');
                         document.editPaymentPage.totalArrears[i].value="";
                         document.editPaymentPage.totalArrears[i].focus();
                         return false;
@@ -1872,7 +1872,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.penalty[i].value))
                     {
-                        alert('Penalty Should be Numeric');
+                        bootbox.alert('Penalty Should be Numeric');
                         document.editPaymentPage.penalty[i].value="";
                         document.editPaymentPage.penalty[i].focus();
                         return false;
@@ -1884,7 +1884,7 @@ function validateEditPaymentForm()
                 {
                     if(isNaN(document.editPaymentPage.totalAmount[i].value))
                     {
-                        alert('TotalAmount Should be Numeric');
+                        bootbox.alert('TotalAmount Should be Numeric');
                         document.editPaymentPage.totalAmount[i].value="";
                         document.editPaymentPage.totalAmount[i].focus();
                         return false;
@@ -1896,7 +1896,7 @@ function validateEditPaymentForm()
 					var refNumObj = document.editPaymentPage.refNum[i];
 					if(trim(refNumObj,refNumObj.value) == "")
 					{
-						alert('Plase Enter Reference Number');
+						bootbox.alert('Plase Enter Reference Number');
 						//document.editPaymentPage.refNum[i].value="";
 						document.editPaymentPage.refNum[i].focus();
 						return false;
@@ -1923,14 +1923,14 @@ function validateEditPaymentForm()
         
         if(temp==0)
         {
-            alert('Please choose Edit or Delete before proceding');
+            bootbox.alert('Please choose Edit or Delete before proceding');
             return false;
         }
         return true;
     }
     else
     {
-        //alert('here in else');
+        //bootbox.alert('here in else');
         if(document.editPaymentPage.edit.checked)
         {
             if(document.editPaymentPage.receiptNo.disabled==false)
@@ -1939,7 +1939,7 @@ function validateEditPaymentForm()
                 //if(!validateNotEmpty(receiptNo)
                 if(trim(receiptNoObj,receiptNoObj.value) == "")
                 {
-                    alert('Plase Enter ReceiptNo');
+                    bootbox.alert('Plase Enter ReceiptNo');
                     //document.editPaymentPage.receiptNo.value="";
                     document.editPaymentPage.receiptNo.focus();
                     return false;
@@ -1952,21 +1952,21 @@ function validateEditPaymentForm()
                 var dateOfPaymentObj = document.editPaymentPage.dateOfPayment;
                 if(trim(dateOfPaymentObj,dateOfPaymentObj.value) == "")
                 {
-                    alert('Plase Enter Date Of Payment');
+                    bootbox.alert('Plase Enter Date Of Payment');
                     document.editPaymentPage.dateOfPayment.focus();
                     return false;
             
                 }
                 if(!validateEnteredDate(document.editPaymentPage.dateOfPayment.value))
                 {
-                    alert('Plase Enter Valid Date Of Payment');
+                    bootbox.alert('Plase Enter Valid Date Of Payment');
                     document.editPaymentPage.dateOfPayment.value="";
                     document.editPaymentPage.dateOfPayment.focus();
                     return false;
                 }
                 if(!validateDate(document.editPaymentPage.dateOfPayment.value))
 				{
-					alert('Date Of Payment should not be higher than Current Date');
+					bootbox.alert('Date Of Payment should not be higher than Current Date');
 					document.editPaymentPage.dateOfPayment.value="";
 					document.editPaymentPage.dateOfPayment.focus();
 					return false;
@@ -1977,7 +1977,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.ptCurr.value))
                 {
-                    alert('Current PT Should be Numeric');
+                    bootbox.alert('Current PT Should be Numeric');
                     document.editPaymentPage.ptCurr.value="";
                     document.editPaymentPage.ptCurr.focus();
                    return false;
@@ -1988,7 +1988,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.cessCurr.value))
                 {
-                    alert('Current Cess Should be Numeric');
+                    bootbox.alert('Current Cess Should be Numeric');
                     document.editPaymentPage.cessCurr.value="";
                     document.editPaymentPage.cessCurr.focus();
                     return false;
@@ -1999,7 +1999,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.totalCurrent.value))
                 {
-                    alert('Current Total Should be Numeric');
+                    bootbox.alert('Current Total Should be Numeric');
                     document.editPaymentPage.totalCurrent.value="";
                     document.editPaymentPage.totalCurrent.focus();
                     return false;
@@ -2009,10 +2009,10 @@ function validateEditPaymentForm()
             }
             if(document.editPaymentPage.ptArr.disabled==false && document.editPaymentPage.ptArr.value!="")
             {
-                //alert('here '+document.editPaymentPage.ptArr.value);
+                //bootbox.alert('here '+document.editPaymentPage.ptArr.value);
                 if(isNaN(document.editPaymentPage.ptArr.value))
                 {
-                    alert('Arrears PT Should be Numeric');
+                    bootbox.alert('Arrears PT Should be Numeric');
                     document.editPaymentPage.ptArr.value="";
                     document.editPaymentPage.ptArr.focus();
                     return false;
@@ -2024,7 +2024,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.cessArr.value))
                 {
-                    alert('Arrears Cess Should be Numeric');
+                    bootbox.alert('Arrears Cess Should be Numeric');
                     document.editPaymentPage.cessArr.value="";
                     document.editPaymentPage.cessArr.focus();
                     return false;
@@ -2035,7 +2035,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.totalArrears.value))
                 {
-                    alert('ArrearsTotal Should be Numeric');
+                    bootbox.alert('ArrearsTotal Should be Numeric');
                     document.editPaymentPage.totalArrears.value="";
                     document.editPaymentPage.totalArrears.focus();
                     return false;
@@ -2046,7 +2046,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.penalty.value))
                 {
-                    alert('Penalty Should be Numeric');
+                    bootbox.alert('Penalty Should be Numeric');
                     document.editPaymentPage.penalty.value="";
                     document.editPaymentPage.penalty.focus();
                     return false;
@@ -2058,7 +2058,7 @@ function validateEditPaymentForm()
             {
                 if(isNaN(document.editPaymentPage.totalAmount.value))
                 {
-                    alert('TotalAmount Should be Numeric');
+                    bootbox.alert('TotalAmount Should be Numeric');
                     document.editPaymentPage.totalAmount.value="";
                     document.editPaymentPage.totalAmount.focus();
                     return false;
@@ -2072,7 +2072,7 @@ function validateEditPaymentForm()
 			var refNumObj = document.editPaymentPage.refNum;
 			if(trim(refNumObj,refNumObj.value) == "")
 			{
-				alert('Plase Enter Reference Number');
+				bootbox.alert('Plase Enter Reference Number');
 				document.editPaymentPage.refNum.focus();
 				return false;
 
@@ -2082,7 +2082,7 @@ function validateEditPaymentForm()
                 
         else if((!document.editPaymentPage.edit.checked) && (!document.editPaymentPage.deleteIt.checked))
         {
-            alert('Please choose Edit or Delete before proceding');
+            bootbox.alert('Please choose Edit or Delete before proceding');
             return false;
         }
         return true;    
@@ -2097,20 +2097,20 @@ function calculateCurrTotal()
     {
         for(var i=0;i<document.editPaymentPage.edit.length;i++)
         {
-                //alert('this'+document.editPaymentPage.edit[i].value);
+                //bootbox.alert('this'+document.editPaymentPage.edit[i].value);
             if(document.editPaymentPage.edit[i].checked)
             {
                 var ptCurr = eval(document.editPaymentPage.ptCurr[i].value);
                 var cessCurr = eval(document.editPaymentPage.cessCurr[i].value);
                 if(ptCurr < 0)
                 {
-                   alert('Please Enter Positive Value');
+                   bootbox.alert('Please Enter Positive Value');
                    document.editPaymentPage.ptCurr[i].value = "";
                    document.editPaymentPage.ptCurr[i].value.focus();
                 }
                 else if(cessCurr < 0)
                 {
-		   alert('Please Enter Positive Value');
+		   bootbox.alert('Please Enter Positive Value');
 		   document.editPaymentPage.cessCurr[i].value = "";
 		   document.editPaymentPage.cessCurr[i].value.focus();
                 }
@@ -2134,13 +2134,13 @@ function calculateCurrTotal()
             var cessCurr = eval(document.editPaymentPage.cessCurr.value);
            if(ptCurr < 0)
 	   {
-	      alert('Please Enter Positive Value');
+	      bootbox.alert('Please Enter Positive Value');
 	      document.editPaymentPage.ptCurr.value = "";
 	      document.editPaymentPage.ptCurr.value.focus();
 	   }
 	   else if(cessCurr < 0)
 	   {
-	       alert('Please Enter Positive Value');
+	       bootbox.alert('Please Enter Positive Value');
 	       document.editPaymentPage.cessCurr.value = "";
 	       document.editPaymentPage.cessCurr.value.focus();
            }
@@ -2148,7 +2148,7 @@ function calculateCurrTotal()
            {
             	var cess  = roundoff(0.34 * ptCurr);
             	var total = roundoff(ptCurr + eval(cess));
-            	//alert('cessCurr'+total);
+            	//bootbox.alert('cessCurr'+total);
             	document.editPaymentPage.cessCurr.value= cess;
             	document.editPaymentPage.cessCurr.readOnly = true;
             	document.editPaymentPage.totalCurrent.value= total;
@@ -2166,20 +2166,20 @@ function calculateArrTotal()
     {
         for(var i=0;i<document.editPaymentPage.edit.length;i++)
         {
-                //alert('this'+document.editPaymentPage.edit[i].value);
+                //bootbox.alert('this'+document.editPaymentPage.edit[i].value);
             if(document.editPaymentPage.edit[i].checked)
             {
                 var ptArr = eval(document.editPaymentPage.ptArr[i].value);
                 var cessArr = eval(document.editPaymentPage.cessArr[i].value);
                 if(ptArr < 0)
 		{
-		   alert('Please Enter Positive Value');
+		   bootbox.alert('Please Enter Positive Value');
 		   document.editPaymentPage.ptArr[i].value = "";
 		   document.editPaymentPage.ptArr[i].value.focus();
 		}
 		else if(cessArr < 0)
 		{
-		   alert('Please Enter Positive Value');
+		   bootbox.alert('Please Enter Positive Value');
 		   document.editPaymentPage.cessArr[i].value = "";
 		   document.editPaymentPage.cessArr[i].value.focus();
                 }
@@ -2203,13 +2203,13 @@ function calculateArrTotal()
             var cessArr = eval(document.editPaymentPage.cessArr.value);
             if(ptArr < 0)
 	    {
-	       alert('Please Enter Positive Value');
+	       bootbox.alert('Please Enter Positive Value');
 	       document.editPaymentPage.ptArr.value = "";
 	       document.editPaymentPage.ptArr.value.focus();
 	    }
 	    else if(cessArr < 0)
 	    {
-	       alert('Please Enter Positive Values');
+	       bootbox.alert('Please Enter Positive Values');
 	       document.editPaymentPage.cessArr.value = "";
 	       document.editPaymentPage.cessArr.value.focus();
 	    }
@@ -2217,7 +2217,7 @@ function calculateArrTotal()
 	    {
 		    var cess  = roundoff(0.34 * ptArr);
 		    var total = roundoff(ptArr + eval(cess));
-		    //alert('cessCurr'+total);
+		    //bootbox.alert('cessCurr'+total);
 		    document.editPaymentPage.cessArr.value= cess;
 		    document.editPaymentPage.cessArr.readOnly = true;
 		    
@@ -2237,7 +2237,7 @@ function calcTotalAmt()
     {
         for(var i=0;i<document.editPaymentPage.edit.length;i++)
         {
-                //alert('this'+document.editPaymentPage.edit[i].value);
+                //bootbox.alert('this'+document.editPaymentPage.edit[i].value);
             if(document.editPaymentPage.edit[i].checked)
             {
                 var totalCurrent = eval(document.editPaymentPage.totalCurrent[i].value);
@@ -2245,7 +2245,7 @@ function calcTotalAmt()
                 var penaltyTotal = eval(document.editPaymentPage.penalty[i].value);
                 if(penaltyTotal < 0)
                 {
-                	alert('Please Enter Positive Values');
+                	bootbox.alert('Please Enter Positive Values');
                 	document.editPaymentPage.penalty[i].value ="";
                 	document.editPaymentPage.penalty[i].value.focus();
                 }
@@ -2262,13 +2262,13 @@ function calcTotalAmt()
     {
         if(document.editPaymentPage.edit.checked)
         {
-            //alert('here calc'+document.editPaymentPage.totalCurrent.value);
+            //bootbox.alert('here calc'+document.editPaymentPage.totalCurrent.value);
             var totalCurrent = eval(document.editPaymentPage.totalCurrent.value);
             var totalArrears = eval(document.editPaymentPage.totalArrears.value);
             var penaltyTotal = eval(document.editPaymentPage.penalty.value);
              	if(penaltyTotal < 0)
 				{
-					alert('Please Enter Positive Value');
+					bootbox.alert('Please Enter Positive Value');
 					document.editPaymentPage.penalty.value ="";
 					document.editPaymentPage.penalty.value.focus();
 				}
@@ -2315,7 +2315,7 @@ function goChangePastDemand()
 			dateBits = DateComponents(obj.value, format);
 			if (dateBits == null) 
 			{
-			  alert('Invalid Date, Please Re-enter');
+			  bootbox.alert('Invalid Date, Please Re-enter');
 			  obj.value="";
 			  obj.focus();
 			  return false;
@@ -2327,14 +2327,14 @@ function goChangePastDemand()
 
 			if ((month < 1 || month > 12) || (day < 1 || day > 31)) // check month range 
 			{ 
-				alert('Invalid Date, Please Re-enter');
+				bootbox.alert('Invalid Date, Please Re-enter');
 				obj.value="";
 			  	obj.focus();
 				return false;
 			} 
 			if ((month==4 || month==6 || month==9 || month==11) && day==31)
 			{
-				alert('Invalid Date, Please Re-enter');
+				bootbox.alert('Invalid Date, Please Re-enter');
 				obj.value="";
 			  	obj.focus();
 				return false;
@@ -2345,7 +2345,7 @@ function goChangePastDemand()
 				var isleap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)); 
 				if (day>29 || (day==29 && !isleap)) 
 				{
-					alert('Invalid Date, Please Re-enter');
+					bootbox.alert('Invalid Date, Please Re-enter');
 					obj.value="";
 			  		obj.focus();
 					return false;
@@ -2354,7 +2354,7 @@ function goChangePastDemand()
 			
 			if (year < 1900 || year > 2100)
 			{
-				alert('Invalid Date, Please Re-enter');
+				bootbox.alert('Invalid Date, Please Re-enter');
 				obj.value="";
 				obj.focus();
 				return false;
@@ -2377,10 +2377,10 @@ function goChangePastDemand()
 		var datePat = /^(\d{1,2})(\/|-)(\d{1,2})\2(\d{4})$/;
 		var matchArray = dateStr.match(datePat);
 		
-		//alert(' matchArray : ' + matchArray);
-		//alert(' matchArray : ' + matchArray[1]);
-		//alert(' matchArray : ' + matchArray[3]);
-		//alert(' matchArray : ' + matchArray[4]);
+		//bootbox.alert(' matchArray : ' + matchArray);
+		//bootbox.alert(' matchArray : ' + matchArray[1]);
+		//bootbox.alert(' matchArray : ' + matchArray[3]);
+		//bootbox.alert(' matchArray : ' + matchArray[4]);
 		
 		if (matchArray == null)
 			return null; 
@@ -2412,7 +2412,7 @@ function goChangePastDemand()
 ***/
 function checkEffectiveDate(obj)
  {
-    // alert('function checkEffectiveDate'+obj);
+    // bootbox.alert('function checkEffectiveDate'+obj);
      if(obj.value!="")
      {
 		 if(ValiDate(obj,'dd-mm-yyyy'))
@@ -2420,14 +2420,14 @@ function checkEffectiveDate(obj)
 				var effectiveDate = obj.value;
 				var day = effectiveDate.substr(0,2);
 				var month = effectiveDate.substr(3,2);
-				//alert('here effectiveDate'+effectiveDate);
-				//alert('here day'+day);
-				//alert('here month'+month);
+				//bootbox.alert('here effectiveDate'+effectiveDate);
+				//bootbox.alert('here day'+day);
+				//bootbox.alert('here month'+month);
 
 
 			   if(day != 01)
 			   {
-				alert("Effective Date should  be 1st April or 1st October");
+				bootbox.alert("Effective Date should  be 1st April or 1st October");
 				obj.focus();
 				obj.value="";
 				return false;
@@ -2439,7 +2439,7 @@ function checkEffectiveDate(obj)
 			   }
 			   else
 			   {
-				 alert("Effective Date should  be 1st April or 1st October");
+				 bootbox.alert("Effective Date should  be 1st April or 1st October");
 				 obj.focus();
 				 obj.value="";
 				 return false;
@@ -2458,7 +2458,7 @@ function validateCardNo(obj)
 
 	     if(len!=16)
 	     {
-			alert('Card No should be of 16 digits. Please Check');
+			bootbox.alert('Card No should be of 16 digits. Please Check');
 			obj.focus();
 			return false;
 	     }
@@ -2486,7 +2486,7 @@ function validateReceipt(obj)
 
 	     if(len>7)
 	     {
-			alert('Invalid Receipt Number,length cannot be more than 7');
+			bootbox.alert('Invalid Receipt Number,length cannot be more than 7');
 
 	     }
 
@@ -2506,7 +2506,7 @@ function validateReceipt(obj)
 				{
 				  if (restLength<=3)
 				  {
-						alert('Invalid receipt No.');
+						bootbox.alert('Invalid receipt No.');
 				  }
 
 					else
@@ -2516,14 +2516,14 @@ function validateReceipt(obj)
 						if (!validateNumeric(rest))
 						{
 
-							alert('Invalid receipt No.');
+							bootbox.alert('Invalid receipt No.');
 						}
 					 }
 				}
 
 				else
 				{
-					alert('Invalid receipt No.');
+					bootbox.alert('Invalid receipt No.');
 				}
 
           }
@@ -2540,7 +2540,7 @@ function validateReceipt(obj)
 
 						if (restlength<3)
 						{
-							alert('Invalid receipt No.');
+							bootbox.alert('Invalid receipt No.');
 						}
 
 						else
@@ -2550,7 +2550,7 @@ function validateReceipt(obj)
 							if (!validateNumeric(rest))
 							{
 
-								alert('Invalid receipt No.');
+								bootbox.alert('Invalid receipt No.');
 							}
 						}
 
@@ -2558,7 +2558,7 @@ function validateReceipt(obj)
 
 				   else
 					{
-						alert('Invalid receipt No.');
+						bootbox.alert('Invalid receipt No.');
 					}
 		  }
 	   }
@@ -2572,7 +2572,7 @@ function checkTextAreaLength(obj,maxLen)
 {
    if(obj.value.length>maxLen)
    {
-     alert("You Entered "+obj.value.length+" Characters, So Please Enter Characters with max of "+maxLen+" characters");
+     bootbox.alert("You Entered "+obj.value.length+" Characters, So Please Enter Characters with max of "+maxLen+" characters");
      obj.value="";
      obj.focus();
      return false;
@@ -2580,13 +2580,13 @@ function checkTextAreaLength(obj,maxLen)
 }
 function formatAmount(amount)
 {
-	//alert("formatAmount");
+	//bootbox.alert("formatAmount");
 
 	var i = parseFloat(amount);
 
 	if(isNaN(i)) 
 	{
-	//alert('isNaN');
+	//bootbox.alert('isNaN');
 	 i = 0.00; 
 	}
 	 var minus = '';
@@ -2614,7 +2614,7 @@ function validateUniqueOrderNum(obj)
 				var response=request.responseText.split("^");
 				if(response[0]=="false")
 				{
-				alert("Please Enter Correct Order Num,This Order Number allready exists");
+				bootbox.alert("Please Enter Correct Order Num,This Order Number allready exists");
 				   obj.value = "";
 				   obj.focus();
 	  			 return false;				
@@ -2666,7 +2666,7 @@ function validateOrderNumber(obj)
   if(orderNum!="")
   if(!orderNumRegExp.test(orderNum))
   {
-    alert("Please Enter Valid Order Number"+"\n"+"The valid Characters for Order number are : alphanumeric and (,),-,/");
+    bootbox.alert("Please Enter Valid Order Number"+"\n"+"The valid Characters for Order number are : alphanumeric and (,),-,/");
     obj.focus();
   }
 }
@@ -2698,7 +2698,7 @@ function checkSpecialCharForName(obj) {
 		var objRegExp = /^([a-zA-Z \/\,\.\&\_\-]+)$/i;
 
 		if (!objRegExp.test(name)) {
-			alert("Please enter valid Characters only!\n");
+			bootbox.alert("Please enter valid Characters only!\n");
 			obj.value = "";
 			obj.focus();
 			return false;
@@ -2712,7 +2712,7 @@ function validateAddress(obj) {
 		var objRegExp = /^([a-zA-Z0-9 \/\,\.\&\_\-]+)$/i;
 
 		if (!objRegExp.test(name)) {
-			alert("Please enter valid Characters only!\n");
+			bootbox.alert("Please enter valid Characters only!\n");
 			obj.value = "";
 			obj.focus();
 			return false;
@@ -2730,7 +2730,7 @@ function validateAddress(obj) {
 				val=eval(obj.value);
 				if(val==0)
 				{
-					alert("Series of Zeros is Not a Valid Number!!");
+					bootbox.alert("Series of Zeros is Not a Valid Number!!");
 					obj.value="";
 					obj.focus();
 					return false;
@@ -2785,7 +2785,7 @@ function trimme(obj,value)
 	 if (result == null) 
 	 {
 	   document.getElementById(divid).innerHTML = errorMessage;
-	   alert( "Please Enable the PopUps from the browser settings and try again");
+	   bootbox.alert( "Please Enable the PopUps from the browser settings and try again");
 	   document.getElementById(buttonId).disabled = true; 
 	   result.close();
 	 }
@@ -2864,7 +2864,7 @@ function validateDecimalNumbers(sText, fieldname)
 	 }
 	if(IsNumber==false)
    {
-     	alert("Please enter a valid number for "+fieldname);
+     	bootbox.alert("Please enter a valid number for "+fieldname);
      	str.focus();
      	return false;
    }
@@ -2897,7 +2897,7 @@ function validatePlotNo(obj,msg)
   if(orderNum!="")
   if(!orderNumRegExp.test(orderNum))
   {
-    alert("Please Enter Valid "+msg+"\n"+"The valid Characters for "+msg+" are : alphanumeric and #,-,/");
+    bootbox.alert("Please Enter Valid "+msg+"\n"+"The valid Characters for "+msg+" are : alphanumeric and #,-,/");
     obj.value="";
     obj.focus();
   }
@@ -2911,7 +2911,7 @@ function checkYearPrevCurr(yearObj)
 	var prevYear = 1900;
 	if(inputYear!="" && (inputYear > currYear || inputYear < prevYear))
 	{
-	   alert("Please Enter Valid Year Of Construction");
+	   bootbox.alert("Please Enter Valid Year Of Construction");
 	   yearObj.value="";
 	   yearObj.focus();
 	   return false;
@@ -2933,7 +2933,7 @@ function validateInteger(obj)
 {
  	var objRegExp = /^[1-9]([0-9]*)$/;
  	if(obj.value != null && obj.value != "" && !objRegExp.test(obj.value)) {
- 		alert("Please Enter Numbers without decimal ");
+ 		bootbox.alert("Please Enter Numbers without decimal ");
  		obj.focus();
  		return false;
  	} else {
@@ -2960,13 +2960,13 @@ function validateFromAndToDate(fromDate,toDate) {
 	var currDate = new Date();
 	
 	if (fromDateNew > currDate) {
-		alert("From Date should be less than or equal to Current Date");
+		bootbox.alert("From Date should be less than or equal to Current Date");
 		return false;
 	} else if (toDateNew > currDate) {
-		alert("To Date should be less than or equal to  Current Date");
+		bootbox.alert("To Date should be less than or equal to  Current Date");
 		return false;
 	} else if (fromDateNew > toDateNew) {
- 		alert("To Date should be greater than or equal to from Date");
+ 		bootbox.alert("To Date should be greater than or equal to from Date");
  		return false;
 	} else {
 		return true;
@@ -2978,7 +2978,7 @@ function checkNumberRange(object, value, minValue, maxValue) {
 	var isInvalidData = false; 
 	
 	if (value < minValue || value > maxValue) {
-		alert('Invalid range, must be between ' + minValue + '-' + maxValue);
+		bootbox.alert('Invalid range, must be between ' + minValue + '-' + maxValue);
 		object.value='';
 		object.focus();
 		return false;
@@ -2994,7 +2994,7 @@ function validateRegDocNumber(obj,msg)
   if(orderNum!="")
   if(!orderNumRegExp.test(orderNum))
   {
-    alert("Please Enter Valid "+msg+"\n"+"The valid Characters for "+msg+" are : alphanumeric and -,/");
+    bootbox.alert("Please Enter Valid "+msg+"\n"+"The valid Characters for "+msg+" are : alphanumeric and -,/");
     obj.value="";
     obj.focus();
   }

@@ -173,7 +173,7 @@ function checkValue(obj){
 	var uomToval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value;
 	var uomFromval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomFrom').value;
 	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>eval(uomToval))){
-		alert("\"UOM To\" should be greater than \"UOM From\".");
+		bootbox.alert("\"UOM To\" should be greater than \"UOM From\".");
 		getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value="";
 		return false;
 	} 
@@ -193,7 +193,7 @@ function checkforNonEmptyPrevRow(){
     var uomToval=getControlInBranch(tbl.rows[lastRow],'uomTo').value;
     var amountVal=getControlInBranch(tbl.rows[lastRow],'amount').value;
     if(uomFromval=='' || uomToval=='' || amountVal==''){
-    	alert("Enter all values for existing rows before adding.");
+    	bootbox.alert("Enter all values for existing rows before adding.");
 		return false;       
     } 
     return true;
@@ -217,10 +217,10 @@ function deleteThisRow(obj){
     var curRow=getRow(obj).rowIndex; 
     var counts = lastRow - 1;
     if(curRow == 1)	{
- 		 alert('Cannot delete first row');
+    	bootbox.alert('Cannot delete first row');
   	     return false;
     } else if(curRow != lastRow){
-    	alert('Cannot delete in between. Delete from last.');
+    	bootbox.alert('Cannot delete in between. Delete from last.');
  	    return false;
     } else	{
         if(getControlInBranch(tbl.rows[lastRow],'detailId').value==''){
@@ -239,7 +239,7 @@ function deleteThisRow(obj){
 							tbl.deleteRow(curRow);
 						}, 
 						error: function (response) {
-							alert("Unable to delete this row.");
+							bootbox.alert("Unable to delete this row.");
 							console.log("failed");
 						}
 					});
@@ -256,7 +256,7 @@ function validateDetailsBeforeSubmit(){
     	uomFromval=getControlInBranch(tbl.rows[i],'uomFrom').value;
     	uomToval=getControlInBranch(tbl.rows[i],'uomTo').value;
     	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>eval(uomToval))){
-    		alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
+    		bootbox.alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
     		getControlInBranch(tbl.rows[i],'uomTo').value="";
     		getControlInBranch(tbl.rows[i],'uomTo').focus();
     		return false;

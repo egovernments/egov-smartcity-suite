@@ -38,24 +38,17 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.Calendar;
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.DonationDetails;
-import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PropertyTypeService;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,23 +61,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/masters")
 public class CategoryMasterController {
-    
-    
+
     private final PropertyTypeService propertyTypeService;
-    
+
     private final ConnectionCategoryService connectionCategoryService;
-    
+
     private final PropertyCategoryService propertyCategoryService;
-    
+
     @Autowired
-    public CategoryMasterController(final PropertyTypeService propertyTypeService,final ConnectionCategoryService connectionCategoryService
-            ,final PropertyCategoryService propertyCategoryService) {
+    public CategoryMasterController(final PropertyTypeService propertyTypeService,
+            final ConnectionCategoryService connectionCategoryService,
+            final PropertyCategoryService propertyCategoryService) {
         this.propertyTypeService = propertyTypeService;
         this.connectionCategoryService = connectionCategoryService;
         this.propertyCategoryService = propertyCategoryService;
-       
+
     }
-    
+
     @RequestMapping(value = "/categoryMaster", method = GET)
     public String viewForm(@ModelAttribute PropertyCategory propertyCategory, final Model model) {
         propertyCategory = new PropertyCategory();
@@ -92,27 +85,29 @@ public class CategoryMasterController {
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
         return "category-master";
     }
-    
+
     @RequestMapping(value = "/categoryMaster", method = RequestMethod.POST)
     public String addCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "category-master";
         PropertyCategory propertycategory = new PropertyCategory();
-        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(propertyCategory.getPropertyType(),connectionCategoryService.findByName(propertyCategory.getConnectionCategory().getName()));
-        if (propertycategory!=null){
+        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(
+                propertyCategory.getPropertyType(),
+                connectionCategoryService.findByCode(propertyCategory.getConnectionCategory().getName().toUpperCase()
+                        .trim()));
+        if (propertycategory != null) {
             redirectAttrs.addFlashAttribute("propertyCategory", propertycategory);
             model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
-        }
-        else{
-        ConnectionCategory category = new ConnectionCategory();
-        category =  propertyCategory.getConnectionCategory();
-        category.setActive(true);
-        category.setCode(category.getName().toUpperCase());
-        connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
-        propertyCategoryService.createPropertyCategory(propertyCategory);
-        redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
-        model.addAttribute("message", "Category Data created successfully");
+        } else {
+            ConnectionCategory category = new ConnectionCategory();
+            category = propertyCategory.getConnectionCategory();
+            category.setActive(true);
+            category.setCode(category.getName().toUpperCase());
+            connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
+            propertyCategoryService.createPropertyCategory(propertyCategory);
+            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+            model.addAttribute("message", "Category Data created successfully");
         }
         return "category-master-success";
     }

@@ -119,7 +119,7 @@ YAHOO.example.treeExample = function () {
 					var ctxtMenu = new YAHOO.widget.ContextMenu("ctxtmenu", {trigger:"menutree", lazyload:true, itemdata:[{text:"    Select    ", onclick:{fn:sendData}}]});
 					ctxtMenu.subscribe("triggerContextMenu", onTriggerContextMenu);
 				}, failure:function(req) {
-					alert('An error occured, Please try again');
+					bootbox.alert('An error occured, Please try again');
 				}, timeout: 300000 
 		};
 		YAHOO.util.Connect.asyncRequest('GET', link, callback);

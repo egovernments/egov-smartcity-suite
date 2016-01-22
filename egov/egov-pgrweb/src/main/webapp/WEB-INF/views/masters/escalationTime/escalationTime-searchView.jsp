@@ -54,7 +54,7 @@
 
 		var curRow = getRow(obj).rowIndex;
 		if (lastRow == 1) {
-			alert('you cannot delete this row ');
+			bootbox.alert('you cannot delete this row ');
 			return false;
 		} else {
 			tb1.deleteRow(curRow);

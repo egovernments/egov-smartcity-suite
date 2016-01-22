@@ -56,12 +56,12 @@ function checkBeforeSubmit()
  	var WardNo = document.propMarkedDeactiveForm.divNumber.value;
  	if(zoneNo==null || zoneNo=="" || zoneNo=="0")
    		{
-   		alert("Please Select a Zone Number");
+   		bootbox.alert("Please Select a Zone Number");
    		return false;
    		}
    	if(WardNo==null || WardNo=="" || WardNo=="0")
    		{
-   		alert("Please Select a Ward Number");
+   		bootbox.alert("Please Select a Ward Number");
    		return false;
    		}
  }

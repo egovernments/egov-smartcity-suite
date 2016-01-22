@@ -161,7 +161,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 	private MiscbilldetailService miscbilldetailService;
 	@Autowired
 	private EntityManager entityManager;
-
+	@Autowired
+	ChartOfAccounts chartOfAccounts;
 	public PaymentService(Class<Paymentheader> type) {
 		super(type);
 	}
@@ -629,10 +630,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 		final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountcodedetails, subledgerdetails,
 				existingVH);
 		HibernateUtil.getCurrentSession().flush();
-		final ChartOfAccounts engine = ChartOfAccounts.getInstance();
 		Transaxtion txnList[] = new Transaxtion[transactions.size()];
 		txnList = transactions.toArray(txnList);
-		if (!engine.postTransaxtions(txnList, sdf.format(existingVH.getVoucherDate())))
+		if (!chartOfAccounts.postTransaxtions(txnList, sdf.format(existingVH.getVoucherDate())))
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, TRANSACTION_FAILED)));
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed updateVoucher.");
@@ -2835,24 +2835,25 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 		return payeeName;
 	}
 
-	public Paymentheader createPaymentHeader(final CVoucherHeader voucherHeader, final Integer bankaccountId, final String type,
-			final BigDecimal amount)
-	{
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Starting createPaymentHeader...");
-		final Paymentheader paymentheader = new Paymentheader();
-		paymentheader.setType(type);
-		paymentheader.setVoucherheader(voucherHeader);
-		final Bankaccount bankaccount = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
-				bankaccountId.longValue());
-		paymentheader.setBankaccount(bankaccount);
-		paymentheader.setPaymentAmount(amount);
-		//persistenceService.setType(Paymentheader.class);
-		persistenceService.create(paymentheader);
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Completed createPaymentHeader.");
-		return paymentheader;
-	}
+
+    public Paymentheader createPaymentHeader(final CVoucherHeader voucherHeader, final Integer bankaccountId, final String type,
+            final BigDecimal amount)
+    {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting createPaymentHeader...");
+       Paymentheader paymentheader = new Paymentheader();
+        paymentheader.setType(type);
+        paymentheader.setVoucherheader(voucherHeader);
+        final Bankaccount bankaccount = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
+                bankaccountId.longValue());
+        paymentheader.setBankaccount(bankaccount);
+        paymentheader.setPaymentAmount(amount);
+        create(paymentheader);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed createPaymentHeader.");
+        return paymentheader;
+    }
+
 
 	public Paymentheader updatePaymentHeader(final Paymentheader paymentheader, final CVoucherHeader voucherHeader,
 			final Integer bankaccountId,

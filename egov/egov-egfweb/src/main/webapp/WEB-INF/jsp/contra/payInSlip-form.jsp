@@ -201,12 +201,12 @@ success: function(o) {
 		document.getElementById('accnumnar').value=narration;	
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function validateFundSelected(){
 	if( document.getElementById('fundId').value == -1){
-		alert("Enter value for Fund");
+		bootbox.alert("Enter value for Fund");
 	}
 	
 }

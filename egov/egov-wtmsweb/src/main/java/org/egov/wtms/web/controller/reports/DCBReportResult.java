@@ -68,6 +68,7 @@ public class DCBReportResult {
     private Integer block;
     private Integer locality;
     private Integer street;
+
     private String connectiontype;
     private BigInteger curr_demand = BigInteger.ZERO;
     private BigInteger arr_demand = BigInteger.ZERO;
@@ -76,8 +77,11 @@ public class DCBReportResult {
     private BigInteger curr_balance = BigInteger.ZERO;
     private BigInteger arr_balance = BigInteger.ZERO;
 
+    private BigInteger countofconsumerno = BigInteger.ZERO;
+
     public Integer getId() {
-        return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : locality != null ? locality : null;
+        return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : locality != null ? locality
+                : null;
     }
 
     public String getMode() {
@@ -260,7 +264,8 @@ public class DCBReportResult {
     }
 
     public BigInteger getTotal_demand() {
-        return (curr_demand == null ? BigInteger.ZERO : curr_demand).add(arr_demand == null ? BigInteger.ZERO : arr_demand);
+        return (curr_demand == null ? BigInteger.ZERO : curr_demand).add(arr_demand == null ? BigInteger.ZERO
+                : arr_demand);
     }
 
     public void setTotal_demand(final BigInteger total_demand) {
@@ -290,7 +295,8 @@ public class DCBReportResult {
     }
 
     public BigInteger getCurr_balance() {
-        return (curr_demand == null ? BigInteger.ZERO : curr_demand).subtract(curr_coll == null ? BigInteger.ZERO : curr_coll);
+        return (curr_demand == null ? BigInteger.ZERO : curr_demand).subtract(curr_coll == null ? BigInteger.ZERO
+                : curr_coll);
     }
 
     public void setCurr_balance(final BigInteger curr_balance) {
@@ -298,7 +304,8 @@ public class DCBReportResult {
     }
 
     public BigInteger getArr_balance() {
-        return (arr_demand == null ? BigInteger.ZERO : arr_demand).subtract(arr_coll == null ? BigInteger.ZERO : arr_coll);
+        return (arr_demand == null ? BigInteger.ZERO : arr_demand).subtract(arr_coll == null ? BigInteger.ZERO
+                : arr_coll);
     }
 
     public void setArr_balance(final BigInteger arr_balance) {
@@ -306,10 +313,19 @@ public class DCBReportResult {
     }
 
     public BigInteger getTotal_balance() {
-        return (curr_balance == null ? BigInteger.ZERO : curr_balance).add(arr_balance == null ? BigInteger.ZERO : arr_balance);
+        return (curr_balance == null ? BigInteger.ZERO : curr_balance).add(arr_balance == null ? BigInteger.ZERO
+                : arr_balance);
     }
 
     public void setTotal_balance(final BigInteger total_balance) {
+    }
+
+    public BigInteger getCountofconsumerno() {
+        return countofconsumerno;
+    }
+
+    public void setCountofconsumerno(final BigInteger countofconsumerno) {
+        this.countofconsumerno = countofconsumerno;
     }
 
 }

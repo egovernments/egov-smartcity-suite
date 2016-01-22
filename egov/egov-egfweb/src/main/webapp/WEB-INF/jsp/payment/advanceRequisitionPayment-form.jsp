@@ -118,7 +118,7 @@ function validateFund(){
 	var fund = document.getElementById('fund').value;
 	var bank = document.getElementById('bank');
 	if(fund == -1 && bank.options.length==1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;

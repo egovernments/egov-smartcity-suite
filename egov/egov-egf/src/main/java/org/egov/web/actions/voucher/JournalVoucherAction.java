@@ -62,11 +62,13 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
@@ -98,7 +100,7 @@ public class JournalVoucherAction extends BaseVoucherAction
     private static final String VHID = "vhid";
     protected EisCommonService eisCommonService;
     private CommonsService commonsService;
-    
+
     @Autowired
     private ScriptService scriptService;
 
@@ -109,7 +111,7 @@ public class JournalVoucherAction extends BaseVoucherAction
         addDropdownData("approvaldepartmentList", Collections.EMPTY_LIST);
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
-      }
+    }
 
     @SkipValidation
     @Action(value = "/voucher/journalVoucher-newForm")
@@ -139,7 +141,7 @@ public class JournalVoucherAction extends BaseVoucherAction
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
         // voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL);
@@ -194,11 +196,11 @@ public class JournalVoucherAction extends BaseVoucherAction
                     voucherService.createBillForVoucherSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,
                             new BigDecimal(totalamount));
                 }
-                voucherHeader.start().withOwner(getPosition()).withComments(voucherHeader.getDescription());
-                // sendForApproval(); //Phoenix
-                // addActionMessage( voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
-                // addActionMessage(getText("pjv.voucher.approved",new
-                // String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
+                populateWorkflowBean();
+                transitionWorkFlow(voucherHeader, workflowBean);
+                persistenceService.applyAuditing(voucherHeader.getState());
+                voucherService.create(voucherHeader);
+                //addActionMessage(voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
                 message = "Voucher  "
                         + voucherHeader.getVoucherNumber()
                         + " Created Sucessfully"
@@ -219,25 +221,25 @@ public class JournalVoucherAction extends BaseVoucherAction
                 return viewform();
             }
 
-        catch (final ValidationException e) {
-            clearMessages();
-            if (subLedgerlist.size() == 0)
-                subLedgerlist.add(new VoucherDetails());
-            voucherHeader.setVoucherNumber(voucherNumber);
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
-            throw new ValidationException(errors);
-        } catch (final Exception e) {
-            clearMessages();
-            if (subLedgerlist.size() == 0)
-                subLedgerlist.add(new VoucherDetails());
-            voucherHeader.setVoucherNumber(voucherNumber);
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp", e.getMessage()));
-            throw new ValidationException(errors);
-        } finally {
-            loadApproverUser("default");
-        }
+            catch (final ValidationException e) {
+                clearMessages();
+                if (subLedgerlist.size() == 0)
+                    subLedgerlist.add(new VoucherDetails());
+                voucherHeader.setVoucherNumber(voucherNumber);
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+                throw new ValidationException(errors);
+            } catch (final Exception e) {
+                clearMessages();
+                if (subLedgerlist.size() == 0)
+                    subLedgerlist.add(new VoucherDetails());
+                voucherHeader.setVoucherNumber(voucherNumber);
+                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                errors.add(new ValidationError("exp", e.getMessage()));
+                throw new ValidationException(errors);
+            } finally {
+                loadApproverUser("default");
+            }
         else if (subLedgerlist.size() == 0)
             subLedgerlist.add(new VoucherDetails());
         loadApproverUser("default");
@@ -275,7 +277,7 @@ public class JournalVoucherAction extends BaseVoucherAction
         return pos;
     }
 
-    public List<Action> getValidActions(final String purpose) {
+/*    public List<Action> getValidActions(final String purpose) {
         final List<Action> validButtons = new ArrayList<Action>();
         final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "pjv.validbuttons")
                 .get(0);
@@ -291,7 +293,7 @@ public class JournalVoucherAction extends BaseVoucherAction
             validButtons.add(action);
         }
         return validButtons;
-    }
+    }*/
 
     public List<VoucherDetails> getBillDetailslist() {
         return billDetailslist;
@@ -430,4 +432,12 @@ public class JournalVoucherAction extends BaseVoucherAction
         this.commonsService = commonsService;
     }
 
- }
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
+
+}

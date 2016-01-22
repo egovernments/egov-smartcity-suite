@@ -110,7 +110,7 @@ function checkMiscAttributes(obj)
 		
 		if(mis!=document.getElementById('miscattributes').value)
 		{
-			alert('Selected bills do not have same attributes. Please select bills with same attributes');
+			bootbox.alert('Selected bills do not have same attributes. Please select bills with same attributes');
 			obj.checked =false;
 			return;
 			
@@ -150,7 +150,7 @@ function check()
 		
 		if(!document.getElementById("paymentModertgs").checked &&  isAnyOneContratorBillChecked)
 		{
-			alert("Mode of payment for contractor bills should only be RTGS");
+			bootbox.alert("Mode of payment for contractor bills should only be RTGS");
 			return false;
 		}	 
 		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-save.action';
@@ -158,7 +158,7 @@ function check()
 	}	             
 	if(document.getElementById('miscount').value==0)
 	{
-		alert('Please select a bill before making the payment');
+		bootbox.alert('Please select a bill before making the payment');
 		return false;
 	}
 	if(document.getElementById('vouchermis.departmentid'))
@@ -185,7 +185,7 @@ function selectAllContractors(element){
 	if(element.checked == true)	{
 		var concnt=checkcontractorForSameMisAttribs('contractorList',length);
 		if(concnt!=0){
-		 alert("Selected Bills doesnot have same attributes");
+		 bootbox.alert("Selected Bills doesnot have same attributes");
 		  document.getElementById('conSelectAll').checked =false; }
 		else
 		checkAll('contractorList',length);
@@ -202,7 +202,7 @@ function selectAllSuppliers(element){
 	{
 		var supcnt= checkSupplierForSameMisAttribs('supplierList',length);
 	    if(supcnt!=0){
-	     alert("Selected Bills doesnot have same attributes");
+	     bootbox.alert("Selected Bills doesnot have same attributes");
 	      document.getElementById('suppSelectAll').checked =false; }
 	     else
 	     checkAll('supplierList',length);
@@ -220,7 +220,7 @@ function selectAllContingent(element){
 		 
 		 var expcnt=checkContingentForSameMisAttribs('contingentList',length);
 		 if(expcnt!=0){
-		  alert("Selected Bills doesnot have same attributes" );
+		  bootbox.alert("Selected Bills doesnot have same attributes" );
 		  document.getElementById('expSelectAll').checked =false;    }
 		  else
 		  checkAll('contingentList',length); 

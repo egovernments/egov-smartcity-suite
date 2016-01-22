@@ -111,19 +111,19 @@ function getConSupCodes()
 	var tdate = document.getElementById('toDate').value;
 	if(fdate.length==0)
 	{
-		alert("please select from date ");
+		bootbox.alert("please select from date ");
 		document.getElementById('conSupType').value="";
 		return;
 	}
 	if(tdate.length==0)
 	{
-		alert("please select to date ");
+		bootbox.alert("please select to date ");
 		document.getElementById('conSupType').value="";
 		return;
 	}
 	if(compareDate(formatDate6(fdate),formatDate6(tdate)) == -1 )
 	{
-		alert('From Date can not be greater than To Date');
+		bootbox.alert('From Date can not be greater than To Date');
 		document.getElementById('conSupType').value="";
 		document.getElementById('fdate').focus();
 		return false;
@@ -159,7 +159,7 @@ function getConSupCodes()
 }
 function getCode()
 {
-	//alert('getcode sIndex'+sIndex+',sText='+sText+',sValue='+sValue);
+	//bootbox.alert('getcode sIndex'+sIndex+',sText='+sText+',sValue='+sValue);
 	if(!(document.getElementById("conSupName").value !=''))
 	{
 		document.getElementById("code").value="";
@@ -174,7 +174,7 @@ function getCode()
 	{
 		document.forms[0].conSupName.options[sIndex]= new Option(sText,sValue);
 	}
-	//alert('getcode');
+	//bootbox.alert('getcode');
 	sIndex=obj.selectedIndex;
 	sValue=obj.options[obj.selectedIndex].value;
 	sText=obj1[0]+"-"+obj1[1];
@@ -212,7 +212,7 @@ function afterRefreshPage(dc)
 
 function accntMod(obj)
 {
-	//alert('accntMod=sIndex'+sIndex+',sText='+sText+',sValue='+sValue)
+	//bootbox.alert('accntMod=sIndex'+sIndex+',sText='+sText+',sValue='+sValue)
 	if(obj.selectedIndex==-1)	 return;
 	if(sIndex!=null)
 	{
@@ -234,7 +234,7 @@ function accntMod(obj)
 	   if(temp[1]!=null && temp[1]!="" )
 	   {
 	    obj.options[obj.selectedIndex].text=temp[0];
-	   // alert('acc');
+	   // bootbox.alert('acc');
 	   }
 	}catch(err){}
 }
@@ -248,7 +248,7 @@ function getData1()
 	tdate1 = document.getElementById('toDate').value;
 	if(compareDate(formatDate6(fdate1),formatDate6(tdate1)) == -1 )
 	{
-		alert('From Date can not be greater than To Date');
+		bootbox.alert('From Date can not be greater than To Date');
 		document.getElementById('fromDate').focus();
 		return;
 	}

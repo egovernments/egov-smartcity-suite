@@ -181,7 +181,7 @@
 					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
 					if(aadharNo != "NaN") {
-					alert("Aadhar number is not valid");
+					bootbox.alert("Aadhar number is not valid");
 					}
 			   }
 			});

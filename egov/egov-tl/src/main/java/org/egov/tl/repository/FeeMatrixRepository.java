@@ -41,10 +41,14 @@
 package org.egov.tl.repository;
 
 
+import java.util.List;
+
 import org.egov.tl.entity.FeeMatrix;
+import org.egov.tl.entity.LicenseSubCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository 
 public interface FeeMatrixRepository extends JpaRepository<FeeMatrix,Long>,FeeMatrixRepositoryCustom {
@@ -52,7 +56,7 @@ public interface FeeMatrixRepository extends JpaRepository<FeeMatrix,Long>,FeeMa
 	FeeMatrix findByUniqueNo(String uniqueNo);
 
 	FeeMatrix findByUniqueNoLike(String uniqueNo);
-
 	
-
+	@Query("select f from FeeMatrix f where f.subCategory=:subCategory")
+	List<FeeMatrix> findBySubCategory(@Param("subCategory") LicenseSubCategory subCategory);
 }

@@ -61,9 +61,9 @@
 		var success = '<s:property value="success"/>';
 
 		if (success == 'yes') {
-			alert("PartyType Modified Successfully");
+			bootbox.alert("PartyType Modified Successfully");
 			} else if((success == 'no')){
-				alert("PartyType Could Not be Modified");
+				bootbox.alert("PartyType Could Not be Modified");
 				}
 		
 		if (close == 'true') {

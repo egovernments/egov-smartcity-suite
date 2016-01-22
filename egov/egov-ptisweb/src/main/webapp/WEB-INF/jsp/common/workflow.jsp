@@ -116,7 +116,7 @@ return true;
 }
 else if(document.getElementById("approverUserId") && document.getElementById("approverUserId").value=="-1")
 {
-alert("Select Approver");
+bootbox.alert("Select Approver");
 return false;
 }else
 {

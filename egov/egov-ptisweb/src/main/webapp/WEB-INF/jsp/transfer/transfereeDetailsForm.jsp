@@ -202,7 +202,7 @@
 						jQuery("select[name='transfereeInfos["+ rowidx +"].guardianRelation']").removeAttr('disabled');
 						jQuery("input[name='transfereeInfos["+ rowidx +"].guardian']").attr('readonly', false);
 						if(aadharNo != "NaN") {
-						alert("Aadhar number is not valid");
+						bootbox.alert("Aadhar number is not valid");
 						}
 				   }
 				});

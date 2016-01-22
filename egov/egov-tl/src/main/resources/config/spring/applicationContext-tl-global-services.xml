@@ -44,31 +44,30 @@
        xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
 	
-	<bean id="TradeLicensePersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.tl.entity.TradeLicense" />
+	<bean id="tradeLicensePersistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type" value="org.egov.tl.entity.TradeLicense"/>
     </bean>
         
     <bean id="TradeLicenseInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-         <constructor-arg index="0" ref="TradeLicensePersistenceService"/>
+         <constructor-arg index="0" ref="tradeLicensePersistenceService"/>
     </bean>
     
-    <bean id="LicenseTransferPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.tl.entity.transfer.LicenseTransfer" />
+    <bean id="licenseTransferPersistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type" value="org.egov.tl.entity.transfer.LicenseTransfer"/>
     </bean>
         
     <bean id="LicenseTransferInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-         <constructor-arg index="0" ref="LicenseTransferPersistenceService"/>
+         <constructor-arg index="0" ref="licenseTransferPersistenceService"/>
     </bean>
     
-    <bean id="LicenseObjectionPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.tl.entity.objection.LicenseObjection" />
+    <bean id="licenseObjectionPersistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type" value="org.egov.tl.entity.objection.LicenseObjection"/>
     </bean>
         
     <bean id="LicenseObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-         <constructor-arg index="0" ref="LicenseObjectionPersistenceService"/>
+         <constructor-arg index="0" ref="licenseObjectionPersistenceService"/>
     </bean>
-    <bean class="org.egov.tl.utils.LicenseUtils" id="licenseUtils"
-		scope="prototype">
-	</bean>
+
+    <bean id="licenseUtils" class="org.egov.tl.utils.LicenseUtils"/>
     
 </beans>

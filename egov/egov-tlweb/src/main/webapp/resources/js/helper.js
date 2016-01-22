@@ -57,9 +57,9 @@ function roundTo(value,decimals,decimal_padding){
 }
 
 
-function createDeleteImageFormatter(baseURL){
+function createDeleteImageFormatter(baseURL){ 
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/image/cancel.png";
+	    var imageURL=baseURL+"/resources/image/removerow.gif";
 	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
 	}
@@ -68,7 +68,7 @@ function createDeleteImageFormatter(baseURL){
 
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/image/add.png";
+	    var imageURL=baseURL+"/resources/image/addrow.gif";
 	    markup='<img height="16" border="0" width="16" alt="Add" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}

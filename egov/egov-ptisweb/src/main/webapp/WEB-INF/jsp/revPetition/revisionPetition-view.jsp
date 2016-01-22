@@ -104,7 +104,7 @@
 			jQuery('tr.floordetails').show();
 		}
 		if (propType == "Apartments") {
-			alert("Please select Apartment/Complex Name");
+			bootbox.alert("Please select Apartment/Complex Name");
 		}
 	}
 
@@ -195,7 +195,7 @@
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
 				//if (validateObjectionOutcome()) {
 					/*  if(document.getElementById('approverPositionId').value=="-1") {
-					        alert("Please Select the Approver ");
+					        bootbox.alert("Please Select the Approver ");
 							return false;
 					    } */
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='

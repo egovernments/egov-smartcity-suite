@@ -44,26 +44,14 @@
 <head>
 <script type="text/javascript">
 	function submitForm() {
-		var mode = '<s:property value="%{mode}"/>';
-		if (mode == 'view') {
-			document.forms[0].action = 'unitRate-view.action';
-		} else {
-			document.forms[0].action = 'unitRate-search.action';
-		}
-
-		document.forms[0].submit;
+		document.forms[0].action = 'unitRate-search.action';
+		document.forms[0].submit;       
 		return true;
 	}
-	function showMandatory() {
-		var mode = '<s:property value="%{mode}"/>';
-		if (mode == 'view') {
-			jQuery("#usageSpan").hide();
-			jQuery("#classificationSpan").hide();
-		}
-	}
+	
 </script>
 </head>
-<body onload="showMandatory();">
+<body>
 
 	<s:form name="unitRateForm" action="unitRate" theme="simple">
 		<s:if test="%{hasErrors()}">
@@ -95,7 +83,7 @@
 					<tr>
 						<td class="greybox" width="20%">&nbsp;</td>
 						<td class="greybox" width="30%"><s:text
-								name="unit.rate.usage" /><span id="usageSpan" class="mandatory1">*</span>
+								name="unit.rate.usage" />
 							:</td>
 						<td class="greybox" width="30%"><s:select headerKey="-1"
 								headerValue="%{getText('default.select')}" name="usageId"
@@ -107,8 +95,7 @@
 					<tr>
 						<td class="greybox" width="20%">&nbsp;</td>
 						<td class="greybox" width="30%"><s:text
-								name="unit.rate.structure.classification" /> <span
-							id="classificationSpan" class="mandatory1">*</span> :</td>
+								name="unit.rate.structure.classification" /> :</td>
 						<td class="greybox" width="30%"><s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
 								name="structureClassId" id="structureClassId" listKey="id"
@@ -149,6 +136,23 @@
 							<display:column property="category.fromDate" format="{0,date,dd/MM/yyyy}" title="Effective From"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="text-align:left" />
+								id<s:property value="%{category.id}"/>
+							<s:if test="%{mode == 'edit'}">
+							  <display:column title=""
+									 media="html"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="text-align:center">
+									<a href="../admin/unitRate-newForm.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=edit"> Edit</a>
+									</display:column> 
+									</s:if>
+							<s:if test="%{mode == 'view'}">
+							 <display:column title=""
+									 media="html"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="text-align:center">
+									<a href="../admin/unitRate-view.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=view"> View</a>
+									</display:column> 
+									</s:if>
 
 							<display:setProperty name="export.pdf" value="true" />
 							<display:setProperty name="export.rtf" value="false" />

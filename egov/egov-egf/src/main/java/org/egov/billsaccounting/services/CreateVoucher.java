@@ -188,7 +188,6 @@ public class CreateVoucher {
     @Autowired
     private ChartOfAccounts chartOfAccounts;
 
-    private ChartOfAccounts engine;
     @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
     @Autowired
@@ -2308,11 +2307,10 @@ public class CreateVoucher {
                 }
             final List<Transaxtion> transactions = createTransaction(null, accountdetails, subledgerdetails, vh);
             HibernateUtil.getCurrentSession().flush();
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
                 throw new ApplicationRuntimeException("Voucher creation Failed");
         } catch (final Exception e)
         {
@@ -2492,11 +2490,10 @@ public class CreateVoucher {
             }
             final List<Transaxtion> transactions = createTransaction(null, accountdetails, subledgerdetails, reversalVoucher);
             HibernateUtil.getCurrentSession().flush();
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             // SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(reversalVoucher.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(reversalVoucher.getVoucherDate())))
                 throw new ApplicationRuntimeException("Voucher Reversal Failed");
         } catch (final ValidationException e) {
             LOGGER.error(ERR, e);

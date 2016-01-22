@@ -76,37 +76,37 @@ function ButtonPress(){
 
 	if (!PageValidator.validateForm())
 		return;
-	//alert('HI');
+	//bootbox.alert('HI');
 	var strtDate = document.getElementById('startDate').value;
 	rptStartDate = strtDate;
-	//alert(rptStartDate);
+	//bootbox.alert(rptStartDate);
 	var endDate = document.getElementById('endDate').value;
 	rptEndDate = endDate;
 	
 	/* if(strtDate.length==0||endDate.length==0)
 	{
-		alert("please select start dates and end dates");
+		bootbox.alert("please select start dates and end dates");
 		return;
 	}*/	
 	/*if( compareDate(formatDateToDDMMYYYY(strtDate),formatDateToDDMMYYYY(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}*/
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}
-//alert(document.getElementById('bill_Po').value);
+//bootbox.alert(document.getElementById('bill_Po').value);
 //bill_PoVar=document.getElementById('bill_Po').value;
 //bill_CreditorVar=document.getElementById('bill_Creditor').value;
-//alert(bill_PoVar);
-//alert(bill_CreditorVar);
+//bootbox.alert(bill_PoVar);
+//bootbox.alert(bill_CreditorVar);
 document.getElementById('searchB').value = 1;
 //PageManager.DataService.setQueryField('bill_Po',bill_PoVar);
 //PageManager.DataService.setQueryField('bill_Creditor',bill_CreditorVar);		
-//alert(document.getElementById('searchB').value);
+//bootbox.alert(document.getElementById('searchB').value);
 document.forms[0].submit();
 	//var aCode1 = document.getElementById('glCode1').value;
 	//var aCode2 = document.getElementById('glCode2').value;
@@ -116,32 +116,32 @@ function ButtonPressAll(){
 
 	if (!PageValidator.validateForm())
 		return;
-	//alert('HI');
+	//bootbox.alert('HI');
 	var strtDate = document.getElementById('startDate').value;
 	rptStartDate = strtDate;
-	//alert(rptStartDate);
+	//bootbox.alert(rptStartDate);
 	var endDate = document.getElementById('endDate').value;
 	rptEndDate = endDate;
 	
 	/* if(strtDate.length==0||endDate.length==0)
 	{
-		alert("please select start dates and end dates");
+		bootbox.alert("please select start dates and end dates");
 		return;
 	}*/	
 	/*if( compareDate(formatDateToDDMMYYYY(strtDate),formatDateToDDMMYYYY(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}*/
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}
-//alert(document.getElementById('searchB').value);
+//bootbox.alert(document.getElementById('searchB').value);
 document.getElementById('searchB').value = 2;
 
-//alert(document.getElementById('searchB').value);
+//bootbox.alert(document.getElementById('searchB').value);
 document.forms[0].submit();
 	//var aCode1 = document.getElementById('glCode1').value;
 	//var aCode2 = document.getElementById('glCode2').value;

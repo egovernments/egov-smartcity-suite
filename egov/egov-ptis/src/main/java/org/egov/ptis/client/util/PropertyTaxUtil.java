@@ -2144,15 +2144,15 @@ public class PropertyTaxUtil {
             whereQry = " and pi.wardid = " + param;
             finalWhereQry = " where dcbinfo.block=boundary.id ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
-            innerSelectQry0 = "select distinct pi.upicno as upicno,";
-            innerSelectQry1 = "select upicno as upicno,";
-            arrearGroupBy = ") as arrear group by upicno ";
-            collGroupBy = ") as collection  group by upicno ";
+            innerSelectQry0 = "select distinct pi.upicno as upicno, pi.houseno as doorno,";
+            innerSelectQry1 = "select upicno as upicno,doorno as doorno,";
+            arrearGroupBy = ") as arrear group by upicno,doorno ";
+            collGroupBy = ") as collection  group by upicno,doorno ";
             whereQry = " and pi.blockid = " + param;
-            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", ";
+            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", doorno as \"houseNo\", ";
             finalFrmQry = " )as dcbinfo ";
             finalWhereQry = "";
-            finalGrpQry = " group by dcbinfo.upicno order by dcbinfo.upicno ";
+            finalGrpQry = " group by dcbinfo.upicno,dcbinfo.doorno order by dcbinfo.upicno ";
         }
         // Arrear Demand query union Current Demand query
         unionQueryStr.append(innerSelectQry1).append(arrear_innerCommonQry1).append(innerSelectQry0)

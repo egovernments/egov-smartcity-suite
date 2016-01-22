@@ -51,7 +51,7 @@ function showDetails(glcode){
 		
 		 var functionCode1=functionName+"~"+functionId;
 
-		// alert(functionCode1);
+		// bootbox.alert(functionCode1);
 		if(functionId==0){
 			functionCode1="";
 			functionId="";

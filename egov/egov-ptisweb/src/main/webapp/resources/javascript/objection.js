@@ -75,7 +75,7 @@ function hideApprovalHeaderTab() {
 }
 function checkLength(obj) {
 	if (obj.value.length > 1024) {
-		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1, 1024);
 	}
 }
@@ -84,7 +84,7 @@ function validateRecordObjections() {
 	document.getElementById("lblError").style.display = 'none';
 
 	if (dom.get('details').value == '') {
-		alert('Please enter Revision Petition Details');
+		bootbox.alert('Please enter Revision Petition Details');
 		return false;
 	}
 	return true;
@@ -93,13 +93,13 @@ function validateRecordObjections() {
 function validateHearingDate() {
 
 	if (dom.get('plannedHearingDtId').value == "") {
-		alert('Please enter Hearing Date');
+		bootbox.alert('Please enter Hearing Date');
 		return false;
 	} else if (dom.get('hearingTime').value == "") {
-		alert('Please enter Hearing time');
+		bootbox.alert('Please enter Hearing time');
 		return false;
 	} else if (dom.get('hearingVenue').value == "") {
-		alert('Please enter Hearing venue');
+		bootbox.alert('Please enter Hearing venue');
 		return false;
 	}
 	return true;
@@ -129,11 +129,11 @@ function printEnodresementNotice(obj) {
 function validateRecordHearing() {
 
 	if (dom.get('hearingDetails').value == "") {
-		alert('Please enter Hearing Details');
+		bootbox.alert('Please enter Hearing Details');
 		return false;
 	} else if (dom.get('inspectionRequiredtrue').checked == false
 			&& dom.get('inspectionRequiredfalse').checked == false) {
-		alert('Please choose if Inspection Required or not');
+		bootbox.alert('Please choose if Inspection Required or not');
 		return false;
 	}
 
@@ -144,16 +144,16 @@ function validateRecordInspection() {
 
 	/*
 	 if (dom.get('generateSpecialNotice').checked == false) {
-			alert('Please choose whether special Notice to be generate after final approval');
+			bootbox.alert('Please choose whether special Notice to be generate after final approval');
 			return false;
 		}
 	*/	
 	if (dom.get('inspectionRemarks').value == "") {
-		alert('Please enter Inspection Remark');
+		bootbox.alert('Please enter Inspection Remark');
 		return false;
 	}
 	 /*if (dom.get('generateSpecialNotice').checked == false) {
-		alert('Please choose whether special Notice to be generate after final approval');
+		bootbox.alert('Please choose whether special Notice to be generate after final approval');
 		return false;
 	}*/
 	return true;
@@ -162,10 +162,10 @@ function validateRecordInspection() {
 function validateObjectionOutcome(obj) {
 	
 	if (dom.get('dateOfOutcome').value == '') {
-		alert('Please enter Outcome Date');
+		bootbox.alert('Please enter Outcome Date');
 		return false;
 	} else if (dom.get('outcomeRemarks').value == '') {
-		alert('Please enter Outcome Remarks');
+		bootbox.alert('Please enter Outcome Remarks');
 		return false;
 	}
 

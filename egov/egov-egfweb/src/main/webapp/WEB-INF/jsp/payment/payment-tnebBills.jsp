@@ -78,7 +78,7 @@ function check()
 {
 	if(document.getElementById('miscount').value==0)
 	{
-		alert('Please select a bill before making the payment');
+		bootbox.alert('Please select a bill before making the payment');
 		return false;
 	}
 	if(document.getElementById('vouchermis.departmentid'))
@@ -105,18 +105,18 @@ function search()
 	var year = document.getElementById('year').value;
 	var region = document.getElementById('region').value;
 	if(region == ""){
-		 alert("Please select Region");
+		 bootbox.alert("Please select Region");
 		 return false;
 	}
 	if(month!=""){
 		if(year == ""){
-			 alert("Please select Year");
+			 bootbox.alert("Please select Year");
 		  return false;
 		}
 	}
 	if(year!=""){
 		if(month == ""){
-			 alert("Please select Month");
+			 bootbox.alert("Please select Month");
 		  return false;
 		}
 	}

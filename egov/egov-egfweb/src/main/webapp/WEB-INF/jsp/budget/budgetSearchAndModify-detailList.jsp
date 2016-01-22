@@ -157,7 +157,7 @@
 									var len = <s:property value="savedbudgetDetailList.size"/>;
 									for(i=0;i<len;i++){
 										if(document.getElementById('savedbudgetDetailList['+i+'].approvedAmount') && document.getElementById('savedbudgetDetailList['+i+'].approvedAmount').value == ''){
-											alert("Enter approved amount");
+											bootbox.alert("Enter approved amount");
 											return false;
 										}
 									}
@@ -172,7 +172,7 @@
 									</s:if>
 									<s:else>
 										if( (value == 'forward' || value == 'Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-											alert("Please select User");
+											bootbox.alert("Please select User");
 											return false;
 										}
 									</s:else>

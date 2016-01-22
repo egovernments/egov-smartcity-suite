@@ -113,10 +113,8 @@ public class OpeningBalance
                 + fundCondition
                 + deptCondition
                 + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name, a.narration ORDER BY  b.name,c.glcode";
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("&&&query  " + query);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("query" + query);
+       if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Opening balance Query ...." + query);
 
         try {
             OpeningBalanceBean ob = null;
@@ -173,7 +171,8 @@ public class OpeningBalance
                 fund = element[0].toString();
                 glcode = element[1].toString();
                 name = element[2].toString();
-                narration = formatStringToFixedLength(element[3].toString(), 30);
+                if(element[3]!=null)
+                    narration = formatStringToFixedLength(element[3].toString(), 30);
                 debit = Double.parseDouble(element[4].toString());
                 credit = Double.parseDouble(element[5].toString());
                 ob = new OpeningBalanceBean();

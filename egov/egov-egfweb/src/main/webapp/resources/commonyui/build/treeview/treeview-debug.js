@@ -1484,10 +1484,10 @@ YAHOO.widget.Node.prototype = {
         for (var i=0;i<this.children.length;++i) {
             var c = this.children[i];
             if (c.isDynamic()) {
-                alert("Not supported (lazy load + expand all)");
+                bootbox.alert("Not supported (lazy load + expand all)");
                 break;
             } else if (! c.multiExpand) {
-                alert("Not supported (no multi-expand + expand all)");
+                bootbox.alert("Not supported (no multi-expand + expand all)");
                 break;
             } else {
                 c.expand();

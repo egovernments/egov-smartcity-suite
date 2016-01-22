@@ -38,9 +38,9 @@
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 	function calculateFunds(obj) {
-		//alert("hi");
+		//bootbox.alert("hi");
 		if (isNaN(obj.value)) {
-			alert("Only Numbers allowed");
+			bootbox.alert("Only Numbers allowed");
 			obj.value="0.00";
 			obj.focus();
 			return;
@@ -49,7 +49,7 @@
 			obj.value=eval(obj.value).toFixed(2);
 			if(obj.value.length>10)
 		{
-			alert("Max number of digits limited to 7 since amounts in LAKH's ");
+				bootbox.alert("Max number of digits limited to 7 since amounts in LAKH's ");
 			obj.value="0.00";
 			obj.focus();
 			return;
@@ -126,7 +126,7 @@
 		var table = document.getElementById('receiptTable');
 		if(table!=null)
 		{
-			//////////////alert(table.rows.length - 3);
+			//////////////bootbox.alert(table.rows.length - 3);
 		for (i = 0; i < table.rows.length - 3; i++) {
 			
 			if(document.getElementById("receiptList[" + i + "].accountNumber").value!='Total'){
@@ -188,7 +188,7 @@
 	
 	function calculateFundsForPayment(obj) {
 		if (isNaN(obj.value)) {
-			alert("Only Numbers allowed");
+			bootbox.alert("Only Numbers allowed");
 			obj.focus();
 			return;
 		}else
@@ -197,7 +197,7 @@
 			if(obj.value.length>10)
 			
 		{
-			alert("Max number of digits limited to 7 since amounts in LAKH's ");
+				bootbox.alert("Max number of digits limited to 7 since amounts in LAKH's ");
 			obj.value="0.00";
 			obj.focus();
 			return;

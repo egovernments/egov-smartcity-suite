@@ -63,9 +63,9 @@
 		var success = '<s:property value="success"/>';
 
 		if (success == 'yes') {
-			alert("Function Modified Successfully");
+			bootbox.alert("Function Modified Successfully");
 			} else if((success == 'no')){
-				alert("Function Could Not be Modified");
+				bootbox.alert("Function Could Not be Modified");
 				}
 		
 		if (close == 'true') {
@@ -92,11 +92,11 @@
 	
 	function validate(){
 		if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-			alert("Please enter Code");
+			bootbox.alert("Please enter Code");
 			return false;
 		}
 		if(document.getElementById('funcNameActual').value == null || document.getElementById('funcNameActual').value==''){
-			alert("Please enter Name");
+			bootbox.alert("Please enter Name");
 			return false;
 		}
 		return true;

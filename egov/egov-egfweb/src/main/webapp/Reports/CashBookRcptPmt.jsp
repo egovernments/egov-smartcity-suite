@@ -117,7 +117,7 @@ document.getElementById("boundary").value=obj.options[obj.selectedIndex].value;
 		return;
 	}
 	var obj=document.getElementById("reportType");
-//alert("obj.checked:"+obj.checked);
+//bootbox.alert("obj.checked:"+obj.checked);
 if(obj.checked==true)
 	document.getElementById('fromBean').value = 3;
 else
@@ -132,7 +132,7 @@ else
 	eDate=document.getElementById("endDate").value;
 	if( compareDate(formatDate6(sDate),formatDate6(eDate)) == -1 )
 	{
-		alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 		document.getElementById('startDate').value='';
 		document.getElementById('endDate').value='';
 		document.getElementById('startDate').focus();
@@ -145,7 +145,7 @@ else
 	deptObj=document.getElementById('departmentId');
 	 if(deptObj.value!='' && deptObj.selectedIndex!=-1){
 			//deptName=deptObj.options[deptObj.selectedIndex].text;
-			//alert("DepartmentName="+deptName);
+			//bootbox.alert("DepartmentName="+deptName);
 			 document.getElementById('dept_name_for').value=' under '+deptObj.options[deptObj.selectedIndex].text+ ' Department';
 			deptObj=deptObj.options[deptObj.selectedIndex].value;
 		}else{
@@ -155,7 +155,7 @@ else
 		functionaryObj=document.getElementById('functionaryId');
 		if(functionaryObj.value!='' && functionaryObj.selectedIndex!=-1){
 			//functionaryName=functionaryObj.options[functionaryObj.selectedIndex].text;
-			//alert("functionaryName="+functionaryName);
+			//bootbox.alert("functionaryName="+functionaryName);
 			//subtitle=" in "+functionaryName+" Functionary";
 			document.getElementById('functionary_name_in').value=' in '+functionaryObj.options[functionaryObj.selectedIndex].text+' functionary';
 			functionaryObj=functionaryObj.options[functionaryObj.selectedIndex].value;
@@ -167,7 +167,7 @@ else
 			//fieldObj=fieldObj.options[fieldObj.selectedIndex].value;
 			document.getElementById('field_name_in').value=' in '+fieldObj.options[fieldObj.selectedIndex].text+' field';
 			//fieldName=fieldObj.options[fieldObj.selectedIndex].text;
-			//alert("fieldName="+fieldName);
+			//bootbox.alert("fieldName="+fieldName);
 			//subtitle=" under "+fieldName+" Field";
 		}else{
 		document.getElementById('field_name_in').value='';
@@ -226,7 +226,7 @@ function buttonPrint()
 {
 	var frmbean=document.getElementById('fromBean').value;
 	if(frmbean==0)
-	{alert("Generate Report before Printing"); Return}
+	{bootbox.alert("Generate Report before Printing"); Return}
 
 	document.getElementById('fromBean').value ="2";
     var hide1,hide2;
@@ -377,7 +377,7 @@ function afterRefreshPage(dc)
 		 //System.out.println("Exception in Jsp Page "+ e.getMessage()); 
 %>
 		 <script>
-		 alert("Error1 :<%=e.getMessage()%>");
+		 bootbox.alert("Error1 :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		<% 
@@ -508,7 +508,7 @@ if(request.getParameter("fromBean") !=null && request.getParameter("fromBean").e
 		 //System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error3 :<%=e.getMessage()%>");
+		 bootbox.alert("Error3 :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -580,7 +580,7 @@ if(request.getParameter("fromBean") !=null && request.getParameter("fromBean").e
 		 //System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error2 :<%=e.getMessage()%>");
+		 bootbox.alert("Error2 :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

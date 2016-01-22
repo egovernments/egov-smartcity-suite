@@ -89,7 +89,7 @@ function ButtonPress()
 	
 	if(moth==0)
 	{
-		alert('Select Month Name');
+		bootbox.alert('Select Month Name');
 
 		document.getElementById('month').focus();
 		return false;
@@ -255,7 +255,7 @@ function buttonPrint()
 		// System.out.println("Exception in Jsp Page"+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 </script>
 		 <%
 		 }

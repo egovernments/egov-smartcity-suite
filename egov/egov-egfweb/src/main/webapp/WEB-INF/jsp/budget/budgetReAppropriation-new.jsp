@@ -139,13 +139,13 @@
 						invalidNumber = "Addition amount should be greater than 0";
 				}	
 				if(invalidNumber != ""){
-					alert(invalidNumber);
+					bootbox.alert(invalidNumber);
 					return false;
 				}
 				if(checkUser){
 					document.getElementById("actionName").value = 'forward';
 					if(null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-						alert("Please Select the user");
+						bootbox.alert("Please Select the user");
 						return false;
 					}
 				}
@@ -158,19 +158,19 @@
 
 			function alertMessage(estimate,anticipatory){
 				if(estimate && anticipatory){
-					alert('Estimate amount and Anticipatory amount must be a number');
+					bootbox.alert('Estimate amount and Anticipatory amount must be a number');
 					return false;
 				}else if(estimate){
-					alert('Estimate amount must be a number');
+					bootbox.alert('Estimate amount must be a number');
 					return false;
 				}else if(anticipatory){
-					alert('Anticipatory amount must be a number');
+					bootbox.alert('Anticipatory amount must be a number');
 					return false;
 				}
 			}
 			function validateMandatoryFields(){
 				if(document.getElementById('financialYear').value==0){
-					alert('Please select a Financial year');
+					bootbox.alert('Please select a Financial year');
 					return false;
 				}
 				return true;

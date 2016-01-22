@@ -44,7 +44,7 @@
 <title>Online Payment</title>
 <script src="common/js/watermark.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/css/collectionspublic.css" />
+	href="${pageContext.request.contextPath}/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
 
 jQuery.noConflict();
@@ -347,7 +347,7 @@ function callAjax(paymentServiceId){
 		     	}//close If  
 			else
 		     	{
-		        	alert("<s:text name='onlineReceipts.transactionmessage.errormessage'/>");
+		        	bootbox.alert("<s:text name='onlineReceipts.transactionmessage.errormessage'/>");
 		        	document.getElementById('transactiondiv').style.display = 'none';
 		     	}
 	     	}//close If

@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -66,9 +67,13 @@ import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -114,6 +119,12 @@ public class CreateEmployeeDataEntryController {
 
     @Autowired
     private PositionMasterService positionMasterService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private AccountDetailKeyService accountDetailKeyService;
@@ -181,6 +192,17 @@ public class CreateEmployeeDataEntryController {
             toDate = DDMMYYYYFORMATS.parse(EisConstants.TO_DATE);
         } catch (final ParseException e) {
             LOGGER.error("Error in getting fromDate and toDate" + e.getMessage(), e);
+        }
+
+        List<User> user = new ArrayList<User>();
+
+        final Set<Role> roles = designationService.getRolesByDesignation(designation.getName());
+        for (final Role role : roles) {
+            user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                    roleService.getRoleByName(role.getName()).getName());
+            if (fromDate.before(new Date()) && toDate.after(new Date()))
+                if (user.isEmpty() || null == user)
+                    employee.addRole(roleService.getRoleByName(role.getName()));
         }
 
         final List<Assignment> assignment = new ArrayList<Assignment>();

@@ -66,14 +66,14 @@ var validationCallback = {
 		}
 		else
 		{
-			alert('Enter valid Code');
+			bootbox.alert('Enter valid Code');
 			document.getElementById('subledgerList['+parseInt(res[0])+']'+'.detailKeyId').value='';
 			document.getElementById('subledgerList['+parseInt(res[0])+']'+'.detailKey').value='';
 			return;
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function validateDetailCode(obj){
@@ -106,7 +106,7 @@ success: function(o) {
 		} 
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -127,12 +127,12 @@ success: function(o) {
 		codeObject = new YAHOO.widget.DS_JSArray(r);
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
 	function autoCompleteSubledgerCode(element,myEvent){
-		//alert(codeObject)
+		//bootbox.alert(codeObject)
 		var yuiflag = new Array();
 		var src = element;	
 		var target = document.getElementById('detailcodescontainer');	
@@ -224,7 +224,7 @@ function createDropdownFormatterForAccountCode(prefix){
 
 		function computeSubledgersTotalCrAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('totalSubLedgerCreditamount');
@@ -236,7 +236,7 @@ function createDropdownFormatterForAccountCode(prefix){
 		
 		function computeSubledgersTotalDrAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('totalSubLedgerDebitamount');
@@ -247,7 +247,7 @@ function createDropdownFormatterForAccountCode(prefix){
 		}
 		function computeEarningsTotalAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('netPayList[0].creditamount');
@@ -261,7 +261,7 @@ function createDropdownFormatterForAccountCode(prefix){
 		
 		function computeDeductionsTotalAmount(target){
 			if(isNaN(parseInt(target.value))){
-				alert("Please enter a valid amount")
+				bootbox.alert("Please enter a valid amount")
 				target.value = 0;
 			}
 			element = document.getElementById('netPayList[0].creditamount');
@@ -346,7 +346,7 @@ function createDropdownFormatterForAccountCode(prefix){
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 		});
@@ -684,19 +684,19 @@ function createDropdownFormatterForAccountCode(prefix){
 <script>
 function validate(){
 	if(document.getElementById('billdate').value == ""){
-		alert("Please enter Bill Date")
+		bootbox.alert("Please enter Bill Date")
 		return false;
 	}
 	if(document.getElementById('month').value == -1){
-		alert("Please select Month")
+		bootbox.alert("Please select Month")
 		return false;
 	}
 	if(document.getElementById('financialyear').value == -1){
-		alert("Please select Financial Year")
+		bootbox.alert("Please select Financial Year")
 		return false;
 	}
 	if(document.getElementById('department').value == -1){
-		alert("Please select Department")
+		bootbox.alert("Please select Department")
 		return false;
 	}
 	var isSubLederAmountValid = validateSubledgerAmounts();
@@ -728,7 +728,7 @@ function validateSubledgerAmounts(){
 		if(value==0){
 			return true;
 		}else{
-			alert("The sum of the subledger amount and the account code amount should match");
+			bootbox.alert("The sum of the subledger amount and the account code amount should match");
 			return false;
 		}
 	}

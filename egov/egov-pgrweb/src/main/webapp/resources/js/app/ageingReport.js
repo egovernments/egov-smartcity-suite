@@ -59,7 +59,7 @@ jQuery(document)
 						
 						var groupByobj="";
 						groupByobj=$('input[name="groupBy"]:checked').val();
-						//alert($('input[name="groupBy"]:checked').val());
+						//bootbox.alert($('input[name="groupBy"]:checked').val());
 						if ($('#start_date').val() == "")
 							startDate = "";
 						

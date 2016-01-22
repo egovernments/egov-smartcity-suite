@@ -50,23 +50,23 @@
 <script type="text/javascript">
 		function validate(){
 			if(document.getElementById('name').value == null || document.getElementById('name').value==''){
-				alert("Please enter Name");
+				bootbox.alert("Please enter Name");
 				return false;
 			}
 			if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-				alert("Please enter Code");
+				bootbox.alert("Please enter Code");
 				return false;
 			}
 			if(document.getElementById('validfrom').value == null || document.getElementById('validfrom').value==''){
-				alert("Please enter Valid From Date");
+				bootbox.alert("Please enter Valid From Date");
 				return false;
 			}
 			if(document.getElementById('validto').value == null || document.getElementById('validto').value==''){
-				alert("Please enter Valid To Date");
+				bootbox.alert("Please enter Valid To Date");
 				return false;
 			}
 			if(isNaN(document.getElementById('initialEstimateAmount').value)){
-				alert("Please enter valid Initial Eastimate Amount");
+				bootbox.alert("Please enter valid Initial Eastimate Amount");
 				return false;
 			}
 			document.getElementById("scheme").disabled  = false;
@@ -131,7 +131,7 @@
 			<s:if test="%{showMode=='edit'}">
 			document.getElementById("scheme").disabled  = true;
 			 	<s:if test="%{clearValues==true}">
-			 		alert('<s:text name="subscheme.saved.successfully" />');
+			 		bootbox.alert('<s:text name="subscheme.saved.successfully" />');
 			 		window.close();
 			 	</s:if>	
 			</s:if>

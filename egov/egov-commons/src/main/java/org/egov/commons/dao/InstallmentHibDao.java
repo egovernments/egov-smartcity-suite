@@ -79,8 +79,8 @@ public class InstallmentHibDao<T, id extends Serializable> extends GenericHibern
     }
 
     @Override
-    public List getInsatllmentByModule(final Module module) {
-        final Query qry = getCurrentSession().createQuery("from Installment I where I.module=:module");
+    public List<Installment> getInsatllmentByModule(final Module module) {
+        final Query qry = getCurrentSession().createQuery("from Installment I where I.module=:module order by installmentYear desc");
         qry.setEntity("module", module);
 
         return qry.list();

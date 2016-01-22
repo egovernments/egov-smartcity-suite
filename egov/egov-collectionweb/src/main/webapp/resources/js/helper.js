@@ -196,7 +196,7 @@ function getRowNum(obj){
 	while(par.nodeName.toLowerCase()!='tr'){
 	par=par.parentNode;
 	}
-	alert(par.rowIndex);
+	bootbox.alert(par.rowIndex);
 	return par.rowIndex;
 } 
 
@@ -273,12 +273,12 @@ function getNumber(value){
 }
 
 function validateNumber(elem){
-	alert('helper validateNumber ');
+	bootbox.alert('helper validateNumber ');
 	if(isNaN(elem) || getNumber(elem)<0 || elem.startsWith('+')){
-		alert('invalid number');
+		bootbox.alert('invalid number');
       	return false;
       }
-	alert('valid number');
+	bootbox.alert('valid number');
 	return true;
 }
 

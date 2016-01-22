@@ -63,25 +63,25 @@ var updateCallback = {
 
 		if(o.responseText=='successful')
 		{
-		    // alert("Update success");
+		    // bootbox.alert("Update success");
 		}else
 		{
-		    // alert("Update failed");
+		    // bootbox.alert("Update failed");
 		}
 
 
 		 },
 	     failure: function(o) {
-		   //  alert("Update failed");
+		   //  bootbox.alert("Update failed");
 	     }
 } 
 
 
 function update(obj)
 {
-//	alert("calling update");
+//	bootbox.alert("calling update");
    	var name=obj.name;
-  // 	alert(name);
+  // 	bootbox.alert(name);
     var factor='Rupees'; 
    	<s:if test="%{isConsolidatedScreen()}">
    	factor='thousand';
@@ -90,7 +90,7 @@ function update(obj)
  	if(name.indexOf('proposedRE')!=-1)
 	 {
    		var idName=name.replace("proposedRE","id");
-   		//alert(idName);
+   		//bootbox.alert(idName);
    		var queryParams="detailId="+document.getElementById(idName).value+"&validId="+document.getElementById(idName).value+"&amountField=originalAmount&amount="+obj.value;  
 	 }
 		 if(name.indexOf('proposedBE')!=-1)
@@ -111,7 +111,7 @@ function update(obj)
 		var queryParams="detailId="+document.getElementById(idName).value+"&validId="+document.getElementById(validId).value+"&amountField=approvedAmount&amount="+obj.value;     
 		}
 		queryParams=queryParams+"&factor="+factor;
-//		alert("calling update  " +queryParams); 
+//		bootbox.alert("calling update  " +queryParams); 
 		lastUpdateDate=new Date();
 		 var transaction = YAHOO.util.Connect.asyncRequest('POST', 'budgetProposal!ajaxUpdateBudgetDetail.action?'+queryParams, updateCallback, null);	
 			}
@@ -123,16 +123,16 @@ setInterval(alertTimeOut, 8*60*1000);
 function alertTimeOut()
 {
 
-	//alert(lastUpdateDate+" lastUpdateDate");
+	//bootbox.alert(lastUpdateDate+" lastUpdateDate");
 	var d=new Date();
-	//alert(d+" newDate");
-	//alert(diffMs);
+	//bootbox.alert(d+" newDate");
+	//bootbox.alert(diffMs);
 	var diffMs = (d - lastUpdateDate);
-	//alert(diffMs);
-	//alert(eval(diffMs)-eval(1*60*1000));
+	//bootbox.alert(diffMs);
+	//bootbox.alert(eval(diffMs)-eval(1*60*1000));
 	if(eval(diffMs)>eval(7*60*1000))
 		{
-		alert("You are Inactive from more than 7 Minutes . Please refresh the home page to keep active");
+		bootbox.alert("You are Inactive from more than 7 Minutes . Please refresh the home page to keep active");
 		}
 		lastUpdateDate=new Date();
 	}

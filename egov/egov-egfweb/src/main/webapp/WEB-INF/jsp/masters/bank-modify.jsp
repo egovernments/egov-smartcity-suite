@@ -75,11 +75,10 @@
 		<jsp:include page="bank-form.jsp"></jsp:include>
 	</div>
 	<div class="buttonbottom">
-		<input type="button" id="Search" value="Search"
-			onclick="javascript:window.location.href='bank.action?mode=MODIFY'"
-			class="buttonsubmit" /> <input type="submit" class="button"
-			value="Save" id="saveButton" name="button"
-			onclick="validateFormAndSubmit();" /> <input type="button"
+		<input type="submit" class="button"
+			value="Save Bank" id="saveButton" name="button"
+			onclick="validateFormAndSubmit();" /> 
+		<input type="button"
 			id="Close" value="Close" onclick="javascript:window.close()"
 			class="button" />
 	</div>

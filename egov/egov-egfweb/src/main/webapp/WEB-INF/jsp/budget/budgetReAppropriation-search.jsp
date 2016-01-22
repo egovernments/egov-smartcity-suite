@@ -233,12 +233,12 @@
 			{
 				if(document.getElementById('financialYear').value==0)
 				{
-					alert('Please Select Financial Year');
+					bootbox.alert('Please Select Financial Year');
 					return false;
 				}
 				if(document.getElementById('budgetReAppropriation_fund').value==0 && document.getElementById('budgetReAppropriation_executingDepartment').value==0 && document.getElementById('budgetReAppropriation_function').value==0)
 				{
-					alert('Please select Fund or Department or Functionary');
+					bootbox.alert('Please select Fund or Department or Functionary');
 					return false;
 				}
 				return true;

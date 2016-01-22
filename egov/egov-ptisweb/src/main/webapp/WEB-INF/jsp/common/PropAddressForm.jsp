@@ -83,7 +83,7 @@ function populateBoundaries() {
 			jQuery('#wardId').html("");
 			jQuery('#blockId').html("");
 			jQuery('#streetId').html("");
-			alert("No boundary details mapped for locality")
+			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
 
@@ -110,7 +110,7 @@ function populateBlock() {
 		error: function (response) {
 			console.log("failed");
 			jQuery('#blockId').html("");
-			alert("No block details mapped for ward")
+			bootbox.alert("No block details mapped for ward")
 		}
 	});
 }

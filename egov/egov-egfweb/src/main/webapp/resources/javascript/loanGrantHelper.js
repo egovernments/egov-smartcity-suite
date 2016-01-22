@@ -332,7 +332,7 @@ var chequeNoAndDate={
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 function loadChequeNoAndDate(billVhId,name){
@@ -394,7 +394,7 @@ function validateDuplicateProjectCode(obj)
 		{
 			if(currId==idObj.value && currow!=i)
 			{
-				alert("Project Code has already been entered");
+				bootbox.alert("Project Code has already been entered");
 				document.getElementById("projectCodeList["+currow+"].id").value="";
 				document.getElementById("projectCodeList["+currow+"].code").value="";
 				document.getElementById("projectCodeList["+currow+"].name").value="";
@@ -495,7 +495,7 @@ function validateLGAmount(tableType,obj,prefix)
 		denom=projectCost;
 	if((projectCost==undefined || projectCost=='') &&  (revisedCost==undefined || revisedCost=='') )
 	{
-		alert("Project Cost and Revised Cost cannot be empty");
+		bootbox.alert("Project Cost and Revised Cost cannot be empty");
 		obj.value='0';
 		return;
 	}
@@ -503,7 +503,7 @@ function validateLGAmount(tableType,obj,prefix)
 	revisedCost=parseFloat(revisedCost);
 	if(!(projectCost>0 || revisedCost>0))
 	{
-		alert("Project Cost and Revised Cost cannot be 0");
+		bootbox.alert("Project Cost and Revised Cost cannot be 0");
 		obj.value='0';
 		return;
 	}
@@ -517,7 +517,7 @@ function validateLGAmount(tableType,obj,prefix)
 		grantValue=parseFloat(grantValue);
 	if(loanValue>0 && grantValue>0)
 	{
-		alert("Both loan and grant amount cannot be specified in a row");
+		bootbox.alert("Both loan and grant amount cannot be specified in a row");
 		obj.value='0';
 		loanValue=parseFloat(document.getElementById(loanObjId).value);
 		grantValue=parseFloat(document.getElementById(grantObjId).value);
@@ -548,7 +548,7 @@ function validateAmounts(obj)
 	}
 	if(projectCost==undefined||projectCost==''||parseFloat(projectCost)==0)
 	{
-		alert("Please enter Project Cost first");
+		bootbox.alert("Please enter Project Cost first");
 		obj.value='0';
 		return;
 	}
@@ -556,7 +556,7 @@ function validateAmounts(obj)
 	{
 		if(parseFloat(sanctionedCost)>parseFloat(projectCost))
 		{
-			alert("Sanctioned Cost cannot be greater than Project Cost");
+			bootbox.alert("Sanctioned Cost cannot be greater than Project Cost");
 			obj.value='0';
 			return;
 		}
@@ -565,7 +565,7 @@ function validateAmounts(obj)
 	{
 		if(parseFloat(revisedCost)!=0 && parseFloat(revisedCost)<=parseFloat(projectCost))
 		{
-			alert("Revised Cost cannot be less than or equal to  Project Cost");
+			bootbox.alert("Revised Cost cannot be less than or equal to  Project Cost");
 			obj.value='0';
 			return;
 		}
@@ -733,19 +733,19 @@ function validateAmountsBeforeSubmit()
 	var revisedCost=document.getElementById('revisedCost').value;
 	if(projectCost==undefined || projectCost==''|| sanctionedCost==undefined|| sanctionedCost=='')
 	{
-		alert("Project Cost or Sanctioned Cost cannot be empty");
+		bootbox.alert( bootbox.alert("Project Cost or Sanctioned Cost cannot be empty");
 		return false;
 	}
 	projectCost=parseFloat(projectCost);
 	sanctionedCost=parseFloat(sanctionedCost);
 	if(projectCost==0 )
 	{
-		alert("Project Cost cannot be 0");
+		bootbox.alert("Project Cost cannot be 0");
 		return false;
 	}
 	if(sanctionedCost>projectCost)
 	{
-		alert("Sanctioned Cost cannot be greater than Project Cost");
+		bootbox.alert("Sanctioned Cost cannot be greater than Project Cost");
 		document.getElementById('sanctionedCost').value='0';
 		return false;
 	}
@@ -755,14 +755,14 @@ function validateAmountsBeforeSubmit()
 	var totalunsanctionedgrant=document.getElementById('totalunsanctionedgrant').value;
 	if((totalsanctionedloan==undefined || totalsanctionedloan=='')&& (totalsanctionedgrant==undefined|| totalsanctionedgrant==''))
 	{
-		alert("Please enter sanctioned amount details");
+		bootbox.alert("Please enter sanctioned amount details");
 		return false;
 	}
 	totalsanctionedloan=parseFloat(totalsanctionedloan);
 	totalsanctionedgrant=parseFloat(totalsanctionedgrant);
 	if((totalsanctionedgrant+totalsanctionedloan)!=sanctionedCost)
 	{
-		alert("Total of sanctioned loans and grants does not match Sanctioned Project Cost ");
+		bootbox.alert("Total of sanctioned loans and grants does not match Sanctioned Project Cost ");
 		return false;
 	}
 	var unsanctionedCost=projectCost-sanctionedCost;
@@ -770,19 +770,19 @@ function validateAmountsBeforeSubmit()
 	{
 		if((totalunsanctionedloan==undefined || totalunsanctionedloan=='')&& (totalunsanctionedgrant==undefined|| totalunsanctionedgrant==''))
 		{
-			alert("Please enter unsanctioned amount details");
+			bootbox.alert("Please enter unsanctioned amount details");
 			return false;
 		}
 		totalunsanctionedloan=parseFloat(totalunsanctionedloan);
 		totalunsanctionedgrant=parseFloat(totalunsanctionedgrant);
 		if((totalunsanctionedgrant+totalunsanctionedloan)==0)
 		{
-			alert("Total of unsanctioned loans and grants cannot be 0");
+			bootbox.alert("Total of unsanctioned loans and grants cannot be 0");
 			return false;
 		}
 		if((totalunsanctionedgrant+totalunsanctionedloan)!=unsanctionedCost)
 		{
-			alert("Total of unsanctioned loans and grants does not match Unsanctioned Project Cost ");
+			bootbox.alert("Total of unsanctioned loans and grants does not match Unsanctioned Project Cost ");
 			return false;
 		}
 	}
@@ -795,7 +795,7 @@ function validateAmountsBeforeSubmit()
 			totalunsanctionedgrant=parseFloat(totalunsanctionedgrant);
 			if((totalunsanctionedgrant+totalunsanctionedloan)!=unsanctionedCost)
 			{
-				alert("Total of unsanctioned loans and grants does not match Unsanctioned Project Cost ");
+				bootbox.alert("Total of unsanctioned loans and grants does not match Unsanctioned Project Cost ");
 				return false;
 			}
 		}
@@ -807,7 +807,7 @@ function validateAmountsBeforeSubmit()
 		revisedCost=parseFloat(revisedCost);
 		if(revisedCost<=projectCost)
 		{
-			alert("Revised Project Cost cannot be less than or equal to Project Cost");
+			bootbox.alert("Revised Project Cost cannot be less than or equal to Project Cost");
 			document.getElementById('revisedCost').value='';
 			return false;
 		}
@@ -815,19 +815,19 @@ function validateAmountsBeforeSubmit()
 		{
 			if((totalrevisedloan==undefined || totalrevisedloan=='')&& (totalrevisedgrant==undefined|| totalrevisedgrant==''))
 			{
-				alert("Please enter revised amount funding details");
+				bootbox.alert("Please enter revised amount funding details");
 				return false;
 			}
 			totalrevisedloan=parseFloat(totalrevisedloan);
 			totalrevisedgrant=parseFloat(totalrevisedgrant);
 			if((totalrevisedloan+totalrevisedgrant)==0)
 			{
-				alert("Total of revised loans and grants cannot be 0");
+				bootbox.alert("Total of revised loans and grants cannot be 0");
 				return false;
 			}
 			if((totalrevisedloan+totalrevisedgrant)!=(revisedCost-projectCost))
 			{
-				alert("Total of revised loans and grants does not match Revised Project Cost ");
+				bootbox.alert("Total of revised loans and grants does not match Revised Project Cost ");
 				return false;
 			}
 		}
@@ -840,7 +840,7 @@ function validateAmountsBeforeSubmit()
 				totalrevisedgrant=parseFloat(totalrevisedgrant);
 				if((totalrevisedloan+totalrevisedgrant)!=0)
 				{
-					alert("Total of revised loans and grants does not match Revised Project Cost ");
+					bootbox.alert("Total of revised loans and grants does not match Revised Project Cost ");
 					return false;
 				}
 			}
@@ -855,7 +855,7 @@ function validateAmountsBeforeSubmit()
 			totalrevisedgrant=parseFloat(totalrevisedgrant);
 			if((totalrevisedloan+totalrevisedgrant)!=0)
 			{
-				alert("Total of revised loans and grants does not match Revised Project Cost ");
+				bootbox.alert("Total of revised loans and grants does not match Revised Project Cost ");
 				return false;
 			}
 		}
@@ -884,62 +884,62 @@ function emptyRevisedCostIfZero(obj)
 		var obj1,obj2,obj3;
 		if(document.getElementById('fundId').value==-1)
 		{
-			alert("Please select a fund ");
+			bootbox.alert("Please select a fund ");
 			return false;
 		}
 		if(document.getElementById('codeuniquecode').style.display !='none')
 		{
-			alert("Sub Scheme has been already mapped to another loan grant header");
+			bootbox.alert("Sub Scheme has been already mapped to another loan grant header");
 			return false;
 		}
 		if(bankBranchObj.value==-1)
 		{
-			alert("Please enter Bank Branch");
+			bootbox.alert("Please enter Bank Branch");
 			return false;
 		}
 		if(bankAccountObj.value==-1)
 		{
-			alert("Please enter Bank Account");
+			bootbox.alert("Please enter Bank Account");
 			return false;
 		}
 		if(schemeNameObj.value==''||schemeIdObj.value=='')
 		{
-			alert("Please enter Scheme");
+			bootbox.alert("Please enter Scheme");
 			return false;
 		}
 		if(subSchemeIdObj.value==''||subSchemeNameObj.value=='')
 		{
-			alert("Please enter Sub Scheme");
+			bootbox.alert("Please enter Sub Scheme");
 			return false;
 		}
 		if(councilResNoObj.value=='')
 		{
-			alert("Please enter Council Resolution Number");
+			bootbox.alert("Please enter Council Resolution Number");
 			return false;
 		}
 		if(govtOrderNoObj.value=='')
 		{
-			alert("Please enter Government Order Number");
+			bootbox.alert("Please enter Government Order Number");
 			return false;
 		}
 		if(amendmentNoObj.value=='')
 		{
-			alert("Please enter Amendment Number");
+			bootbox.alert("Please enter Amendment Number");
 			return false;
 		}
 		if(councilResDateObj.value=='')
 		{
-			alert("Please enter Council Resolution Date");
+			bootbox.alert("Please enter Council Resolution Date");
 			return false;
 		}
 		if(govtOrderDateObj.value=='')
 		{
-			alert("Please enter Government Order Date");
+			bootbox.alert("Please enter Government Order Date");
 			return false;
 		}
 		if(amendmentDateObj.value=='')
 		{
-			alert("Please enter Amendment Date");
+			bootbox.alert("Please enter Amendment Date");
 			return false;
 		}
 		for( i=0;i<projectCodeDetailTableIndex;i++)
@@ -950,7 +950,7 @@ function emptyRevisedCostIfZero(obj)
 			obj2=document.getElementById(PROJECTCODELIST+'['+i+'].code');
 			if(obj1!=null && obj1.value=='' && obj2!=null && obj2.value=='')
 			{
-				alert("Please enter values for Project Code for row "+(i+1)+" or delete the row");
+				bootbox.alert("Please enter values for Project Code for row "+(i+1)+" or delete the row");
 				return false;
 			}
 			if(obj1!=null && obj1.value!='')
@@ -959,7 +959,7 @@ function emptyRevisedCostIfZero(obj)
 				isPCCodePresent=true;
 			if((isPCIdPresent || isPCCodePresent)&& !(isPCIdPresent && isPCCodePresent))
 			{
-				alert("Please re-enter Project Code for row "+(i+1));
+				bootbox.alert("Please re-enter Project Code for row "+(i+1));
 				return false;
 			}
 			
@@ -977,7 +977,7 @@ function emptyRevisedCostIfZero(obj)
 				isLGAmountPresent=true;
 			if((isFundSelected || isLGAmountPresent)&& !(isFundSelected && isLGAmountPresent))
 			{
-				alert("Please enter both Funding Agency and Loan Amount or Grant Amount for Sanctioned amount List for row "+(i+1));
+				bootbox.alert("Please enter both Funding Agency and Loan Amount or Grant Amount for Sanctioned amount List for row "+(i+1));
 				return false;
 			}
 			
@@ -995,7 +995,7 @@ function emptyRevisedCostIfZero(obj)
 				isLGAmountPresent=true;
 			if((isFundSelected || isLGAmountPresent)&& !(isFundSelected && isLGAmountPresent))
 			{
-				alert("Please enter both Funding Agency and Loan Amount or Grant Amount for Unsanctioned amount List for row "+(i+1));
+				bootbox.alert("Please enter both Funding Agency and Loan Amount or Grant Amount for Unsanctioned amount List for row "+(i+1));
 				return false;
 			}
 			
@@ -1013,7 +1013,7 @@ function emptyRevisedCostIfZero(obj)
 				isLGAmountPresent=true;
 			if((isFundSelected || isLGAmountPresent)&& !(isFundSelected && isLGAmountPresent))
 			{
-				alert("Please enter both Funding Agency and Loan Amount or Grant Amount for Revised amount List for row "+(i+1));
+				bootbox.alert("Please enter both Funding Agency and Loan Amount or Grant Amount for Revised amount List for row "+(i+1));
 				return false;
 			}
 			
@@ -1025,7 +1025,7 @@ function emptyRevisedCostIfZero(obj)
 		var dat=validateDate(obj.value);
 		if (!dat) 
 		{
-			alert('Invalid date format : Enter Date as dd/mm/yyyy');
+			bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 			obj.value="";
 			return;
 		}

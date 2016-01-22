@@ -59,7 +59,7 @@
 	
 	function onLoadTask(){
 		if('<s:property value="message"/>' != ''){
-			alert('<s:property value="message"/>');
+			bootbox.alert('<s:property value="message"/>');
 			window.close();
 		}
 		return;
@@ -74,7 +74,7 @@
 		</s:if>
 		<s:else>
 			if( (value == 'forward' || value == 'Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-				alert("please select User");
+				bootbox.alert("please select User");
 				return false;
 			}
 		</s:else>

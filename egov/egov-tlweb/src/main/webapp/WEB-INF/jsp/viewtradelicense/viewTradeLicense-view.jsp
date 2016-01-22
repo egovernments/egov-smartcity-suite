@@ -67,12 +67,12 @@
 	</head>
 	<body>
 		<div id="content">
-			<table align="center" width="100%">
+			<table  width="100%">
 				<tbody>
 					<tr>
 						<td>
-							<div align="center">
-								<center>
+							<div>
+								
 									<div class="formmainbox">
 										<div class="subheadnew" id="headingdiv">
 											<s:text name="page.title.viewtrade" />
@@ -97,7 +97,7 @@
 											</s:push>
 										</s:form>
 									</div>
-								</center>
+								
 							</div>
 						</td>
 					</tr>

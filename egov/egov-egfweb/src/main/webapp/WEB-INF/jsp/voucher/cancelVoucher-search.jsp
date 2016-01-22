@@ -229,9 +229,10 @@ function loadNamesForSelectedType()
 					</tr>
 				</s:iterator>
 			</table>
-
-			<td><s:submit Class="buttonsubmit" value="Submit"
-					onclick="return validateVouchers();" /></td>
+			<div class="buttonbottom" align="center">
+				<s:submit Class="buttonsubmit" value="Cancel Voucher"
+					onclick="return validateVouchers();" />
+			</div>
 
 		</div>
 	</s:if>
@@ -262,7 +263,7 @@ function loadNamesForSelectedType()
 		}                                      
 		</s:iterator> 
 		if(queryParams==""){
-			alert("Alert please select atleast one voucher to cancel");
+			bootbox.alert("Alert please select atleast one voucher to cancel");
 			return false;
 		}else{            
 			document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-update.action?"+queryParams;
@@ -282,12 +283,12 @@ function doAfterSubmit(){
 
 var callback = {
 		success: function(o){
-			alert("Vouchers cancelled succesfully");
+			bootbox.alert("Vouchers cancelled succesfully");
 			document.getElementById('listid').style.display ='none';
 			},
 		failure: function(o) {
 			document.getElementById('loading').style.display ='none';
-			alert("Search failed! Please try again");
+			bootbox.alert("Search failed! Please try again");
 			}
 }
 function loadSearch(){
@@ -298,13 +299,16 @@ function loadSearch(){
 
 function fieldReset()
 {
-	document.getElementById('voucherNumber').value="";
+
+	document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-beforeSearch.action";
+	document.cancelVoucher.submit();
+	/* document.getElementById('voucherNumber').value="";
 	document.getElementById('fundId').value=-1;
 	document.getElementById('vouchermis.departmentid').value=-1;
 	document.getElementById('type').value=-1;
 	document.getElementById('name').value=-1;
 	document.getElementById('fromDate').value="";
-	document.getElementById('toDate').value="";
+	document.getElementById('toDate').value=""; */
 }
 		</script>
 </body>

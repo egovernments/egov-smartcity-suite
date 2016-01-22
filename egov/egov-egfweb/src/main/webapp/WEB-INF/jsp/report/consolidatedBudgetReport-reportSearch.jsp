@@ -305,7 +305,7 @@
 	 	 var fundType=document.getElementById("fundType").value;
 	 	 var budgetType=document.getElementById("budgetType").value;
 	 		if(finYr == 0 || fundType == 'Select' || budgetType == 'Select'){
-		 		alert("Select all fields");
+		 		bootbox.alert("Select all fields");
 		 		return false;
 			}
 	 		return true;
@@ -316,7 +316,7 @@
 	 	 var fundType=document.getElementById("fundType").value;
 	 	 var budgetType=document.getElementById("budgetType").value;
 	 		if(finYr == 0 || fundType == 'Select' || budgetType == 'Select'){
-		 		alert("Select all fields");
+		 		bootbox.alert("Select all fields");
 		 		return false;
 			}
 		 var url="${pageContext.request.contextPath}/report/consolidatedBudgetReport!exportPDF.action?financialYear.id="+finYr+"&fundType="+fundType+"&budgetType="+budgetType;
@@ -327,7 +327,7 @@
 	 	 var fundType=document.getElementById("fundType").value;
 	 	 var budgetType=document.getElementById("budgetType").value;
 	 		if(finYr == 0 || fundType == 'Select' || budgetType == 'Select'){
-		 		alert("Select all fields");
+		 		bootbox.alert("Select all fields");
 		 		return false;
 			}
 		 var url="${pageContext.request.contextPath}/report/consolidatedBudgetReport!exportExcel.action?financialYear.id="+finYr+"&fundType="+fundType+"&budgetType="+budgetType;

@@ -173,7 +173,7 @@
 					if(obj.options[obj.selectedIndex].value!=-1)
 					{
 						var x=	obj.options[obj.selectedIndex].value.split("-");
-						//alert("heelo"+x);                            
+						//bootbox.alert("heelo"+x);                            
 						document.getElementById("bankbranch").value=x[1];
 						populatebankaccount({branchId:x[1]+'&asOnDate='+date,fundId:fund.options[fund.selectedIndex].value});
 					}

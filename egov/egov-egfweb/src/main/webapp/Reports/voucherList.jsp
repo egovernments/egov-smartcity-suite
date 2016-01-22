@@ -104,7 +104,7 @@ addSlNo();
 	{						
 		document.getElementById('button').style.display='none';
 		document.getElementById('getVoucherGrid').style.display='none';
-		alert("No Data");
+		bootbox.alert("No Data");
 		return;
 	}
 	
@@ -150,19 +150,19 @@ function buttonPress()
 	
 	if(sDate.length==0&&eDate.length==0&&vno==0)
 	{
-		alert("please select voucher no or dates");
+		bootbox.alert("please select voucher no or dates");
 		return;
 	}
            
 	if(vno.length==0&&(sDate.length==0||eDate.length==0))
 	{
-		alert("please select start date and end date");
+		bootbox.alert("please select start date and end date");
 		return;
 	}
 
 	if( compareDate(formatDate6(sDate),formatDate6(eDate)) == -1 )
 	{
-		alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 		document.getElementById('startDate').value='';
 		document.getElementById('endDate').value='';
 		document.getElementById('startDate').focus();
@@ -216,7 +216,7 @@ function onClickView(obj)
 
 	if(window.fundRowIndex<=0)
 	{
-			alert(' Select voucher type ');
+		bootbox.alert(' Select voucher type ');
 			return;
 	}
 	var table=document.getElementById('getVoucherGrid');

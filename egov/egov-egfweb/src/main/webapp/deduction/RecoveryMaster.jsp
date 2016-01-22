@@ -70,7 +70,7 @@ function uniqueCheckForAccCode()
 		booleanValue=uniqueCheckingBoolean('../commonyui/egov/uniqueCheckAjax.jsp', 'tds', 'glcodeid', 'recovAccCodeId', 'no', 'no');
 		if(booleanValue==false)
 		{
-		alert("This Account code already used for some other Recoveries!!!!");
+			bootbox.alert("This Account code already used for some other Recoveries!!!!");
 		document.RecoverySetupForm.recovAccCodeId.focus();		
 		return false;
 		}
@@ -83,8 +83,8 @@ function uniqueCheckForAccCode()
 		var accCodeIdNew=document.getElementById('recovAccCodeId').value;
 		var accCodeIdOld="<%=(rsf.getRecovAccCodeId())%>";
 		
-		//alert("accCodeIdNew"+accCodeIdNew);
-		//alert("accCodeIdOld"+accCodeIdOld);
+		//bootbox.alert("accCodeIdNew"+accCodeIdNew);
+		//bootbox.alert("accCodeIdOld"+accCodeIdOld);
 		
 		if(accCodeIdNew!=accCodeIdOld)
 		{
@@ -92,7 +92,7 @@ function uniqueCheckForAccCode()
 			if(booleanValue==false)
 			{
 	
-			alert("This Account code already used for some other Recoveries!!!!");
+				bootbox.alert("This Account code already used for some other Recoveries!!!!");
 			document.RecoverySetupForm.recovAccCodeId.focus();			
 			return false;
 			}		
@@ -115,7 +115,7 @@ function uniqueCheckForRecoveryCode()
 
 			if(booleanValue==false)
 			{
-				alert("This Recovery code already used for some other Recoveries!!!!");
+				bootbox.alert("This Recovery code already used for some other Recoveries!!!!");
 				var temp="document.RecoverySetupForm.recovCode.focus();";
 				setTimeout(temp,0);		
 				return false;
@@ -129,8 +129,8 @@ function uniqueCheckForRecoveryCode()
 		var recovCodeNew=document.getElementById('recovCode').value;
 		var recovCodeOld="<%=(rsf.getRecovCode())%>";
 
-		//alert("recovCodeNew"+recovCodeNew);
-		//alert("recovCodeOld"+recovCodeOld);
+		//bootbox.alert("recovCodeNew"+recovCodeNew);
+		//bootbox.alert("recovCodeOld"+recovCodeOld);
 
 		if(recovCodeNew!=recovCodeOld)
 		{
@@ -138,7 +138,7 @@ function uniqueCheckForRecoveryCode()
 
 			if(booleanValue==false)
 			{
-			alert("This Recovery code already used for some other Recoveries!!!!");
+				bootbox.alert("This Recovery code already used for some other Recoveries!!!!");
 			var temp="document.RecoverySetupForm.recovCode.focus();";
 			setTimeout(temp,0);	
 			return false;
@@ -194,7 +194,7 @@ function deleteRow()
 
 	if(lastRow ==1)
 	{
-		 alert("This row can not be deleted");
+		bootbox.alert("This row can not be deleted");
 		return false;
 	 }
 	else
@@ -251,7 +251,7 @@ function calcTotalPer(obj)
 
 			if(isNaN(itPer))
 			{
-				alert("IT should be in Number");
+				bootbox.alert("IT should be in Number");
 				return false;
 			}
 			
@@ -259,7 +259,7 @@ function calcTotalPer(obj)
 			{
 				if(isNaN(surPer))
 				{
-				alert("SurCharge should be in Number");
+					bootbox.alert("SurCharge should be in Number");
 				return false;
 				}
 			}
@@ -267,7 +267,7 @@ function calcTotalPer(obj)
 			{
 				if(isNaN(eduPer))
 				{
-				alert("Education Cess should be in Number");
+					bootbox.alert("Education Cess should be in Number");
 				return false;
 				}
 			}
@@ -294,7 +294,7 @@ function calcTotalPer(obj)
               getControlInBranch(table.rows[rowobj.rowIndex],"totalPercentage").value=(a+b+c+d).toFixed(2);
               if(getControlInBranch(table.rows[rowobj.rowIndex],"totalPercentage").value>100.00)
               {
-              	 	alert("Total Percentage cannot be more than 100");
+            	  bootbox.alert("Total Percentage cannot be more than 100");
 			return false;
               }
               
@@ -317,35 +317,35 @@ function checkEmptyFieldFromTable()
 	col2=getControlInBranch(table.rows[i],"docType").value;
 	col3=getControlInBranch(table.rows[i],"recovDateFrom").value;
 	col4=getControlInBranch(table.rows[i],"lowAmount").value;
-	//alert(document.RecoverySetupForm.recovAppliedTo.options[document.RecoverySetupForm.recovAppliedTo.selectedIndex].text);
+	//bootbox.alert(document.RecoverySetupForm.recovAppliedTo.options[document.RecoverySetupForm.recovAppliedTo.selectedIndex].text);
 	// If Applied To Not a Employee means Document Type is mandatory
 	if(!(document.RecoverySetupForm.recovAppliedTo.options[document.RecoverySetupForm.recovAppliedTo.selectedIndex].text.toLowerCase()=='employee'))
 	{
-		//alert("If Not a Employee");
+		//bootbox.alert("If Not a Employee");
 		
 		/*if(!(col1!=0 && col1!=""))
 		{
-		alert("In Recovery Master-->"+i+" Row Party Type Cannot be empty");
+		bootbox.alert("In Recovery Master-->"+i+" Row Party Type Cannot be empty");
 		getControlInBranch(table.rows[i],'partyType').focus();
 		return false;
 		}
 		*/
 		if(!(col2!=0 && col2!=""))
 		{
-		alert("In Recovery Master-->"+i+" Row Document Type Cannot be empty");
+			bootbox.alert("In Recovery Master-->"+i+" Row Document Type Cannot be empty");
 		getControlInBranch(table.rows[i],'docType').focus();
 		return false;
 		}
 	}	
 		if(!(col3!=0 && col3!=""))
 		{
-		alert("In Recovery Master-->"+i+" Row DateFrom Cannot be empty");
+			bootbox.alert("In Recovery Master-->"+i+" Row DateFrom Cannot be empty");
 		getControlInBranch(table.rows[i],'recovDateFrom').focus();
 		return false;
 		}
 		if(!(col4!=0 && col4!=""))
 		{
-		alert("In Recovery Master-->"+i+" Row Payment Low Limit Cannot be empty");
+			bootbox.alert("In Recovery Master-->"+i+" Row Payment Low Limit Cannot be empty");
 		getControlInBranch(table.rows[i],'lowAmount').focus();
 		return false;
 		}
@@ -358,7 +358,7 @@ function checkLimitsAll()
 {
 	var table=document.getElementById("gridRecoverySetup");
 	var col1,col2,col3,col4;
-//alert(table.rows.length);
+//bootbox.alert(table.rows.length);
 	
  	for(var i=1;i<table.rows.length;i++)
 	{
@@ -372,7 +372,7 @@ function checkLimitsAll()
 		{
 			if((compareDate(formatDate6(col1),formatDate6(col2)) !=1))
 			 {
-			 alert("In Recovery Master-->"+i+" Row To Date must be Higher than the From Date");
+				bootbox.alert("In Recovery Master-->"+i+" Row To Date must be Higher than the From Date");
 			 getControlInBranch(table.rows[i],'recovDateTo').focus();				
 			 return false;
 			 }
@@ -381,14 +381,14 @@ function checkLimitsAll()
 		 {
 		 	if(isNaN(col3))
 		 	{
-			alert("Low Limit value should be in Number");
+		 		bootbox.alert("Low Limit value should be in Number");
 			return false;
 			}
 		 			
 			minVal=parseFloat(col3);
 			if(minVal>parseFloat(9999999999999.99))
 			{
-			alert("Low Limit Values  cannot be greater than 9999999999999.99");
+				bootbox.alert("Low Limit Values  cannot be greater than 9999999999999.99");
 			getControlInBranch(table.rows[i],'lowAmount').focus();				
 			return false;
 			}
@@ -399,26 +399,26 @@ function checkLimitsAll()
 		 {
 			if(isNaN(col4))
 			{
-			alert("High Limit value should be in Number");
+				bootbox.alert("High Limit value should be in Number");
 			return false;
 			}
 			maxVal=parseFloat(col4);
 
 			if(maxVal==0)
 			{
-			alert(" High Limit value cannot be Zero ");
+				bootbox.alert(" High Limit value cannot be Zero ");
 			getControlInBranch(table.rows[i],'highAmount').focus();
 			return false;
 			}
 			if(minVal >= maxVal)
 			{
-			alert("In Recovery Master-->"+i+" Row High Limit  value must be Higher than the Low Limit value");
+				bootbox.alert("In Recovery Master-->"+i+" Row High Limit  value must be Higher than the Low Limit value");
 			getControlInBranch(table.rows[i],'highAmount').focus();				
 			return false;
 			}
 			if(maxVal>parseFloat(9999999999999.99))
 			{
-			alert("High Limit Values  cannot be greater than 9999999999999.99");
+				bootbox.alert("High Limit Values  cannot be greater than 9999999999999.99");
 			getControlInBranch(table.rows[i],'highAmount').focus();				
 			return false;
 			}
@@ -487,7 +487,7 @@ function checkLimitsWithCombination()
 
 			  /*if((compareDate(formatDate6(previousMaxDate),formatDate6(curfromDateVal)) != 1))
 			  {
-				 alert("In Recovery Master-->"+j+" Row From Date must be Higher than the "+i+" Row Date Range");
+				 bootbox.alert("In Recovery Master-->"+j+" Row From Date must be Higher than the "+i+" Row Date Range");
 				 getControlInBranch(table.rows[j],'recovDateFrom').focus();				
 				 return false;
 			  }
@@ -501,7 +501,7 @@ function checkLimitsWithCombination()
 				minVal=parseInt(rowcol5);
 				if(minVal>parseFloat(9999999999999.99))
 				{
-				alert("Low Limit Values  cannot be greater than 9999999999999.99");
+					bootbox.alert("Low Limit Values  cannot be greater than 9999999999999.99");
 				getControlInBranch(table.rows[j],'lowAmount').focus();				
 				return false;
 				}
@@ -524,7 +524,7 @@ function checkLimitsWithCombination()
 			{
 				if(previousHigh >= minVal)
 				{
-					alert("In Recovery Master-->"+j+" Row Low Limit  value must be Higher than the "+i+" Row Payment Limits");
+					bootbox.alert("In Recovery Master-->"+j+" Row Low Limit  value must be Higher than the "+i+" Row Payment Limits");
 					getControlInBranch(table.rows[j],'lowAmount').focus();				
 					return false;
 				}
@@ -553,7 +553,7 @@ function checkLimitsWithCombination()
 
 			  if((compareDate(formatDate6(previousMaxDate),formatDate6(curfromDateVal)) != 1))
 			  {
-				 alert("In Recovery Master-->"+j+" Row From Date must be Higher than the "+i+" Row Date Range");
+				  bootbox.alert("In Recovery Master-->"+j+" Row From Date must be Higher than the "+i+" Row Date Range");
 				 getControlInBranch(table.rows[j],'recovDateFrom').focus();				
 				 return false;
 			  }
@@ -566,7 +566,7 @@ function checkLimitsWithCombination()
 				minVal=parseInt(rowcol5);
 				if(minVal>parseFloat(9999999999999.99))
 				{
-				alert("Low Limit Values  cannot be greater than 9999999999999.99");
+					bootbox.alert("Low Limit Values  cannot be greater than 9999999999999.99");
 				getControlInBranch(table.rows[j],'lowAmount').focus();				
 				return false;
 				}
@@ -588,7 +588,7 @@ function checkLimitsWithCombination()
 			{
 				if(previousHigh >= minVal)
 				{
-					alert("In Recovery Master-->"+j+" Row Low Limit  value must be Higher than the "+i+" Row Payment Limits");
+					bootbox.alert("In Recovery Master-->"+j+" Row Low Limit  value must be Higher than the "+i+" Row Payment Limits");
 					getControlInBranch(table.rows[j],'lowAmount').focus();				
 					return false;
 				}
@@ -646,7 +646,7 @@ function checkDuplicatesFromTable()
 					 	
 					 		if((row1col5.value==rowcol5.value) && rowcol5.value.length>0)
 					 		{
-					 		alert("In Recovery Master-->"+j+" Row Data  Cannot be Same as "+i+" Row Data");
+					 			bootbox.alert("In Recovery Master-->"+j+" Row Data  Cannot be Same as "+i+" Row Data");
 					 		getControlInBranch(table.rows[j],'recovDateFrom').focus();
 					 		return false;
 					 		}
@@ -660,7 +660,7 @@ function checkDuplicatesFromTable()
 						{
 							if((row1col5.value==rowcol5.value) && rowcol5.value.length>0)
 							{
-							alert("In Recovery Master-->"+j+" Row Data  Cannot be Same as "+i+" Row Data");
+								bootbox.alert("In Recovery Master-->"+j+" Row Data  Cannot be Same as "+i+" Row Data");
 							getControlInBranch(table.rows[j],'recovDateFrom').focus();
 							return false;
 							}
@@ -704,7 +704,7 @@ function checkNegativeInputs()
 		{
 			if(isNaN(col1))
 			{
-			alert(" Low Limit value should be in Number");
+				bootbox.alert(" Low Limit value should be in Number");
 			getControlInBranch(table.rows[i],'lowAmount').focus();
 			return false;
 			}
@@ -712,7 +712,7 @@ function checkNegativeInputs()
 			col1=parseFloat(col1)
 			if(col1<0)
 			{
-			alert("In Recovery Master-->"+i+" Row Low Limit value should not be Negative");
+				bootbox.alert("In Recovery Master-->"+i+" Row Low Limit value should not be Negative");
 			getControlInBranch(table.rows[i],'lowAmount').focus();
 			return false;
 			}
@@ -721,14 +721,14 @@ function checkNegativeInputs()
 		{
 			if(isNaN(col2))
 			{
-			alert(" High Limit value should be in Number");
+				bootbox.alert(" High Limit value should be in Number");
 			getControlInBranch(table.rows[i],'highAmount').focus();
 			return false;
 			}
 			else
 			col2=parseFloat(col2)
 			if(col2<0)
-			{alert("In Recovery Master-->"+i+" Row High Limit value should not be Negative");
+			{bootbox.alert("In Recovery Master-->"+i+" Row High Limit value should not be Negative");
 			getControlInBranch(table.rows[i],'highAmount').focus();
 			return false;
 			}
@@ -738,14 +738,14 @@ function checkNegativeInputs()
 		{
 			if(isNaN(col3))
 			{
-			alert(" IT percentage should be Number in 0 to 100");
+				bootbox.alert(" IT percentage should be Number in 0 to 100");
 			getControlInBranch(table.rows[i],'ITPercentage').focus();
 			return false;
 			}
 			else
 			col3=parseFloat(col3)
 			if(col3<0)
-			{alert("In Recovery Master-->"+i+" Row ITPercentage value should not be Negative");
+			{bootbox.alert("In Recovery Master-->"+i+" Row ITPercentage value should not be Negative");
 			getControlInBranch(table.rows[i],'ITPercentage').focus();
 			return false;
 			}
@@ -755,14 +755,14 @@ function checkNegativeInputs()
 		{
 			if(isNaN(col4))
 			{
-			alert(" Surcharge value should be Number in 0 to 100");
+				bootbox.alert(" Surcharge value should be Number in 0 to 100");
 			getControlInBranch(table.rows[i],'surPercentage').focus();
 			return false;
 			}
 			else
 			col4=parseFloat(col4)
 			if(col4<0)
-			{alert("In Recovery Master-->"+i+" Row Surcharge value should not be Negative");
+			{bootbox.alert("In Recovery Master-->"+i+" Row Surcharge value should not be Negative");
 			getControlInBranch(table.rows[i],'surPercentage').focus();
 			return false;
 			}
@@ -772,14 +772,14 @@ function checkNegativeInputs()
 		{
 			if(isNaN(col5))
 			{
-			alert(" Education Cess value should be Number in 0 to 100");
+				bootbox.alert(" Education Cess value should be Number in 0 to 100");
 			getControlInBranch(table.rows[i],'eduCessPercentage').focus();
 			return false;
 			}
 			else
 			col5=parseFloat(col5)
 			if(col5<0)
-			{alert("In Recovery Master-->"+i+" Row Education Cess value should not be Negative");
+			{bootbox.alert("In Recovery Master-->"+i+" Row Education Cess value should not be Negative");
 			getControlInBranch(table.rows[i],'eduCessPercentage').focus();
 			return false;
 			}
@@ -789,14 +789,14 @@ function checkNegativeInputs()
 		{
 			if(isNaN(col6))
 			{
-			alert(" Flat Amount should be in Number");
+				bootbox.alert(" Flat Amount should be in Number");
 			getControlInBranch(table.rows[i],'flatAmount').focus();
 			return false;
 			}
 			else
 			col6=parseFloat(col6)
 			if(col6<0)
-			{alert("In Recovery Master-->"+i+" Row Flat Amount should not be Negative");
+			{bootbox.alert("In Recovery Master-->"+i+" Row Flat Amount should not be Negative");
 			getControlInBranch(table.rows[i],'flatAmount').focus();
 			return false;
 			}
@@ -807,7 +807,7 @@ function checkNegativeInputs()
 		{
 			if(valPresentFlat)
 			{
-			alert("In Recovery Master-->"+i+" Row Enter Either Percentage value OR Flat Amount value");
+				bootbox.alert("In Recovery Master-->"+i+" Row Enter Either Percentage value OR Flat Amount value");
 			getControlInBranch(table.rows[i],'ITPercentage').focus();
 			return false;
 			
@@ -819,7 +819,7 @@ function checkNegativeInputs()
 		
 			if(valPresentPer)
 			{
-			alert("In Recovery Master-->"+i+" Row Enter Either Percentage value OR Flat Amount value");
+				bootbox.alert("In Recovery Master-->"+i+" Row Enter Either Percentage value OR Flat Amount value");
 			getControlInBranch(table.rows[i],'ITPercentage').focus();
 			return false;
 						
@@ -828,7 +828,7 @@ function checkNegativeInputs()
 		}
 		else
 		{
-			alert("In Recovery Master-->"+i+" Row Enter Either Percentage value OR Flat Amount value->It should not be empty");
+			bootbox.alert("In Recovery Master-->"+i+" Row Enter Either Percentage value OR Flat Amount value->It should not be empty");
 			getControlInBranch(table.rows[i],'ITPercentage').focus();
 			return false;
 		}
@@ -885,7 +885,7 @@ function checkEitherPerOrFlat()
 				{
 					if(currFlat)
 					{
-					alert("In Recovery Master-->"+j+" Row should not enter Flat Amount.Enter All rows should be Flat OR Percentage");
+						bootbox.alert("In Recovery Master-->"+j+" Row should not enter Flat Amount.Enter All rows should be Flat OR Percentage");
 					getControlInBranch(table.rows[j],'flatAmount').focus();
 					return false;
 
@@ -896,7 +896,7 @@ function checkEitherPerOrFlat()
 				{
 					if(currPer)
 					{
-					alert("In Recovery Master-->"+j+" Row should not enter Flat Amount.Enter All rows should be Flat OR Percentage");
+						bootbox.alert("In Recovery Master-->"+j+" Row should not enter Flat Amount.Enter All rows should be Flat OR Percentage");
 					getControlInBranch(table.rows[j],'ITPercentage').focus();
 					return false;
 
@@ -921,7 +921,7 @@ function ButtonPress(arg)
 		{
 				if(document.RecoverySetupForm.emprecovAccCodeId.value == "0")
 				{
-						alert("Select Account Code");
+					bootbox.alert("Select Account Code");
 						var temp="document.RecoverySetupForm.emprecovAccCodeId.focus();";
 						setTimeout(temp,0);		
 						return;
@@ -937,7 +937,7 @@ function ButtonPress(arg)
 						
 				if(document.RecoverySetupForm.recovAppliedTo.value == "0")
 				{
-						alert("Select Applied To");
+					bootbox.alert("Select Applied To");
 						var temp="document.RecoverySetupForm.recovAppliedTo.focus();";
 						setTimeout(temp,0);		
 						return;
@@ -948,14 +948,14 @@ function ButtonPress(arg)
 		{
 		if(document.RecoverySetupForm.recovAccCodeId.value == "0")
 		{
-				alert("Select Account Code");
+			bootbox.alert("Select Account Code");
 				var temp="document.RecoverySetupForm.recovAccCodeId.focus();";
 				setTimeout(temp,0);		
 				return;
 		}
 		if(document.RecoverySetupForm.recovAppliedTo.value == "0")
 		{
-				alert("Select Applied To");
+			bootbox.alert("Select Applied To");
 				var temp="document.RecoverySetupForm.recovAppliedTo.focus();";
 				setTimeout(temp,0);		
 				return;
@@ -969,14 +969,14 @@ function ButtonPress(arg)
 		{
 			if(document.RecoverySetupForm.recovRemitTo.value=="")
 			{
-				alert("Remitted to is required!");
+				bootbox.alert("Remitted to is required!");
 				var temp="document.RecoverySetupForm.recovRemitTo.focus();";
 				setTimeout(temp,0);		
 				return;
 			}
 			/*if(document.RecoverySetupForm.recovBSRCode.value=="")
 			{
-				alert("BSR Code is required!");
+				bootbox.alert("BSR Code is required!");
 				var temp="document.RecoverySetupForm.recovBSRCode.focus();";
 				setTimeout(temp,0);		
 				return;
@@ -998,21 +998,21 @@ function ButtonPress(arg)
 		{			
 			if(document.RecoverySetupForm.isBankLoan.checked==false && document.RecoverySetupForm.recovRemitTo.value=="")
 			{
-				alert("Remitted to is required!");
+				bootbox.alert("Remitted to is required!");
 				var temp="document.RecoverySetupForm.recovRemitTo.focus();";
 				setTimeout(temp,0);		
 				return;
 			}
 			/*if(document.RecoverySetupForm.isBankLoan.checked==false && document.RecoverySetupForm.recovBSRCode.value=="")
 			{
-				alert("BSR Code is required!");
+				bootbox.alert("BSR Code is required!");
 				var temp="document.RecoverySetupForm.recovBSRCode.focus();";
 				setTimeout(temp,0);		
 				return;
 			}*/	
 			if(document.RecoverySetupForm.isBankLoan.checked==true && document.RecoverySetupForm.bank.value=="0")	
 			{
-				alert("Select Bank!");
+				bootbox.alert("Select Bank!");
 				var temp="document.RecoverySetupForm.bank.focus();";
 				setTimeout(temp,0);		
 				return;
@@ -1041,20 +1041,20 @@ function ButtonPress(arg)
 		
 		}
 		var mode="${mode}";
-		//alert(mode);		
+		//bootbox.alert(mode);		
 		document.getElementById("button").value=arg;
 		if(document.RecoverySetupForm.isBankLoan.checked==false)
 			document.RecoverySetupForm.bankLoan.value="off";
 		document.getElementById("flagRow").disabled=false;
 		if(mode == "create")
 		{
-		//alert("Create submit"+mode);		
+		//bootbox.alert("Create submit"+mode);		
 			document.RecoverySetupForm.action = "../deduction/recoverySetupMaster.do?submitType=createRecoveryMaster";
 			document.RecoverySetupForm.submit();	
 		}
 		if(mode == "modify")
 		{
-		//alert("Modify submit"+mode);
+		//bootbox.alert("Modify submit"+mode);
 			document.RecoverySetupForm.action = "../deduction/recoverySetupMaster.do?submitType=modifyRecoveryMaster";
 			document.RecoverySetupForm.submit();
 		}
@@ -1065,7 +1065,7 @@ function ButtonPress(arg)
 	
 		if(document.RecoverySetupForm.tdsTypeId.value == "0")
 		{
-			alert("Select Recovery Code First");
+			bootbox.alert("Select Recovery Code First");
 			var temp="document.RecoverySetupForm.tdsTypeId.focus();";
 			setTimeout(temp,0);		
 			return;
@@ -1078,7 +1078,7 @@ function ButtonPress(arg)
 	{
 		if(document.RecoverySetupForm.tdsTypeId.value == "0")
 		{
-			alert("Select Recovery Code First");
+			bootbox.alert("Select Recovery Code First");
 			var temp="document.RecoverySetupForm.tdsTypeId.focus();";
 			setTimeout(temp,0);		
 			return;
@@ -1111,8 +1111,8 @@ function splitGlCode()
 	if(document.RecoverySetupForm.recovAccCodeId.options[document.RecoverySetupForm.recovAccCodeId.selectedIndex].value!=0)
 	{
 		var arr=document.RecoverySetupForm.recovAccCodeId.options[document.RecoverySetupForm.recovAccCodeId.selectedIndex].text.split("`-`");
-		//alert(arr[0]);
-		//alert(arr[1]);
+		//bootbox.alert(arr[0]);
+		//bootbox.alert(arr[1]);
 	
 		document.RecoverySetupForm.recovAccCodeId.options[document.RecoverySetupForm.recovAccCodeId.selectedIndex].text=arr[0];
 		document.getElementById("recAccDesc").value=arr[1];
@@ -1133,8 +1133,8 @@ function empsplitGlCode()
 	if(document.RecoverySetupForm.emprecovAccCodeId.options[document.RecoverySetupForm.emprecovAccCodeId.selectedIndex].value!=0)
 	{
 		var arr=document.RecoverySetupForm.emprecovAccCodeId.options[document.RecoverySetupForm.emprecovAccCodeId.selectedIndex].text.split("`-`");
-		//alert(arr[0]);
-		//alert(arr[1]);
+		//bootbox.alert(arr[0]);
+		//bootbox.alert(arr[1]);
 	
 		document.RecoverySetupForm.emprecovAccCodeId.options[document.RecoverySetupForm.emprecovAccCodeId.selectedIndex].text=arr[0];
 		document.getElementById("emprecAccDesc").value=arr[1];
@@ -1159,7 +1159,7 @@ function onBodyLoad()
 	var target="<%=(request.getAttribute("alertMessage"))%>";
 	if(target!="null")
 	{
-		alert("<%=request.getAttribute("alertMessage")%>");		
+		bootbox.alert("<%=request.getAttribute("alertMessage")%>");		
 	}
 	
 	var mode="${mode}";
@@ -1376,7 +1376,7 @@ function onBodyLoad()
 	} // main if
 	
 	var buttonType="${buttonType}";
-	//alert(buttonType);
+	//bootbox.alert(buttonType);
 	if(buttonType == "saveclose")
 	{
 		window.close();
@@ -1508,14 +1508,14 @@ function checkDocumentType(obj)
 	var col1 =getControlInBranch(currRow,'docType').value;
 	var col2=getControlInBranch(currRow,"subType").value;
 	
-	//alert("Current row Doc Type"+col1);
-	//alert("Current row Sub Type"+col2);
+	//bootbox.alert("Current row Doc Type"+col1);
+	//bootbox.alert("Current row Sub Type"+col2);
 	
 	if((col2 !=0 && col2 !=""))
 	{
 		if(!(col1 !=0 && col1 !=""))
 		{
-		alert("Select Document Type First !!!");
+			bootbox.alert("Select Document Type First !!!");
 		getControlInBranch(currRow,'docType').focus();
 		return false;
 		}
@@ -1551,7 +1551,7 @@ booleanValue=uniqueCheckingBoolean('../commonyui/egov/uniqueCheckAjax.jsp', 'tds
 		if(booleanValue==false)
 		{
 		//document.RecoverySetupForm.emprecovAccCodeId.focus();	
-		alert("This Account code already used for some other Earnings!!!!");
+		bootbox.alert("This Account code already used for some other Earnings!!!!");
 		document.RecoverySetupForm.emprecovAccCodeId.focus();	
 		//document.RecoverySetupForm.emprecovAccCodeId.value=0;		
 		return false;
@@ -1565,8 +1565,8 @@ booleanValue=uniqueCheckingBoolean('../commonyui/egov/uniqueCheckAjax.jsp', 'tds
 		var accCodeIdNew=document.getElementById('emprecovAccCodeId').value;
 		var accCodeIdOld="<%=(rsf.getEmprecovAccCodeId())%>";
 		
-		//alert("accCodeIdNew"+accCodeIdNew);
-		//alert("accCodeIdOld"+accCodeIdOld);
+		//bootbox.alert("accCodeIdNew"+accCodeIdNew);
+		//bootbox.alert("accCodeIdOld"+accCodeIdOld);
 		
 		if(accCodeIdNew!=accCodeIdOld)
 		{
@@ -1574,7 +1574,7 @@ booleanValue=uniqueCheckingBoolean('../commonyui/egov/uniqueCheckAjax.jsp', 'tds
 			if(booleanValue==false)
 			{
 	
-			alert("This Account code already used for some other Earnings!!!!");
+				bootbox.alert("This Account code already used for some other Earnings!!!!");
 			document.RecoverySetupForm.emprecovAccCodeId.focus();			
 			return false;
 			}		

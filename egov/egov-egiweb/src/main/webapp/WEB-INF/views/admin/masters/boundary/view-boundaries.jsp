@@ -96,4 +96,4 @@
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/viewboundaries.js'/>"></script>
+<script src="<c:url value='/resources/js/app/viewboundaries.js?rnd=${app_release_no}'/>"></script>

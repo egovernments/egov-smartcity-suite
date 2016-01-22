@@ -39,32 +39,39 @@
  */
 package org.egov.pims.commons;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
 import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_designation")
-@Unique(id = "id", tableName = "eg_designation", fields = { "name","code" }, columnName = { "name","code" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eg_designation", fields = { "name", "code" }, columnName = { "name",
+        "code" }, enableDfltMsg = true)
 @SequenceGenerator(name = Designation.SEQ_DESIGNATION, sequenceName = Designation.SEQ_DESIGNATION, allocationSize = 1)
-@NamedQuery(name="getDesignationForListOfDesgNames",query="from Designation where trim(upper(name)) in(:param_0)")
+@NamedQuery(name = "getDesignationForListOfDesgNames", query = "from Designation where trim(upper(name)) in(:param_0)")
 public class Designation extends AbstractAuditable {
 
     private static final long serialVersionUID = -3775503109625394145L;
@@ -80,10 +87,11 @@ public class Designation extends AbstractAuditable {
     @SafeHtml
     @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message = "Name should contain letters with space and (-,_)")
     private String name;
-    
+
     @NotBlank
     @SafeHtml
-   // @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message = "Name should contain letters with space and (-,_)")
+    // @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message =
+    // "Name should contain letters with space and (-,_)")
     private String code;
 
     @SafeHtml
@@ -93,10 +101,16 @@ public class Designation extends AbstractAuditable {
     @JoinColumn(name = "chartofaccounts")
     private CChartOfAccounts chartOfAccounts;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egeis_desig_rolemapping", joinColumns = @JoinColumn(name = "designationid") , inverseJoinColumns = @JoinColumn(name = "roleid") )
+    private final Set<Role> roles = new HashSet<>();
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -108,6 +122,7 @@ public class Designation extends AbstractAuditable {
     public void setName(final String name) {
         this.name = name;
     }
+
     public String getCode() {
         return code;
     }
@@ -115,7 +130,6 @@ public class Designation extends AbstractAuditable {
     public void setCode(final String code) {
         this.code = code;
     }
-    
 
     public String getDescription() {
         return description;

@@ -65,6 +65,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.workflow.Action;
@@ -155,11 +156,11 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
                 userId = Integer.valueOf(parameters.get("approverUserId")[0]);
             else
                 userId = EgovThreadLocals.getUserId().intValue();
-            if (narration != null)
+          /*  if (narration != null)
                 paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader, narration);
             else
                 paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader, paymentheader
-                        .getVoucherheader().getDescription());
+                        .getVoucherheader().getDescription());*/
             paymentService.persist(paymentheader);
             createMiscBill(paymentheader, advanceRequisition);
             advanceRequisition.getEgAdvanceReqMises().setVoucherheader(paymentheader.getVoucherheader());
@@ -351,7 +352,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return voucherHeader;
     }
 
@@ -432,8 +433,8 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
         return egovCommon;
     }
 
-    public List<Action> getValidActions() {
-        return paymentWorkflowService.getValidActions(paymentheader);
+    public List<String> getValidActions() {
+        return null;
     }
 
     public String formatDate(final Date date) {

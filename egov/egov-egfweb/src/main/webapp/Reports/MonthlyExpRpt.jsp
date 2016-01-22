@@ -99,7 +99,7 @@ function ButtonPress(){
 		
 	
 	if(mnName.options[mnName.selectedIndex].text = ""){
-	alert('Select the Month');
+		bootbox.alert('Select the Month');
 	document.getElementById('monthName').value;
 	return false;
 	}
@@ -109,7 +109,7 @@ function ButtonPress(){
 	}
 	
 	if(document.getElementById('yearName').text = ""){
-	alert('Select the Year');
+		bootbox.alert('Select the Year');
 	document.getElementById('yearName').value;
 	return;
 	}	

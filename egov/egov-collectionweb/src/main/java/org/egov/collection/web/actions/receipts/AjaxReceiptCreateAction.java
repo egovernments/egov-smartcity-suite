@@ -346,9 +346,9 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final Integer fundId = Integer.valueOf(parameters.get("fundId")[0]);
         if (null == fundId || fundId == -1)
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=1 order by name", -1);
+                    " from Scheme where fund.id=? and isActive=true order by name", -1);
         else
-            schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive='1' order by name", fundId);
+            schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=true order by name", fundId);
 
         return "schemeList";
     }
@@ -359,7 +359,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     {
         final Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
         if (null != schemeId && schemeId != -1)
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
                     schemeId);
         else
             subSchemes = Collections.EMPTY_LIST;
@@ -389,7 +389,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
         final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
                 "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and " +
-                        "  service.isEnabled='1'" + " and service.id=?",  deptId, serviceId);
+                        "  service.isEnabled=true" + " and service.id=?",  deptId, serviceId);
 
         final StringBuffer miscDetails = new StringBuffer();
         if (null != service)

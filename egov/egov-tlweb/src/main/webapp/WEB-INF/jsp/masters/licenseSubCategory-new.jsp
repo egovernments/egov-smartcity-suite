@@ -60,21 +60,22 @@
 
 	function bodyOnLoad(){
 		if(dom.get("userMode").value=='view'  || dom.get("userMode").value=='success'){
-			 dom.get("code").disabled=true;
-			 dom.get("name").disabled=true;
-			 dom.get("categoryId").disabled=true;
-			 jQuery("span").remove(".mandatory");
+			 for(i=0;i<document.licenseSubCategoryForm.elements.length;i++){ 
+					if(document.licenseSubCategoryForm.elements[i].id!='btnclose'){
+					document.licenseSubCategoryForm.elements[i].disabled=true;
+					document.licenseSubCategoryForm.elements[i].readonly=true;
+					} 
+			 }
+			 subCategoryMappingDataTable.removeListener('cellClickEvent');
+			 jQuery("span").remove(".mandatory");  
 		}
 	}
 
 
 	function reload(){
-		dom.get("code").value="";
-		dom.get("name").value="";
-		dom.get("categoryId").value="-1";
+		document.licenseSubCategoryForm.reset();
 		document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-newform.action';
     	document.licenseSubCategoryForm.submit();
-		
 	}
 
 	function validateFormAndSubmit(){
@@ -91,11 +92,28 @@
 			showMessage('subcategory_error', '<s:text name="tradelic.master.tradesubcategorycode.null" />');
 			return false;
 		}
+		if(!validateMappingDetails())
+			return false;
 		else {
 		    	clearMessage('subcategory_error')
 		    	document.licenseSubCategoryForm.action='${pageContext.request.contextPath}/masters/licenseSubCategory-save.action';
 		    	document.licenseSubCategoryForm.submit();
 		 	}
+	}
+
+	function validateMappingDetails(){ 
+		var records= subCategoryMappingDataTable.getRecordSet();
+	   	for(var i=0;i<subCategoryMappingDataTable.getRecordSet().getLength();i++)
+	   	{
+	   	  	var record = subCategoryMappingDataTable.getRecord(i);
+	   		 if(dom.get("feeType"+record.getId()).value==0 || dom.get("rateType"+record.getId()).value==0 ||
+	   				dom.get("uom"+record.getId()).value==0){
+	   			document.getElementById("scDtl_error").innerHTML='Please select all the details for '+(i+1)+' row.'; 
+	            document.getElementById("scDtl_error").style.display='';
+	            return false;
+	    	  }
+	   	}
+	   	return true;
 	}
 
 	function validateData(obj,param){
@@ -171,7 +189,8 @@
 					
 						<s:hidden name="id" /> 
 						<s:hidden name="userMode" id="userMode"/>
-					
+						<s:hidden name="licenseFee" id="licenseFee"/>
+						<s:hidden name="feeExists" id="feeExists"/>
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.category.lbl" /><span class="mandatory"></span></label>
@@ -196,6 +215,10 @@
 							<div class="col-sm-3 add-margin">
 								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32" onchange="return validateData(this,'code')"/>
 							</div>
+						</div>
+						
+						<div>
+            				<%@ include file="subCategory-details.jsp"%>  
 						</div>
 						
 					</div>

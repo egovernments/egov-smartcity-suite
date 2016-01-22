@@ -101,10 +101,6 @@ success: function(o) {
 				}
 				
 		}
-		
-    },
-    failure: function(o) {
-    	alert('failure');
     }
 }
 
@@ -127,7 +123,7 @@ schemeDropDownSuccessHandler=function(req,res){
 }
 
 schemeDropDownFailureHandler=function(){
-  alert('failure while loading scheme drop down');
+  bootbox.alert('failure while loading scheme drop down');
 }
 
 
@@ -149,7 +145,7 @@ subschemeDropDownSuccessHandler=function(req,res){
 }
 
 subschemeDropDownFailureHandler=function(){
-  alert('failure while loading sub scheme drop down');
+  bootbox.alert('failure while loading sub scheme drop down');
 }
 
 
@@ -171,7 +167,7 @@ fundsourceDropDownSuccessHandler=function(req,res){
 }
 
 fundsourceDropDownFailureHandler=function(){
-  alert('failure while loading fundource drop down');
+  bootbox.alert('failure while loading fundource drop down');
 }
 
 
@@ -220,7 +216,7 @@ loadFinAccSuccessHandler=function(req,res){
 		 document.getElementById('totalcramount').value=totalcramt;
     }
  loadFinAccFailureHandler=function(){
-  alert('failure');
+  bootbox.alert('unable to load Function');
 }
 
 
@@ -270,5 +266,5 @@ loadFinSubledgerSuccessHandler=function(req,res){
 }
 
  loadFinSubledgerFailureHandler=function(){
-  alert('failure');
+  bootbox.alert('Unable to load Sub Ledger');
 }
