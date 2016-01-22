@@ -48,7 +48,7 @@
     	<s:text name="dishonorcheque.title"/>
     </title>
       <sj:head jqueryui="true" jquerytheme="redmond" loadAtOnce="true"/>
-  <script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>  
+  <script type="text/javascript" src="/EGF/resources/javascript/helper.js?rnd=${app_release_no}"></script>  
   <script type="text/javascript">
 
 

@@ -146,4 +146,4 @@
  type="text/javascript"></script>
  <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
  type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/onlinePaymentReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/onlinePaymentReport.js?rnd=${app_release_no}'/>"></script>

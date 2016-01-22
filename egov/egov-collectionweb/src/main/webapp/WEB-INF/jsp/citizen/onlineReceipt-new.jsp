@@ -44,7 +44,7 @@
 <title>Online Payment</title>
 <script src="common/js/watermark.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/css/collectionspublic.css" />
+	href="${pageContext.request.contextPath}/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
 
 jQuery.noConflict();

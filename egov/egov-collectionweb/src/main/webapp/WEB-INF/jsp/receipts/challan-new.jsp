@@ -40,7 +40,7 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/challan.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/challan.js?rnd=${app_release_no}"></script>
 <script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
 <style type="text/css">
 	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
