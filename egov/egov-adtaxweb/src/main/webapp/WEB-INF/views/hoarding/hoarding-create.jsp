@@ -77,6 +77,20 @@
 var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
 var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
+
+$('#Forward').click(function(e){
+	if($('#advertisementform').valid()){
+		console.log('valid');
+		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
+			if($('#measurement').val() <= 0)
+				bootbox.alert('Please enter valid measurement');
+				e.preventDefault();
+		}else{
+			e.preventDefault();
+		}
+	}
+	e.preventDefault();
+});
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>

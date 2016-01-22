@@ -120,9 +120,12 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             advertisementPermitDetail.setStatus(advertisementPermitDetailService
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
             return "hoarding-create";
-
+        }
         storeHoardingDocuments(advertisementPermitDetail);
 
         Long approvalPosition = 0l;
