@@ -5,6 +5,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -27,6 +28,8 @@ public class DcbReportController extends GenericController {
     private AdvertisementService hoardingService;
     @Autowired
     private ApplicationProperties applicationProperties;
+    @Autowired
+    private  AdvertisementPermitDetailService advertisementPermitDetailService;
 
     @RequestMapping(value = "search-for-dcbreport", method = GET)
     public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch) {
@@ -35,12 +38,10 @@ public class DcbReportController extends GenericController {
 
     @RequestMapping(value = "search-for-dcbreport", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-       /* return "{ \"data\":"
+        return "{ \"data\":"
                 + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(hoardingService.getHoardingSearchResult(hoardingSearch)) + "}";*/
-        
-        return null;
-    }
+                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch,null)) + "}";
+      }
 
     @RequestMapping(value = "getHoardingDcb/{hoardingNumber}")
     public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
