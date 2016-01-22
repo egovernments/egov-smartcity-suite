@@ -69,7 +69,7 @@ function ButtonPress(arg)
 		var parentCode=document.PartyTypeForm.parentId.options[document.PartyTypeForm.parentId.selectedIndex].text;
 			if(parentCode==codeVal)
 			{
-				alert("Code and Parent Code cannot be same!!!!");
+				bootbox.alert("Code and Parent Code cannot be same!!!!");
 				return false;
 			}
 		
@@ -101,7 +101,7 @@ function uniqueCheckForPartyCode()
 
 			if(booleanValue==false)
 			{
-				alert("This Code already used for some other Party Type!!!!");
+				bootbox.alert("This Code already used for some other Party Type!!!!");
 				return false;
 			}
 	<%
@@ -119,7 +119,7 @@ function uniqueCheckForPartyCode()
 
 			if(booleanValue==false)
 			{
-			alert("This Code already used for some other Party Type!!!!");
+				bootbox.alert("This Code already used for some other Party Type!!!!");
 			return false;
 			}		
 		}	
@@ -138,7 +138,7 @@ function setDefault()
 	var target='<%=(request.getAttribute("alertMessage"))%>';
 	if(target!="null")
 	{
-		alert('<%=request.getAttribute("alertMessage")%>');
+		bootbox.alert('<%=request.getAttribute("alertMessage")%>');
 	}
 	
 	var buttonType="${buttonType}";		

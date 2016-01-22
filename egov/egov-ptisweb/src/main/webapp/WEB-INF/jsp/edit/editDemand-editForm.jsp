@@ -69,7 +69,7 @@
 	                  if ((jQuery(this).data('optional') === 0)
 	                      && ((!jQuery(this).val()) || jQuery(this).val() === '-1')) {
 	                      jQuery(this).focus();
-	                      alert(jQuery(this).data('errormsg'));
+	                      bootbox.alert(jQuery(this).data('errormsg'));
 	                      validationsuccess = false;// set validation failure
 	                      return false;
 	                  }
@@ -570,7 +570,7 @@
 		</s:form>
 	<s:if test="%{hasActionErrors() == false || isFirstInstVisible == false}">
 		<script type="text/javascript">
-			//alert('isFirstInstVisible' + isFirstInstVisible);
+			//bootbox.alert('isFirstInstVisible' + isFirstInstVisible);
 			//rearrangeIndexes();	
 		</script>
 	</s:if>

@@ -59,13 +59,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta name="description" content="eGov Urban Portal" />
 		<meta name="author" content="eGovernments Foundation" />
-		
+        <spring:eval expression="@environment.getProperty('app.core.build.no')" scope="application" var="buildno"/>
 		<title>eGov Urban Portal Login</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -344,9 +344,9 @@
 			</div>
 		</div>
 		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
-		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
+		<script src="/egi/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 		<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
-		<script src="/egi/resources/js/app/login.js" type="text/javascript"></script>
+		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 	</body>
 </html>
 <%session.invalidate();%>

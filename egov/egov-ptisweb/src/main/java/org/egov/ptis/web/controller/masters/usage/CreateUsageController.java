@@ -41,7 +41,7 @@ package org.egov.ptis.web.controller.masters.usage;
 
 import javax.validation.Valid;
 
-import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +65,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateUsageController {
 
     private final PropertyUsageService propertyUsageService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public CreateUsageController(final PropertyUsageService propertyUsageService) {
@@ -78,6 +81,8 @@ public class CreateUsageController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String newForm(final Model model) {
+        String roleName = propertyUsageService.getRolesForUserId(securityUtils.getCurrentUser().getId());
+        model.addAttribute("roleName",roleName);
         return "usage-form";
     }
 

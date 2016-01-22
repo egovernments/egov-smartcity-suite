@@ -98,8 +98,8 @@ function ButtonPress()
 		{
 			if( compareDate(formatDate6(vstartDate),formatDate6(vendDate)) == -1 )
 			{
-				//alert("Inside compare dt");
-				alert('From Date cannot be greater than To Date');
+				//bootbox.alert("Inside compare dt");
+				bootbox.alert('From Date cannot be greater than To Date');
 				//document.getElementById('voucherDateFrom').value='';
 				//document.getElementById('voucherDateTo').value='';
 				document.getElementById('voucherDateFrom').focus();
@@ -293,7 +293,7 @@ function fillDate1(objName)
 				LOGGER.error("Exception in Jsp Page:"+e.getMessage());
 				%>
 			 	<script>
-				 alert("Error :<%=e.getMessage()%>");
+			 	bootbox.alert("Error :<%=e.getMessage()%>");
 			 	</script>
 			 	<%
 			}

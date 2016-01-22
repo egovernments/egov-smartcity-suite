@@ -146,7 +146,7 @@ var subGLcodes="<%= subGLcodes %>";
 	       document.getElementById("repSubType").style.display="none";
 	   }
    /* document.getElementById("userId").value=PageManager.DataService.getQueryField("current_UserID");
-    alert(document.getElementById("userId").value);
+    bootbox.alert(document.getElementById("userId").value);
     */
   }
   function setLists()
@@ -161,10 +161,10 @@ var subGLcodes="<%= subGLcodes %>";
   }
   function getRepLineItem(obj)
   {
-    //alert(obj.options[obj.selectedIndex].value);
+    //bootbox.alert(obj.options[obj.selectedIndex].value);
     if(!validateCombo("repType"))
     {
-       alert("Select any one of Report Type Options");
+    	bootbox.alert("Select any one of Report Type Options");
        return;
     }
     //On change of report type Clening up all the fields
@@ -213,7 +213,7 @@ var subGLcodes="<%= subGLcodes %>";
      if(B2ScheduleMajorCode!="null" && report=='BS' && obj.options[obj.selectedIndex].text==B2ScheduleMajorCode)
      	{
      	
-     	if(subGLcodes=="null") { alert("property  subGLcodes doesn't exists in config file"); return;}
+     	if(subGLcodes=="null") { bootbox.alert("property  subGLcodes doesn't exists in config file"); return;}
      	loadSelectData('../commonyui/egov/loadComboAjax.jsp', "chartofaccounts", "id||'  ~  '||name", "glcode", " glcode in("+subGLcodes+")", 'repLineItem', 'accnt_Code');
      	var repLineItemObjvalue=document.getElementById('repLineItem').options[document.getElementById('repLineItem').selectedIndex].text;
      	PageManager.DataService.setQueryField("glcode",repLineItemObjvalue);
@@ -299,10 +299,10 @@ var subGLcodes="<%= subGLcodes %>";
 		var table = document.getElementById(TableId);
 		if(!table || !table.rows) return false;
 		var accntLength=document.getElementById("accnt_Code").options.length;
-		//alert(table.rows.length);			
+		//bootbox.alert(table.rows.length);			
 		if(table.rows.length>accntLength)
 		{
-		  alert("No more Account Codes to select!...");
+			bootbox.alert("No more Account Codes to select!...");
 		  return;
 		}
 	    //addGrid(table);
@@ -315,7 +315,7 @@ var subGLcodes="<%= subGLcodes %>";
 		var table = document.getElementById(TableId);
 		if(!table || !table.rows) return false;	
 		var schLineItemGrid=document.getElementById('schLineItem');
-		if(schLineItemGrid.rows.length<=2) { alert('There should be atleast one line item'); return false;}
+		if(schLineItemGrid.rows.length<=2) { bootbox.alert('There should be atleast one line item'); return false;}
 		removeGrid(document.getElementById(TableId),1);
 	}
   }
@@ -373,7 +373,7 @@ var subGLcodes="<%= subGLcodes %>";
   {
     if(!validateCombo("repType"))
     {
-      alert("Select any one of Report Type Options");
+    	bootbox.alert("Select any one of Report Type Options");
       return;
     }
     var repType=document.getElementById("repType")
@@ -381,18 +381,18 @@ var subGLcodes="<%= subGLcodes %>";
     {
 	    if(!validateCombo("repSubType"))
 	    {
-	      alert("Select any one of Sub-Report Type Options");
+	    	bootbox.alert("Select any one of Sub-Report Type Options");
 	      return;
 	    }
 	}
 	if(!chkAccountCode())
 	{
-		alert('Duplicate Account Codes are not allowed\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
+		bootbox.alert('Duplicate Account Codes are not allowed\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
 		return false;
 	}
 	if(!chkAccountCodeRowEmpty())
 	{
-		alert('Account Code can not be empty\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
+		bootbox.alert('Account Code can not be empty\n \t\tor \n Delete empty rows if exists by pressing "Delete" button');
 		return false;
 	}
 
@@ -407,9 +407,9 @@ var subGLcodes="<%= subGLcodes %>";
 	   document.getElementById("repLineItem").disabled=false;
 	   document.getElementById("isRemission").disabled=false;
 	}
-	//alert("submit");
+	//bootbox.alert("submit");
 	PageManager.UpdateService.submitForm('scheduleMaster');
-	//alert("submited");
+	//bootbox.alert("submited");
 	
   }
   function chkAccountCode()
@@ -420,7 +420,7 @@ var subGLcodes="<%= subGLcodes %>";
 
 	  	 // rowObj=PageManager.DataService.getControlInBranch(table.rows[i]);
 	  	  accNo=PageManager.DataService.getControlInBranch(table.rows[i],'accnt_Code');
-	  	 // alert("Acc no:"+accNo+"**"+accNo.value);
+	  	 // bootbox.alert("Acc no:"+accNo+"**"+accNo.value);
 	 	 accNo=accNo.value;
 	  	 accNo=accNo.toLowerCase();
 	  	  for(var j=i+1;j<table.rows.length;j++)
@@ -446,7 +446,7 @@ var subGLcodes="<%= subGLcodes %>";
   	   {
     	  	  accNo=PageManager.DataService.getControlInBranch(table.rows[i],'accnt_Code');
   	  	  accNo=accNo.value;
-    	  	//alert("accNo----->"+accNo);
+    	  	//bootbox.alert("accNo----->"+accNo);
   	  	  if(!accNo!="")
   	  	  return false;
   		  

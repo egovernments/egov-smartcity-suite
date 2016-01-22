@@ -111,4 +111,13 @@
 	
 	<bean id="createVoucher" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype">
 	</bean>
+	
+	    <bean id="voucherHeaderPersistenceService" parent="persistenceService" >
+        <property name="type" value="org.egov.commons.CVoucherHeader" />
+    </bean>
+        
+    <bean id="CVoucherHeaderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" >
+         <constructor-arg index="0" ref="voucherHeaderPersistenceService"/>
+    </bean>
+    
 </beans>

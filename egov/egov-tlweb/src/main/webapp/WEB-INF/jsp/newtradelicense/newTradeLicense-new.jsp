@@ -312,7 +312,7 @@
  					var oRow = src.parentNode.parentNode;
  					if (oRow.rowIndex == 2) 
  					{
- 						alert("Cannot delete the first row!");
+ 						bootbox.alert("Cannot delete the first row!");
  						return;
  					} 
  					else
@@ -326,7 +326,7 @@
 			
 			function checkLength(obj,val){
 				if(obj.value.length>val) {
-					alert('Max '+val+' digits allowed')
+					bootbox.alert('Max '+val+' digits allowed')
 					obj.value = obj.value.substring(0,val);
 				}
 			}	
@@ -376,7 +376,7 @@
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
-								alert(data.errorDetails.errorMessage);
+								bootbox.alert(data.errorDetails.errorMessage);
 							} else{
 								if(data.boundaryDetails!=null){
 									jQuery("#boundary").val(data.boundaryDetails.localityId)
@@ -390,7 +390,7 @@
 							console.log('error:'+e.message);
 							document.getElementById("propertyNo").value="";
 							resetOnPropertyNumChange();
-							alert("Error getting property details");
+							bootbox.alert("Error getting property details");
 						}
 					});
             	} else{

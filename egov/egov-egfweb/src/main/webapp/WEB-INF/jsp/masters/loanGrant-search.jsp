@@ -295,7 +295,7 @@ function validate()
 	schemeIdObj=document.getElementById('schemeId');
 	if(schemeIdObj.value=='')
 	{
-		alert("Please enter scheme");
+		bootbox.alert("Please enter scheme");
 		return false;
 	}
 	else

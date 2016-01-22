@@ -120,7 +120,7 @@ function ButtonPress()
 	eDate=document.getElementById("endDate").value;
 	if( compareDate(formatDate6(sDate),formatDate6(eDate)) == -1 )
 	{
-		alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 		document.getElementById('startDate').value='';
 		document.getElementById('endDate').value='';
 		document.getElementById('startDate').focus();
@@ -268,7 +268,7 @@ function buttonPrint()
 		// System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -337,7 +337,7 @@ function buttonPrint()
 		// System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

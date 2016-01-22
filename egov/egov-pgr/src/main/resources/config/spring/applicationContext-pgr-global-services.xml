@@ -44,8 +44,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
 
-    <bean id="complaintPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.pgr.entity.Complaint" />
+    <bean id="complaintPersistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type" value="org.egov.pgr.entity.Complaint"/>
     </bean>
         
     <bean id="ComplaintInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">

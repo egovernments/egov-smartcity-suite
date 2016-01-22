@@ -64,6 +64,8 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.hibernate.search.annotations.CharFilterDef;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -85,6 +87,8 @@ public class ContraCTBAction extends BaseVoucherAction
     private String message;
     private boolean close;
     private InstrumentService instrumentService;
+    @Autowired
+	private ChartOfAccounts chartOfAccounts;
 
     public InstrumentService getInstrumentService() {
         return instrumentService;
@@ -194,11 +198,10 @@ public class ContraCTBAction extends BaseVoucherAction
                     LOGGER.debug("going to post into transactions");
                 final List<Transaxtion> transactions = contraService.postInTransaction(voucherHeader, contraBean);
                 HibernateUtil.getCurrentSession().flush();
-                final ChartOfAccounts engine = ChartOfAccounts.getInstance();
                 Transaxtion txnList[] = new Transaxtion[transactions.size()];
                 txnList = transactions.toArray(txnList);
                 final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-                if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+                if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 {
                     final List<ValidationError> errors = new ArrayList<ValidationError>();
                     errors.add(new ValidationError("exp", "Engine Validation failed"));

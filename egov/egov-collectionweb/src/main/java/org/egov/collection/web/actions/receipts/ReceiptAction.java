@@ -160,7 +160,7 @@ public class ReceiptAction extends BaseFormAction {
     private String reasonForCancellation;
     private String target = "view";
     private String paidBy;
-    private ReceiptHeader receiptHeader;
+    private ReceiptHeader receiptHeader = new ReceiptHeader();
 
     /**
      * A <code>Long</code> value representing the receipt header id captured from the front end, which has to be cancelled.
@@ -442,7 +442,7 @@ public class ReceiptAction extends BaseFormAction {
                 CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
         if (null != this.service && null != this.service.getId() && this.service.getId() != -1)
             service = serviceDetailsService.findById(this.service.getId(), false);
-        final ReceiptHeader receiptHeader = new ReceiptHeader();
+       // final ReceiptHeader receiptHeader = new ReceiptHeader();
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
         final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
@@ -464,7 +464,7 @@ public class ReceiptAction extends BaseFormAction {
         if (receiptMisc.getFundsource() != null && receiptMisc.getFundsource().getId() != null)
             fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId());
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_DEPARTMENT_BY_ID, Integer.valueOf(deptId));
+                CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(null, fund, functionary, fundSource, dept, receiptHeader,
                 scheme, subscheme, null);
@@ -576,7 +576,6 @@ public class ReceiptAction extends BaseFormAction {
             createMisc();
         // set collection modes allowed rule through script
         setCollectionModesNotAllowed();
-
         return NEW;
     }
 
@@ -664,6 +663,9 @@ public class ReceiptAction extends BaseFormAction {
         getHeaderMandateFields();
         setupDropdownDataExcluding();
 
+        headerFields.remove(CollectionConstants.FUNDSOURCE);
+        headerFields.remove(CollectionConstants.SCHEME);
+        headerFields.remove(CollectionConstants.SUBSCHEME);
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
@@ -702,10 +704,6 @@ public class ReceiptAction extends BaseFormAction {
         partPaymentAllowed = false;
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
-
-        if (paidBy == null || CollectionConstants.BLANK.equals(paidBy))
-            paidBy = collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                    CollectionConstants.APPCONFIG_VALUE_PAYEEFORMISCRECEIPTS);
         // this.paidBy = payeename;
         if (null != service && null != service.getId() && service.getId() != -1)
             setServiceName(serviceDetailsService.findById(service.getId(), false).getName());
@@ -748,10 +746,10 @@ public class ReceiptAction extends BaseFormAction {
             if (mandate.equalsIgnoreCase("M"))
                 mandatoryFields.add(header);
         }
-        if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Receipt"))) {
+      /*  if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Receipt"))) {
             headerFields.add("vouchernumber");
             mandatoryFields.add("vouchernumber");
-        }
+        }*/
         mandatoryFields.add("voucherdate");
     }
 
@@ -802,8 +800,8 @@ public class ReceiptAction extends BaseFormAction {
                 receiptHeader.setVoucherDate(voucherDate);
                 receiptHeader.setVoucherNum(voucherNum);
                 receiptHeader.setIsReconciled(Boolean.TRUE);
-                receiptHeader.setReceiptdate(manualReceiptDate);
                 receiptHeader.setManualreceiptdate(manualReceiptDate);
+                receiptHeader.setPayeeName(StringEscapeUtils.unescapeHtml(paidBy));
 
             } else {
                 receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);

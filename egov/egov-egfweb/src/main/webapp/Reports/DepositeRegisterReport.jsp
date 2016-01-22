@@ -145,7 +145,7 @@
 	
 		if(compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			alert('Start Date can not be greater than End Date');
+			bootbox.alert('Start Date can not be greater than End Date');
 			document.getElementById('startDate').focus();
 			return false;
 		}
@@ -275,7 +275,7 @@
 			LOGGER.info("Exception in Jsp Page:"+e.getMessage());
 			%>
 			 <script>
-		 		alert("Error :<%=e.getMessage()%>");
+			 bootbox.alert("Error :<%=e.getMessage()%>");
 		 		//PageManager.DataService.setQueryField('endDate','');
 		 </script>
 		 <%
@@ -326,7 +326,7 @@
 			LOGGER.error("Exception in Jsp Page:"+e.getMessage());
 			%>
 			 <script>
-		 		alert("Error :<%=e.getMessage()%>");
+			 bootbox.alert("Error :<%=e.getMessage()%>");
 		 		//PageManager.DataService.setQueryField('endDate','');
 		 	</script>
 			<%

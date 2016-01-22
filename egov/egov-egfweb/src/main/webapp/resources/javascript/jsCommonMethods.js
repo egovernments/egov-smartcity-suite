@@ -54,7 +54,7 @@ function topmenu(){
 	document.write("<span class='style5'><div name='title' id='title'></span></td>");
 	document.write("<td width='60%'  height=52 valign='bottom' align='left' class='normaltext'><span><div name='username' id='username'>User:&nbsp;</span></td>");
 	document.write("<td width='30%' height=52 valign='bottom' nowrap class='banner'><a class='footerlocallink'  onClick='gotoHomePage()' href='#'>Home</a>&nbsp;&nbsp;");
-	<!--document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");-->
+	/*document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");*/
 	document.write("<a class='footerlocallink' href='#'>Help</a>&nbsp; <a class='footerlocallink' onClick='changePassword()' href='#'>ChangePassword</a>&nbsp;<a class='footerlocallink' onClick='logOut()' href='#'>Logout</a>");
 	document.write("<td width='9%'><div align='right'><input name='imageField2' type='image' src='/egi/resources/erp2/images/eGovLogo.jpg' align='top' width='80' height='60' border='0'></div></td></tr>");
 	document.write("</table>");
@@ -225,9 +225,9 @@ function navigateMenu(chkFlag) {
 
 		clear();
 	
-	   //alert(getCookie('expChartOfAccounts'));alert(getCookie('expTransaction'));alert(getCookie('expUserAccess'));alert(getCookie('expMaster'));
+	   //bootbox.alert(getCookie('expChartOfAccounts'));bootbox.alert(getCookie('expTransaction'));bootbox.alert(getCookie('expUserAccess'));bootbox.alert(getCookie('expMaster'));
 		
-//alert('1');																	// Master Block
+//bootbox.alert('1');																	// Master Block
 			x=t.insertRow(menuCount);
 			
 			menuCount = menuCount + 1;
@@ -241,7 +241,7 @@ function navigateMenu(chkFlag) {
 		
 		
 		
-//alert('2');																	// Transaction Bloack
+//bootbox.alert('2');																	// Transaction Bloack
 			x=t.insertRow(menuCount);
 			menuCount = menuCount + 1;
 			var y=x.insertCell(0);
@@ -283,7 +283,7 @@ function navigateMenu(chkFlag) {
 			
 		}
 	
-//alert('3');																	// Master Block
+//bootbox.alert('3');																	// Master Block
 			x=t.insertRow(menuCount);
 			menuCount = menuCount + 1;
 			var y=x.insertCell(0);
@@ -292,7 +292,7 @@ function navigateMenu(chkFlag) {
 			
 		if( getCookie('expMaster') == "true")
 		{
-			//alert('in child master block');
+			//bootbox.alert('in child master block');
 			var x=t.insertRow(menuCount);
 			menuCount = menuCount + 1;
 			var y=x.insertCell(0);
@@ -340,7 +340,7 @@ function navigateMenu(chkFlag) {
 
 		}		
 		
-//alert('4');																			// Employee Block	
+//bootbox.alert('4');																			// Employee Block	
 			x=t.insertRow(menuCount);
 			menuCount = menuCount + 1;
 			var y=x.insertCell(0);
@@ -349,7 +349,7 @@ function navigateMenu(chkFlag) {
 			
 		if( getCookie('expUserAccess') == "true")
 		{
-			//alert('in child master block');
+			//bootbox.alert('in child master block');
 			var x=t.insertRow(menuCount);
 			menuCount = menuCount + 1;
 			var y=x.insertCell(0);
@@ -383,7 +383,7 @@ function navigateMenu(chkFlag) {
 
 }		
 		
-//alert('5');																		// Report Block
+//bootbox.alert('5');																		// Report Block
 			x=t.insertRow(menuCount);
 			menuCount = menuCount + 1;
 			var y=x.insertCell(0);
@@ -535,14 +535,14 @@ function deleteRowTable(obj)
 			}
 			else
 			{			 
-			 alert("You cannot delete this row"); 
+				bootbox.alert("You cannot delete this row"); 
 			 return false;
 			}
 		}
 	 } 
 	 if(!isSelected)
 	 {
-	 alert("Select the row to be deleted.");
+		 bootbox.alert("Select the row to be deleted.");
 	 return;
 	 }
    
@@ -607,7 +607,7 @@ function ResetForm(formId, focusToId){
  function addSlNo(id)
 		{
 			
-			//alert('sdfkj')
+			//bootbox.alert('sdfkj')
 			
 			var tab=document.getElementById(id);
 			var lastRow=tab.rows.length;
@@ -672,7 +672,7 @@ function getSelectedRadioValue(buttonGroup) {
 		 {
 				var narration=document.getElementById(ctrlName);
 				if(narration.value.length>g_maxOfNarration){
-				  alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
+					bootbox.alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
 				  narration.focus();
 				  return false;
 				}
@@ -685,7 +685,7 @@ function chkNarration(ctrlName)
 	{
 		var narration=document.getElementById(ctrlName);
 		if(narration.value.length>=g_maxOfNarration){
-		  alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
+			bootbox.alert("Narration Cannot Be More Than "+g_maxOfNarration+" Characters");
 		 event.returnValue=false;
 		}
 	}
@@ -767,7 +767,7 @@ function checkBackDate(eleObj,currentDate,msgText)
 		  //testDateAry contains date to check and curDateAry contains current date
           if(parseInt(testDateAry[5]) > parseInt(curDateAry[5]))
           {
-			  alert("Not a valid  "+msgText+" date");
+        	  bootbox.alert("Not a valid  "+msgText+" date");
 			  eleObj.focus();
               return false;
           }    
@@ -775,7 +775,7 @@ function checkBackDate(eleObj,currentDate,msgText)
           {
                 if(vDate.getMonth()> currentDate.getMonth())
                 {
-                        alert("Not a valid  "+msgText+" date");
+                	bootbox.alert("Not a valid  "+msgText+" date");
 						eleObj.focus();
                         return false;
                 }
@@ -783,7 +783,7 @@ function checkBackDate(eleObj,currentDate,msgText)
                 {
                         if(parseInt(testDateAry[2]) > parseInt(curDateAry[2]))
                         {
-							  alert("Not a valid  "+msgText+" date");
+                        	bootbox.alert("Not a valid  "+msgText+" date");
 							  eleObj.focus();
                               return false;
                         }
@@ -811,7 +811,7 @@ function checkFrontDate(eleObj,currentDate,msgText)
 		  //testDateAry contains date to check and curDateAry contains current date
 		  if(parseInt(testDateAry[5]) < parseInt(curDateAry[5]))
           {
-			  alert("Not a valid "+msgText+" date");
+			  bootbox.alert("Not a valid "+msgText+" date");
 			  eleObj.focus();
               return false;
           }    
@@ -819,7 +819,7 @@ function checkFrontDate(eleObj,currentDate,msgText)
           {
                 if(vDate.getMonth()< currentDate.getMonth())
                 {
-					    alert("Not a valid  "+msgText+" date");
+                	bootbox.alert("Not a valid  "+msgText+" date");
 						eleObj.focus();
                         return false;
                 }
@@ -827,7 +827,7 @@ function checkFrontDate(eleObj,currentDate,msgText)
                 {
                         if(parseInt(testDateAry[2]) < parseInt(curDateAry[2]))
                         {
-							  alert("Not a valid  "+msgText+" date");
+                        	bootbox.alert("Not a valid  "+msgText+" date");
 							  eleObj.focus();
                               return false;
                         }
@@ -852,7 +852,7 @@ function isValidUser(level, role){
 	}
 	
 	if (ret == false)
-		alert('Permission denied. Contact administrator');
+		bootbox.alert('Permission denied. Contact administrator');
 	return ret;
 }
 
@@ -1717,7 +1717,7 @@ function checkDate(obj)
 	var dat=validateDate(obj.value);
 	if (!dat) 
 	{
-		alert('Invalid date format : Enter Date as dd/mm/yyyy');
+		bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 		obj.focus();
 		return;
 	}
@@ -1758,7 +1758,7 @@ function getRow(obj)
 	    }	
 	    else if(result[0]=="false")
 	    {
-		alert("Entered "+fieldname+" already exists");	
+	    	bootbox.alert("Entered "+fieldname+" already exists");	
 		isUnique="false";
 	    }		
 
@@ -1781,9 +1781,9 @@ function getRow(obj)
 				curleft = obj.offsetLeft;
 				curtop = obj.offsetTop;
 				while (obj = obj.offsetParent) 
-				{	//alert(obj.nodeName);
+				{	//bootbox.alert(obj.nodeName);
 					curleft =curleft + obj.offsetLeft;
-					curtop =curtop + obj.offsetTop; //alert(curtop);
+					curtop =curtop + obj.offsetTop; //bootbox.alert(curtop);
 				}
 			}
 			return [curleft,curtop];
@@ -1808,13 +1808,13 @@ function IsNumeric(sText)
 // Format amount round of 2 decimal point
 	function formatAmount(amount)
 	{
- 		//alert("formatAmount");
+ 		//bootbox.alert("formatAmount");
 
  		var i = parseFloat(amount);
  		
  		if(isNaN(i)) 
  		{
- 		//alert('isNaN');
+ 		//bootbox.alert('isNaN');
  		 i = 0.00; 
  		}
 		
@@ -1832,25 +1832,25 @@ function IsNumeric(sText)
 
 /* checking for duplicate account code and Function Code Combination */
 function checkForFunction_AccountCode(table,funId,glCode){ //,checkEntityDuplication){
-	//alert('inside function checkForFunction_AccountCode');
+	//bootbox.alert('inside function checkForFunction_AccountCode');
 	var funcIdtemp1,glcodeTemp1,funcIdtemp2,glcodeTemp2;
 	var tableObj = document.getElementById(table);
-	//alert("length:"+tableObj.rows.length);
+	//bootbox.alert("length:"+tableObj.rows.length);
 	
 
 	for(i=1; i<tableObj.rows.length && tableObj.rows.length>2; i++){ 
 		funcIdtemp1=getControlInBranch(tableObj.rows[i],funId);
 		glcodeTemp1=getControlInBranch(tableObj.rows[i],glCode);
 		if(funcIdtemp1!="" && glcodeTemp1!="")continue;
-		//alert('glcodeTemp1.getAttribute(id):'+ glcodeTemp1.getAttribute('id'));
-		if(glcodeTemp1.value == '') { alert("delete empty row :"+i); return false;}
+		//bootbox.alert('glcodeTemp1.getAttribute(id):'+ glcodeTemp1.getAttribute('id'));
+		if(glcodeTemp1.value == '') { bootbox.alert("delete empty row :"+i); return false;}
 		
 		for(j=i+1; j<tableObj.rows.length; j++){ 
 			funcIdtemp2=getControlInBranch(tableObj.rows[j],funId);
-			//alert("funcIdtemp1:"+funcIdtemp1.value+";;;"+"funcIdtemp2:"+funcIdtemp2.value);
+			//bootbox.alert("funcIdtemp1:"+funcIdtemp1.value+";;;"+"funcIdtemp2:"+funcIdtemp2.value);
 			glcodeTemp2=getControlInBranch(tableObj.rows[j],glCode);
 			 if((glcodeTemp1.value  == glcodeTemp2.value)  && (funcIdtemp1.value == funcIdtemp2.value)){
-				alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
+				 bootbox.alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
 				return false;
 	  		}
 	 	}
@@ -1861,10 +1861,10 @@ function checkForFunction_AccountCode(table,funId,glCode){ //,checkEntityDuplica
 }
 /* checking for duplicate account code and Function Code and tdsCode Combination */
 function checkForFunction_AccountCode_dedGrid(table,funId,glCode,tdsCode){ //,checkEntityDuplication){
-	//alert('inside function checkForFunction_AccountCode');
+	//bootbox.alert('inside function checkForFunction_AccountCode');
 	var funcIdtemp1,glcodeTemp1,funcIdtemp2,glcodeTemp2,tds1,tds2;
 	var tableObj = document.getElementById(table);
-	//alert("length:"+tableObj.rows.length);
+	//bootbox.alert("length:"+tableObj.rows.length);
 	
 
 	for(i=1; i<tableObj.rows.length && tableObj.rows.length>2; i++){ 
@@ -1872,22 +1872,22 @@ function checkForFunction_AccountCode_dedGrid(table,funId,glCode,tdsCode){ //,ch
 		glcodeTemp1=getControlInBranch(tableObj.rows[i],glCode);
 		if(funcIdtemp1!="" && glcodeTemp1!="")continue;
 		tds1=getControlInBranch(tableObj.rows[i],tdsCode);
-		//alert('glcodeTemp1.getAttribute(id):'+ glcodeTemp1.getAttribute('id'));
-		//if(glcodeTemp1.value == '') { alert("delete empty row: "+i); return false;}
+		//bootbox.alert('glcodeTemp1.getAttribute(id):'+ glcodeTemp1.getAttribute('id'));
+		//if(glcodeTemp1.value == '') { bootbox.alert("delete empty row: "+i); return false;}
 		
 		for(j=i+1; j<tableObj.rows.length; j++){ 
 			funcIdtemp2=getControlInBranch(tableObj.rows[j],funId);
-			//alert("funcIdtemp1:"+funcIdtemp1.value+";;;"+"funcIdtemp2:"+funcIdtemp2.value);
+			//bootbox.alert("funcIdtemp1:"+funcIdtemp1.value+";;;"+"funcIdtemp2:"+funcIdtemp2.value);
 			glcodeTemp2=getControlInBranch(tableObj.rows[j],glCode);
 			tds2=getControlInBranch(tableObj.rows[j],tdsCode);
 			if(tds1!=null && tds1.value!=''){
 				if((tds1.value  == tds2.value)  && (funcIdtemp1.value == funcIdtemp2.value)){
-					alert('Same tds Code & Function Name can not appear more than once...CHECK type : ' + tds1.value);
+					bootbox.alert('Same tds Code & Function Name can not appear more than once...CHECK type : ' + tds1.value);
 					return false;
 				}
 			}else{
 				if((glcodeTemp1.value  == glcodeTemp2.value)  && (funcIdtemp1.value == funcIdtemp2.value)){
-					alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
+					bootbox.alert('Same Account Code & Function Name can not appear more than once...CHECK ACCOUNT : ' + glcodeTemp1.value);
 					return false;
 				}
 			}
@@ -1918,7 +1918,7 @@ function validateNames(obj)
 			{
 			if(x.charAt(i)==regex.charAt(j))
 			{
-			alert("Please Enter only A-Z,a-z,0-9,.");
+				bootbox.alert("Please Enter only A-Z,a-z,0-9,.");
 			obj.focus();
 			return;
 			}
@@ -1950,7 +1950,7 @@ function convertDate(obj)
 	}
 	else
 	{
-		alert('Invalid date');
+		bootbox.alert('Invalid date');
 		return;
 	}	
 }
@@ -1986,7 +1986,7 @@ function validateDigitsAndDecimal(obj)
 {
 	if(isNaN(obj.value.trim()))
 	{
-		alert("Invalid Amount")
+		bootbox.alert("Invalid Amount")
 		obj.value=0;
 		obj.focus();
 	}
@@ -1994,7 +1994,7 @@ function validateDigitsAndDecimal(obj)
 	{
 		if(parseFloat(obj.value.trim())<0)
 		{
-			alert("Negetive Amount is not allowed");
+			bootbox.alert("Negetive Amount is not allowed");
 			obj.value=0;
 			obj.focus();
 		}

@@ -44,7 +44,7 @@ jQuery.noConflict();
 function makePropertyTypeMandatory() {
     var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
     if (propertyType == "select") {
-            alert("Please select category of ownership");
+            bootbox.alert("Please select category of ownership");
             jQuery('#propTypeId').focus();
             return false;
     }
@@ -532,7 +532,7 @@ function toggleFloorDetails() {
 		jQuery('tr.floordetails').show();
 	}
 	if (propType == "Apartments") {
-		alert("Please select Apartment/Complex Name");
+		bootbox.alert("Please select Apartment/Complex Name");
 	}
 }
 

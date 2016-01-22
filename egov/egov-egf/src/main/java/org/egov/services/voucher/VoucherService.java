@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -77,6 +78,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -110,12 +112,14 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
+import org.egov.services.bills.EgBillRegisterService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.Transaxtion;
@@ -123,6 +127,7 @@ import com.exilant.GLEngine.TransaxtionParameter;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
+@Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
     private static final Logger LOGGER = Logger.getLogger(VoucherService.class);
@@ -130,12 +135,14 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     protected EisCommonService eisCommonService;
     private BudgetDetailsDAO budgetDetailsDAO;
     private @Autowired AppConfigValueService appConfigValuesService;
-    @Qualifier("voucherHibDAO")
+    @Qualifier("voucherHibernateDAO")
     private VoucherHibernateDAO voucherHibDAO;
     @Autowired
     private ChartOfAccountsDAO coaDAO;
     @Autowired
     private FunctionDAO functionDAO;
+    @Autowired
+    private AssignmentService assignmentService;
     @Autowired
     private VoucherHeaderDAO voucherHeaderDAO;
     @Autowired
@@ -149,18 +156,19 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private SequenceGenerator sequenceGenerator;
     private FinancialYearHibernateDAO financialYearDAO;
 
-    public VoucherService() {
-
-    }
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
-        this.type = voucherHeader;
+        super(voucherHeader);
     }
 
     private EISServeable eisService;
     private EmployeeServiceOld employeeService;
     @Autowired
     private ScriptService scriptService;
-    private PersistenceService<EgBillregister, Long> billRegisterService;
+
+    @Autowired
+    private EgBillRegisterService egBillRegisterService;
+    @Autowired
+    private EntityManager entityManager;
 
     public Boundary getBoundaryForUser(final CVoucherHeader rv)
     {
@@ -169,9 +177,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public String getEmployeeNameForPositionId(final Position pos) throws ApplicationRuntimeException
     {
-        final Employee pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
-        final Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getId());
-        return pi.getId() + " (" + assignment.getDesignation().getName() + ")";
+        Assignment assignment = assignmentService.getAssignmentsForPosition(
+                +pos.getId(), new Date()).get(0);
+        return assignment.getEmployee().getName() + " (" + assignment.getDesignation().getName() + ")";
     }
 
     public Department getCurrentDepartment()
@@ -366,7 +374,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             if (voucherheader.getStatus() != null)
                 voucherMap.put("status", voucherheader.getStatus() == 0 ? voucherheader.getIsConfirmed() == 0 ? "UnConfirmed"
                         : "Confirmed" : voucherheader.getStatus() == 1 ? "Reversed"
-                                : voucherheader.getStatus() == 2 ? "Reversal" : "");
+                        : voucherheader.getStatus() == 2 ? "Reversal" : "");
 
             voucherList.add(voucherMap);
         }
@@ -828,7 +836,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             PersistenceService<EgfRecordStatus, Long> recordStatusSer;
             recordStatusSer = new PersistenceService<EgfRecordStatus, Long>();
             // recordStatusSer.setSessionFactory(new SessionFactory());
-            //recordStatusSer.setType(EgfRecordStatus.class);
+            // recordStatusSer.setType(EgfRecordStatus.class);
             final String code = EGovConfig.getProperty("egf_config.xml", "confirmoncreate", "", voucherHeader.getType());
             if ("N".equalsIgnoreCase(code))
                 recordStatus.setStatus(Integer.valueOf(1));
@@ -957,7 +965,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();
         for (final String desgFuncryName : list)
             if (desgFuncryName.trim().length() != 0 && !desgFuncryName.equalsIgnoreCase("END")
-            && !desgFuncryName.equalsIgnoreCase("ANYFUNCTIONARY-ANYDESG")) {
+                    && !desgFuncryName.equalsIgnoreCase("ANYFUNCTIONARY-ANYDESG")) {
                 desgFuncryMap = new HashMap<String, Object>();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Designation and Functionary  Name  = " + desgFuncryName);
@@ -991,7 +999,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             LOGGER.debug("department id = " + deptId);
         final StringBuffer query = new StringBuffer(200);
         query.append("select DISTINCT desg.name,desg.id from Designation desg , EmployeeView ev where ").
-        append(" desg.id=ev.desigId.id and ev.deptId.id = ? and ev.userMaster is not null");
+                append(" desg.id=ev.desigId.id and ev.deptId.id = ? and ev.userMaster is not null");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getAllDesgByFuncryAndDept Query : = " + query.toString());
         final List<Object[]> list = persistenceService.findAllBy(query.toString(), deptId);
@@ -1037,7 +1045,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherService | createBillForVoucherSubType | Start");
         final EgBillregister egBillregister = new EgBillregister();
-        //Fix it for basic financial type also
+        // Fix it for basic financial type also
         try {
             egBillregister.setBillstatus("APPROVED");
             EgwStatus egwstatus = null;
@@ -1116,12 +1124,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
             egBilldetailes = prepareBillDetails(egBillregister, billDetailslist, subLedgerlist, voucherHeader, egBilldetailes);
             egBillregister.setEgBilldetailes(egBilldetailes);
-            billRegisterService.applyAuditing(egBillregister);
-            billRegisterService.persist(egBillregister);
+            egBillRegisterService.applyAuditing(egBillregister);
+            egBillRegisterService.persist(egBillregister);
 
             voucherHeader.getVouchermis().setSourcePath(
                     "/EGF/voucher/journalVoucherModify-beforeModify.action?voucherHeader.id=" + voucherHeader.getId());
             update(voucherHeader);
+            entityManager.flush();
         } catch (final ValidationException e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
@@ -1193,7 +1202,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             egBilldetailes.clear();
 
             prepareBillDetails(egBillregister, billDetailslist, subLedgerlist, voucherHeader, egBilldetailes);
-            billRegisterService.update(egBillregister);
+            egBillRegisterService.update(egBillregister);
 
         } catch (final ValidationException e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1217,6 +1226,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
      * @param voucherHeader
      * @return
      */
+    @Transactional
     private Set<EgBilldetails> prepareBillDetails(final EgBillregister egBillregister,
             final List<VoucherDetails> billDetailslist,
             final List<VoucherDetails> subLedgerlist, final CVoucherHeader voucherHeader, final Set<EgBilldetails> egBilldetailes) {
@@ -1309,21 +1319,16 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         this.scriptService = scriptService;
     }
 
-    public void setBillRegisterService(
-            final PersistenceService<EgBillregister, Long> billRegisterService) {
-        this.billRegisterService = billRegisterService;
-    }
-
     public Integer getDefaultDepartment() {
         persistenceService.findAllByNamedQuery(Script.BY_NAME, "BudgetDetail.get.default.department")
-        .get(0);
+                .get(0);
         final String defaultDepartmentName = null;/*
                                                    * (String) script.eval(Script.createContext("eisCommonServiceBean",
                                                    * eisCommonService,
                                                    * "userId",Integer.valueOf(EgovThreadLocals.getUserId().trim())));
                                                    */
         if (!"".equalsIgnoreCase(defaultDepartmentName)) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName=?",
+            final Department dept = (Department) persistenceService.find("from Department where name=?",
                     defaultDepartmentName);
             if (dept != null)
                 return dept.getId().intValue();
@@ -1353,10 +1358,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public void setVoucherHelper(final VoucherHelper voucherHelper) {
         this.voucherHelper = voucherHelper;
-    }
-
-    public PersistenceService<EgBillregister, Long> getBillRegisterService() {
-        return billRegisterService;
     }
 
 }

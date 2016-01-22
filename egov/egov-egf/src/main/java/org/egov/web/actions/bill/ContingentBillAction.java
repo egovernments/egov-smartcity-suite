@@ -82,6 +82,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -143,7 +144,7 @@ public class ContingentBillAction extends BaseBillAction {
     private Department primaryDepartment;
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return super.getModel();
     }
 

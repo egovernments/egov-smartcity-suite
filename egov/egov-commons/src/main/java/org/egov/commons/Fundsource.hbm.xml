@@ -25,7 +25,7 @@
 		<property name="llevel" type="big_decimal">
 			<column name="LLEVEL" precision="22" scale="0" />
 		</property>
-		<property name="isactive" type="boolean">
+		<property name="isactive" >
 			<column name="ISACTIVE" precision="1" scale="0" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" />
@@ -34,7 +34,7 @@
 			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</property>
 		<property name="lastmodified" column="LASTMODIFIEDDATE" />
-		<property name="isnotleaf" type="boolean">
+		<property name="isnotleaf">
 			<column name="ISNOTLEAF" precision="1" scale="0" />
 		</property>
 		<many-to-one name="finInstId" class="org.egov.commons.FinancingInstitution" column="FINANCIALINSTID" />

@@ -84,7 +84,7 @@ jQuery('#submitButton')
 		.click(
 				function(e) {
 					if (jQuery('#digSignDetailsTab').find('input[type=checkbox]:checked').length == 0) {
-						alert('Please select atleast one document to sign');
+						bootbox.alert('Please select atleast one document to sign');
 						return false;
 					} else {
 						var tbl = document.getElementById("digSignDetailsTab");

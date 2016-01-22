@@ -80,6 +80,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -319,7 +320,7 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType("Payment");
         return voucherHeader;
@@ -900,31 +901,34 @@ public class PaymentAction extends BasePaymentAction {
             billregister.getEgBillregistermis().setFunction(cFunctionobj);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");
-            paymentheader = paymentService.createPayment(parameters, billList, billregister);
+	            paymentheader = paymentService.createPayment(parameters, billList, billregister);
             paymentheader.getVoucherheader().getVouchermis()
-            .setSourcePath("/EGF/payment/payment!view.action?" + PAYMENTID + "=" + paymentheader.getId());
-            getPaymentBills();
+            .setSourcePath("/EGF/payment/payment-view.action?" + PAYMENTID + "=" + paymentheader.getId());
+            paymentService.getPaymentBills(paymentheader);
             paymentheader.start().withOwner(paymentService.getPosition());
             sendForApproval();
             addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                     .getVoucherNumber() }));
-            loadApproverUser(voucherHeader.getType());
+            //loadApproverUser(voucherHeader.getType());
         } catch (final ValidationException e) {
-            loadApproverUser(voucherHeader.getType());
+           // loadApproverUser(voucherHeader.getType());
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage());
-            loadApproverUser(voucherHeader.getType());
+            
+            //loadApproverUser(voucherHeader.getType());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
+        	e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createPayment.");
+        wfitemstate="END";
         return VIEW;
     }
 
@@ -935,14 +939,17 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting sendForApproval...");
         paymentheader = getPayment();
+    //dont validate in create
+        /*
         if (paymentheader != null && paymentheader.getState() != null)
             if (!validateOwner(paymentheader.getState())) {
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", "Invalid Access"));
                 throw new ValidationException(errors);
-            }
+            }*/
         getPaymentBills();
-        if (LOGGER.isDebugEnabled())
+        //uncoment below like while implementing workflow //venky
+        /*if (LOGGER.isDebugEnabled())
             LOGGER.debug("Paymentheader==" + paymentheader.getId() + ", actionname=" + parameters.get(ACTIONNAME)[0]);
         action = parameters.get(ACTIONNAME)[0];
 
@@ -978,6 +985,10 @@ public class PaymentAction extends BasePaymentAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed sendForApproval.");
+        */
+        
+        
+        
         return VIEW;
     }
 
@@ -988,11 +999,11 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<String> getValidActions() {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getValidActions...");
-        return paymentWorkflowService.getValidActions(getPayment());
+        return null;
     }
 
     @SkipValidation
@@ -1022,7 +1033,8 @@ public class PaymentAction extends BasePaymentAction {
              * LOGGER.debug("Starting validate owner"); if(!validateOwner(paymentheader.getState())){ List<ValidationError>
              * errors=new ArrayList<ValidationError>(); errors.add(new ValidationError("exp","Invalid Access")); throw new
              * ValidationException(errors); } }
-             */loadApproverUser(voucherHeader.getType());
+             */
+        	//loadApproverUser(voucherHeader.getType());
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("defaultDept in vew : " + getDefaultDept());
@@ -1417,8 +1429,8 @@ public class PaymentAction extends BasePaymentAction {
                     userId = Integer.valueOf(parameters.get("approverUserId")[0]);
                 else
                     userId = EgovThreadLocals.getUserId().intValue();
-                paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader,
-                        paymentheader.getVoucherheader().getDescription());
+               /* paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader,
+                        paymentheader.getVoucherheader().getDescription());*/
                 addActionMessage(getMessage("payment.voucher.approved",
                         new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
                 loadApproverUser(voucherHeader.getType());

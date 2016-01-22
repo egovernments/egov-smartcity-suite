@@ -154,17 +154,17 @@
 			{
 				if(isNaN(obj.value))
 				{
-					alert('Cheque number contains alpha characters.');
+					bootbox.alert('Cheque number contains alpha characters.');
 					obj.value='';
 					return false;
 				}
 				var index = obj.id.substring(19,obj.id.length);
 				if(obj.value=='')
 					return true;
-				//alert(index);		
+				//bootbox.alert(index);		
 				if(document.getElementById('department') && document.getElementById('department').options[document.getElementById('department').selectedIndex].value==-1)
 				{
-					alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued From');
 					obj.value='';
 					return false;
 				}
@@ -184,12 +184,12 @@
 					res = res.split('~');
 					if(res[1]=='false')
 					{
-						alert('Enter valid cheque number or This Cheque number has been already used');
+						bootbox.alert('Enter valid cheque number or This Cheque number has been already used');
 						document.getElementById('newInstrumentNumber['+parseInt(res[0])+']').value='';
 					}
 			    },
 			    failure: function(o) {
-			    	alert('failure');
+			    	bootbox.alert('failure');
 			    }
 			}
 			
@@ -224,7 +224,7 @@
 	 			{
 	 				if(newChqNoObj[i].value==""||newChqNoObj[i].value==undefined)
 					{
-						alert(alertNumber);
+						bootbox.alert(alertNumber);
 						newChqNoObj[i].focus();
 						return false;
 					}
@@ -232,13 +232,13 @@
 					{
 					if(isNaN(newChqNoObj[i].value))
 					{
-					alert(alertOnlyNumber);
+					bootbox.alert(alertOnlyNumber);
 					}
 					}
 					
 					if(newChqDateObj[i].value=="" || newChqDateObj[i].value==undefined)
 					{
-					alert(alertDate);
+					bootbox.alert(alertDate);
 					newChqDateObj[i].focus();
 					return false;
 	 				}

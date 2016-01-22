@@ -69,6 +69,7 @@ public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
 
             jsonObject.addProperty("curr_demand", dCBReportObj.getCurr_demand());
             jsonObject.addProperty("arr_demand", dCBReportObj.getArr_demand());
+            jsonObject.addProperty("no_of_users", dCBReportObj.getCountofconsumerno());
             jsonObject.addProperty("total_demand", dCBReportObj.getTotal_demand());
 
             jsonObject.addProperty("curr_coll", dCBReportObj.getCurr_coll());

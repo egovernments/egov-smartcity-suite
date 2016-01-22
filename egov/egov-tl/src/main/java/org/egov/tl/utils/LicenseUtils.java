@@ -190,11 +190,8 @@ public class LicenseUtils {
 	public String findGlCodeForDemand(final EgDemand demand) {
 		String glCode = Constants.EMPTY_STRING;
 		for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
-			if (!Constants.PENALTY_CODE.equals(demandDetails
-					.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-				final StringBuilder strBuf = new StringBuilder(2000);
-				strBuf.append(" select ch.glcode from CChartOfAccounts ch, EgDemandDetails demDet where demDet.id=:demandId and demDet.egDemandReason.glcodeId.id=ch.id");
-				final Query qry = getSession().createQuery(strBuf.toString())
+			if (!Constants.PENALTY_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+				final Query qry = getSession().createQuery("select ch.glcode from CChartOfAccounts ch, EgDemandDetails demDet where demDet.id=:demandId and demDet.egDemandReason.glcodeId.id=ch.id")
 						.setLong(LicenseUtils.DEMAND_ID, demandDetails.getId());
 				glCode = (String) qry.uniqueResult();
 			}

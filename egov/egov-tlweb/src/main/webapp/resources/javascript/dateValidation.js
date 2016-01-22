@@ -51,31 +51,31 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 	var rTo;
 	var rFrom;
 	var rTF;
-	//alert("JSSSSSSSSSSSSS");
-	//alert(tdateObj.value+fdateObj.value+dateSelObj.value);
+	//bootbox.alert("JSSSSSSSSSSSSS");
+	//bootbox.alert(tdateObj.value+fdateObj.value+dateSelObj.value);
 	/*if(dateSelObj.value == "-1")
 	{
-			alert("Please select the date");
+			bootbox.alert("Please select the date");
 			dateSelObj.focus();
 			return false;
 	}*/
 
 	if((fdateObj.value == "" || tdateObj.value == "") && dateSelObj.value == "3")
 	{
-		alert("Please fill the date parameters correctly");
+		bootbox.alert("Please fill the date parameters correctly");
 		fdateObj.focus();
 		return false;
 	}
 	if(tdateObj.value == "" && dateSelObj.value == "1")
 	{
-		alert("To date is necessary");
+		bootbox.alert("To date is necessary");
 		tdateObj.focus();
 		return false;
 	}
 
 	if(fdateObj.value == ""  && dateSelObj.value == "2")
 	{
-		alert("From date is necessary");
+		bootbox.alert("From date is necessary");
 		fdateObj.focus();
 		return false;
 	}
@@ -87,7 +87,7 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		rType=validateDate(tdateObj.value);
 		if(rType==false)
 		{
-			alert('Please enter the valid To-date');
+			bootbox.alert('Please enter the valid To-date');
 			tdateObj.value="";
 			tdateObj.focus();
 			return false;
@@ -99,7 +99,7 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		rType=validateDate(fdateObj.value);
 		if(rType==false)
 		{
-			alert('Please enter the valid From-date');
+			bootbox.alert('Please enter the valid From-date');
 			fdateObj.value="";
 			fdateObj.focus();
 			return false;
@@ -111,10 +111,10 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		rFrom=validateDate(fdateObj.value);
 		rTo=validateDate(tdateObj.value);
 		
-		//alert('I m here');
+		//bootbox.alert('I m here');
 		if(rFrom==false || rTo==false)
 		{
-			alert('Please Enter Valid Date');
+			bootbox.alert('Please Enter Valid Date');
 			if(rFrom==false)
 			{
 				fdateObj.value="";
@@ -131,11 +131,11 @@ function validateDateBeforeSubmit(dateSelObj,fdateObj,tdateObj)
 		
 		else
 		{
-			//alert('I m inside F & T date');
+			//bootbox.alert('I m inside F & T date');
 			rTF=checkFdateTdate(fdateObj.value,tdateObj.value);
 			if(rTF==false)
 			{
-				alert('From date should be less than or equal to To Date');
+				bootbox.alert('From date should be less than or equal to To Date');
 				//fdateObj.value="";
 				fdateObj.focus();
 				return false;
@@ -160,14 +160,14 @@ function myFromDate(dateSelObj)
 
 	if(dateSelObj.value == "-1")
 	{
-		alert("Please select the date");
+		bootbox.alert("Please select the date");
 		dateSelObj.focus();
 		return false;
 	}
 	if(dateSelObj.value == "0")
 	{
 		
-		alert("From Date is not necessary when Date Selection is All Dates");
+		bootbox.alert("From Date is not necessary when Date Selection is All Dates");
 		dateSelObj.focus();
 		return false;
 	}
@@ -175,13 +175,13 @@ function myFromDate(dateSelObj)
 	else if(dateSelObj.value == "4")
 	{
 			
-			alert("From Date is not necessary when Date Selection is Current Date");
+		bootbox.alert("From Date is not necessary when Date Selection is Current Date");
 			dateSelObj.focus();
 			return false;
 	}
 	else if(dateSelObj.value == "1")
 	{
-			alert("From Date is not necessary when Date Selection is Before");
+		bootbox.alert("From Date is not necessary when Date Selection is Before");
 			dateSelObj.focus();
 			return false;
 		
@@ -198,28 +198,28 @@ function myToDate(dateSelObj)
 {
 	if(dateSelObj.value == "-1")
 	{
-		alert("Please select the date");
+		bootbox.alert("Please select the date");
 		dateSelObj.focus();
 		return false;
 	}
 
 	if(dateSelObj.value == "0")
 	{		
-		alert("To Date is not necessary when Date Selection is  All Dates");
+		bootbox.alert("To Date is not necessary when Date Selection is  All Dates");
 		dateSelObj.focus();
 		return false;
 	}
 	
 	else if(dateSelObj.value == "4")
 	{			
-		alert("To Date is not necessary when Date Selection is  Current Date");
+		bootbox.alert("To Date is not necessary when Date Selection is  Current Date");
 		dateSelObj.focus();
 		return false;
 	}
 	else if(dateSelObj.value == "2")
 	{
 					
-		alert("To Date is not necessary when Date Selection is After");
+		bootbox.alert("To Date is not necessary when Date Selection is After");
 		dateSelObj.focus();
 		return false;
 	}
@@ -294,9 +294,9 @@ function checkFdateTdate(fromDate,toDate)
 {
 	//ENTERED DATE FORMAT MM/DD/YYYY	
 
-	//alert('From Year'+fromDate.substr(6,4)+'To'+toDate.substr(6,4));
-	//alert('From Month'+fromDate.substr(0,2)+'To'+toDate.substr(0,2));
-	//alert('From Date'+fromDate.substr(3,2)+'To'+toDate.substr(3,2));
+	//bootbox.alert('From Year'+fromDate.substr(6,4)+'To'+toDate.substr(6,4));
+	//bootbox.alert('From Month'+fromDate.substr(0,2)+'To'+toDate.substr(0,2));
+	//bootbox.alert('From Date'+fromDate.substr(3,2)+'To'+toDate.substr(3,2));
 	
 	if(fromDate.substr(6,4) > toDate.substr(6,4))
 	{
@@ -343,10 +343,10 @@ function checkFdateTdate(fromDate,toDate)
     //SYS DATE FORMAT DD/MM/YYYY
     //ENTERED DATE FORMAT DD/MM/YYYY
     
-   //alert('ENTERED YEAR='+strValue.substr(6,4)+'YEAR='+year);
-   //alert('ENTERED MONTH='+strValue.substr(0,2)+'MONTH='+month);
-   //alert('ENTERED DATE='+strValue.substr(3,2)+'DAY='+day);
-        	//alert();
+   //bootbox.alert('ENTERED YEAR='+strValue.substr(6,4)+'YEAR='+year);
+   //bootbox.alert('ENTERED MONTH='+strValue.substr(0,2)+'MONTH='+month);
+   //bootbox.alert('ENTERED DATE='+strValue.substr(3,2)+'DAY='+day);
+        	//bootbox.alert();
     if(strValue!="")
     {
         //Check for year
@@ -403,13 +403,13 @@ function checkFdateTdate(fromDate,toDate)
 //Validates that the Date entered belongs to the givenfinancial year 
 function validateFinancialYear(financialYear, collDateObj)
 {
-    //alert('Inside validateFinancialYear'+financialYear);
+    //bootbox.alert('Inside validateFinancialYear'+financialYear);
     var collMonth = eval(collDateObj.substr(3,2));
     var collYear = eval(collDateObj.substr(8,2));
     var finYear = eval(financialYear);
-    //alert('collYear'+collYear);
-   // alert('collMonth'+collMonth);
-  //  alert('finYear'+finYear);
+    //bootbox.alert('collYear'+collYear);
+   // bootbox.alert('collMonth'+collMonth);
+  //  bootbox.alert('finYear'+finYear);
     
     //if(collMonth <= 3 && finYear == (collYear -1))
     
@@ -428,7 +428,7 @@ function validateCollDateFinYear(collDateObj)
     var collYear=eval(collDateObj.substr(6,4));
     finYear=today.getYear();
     var FinMonth=today.getMonth();
-    //alert("FinMonth"+FinMonth+"finYear"+finYear);
+    //bootbox.alert("FinMonth"+FinMonth+"finYear"+finYear);
     collMonth=eval(collDateObj.substr(3,2));
     if(collMonth>3 && collYear == finYear )
     return true;
@@ -446,14 +446,14 @@ function validateCollDateFinYear(collDateObj)
 **/
 /*function validateCollDateFinYear(strValue)
 {
-//alert("Entered validateCollectionDate() fun");
+//bootbox.alert("Entered validateCollectionDate() fun");
     var today = new Date();
     var sys_day = today.getDate();
     var sys_month = today.getMonth();
     var sys_year = today.getYear();
     
 
-//alert("Entered validateCollectionDate() fun    "+sys_month);
+//bootbox.alert("Entered validateCollectionDate() fun    "+sys_month);
 sys_month=eval(sys_month)+eval(1);
 
     var coll_year=strValue.substr(6,4);
@@ -480,7 +480,7 @@ sys_month=eval(sys_month)+eval(1);
    
    
         
-    //alert("SYS MONTH="+sys_month+" Coll_MONTH="+coll_month);
+    //bootbox.alert("SYS MONTH="+sys_month+" Coll_MONTH="+coll_month);
     if(coll_month>=4)
     {
     	//if(coll_year<sys_year)
@@ -492,7 +492,7 @@ sys_month=eval(sys_month)+eval(1);
     else if(coll_month<=3)
     {
     	//if((coll_year!=sys_year) || (coll_year!=(eval(sys_year)-eval(1))))
-    	//alert("SYS YEAR="+sys_year+" Coll_YEAR="+coll_year);
+    	//bootbox.alert("SYS YEAR="+sys_year+" Coll_YEAR="+coll_year);
     	if(coll_year!=(eval(sys_year)))
     	{
     		return false;
@@ -522,11 +522,11 @@ function validateDate(strValue)
     
     //SYS DATE FORMAT DD/MM/YYYY
     //ENTERED DATE FORMAT DD/MM/YYYY
-    alert("HIIIIIIIIIII");
+    bootbox.alert("HIIIIIIIIIII");
     
-   /* alert('ENTERED YEAR='+strValue.substr(6,4)+'YEAR='+year);
-    alert('ENTERED MONTH='+strValue.substr(0,2)+'MONTH='+month);
-    alert('ENTERED DATE='+strValue.substr(3,2)+'DAY='+day);*/
+   /* bootbox.alert('ENTERED YEAR='+strValue.substr(6,4)+'YEAR='+year);
+    bootbox.alert('ENTERED MONTH='+strValue.substr(0,2)+'MONTH='+month);
+    bootbox.alert('ENTERED DATE='+strValue.substr(3,2)+'DAY='+day);*/
 
     if(strValue!="")
     {
@@ -534,14 +534,14 @@ function validateDate(strValue)
         //If entered year is less than the current year return true
         if (strValue.substr(6,4) < year )
         {
-        	//alert('ENTERED YEAR='+strValue.substr(6,4));
-        	//alert('YEAR='+year);
+        	//bootbox.alert('ENTERED YEAR='+strValue.substr(6,4));
+        	//bootbox.alert('YEAR='+year);
             return true;
         }
         //If entered year is greater than the current year return false
         else if ( strValue.substr(6,4) > year)
         {
-            //alert('pls enter the valid date');
+            //bootbox.alert('pls enter the valid date');
             return false;
         }
         //If entered year is equal the current year return false
@@ -553,12 +553,12 @@ function validateDate(strValue)
             }
             if(strValue.substr(3,2)> (month+1))
             {
-            	//alert('pls enter the valid date');
+            	//bootbox.alert('pls enter the valid date');
                 return false;
             }
             if (strValue.substr(3,2) == (month+1) && strValue.substr(0,2)>day)
             {
-            	//alert('pls enter the valid date');
+            	//bootbox.alert('pls enter the valid date');
             	return false;
             }
             
@@ -601,11 +601,11 @@ function validateDateJS(obj)
 
      //SYS DATE FORMAT DD/MM/YYYY
     //ENTERED DATE FORMAT DD/MM/YYYY
-    //alert("HIIIIIIIIIII");
+    //bootbox.alert("HIIIIIIIIIII");
     
-   /* alert('ENTERED YEAR='+strValue.substr(6,4)+'YEAR='+year);
-    alert('ENTERED MONTH='+strValue.substr(0,2)+'MONTH='+month);
-    alert('ENTERED DATE='+strValue.substr(3,2)+'DAY='+day);*/
+   /* bootbox.alert('ENTERED YEAR='+strValue.substr(6,4)+'YEAR='+year);
+    bootbox.alert('ENTERED MONTH='+strValue.substr(0,2)+'MONTH='+month);
+    bootbox.alert('ENTERED DATE='+strValue.substr(3,2)+'DAY='+day);*/
 
 
     var strValue=obj.value;
@@ -617,14 +617,14 @@ function validateDateJS(obj)
         //If entered year is less than the current year return true
         if (strValue.substr(6,4) < year )
         {
-        	//alert('ENTERED YEAR='+strValue.substr(6,4));
-        	//alert('YEAR='+year);
+        	//bootbox.alert('ENTERED YEAR='+strValue.substr(6,4));
+        	//bootbox.alert('YEAR='+year);
             return true;
         }
         //If entered year is greater than the current year return false
         else if ( strValue.substr(6,4) > year)
         {
-            alert('pls enter the valid date');
+        	bootbox.alert('pls enter the valid date');
             obj.focus();
             return false;
         }
@@ -637,14 +637,14 @@ function validateDateJS(obj)
             }
             if(strValue.substr(3,2)> (month+1))
             {
-            	alert('pls enter the valid date');
+            	bootbox.alert('pls enter the valid date');
             	obj.focus();
                 return false;
             }
            
            if (strValue.substr(3,2) == (month+1) && strValue.substr(0,2)>day)
             {
-            	alert('pls enter the valid date');
+        	   bootbox.alert('pls enter the valid date');
             	obj.focus();
             	return false;
             }
@@ -698,7 +698,7 @@ if(dt!="" && dt!=null)
 	
 	if(invalid==true)
 	{
-		alert("Please enter the valid characters");
+		bootbox.alert("Please enter the valid characters");
 		obj.value="";
 		obj.focus();
 	}
@@ -741,7 +741,7 @@ function validateDateFormat(obj)
     	validDate=false;
     	checkDate(obj);
     	
-    	//alert("day="+day+" month="+month);
+    	//bootbox.alert("day="+day+" month="+month);
     	if(year=="0000" || year<1900 || month=="00" || day=="00" || dtStr.length!=10)
     	{
     		validDate=false;
@@ -752,23 +752,23 @@ function validateDateFormat(obj)
     		//if(year>1900 && year<=
     		leap=year%4;
  		
- 		//alert("Hi Feb LEAP="+leap);
+ 		//bootbox.alert("Hi Feb LEAP="+leap);
  		 if(month=="02")
 		 {
-		  		//alert("dffffffffffffg");
+		  		//bootbox.alert("dffffffffffffg");
 		 		feb=true;
 		 }
 
  		
  		if(leap==0 && month=="02")
     		{
-    			//alert("111111111111111111111");
+    			//bootbox.alert("111111111111111111111");
     			if(day>29)
     			{
     				valid=false;
     				feb=true;
     			}
-    			//alert("Leap Year");    			
+    			//bootbox.alert("Leap Year");    			
     			/*if(month=="2") // || month==02)
     			{
     				valid=false;
@@ -789,7 +789,7 @@ function validateDateFormat(obj)
     		{    
     			valid=false;
     			feb=true;
-    			//alert("222222222222222222");
+    			//bootbox.alert("222222222222222222");
     			/*if(month=="2")
     			{
     				valid=false;
@@ -807,7 +807,7 @@ function validateDateFormat(obj)
     		
     		if(feb==false)
     		{    	
-    			//alert("33333333333333333333333");
+    			//bootbox.alert("33333333333333333333333");
     			if(month=="03" || month=="01" || month=="05" || month=="07" || month=="08" || month=="10" || month=="12")
     			{
     				if(day>31)
@@ -833,10 +833,10 @@ function validateDateFormat(obj)
     	}
     }	
    
-   //alert("valid="+valid+" oth_valid="+oth_valid+" validDate="+validDate);
+   //bootbox.alert("valid="+valid+" oth_valid="+oth_valid+" validDate="+validDate);
     if(valid==false || oth_valid==false || validDate==false)
     {
-    	alert("Please enter the valid date in the dd/MM/yyyy Format only");
+    	bootbox.alert("Please enter the valid date in the dd/MM/yyyy Format only");
     	obj.value="";
     	obj.focus();
     	Ret=false;
@@ -858,13 +858,13 @@ function validateCollectionDate(paymentYear,collectionDate)
 	var prevYear=pmntYear.substr(0,4);
 	var nextYear=eval(prevYear)+eval(0001);
 	
-	/*alert("Payment year="+pmntYear+"CollectionYear="+collectionDate);	
-	alert("Substring Year="+prevYear+"Substring Collection="+collDate.substr(6,4));	
-	alert("Financial Year="+prevYear+"-"+nextYear);*/
+	/*bootbox.alert("Payment year="+pmntYear+"CollectionYear="+collectionDate);	
+	bootbox.alert("Substring Year="+prevYear+"Substring Collection="+collDate.substr(6,4));	
+	bootbox.alert("Financial Year="+prevYear+"-"+nextYear);*/
 	
 	if(collDate.substr(6,4) > nextYear || collDate.substr(6,4) <prevYear)
 	{
-		//alert("The collection date should be between the payment year!!");
+		//bootbox.alert("The collection date should be between the payment year!!");
 		//obj.value="";
 		return false;
 	}
@@ -873,7 +873,7 @@ function validateCollectionDate(paymentYear,collectionDate)
 	{
 		if(collDate.substr(6,4)==nextYear)
 		{
-			//alert("ENTERED NEXT YEAR");
+			//bootbox.alert("ENTERED NEXT YEAR");
 			if(collDate.substr(3,2)>3)
 			{
 				return false;
@@ -902,7 +902,7 @@ function validateCollectionDate(paymentYear,collectionDate)
 
 		if(collDate.substr(6,4)==prevYear)
 		{
-			//alert("ENTERED PREVIOUS YEAR");
+			//bootbox.alert("ENTERED PREVIOUS YEAR");
 			if(collDate.substr(3,2)<4)
 			{
 				return false;
@@ -949,10 +949,10 @@ function validateCollectionDateCurrenDate(paymentYear,collectionDate)
 	
 	var prevYear=pmntYear.substr(0,4);
 	
-	//alert("Ins Year="+paymentYear);
+	//bootbox.alert("Ins Year="+paymentYear);
 	if(isNaN(prevYear) && pmntYear!="Choose")
 	{
-		//alert("Prior");
+		//bootbox.alert("Prior");
 		prevYear="2000";
 		//return false;
 	}
@@ -967,13 +967,13 @@ function validateCollectionDateCurrenDate(paymentYear,collectionDate)
 	month=eval(month)+eval(1);
 	nextYear=year;
 	/***********************************************/
-	/*alert("Payment year="+pmntYear+"CollectionYear="+collectionDate);	
-	alert("Substring Year="+prevYear+"Substring Collection="+collDate.substr(6,4));	
-	alert("Financial Year="+prevYear+"-"+nextYear);*/
+	/*bootbox.alert("Payment year="+pmntYear+"CollectionYear="+collectionDate);	
+	bootbox.alert("Substring Year="+prevYear+"Substring Collection="+collDate.substr(6,4));	
+	bootbox.alert("Financial Year="+prevYear+"-"+nextYear);*/
 	
 	if(collDate.substr(6,4) > nextYear || collDate.substr(6,4) <prevYear)
 	{
-		//alert("The collection date should be between the payment year!!");
+		//bootbox.alert("The collection date should be between the payment year!!");
 		//obj.value="";
 		return false;
 	}
@@ -982,7 +982,7 @@ function validateCollectionDateCurrenDate(paymentYear,collectionDate)
 	{
 		if(collDate.substr(6,4)==nextYear)
 		{
-			//alert("ENTERED NEXT YEAR");
+			//bootbox.alert("ENTERED NEXT YEAR");
 			//R if(collDate.substr(3,2)>3)
 			if(collDate.substr(3,2)>month)
 			{
@@ -1013,7 +1013,7 @@ function validateCollectionDateCurrenDate(paymentYear,collectionDate)
 
 		if(collDate.substr(6,4)==prevYear)
 		{
-			//alert("ENTERED PREVIOUS YEAR");
+			//bootbox.alert("ENTERED PREVIOUS YEAR");
 			if(collDate.substr(3,2)<4)
 			{
 				return false;

@@ -77,17 +77,17 @@ function validateDates(){
 	var bankAccount = document.getElementById('accountNumber').value;
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a bank")
+		bootbox.alert("Please select a bank")
 		return false;
 	}
 	if(bankAccount == -1){
-		alert("Please select a bank account")
+		bootbox.alert("Please select a bank account")
 		return false;
 	}
 	var fromDate = document.getElementById('fromDate').value;
 	var toDate = document.getElementById('toDate').value;
 	if(fromDate == '' || toDate == ''){
-		alert("Please select the dates")
+		bootbox.alert("Please select the dates")
 		return false;
 	}
 	document.getElementById('accountNumber.id').value=bankAccount;

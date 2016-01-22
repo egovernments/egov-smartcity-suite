@@ -99,13 +99,13 @@ document.getElementById("errors").innerHTML="";
 }
 if(document.getElementById("fundId").value=="-1" )
 {
-alert("Select fund");
+bootbox.alert("Select fund");
 return false;
 }
 
 if(document.getElementById("schemeId").value==null || document.getElementById("schemeId").value=="")
 {
-   alert("Select Scheme");
+   bootbox.alert("Select Scheme");
    return false;
 }
 return true;

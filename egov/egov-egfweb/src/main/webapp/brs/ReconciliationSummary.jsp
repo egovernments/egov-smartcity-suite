@@ -67,12 +67,12 @@
 		{
 			if(document.reconciliationSummaryForm.bankId.options[document.reconciliationSummaryForm.bankId.selectedIndex].value == 0)
 			{
-				alert("Select Bank");
+				bootbox.alert("Select Bank");
 				return;
 			}
 			if(document.reconciliationSummaryForm.accId.options[document.reconciliationSummaryForm.accId.selectedIndex].value == 0)
 			{
-				alert("Select Account Number");
+				bootbox.alert("Select Account Number");
 				return;
 			}
 			
@@ -81,30 +81,30 @@
 			{
 				if(parseFloat(document.reconciliationSummaryForm.balAsPerStatement.value) < 0)
 				{
-				alert("Enter Bank Statement Balance");
+				bootbox.alert("Enter Bank Statement Balance");
 				return;
 				}
 			}
 			else
 			{
-				alert("Enter Numeric value for  Bank Statement Balance");
+				bootbox.alert("Enter Numeric value for  Bank Statement Balance");
 				return;
 			}
 			*/
 			if(document.reconciliationSummaryForm.balAsPerStatement.value == "")
 			{
-				alert("Enter Bank Statement Balance");
+				bootbox.alert("Enter Bank Statement Balance");
 				return;
 			}
 			
 			if(isNaN(parseFloat(document.reconciliationSummaryForm.balAsPerStatement.value)))
 			{
-				alert("Enter Numeric value for  Bank Statement Balance");
+				bootbox.alert("Enter Numeric value for  Bank Statement Balance");
 				return;
 			}
 			if(document.reconciliationSummaryForm.bankStatementDate.value == "")
 			{
-				alert("Enter Bank Statement Date");
+				bootbox.alert("Enter Bank Statement Date");
 				return;
 			}
 			else
@@ -112,7 +112,7 @@
 				var dat=validateDate(document.reconciliationSummaryForm.bankStatementDate.value);
 				if (!dat) 
 				{
-					alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 					document.reconciliationSummaryForm.bankStatementDate.focus();
 					return;
 				}
@@ -155,10 +155,10 @@
 function printPage()
   {
    
-  // alert(document.reconciliationSummaryForm.bankId.options[document.reconciliationSummaryForm.bankId.selectedIndex].text);
-  // alert(document.reconciliationSummaryForm.accId.options[document.reconciliationSummaryForm.accId.selectedIndex].text);
-  // alert(document.reconciliationSummaryForm.balAsPerStatement.value);
-  // alert(document.reconciliationSummaryForm.bankStatementDate.value);
+  // bootbox.alert(document.reconciliationSummaryForm.bankId.options[document.reconciliationSummaryForm.bankId.selectedIndex].text);
+  // bootbox.alert(document.reconciliationSummaryForm.accId.options[document.reconciliationSummaryForm.accId.selectedIndex].text);
+  // bootbox.alert(document.reconciliationSummaryForm.balAsPerStatement.value);
+  // bootbox.alert(document.reconciliationSummaryForm.bankStatementDate.value);
   
   
    document.getElementById('bankBranch').value=document.reconciliationSummaryForm.bankId.options[document.reconciliationSummaryForm.bankId.selectedIndex].text;

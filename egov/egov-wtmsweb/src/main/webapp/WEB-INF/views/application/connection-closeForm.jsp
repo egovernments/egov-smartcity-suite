@@ -121,9 +121,9 @@
 <script>
 
 if($('#validationMessage').val()!='')
-	alert($('#validationMessage').val());
+	bootbox.alert($('#validationMessage').val());
 function validate(){
-	//alert(document.forms[0].action);
+	//bootbox.alert(document.forms[0].action);
 
 	var radioValue = $("input[name='closeConnectionType']:checked").val();
     var ar=document.getElementsByName('closeConnectionType');

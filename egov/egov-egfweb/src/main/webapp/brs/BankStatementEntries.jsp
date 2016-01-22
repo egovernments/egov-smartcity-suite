@@ -71,7 +71,7 @@
 			document.forms("bankStatementEntriesForm").submit();
 		}
 		else
-			alert("Select Account No")
+			bootbox.alert("Select Account No")
 		
 	}
 	
@@ -81,13 +81,13 @@
 		{
 			if(document.bankStatementEntriesForm.bankId.options[document.bankStatementEntriesForm.bankId.selectedIndex].value == 0)
 			{
-				alert("Select Bank");
+				bootbox.alert("Select Bank");
 				return;
 			}
 			
 			if(document.bankStatementEntriesForm.accId.options[document.bankStatementEntriesForm.accId.selectedIndex].value == 0)
 			{
-				alert("Select Account Number");
+				bootbox.alert("Select Account Number");
 				return;
 			}
 			var table= document.getElementById("gridBankEntry");
@@ -95,13 +95,13 @@
 			{
 				if(getControlInBranch(table.rows[i],'refNo').value=="")
 				{
-					alert("Enter Reference No:");
+					bootbox.alert("Enter Reference No:");
 					getControlInBranch(table.rows[i],'refNo').focus();
 					return;
 				}
 				if(getControlInBranch(table.rows[i],'type').options[getControlInBranch(table.rows[i],'type').selectedIndex].value == 0)
 				{
-					alert("Select Type");
+					bootbox.alert("Select Type");
 					return;
 				}
 				var val=getControlInBranch(table.rows[i],'entrydate').value;
@@ -110,26 +110,26 @@
 					var dat=validateDate(val);
 					if (!dat) 
 					{
-						alert('Invalid date format : Enter Date as dd/mm/yyyy');
+						bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 						getControlInBranch(table.rows[i],'entrydate').focus();
 						return;
 					}
 				}
 				else
 				{	
-					alert("Enter Date");
+					bootbox.alert("Enter Date");
 					getControlInBranch(table.rows[i],'entrydate').focus();
 					return;
 				}
 				if(getControlInBranch(table.rows[i],'amount').value=="")
 				{
-					alert("Enter Amount");
+					bootbox.alert("Enter Amount");
 					getControlInBranch(table.rows[i],'amount').focus();
 					return;
 				}
 				if(getControlInBranch(table.rows[i],'remarks').value=="")
 				{
-					alert("Enter Remarks");
+					bootbox.alert("Enter Remarks");
 					getControlInBranch(table.rows[i],'remarks').focus();
 					return;
 				}
@@ -137,12 +137,12 @@
 				{
 					if(getControlInBranch(table.rows[i],'accountCodeId').options[getControlInBranch(table.rows[i],'accountCodeId').selectedIndex].value == 0)
 					{
-						alert("Select Account Code");
+						bootbox.alert("Select Account Code");
 						return;
 					}
 					if(document.bankStatementEntriesForm.fundId.options[document.bankStatementEntriesForm.fundId.selectedIndex].value == 0)
 					{
-						alert("Select Fund ");
+						bootbox.alert("Select Fund ");
 						return;
 					}
 					
@@ -192,7 +192,7 @@
 
 		if(lastRow ==1)
 		{
-			 alert("This row can not be deleted");
+			bootbox.alert("This row can not be deleted");
 			return false;
 		 }
 		else
@@ -233,7 +233,7 @@
 		var target="<%=(request.getAttribute("alertMessage"))%>";
 		if(target!="null")
 		{
-			alert("<%=request.getAttribute("alertMessage")%>");
+			bootbox.alert("<%=request.getAttribute("alertMessage")%>");
 			<%	
 			if(request.getAttribute("alertMessage") != null)
 			{
@@ -327,7 +327,7 @@
 	function highlight(obj)
 	{
 		if(!obj.selectedIndex == 0)
-		alert("cfg");
+			bootbox.alert("cfg");
 		
 	}
 	</script>

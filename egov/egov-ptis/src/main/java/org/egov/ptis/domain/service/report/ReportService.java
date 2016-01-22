@@ -243,7 +243,7 @@ public class ReportService {
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         query.setString("service", PTMODULENAME);
         if (StringUtils.isNotBlank(collectionMode)) {
-            query.setLong("mode", Long.valueOf(collectionMode));
+            query.setString("mode", collectionMode);
         }
         if (StringUtils.isNotBlank(collectionOperator)) {
             query.setLong("operator", Long.valueOf(collectionOperator));

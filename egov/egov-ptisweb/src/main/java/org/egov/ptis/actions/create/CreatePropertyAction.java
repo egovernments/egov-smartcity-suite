@@ -1170,7 +1170,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProperty.setUpicNo(assessmentNo);
         basicProperty.setOldMuncipalNum(upicNo);
-        basicProperty.setAssessmentdate(new Date());
         try {
             addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
                     basicProperty.getPropertyMutationMaster());
@@ -1182,6 +1181,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
+        basicProperty.setAssessmentdate(propCompletionDate);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
         // basicPropertyService.applyAuditing(property);
         basicPropertyService.persist(basicProperty);

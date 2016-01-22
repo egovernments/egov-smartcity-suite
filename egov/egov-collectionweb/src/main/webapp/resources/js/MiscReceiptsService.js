@@ -49,15 +49,15 @@
         	
         	var path = '/collection';
         	
-        	var url1 = path+"/receipts/ajaxReceiptCreate!ajaxFinMiscDtlsByService.action?serviceId="+service+"&deptId="+dept;
+        	var url1 = path+"/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService.action?serviceId="+service+"&deptId="+dept;
         	var transaction = YAHOO.util.Connect.asyncRequest('POST', url1,loadMiscDetails, null);
         	
     		
-        	var url2 = path+"/receipts/ajaxReceiptCreate!ajaxFinAccDtlsByService.action";
+        	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
         	makeJSONCall(["functionIdDetail","functionDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
         	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
         
-        	var url3 = path+"/receipts/ajaxReceiptCreate!ajaxFinSubledgerByService.action";
+        	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
         	makeJSONCall(["subledgerCode","glcodeId","detailTypeId","detailTypeName","detailCode","detailKeyId",
         	"detailKey","amount"],url3,{serviceId:service,deptId:dept},loadFinSubledgerSuccessHandler,loadFinSubledgerFailureHandler);
         	
@@ -77,20 +77,20 @@ success: function(o) {
 						 setFundId();
 				}
 				if(null != dom.get('schemeId') ){
-						var url= "/EGF/voucher/common!ajaxLoadSchemes.action";
+						var url= "/collection/receipts/ajaxReceiptCreate-ajaxLoadSchemes.action";
 						var fundId = dom.get('fundId').value;
         				makeJSONCall(["Text","Value"],url,{fundId:miscArray[0]},schemeDropDownSuccessHandler,schemeDropDownFailureHandler);
 				}
 				if(null != dom.get('subschemeId')  ){
 
-						var url= "/EGF/voucher/common!ajaxLoadSubSchemes.action";
+						var url= "/collection/receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action";
 						var schemeId = dom.get('schemeId').value;
         				makeJSONCall(["Text","Value"],url,{schemeId:miscArray[1]},subschemeDropDownSuccessHandler,subschemeDropDownFailureHandler);
 						
 				}
 				
 				if(null != dom.get('fundSourceId') ){
-						var url= "/EGF/voucher/common!ajaxLoadFundSource.action";
+						var url= "/EGF/voucher/common-ajaxLoadFundSource.action";
 						var subschemeId = dom.get('subschemeId').value;
         				makeJSONCall(["Text","Value"],url,{subSchemeId:miscArray[2]},fundsourceDropDownSuccessHandler,fundsourceDropDownFailureHandler);
 		
@@ -101,10 +101,6 @@ success: function(o) {
 				}
 				
 		}
-		
-    },
-    failure: function(o) {
-    	alert('failure');
     }
 }
 
@@ -127,7 +123,7 @@ schemeDropDownSuccessHandler=function(req,res){
 }
 
 schemeDropDownFailureHandler=function(){
-  alert('failure while loading scheme drop down');
+  bootbox.alert('failure while loading scheme drop down');
 }
 
 
@@ -149,7 +145,7 @@ subschemeDropDownSuccessHandler=function(req,res){
 }
 
 subschemeDropDownFailureHandler=function(){
-  alert('failure while loading sub scheme drop down');
+  bootbox.alert('failure while loading sub scheme drop down');
 }
 
 
@@ -171,7 +167,7 @@ fundsourceDropDownSuccessHandler=function(req,res){
 }
 
 fundsourceDropDownFailureHandler=function(){
-  alert('failure while loading fundource drop down');
+  bootbox.alert('failure while loading fundource drop down');
 }
 
 
@@ -220,7 +216,7 @@ loadFinAccSuccessHandler=function(req,res){
 		 document.getElementById('totalcramount').value=totalcramt;
     }
  loadFinAccFailureHandler=function(){
-  alert('failure');
+  bootbox.alert('unable to load Function');
 }
 
 
@@ -270,5 +266,5 @@ loadFinSubledgerSuccessHandler=function(req,res){
 }
 
  loadFinSubledgerFailureHandler=function(){
-  alert('failure');
+  bootbox.alert('Unable to load Sub Ledger');
 }

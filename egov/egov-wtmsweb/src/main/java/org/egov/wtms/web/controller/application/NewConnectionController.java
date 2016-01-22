@@ -404,7 +404,7 @@ public class NewConnectionController extends GenericConnectionController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("cityName", waterTaxUtils.getCityName());
+        model.addAttribute("cityName", waterTaxUtils.getMunicipalityName());
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));

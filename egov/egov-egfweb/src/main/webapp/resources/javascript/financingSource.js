@@ -76,7 +76,7 @@ success: function(o) {
 		
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function calcPercAmt(){
@@ -104,7 +104,7 @@ var callbackSrcAmount = {
 				
 		    },
 		    failure: function(o) {
-		    	alert('failure');
+		    	bootbox.alert('failure');
 		    }
 }
 function calcSrcAmtPercAmt(){

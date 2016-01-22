@@ -396,7 +396,7 @@ function printVoucher(){
 		{
 			if(obj.value.length>1024)
 			{
-				alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+				bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 				obj.value = obj.value.substring(1,1024);
 			}
 		}
@@ -425,7 +425,7 @@ function printVoucher(){
 			{
 				if(parseFloat(document.getElementById('paymentAmountspan').innerHTML)>parseFloat(document.getElementById('balance').innerHTML))
 				{
-					alert('Insufficient bank balance');
+					bootbox.alert('Insufficient bank balance');
 					return false;
 				}
 			}

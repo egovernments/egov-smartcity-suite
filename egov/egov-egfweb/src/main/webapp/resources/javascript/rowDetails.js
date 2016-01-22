@@ -42,7 +42,7 @@
 				var glObj= PageManager.DataService.getControlInBranch(trObj,ctrlName);
 				var filter=glObj.value;
 				if(!filter){
-					alert("select account code first");
+					bootbox.alert("select account code first");
 					return;
 				} 
 				var oldList=getOldList(trObj.rowIndex);
@@ -156,18 +156,18 @@
 				if(gridObj1[0][ii]=='cv_fromFunctionCodeId')
 					funIdx=ii;
 			}
-			if(funIdx==null){ alert("functionId if not retrieved"); return false; }
+			if(funIdx==null){ bootbox.alert("functionId if not retrieved"); return false; }
 			for(var i=1;i<gridObj1.length;i++)
 			{
 			 for(var j=1;j<entityGridObj1.length;j++)
 			  {
 				if(entityGridObj1[j][4]!=null){
-					//alert("ddd:"+PageManager.DataService.getControlInBranch(gridObj1[0],"cv_fromFunctionCodeId"));
+					//bootbox.alert("ddd:"+PageManager.DataService.getControlInBranch(gridObj1[0],"cv_fromFunctionCodeId"));
 				    if((gridObj1[i][2]==entityGridObj1[j][3]) && (gridObj1[i][funIdx]==entityGridObj1[j][4]))
-						dc.grids['entities_grid'][j][3]=i; //alert(i+"<--if:-->"+dc.grids['entities_grid'][j][3]);
+						dc.grids['entities_grid'][j][3]=i; //bootbox.alert(i+"<--if:-->"+dc.grids['entities_grid'][j][3]);
 				}else{
 					if(gridObj1[i][2]==entityGridObj1[j][3])
-						     dc.grids['entities_grid'][j][3]=i; //alert("else");
+						     dc.grids['entities_grid'][j][3]=i; //bootbox.alert("else");
 				}
 			  }	
 			}

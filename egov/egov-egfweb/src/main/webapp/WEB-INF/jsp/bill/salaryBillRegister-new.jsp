@@ -151,7 +151,7 @@
 		var close = '<s:property value="close"/>';
 		var message = '<s:property value="message"/>';
 		if(message!=""){
-			alert(message);
+			bootbox.alert(message);
 		}
 		if(close=='true'){
 			window.close();

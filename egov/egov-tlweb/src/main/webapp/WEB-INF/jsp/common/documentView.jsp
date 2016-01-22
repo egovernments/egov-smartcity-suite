@@ -47,9 +47,9 @@
 </script>
 <div class="col-sm-12 view-content header-color hidden-xs">
 	<div class="col-sm-1 table-div-column"><s:text name="doctable.sno" /></div>
-    <div class="col-sm-5 table-div-column"><s:text name="doctable.docname" /></div>
-    <div class="col-sm-3 table-div-column"><s:text name="doctable.checklist"/></div>
-    <div class="col-sm-3 table-div-column"><s:text name="doctable.attach.doc" /></div>	
+    <div class="col-sm-5 table-div-column text-center"><s:text name="doctable.docname" /></div>
+    <div class="col-sm-3 table-div-column text-center"><s:text name="doctable.checklist"/></div>
+    <div class="col-sm-3 table-div-column text-center"><s:text name="doctable.attach.doc" /></div>	
 </div>
 <s:iterator value="model.documents" status="status" var="document">
 	<div class="form-group">

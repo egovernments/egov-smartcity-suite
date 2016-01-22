@@ -565,10 +565,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     addActionError(getText("mandatory.guardian"));
             }
 
-        if (getMutationId() != null
-                && !(userDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) || userDesignation
-                        .equalsIgnoreCase(SENIOR_ASSISTANT)) && null != propertyMutation
-                && !propertyMutation.getState().getValue().equals(WFLOW_ACTION_NEW)) {
+        if (getMutationId() != null && null != propertyMutation
+                && propertyMutation.getState().getValue().equals(WF_STATE_BILL_COLLECTOR_APPROVED)) {
             if (propertyMutation.getMutationFee() == null)
                 addActionError(getText("mandatory.mutationFee"));
             else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)

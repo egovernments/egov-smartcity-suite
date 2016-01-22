@@ -216,13 +216,13 @@ function onbodyload(){
 	if(result == 'success'){
 	var voucherNumber = '<s:property value='%{voucherHeader.voucherNumber}'/>' ;
 		if(saveMode == 'saveclose'){
-			alert("Payinslip voucher created sucessfully with voucher number =  "+voucherNumber);
+			bootbox.alert("Payinslip voucher created sucessfully with voucher number =  "+voucherNumber);
 				window.close();
 		} else if(saveMode == 'saveview'){
-				alert("Payinslip voucher created sucessfully with voucher number =  "+voucherNumber );
+				bootbox.alert("Payinslip voucher created sucessfully with voucher number =  "+voucherNumber );
 				window.open('../voucher/preApprovedVoucher!loadvoucherview.action?vhid=<s:property value='%{voucherHeader.id}'/>','Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}else if(saveMode=='savenew'){
-				alert("Payinslip voucher created sucessfully with voucher number =  "+voucherNumber );
+				bootbox.alert("Payinslip voucher created sucessfully with voucher number =  "+voucherNumber );
 				document.forms[0].action = "${pageContext.request.contextPath}/contra/payInSlip!newform.action";
 				document.forms[0].submit();
 			}

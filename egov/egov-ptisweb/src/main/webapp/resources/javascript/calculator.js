@@ -91,7 +91,7 @@ function newCalculator()
 				m_totalamtpaid +=  arrearsTotDmd;
 				document.payment.arrearsbalance.value ="0.00";
 				collection_curr = collection_curr - (arrearsTotDmd - arrCollection);
-				//alert('here in if 1'+m_totalamtpaid);
+				//bootbox.alert('here in if 1'+m_totalamtpaid);
 				
 			 }
 			 else if((collection_curr < arrearsTotDmd - arrCollection) && (arrearsTotDmd - arrCollection > 0))
@@ -100,7 +100,7 @@ function newCalculator()
 				m_totalamtpaid +=  collection_curr + arrCollection;//add past 
 				document.payment.arrearsbalance.value = roundoff(arrearsTotDmd-(collection_curr + arrCollection));
 				collection_curr = 0;
-				//alert('here in else1 '+m_totalamtpaid);
+				//bootbox.alert('here in else1 '+m_totalamtpaid);
 			 }
 			 //here v r handling the case where arrearsTotDmd is wrong. calculation in the whole function depends on Dmds but 
 			 //though when arrearsTotDmd is wrong amt shuold be collected towards arrears.
@@ -111,7 +111,7 @@ function newCalculator()
 				m_totalamtpaid +=  arrCollection + arrBalance;//past arrears col acts as arrearsdmd here 
 				document.payment.arrearsbalance.value = "0.00";
 				collection_curr = collection_curr - (arrBalance);
-				//alert('here in if 2'+m_totalamtpaid);
+				//bootbox.alert('here in if 2'+m_totalamtpaid);
 			 }
 			 else if(arrCollection > arrearsTotDmd && collection_curr < (arrBalance))
 			 {
@@ -128,7 +128,7 @@ function newCalculator()
 				m_totalamtpaid +=arPnltyDmd;
 				document.payment.arrearspenaltybalance.value ="0.00";
 				collection_curr = collection_curr - (arPnltyDmd - arrPnltyColn);
-				//alert('here in if 3'+m_totalamtpaid);
+				//bootbox.alert('here in if 3'+m_totalamtpaid);
 				
 			 }
 			 else
@@ -147,7 +147,7 @@ function newCalculator()
 				m_totalamtpaid += curPnltydmd;
 				document.payment.currentpenaltybalance.value ="0.00";
 				collection_curr	=	collection_curr - (curPnltydmd - curPnltyColn);
-				//alert('here in if 4'+m_totalamtpaid);
+				//bootbox.alert('here in if 4'+m_totalamtpaid);
 			 }
 			 else
 			 {
@@ -172,7 +172,7 @@ function newCalculator()
 				m_totalamtpaid += collection_curr + curPtColn;//earlier function not used to deduct curPtColn here
 				document.payment.currentpaymentbalance.value = roundoff(curDmdPt-(collection_curr + curPtColn)) ;
 				collection_curr	= 0;
-				//alert('here in else 5'+m_totalamtpaid);
+				//bootbox.alert('here in else 5'+m_totalamtpaid);
 			 }
 
 			 //Fianally lets calc the Totbalance bal amt is got from adding up all bals
@@ -184,10 +184,10 @@ function newCalculator()
 			 }
 			 else //normal case
 			 {
-			 	 //alert('totalDmdAmt'+roundoff(totalDmdAmt));
-			 	// alert('m_totalamtpaid '+roundoff(m_totalamtpaid));
-			 	// alert('collection_curr '+roundoff(collection_curr));
-			 	// alert('Balance '+roundoff(totalDmdAmt - m_totalamtpaid - collection_curr));
+			 	 //bootbox.alert('totalDmdAmt'+roundoff(totalDmdAmt));
+			 	// bootbox.alert('m_totalamtpaid '+roundoff(m_totalamtpaid));
+			 	// bootbox.alert('collection_curr '+roundoff(collection_curr));
+			 	// bootbox.alert('Balance '+roundoff(totalDmdAmt - m_totalamtpaid - collection_curr));
 			 	 document.payment.totalbalance.value =  roundoff(totalDmdAmt - m_totalamtpaid - collection_curr);
 			 	 
 		         }
@@ -205,7 +205,7 @@ function newCalculator()
 		 if(document.payment.totalbalance.value < 0)
 		 {
 			//document.payment.totalbalance.value =  roundoff(totBal - collection_curr);
-			alert('Balance should not be Negative');
+			bootbox.alert('Balance should not be Negative');
 			document.payment.totalbalance.value = "";
 		 }
 	}
@@ -280,16 +280,16 @@ function paymentloadForPastYrPayment()
 }
 function serChargeCalc()
 {
-	//alert('Hii');
+	//bootbox.alert('Hii');
 	
 	if(document.payment.totalcollection.value != "" && document.payment.totalcollection.value != 0.00)
 	{
 		var totColAmt = eval(document.payment.totalcollection.value);
-		//alert('hi'+totColAmt);
+		//bootbox.alert('hi'+totColAmt);
 		var serCharge = roundoff(eval(totColAmt*0.0175));
-		//alert('hi'+serCharge);
+		//bootbox.alert('hi'+serCharge);
 		var grandTot = roundoff(totColAmt+eval(serCharge));
-		//alert('hi'+grandTot);
+		//bootbox.alert('hi'+grandTot);
 		if(confirm('For Debit/Credit Card Payment BankServiceCharge Applicable is : Rs.'+serCharge+'                                                                                                                                     Total Amount Payable is : Rs. '+grandTot+""))
 		{
 			 return true;

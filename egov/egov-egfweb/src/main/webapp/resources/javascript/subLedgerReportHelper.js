@@ -79,7 +79,7 @@ function openEntitySearch()
 		var	url = "../voucher/common!searchEntites.action?accountDetailType="+detailtypeid;
 		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
-		alert("Select the Type.");
+		bootbox.alert("Select the Type.");
 	}
 }
 
@@ -95,7 +95,7 @@ function popupCallback(arg0, srchType) {
 		}
 		else
 		{
-			alert("Invalid entity selected.");
+			bootbox.alert("Invalid entity selected.");
 			document.getElementById('accEntityList').value="";
 			document.getElementById('accEntityKey').value="";
 			document.getElementById('entityName').value="";
@@ -147,7 +147,7 @@ function callEntity() {
 		var	url = "../voucher/common!searchEntites.action?accountDetailType="+detailtypeid;
 		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
-		alert("Select the Type.");
+		bootbox.alert("Select the Type.");
 	}
 }    
 function autocompletecode(obj,eventObj)
@@ -230,7 +230,7 @@ function afterRefreshPage(dc)
 	}
 	if(dc.values['reportCodeFailed'])
 	{
-		alert(dc.values['reportCodeFailed']);
+		bootbox.alert(dc.values['reportCodeFailed']);
 	}
 	PageManager.DataService.removeQueryField('startDate');
 	PageManager.DataService.removeQueryField('endDate');
@@ -390,7 +390,7 @@ String.prototype.trim = function () {
 
 function autocompleteEntities1(obj,myEvent)
 {
-	//alert('autocomplete');
+	//bootbox.alert('autocomplete');
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 

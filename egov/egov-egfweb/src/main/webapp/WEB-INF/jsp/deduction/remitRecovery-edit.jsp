@@ -68,7 +68,7 @@ function validateFund(){
 	var fund = document.getElementById('fundId').value;
 	var bank = document.getElementById('bank');
 	if(fund == -1 && bank.options.length==1){
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	return true;
@@ -102,7 +102,7 @@ function populateNarration(accnumObj){
 function populateAvailableBalance(accnumObj){
 	if(document.getElementById('voucherDate').value=='')
 	{
-		alert("Please Select the Voucher Date!!");
+		bootbox.alert("Please Select the Voucher Date!!");
 		accnumObj.options.value=-1;
 		return;
 	}
@@ -115,7 +115,7 @@ function populateAvailableBalance(accnumObj){
 
 var callback = {
 		success: function(o){
-	        alert(o.responseText.value);
+	        bootbox.alert(o.responseText.value);
 			document.getElementById('availableBalance').value=o.responseText;
 			},
 			failure: function(o) {
@@ -148,7 +148,7 @@ success: function(o) {
 		document.getElementById('accnumnar').value= o.responseText;
 		},
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -156,7 +156,7 @@ function checkLength(obj)
 {
 	if(obj.value.length>1024)
 	{
-		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,1024);
 	}
 }
@@ -178,7 +178,7 @@ function validateApproveUser(name,value){
 	document.getElementById("actionName").value= name;
 <s:if test="%{wfitemstate !='END'}">
 	 if( (value == 'Approve' || value=='Send for Approval' || value == 'Forward' || value == 'Save And Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-		alert("Please Select the user");
+		bootbox.alert("Please Select the user");
 		return false;
 	}
 </s:if>
@@ -213,7 +213,7 @@ function printVoucher(){
 				{
 
 				var insuffiecientBankBalance ='<s:text name="insuffiecientBankBalance"/>';
-					alert(insuffiecientBankBalance);
+					bootbox.alert(insuffiecientBankBalance);
 					return false;
 				}
 				}
@@ -533,7 +533,7 @@ function printVoucher(){
 					onclick="javascript:window.close()" class="button" />
 			</div>
 			<script type="text/javascript">
-	//alert('<s:property value="fund.id"/>');                               
+	//bootbox.alert('<s:property value="fund.id"/>');                               
 	calcTotalForPayment();
 	</script>
 		</s:push>

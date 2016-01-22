@@ -1,55 +1,43 @@
-
 <!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+   accountability and the service delivery of the government  organizations.
 
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
-        <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
-        <script type="text/javascript" src="/egi/commonyui/yui2.7/yuiloader/yuiloader-min.js"></script>
-        <script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
-        <script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
+    Copyright (C) <2015>  eGovernments Foundation
 
-        <script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
-        <script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
-        <script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
-        <script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/MiscReceipts.js"></script>        
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/MiscReceiptsService.js"></script>   
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceipts.js?rnd=${app_release_no}"></script>        
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceiptsService.js?rnd=${app_release_no}"></script>   
 <style type="text/css">
     #codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
     #codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -145,19 +133,21 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
+    document.getElementById("voucherDate").disabled=true;
     if(document.getElementById("deptId")!=null){
         document.getElementById("deptId").disabled=true;
     }
+    document.getElementById("rebateDetails").style.display="none";
     loadDropDownCodes();
     loadDropDownRebateCodes();
     loadDropDownCodesFunction();
     checkData();
     updatetotalAmount();
-    document.getElementById('paidBy').readOnly=true;
+   // document.getElementById('paidBy').readOnly=true;
     check();
-    var paidby = '<s:property value="%{paidBy}"/>';
+    /* var paidby = '<s:property value="%{paidBy}"/>';
     paidby = paidby.replace("\'","'");
-    document.getElementById('paidBy').value=paidby;
+    document.getElementById('paidBy').value=paidby; */
 }
 function checkfund()
 {
@@ -354,6 +344,17 @@ var valid=true;
                 }
                 
             </s:if>
+
+            if(null != document.getElementById('serviceCategoryid') && document.getElementById('serviceCategoryid').value == -1){
+
+                document.getElementById("receipt_error_area").innerHTML+='<s:text name="error.select.service.category" />'+ "<br>";
+                valid=false;
+            }
+            if(null != document.getElementById('serviceId') && document.getElementById('serviceId').value == -1){
+
+                document.getElementById("receipt_error_area").innerHTML+='<s:text name="error.select.service.type" />'+ "<br>";
+                valid=false;
+            }
             
             
         
@@ -371,12 +372,12 @@ var totaldbamt=0,totalcramt=0;
                 
     var makeCreditDetailTable = function() {
         var creditDetailColumns = [
-            {key:"functionid",hidden:true,width:10, formatter:createTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".functionIdDetail","hidden",VOUCHERCREDITDETAILTABLE)},
-            {key:"function",label:'Function',width:90, formatter:createTextFieldFormatterForFunctionCredit(VOUCHERCREDITDETAILLIST,".functionDetail",VOUCHERCREDITDETAILTABLE)},
+            {key:"functionid",hidden:true,width:0, formatter:createTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".functionIdDetail","hidden",VOUCHERCREDITDETAILTABLE)},
+            {key:"function",label:'Function',minWidth:90, formatter:createTextFieldFormatterForFunctionCredit(VOUCHERCREDITDETAILLIST,".functionDetail",VOUCHERCREDITDETAILTABLE)},
             {key:"glcodeid",hidden:true,width:10, formatter:createTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".glcodeIdDetail","hidden",VOUCHERCREDITDETAILTABLE)},
-            {key:"accounthead", label:'Account Head <span class="mandatory">*</span>',formatter:createLongTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".accounthead",VOUCHERCREDITDETAILTABLE)},               
+            {key:"accounthead", label:'Account Head <span class="mandatory"></span>',formatter:createLongTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".accounthead",VOUCHERCREDITDETAILTABLE)},               
             {key:"glcode",label:'Account Code ', formatter:createTextFieldFormatterCredit(VOUCHERCREDITDETAILLIST,".glcodeDetail","text",VOUCHERCREDITDETAILTABLE)},
-            {key:"creditamount",label:'Credit Amount (Rs.)', formatter:createAmountFieldFormatterRebate(VOUCHERCREDITDETAILLIST,".creditAmountDetail","updateCreditAmount()",VOUCHERCREDITDETAILTABLE)},
+            {key:"creditamount",label:'Amount (Rs.)', formatter:createAmountFieldFormatterRebate(VOUCHERCREDITDETAILLIST,".creditAmountDetail","updateCreditAmount()",VOUCHERCREDITDETAILTABLE)},
             {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
             {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
         ];
@@ -403,7 +404,7 @@ var totaldbamt=0,totalcramt=0;
                     check();
                 }
                 else{
-                    alert("This row can not be deleted");
+                    bootbox.alert("This row can not be deleted");
                 }
             }
             
@@ -464,10 +465,10 @@ var totaldbamt=0,totalcramt=0;
     
     var makeRebateDetailTable = function() {
         var rebateDetailColumns = [ 
-            {key:"functionid",hidden:true,width:10, formatter:createTextFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".functionIdDetail","hidden",VOUCHERREBATEDETAILTABLE)},
-            {key:"function",label:'Function ',width:90, formatter:createTextFieldFormatterForFunctionRebate(VOUCHERREBATEDETAILLIST,".functionDetail",VOUCHERREBATEDETAILTABLE)},
+            {key:"functionid",hidden:true,width:0, formatter:createTextFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".functionIdDetail","hidden",VOUCHERREBATEDETAILTABLE)},
+            {key:"function",label:'Function ',minWidth:90, formatter:createTextFieldFormatterForFunctionRebate(VOUCHERREBATEDETAILLIST,".functionDetail",VOUCHERREBATEDETAILTABLE)},
             {key:"glcodeid",hidden:true,width:10, formatter:createTextFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".glcodeIdDetail","hidden",VOUCHERREBATEDETAILTABLE)},
-            {key:"accounthead", label:'Account Head <span class="mandatory">*</span>',formatter:createLongTextFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".accounthead",VOUCHERREBATEDETAILTABLE)},               
+            {key:"accounthead", label:'Account Head <span class="mandatory"></span>',formatter:createLongTextFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".accounthead",VOUCHERREBATEDETAILTABLE)},               
             {key:"glcode",label:'Account Code ', formatter:createTextFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".glcodeDetail","text",VOUCHERREBATEDETAILTABLE)},
             {key:"debitamount",label:'Debit Amount (Rs.)', formatter:createAmountFieldFormatterRebate(VOUCHERREBATEDETAILLIST,".debitAmountDetail","updateDebitAmount()",VOUCHERREBATEDETAILTABLE)}, 
             {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
@@ -496,7 +497,7 @@ var totaldbamt=0,totalcramt=0;
                     check();
                 }
                 else{
-                    alert("This row can not be deleted");
+                    bootbox.alert("This row can not be deleted");
                 }
             }
             
@@ -571,10 +572,10 @@ var totaldbamt=0,totalcramt=0;
     var makeSubLedgerTable = function() {
         var subledgerColumns = [ 
             {key:"glcode",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".subledgerCode","hidden")},
-            {key:"glcode.id",label:'Account Code <span class="mandatory">*</span>', formatter:createDropdownFormatterCode(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+            {key:"glcode.id",label:'Account Code <span class="mandatory"></span>', formatter:createDropdownFormatterCode(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
             {key:"detailTypeName",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".detailTypeName","hidden")},
-            {key:"detailType.id",label:'Type <span class="mandatory">*</span>', formatter:createDropdownFormatterDetail(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-            {key:"detailCode",label:'Code <span class="mandatory">*</span>',formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
+            {key:"detailType.id",label:'Type <span class="mandatory"></span>', formatter:createDropdownFormatterDetail(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+            {key:"detailCode",label:'Code <span class="mandatory"></span>',formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
             {key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatter(SUBLEDGERLIST,".detailKeyId")},
             {key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatter(SUBLEDGERLIST,".detailKey","")},
             {key:"amount",label:'Amount (Rs.)', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
@@ -601,7 +602,7 @@ var totaldbamt=0,totalcramt=0;
                     }
                 }
                 else{
-                    alert("This row can not be deleted");
+                    bootbox.alert("This row can not be deleted");
                 }
             }        
         });
@@ -642,17 +643,17 @@ var totaldbamt=0,totalcramt=0;
  
      <tr>
           <td width="4%" class="bluebox2">&nbsp;</td>
-         <td width="21%" class="bluebox2"><s:text name="miscreceipt.voucher.date"/><span class="mandatory">*</span></td>
+         <td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptdate"/><span class="mandatory"/></td>
                   <s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/>
           <td width="24%" class="bluebox2">
                 <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-                <img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-                </a><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
+               <!--  <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;" >
+                <img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
+                </a> --><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
           </td>
                
            <s:if test="%{shouldShowHeaderField('field')}">
-           <td width="21%" class="bluebox2"><s:text name="miscreceipt.field"/><s:if test="%{isFieldMandatory('field')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+           <td width="21%" class="bluebox2"><s:text name="miscreceipt.field"/><s:if test="%{isFieldMandatory('field')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
           <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.fieldList" listKey="id" listValue="name"  /> </td>
             </s:if>
            <s:else>
@@ -660,7 +661,7 @@ var totaldbamt=0,totalcramt=0;
             </s:else>
          
            <s:if test="%{shouldShowHeaderField('vouchernumber')}">
-           <td width="21%" class="bluebox2"><s:text name="miscreceipt.voucher.number"/><span class="mandatory">*</span></td>
+           <td width="21%" class="bluebox2"><s:text name="miscreceipt.voucher.number"/><span class="mandatory"/></td>
         <td width="30%" class="bluebox2"><s:textfield name="voucherNum" id="voucherNum" maxlength="16"/></td>
         </s:if>
         <s:else>
@@ -670,10 +671,10 @@ var totaldbamt=0,totalcramt=0;
         <tr>
         <td width="4%" class="bluebox">&nbsp;</td>
          
-        <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /> </td>
-        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" /> 
-       	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="/receipts/ajaxReceiptCreate!ajaxLoadServiceByCategory.action" /></td>
-        <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /> </td>
+        <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
+        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" />
+       	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
+        <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="service.id" id="serviceId" cssClass="selectwk"
 	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{service.id}" onchange="loadFinDetails(this);"/>
         </td>
@@ -687,12 +688,11 @@ var totaldbamt=0,totalcramt=0;
          <tr>
           <td width="4%" class="bluebox2">&nbsp;</td>
            <s:if test="%{shouldShowHeaderField('fund')}">
-          <td width="21%" class="bluebox2"><s:text name="miscreceipt.fund"/><s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
+          <td width="21%" class="bluebox2"><s:text name="miscreceipt.fund"/><s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
           <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="fundId" id="fundId" cssClass="selectwk" onChange="setFundId();getSchemelist(this);getBankBranchList(this);" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
           <egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
-                url='receipts/ajaxBankRemittance!bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
-          <!-- <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate!ajaxLoadSchemes.action' /> -->
-          <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='../EGF/voucher/common!ajaxLoadSchemes.action' />
+                url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
+          <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
           </td>
           </s:if>
@@ -700,8 +700,8 @@ var totaldbamt=0,totalcramt=0;
             <td colspan=2 class="bluebox2"></td>
             </s:else>
               <s:if test="%{shouldShowHeaderField('department')}">
-           <td width="21%" class="bluebox2"><s:text name="miscreceipt.department"/><s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory">*</span></span></s:if></td>
-          <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="deptId" id="deptId" cssClass="selectwk" list="dropdownData.departmentList" listKey="id" listValue="deptName"  /> </td>
+           <td width="21%" class="bluebox2"><s:text name="miscreceipt.department"/><s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
+          <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="deptId" id="deptId" cssClass="selectwk" list="dropdownData.departmentList" listKey="id" listValue="name"  /> </td>
             </s:if>
            <s:else>
             <td colspan=2 class="bluebox2"></td>
@@ -712,7 +712,7 @@ var totaldbamt=0,totalcramt=0;
         <tr>
           <td width="4%" class="bluebox">&nbsp;</td>
           <s:if test="%{shouldShowHeaderField('fundsource')}">
-           <td width="21%" class="bluebox"><s:text name="miscreceipt.fundingsource"/> <s:if test="%{isFieldMandatory('fundsource')}"><span class="bluebox2"><span class="mandatory">*</span></span></s:if></td>
+           <td width="21%" class="bluebox"><s:text name="miscreceipt.fundingsource"/> <s:if test="%{isFieldMandatory('fundsource')}"><span class="bluebox2"><span class="mandatory"/></s:if></td>
          <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="fundSourceId" id="fundSourceId" onclick="checkfund()" onchange="setFundSourceId();" cssClass="selectwk" list="dropdownData.fundsourceList" listKey="id" listValue="name"  /></td>
          <s:hidden label="receiptMisc.fundsource.id" id="receiptMisc.fundsource.id"  name="receiptMisc.fundsource.id"/>
          </s:if>
@@ -720,7 +720,7 @@ var totaldbamt=0,totalcramt=0;
         <td colspan=2 class="bluebox"></td>
         </s:else>
         <s:if test="%{shouldShowHeaderField('functionary')}">
-          <td width="21%" class="bluebox"><s:text name="miscreceipt.functionary"/>  <s:if test="%{isFieldMandatory('functionary')}"><span class="bluebox2"><span class="mandatory">*</span></span></s:if> </td>
+          <td width="21%" class="bluebox"><s:text name="miscreceipt.functionary"/>  <s:if test="%{isFieldMandatory('functionary')}"><span class="bluebox2"><span class="mandatory"/></s:if> </td>
          <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="receiptMisc.idFunctionary.id" id="receiptMisc.idFunctionary.id" cssClass="selectwk" list="dropdownData.functionaryList" listKey="id" listValue="name"  /></td>
          
          </s:if>
@@ -732,19 +732,19 @@ var totaldbamt=0,totalcramt=0;
           <s:if test="%{shouldShowHeaderField('scheme')}">
           <tr>
           <td width="4%" class="bluebox2">&nbsp;</td>
-          <td width="21%" class="bluebox2"><s:text name="miscreceipt.scheme"/> <s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory">*</span></s:if>  </td>
+          <td width="21%" class="bluebox2"><s:text name="miscreceipt.scheme"/> <s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory"/></s:if>  </td>
           <td width="24%" class="bluebox2">
           <s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="schemeId" id="schemeId" onclick="checkfund()" onchange="setSchemeId();getSubSchemelist(this)" cssClass="selectwk" list="dropdownData.schemeList" listKey="id" listValue="name"  value="%{scheme.id}" /> 
-          <egov:ajaxdropdown id="subschemeId" fields="['Text','Value']" dropdownId='subschemeId' url='../EGF/voucher/common!ajaxLoadSubSchemes.action' />
+          <egov:ajaxdropdown id="subschemeId" fields="['Text','Value']" dropdownId='subschemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action' />
           <s:hidden label="receiptMisc.scheme.id" id="receiptMisc.scheme.id"  name="receiptMisc.scheme.id"/>
           </td>
           
-          <td width="21%" class="bluebox2"><s:text name="miscreceipt.subscheme"/> <s:if test="%{isFieldMandatory('subscheme')}"><span class="mandatory">*</span></s:if>  </td>
+          <td width="21%" class="bluebox2"><s:text name="miscreceipt.subscheme"/> <s:if test="%{isFieldMandatory('subscheme')}"><span class="mandatory"/></s:if>  </td>
 
          <td width="30%" class="bluebox2">
           <s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="subschemeId" id="subschemeId" onchange="setSubSchemeId();getFundSourcelist(this)" onclick="checkscheme()" cssClass="selectwk" list="dropdownData.subschemeList" listKey="id" listValue="name"  /></td>
           <egov:ajaxdropdown id="fundSourceId" fields="['Text','Value']" dropdownId='fundSourceId'
-           url='../EGF/voucher/common!ajaxLoadFundSource.action'  />
+           url='../../EGF/voucher/common-ajaxLoadFundSource.action'  />
            <s:hidden label="receiptMisc.subscheme.id" id="receiptMisc.subscheme.id"  name="receiptMisc.subscheme.id"/>
          
         </tr>
@@ -766,6 +766,7 @@ var totaldbamt=0,totalcramt=0;
      </script>
      <div id="codescontainer"></div>
      <br/>
+     <div id="rebateDetails">
     <div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Rebate"/></span></div>
     
     <div class="yui-skin-sam" align="center">
@@ -778,6 +779,7 @@ var totaldbamt=0,totalcramt=0;
      </script>
      <div id="rebatecodescontainer"></div>
      <br/>
+     </div>
      <div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.SubLedger"/></span></div>
     
         

@@ -98,6 +98,7 @@
                             </tr>
 
 							<tr>
+							    <th>Door No</th>
 								<th>Arrear
 									Property Tax</th>
 								<th>Arrear
@@ -137,6 +138,7 @@
 						 <tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>

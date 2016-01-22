@@ -70,13 +70,11 @@
 				</div>
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.type" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin"  id="categorydiv">
-					<form:input cssClass="form-control patternvalidation"
-						data-pattern="alphabetwithspace" maxlength="25" id="categoryName"
+					<form:input class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$"  maxlength="24" id="categoryName"
 						path="connectionCategory.name" required="required" />
 					<form:errors path="connectionCategory.name"
 						cssClass="add-margin error-msg" />
 				</div>
-
 
 			</div>
 

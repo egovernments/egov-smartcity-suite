@@ -65,9 +65,12 @@ import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
@@ -115,6 +118,12 @@ public class EmployeeService implements EntityTypeService {
     private BoundaryService boundaryService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
@@ -142,7 +151,8 @@ public class EmployeeService implements EntityTypeService {
     }
 
     /**
-     * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
+     * since it is mapped to only one AccountDetailType -creditor it ignores the
+     * input parameter
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -158,6 +168,8 @@ public class EmployeeService implements EntityTypeService {
         employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
 
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
+
+        List<User> user = new ArrayList<User>();
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
@@ -165,6 +177,15 @@ public class EmployeeService implements EntityTypeService {
         for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
+
+            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
+            for (final Role role : roles) {
+                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                        roleService.getRoleByName(role.getName()).getName());
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
+                    if (user.isEmpty() || user == null)
+                        employee.addRole(roleService.getRoleByName(role.getName()));
+            }
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
@@ -177,6 +198,7 @@ public class EmployeeService implements EntityTypeService {
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
+
         employeeRepository.save(employee);
     }
 
@@ -194,9 +216,20 @@ public class EmployeeService implements EntityTypeService {
         // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
+        List<User> user = new ArrayList<User>();
+
         for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
+
+            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
+            for (final Role role : roles) {
+                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                        roleService.getRoleByName(role.getName()).getName());
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
+                    if (user.isEmpty() || user == null)
+                        employee.addRole(roleService.getRoleByName(role.getName()));
+            }
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
@@ -372,7 +405,7 @@ public class EmployeeService implements EntityTypeService {
     @Override
     public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
-        return employeeRepository.findByNameLikeOrCodeLike(filterKey+"%", filterKey+"%");
+        return employeeRepository.findByNameLikeOrCodeLike(filterKey + "%", filterKey + "%");
     }
 
     @Override

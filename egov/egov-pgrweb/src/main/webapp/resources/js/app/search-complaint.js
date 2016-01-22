@@ -64,7 +64,7 @@
     		if( validateEmail($('#ct-email').val())) { 
     			var urlStr="";
             	if($('#currentLoggedUser').val()=='anonymous'){
-            		//alert(" citizen");
+            		//bootbox.alert(" citizen");
                		urlStr="/pgr/complaint/citizen/anonymous/search";
             	}
             	else{
@@ -117,7 +117,7 @@
         			});
         		});
     		}else{
-    			alert('Enter valid Email ID!');
+    			bootbox.alert('Enter valid Email ID!');
     		}
     	}
 	});
@@ -140,7 +140,7 @@
 	
 	$("#complaintSearchResults").on('click','tbody tr',function(event) {
 		
-		//alert(tableContainer1.fnGetData(this,0));
+		//bootbox.alert(tableContainer1.fnGetData(this,0));
 		var crn=tableContainer1.fnGetData(this,0);
 		var currentOwner=tableContainer1.fnGetData(this,7);
 		var currentStatus=tableContainer1.fnGetData(this,4);
@@ -240,7 +240,7 @@
 					ValidRange(start, end);
 				}
 				}else{
-				alert("Select the date");
+					bootbox.alert("Select the date");
 			}
 			
 			event.preventDefault();

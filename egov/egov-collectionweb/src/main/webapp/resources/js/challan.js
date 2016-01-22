@@ -365,7 +365,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -397,7 +397,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -623,7 +623,7 @@ function createDropdownFormatterDetailCode(prefix){
 		}
 	    },
 	    failure: function(o) {
-	    	alert('failure');
+	    	bootbox.alert('failure');
 	    }
 	}	
 
@@ -826,7 +826,7 @@ success: function(o) {
 		
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -1142,7 +1142,7 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function populatesubledgeramount1(){
@@ -1207,7 +1207,7 @@ var callbackCode = {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -1418,7 +1418,7 @@ HideImage(entobj);
 	
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 

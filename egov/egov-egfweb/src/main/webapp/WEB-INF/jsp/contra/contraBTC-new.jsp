@@ -180,7 +180,7 @@
 			{
 				if(document.getElementById('bankBalanceMandatory').value=='true')
 				{
-					alert(insuffientAlert);
+					bootbox.alert(insuffientAlert);
 					return false;
 				}
 				else

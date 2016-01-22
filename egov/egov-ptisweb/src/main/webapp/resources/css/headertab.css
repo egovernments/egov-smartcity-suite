@@ -58,7 +58,11 @@
 	PADDING-LEFT: 0px;
 	MARGIN: 0 0 -3px;
 	PADDING-TOP: 5px;
-	LIST-STYLE-TYPE: none
+	LIST-STYLE-TYPE: none;
+	width: 100%;
+    border-bottom: 1px solid #F2851F;
+    padding-bottom: 0px;
+    margin-bottom: 5px;
 }
 
 #header LI {
@@ -129,7 +133,7 @@
 	
   padding: 10px 12px;
   float: left;
-  color: #F2851F;
+  color: rgba(242, 133, 31, 0.52);
   text-align: center;
   text-decoration: none;
   border-top: 1px solid #F2851F;

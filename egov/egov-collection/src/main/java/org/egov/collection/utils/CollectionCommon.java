@@ -254,7 +254,7 @@ public class CollectionCommon {
                         CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
                         CollectionConstants.INSTRUMENTTYPE_ONLINE));
             newReceiptDetail.setDramount(debitAmount);
-            newReceiptDetail.setCramount(BigDecimal.valueOf(0));
+            newReceiptDetail.setCramount(BigDecimal.ZERO);
             newReceiptDetail.setReceiptHeader(receiptHeader);
         }
 

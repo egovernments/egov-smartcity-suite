@@ -102,7 +102,7 @@ $(document).ready(function()
 		
 		
 		/*if($('#validationMessage').val()!='')
-			alert($('#validationMessage').val());*/
+			bootbox.alert($('#validationMessage').val());*/
 		
 		function validateDateRange(fromDate, toDate) {
 			if (fromDate != "" && toDate != "") {
@@ -146,7 +146,7 @@ $(document).ready(function()
 				 $('#Reject').attr('formnovalidate','true');	
 				 var approvalComent=$('#approvalComent').val();
 				  if(approvalComent == "") {
-						alert("Please enter rejection comments!");
+					  bootbox.alert("Please enter rejection comments!");
 						$('#approvalComent').focus();
 						return false;
 				  }
@@ -161,7 +161,7 @@ $(document).ready(function()
 					 $('#Reject').attr('formnovalidate','true');	
 					 var approvalComent=$('#approvalComent').val();
 					  if(approvalComent == "") {
-							alert("Please enter rejection comments!");
+						  bootbox.alert("Please enter rejection comments!");
 							$('#approvalComent').focus();
 							return false;
 					  }
@@ -175,7 +175,7 @@ $(document).ready(function()
 	    		 if($('form').valid())	{
  					var estimationCharge = $('#estimationCharges').val();
  			    	if(estimationCharge <= 0) {
- 			    		alert("Please enter the value greater than ZERO for Estimation charges!");
+ 			    		bootbox.alert("Please enter the value greater than ZERO for Estimation charges!");
  			    		$('#estimationCharges').focus();
  			    		return false;
  			    	}
@@ -202,7 +202,7 @@ $(document).ready(function()
 				 $('#Reject').attr('formnovalidate','true');	
 				 var approvalComent=$('#approvalComent').val();
 				  if(approvalComent == "") {
-						alert("Please enter rejection comments!");
+					  bootbox.alert("Please enter rejection comments!");
 						$('#approvalComent').focus();
 						return false;
 				  }

@@ -77,12 +77,12 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 	// 3 = dd/mm/yyyy
 	//Enter a tilde sign for the first number and you can check the variable information.
 	if (vDateValue == "~") {
-		alert("AppVersion = "+navigator.appVersion+" \nNav. 4 Version = "+isNav4+" \nNav. 5 Version = "+isNav5+" \nIE Version = "+isIE4+" \nYear Type = "+vYearType+" \nDate Type = "+vDateType+" \nSeparator = "+strSeperator);
+		alert(bootbox.alert("AppVersion = "+navigator.appVersion+" \nNav. 4 Version = "+isNav4+" \nNav. 5 Version = "+isNav5+" \nIE Version = "+isIE4+" \nYear Type = "+vYearType+" \nDate Type = "+vDateType+" \nSeparator = "+strSeperator));
 		vDateName.value = "";
 		vDateName.focus();
 		return true;
 	}
-	//alert(window.Event)
+	//bootbox.alert(window.Event)
 	//var whichCode = (window.Event) ? e.which : e.keyCode; 
 	var whichCode = window.event ? window.event.keyCode : e.charCode; 
 	// Check to see if a seperator is already present.
@@ -113,12 +113,12 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 	//Create numeric string values for 0123456789/
 	//The codes provided include both keyboard and keypad values
 	var strCheck = '47,48,49,50,51,52,53,54,55,56,57,58,59,95,96,97,98,99,100,101,102,103,104,105,67,86,9,16,35,36,37,38,39,40,17,18';
-	//alert('whichCode='+whichCode)
-	//alert(strCheck.indexOf(whichCode))
+	//bootbox.alert('whichCode='+whichCode)
+	//bootbox.alert(strCheck.indexOf(whichCode))
 	if (strCheck.indexOf(whichCode) != -1) {
 		if (isNav4) {
 			if (((vDateValue.length < 6 && dateCheck) || (vDateValue.length == 7 && dateCheck)) && (vDateValue.length >=1)) {
-				alert("Invalid Date\nPlease Re-Enter");
+				bootbox.alert("Invalid Date\nPlease Re-Enter");
 				vDateName.value = "";
 				vDateName.focus();
 				vDateName.select();
@@ -141,7 +141,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 				}
 				var vDateValueCheck = mMonth+strSeperator+mDay+strSeperator+mYear;
 				if (!dateValid(vDateValueCheck)) {
-					alert("Invalid Date\nPlease Re-Enter");
+					bootbox.alert("Invalid Date\nPlease Re-Enter");
 					vDateName.value = "";
 					vDateName.focus();
 					vDateName.select();
@@ -179,7 +179,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 				vDateType = 1;
 				var vDateValueCheck = mMonth+strSeperator+mDay+strSeperator+mYear;
 					if (!dateValid(vDateValueCheck)) {
-						alert("Invalid Date\nPlease Re-Enter");
+						bootbox.alert("Invalid Date\nPlease Re-Enter");
 						vDateType = vDateTypeTemp;
 						vDateName.value = "";
 						vDateName.focus();
@@ -191,7 +191,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 				}
 				else {
 					if (((vDateValue.length < 8 && dateCheck) || (vDateValue.length == 9 && dateCheck)) && (vDateValue.length >=1)) {
-						alert("Invalid Date\nPlease Re-Enter");
+						bootbox.alert("Invalid Date\nPlease Re-Enter");
 						vDateName.value = "";
 						vDateName.focus();
 						vDateName.select();
@@ -203,7 +203,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 		else {
 			// Non isNav Check
 			if (((vDateValue.length < 8 && dateCheck) || (vDateValue.length == 9 && dateCheck)) && (vDateValue.length >=1)) {
-				alert("Invalid Date\nPlease Re-Enter");
+				bootbox.alert("Invalid Date\nPlease Re-Enter");
 				vDateName.value = "";
 				vDateName.focus();
 				return true;
@@ -232,7 +232,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 				}
 				if (vYearLength == 4) {
 					if (mYear.length < 4) {
-						alert("Invalid Date\nPlease Re-Enter");
+						bootbox.alert("Invalid Date\nPlease Re-Enter");
 						vDateName.value = "";
 						vDateName.focus();
 						return true;
@@ -264,7 +264,7 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 						vDateName.value = mDay+strSeperator+mMonth+strSeperator+mYear;
 				}
 				if (!dateValid(vDateValueCheck)) {
-					alert("Invalid Date\nPlease Re-Enter");
+					bootbox.alert("Invalid Date\nPlease Re-Enter");
 					vDateType = vDateTypeTemp;
 					vDateName.value = "";
 					vDateName.focus();
@@ -304,8 +304,8 @@ function DateFormat(vDateName, vDateValue, e, dateCheck, dateType)
 		if (vDateValue.length == 10&& dateCheck) {
 			if (!dateValid(vDateName)) {
 				// Un-comment the next line of code for debugging the dateValid() function error messages
-				//alert(err);
-				alert("Invalid Date\nPlease Re-Enter");
+				//bootbox.alert(err);
+				bootbox.alert("Invalid Date\nPlease Re-Enter");
 				vDateName.focus();
 				vDateName.select();
 	   		}

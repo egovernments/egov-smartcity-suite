@@ -90,6 +90,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -107,6 +108,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
 import org.egov.web.actions.voucher.CommonAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -169,6 +171,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private final boolean remit = false;
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
     private ScriptService scriptService;
+	private ChartOfAccounts chartOfAccounts;
 
     public BigDecimal getBalance() {
         return balance;
@@ -179,7 +182,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         return voucherHeader;
@@ -449,8 +452,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return paymentWorkflowService.getValidActions(getPayment());
+    public List<String> getValidActions() {
+        return null;
     }
 
     @SuppressWarnings(UNCHECKED)
@@ -678,11 +681,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     voucherHeader);
             HibernateUtil.getCurrentSession().flush();
 
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data",
                         "Transaction Failed")));
 
@@ -1070,5 +1072,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public void setScriptService(final ScriptService scriptService) {
         this.scriptService = scriptService;
     }
+
+	public ChartOfAccounts getChartOfAccounts() {
+		return chartOfAccounts;
+	}
+
+	public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+		this.chartOfAccounts = chartOfAccounts;
+	}
 
 }

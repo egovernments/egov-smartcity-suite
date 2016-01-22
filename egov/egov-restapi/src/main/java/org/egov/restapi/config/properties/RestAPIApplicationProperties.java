@@ -63,4 +63,7 @@ public class RestAPIApplicationProperties {
     public List<String> esevaIPAddress() {
         return Arrays.asList(environment.getProperty("eseva.ipaddress").split(","));
     }
+    public List<String> softtechIPAddress() {
+        return Arrays.asList(environment.getProperty("softtech.ipaddress").split(","));
+    }
 }

@@ -131,11 +131,11 @@ if(PageManager.DataService.getQueryField('glCode2') != null)
 }
 if(PageManager.DataService.getQueryField('fundName') != null)
 {
-	//alert(PageManager.DataService.getQueryField('fundName'));	
+	//bootbox.alert(PageManager.DataService.getQueryField('fundName'));	
 }
 //document.getElementById('titleUlb').value=PageManager.DataService.getQueryField('titleUlb');
 //var x = document.getElementById('titleUlb').value;
-//alert(x);
+//bootbox.alert(x);
 
 var tempT=PageManager.DataService.getQueryField('endDate');	
 
@@ -170,7 +170,7 @@ if(document.getElementById('startDate').value && document.getElementById('endDat
 	                      {
 	                      	var codes2=req2.responseText;
 	                      	var a = codes2.split("^");
-							var codes = a[0]; //alert(acccodeArray);
+							var codes = a[0]; //bootbox.alert(acccodeArray);
 							acccodeArray=codes.split("+");
 							codeObj = new YAHOO.widget.DS_JSArray(acccodeArray);
 	                      }
@@ -235,13 +235,13 @@ function finHeader()
 {
 	var gLCode1 =document.getElementById('glCode1').value;
 	//var x = document.getElementById('titleUlb').value;
-	//alert(x);
+	//bootbox.alert(x);
 	var gLCode2 =document.getElementById('glCode2').value;
 	//var title = document.getElementById('titleUlb').value;
 	var title='';
 	//var fObj = document.getElementById('fund_id');
 	var fundHeader = PageManager.DataService.getQueryField('fundName');
-	//alert(title);
+	//bootbox.alert(title);
 	rptAccName = 'FUND : '+ fundHeader;
 	rptStartDate=document.getElementById('startDate').value;
 	rptEndDate=document.getElementById('endDate').value;
@@ -264,11 +264,11 @@ function buttonFlush()
 	document.getElementById('glCode2').value='';
 	document.getElementById('startDate').value='';
 	document.getElementById('endDate').value='';
-	//alert('XXXXX');
+	//bootbox.alert('XXXXX');
 	PageManager.DataService.setQueryField('fundSource_id','');
 	PageManager.DataService.setQueryField('fund_id','');
-	//alert(document.getElementById('reversedEntry').vlaue);
-	//alert(document.getElementById('glCode1').value);
+	//bootbox.alert(document.getElementById('reversedEntry').vlaue);
+	//bootbox.alert(document.getElementById('glCode1').value);
 }
 function ButtonPress(){
 	if (!PageValidator.validateForm()){
@@ -278,39 +278,39 @@ function ButtonPress(){
 	}
 	var strtDate = document.getElementById('startDate').value;
 	rptStartDate = strtDate;
-	//alert(rptStartDate);
+	//bootbox.alert(rptStartDate);
 	var endDate = document.getElementById('endDate').value;
 	rptEndDate = endDate;
-	//alert('HI');
+	//bootbox.alert('HI');
 	//accCode_1=document.getElementById('glCode1').value;
 	//accCode_2=document.getElementById('glCode2').value;
 	var strtDate = document.getElementById('startDate').value;
 	rptStartDate = strtDate;
-	//alert(rptStartDate);
+	//bootbox.alert(rptStartDate);
 	var endDate = document.getElementById('endDate').value;
 	rptEndDate = endDate;
-	//alert(rptEndDate);
+	//bootbox.alert(rptEndDate);
 	var aCode1 = document.getElementById('glCode1').value;
 	accCode_1=aCode1;
 	var aCode2 = document.getElementById('glCode2').value;
 	accCode_2=aCode2;
 	
 	if(aCode1.length==0){
-					alert("please select  Account Code");
+		bootbox.alert("please select  Account Code");
 					
 					return;
 				 }
 				 if(aCode2.length==0){
-				 					alert("please select  Account Code");
+					 bootbox.alert("please select  Account Code");
 				 					return;
 				 }
 	if(strtDate.length==0||endDate.length==0){
-					alert("please select start dates and end dates");
+		bootbox.alert("please select start dates and end dates");
 					return;
 				 }
 
 		if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+			bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').value='';
 		document.getElementById('endDate').value='';
 		document.getElementById('startDate').focus();
@@ -321,7 +321,7 @@ function ButtonPress(){
 		var fsObj = document.getElementById('fundSource_id');
 		if(fObj.selectedIndex<0)
 		{
-				alert("please select fund");
+			bootbox.alert("please select fund");
 		}
 		if(fObj.selectedIndex>-1){
 			PageManager.DataService.setQueryField('fund_id', fObj.options[fObj.selectedIndex].value);
@@ -330,7 +330,7 @@ function ButtonPress(){
 			//fundNameQ=fName;
 			document.getElementById('fundName').value=fName;
 			PageManager.DataService.setQueryField('fundName',fObj.options[fObj.selectedIndex].text);
-			//alert(fObj.options[fObj.selectedIndex].text);
+			//bootbox.alert(fObj.options[fObj.selectedIndex].text);
 		}
 
 		if(fsObj.selectedIndex>-1){
@@ -342,7 +342,7 @@ function ButtonPress(){
 		
 		document.getElementById('fromBean').value = 1;
 	  //document.getElementById('titleUlb').value=document.getElementById('title').value;
-	   //alert(document.getElementById('titleUlb').value);
+	   //bootbox.alert(document.getElementById('titleUlb').value);
 	   //PageManager.DataService.setQueryField('titleUlb',document.getElementById('titleUlb').value);
 
 	
@@ -580,7 +580,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null)
 		 </script>
 		 <%
@@ -658,7 +658,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null)
 		 </script>
 		 <%

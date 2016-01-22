@@ -109,25 +109,23 @@
 									<form:errors path="username" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<div class="form-group" id="wrap">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="input-group">
-											<div class="input-group-addon style-label">
-												<i class="entypo-key theme-color style-color"></i>
-											</div>
-											<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" minlength="8" maxlength="32" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]"/>
-											<span class="mandatory set-mandatory"></span>
+							<div class="row form-group" id="wrap">
+								<div class="col-md-6" style="margin:0">
+									<div class="input-group">
+										<div class="input-group-addon style-label">
+											<i class="entypo-key theme-color style-color"></i>
 										</div>
+										<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" minlength="8" maxlength="32" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Minimum 8 to 32 characters long and should contain upper case, lower case alphabet,number and special character except [& < > # % \" ' / and space]"/>
+										<span class="mandatory set-mandatory"></span>
 									</div>
-									<div class="col-md-6 margin-sm-top">
-										<div class="input-group">
-											<div class="input-group-addon style-label">
-												<i class="entypo-key theme-color style-color"></i>
-											</div>
-											<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
-											autocomplete="off" required="required" minlength="8" maxlength="32"/><span class="mandatory set-mandatory"></span>
+								</div>
+								<div class="col-md-6" style="margin:0">
+									<div class="input-group">
+										<div class="input-group-addon style-label">
+											<i class="entypo-key theme-color style-color"></i>
 										</div>
+										<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
+										autocomplete="off" required="required" minlength="8" maxlength="32"/><span class="mandatory set-mandatory"></span>
 									</div>
 								</div>
 								<div class="text-right add-margin error-msg display-hide password-error">These passwords don't match. Try again!</div>
@@ -177,7 +175,7 @@
 									<spring:message code="btn.signup" />
 								</button>
 							</div>
-                             <div class="form-group text-left" style="font-size:12px;color:#777">
+                             <div class="form-group text-left" style="font-size:12px;color:#777;margin-top:10px;">
 								<spring:message code="lbl.signup.termsofuse1" /> <span>
 								<a href="javascript:void(0);" data-toggle="modal" data-target="#myModal" data-backdrop="static">
 								<spring:message code="lbl.signup.termsofuse2" /></a> & 

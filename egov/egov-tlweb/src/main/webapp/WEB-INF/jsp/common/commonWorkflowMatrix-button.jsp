@@ -66,26 +66,26 @@
 		<s:if test="%{getNextAction()!='END'}">
 	    if(name=="Forward" || name=="forward") {
 	    	if(approverDeptId && approverDeptId.value == -1){
-		        alert("Please Select the Approver Department ");
+	    		bootbox.alert("Please Select the Approver Department ");
 				return false;
 		    } else if(approverDesgId && approverDesgId.value == -1){
-		        alert("Please Select the Approver Designation ");
+		    	bootbox.alert("Please Select the Approver Designation ");
 				return false;
 		    } else if(approverPosId && approverPosId.value == -1){
-		        alert("Please Select the Approver ");
+		    	bootbox.alert("Please Select the Approver ");
 				return false;
 		    }  
 	    }
 	    </s:if>
 	    if(name=="Forward" || name=="forward" || name=="approve" || name=="Approve") {
 	    	 if (approverComments == null || approverComments == "") { 
-	    		alert("Please Enter Approver Remarks ");
+	    		 bootbox.alert("Please Enter Approver Remarks ");
 				return false;
 	    	}  
 	    }
 	    if ((name=="Reject" || name=="reject")) {
 	    	if (approverComments == null || approverComments == "") {
-	    		alert("Please Enter Rejection Remarks ");
+	    		bootbox.alert("Please Enter Rejection Remarks ");
 				return false;
 	    	}
 		}

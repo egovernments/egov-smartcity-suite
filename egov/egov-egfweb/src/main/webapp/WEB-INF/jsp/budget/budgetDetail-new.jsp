@@ -46,7 +46,7 @@
     function onLoadTask(){
     	showMessage = '<s:property value="showMessage"/>';
     	if(showMessage == 'true' && '<s:property value="actionMessage"/>' != ''){
-    		alert('<s:property value="actionMessage"/>');
+    		bootbox.alert('<s:property value="actionMessage"/>');
     		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail.action";
 			document.forms[0].submit();
     	}
@@ -70,13 +70,13 @@
 						estimate = true;
 				}				
 				if(estimate && anticipatory){
-					alert('Estimate amount and Anticipatory amount must be a number');
+					bootbox.alert('Estimate amount and Anticipatory amount must be a number');
 					return false;
 				}else if(estimate){
-					alert('Estimate amount must be a number');
+					bootbox.alert('Estimate amount must be a number');
 					return false;
 				}else if(anticipatory){
-					alert('Anticipatory amount must be a number');
+					bootbox.alert('Anticipatory amount must be a number');
 					return false;
 				}
 				document.budgetDetailForm.submit();

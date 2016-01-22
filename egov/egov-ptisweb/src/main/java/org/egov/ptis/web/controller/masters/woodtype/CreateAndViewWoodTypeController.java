@@ -43,6 +43,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateAndViewWoodTypeController {
 
     private final WoodTypeService woodTypeService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public CreateAndViewWoodTypeController(final WoodTypeService woodTypeService) {
@@ -81,7 +85,9 @@ public class CreateAndViewWoodTypeController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showWoodTypes() {
+    public String showWoodTypes(Model model) {
+        String roleName = woodTypeService.getRolesForUserId(securityUtils.getCurrentUser().getId());
+        model.addAttribute("roleName",roleName);
         return "woodType-search";
     }
 

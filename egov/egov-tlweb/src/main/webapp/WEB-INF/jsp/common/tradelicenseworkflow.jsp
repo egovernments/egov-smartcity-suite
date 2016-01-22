@@ -137,7 +137,7 @@
 		if(obj.value.toUpperCase()=="REJECT" || obj.value.toUpperCase()=="APPROVE" || obj.value.toUpperCase()=="SAVE") {
 			return true;
 		} else if(document.getElementById("approverUserId") && document.getElementById("approverUserId").value=="-1") {
-			alert("Please select appropriate Approver info.");
+			bootbox.alert("Please select appropriate Approver info.");
 			return false;
 		} else {
 			return true;

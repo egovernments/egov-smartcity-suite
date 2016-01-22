@@ -66,8 +66,9 @@
 			<tr>
 				<jsp:include page="../voucher/voucher-filter.jsp" />
 			</tr>
-			<br/><br/>
+				<br/><br/>
 			<tr>
+				<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.type" /></td>
 				<td class="greybox"><s:select name="type" id="type"
 						list="dropdownData.typeList" headerKey="-1"
@@ -80,6 +81,7 @@
 			</tr>
 			
 			<tr id="modeofpayment">
+				<td style="width: 5%"></td>
 				<td class="bluebox"><s:text name="voucher.modeOfPayment" /></td>
 				<td class="bluebox"><s:select name="modeOfPayment"
 						id="modeOfPayment" list="dropdownData.modeOfPaymentList"
@@ -88,6 +90,7 @@
 				<td class="bluebox"></td>
 			</tr>
 			<tr>
+				<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.fromdate" /><span
 					class="mandatory1">*</span></td>
 				<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
@@ -110,6 +113,7 @@
 						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
+				<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.status" /></td>
 				<td class="greybox"><s:select name="status" id="status"
 						list="%{statusMap}" headerKey="-1" headerValue="----Choose----"
@@ -143,8 +147,12 @@
 								<s:property value="%{#attr.currentRowObject.name}" />
 							</display:column>
 							<display:column title="Voucher Number" style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.vouchernumber}" />
+
+								<a href="#"
+									onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>');"><s:property
+										value="%{#attr.currentRowObject.vouchernumber}" />
 							</display:column>
+						
 							<display:column title="Voucher Type" style="text-align:center;">
 								<s:property value="%{#attr.currentRowObject.type}" />
 							</display:column>
@@ -252,7 +260,11 @@
 			document.forms[0].action='${pageContext.request.contextPath}/report/voucherStatusReport-generateXls.action';
 			document.forms[0].submit();
 		}
-		
+
+		function openVoucher(vid){
+			var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
+			window.open(url,'','width=900, height=700');
+		}
 		</script>
   </div>
 	</s:form>

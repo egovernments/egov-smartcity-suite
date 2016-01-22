@@ -316,30 +316,30 @@
 			var fundId=document.getElementById('fundId').value;
 
 			if(fromDate == ""){
-				alert("Please select from date");
+				bootbox.alert("Please select from date");
 				return false;
 				}
 			
 			if(toDate == ""){
-				alert("Please select to date");
+				bootbox.alert("Please select to date");
 				return false;
 				}
 
 			if(fundId == "-1"){
-				alert("Please select fund");
+				bootbox.alert("Please select fund");
 				return false;
 				}
 			
 			if(fromDate>todayDateText){
-				alert("Invalid Date! from date is greater than current date");
+				bootbox.alert("Invalid Date! from date is greater than current date");
 				return false;
 			}
 			if(toDate>todayDateText){
-				alert("Invalid Date! to date is greater than current date");
+				bootbox.alert("Invalid Date! to date is greater than current date");
 				return false;
 			}
 			if (fromDate > toDate) {
-				alert("Invalid Date Range! From Date cannot be after To Date!")
+				bootbox.alert("Invalid Date Range! From Date cannot be after To Date!")
 				return false;
 				} 
 			

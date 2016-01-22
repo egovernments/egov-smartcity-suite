@@ -271,14 +271,14 @@ jQuery(document)
 				  
 			    if (fromName=="" || fromName==null)
 			    {
-			    	alert('Heirarchy From position is mandatory in the last row');
+			    	bootbox.alert('Heirarchy From position is mandatory in the last row');
 			    }else if(toName=="" || toName=="Select" || toName==null)
 			    	{
-			    	alert('Heirarchy to position is mandatory in the last row');
+			    	bootbox.alert('Heirarchy to position is mandatory in the last row');
 			    	}
 			    else if(fromName==toName)
 		    	{
-			    	alert('Heirarchy from position and To position are same in single line.');
+			    	bootbox.alert('Heirarchy from position and To position are same in single line.');
 		    			$('#positionHierarchyToPositionid'+(currentIndex - 2)).val('');	
 		    	}
 			    else	
@@ -290,7 +290,7 @@ jQuery(document)
 			});
 
 	$('#escalationCreateSearch').click(function() {
-		//alert('before submit'+$("#positionId").val());
+		//bootbox.alert('before submit'+$("#positionId").val());
 	 	$('#viewEscalation').attr('method', 'post');
 	 	$('#viewEscalation').attr('action', '/pgr/escalation/search-view');
 	 //	$('#viewEscalation').submit(); 
@@ -321,7 +321,7 @@ function calltypeahead(currentIndex) {
 			$.each(response, function(index, value) {
 				$(".approvalDesignation"+ currentIndex).append($('<option>').text(value.name).attr('value', value.id));
 			});
-			//alert($(".approvalDesignation"+ currentIndex).attr("data-optvalue"));
+			//bootbox.alert($(".approvalDesignation"+ currentIndex).attr("data-optvalue"));
 			$(".approvalDesignation"+ currentIndex).val($(".approvalDesignation"+ currentIndex).attr("data-optvalue"));
 		}, 
 		error: function (response) {
@@ -398,7 +398,7 @@ function addNewRowToTable(currentIndex)
 function checkUniqueDesignationSelected() {
 	var u = {}, a = [];
 	var totalTableRows = $("#escalationTable tr").length;
-//alert('inside checkUniqueDesignationSelected');
+//bootbox.alert('inside checkUniqueDesignationSelected');
 	if (totalTableRows == 1)
 		return false;
 
@@ -418,22 +418,22 @@ function checkUniqueDesignationSelected() {
 	
 	
 	if (a.length != (totalTableRows - 1)) {
-		alert("From Position and complaint type should be unique.\nPosition and complaint type is same in multiple rows. Please redefine.");
+		bootbox.alert("From Position and complaint type should be unique.\nPosition and complaint type is same in multiple rows. Please redefine.");
 		return false;
 	}
 
 	var j;
 	for (j = 0; j < (totalTableRows - 1); j++) {
-//	alert(totalTableRows - 1);
+//	bootbox.alert(totalTableRows - 1);
 		if($("#positionHierarchyFromPositionId"+j).val()==$("#positionHierarchyToPositionid"+j).val()){
-			alert('Heirarchy from position and To position are same in single line.');
+			bootbox.alert('Heirarchy from position and To position are same in single line.');
 		return false;
 		}
 		
 	}
 	
 		var url = '/pgr/escalation/update/'+ $('#formpositionId').val();
-		//alert(url);
+		//bootbox.alert(url);
 		$('#saveEscalationForm').attr('method', 'post');
 		$('#saveEscalationForm').attr('action', url);
     	//$('#viewEscalation').submit(); 

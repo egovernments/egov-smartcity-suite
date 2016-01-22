@@ -46,10 +46,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Accountdetailkey;
@@ -70,11 +68,10 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @ParentPackage("egov")
-@Namespace("/receipts")
-@ResultPath("/WEB-INF/jsp/receipts/")
 @Results({
         @Result(name = "schemeList", location = "ajaxReceiptCreate-schemeList.jsp"),
         @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp"),
+        @Result(name = "serviceList", location = "ajaxReceiptCreate-serviceList.jsp"),
         @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp")
 })
 public class AjaxReceiptCreateAction extends BaseFormAction {
@@ -124,7 +121,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         return RESULT;
     }
 
-   @Action( value="/ajaxReceiptCreate-getDetailCode")
+   @Action(value = "/receipts/ajaxReceiptCreate-getDetailCode")
     public String getDetailCode() throws Exception
     {
         value = "";
@@ -342,27 +339,27 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-    @Action(value = "/ajaxReceiptCreate-ajaxLoadSchemes")
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadSchemes")
     public String ajaxLoadSchemes()
     {
 
         final Integer fundId = Integer.valueOf(parameters.get("fundId")[0]);
         if (null == fundId || fundId == -1)
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=1 order by name", -1);
+                    " from Scheme where fund.id=? and isActive=true order by name", -1);
         else
-            schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive='1' order by name", fundId);
+            schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=true order by name", fundId);
 
         return "schemeList";
     }
 
     @SuppressWarnings("unchecked")
-    @Action(value = "/ajaxReceiptCreate-ajaxLoadSubSchemes")
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadSubSchemes")
     public String ajaxLoadSubSchemes()
     {
         final Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
         if (null != schemeId && schemeId != -1)
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
                     schemeId);
         else
             subSchemes = Collections.EMPTY_LIST;
@@ -371,7 +368,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory", results = { @Result(name = "serviceList", type = "redirect") })
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory")
     public String ajaxLoadServiceByCategory() {
 
         if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0] &&
@@ -385,14 +382,14 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
     }
 
-    @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService", results = { @Result(name = "result", type = "redirect") })
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService")
     public String ajaxFinMiscDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final Integer deptId = Integer.valueOf(parameters.get("deptId")[0]);
+        final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
         final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
                 "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and " +
-                        "  service.isEnabled=1" + " and service.id=" + serviceId, deptId);
+                        "  service.isEnabled=true" + " and service.id=?",  deptId, serviceId);
 
         final StringBuffer miscDetails = new StringBuffer();
         if (null != service)
@@ -412,7 +409,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
     }
 
-    @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService", results = { @Result(name = "serviceAccDtls", type = "redirect") })
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService")
     public String ajaxFinAccDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
@@ -432,7 +429,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
     }
 
-    @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService", results = { @Result(name = "subledger", type = "redirect") })
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService")
     public String ajaxFinSubledgerByService() {
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
         final Integer deptId = Integer.valueOf(parameters.get("deptId")[0]);

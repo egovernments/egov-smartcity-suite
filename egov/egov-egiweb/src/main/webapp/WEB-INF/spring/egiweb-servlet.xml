@@ -60,6 +60,8 @@
         </mvc:message-converters>                  
     </mvc:annotation-driven>
 
+    <context:property-placeholder />
+
 	<mvc:view-controller path="/error/500" view-name="error/500"/>
   	<mvc:view-controller path="/error/404" view-name="error/404"/>
   	<mvc:view-controller path="/error/403" view-name="error/403"/>

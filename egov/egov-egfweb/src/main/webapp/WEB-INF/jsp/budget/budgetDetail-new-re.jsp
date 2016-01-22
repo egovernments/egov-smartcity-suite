@@ -65,7 +65,7 @@
     function onLoadTask(){
     	showMessage = '<s:property value="showMessage"/>';
     	if(showMessage == 'true' && '<s:property value="actionMessage"/>' != ''){
-    		alert('<s:property value="actionMessage"/>');
+    		bootbox.alert('<s:property value="actionMessage"/>');
     		document.getElementById('budgetDetail_executingDepartment').value=-1;
     		var functionid="";
     		<s:if test="%{searchfunctionid!=0}">
@@ -155,13 +155,13 @@
 										estimate = true;
 								}				
 								if(estimate && anticipatory){
-									alert('Estimate amount and Anticipatory amount must be a number');
+									bootbox.alert('Estimate amount and Anticipatory amount must be a number');
 									return false;
 								}else if(estimate){
-									alert('Estimate amount must be a number');
+									bootbox.alert('Estimate amount must be a number');
 									return false;
 								}else if(anticipatory){
-									alert('Anticipatory amount must be a number');
+									bootbox.alert('Anticipatory amount must be a number');
 									return false;
 								}
 								document.budgetDetailForm.submit();
@@ -173,7 +173,7 @@
 								if(con==false)
 								    return false;
 								if(null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-									alert("Please select User");
+									bootbox.alert("Please select User");
 									return false;
 								}
 								forward();

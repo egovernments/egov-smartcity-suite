@@ -80,8 +80,8 @@ function buttonFlush()
 %>
 
 function getDataList(){
-	//alert(document.getElementById("finId").value);
-	//alert(document.getElementById("conSupTypeId").value);
+	//bootbox.alert(document.getElementById("finId").value);
+	//bootbox.alert(document.getElementById("conSupTypeId").value);
 	var objKmfNo=document.getElementById('kmfNo');
 	var objFinyear=document.getElementById('finyear'); 
 	if(objKmfNo.selectedIndex <= 0 || objFinyear.selectedIndex <= 0)  return;
@@ -90,7 +90,7 @@ function getDataList(){
 	document.getElementById("displayCondition").value=1;
 		
 	if(document.getElementById('displayCondition').value!=0)	
-	{	//alert(getFormNOName(objKmfNo));
+	{	//bootbox.alert(getFormNOName(objKmfNo));
 		var obj=getFormNOName(objKmfNo);
 		var a=obj.split('~~');
 			
@@ -128,7 +128,7 @@ function getFormNOName(obj)
 		case '87': acctype=8; name=""; rule="(Rule 140(1))"; break;
 		
 	}
-	//alert(acctype+'~~'+name+'~~'+rule);
+	//bootbox.alert(acctype+'~~'+name+'~~'+rule);
 	return acctype+'~~'+name+'~~'+rule;
 }
 
@@ -244,7 +244,7 @@ function onLoadTask()
 function alertRedColor()
 {
 	var objKmfNo=document.getElementById('kmfNo');
-	//alert("redcolor");
+	//bootbox.alert("redcolor");
 	var objFinyear=document.getElementById('finyear'); 
 	if(objKmfNo.selectedIndex <= 0) objKmfNo.style.backgroundColor="OrangeRed";
 	if(objFinyear.selectedIndex <= 0)   objFinyear.style.backgroundColor="OrangeRed";
@@ -253,7 +253,7 @@ function alertRedColor()
 function alertNoColor()
 {
 	var objKmfNo=document.getElementById('kmfNo');
-	//alert("nocolor");
+	//bootbox.alert("nocolor");
 	var objFinyear=document.getElementById('finyear'); 
 	if(objKmfNo.selectedIndex <= 0) objKmfNo.style.backgroundColor="White";
 	if(objFinyear.selectedIndex <= 0)   objFinyear.style.backgroundColor="White";

@@ -55,13 +55,13 @@
 			
 			function validate() {
 				if(document.getElementById('reprint').value=="-1"){
-					alert("Please provide the mandatory values");
+					bootbox.alert("Please provide the mandatory values");
 					return false;
 				}
 				
 				if (document.getElementById('duplicate').value == "true") {
 					if (document.getElementById('receiptNumber').value.trim() == "" || document.getElementById('receiptDate').value.trim() == "") {
-						alert("Please provide the mandatory values");
+						bootbox.alert("Please provide the mandatory values");
 						return false;
 					}					
 				}

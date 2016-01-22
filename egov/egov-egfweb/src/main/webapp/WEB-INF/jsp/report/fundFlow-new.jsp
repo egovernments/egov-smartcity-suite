@@ -50,12 +50,12 @@
 <script type="text/javascript">
     function onloadFundFlow()
     {
-    //alert("onload");
+    //bootbox.alert("onload");
 	<s:if test="receiptList!=null && receiptList.size()>0">
 	var alertMsg='<s:text name="lastReportGenDateAlert"/>'+'  '+'<s:property value="openignBalanceCalculatedDate"/>';    
-	alert(alertMsg);
+	bootbox.alert(alertMsg);
     calculateFunds(document.getElementById('receiptList[0].openingBalance'));
-    //alert("onload2");
+    //bootbox.alert("onload2");
     </s:if>
     <s:if test="paymentList!=null && paymentList.size()>0">
     calculateFundsForPayment(document.getElementById('paymentList[0].openingBalance'));
@@ -66,12 +66,12 @@
     
     /*if(document.getElementById("fund").value=="")
     {
-     alert("Select Fund");
+     bootbox.alert("Select Fund");
      return false;
      }*/
      if(document.getElementById("asOnDate").value=="")
      {
-     alert("Select Date");
+     bootbox.alert("Select Date");
      return false;
      }
      return true;

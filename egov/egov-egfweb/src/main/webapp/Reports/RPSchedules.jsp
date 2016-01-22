@@ -73,11 +73,11 @@ function onLoad(){
 	document.getElementById('month').value="<%=request.getParameter("month")%>";
 	document.getElementById('fundId').value="<%=request.getParameter("fundId")%>";
 	var fromBean="<%=request.getParameter("fromBean")%>";
-	//alert(fromBean);
+	//bootbox.alert(fromBean);
 	if(fromBean!=null && fromBean==0){
 		document.getElementById('fromBean').value=1;
 		document.forms[0].action=action = "../Reports/RPSchedules.jsp?fromBean=1";
-		alert('inside submit');
+		bootbox.alert('inside submit');
 		document.forms[0].submit();
 	}
 }
@@ -147,7 +147,7 @@ function afterRefreshPage(dc){
  		 	LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 	 %> 
 	 		 <script>
-	 		 alert("Error :<%=e.getMessage()%>");
+	 		bootbox.alert("Error :<%=e.getMessage()%>");
 	 		 </script>
 	 <%
  		 }

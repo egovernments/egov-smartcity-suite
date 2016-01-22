@@ -42,7 +42,7 @@ var initialNetPayGLCode;
 function selectDefaultAccountCode(){
 	var accountCodeList=document.getElementById('chartOfAccounts_glConetPay');
 	accountCodesLen=accountCodeList.options.length;
-	//alert('accountCodesLen='+accountCodesLen+',defaultAccCode='+defaultAccCode);	
+	//bootbox.alert('accountCodesLen='+accountCodesLen+',defaultAccCode='+defaultAccCode);	
 	var i=0;
 	while(i<accountCodesLen){	
 		if(accountCodeList.options[i].text == defaultAccCode){	
@@ -134,23 +134,23 @@ var booleanA = true;
  * 
  * for(var i =1 ; i<gltable.rows.length;i++) { entitytotal1 =0 ; var dedAmount1 =
  * PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).value;
- * //alert(dedAmount1); if(dedAmount1 =='undefined' || dedAmount1=="")
- * dedAmount1 =0; //alert("Amount in Row is: "+i+" "+dedAmount1 );
+ * //bootbox.alert(dedAmount1); if(dedAmount1 =='undefined' || dedAmount1=="")
+ * dedAmount1 =0; //bootbox.alert("Amount in Row is: "+i+" "+dedAmount1 );
  * //if(eval(dedAmount1) > 0) { //for(var j =2 ; j<entitygltable.rows.length;j++)
- * //alert("Table Length of "+maintab+" " +entitygltable.rows.length); for(var j
+ * //bootbox.alert("Table Length of "+maintab+" " +entitygltable.rows.length); for(var j
  * =1 ; j<entitygltable.rows.length;j++) {
  * 
- * //alert("hi"); val =
+ * //bootbox.alert("hi"); val =
  * PageManager.DataService.getControlInBranch(entitygltable.rows[j],prefix+"grid_amount");
  * 
  * if(val!=null) { var rowIndex1 =
  * PageManager.DataService.getControlInBranch(entitygltable.rows[j],prefix+"grid_rowIndex").value;
  * if(rowIndex1 == i && eval(val.value)>0) { entitytotal1 = eval(entitytotal1)+
- * eval(val.value) ; // alert(eval(entitytotal1));
+ * eval(val.value) ; // bootbox.alert(eval(entitytotal1));
  *  }
- *  } } // alert(eval(dedAmount1)); // alert(eval(entitytotal1));
+ *  } } // bootbox.alert(eval(dedAmount1)); // bootbox.alert(eval(entitytotal1));
  *  // if only payee details entered and amount is not entered
- * if(eval(dedAmount1)<eval(entitytotal1)) { //alert("got u"); alert(" amount
+ * if(eval(dedAmount1)<eval(entitytotal1)) { //bootbox.alert("got u"); bootbox.alert(" amount
  * should be equal to the total payee amount in Row "+ i);
  * 
  * PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
@@ -158,13 +158,13 @@ var booleanA = true;
  *  }
  *  // Both Total matches then call calTotal & calNetPayment
  * 
- * if(eval(dedAmount1) == eval(entitytotal1)) { //alert("Payees amount is equal
+ * if(eval(dedAmount1) == eval(entitytotal1)) { //bootbox.alert("Payees amount is equal
  * to the Total Amoount"); // var obj =
  * PageManager.DataService.getControlInBranch(gltable.rows[i],columname); return
  * true; //return true;
  *  } else if(dedAmount1 !='' && eval(dedAmount1)>0 && eval(entitytotal1)!=0 &&
  * entitytotal1!= "-0" ) { if(eval(dedAmount1) > eval(entitytotal1) ||
- * eval(dedAmount1) < eval(entitytotal1) && entitytotal1!= "-0") { alert("Payees
+ * eval(dedAmount1) < eval(entitytotal1) && entitytotal1!= "-0") { bootbox.alert("Payees
  * amount should be equal to the total amount in Row "+ i);
  * 
  * PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
@@ -245,7 +245,7 @@ function afterRefreshPage(dc) {
 		}
 		else 
 		{
-			//alert('here');
+			//bootbox.alert('here');
 			document.getElementById('modeOfExec').value = "new";
 			PageManager.DataService.setQueryField("keyValue",defaultAccountCode);
 			PageManager.DataService.callDataService('getDefaultAccountCode');
@@ -268,7 +268,7 @@ function afterRefreshPage(dc) {
 		var dedTable = document.getElementById("deductionTable");
 	}
 
-	//alert("Inside afterRefreshPage"+sm);
+	//bootbox.alert("Inside afterRefreshPage"+sm);
 	if (dc.values['serviceID'] = 'getDefaultAccountCode' && (typeof(dc.values['defaultAccountCode']) != "undefined" && sm == "new")) {
 		defaultAccCode = dc.values['defaultAccountCode'];
 	}
@@ -310,7 +310,7 @@ function afterRefreshPage(dc) {
 
 	}
 	//if(dc.values['serviceID']=='getSalaryGridDetails' && sm=="new")
-	if (dc.values['serviceID'] == 'getSalaryGridDetails') { //alert("Inside New");
+	if (dc.values['serviceID'] == 'getSalaryGridDetails') { //bootbox.alert("Inside New");
 		var earnTable = document.getElementById("earningTable");
 		var dedTable = document.getElementById("deductionTable");
 		for ( var i = 1; i < earnTable.rows.length; i++) {
@@ -334,20 +334,20 @@ function afterRefreshPage(dc) {
 		var earnTable = document.getElementById("earningTable");
 		var dedTable = document.getElementById("deductionTable");
 		for ( var i = 1; i < earnTable.rows.length; i++) {
-			//alert(PageManager.DataService.getControlInBranch(earnTable.rows[i],"salary_CodeIdEar").value) ;
+			//bootbox.alert(PageManager.DataService.getControlInBranch(earnTable.rows[i],"salary_CodeIdEar").value) ;
 			if (PageManager.DataService.getControlInBranch(earnTable.rows[i],
 					"salary_CodeIdEar").value != "")
 				PageManager.DataService.getControlInBranch(earnTable.rows[i],
 						"chartOfAccounts_glCodeearning").disabled = "true";
 		}
-		for ( var i = 1; i < dedTable.rows.length; i++) { //alert(PageManager.DataService.getControlInBranch(dedTable.rows[i],"salary_CodeIdDed").value);
+		for ( var i = 1; i < dedTable.rows.length; i++) { //bootbox.alert(PageManager.DataService.getControlInBranch(dedTable.rows[i],"salary_CodeIdDed").value);
 			if (PageManager.DataService.getControlInBranch(dedTable.rows[i],
 					"salary_CodeIdDed").value != "")
 				PageManager.DataService.getControlInBranch(dedTable.rows[i],
 						"chartOfAccounts_glCodeduction").disabled = "true";
 		}
 	}
-	if (dc.values['serviceID'] == 'getSalBillRegSearchDetails' && sm == "view") { //alert("Inside View");
+	if (dc.values['serviceID'] == 'getSalBillRegSearchDetails' && sm == "view") { //bootbox.alert("Inside View");
 		// disableControls(0,true);
 		for ( var i = 0; i < document.forms[0].length; i++) {
 			if (document.forms[0].elements[i].value != " Back ") {
@@ -372,7 +372,7 @@ function afterRefreshPage(dc) {
 	{
 		if (dc.grids['deductionTable'] == null || dc.grids['deductionTable'].length == 0	|| dc.grids['deductionTable'].length == 1) 
 		{
-			//alert("inside the length  0 ");
+			//bootbox.alert("inside the length  0 ");
 			PageManager.DataService.addNewRow('deductionTable');
 
 			// PageManager.DataService.addNewRow('deductionTable');
@@ -381,7 +381,7 @@ function afterRefreshPage(dc) {
 	}
 	if (dc.values['serviceID'] == 'getSalBillRegSearchDetails' && sm == "view") {
 		if (dc.grids['deductionTable'].length == 0 || dc.grids['deductionTable'].length == 1) {
-			//alert("inside the length  0 ");
+			//bootbox.alert("inside the length  0 ");
 			PageManager.DataService.addNewRow('deductionTable');
 
 			// PageManager.DataService.addNewRow('deductionTable');
@@ -499,13 +499,13 @@ function onloadTasks() {
 	
 	var earnTable= document.getElementById("earningTable");
 	var dedTable= document.getElementById("deductionTable");
-	//alert(earnTable.rows.length);
-	//alert(dedTable.rows.length);*/
+	//bootbox.alert(earnTable.rows.length);
+	//bootbox.alert(dedTable.rows.length);*/
 
 }
 
 function ButtonPress(name) {
-	//alert(document.getElementById('modeOfExec').value);
+	//bootbox.alert(document.getElementById('modeOfExec').value);
 	if (name.toLowerCase() == 'savenew')
 		str = "new";
 	if (name.toLowerCase() == 'saveclose')
@@ -519,34 +519,34 @@ function ButtonPress(name) {
 	/*
 	if(document.getElementById("salaryBill_Number").value == 0)
 	{
-	alert("Please Enter Bill Number");
+	bootbox.alert("Please Enter Bill Number");
 	return;
 	}
 	 */
 	if (document.getElementById('salaryBill_Date').value == 0) {
-		alert("Please Enter The Bill Date");
+		bootbox.alert("Please Enter The Bill Date");
 		return;
 	}
 
 	if (document.getElementById("month_id").value == 0) {
-		alert("Please Select Month ");
+		bootbox.alert("Please Select Month ");
 		return;
 	}
 
 	if (document.getElementById('financialYear_id').value == 0) {
-		alert("Please Select The Financial Year");
+		bootbox.alert("Please Select The Financial Year");
 		return;
 	}
 	/*
 	if(document.getElementById("field_name").value == 0)
 	{
-		alert("Please Select The Field");
+		bootbox.alert("Please Select The Field");
 		return;
 	}
 	 */
 
 	if (document.getElementById('department_id').value == 0) {
-		alert("Please Select The Department");
+		bootbox.alert("Please Select The Department");
 		return;
 	}
 
@@ -557,7 +557,7 @@ function ButtonPress(name) {
 
 		var netPay = document.getElementById('netPay');
 		if (isNaN(netPay.value) || netPay.value <= 0) {
-			alert("Entries Invalid:Net Pay Can't be Less than or equal to zero");
+			bootbox.alert("Entries Invalid:Net Pay Can't be Less than or equal to zero");
 			return;
 		}
 
@@ -676,7 +676,7 @@ function calculateDeductionTotal() {
 function checkDispersementType(obj) {
 	var mode = PageManager.DataService.getQueryField("showMode");
 
-	//	alert("calling ");
+	//	bootbox.alert("calling ");
 	openDetails(obj, 'chartOfAccounts_glCodeduction', mode, 'entitiesNew_grid',
 			'new_');
 
@@ -685,7 +685,7 @@ function checkDispersementType(obj) {
 function checkDispersementTypeDed(obj) {
 	var mode = PageManager.DataService.getQueryField("showMode");
 
-	//alert("calling ");
+	//bootbox.alert("calling ");
 
 	openDetails(obj, 'chartOfAccounts_glCodeearning', mode, 'entities_grid', '')
 
@@ -733,7 +733,7 @@ function openSearch(obj, tableNo) {
 
 	if (sRtn != '') {
 		a = sRtn.split("`~`");
-		// alert(a);
+		// bootbox.alert(a);
 		var x, y, z;
 		if (tableNo == 1) {
 			x = PageManager.DataService.getControlInBranch(
@@ -743,7 +743,7 @@ function openSearch(obj, tableNo) {
 					'chartOfAccounts_nameearning');
 			z = PageManager.DataService.getControlInBranch(
 					obj.parentNode.parentNode.parentNode, 'glCodeId_Earning');
-			//alert(document.getElementById('glCodeId_Earning').value);	
+			//bootbox.alert(document.getElementById('glCodeId_Earning').value);	
 
 		} else {
 			x = PageManager.DataService.getControlInBranch(obj.parentNode,
@@ -753,15 +753,15 @@ function openSearch(obj, tableNo) {
 					'chartOfAccounts_namededuction');
 			z = PageManager.DataService.getControlInBranch(
 					obj.parentNode.parentNode.parentNode, 'glCodeId_Ded');
-			//alert(document.getElementById('glCodeId_Ded').value);
+			//bootbox.alert(document.getElementById('glCodeId_Ded').value);
 		}
 		x.value = a[0];
 		y.value = a[1];
 		z.value = a[2];
 
-		//alert(a[0]);
-		// alert(a[1]);
-		// alert(a[2]);
+		//bootbox.alert(a[0]);
+		// bootbox.alert(a[1]);
+		// bootbox.alert(a[2]);
 	}
 }
 
@@ -778,7 +778,7 @@ function openSearch1(obj, tableName, tableNo) {
 			a = sRtn.split("`~`");
 
 			if (tableName.toLowerCase() == 'function' && tableNo == 1) {
-				//alert("a 0 value= "+a[0]+" a 1 value = " +a[1]+" a 2 value ="+a[2]);
+				//bootbox.alert("a 0 value= "+a[0]+" a 1 value = " +a[1]+" a 2 value ="+a[2]);
 				var y = PageManager.DataService.getControlInBranch(
 						obj.parentNode, 'function_code');
 				var x = PageManager.DataService.getControlInBranch(
@@ -796,9 +796,9 @@ function openSearch1(obj, tableName, tableNo) {
 			y.value = a[1];
 			x.value = a[2];
 			document.getElementById('fnctionCodeId').value = a[2];
-			//alert(document.getElementById('fnctionCodeId').value);
-			//alert(a[1]);
-			//alert(a[2]);
+			//bootbox.alert(document.getElementById('fnctionCodeId').value);
+			//bootbox.alert(a[1]);
+			//bootbox.alert(a[2]);
 		}
 	}
 }
@@ -815,7 +815,7 @@ function checkDuplicatesAmongTables() {
 					dedTable.rows[j], "chartOfAccounts_glCodeduction");
 			if ((row1Data.value.toLowerCase() == rowData.value.toLowerCase())
 					&& rowData.value.length > 0) {
-				alert("Record "
+				bootbox.alert("Record "
 						+ j
 						+ " Account Code Of Deductions  Cannot be Same as Record "
 						+ i + " of Earnings");
@@ -838,14 +838,14 @@ function isRowsEmpty() {
 				'earningAmount');
 		/*
 		if(tCodeObj.value.length>0 && tAmtObj.value.length==0){
-		  alert("Fill the Amount For Earnings");
+		  bootbox.alert("Fill the Amount For Earnings");
 		  tAmtObj.focus();
 		  return true;
 		}
 		 */
 
 		if (tCodeObj.value.length == 0 && tAmtObj.value.length > 0) {
-			alert("Fill the Account Code For Earnings Otherwise Amount make it as empty");
+			bootbox.alert("Fill the Account Code For Earnings Otherwise Amount make it as empty");
 			tCodeObj.focus();
 			return true;
 		}
@@ -853,7 +853,7 @@ function isRowsEmpty() {
 		// This is for if added any extra Empty Rows
 		/*
 		if(tCodeObj.value.length==0 && tAmtObj.value.length==0){
-		  alert("Fill the Code For Earnings");
+		  bootbox.alert("Fill the Code For Earnings");
 		  tCodeObj.focus();
 		  return true;
 		}
@@ -863,7 +863,7 @@ function isRowsEmpty() {
 	var tAmount = document.getElementById('ernTotalAmount').value;
 	var netPayGLCode = document.getElementById('chartOfAccounts_glConetPay')
 	if (netPayGLCode.options[netPayGLCode.selectedIndex].text == initialNetPayGLCode && (isNaN(tAmount) || parseInt(tAmount) <= 0 || tAmount.length == 0)) {
-		alert("No  Data To Post");
+		bootbox.alert("No  Data To Post");
 		// tCodeObj=document.getElementById('chartOfAccounts_glCodeearning');
 		// tCodeObj.focus();
 		return true;
@@ -881,14 +881,14 @@ function isDedRowsEmpty() {
 				'deductionAmount');
 		/*
 		if(tCodeObj.value.length>0 && tAmtObj.value.length==0){
-		  alert("Fill the Amount For Deductions");
+		  bootbox.alert("Fill the Amount For Deductions");
 		  tAmtObj.focus();
 		  return true;
 		}
 		 */
 
 		if (tCodeObj.value.length == 0 && tAmtObj.value.length > 0) {
-			alert("Fill the Account Code For Deductions Otherwise Amount make it as empty");
+			bootbox.alert("Fill the Account Code For Deductions Otherwise Amount make it as empty");
 			tCodeObj.focus();
 			return true;
 		}
@@ -896,7 +896,7 @@ function isDedRowsEmpty() {
 		// This is for if added any extra Empty Rows
 		/*
 		if(tCodeObj.value.length==0 && tAmtObj.value.length==0){
-				  alert("Fill the Code For Deductions");
+				  bootbox.alert("Fill the Code For Deductions");
 				  tCodeObj.focus();
 				  return true;
 		}
@@ -916,7 +916,7 @@ function checkDuplicates(tableId, ctlToSearch) {
 					ctlToSearch);
 			if ((row1Data.value.toLowerCase() == rowData.value.toLowerCase())
 					&& rowData.value.length > 0) {
-				alert("In Earnings Record " + j
+				bootbox.alert("In Earnings Record " + j
 						+ " Account Code  Cannot be Same as Record " + i);
 				rowData.value = "";
 				rowData.focus();
@@ -942,10 +942,10 @@ function checkSalaryCode() {
 		}
 	}
 	if (foundCode == 0) {
-		alert("please select salary code in earnings");
+		bootbox.alert("please select salary code in earnings");
 		return false;
 	} else if (foundCode > 1) {
-		alert("select only one salary code");
+		bootbox.alert("select only one salary code");
 		return false;
 	}
 	return true;
@@ -978,7 +978,7 @@ function checkDuplicatesDeduction(tableId, ctlToSearch) {
 					&& rowData.value.length > 0) {
 				if (!checkEntityDuplication(i, j, 'entities_grid', ''))
 					continue;
-				alert("In Deductions Record " + j
+				bootbox.alert("In Deductions Record " + j
 						+ " Account Code  Cannot be Same as Record " + i);
 				rowData.value = "";
 				rowData.focus();
@@ -1003,9 +1003,9 @@ function getAccNameEarn(obj, neibrObjName) {
 	temp = temp.split("`-`");
 	obj.value = temp[0];
 
-	//alert(temp[0]);
-	//alert(temp[1]);
-	//alert(temp[2]);
+	//bootbox.alert(temp[0]);
+	//bootbox.alert(temp[1]);
+	//bootbox.alert(temp[2]);
 
 	PageManager.DescService.onblur(neibrObjName);
 	var currRow = PageManager.DataService.getRow(obj);
@@ -1018,7 +1018,7 @@ function getAccNameEarn(obj, neibrObjName) {
 		neibrObj.value = temp[1];
 		PageManager.DataService.getControlInBranch(obj.parentNode.parentNode,
 				"glCodeId_Earning").value = temp[2];
-		//alert(PageManager.DataService.getControlInBranch(obj.parentNode.parentNode,"glCodeId_Earning").value);
+		//bootbox.alert(PageManager.DataService.getControlInBranch(obj.parentNode.parentNode,"glCodeId_Earning").value);
 		//document.getElementById('glCodeId_Earning').value=temp[2];
 	}
 }
@@ -1028,9 +1028,9 @@ function getAccNameDed(obj, neibrObjName) {
 	temp = temp.split("`-`");
 	obj.value = temp[0];
 
-	//alert(temp[0]);
-	//alert(temp[1]);
-	//alert(temp[2]);
+	//bootbox.alert(temp[0]);
+	//bootbox.alert(temp[1]);
+	//bootbox.alert(temp[2]);
 
 	PageManager.DescService.onblur(neibrObjName);
 	var currRow = PageManager.DataService.getRow(obj);
@@ -1043,7 +1043,7 @@ function getAccNameDed(obj, neibrObjName) {
 		neibrObj.value = temp[1];
 		PageManager.DataService.getControlInBranch(obj.parentNode.parentNode,
 				"glCodeId_Ded").value = temp[2];
-		//alert(PageManager.DataService.getControlInBranch(obj.parentNode.parentNode,"glCodeId_Ded").value);
+		//bootbox.alert(PageManager.DataService.getControlInBranch(obj.parentNode.parentNode,"glCodeId_Ded").value);
 		//document.getElementById('glCodeId_Ded').value=temp[2];
 	}
 }
@@ -1066,8 +1066,8 @@ function getFunId1(obj, neibrObjName) {
 	else {
 		neibrObj.value = temp[1];
 		document.getElementById('fnctionCodeId').value = temp[1];
-		//alert(temp[0]);
-		//alert(temp[1]);
+		//bootbox.alert(temp[0]);
+		//bootbox.alert(temp[1]);
 	}
 	neibrObj.disabled = true;
 
@@ -1159,14 +1159,14 @@ function fillDate1(objName) {
 function checkfund() {
 	var tempfund = document.getElementById("fund_id").value;
 	if (tempfund == "")
-		alert("Select Fund First");
+		bootbox.alert("Select Fund First");
 }
 
 function checkscheme() {
 	var tempfund = document.getElementById("scheme").value;
-	//alert(tempfund);
+	//bootbox.alert(tempfund);
 	if (tempfund == "")
-		alert("Select Scheme First");
+		bootbox.alert("Select Scheme First");
 }
 
 function getPurposeIds()

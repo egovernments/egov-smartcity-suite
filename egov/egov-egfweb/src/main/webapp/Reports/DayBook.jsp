@@ -162,7 +162,7 @@ function ButtonPress(){
 	
 	var strtDate = document.getElementById('startDate').value;
 	rptStartDate = strtDate;
-	//alert(rptStartDate);
+	//bootbox.alert(rptStartDate);
 	var endDate = document.getElementById('endDate').value;
 	rptEndDate = endDate;
 	var rptfundId= document.getElementById('fundLst').value;
@@ -174,16 +174,16 @@ function ButtonPress(){
 	
 	 if(strtDate.length==0||endDate.length==0)
 	{
-		alert("please select start dates and end dates");
+		 bootbox.alert("please select start dates and end dates");
 		return;
 	}
 	/*if( compareDate(formatDateToDDMMYYYY(strtDate),formatDateToDDMMYYYY(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}*/
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 ){
-		alert('Start Date can not be greater than End Date');
+		bootbox.alert('Start Date can not be greater than End Date');
 		document.getElementById('startDate').focus();
 		return false;
 	}
@@ -371,7 +371,7 @@ function buttonPrint()
 		LOGGER.error("Exception in Jsp Page:"+e.getMessage());
 		%>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate','');
 		 </script>
 		 <%
@@ -466,7 +466,7 @@ function buttonPrint()
 		LOGGER.error("Exception in Jsp Page:"+e.getMessage());
 		%>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate','');
 		 </script>
 		 <%

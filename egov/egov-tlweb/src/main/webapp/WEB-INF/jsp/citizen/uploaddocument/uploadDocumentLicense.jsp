@@ -175,7 +175,7 @@
 		} catch (e) {
 			//This error can occur due to either docNumber field or docNumberUpdater function 
 			//is missing in parent window OR Parent window got closed before child window had closed. 
-			alert("Failed to update Document Number...!");
+			bootbox.alert("Failed to update Document Number...!");
 		}
 	}
 	window.close();

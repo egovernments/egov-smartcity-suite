@@ -83,7 +83,6 @@ else if(request.getParameter("type").equalsIgnoreCase("contractorName")){
  	//System.out.println(query);
 	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
-
 else if(request.getParameter("type").equalsIgnoreCase("supplierName")){
 	String query="select name||'`-`'||code as \"code\" from relation where id in(select relationid from worksdetail where totalvalue>0 and isactive=1) and isactive=1 and relationTypeid=1  order by upper(\"code\") ";
 	//System.out.println(query);
@@ -328,6 +327,15 @@ else if(request.getParameter("type").equalsIgnoreCase("validaUniquePanTinno"))
  	String query="select code AS \"code\" from relation where "+appQry+" and code!='"+request.getParameter("code")+"' ";
 //System.out.println(query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+}
+else if(request.getParameter("type").equalsIgnoreCase("getAllCoaNames"))
+{//TESTED
+	final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = '1' order by glcode ";
+	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+}
+else if(request.getParameter("type").equalsIgnoreCase("getAllFunctionCode")){
+	final String query="select code||'`~`'||name||'`~~`'||id as \"code\" from function where  isactive = 1 AND isnotleaf=0 order by name ";
+	rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 int i = 0;
 try{

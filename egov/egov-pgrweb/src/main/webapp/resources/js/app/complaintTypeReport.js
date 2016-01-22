@@ -421,7 +421,7 @@ function showChangeDropdown(dropdown) {
 }
 function setHiddenValueByLink(obj, paaram) {
 
-//alert(paaram +'  ' + $(obj).data('complaintname'));
+//bootbox.alert(paaram +'  ' + $(obj).data('complaintname'));
 
 	if ($(obj).data('eleval')>0) {
 		$('input[name=status]').val(paaram);

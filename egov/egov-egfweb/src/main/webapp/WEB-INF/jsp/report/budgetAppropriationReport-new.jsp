@@ -66,7 +66,7 @@ function getData(){
 		doLoadingMask();
 		var frmdate=document.getElementById('fromDate').value;
 		var todate=document.getElementById('toDate').value;
-		//alert("<<<>>>"+budName+"<<>>"+depName+"<<>>"+fndName+"<<<>>>"+funcName);
+		//bootbox.alert("<<<>>>"+budName+"<<>>"+depName+"<<>>"+fndName+"<<<>>>"+funcName);
 		var url = '/EGF/report/budgetAppropriationReport!ajaxGenerateReport.action?showDropDown=false'
 					+'&model.budgetDetail.executingDepartment.id='+document.getElementById('department').value
 					+'&model.budgetDetail.function.id='+document.getElementById('function').value
@@ -101,10 +101,10 @@ function validateMandatoryField(){
 	var frmdate=document.getElementById('fromDate').value;
 	var todate=document.getElementById('toDate').value;
 	if(budgetval.value==null || budgetval.value==''){
-		alert("Please Select Budget");
+		bootbox.alert("Please Select Budget");
 		return false;
 	}if(frmdate=='' || todate=='' ){
-		alert("Please Select Date Range");
+		bootbox.alert("Please Select Date Range");
 		return false;
 	}
 	doLoadingMask();

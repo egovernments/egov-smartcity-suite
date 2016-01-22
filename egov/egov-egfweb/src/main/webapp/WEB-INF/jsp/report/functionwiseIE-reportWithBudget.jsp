@@ -48,22 +48,22 @@
     {
 	    if(document.getElementById('incExp').value==-1)
 	    {
-	     alert("Select Income/ expenditure");
+	     bootbox.alert("Select Income/ expenditure");
 	     return false;
 	     }
 	     if(document.getElementById('asOnDate').value=="")
 	    {
-	     alert("Select As On Date");
+	     bootbox.alert("Select As On Date");
 	     return false;
 	     }
 	     if(document.getElementById('fund').value==-1)
 	    {
-	     alert("Select Fund");
+	     bootbox.alert("Select Fund");
 	     return false;
 	     }  
 	   if(document.getElementById('function').value==-1)
 	    {
-	     alert("Select Function");
+	     bootbox.alert("Select Function");
 	     return false;
 	     }
 	   
