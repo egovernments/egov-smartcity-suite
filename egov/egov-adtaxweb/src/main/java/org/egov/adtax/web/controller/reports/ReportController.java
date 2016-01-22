@@ -114,10 +114,12 @@ public class ReportController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("permitNumber", advertisementPermitDetail.getPermissionNumber());
-            if (advertisementPermitDetail.getAgency() != null && StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
+            if (advertisementPermitDetail.getAgency() != null
+                    && StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
                 reportParams.put("agencyname",
                         advertisementPermitDetail.getAgency().getName() + "/" + advertisementPermitDetail.getOwnerDetail());
-            else if (advertisementPermitDetail.getAgency() != null && StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
+            else if (advertisementPermitDetail.getAgency() != null
+                    && StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
                 reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
             else
                 reportParams.put("agencyname", advertisementPermitDetail.getOwnerDetail());
@@ -125,7 +127,7 @@ public class ReportController {
             reportParams.put("address", advertisementPermitDetail.getAdvertisement().getAddress());
             reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
             reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
-            reportParams.put("unitofmeasure", advertisementPermitDetail.getUnitOfMeasure());
+            reportParams.put("unitofmeasure", advertisementPermitDetail.getUnitOfMeasure().getDescription());
             reportParams.put("measurement", advertisementPermitDetail.getMeasurement() == null ? Long.valueOf(0)
                     : advertisementPermitDetail.getMeasurement());
             reportParams.put("length",
@@ -158,7 +160,15 @@ public class ReportController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("advertisementnumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
-            reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
+            if (advertisementPermitDetail.getAgency() != null
+                    && StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
+                reportParams.put("agencyname",
+                        advertisementPermitDetail.getAgency().getName() + "/" + advertisementPermitDetail.getOwnerDetail());
+            else if (advertisementPermitDetail.getAgency() != null
+                    && StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
+                reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
+            else
+                reportParams.put("agencyname", advertisementPermitDetail.getOwnerDetail());
             reportParams.put("address", advertisementPermitDetail.getAdvertisement().getAddress());
             reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
             reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
