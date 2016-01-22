@@ -40,15 +40,15 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<span class="mandatory1"> <font
+<%-- <span class="mandatory1"> <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
 		<s:actionmessage /></font>
-</span>
+</span> --%>
 <s:if test="%{dayBookDisplayList.size!=0}">
 	<display:table name="dayBookDisplayList" id="currentRowObject"
 		uid="currentRowObject" class="tablebottom" style="width:100%;"
 		cellpadding="0" cellspacing="0" export="true"
-		requestURI="dayBookReport!ajaxSearch.action">
+		requestURI="dayBookReport-ajaxSearch.action">
 		<display:caption>
 			<div class="headingsmallbgnew" align="center"
 				style="text-align: center; width: 98%;">
@@ -97,9 +97,13 @@
 			title="Credit Amount(Rs.)" style="width:5%;text-align:right"
 			property="creditamount" />
 		<display:caption media="pdf">
+		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						                                     Day Book Report  
 		</display:caption>
 		<display:caption media="excel">
-				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						  Day Book Report  
 				</display:caption>
 		<display:setProperty name="export.pdf" value="true" />
