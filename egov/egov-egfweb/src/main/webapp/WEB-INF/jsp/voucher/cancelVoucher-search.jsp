@@ -229,9 +229,10 @@ function loadNamesForSelectedType()
 					</tr>
 				</s:iterator>
 			</table>
-
-			<td><s:submit Class="buttonsubmit" value="Submit"
-					onclick="return validateVouchers();" /></td>
+			<div class="buttonbottom" align="center">
+				<s:submit Class="buttonsubmit" value="Cancel Voucher"
+					onclick="return validateVouchers();" />
+			</div>
 
 		</div>
 	</s:if>
