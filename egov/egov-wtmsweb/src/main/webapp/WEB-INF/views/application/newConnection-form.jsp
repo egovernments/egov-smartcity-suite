@@ -81,5 +81,5 @@
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
+<script src="<c:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
