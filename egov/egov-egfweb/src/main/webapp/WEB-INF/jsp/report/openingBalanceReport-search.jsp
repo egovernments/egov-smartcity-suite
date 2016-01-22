@@ -167,7 +167,7 @@
 				</div>
 			</div>
 		</s:push>
-		<span class="mandatory">
+		<span >
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="openingBalanceReport-result.jsp" />
 			</div>
