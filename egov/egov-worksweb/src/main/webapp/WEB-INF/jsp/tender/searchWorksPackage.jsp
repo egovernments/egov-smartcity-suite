@@ -56,7 +56,7 @@ function validateSearch()
 	dom.get('fromDate').value=="" &&
 	dom.get('toDate').value=="" && dom.get('tenderFileNumber').value=="" && dom.get('estimateNumberSearch').value=="")
 	{
-		dom.get("searchwp_error").innerHTML='Please Select any one of the Search Parameters'; 
+		dom.get("searchwp_error").innerHTML='<s:text name="search.criteria.atleastone.mandatory"/>'; 
         dom.get("searchwp_error").style.display='';
 		return false;
 	 }
@@ -80,7 +80,7 @@ function createNegotiation(){
 	else{
 	
 		clearMessage('searchwp_error')
-		window.open('${pageContext.request.contextPath}/tender/tenderNegotiation!newform.action?tenderSource=package&sourcepage=createNegotiationForWP&worksPackageId='+id,'_self');
+		window.open('${pageContext.request.contextPath}/tender/tenderNegotiation-newform.action?tenderSource=package&sourcepage=createNegotiationForWP&worksPackageId='+id,'_self');
 	}
 }
 
@@ -131,7 +131,7 @@ function retenderonclick(obj)
 			</div>
 		</s:if>
 		<s:form name="workspackageForm"
-			action="searchWorksPackage!search.action" theme="simple">
+			action="searchWorksPackage-search.action" theme="simple">
 			<div class="formmainbox"></div>
 			<div class="insidecontent">
 				<div class="rbroundbox2">
@@ -229,10 +229,10 @@ function retenderonclick(obj)
        												</div>	
        											</div>
        											<s:if test="%{source=='cancelWP'}">
-       												<egov:autocomplete name="wpNumberSearch" width="20" field="wpNumberSearch" url="ajaxWorksPackage!searchWorksPackageNumber.action?" queryQuestionMark="false" results="wpNumberSearchResults" paramsFunction="wpParamsFunction" handler="wpNumberSearchSelectionHandler" queryLength="3"/>
+       												<egov:autocomplete name="wpNumberSearch" width="20" field="wpNumberSearch" url="ajaxWorksPackage-searchWorksPackageNumber.action?" queryQuestionMark="false" results="wpNumberSearchResults" paramsFunction="wpParamsFunction" handler="wpNumberSearchSelectionHandler" queryLength="3"/>
        											</s:if>
        											<s:else>
-       												<egov:autocomplete name="wpNumberSearch" width="20" field="wpNumberSearch" url="ajaxWorksPackage!searchWorksPackageNumber.action?" queryQuestionMark="false" results="wpNumberSearchResults" handler="wpNumberSearchSelectionHandler" queryLength="3"/>
+       												<egov:autocomplete name="wpNumberSearch" width="20" field="wpNumberSearch" url="ajaxWorksPackage-searchWorksPackageNumber.action?" queryQuestionMark="false" results="wpNumberSearchResults" handler="wpNumberSearchSelectionHandler" queryLength="3"/>
        											</s:else>	
 											</td>
 										</tr>
@@ -313,7 +313,7 @@ function retenderonclick(obj)
 													<s:select id="department" name="department"
 														cssClass="selectwk"
 														list="%{dropdownData.departmentList}" listKey="id"
-														listValue="deptName" value="%{execDept}" />
+														listValue="name" value="%{execDept}" />
 												</td>
 												<s:if test="%{negoCreatedBy=='no' && dropdownData.departmentList.size==1}">
 													<script>
@@ -331,7 +331,7 @@ function retenderonclick(obj)
 														headerKey="-1" headerValue="---select---"
 														cssClass="selectwk"
 														list="%{dropdownData.departmentList}" listKey="id"
-														listValue="deptName" value="%{department.id}" />
+														listValue="name" value="%{department.id}" />
 												</td>
 											</s:else>
 											<td width="15%" class="whiteboxwk">
@@ -364,7 +364,7 @@ function retenderonclick(obj)
 										<tr>
 											<td colspan="4">
 												<div class="buttonholdersearch" align="center">
-													<s:submit value="Save" cssClass="buttonadd" value="SEARCH"
+													<s:submit cssClass="buttonadd" value="SEARCH" 
 														id="saveButton" name="button"
 														onClick="return validateSearch();" />
 												</div>

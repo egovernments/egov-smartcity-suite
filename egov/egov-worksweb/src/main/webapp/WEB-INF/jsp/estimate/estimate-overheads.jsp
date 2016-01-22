@@ -274,16 +274,32 @@ function recalculateOverHeadTotalsOnDelete(record){
 }
 </script>
 
-<table id="overheadsHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-	<div class="errorstyle" id="overheads_error" style="display:none;"></div>
-              <tr>
-                <td colspan="5" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">Overheads</div></td><td class="headingwk" align="right" style="border-left-width: 0px"><input type='button' class="buttonadd" value='Recalculate' onClick='recalculateOverheads();'/></td>
-              </tr>
-              <tr>
-                <td   colspan="6" width="100%">
-                <div class="yui-skin-sam">
+
+<div id="overheadsHeaderTable" class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   Overheads
+		   <div class="pull-right">
+		    <a href="javascript:void(0);" class="btn btn-primary" 
+	   	       onclick="recalculateOverheads();">
+	   	       Recalculate
+	   	    </a>
+		   </div>
+		</div>
+	</div>
+	<div class="panel-body">		
+		<div class="alert alert-danger" id="overheads_error" style="display:none;"></div>
+		
+	    <div class="form-group no-margin-bottom">
+	    	 <div class="yui-skin-sam">
                     <div id="overheadTable"></div>
                 </div>
+	    </div>
+	</div>
+</div>
+
+
+
                 <script>
                 var estDate = '<s:property value="model.estimateDate"/>';
                 if (estDate == null || estDate == "") {
@@ -347,11 +363,4 @@ function recalculateOverHeadTotalsOnDelete(record){
                    
 		        </s:iterator>
 		        </script>
-                </td>
-                </tr>
-                <tr>
-                <td colspan="6" class="shadowwk"></td>
-              </tr>
-
-</table> 
 

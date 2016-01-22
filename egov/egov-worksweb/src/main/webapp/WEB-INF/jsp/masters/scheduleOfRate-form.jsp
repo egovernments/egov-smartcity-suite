@@ -41,9 +41,21 @@
 #yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
 	Width: 100%;
 }
+ul {
+list-style-type: none;
+}
 </style>
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
+function createDeleteImageFormatter(baseURL){
+	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
+	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
+	    el.innerHTML = markup;
+	}
+	return deleteImageFormatter;
+}
+
 function validateSORFormAndSubmit() {
     clearMessage('sor_error')
 	links=document.scheduleOfRate.getElementsByTagName("span");
@@ -74,7 +86,6 @@ function enableLastEndDate(){
 	var i;
 	var records= scheduleOfRateDataTable.getRecordSet();
 
-	hideColumn('deleteRate');
 	disablePrevRates();
 	for(i=0;i<records.getLength();i++){
 		if(i <= (persistedRatesCnt-1)) {
@@ -93,19 +104,15 @@ function enableLastEndDate(){
 	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).disabled=false;	
 }
 
-function hideColumn(colKey) {
-	scheduleOfRateDataTable.hideColumn(colKey);
-}
-
 function disableEnablePrevRateDetails(records,j) {
 	var endDate;
-	if(dom.get("endDate"+records.getRecord(j).getId()).value!="") {
+	if(dom.get("endDate"+records.getRecord(j).getId()).value!=null) {
 		endDate = dom.get("endDate"+records.getRecord(j).getId()).value;
 	}
-	dom.get("rate"+records.getRecord(j).getId()).readonly=true;
-	dom.get("rate"+records.getRecord(j).getId()).disabled=true;
-	dom.get("startDate"+records.getRecord(j).getId()).readonly=true;
-	dom.get("startDate"+records.getRecord(j).getId()).disabled=true;
+	dom.get("rate"+records.getRecord(j).getId()).readonly=false;
+	dom.get("rate"+records.getRecord(j).getId()).disabled=false;
+	dom.get("startDate"+records.getRecord(j).getId()).readonly=false;
+	dom.get("startDate"+records.getRecord(j).getId()).disabled=false;
 
 	<jsp:useBean id="today" class="java.util.Date" />
 	<fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${today}"/>
@@ -123,7 +130,6 @@ function disableEnablePrevRateDetails(records,j) {
 
 function disablePreviousRatesOnLoad() {
 	<s:if test="%{id!=null && mode=='edit'}">
-		hideColumn('deleteRate');
 		disablePrevRates();
 	</s:if>
 } 
@@ -147,29 +153,6 @@ function validateLineBreaks() {
 	dom.get("code").value = codeName;
 }
 
-function validateLineBreaksInDescription() {
-	var descriptionText = dom.get('description').value;
-	descriptionText = descriptionText.replace(/([\n]|<br \>)/g,'');
-	dom.get("description").value = descriptionText;
-}
-
-function UniqueCheckOnCodenumber() {
-	codeno = dom.get('code').value;
-	scheduleCategory = dom.get('scheduleCategory').value;
-	if(scheduleCategory==-1 && codeno!='') {
-		dom.get("selectcategory").style.display = "";
-	} else {
-		populatenumberunique({codeNo:codeno,scheduleCategoryId:scheduleCategory});
-		dom.get("selectcategory").style.display = "none";
-	}
-}
-
-function checkForCode() {	
-	 if(dom.get("numberunique").style.display =="" ) {
-		 document.getElementById('code').value="";
-	 }	 
-}
- 
 function createHiddenFormatter(el, oRecord, oColumn, oData) {
 	var hiddenFormatter = function(el, oRecord, oColumn, oData) {
     	var value = (YAHOO.lang.isValue(oData))?oData:"";
@@ -182,8 +165,6 @@ function createHiddenFormatter(el, oRecord, oColumn, oData) {
 	return hiddenFormatter;
 }
 var hiddenFormatter = createHiddenFormatter(10,10); 
- 
- 
  
 function createTextBoxFormatter(size,maxlength) {
 	var textboxFormatter = function(el, oRecord, oColumn, oData) {
@@ -202,7 +183,7 @@ var dateFormatter = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionRates[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
 	var id = oColumn.getKey() + oRecord.getId();
 	
-	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
+	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
 	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
 				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	 e2.innerHTML = markup;
@@ -214,10 +195,10 @@ var makeScheduleOfRateDataTable = function() {
 	var scheduleOfRateColumnDefs = [ 
 		{key:"id", hidden:true,formatter:hiddenFormatter,sortable:false, resizeable:false} ,
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false, width:50},
-		{key:"rate", label:'<span class="mandatory">*</span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
-		{key:"startDate", label:'<span class="mandatory">*</span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
+		{key:"rate", label:'<span class="mandatory"></span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
+		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
 		{key:"endDate",label:'End Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
-		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
+		{key:'deleteRate',hidden:true,label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
 	var scheduleOfRateDataSource = new YAHOO.util.DataSource(); 
@@ -247,79 +228,101 @@ var makeScheduleOfRateDataTable = function() {
 <span align="center" style="display:none" id="selectcategory">
  	<div class="errorstyle" >
          <s:text name="sor.code.categoryType.null"/>
-   </div>
-</span>
-<span align="center" style="display:none" id="numberunique">
-  <div class="errorstyle" >
-         <s:text name="codeno.exists"/>
-  </div>
+	</div>
 </span>
 
-<div class="navibarshadowwk"></div>
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
-	  <div class="rbcontent2">
-	  <table width="100%" border="0" cellspacing="0" cellpadding="0">          
-       <tr>
-         <td>&nbsp;</td>
-       </tr>
-       <tr>
-         <td>
-         	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-        	<tr>
-          		<td colspan="4" class="headingwk">
-          			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-            		<div class="headplacer"><s:text name="sor.header" /></div>
-            	</td>
-        	</tr>
-        	<tr>
-        		<td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.category" />:</td>
-          		<td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" onchange="UniqueCheckOnCodenumber();"/> </td>
-                <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.code" />:</td>
-          		<td width="53%" class="whitebox2wk"><s:textfield name="code" cssClass="selectwk" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" /></td>
-			</tr>
-			<tr>
-				<td width="11%" class="whiteboxwk"></td>
-            	<td width="21%" class="whiteboxwk"></td>
-            	<td width="15%" class="whiteboxwk"></td>
-            	<td width="53%" class="whitebox2wk"></td>
-			</tr>
-			<tr>
-				<td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.sor.description" />:</td>
-            	<td width="21%" class="greybox2wk"><span class="greybox2wk">
-            	<s:textarea name="description" cols="45"  rows="4" cssClass="selectwk" id="description" value = "%{description}"  maxlength = "4000" onblur="validateLineBreaksInDescription();" /></span>
-            	</td>
-                <td width="15%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.sor.uom" />:</td>
-          		<td width="53%" class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="uom" id="uom" cssClass="selectwk" list="dropdownData.uomlist" listKey="id" listValue="uom" value="%{uom.id}" /></td>
-            </tr>
-	        <tr>
-	          	<td colspan="4" class="shadowwk"></td>
-	        </tr>
- 			</table>
- 		</td>
-     </tr>
-      <tr>
-        <td>&nbsp;</td>
-      </tr>
-          <tr>
-            <td>
-            <table id="ratesTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-				<div class="headplacer"><s:text name="sor.rateDetails" /></div>
-				</td>
-				<td align="right" class="headingwk" style="border-left-width: 0px"><a href="#" onclick="scheduleOfRateDataTable.addRow({SlNo:scheduleOfRateDataTable.getRecordSet().getLength()+1});return false;"><img border="0" alt="Add SOR Rate" src="/egi/resources/erp2/images/add.png" /></a>
-				</td>
-			</tr>
-		<tr>
-			<td colspan="4">
+<div class="new-page-header">
+	<s:text name="sor.header" />
+</div>
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		</div>
+	</div>
+
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.category" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" /> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.code" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" cssClass="form-control" id="code" value = "%{code}" maxlength = "50" autocomplete="off" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.description" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="description" cols="45"  rows="3" cssClass="form-control" id="description" value = "%{description}"  maxlength = "4000"  /> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.uom" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+			<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="uom" id="uom" cssClass="form-control" list="dropdownData.uomlist" listKey="id" listValue="uom" value="%{uom.id}" />
+			</div>
+		</div>
+     </div>
+</div>
+
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name="master.sor.rateDetails" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<div class="text-right add-margin">
+	   	       <button class="btn btn-primary" onclick="scheduleOfRateDataTable.addRow({SlNo:scheduleOfRateDataTable.getRecordSet().getLength()+1}); initializeDatePicker(); return false;"><s:text name="sor.addsor.rate" /></button>
+	   	   </div>
 			<div class="yui-skin-sam">
 			<div id="scheduleOfRateTable"></div>
-	<script>
+
+<script>
+var imgURL="/egi/resources/erp2/images/cancel.png";	
+function validateInput(){ 
+		var elems = document.getElementsByTagName("input");
+		for (var i=0; i<elems.length; i++) {
+		if(elems[i].id != '') {
+			var val = document.getElementById(elems[i].id).value;
+			  if ((elems[i].id.indexOf("rateyui") == 0 || elems[i].id.indexOf("marketRateyui") == 0) && val == '0.0')
+				  document.getElementById(elems[i].id).value = '';
+		}
+	}
+}
+function initializeDatePicker()
+{
+	jQuery(".datepicker").datepicker({
+		format : "dd/mm/yyyy",
+		autoclose:true
+	});
+}
             makeScheduleOfRateDataTable();
-         <s:iterator id="rateIterator" value="model.sorRates" status="rate_row_status">
-				        scheduleOfRateDataTable.addRow(
+            <s:iterator id="rateIterator" value="model.sorRates" status="rate_row_status">
+            <s:if test="#rate_row_status == 1">
+	       ScheduleOfRateDataTable.updateRow(0,
+	    		   {id:'<s:property value="id"/>',											
+               SlNo:'<s:property value="#rate_row_status.count"/>',
+               rate:'<s:property value="rate"/>',
+               startDate:'<s:property value="validity.startDate"/>',
+               endDate:'<s:property value="validity.endDate"/>'
+				}
+				);
+	          </s:if>
+	          <s:else>
+	          debugger;
+	          scheduleOfRateDataTable.addRow(
+	    	          
 			        						{id:'<s:property value="id"/>',											
 			                                SlNo:'<s:property value="#rate_row_status.count"/>',
 			                                rate:'<s:property value="rate"/>',
@@ -327,6 +330,7 @@ var makeScheduleOfRateDataTable = function() {
 			                                endDate:'<s:property value="validity.endDate"/>'
 											}
 											);
+			</s:else>
 				var record = scheduleOfRateDataTable.getRecord(parseInt('<s:property value="#rate_row_status.index"/>'));			  									
 				var rateidValue='<s:property value="id"/>';		
 			<s:if test="%{estimateDtFlag=='yes'}">
@@ -419,27 +423,14 @@ var makeScheduleOfRateDataTable = function() {
 			</s:else>
 
 		</s:iterator>
-       </script>
+</script>
   		</div>
-		</td>
-	</tr>
-    </table>
-    </td>
-   </tr>
-   <%@ include file='scheduleOfRate-marketRate.jsp'%>
-  <tr>
-  	<td colspan="4" class="shadowwk"></td>
-  </tr>
-  <tr>
-    <td><div align="right" class="mandatory">* <s:text name="message.mandatory" /></div></td>
-  </tr>
- </table>	    
+		</div>
+	</div>
 </div>
 
-<div class="rbbot2"><div></div></div>
-</div>
-</div>
-</div>
+<%@ include file='scheduleOfRate-marketRate.jsp'%>
+
 <script>
 
 <s:if test="%{mode=='view'}">
@@ -453,26 +444,22 @@ var makeScheduleOfRateDataTable = function() {
 	links[i].onclick=function(){return false;};
 	}
 </s:if>
-<s:if test="%{mode=='edit'}">
-	scheduleOfRateDataTable.removeListener('cellClickEvent');
-</s:if>
 <s:if test="%{estimateDtFlag=='yes' || woDateFlag=='yes' || hasErrors()}">
-		scheduleOfRateDataTable.removeListener('cellClickEvent');	
-		var len=document.scheduleOfRate.elements.length;		
-		for(i=0;i<5;i++){		
-		if(i==3){
-		}
-		else
-			{			
-				document.scheduleOfRate.elements[i].readonly=true;	
-				document.scheduleOfRate.elements[i].disabled=true;	
-			}
-		}
-		enableLastEndDate();
+scheduleOfRateDataTable.removeListener('cellClickEvent');	
+var len=document.scheduleOfRate.elements.length;		
+for(i=0;i<5;i++){		
+if(i==3){
+}
+else
+	{			
+		document.scheduleOfRate.elements[i].readonly=false;	
+		document.scheduleOfRate.elements[i].disabled=false;	
+	}
+}
+enableLastEndDate();
 </s:if>	
 	
 	function handleSuccess(transport) {
 		alert('status :'+transport.status+' ,Result: '+transport.responseText);
 	}
 </script>
- 

@@ -52,7 +52,7 @@
 		<property name="wpNumber" type="string">
 			<column name="WP_NUMBER" />
 		</property>	
-		<property name="packageDate" type="date">
+		<property name="wpDate" type="date">
 			<column name="WP_DATE" not-null="true"/>
 		</property>
 		<property name="name" type="string">
@@ -67,11 +67,7 @@
 		</property>	 
 		<property name="documentNumber" type="long">
 			<column name="DOCUMENT_NUMBER" />
-		</property>	
-		<many-to-one name="preparedBy"
-			class="org.egov.pims.model.PersonalInformation"> 
-			<column name="PREPAREDBY" not-null="true" />
-		</many-to-one>     			        	
+		</property>			        	
 		<many-to-one name="department"
 			class="org.egov.infra.admin.master.entity.Department" fetch="select">
 			<column name="DEPARTMENT_ID" />

@@ -114,63 +114,65 @@ function setApprover() {
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
 
-<s:if test="%{#request.approverOddTextCss==null}">
-      <c:set var="approverOddTextCss" value="greybox" scope="request"/>
-       <c:set var="approverOddCSS" value="greybox" scope="request"/>
-</s:if>
-
-<s:if test="%{#request.approverEvenTextCSS==null}">
-   <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
-     <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
-</s:if>
-
- <table width="100%" border="0" cellspacing="0" cellpadding="0">
- <tr>
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.approval.information"/></span>
-			</div>
-		
-	</tr>
-	  	<tr>   
-	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
-			 <td class="${approverOddCSS}" id="deptLabel" width="14%"><s:text name="wf.approver.department"/>:</td>
-			 <td class="${approverOddTextCss}" width="14%">
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name="title.approval.information"/>
+		</div>
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="wf.approver.department"/><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
 				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
-					cssClass="dropDownCss" />
+					cssClass="form-control" />
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
-					contextToBeUsed="/eis" afterSuccess="setDesignation();"/>
-			</td>
-			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver.designation"/>:</td>
-			<td class="${approverOddTextCss}" width="14%">
+					contextToBeUsed="/eis" afterSuccess="setDesignation();"/> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="wf.approver.designation"/><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
-					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
+					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="form-control" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" afterSuccess="setApprover();"/>
-			</td>
-			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver"/>:</td>
-			<td class="${approverOddTextCss}" width="14%">
-			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
-			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
-			<td class="${approverOddCSS}" width="5%">&nbsp;</td>
-		</tr>
-		</table>
-</s:if>
-<br/>
-
- <div id="workflowCommentsDiv" align="center">
-         <table width="100%">
-         <tr>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
-           <td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>: </td>
-           <td class="${approverEvenTextCSS}"> 
-           	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
-           </td>
-           <td class="${approverEvenCSS}">&nbsp;</td>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td  class="${approverEvenCSS}">&nbsp;</td>
-           </tr>
-         </table>
-  </div>       
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="wf.approver"/><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
+			  			value="%{approverPositionId}" cssClass="form-control" />
+			</div>
+		</div>	
+		
+		<div class="form-group"> 
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="wf.approver.remarks"/>
+			</label>
+			<div class="col-sm-8 add-margin">
+				<textarea id="approverComments" name="approverComments" rows="2" cols="35" class="form-control"></textarea> 
+			</div>
+		</div>	
+     </div>
+  </div> 
+</s:if>	
+<s:else>
+		<div class="form-group"> 
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="wf.approver.remarks"/>
+			</label>
+			<div class="col-sm-8 add-margin">
+				<textarea id="approverComments" name="approverComments" rows="2" cols="35" class="form-control"></textarea> 
+			</div>
+		</div>
+</s:else>

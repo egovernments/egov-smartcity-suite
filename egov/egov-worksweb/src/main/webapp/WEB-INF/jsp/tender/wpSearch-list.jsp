@@ -49,16 +49,16 @@ function gotoPage(obj)
 	var showActions = getControlInBranch(currRow,'searchActions');
 	if(showActions[1]!=null && obj.value==showActions[1].value)
 	{
-		window.open("${pageContext.request.contextPath}/tender/worksPackage!edit.action?id="+packageIden.value+
+		window.open("${pageContext.request.contextPath}/tender/worksPackage-edit.action?id="+packageIden.value+
 		"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 	if(showActions[2]!=null && obj.value==showActions[2].value)
 	{
-		document.location.href="${pageContext.request.contextPath}/tender/worksPackage!viewWorksPackagePdf.action?id="+packageIden.value;
+		document.location.href="${pageContext.request.contextPath}/tender/worksPackage-viewWorksPackagePdf.action?id="+packageIden.value;
 	}
 	if(showActions[3]!=null && obj.value==showActions[3].value)
 	{
-		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate!workflowHistory.action?stateValue="+
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue="+
 		packageStateId.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 	if(showActions[4]!=null && obj.value==showActions[4].value)
@@ -73,7 +73,7 @@ function gotoPage(obj)
 	}
 	if(showActions[5]!=null && obj.value==showActions[5].value)
 	{
-		window.open("${pageContext.request.contextPath}/tender/setStatus!retenderEdit.action?objectType=WorksPackage&objId="+
+		window.open("${pageContext.request.contextPath}/tender/setStatus-retenderEdit.action?objectType=WorksPackage&objId="+
 		packageIden.value+"&setStatus="+dom.get('setStatus').value+"&appDate="+approvedDate.value+"&objNo="+objNo.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 }
@@ -110,7 +110,7 @@ function cancelWorksPackage(){
 }
 
 function getTNForWP(wpId){ 
-    makeJSONCall(["istenderResponsePresent","tnNumber"],'${pageContext.request.contextPath}/tender/ajaxWorksPackage!isTRPresentForWPCheck.action',{wpId:wpId},wpSearchHandler,wpLoadFailureHandler);
+    makeJSONCall(["istenderResponsePresent","tnNumber"],'${pageContext.request.contextPath}/tender/ajaxWorksPackage-isTRPresentForWPCheck.action',{wpId:wpId},wpSearchHandler,wpLoadFailureHandler);
 }
 
 wpSearchHandler = function(req,res){
@@ -224,7 +224,7 @@ function validateCancel() {
 
 				<display:column title="WorksPackage Date" titleKey='wp.date'
 					headerClass="pagetableth" class="pagetabletd" style="width:5%;text-align:center">
-					<s:date name="#attr.currentRow.packageDate" format="dd/MM/yyyy" />
+					<s:date name="#attr.currentRow.wpDate" format="dd/MM/yyyy" />
 				</display:column>
 
 				<display:column title="Department" titleKey='wp.dept'
@@ -268,7 +268,7 @@ function validateCancel() {
 						<s:hidden name="approvedDate" id="approvedDate"	value="%{#attr.currentRow.state.createdDate}" />
 					</s:if>
 					<s:else>
-						<s:hidden name="approvedDate" id="approvedDate" value="%{#attr.currentRow.packageDate}" />
+						<s:hidden name="approvedDate" id="approvedDate" value="%{#attr.currentRow.wpDate}" />
 					</s:else>
 
 					<s:select theme="simple" id="searchActions" name="searchActions"

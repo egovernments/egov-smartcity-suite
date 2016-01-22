@@ -222,7 +222,7 @@ var makeSORDataTable = function() {
             {key:"Description", width:450,formatter:descriptionFormatter,sortable:false, resizeable:false},
             {key:"UOM", width:250,sortable:false, resizeable:false},
             <s:if test="%{mode!='view'}">
-            {key:'Delete',width:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")},
+            {key:'Delete',width:60,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")},
             </s:if>
             {key:"FullDescription",hidden:true,sortable:false, resizeable:false}
         ];
@@ -304,52 +304,57 @@ function showProcessImage(event) {
 }
 
 </script>
-<div class="errorstyle" id="sor_error" style="display:none;"></div>
 
-<table id="baseSORTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>        
-		<td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.scheduleCategory.name" />:</td>
-        <td class="whitebox2wk" colspan="2"><s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description"/>
-        </td>
-	</tr>
-              <tr>
-                <td width="30%" class="whiteboxwk"><span class="bold">Add SOR:</span></td>
-                <td width="50%" class="whitebox2wk">
-    <div class="yui-skin-sam">
-    <div id="sorSearch_autocomplete">
-    <div><input id="search" type="text" name="item" class="selectwk" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);"></div>
-    <span id="searchResults"></span>
-    </div>
-    </div>
-    
-<egov:autocomplete name="sorSearch" width="50" field="search" url="../masters/scheduleOfRateSearch!searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />          
+<div id="baseSORTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
+				<div class="panel-heading">
+					<div class="panel-title">
+					    SOR
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right">
+						    <s:text name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description"/>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right">
+						    Add SOR
+						</label>
+						<div class="col-sm-8 add-margin">
+							<div id="sorSearch_autocomplete">
+							   <div class="right-inner-addon">
+								    <input id="search" type="text" name="item" class="form-control" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
+								    <i id="loadImage" style="display:none" class="fa fa-circle-o-notch fa-spin"></i>
+				    			</div>    
+						    	<span id="searchResults"></span>
+						    	<egov:autocomplete name="sorSearch" width="50" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />
+						    </div> 
+						</div>
+					</div>
+					
+					<div class="form-group no-margin-bottom">
+						<div class="col-sm-offset-2 col-sm-8">
+							<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display:none;"></div>
+						</div>
+					</div>	
+					
+					<div class="form-group" id="sorHeaderTable">
+						<hr/>
+						<div class="yui-skin-sam">
+					         <div id="sorTable"></div>
+					         <div id="sorTotals"></div>                                
+					     </div>
+							
+					</div>	
+					
+				</div>
+</div>
 
-                  <label>
-
-                  </label><td width="20%" class="whitebox2wk"><div id="loadImage" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
-            </table></td>
-          </tr>
-          <!--<tr>
-            <td>&nbsp;</td>
-          </tr>-->
-          <tr>
-            <td>
-<table id="sorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td colspan="11" class="headingwk" align="left"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
-              </tr>
-              <tr>
-                <td >
-                <div class="yui-skin-sam">
-                    <div id="sorTable"></div>
-                    <div id="sorTotals"></div>                                
-                </div>
-                </td></tr>
-                <tr>
-                	<td colspan="11" class="shadowwk"></td>
-                </tr>
-			<tr><td>&nbsp;</td></tr>
-</table> 
 <script>
 makeSORDataTable();
 <s:iterator id="soriterator" value="SORActivities" status="row_status">

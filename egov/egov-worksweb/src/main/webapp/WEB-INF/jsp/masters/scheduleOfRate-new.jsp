@@ -50,14 +50,17 @@
   width:5%;
 }
 
+body
+{
+  font-size: 14px;
+  font-family:regular;
+}
 </style>
-
-
 <html>  
 <head>  
     <title><s:text name="sor.master.title" /></title>  
 </head>  
-	<body onload="disablePreviousRatesOnLoad();">
+<body onload="validateInput();">
 	<s:if test="%{hasErrors()}">
         <div class="errorstyle">
           <s:actionerror/>
@@ -69,21 +72,24 @@
         	<s:actionmessage theme="simple"/>
         </div>
     </s:if>
-		<s:form action="scheduleOfRate-save" theme="simple" name="scheduleOfRate"  onsubmit="return validateSORFormAndSubmit();">
 
-		<s:token/> 
-			<s:hidden  name="model.id" id="id"/> 
-			<%@ include file='scheduleOfRate-form.jsp'%>
-		<p>
-		<s:if test="%{mode!='view'}">
-			<!-- <input type="button" class="buttonfinal" value="SAVE" id="saveButton" name="button"  onclick="validateSORFormAndSubmit();" />&nbsp;-->
-			<s:submit type="submit" cssClass="buttonfinal" value="SAVE" id="saveButton" name="button" method="save" onclick="validateSORFormAndSubmit();"/>&nbsp;
-		</s:if>
- 		<!--<s:submit name="button" method="create" id="button" value="SAVE" cssClass="buttonfinal" onClick="validateSORFormAndSubmit();"/>   -->
-		<s:if test="%{model.id==null}" >
-			<input type="button" class="buttonfinal" value="CLEAR" id="button" name="clear" onclick="this.form.reset();">&nbsp;
-		</s:if>
-		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" /></p>
-	</s:form>    
-	</body>  
+<s:form action="scheduleOfRate-save" theme="simple" name="scheduleOfRate" onsubmit="return validateSORFormAndSubmit();" cssClass="form-horizontal form-groups-bordered"><s:token/> 
+<s:hidden name="mode" id="mode" />
+<s:hidden  name="model.id" id="id"/> 
+	
+	<%@ include file='scheduleOfRate-form.jsp'%>
+	
+<p class="text-center">
+<s:if test="%{model.id!=null && mode != 'view'}">
+	<s:submit type="submit" cssClass="btn btn-primary" value="Modify" id="saveButton" name="button" method="save"  />&nbsp;
+</s:if>
+<s:if test="%{model.id==null}">
+	<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"  />&nbsp;
+	<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();" onclick="validateSORFormAndSubmit();"> &nbsp;
+</s:if>
+	<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
+</p>
+	
+</s:form>    
+</body>  
 </html>

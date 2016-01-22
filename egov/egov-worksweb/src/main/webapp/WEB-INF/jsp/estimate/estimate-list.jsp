@@ -266,69 +266,40 @@ function toggleCancelRemarks(obj) {
 }  
 
 </script>
-
 <div id="blanket" style="display:none;"></div>
 <div id="popUpDiv" style="display:none;" >
 	<s:text name="estimate.copy.cancelledEstimate"/>(<a href="#" onclick="copyCancelledEst();">Yes</a>/<a href="#" onclick="createNewEstimate();">No</a>)?
 	<br> <a href="#" onclick="closePopUp();">Close</a>
 </div>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <s:hidden id="copyCancelledEstNum" name="copyCancelledEstNum"/>
-	<tr>
-		<td>
-			&nbsp;
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td colspan="9" class="headingwk" align="left">
-						<div class="arrowiconwk">
-							<img src="/egi/resources/erp2/images/arrow.gif" />
-						</div>
-						<s:if test="%{source=='financialdetail'}">
-							<div class="headerplacer">
-								<s:text name='page.title.financial.detail' />
-							</div>
-						</s:if>
-						<s:elseif test="%{source=='technical sanction'}">
-							<div class="headerplacer">
-								<s:text name='page.title.Technical.Sanction' />
-							</div>
-						</s:elseif>
-						<s:elseif test="%{source=='Financial Sanction'}">
-							<div class="headerplacer">
-								<s:text name='page.title.Financial.Sanction' />
-							</div>
-						</s:elseif>
-						<s:elseif test="%{source=='AdministrativeSanction'}">
-							<div class="headerplacer">
-								<s:text name='page.title.Admin.Sanction' />
-							</div>
-						</s:elseif>
-						<s:elseif test="%{source=='createNegotiation'}">
-							<div class="headerplacer">
-								<s:text name='page.result.search.estimate' />
-							</div>
-						</s:elseif>
 
-						<s:else>
-							<div class="headerplacer">
-								<s:text name='page.title.search.estimates' />
-							</div>
-						</s:else>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
+<s:if test= "%{searchResult.fullListSize!= 0 || searchResult.fullListSize== 0}">
+	<div class="col-md-12 table-header text-left">
+		<s:if test="%{source=='financialdetail'}">
+				<s:text name='page.title.financial.detail' />
+		</s:if>
+		<s:elseif test="%{source=='technical sanction'}">
+				<s:text name='page.title.Technical.Sanction' />
+		</s:elseif>
+		<s:elseif test="%{source=='Financial Sanction'}">
+				<s:text name='page.title.Financial.Sanction' />
+		</s:elseif>
+		<s:elseif test="%{source=='AdministrativeSanction'}">
+				<s:text name='page.title.Admin.Sanction' />
+		</s:elseif>
+		<s:elseif test="%{source=='createNegotiation'}">
+				<s:text name='page.result.search.estimate' />
+		</s:elseif>
+		<s:else>
+				<s:text name='page.title.search.estimates' />
+		</s:else>
+	</div>
+</s:if>
+
 <s:if test= "%{searchResult.fullListSize!= 0}">	
 <display:table name="searchResult" pagesize="30" uid="currentRow"
 	cellpadding="0" cellspacing="0" requestURI=""
-	style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
+	class="table table-hover">
 
 	<s:if
 		test="%{source=='financialdetail' || source=='createNegotiation'}">
@@ -396,30 +367,38 @@ function toggleCancelRemarks(obj) {
 </display:table>
 </s:if>
 <s:elseif test= "%{searchResult.fullListSize== 0}">	
-	   <div>
-	      <table width="100%" border="0" cellpadding="0" cellspacing="0">
-	   	     <tr>
-	 	         <td align="center">
-	                <s:text name='label.no.records.found'></s:text>
-	             </td>
-	   		</tr>
-    	</table>
-   	 </div>
+	   <div class="col-xs-12 mtb-5">
+	     <div class="alert alert-warning"><s:text name='label.no.records.found'></s:text></div>
+   	   </div>   	   
 </s:elseif>	  
 
-<s:if test="%{searchResult.fullListSize != 0 && source=='cancelEstimate'}" >
-	<P align="left">
-		<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mandatory">*</span><s:text name="cancellation.reason" />:</b>
-		<s:select id="cancellationReason" name="cancellationReason" cssClass="selectwk" list="#{'':'---------Select---------','DATA ENTRY MISTAKE':'DATA ENTRY MISTAKE','OTHER':'OTHER'}" onChange="toggleCancelRemarks(this)" />
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<span id="cancelRemarksDtls" style="display:none"><b><span class="mandatory">*</span><s:text name="cancel.remarks" />:</b>&nbsp;&nbsp;
-			<s:textarea id="cancelRemarks" name="cancelRemarks" rows="2" cols="35" />
-		</span> 
-	</P>
-	<P align="center">
-		<input type="button" class="buttonadd"
-			value="Cancel Estimate" id="addButton"
-			name="cancelEstimate" onclick="cancelAbstractEstimate();"
-			align="center" />
-	</P>
+<s:if test="%{searchResult.fullListSize != 0 && source=='cancelEstimate'}" > -->
+	
+		<div class="form-group">
+		<label class="col-sm-2 control-label text-right">
+		   <s:text name="cancellation.reason" /><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<s:select id="cancellationReason" name="cancellationReason" cssClass="form-control" list="#{'':'---------Select---------','DATA ENTRY MISTAKE':'DATA ENTRY MISTAKE','OTHER':'OTHER'}" onChange="toggleCancelRemarks(this)" />
+		</div>
+	</div>
+	
+	<div class="form-group" id="cancelRemarksDtls" style="display:none">
+		<label class="col-sm-2 control-label text-right">
+		   <s:text name="cancel.remarks" /><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<s:textarea cssClass="form-control" id="cancelRemarks" name="cancelRemarks" rows="2" cols="35" />
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-3">
+			<input type="button" class="btn btn-primary"
+				value="Cancel Estimate" id="addButton"
+				name="cancelEstimate" onclick="cancelAbstractEstimate();"
+				align="center" />
+		</div>
+	</div>
+	
 </s:if>

@@ -47,6 +47,7 @@ public class Constants {
     public static final String EMAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
     public static final String MIXEDCHAR = "^[a-z|A-Z|]+[a-z|A-Z|&/ :,-.]*";
     public static final String ALPHANUMERIC = "[0-9a-zA-Z]+";
+    public static final String PANNUMBER = "[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}";
     public static final String NUMERIC = "[0-9]+";
     public static final String ALPHABETS = "[A-Za-z]+";
     public static final String ALPHANUMERIC_WITHSPACE = "[0-9a-zA-Z ]+";

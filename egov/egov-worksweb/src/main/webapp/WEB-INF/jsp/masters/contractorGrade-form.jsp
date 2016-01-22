@@ -37,55 +37,47 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<div class="navibarshadowwk"></div>
-<div class="formmainbox">
-<div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>  
-    
- <div class="rbcontent2">   
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-        	<tr>
-          		<td colspan="4" class="headingwk" align="left">
-          			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-            		<div class="headplacer"><s:text name="contractor.grade.header" /></div>
-            	</td>
-        	</tr>
-        	
-        <tr>
-				<td class="whiteboxwk"><span class="mandatory">*</span><s:text name="contractor.grade.master.grade" />:</td>
-            	<td class="whitebox2wk"><s:textfield name="grade" maxlength="20" id="grade"  cssClass="selectwk" value="%{grade}" /></td>
-                <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="contractor.grade.master.description" />:</td>
-                <td class="whitebox2wk"><s:textfield name="description" maxlength="100" cssClass="selectwk" id="description" value="%{description}"/></td>
-        </tr>	
-        
-        <tr>
-				<td class="greyboxwk"><span class="mandatory">*</span><s:text name="contractor.grade.master.minamount" />:</td>
-            	<td class="greybox2wk"><s:textfield name="minAmount"  id="minAmount"  cssClass="amount" value="%{minAmount}" placeholder="0" /></td>
-                <td class="greyboxwk"><span class="mandatory">*</span><s:text name="contractor.grade.master.maxamount" />:</td>
-            	<td class="greybox2wk"><s:textfield name="maxAmount"  id="maxAmount"  cssClass="amount" value="%{maxAmount}" placeholder="0" /></td>
-        </tr>
-       <tr>
-	          	<td colspan="4" class="shadowwk"></td>
-	   </tr>
-
-      <tr>
-               <td colspan="4" class="mandatory" align="right">* <s:text name="message.mandatory" /></td>
-               
-      </tr>
-
-</table>	   
-
+<div class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			<div class="panel-heading">
+				<div class="panel-title"><s:text name="contractor.grade.header" /></div>
+			</div>
+			
+			<div class="panel-body">
+			
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> 
+					   <s:text name="contractor.grade.master.grade" /> <span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:textfield name="grade" maxlength="20" id="grade"  cssClass="form-control" value="%{grade}" />
+					</div>
+					<label class="col-sm-2 control-label text-right"> 
+						<s:text name="contractor.grade.master.description" /> <span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:textfield name="description" maxlength="100" cssClass="form-control" id="description" value="%{description}"/>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> 
+					   <s:text name="contractor.grade.master.minamount" /> <span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 add-margin">
+					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" placeholder="0" />
+					</div>
+					<label class="col-sm-2 control-label text-right"> 
+						<s:text name="contractor.grade.master.maxamount" /> <span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 add-margin">
+						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" placeholder="0" />
+					</div>
+				</div>
+				
+			</div>
 </div>
-<div class="rbbot2"><div></div></div>
-
-
-
-</div>
-</div>
-</div>
-
 
 <s:if test="%{mode=='view'}">
 	<script>

@@ -77,36 +77,48 @@
 		validateOverheadFormAndSubmit();
 	 }
 	</script> 
+	
+	    <div class="new-page-header">
+			Create Overhead
+		</div>
+	
 		<s:if test="%{hasErrors()}">
-        <div class="errorstyle">
+        <div class="alert alert-danger">
           <s:actionerror/>
           <s:fielderror/>
         </div>
-    </s:if>
-    <s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
-        	<s:actionmessage theme="simple"/>
-        </div>
-    </s:if>
+    	</s:if>
+    	
+	    <s:if test="%{hasActionMessages()}">
+	        <div class="messagestyle">
+	        	<s:actionmessage theme="simple"/>
+	        </div>
+	    </s:if>
    
-		<s:form action="overhead" theme="simple" name="overhead" >  
+		<s:form action="overhead" theme="simple" name="overhead" 
+			cssClass="form-horizontal form-groups-bordered">  
 		<s:token/> 
-		 <div class="errorstyle" id="overheads_error" style="display:none;"></div>
+		 <div class="alert alert-danger" id="overheads_error" style="display:none;"></div>
 		<s:push value="model">
 		    <!-- <s:hidden  name="model.id" /> -->
 			<s:hidden name="id" />
 		    <%@ include file='overhead-form.jsp'%>
-			<div class="buttonholderwk">
-			<input type="button" class="buttonfinal" value="SAVE" id="saveButton" name="button"  onclick="enableFields();" />
-			 &nbsp;
-			 <input type="button" name="addOverheadButton" id="buttonfinal" class="buttonadd" value="Add a New Overhead"
-			 onclick="window.open('${pageContext.request.contextPath}/masters/overhead!newform.action','_self');" />
-			  &nbsp;
-			  
-			<input type="button" name="listOverheadsButton" id="listOverheadsButton" class="buttonadd" value="Overhead Listing" 
-			onclick="window.open('${pageContext.request.contextPath}/masters/overhead.action','_self');"/>
-			
+		    
+		    
+		    <div class="row">
+				<div class="col-xs-12 text-center buttonholdersearch">
+					<input type="button" class="btn btn-primary" value="Save" id="saveButton" name="button"  onclick="enableFields();" />
+					 &nbsp;
+					 <input type="button" name="addOverheadButton" id="buttonfinal" class="btn btn-primary" value="Add a New Overhead"
+					 onclick="window.open('${pageContext.request.contextPath}/masters/overhead!newform.action','_self');" />
+					  &nbsp;
+					<input type="button" name="listOverheadsButton" id="listOverheadsButton" class="btn btn-primary" value="Overhead Listing" 
+					onclick="window.open('${pageContext.request.contextPath}/masters/overhead.action','_self');"/>
+				</div>
 			</div>
+			
+		    
+		
 			</s:push>
 		</s:form>  
 	    

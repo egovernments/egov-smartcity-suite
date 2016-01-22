@@ -128,8 +128,8 @@
         		<s:textfield name="estimateDate" value="%{estDateFormat}" id="estimateDate" readonly="true" cssClass="selectboldwk" />
         	</s:if>
         	<s:elseif test="%{tenderResponse!=null && tenderResponse.tenderEstimate.worksPackage!=null}">
-        		<s:date name="tenderResponse.tenderEstimate.worksPackage.packageDate" var="packageDateFormat" format="dd/MM/yyyy"/>
-        		<s:textfield name="packageDate" value="%{packageDateFormat}" id="packageDate" readonly="true" cssClass="selectboldwk"/>
+        		<s:date name="tenderResponse.tenderEstimate.worksPackage.wpDate" var="wpDateFormat" format="dd/MM/yyyy"/>
+        		<s:textfield name="wpDate" value="%{wpDateFormat}" id="wpDate" readonly="true" cssClass="selectboldwk"/>
         	</s:elseif>
         </td>
    </tr>

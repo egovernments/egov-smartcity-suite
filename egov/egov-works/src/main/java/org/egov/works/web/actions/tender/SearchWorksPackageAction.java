@@ -47,17 +47,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.tender.SetStatus;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
@@ -66,15 +71,19 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@ParentPackage("egov")
+@Results({ @Result(name = SearchWorksPackageAction.SUCCESS, location = "searchWorksPackage.jsp") })
 public class SearchWorksPackageAction extends SearchFormAction {
 
     private static final long serialVersionUID = -6268869129605734393L;
     private WorksPackage worksPackage = new WorksPackage();
     private List<WorksPackage> results = new LinkedList<WorksPackage>();
     @Autowired
-    private EmployeeServiceOld employeeService;
+    private AssignmentService assignmentService;
     @Autowired
-    private CommonsService commonsService;
+    private EmployeeService employeeService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private Date fromDate;
     private Date toDate;
     private String status;
@@ -121,8 +130,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     public List<EgwStatus> getAllOfflineStatus() {
-        String status;
-        status = worksService.getWorksConfigValue("WorksPackage.setstatus");
+        final String status = worksService.getWorksConfigValue(WorksConstants.WP_OFFLINE_STATUS);
 
         final List<String> statList = new ArrayList<String>();
         if (StringUtils.isNotBlank(status)) {
@@ -131,10 +139,12 @@ public class SearchWorksPackageAction extends SearchFormAction {
                 statList.add(stat);
         }
         final List<EgwStatus> returnList = new LinkedList<EgwStatus>();
-        final EgwStatus cancelledStatus = commonsService.getStatusByModuleAndCode(OBJECT_TYPE,
+        final EgwStatus cancelledStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(OBJECT_TYPE,
                 WorksPackage.WorkPacakgeStatus.CANCELLED.toString());
-        returnList.add(cancelledStatus);
-        returnList.addAll(commonsService.getStatusListByModuleAndCodeList(OBJECT_TYPE, statList));
+        if (cancelledStatus != null)
+            returnList.add(cancelledStatus);
+        if (!statList.isEmpty())
+            returnList.addAll(egwStatusHibernateDAO.getStatusListByModuleAndCodeList(OBJECT_TYPE, statList));
         return returnList;
     }
 
@@ -144,7 +154,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
             execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
         negoCreatedBy = worksService.getWorksConfigValue("TENDER_NEGOTIATION_CREATED_BY_SELECTION");
-        statusReq = worksService.getWorksConfigValue("WorksPackage.laststatus");
+        statusReq = worksService.getWorksConfigValue(WorksConstants.WP_LAST_STATUS);
         estimateOrWpSearchReq = worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ");
 
         addDropdownData("departmentList", worksService.getAllDeptmentsForLoggedInUser());
@@ -158,7 +168,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     @SuppressWarnings("unchecked")
-    protected void getPositionAndUser() {
+    private void getPositionAndUser() {
         final List<WorksPackage> wpList = new ArrayList<WorksPackage>();
 
         final Iterator i = searchResult.getList().iterator();
@@ -170,30 +180,34 @@ public class SearchWorksPackageAction extends SearchFormAction {
             if (wp.getCurrentState() != null) {
                 if (!wp.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !wp.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final PersonalInformation emp = employeeService.getEmployeeforPosition(wp.getCurrentState()
-                            .getOwnerPosition());
-                    if (emp != null && StringUtils.isNotBlank(emp.getEmployeeName()))
-                        wp.setEmployeeName(emp.getEmployeeName());
+                    final String posName = wp.getState().getOwnerPosition().getName();
+                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(wp.getState()
+                            .getOwnerPosition().getId());
+                    if (assignment != null)
+                        wp.setEmployeeName(posName + " / " + assignment.getEmployee().getName());
+                    else
+                        wp.setEmployeeName(posName);
                 }
                 final String approved = getApprovedValue();
                 final SetStatus lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, wp.getId(),
                         OBJECT_TYPE, lastStatusDescription);
-                final String actions = worksService.getWorksConfigValue("WORKSPACKAGE_SEARCH_ACTIONS");
-                worksPackageActions = new LinkedList<String>();
-                if (StringUtils.isNotBlank(actions)) {
-                    String setStat = "";
-                    worksPackageActions.addAll(Arrays.asList(actions.split(",")));
 
-                    if (lastStatus != null || "view".equalsIgnoreCase(setStatus) && wp.getSetStatuses() != null
-                            && !wp.getSetStatuses().isEmpty())
-                        setStat = worksService.getWorksConfigValue("WORKS_VIEW_OFFLINE_STATUS_VALUE");
-                    else if (lastStatus == null && StringUtils.isNotBlank(approved) && wp.getEgwStatus() != null
-                            && approved.equals(wp.getEgwStatus().getCode()) && "create".equalsIgnoreCase(setStatus))
-                        setStat = worksService.getWorksConfigValue("WORKS_SETSTATUS_VALUE");
-                    if (StringUtils.isNotBlank(setStat))
-                        worksPackageActions.add(setStat);
-                    wp.setWorksPackageActions(worksPackageActions);
-                }
+                worksPackageActions = new LinkedList<String>();
+                worksPackageActions.add(0, WorksConstants.ACTION_VIEW);
+                worksPackageActions.add(1, WorksConstants.ACTION_VIEW_PDF);
+                worksPackageActions.add(2, WorksConstants.ACTION_WF_HISTORY);
+                worksPackageActions.add(3, WorksConstants.ACTION_VIEW_DOCUMENT);
+                String setStat = "";
+                if (lastStatus != null || "view".equalsIgnoreCase(setStatus) && wp.getSetStatuses() != null
+                        && !wp.getSetStatuses().isEmpty())
+                    setStat = WorksConstants.WORKS_VIEW_OFFLINE_STATUS_VALUE;
+                else if (lastStatus == null && StringUtils.isNotBlank(approved) && wp.getEgwStatus() != null
+                        && approved.equals(wp.getEgwStatus().getCode()) && "create".equalsIgnoreCase(setStatus))
+                    setStat = WorksConstants.WORKS_SETSTATUS_VALUE;
+                if (StringUtils.isNotBlank(setStat))
+                    worksPackageActions.add(setStat);
+                wp.setWorksPackageActions(worksPackageActions);
+
                 setOnlineOrOfflineStatusForWp(wp);
                 wpList.add(wp);
             }
@@ -216,23 +230,21 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     public String getApprovedValue() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_STiATUS");
+        return WorksPackage.WorkPacakgeStatus.APPROVED.toString();
     }
 
     public String getLastStatus() {
-        return worksService.getWorksConfigValue(WorksConstants.WORKSPACKAGE_LASTSTATUS);
+        return worksService.getWorksConfigValue(WorksConstants.WP_LAST_STATUS);
     }
 
     public List<EgwStatus> getPackageStatuses() {
-        final String wpStatus = worksService.getWorksConfigValue("WP_STATUS_SEARCH");
-        final String status = worksService.getWorksConfigValue("WorksPackage.setstatus");
-        final String lastStatus = worksService.getWorksConfigValue("WorksPackage.laststatus");
         final List<String> statList = new ArrayList<String>();
-        if (StringUtils.isNotBlank(wpStatus)) {
-            final List<String> statusList = Arrays.asList(wpStatus.split(","));
-            for (final String stat : statusList)
-                statList.add(stat);
-        }
+        for (final WorksPackage.WorkPacakgeStatus stat : Arrays.asList(WorksPackage.WorkPacakgeStatus.values()))
+            statList.add(stat.toString());
+
+        final String status = worksService.getWorksConfigValue(WorksConstants.WP_OFFLINE_STATUS);
+        final String lastStatus = worksService.getWorksConfigValue(WorksConstants.WP_LAST_STATUS);
+
         if (StringUtils.isNotBlank(status) && StringUtils.isNotBlank(lastStatus)) {
             final List<String> statusList = Arrays.asList(status.split(","));
             for (final String stat : statusList)
@@ -242,7 +254,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
                 } else
                     statList.add(stat);
         }
-        return commonsService.getStatusListByModuleAndCodeList(WorksPackage.class.getSimpleName(), statList);
+        return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorksPackage.class.getSimpleName(), statList);
     }
 
     public List<EgwStatus> getCancelPackageStatuses() {
@@ -292,16 +304,8 @@ public class SearchWorksPackageAction extends SearchFormAction {
         this.results = results;
     }
 
-    public void setEmployeeService(final EmployeeServiceOld employeeService) {
-        this.employeeService = employeeService;
-    }
-
     public void setModel(final WorksPackage worksPackage) {
         this.worksPackage = worksPackage;
-    }
-
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
     }
 
     public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
@@ -381,12 +385,12 @@ public class SearchWorksPackageAction extends SearchFormAction {
             paramList.add(getStatus());
 
         } else {
-            final String wpStatus = worksService.getWorksConfigValue("WP_STATUS_SEARCH");
-            final List<String> statusList = Arrays.asList(wpStatus.split(","));
+            // final String wpStatus = worksService.getWorksConfigValue("WP_STATUS_SEARCH");
+            final List<String> statusList = Arrays.asList(WorksPackage.WorkPacakgeStatus.values().toString());
             if (checkRetenderedWP != null && checkRetenderedWP) {
                 if (StringUtils.isNotBlank(getOfflinestatus())
                         && getOfflinestatus().equals(WorksPackage.WorkPacakgeStatus.CANCELLED.toString())) {
-                    sb.append("from WorksPackage as wp where wp.egwStatus.code= ?  ");
+                    sb.append("from WorksPackage as wp where wp.egwStatus.code= ? ");
                     paramList.add(getOfflinestatus());
                 } else if (StringUtils.isNotBlank(getOfflinestatus()) && !getOfflinestatus().equals("-1")) {
                     sb.append(
@@ -463,7 +467,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
                 paramList.add(toDate);
             }
         } else if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            sb.append(" and wp.packageDate between ? and ? ");
+            sb.append(" and wp.wpDate between ? and ? ");
             paramList.add(fromDate);
             paramList.add(toDate);
         }
@@ -486,17 +490,12 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
     public String cancelWP() {
         final WorksPackage worksPackage = workspackageService.findById(wpCancelId, false);
-        final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());
-        String empName = "";
-        worksPackage.setEgwStatus(commonsService.getStatusByModuleAndCode("WorksPackage", "CANCELLED"));
-        if (prsnlInfo.getEmployeeFirstName() != null)
-            empName = prsnlInfo.getEmployeeFirstName();
-        if (prsnlInfo.getEmployeeLastName() != null)
-            empName = empName.concat(" ").concat(prsnlInfo.getEmployeeLastName());
+        final Employee employee = employeeService.getEmployeeById(worksService.getCurrentLoggedInUserId());
+        worksPackage.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("WorksPackage", "CANCELLED"));
         if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
-            getText("wp.canceled.by", new String[] { cancellationReason + " : " + cancelRemarks, empName });
+            getText("wp.canceled.by", new String[] { cancellationReason + " : " + cancelRemarks, employee.getName() });
         else
-            getText("wp.canceled.by", new String[] { cancellationReason, empName });
+            getText("wp.canceled.by", new String[] { cancellationReason, employee.getName() });
 
         // TODO - The setter methods of variables in State.java are protected.
         // Need to alternative way to solve this issue.
@@ -515,17 +514,15 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     @Override
+    @Action(value = "/tender/searchWorksPackage-search")
     public String search() {
         setPageSize(WorksConstants.PAGE_SIZE);
         final String retVal = super.search();
 
         getPositionAndUser();
         if (searchResult.getFullListSize() == 0)
-            addFieldError("result not found", "No results found for search parameters");
+            addFieldError("search.result.empty", "search.result.empty");
         return retVal;
-    }
-
-    public void setDepartmentService(final DepartmentService departmentService) {
     }
 
     public void setWpCancelId(final Long wpCancelId) {

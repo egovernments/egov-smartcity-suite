@@ -111,9 +111,9 @@ public class TenderHeader extends BaseModel {
                             "tenderEstimate.tenderDate.cannot_greaterthan_estimateDate"));
                 else if (tenderEstimate.getWorksPackage() != null
                         && DateConversionUtil.isBeforeByDate(tenderDate, tenderEstimate.getWorksPackage()
-                                .getPackageDate()))
+                                .getWpDate()))
                     validationErrors.add(new ValidationError("tenderDate",
-                            "tenderEstimate.tenderDate.cannot_greaterthan_packageDate"));
+                            "tenderEstimate.tenderDate.cannot_greaterthan_wpDate"));
         return validationErrors;
     }
 }

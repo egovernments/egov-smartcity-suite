@@ -87,7 +87,7 @@ function setWpId(elem){
 							<display:column headerClass="pagetableth" class="pagetabletd"
 								title="WorksPackage Date" titleKey="wp.date" 
 								style="width:15%;text-align:left;WORD-BREAK:BREAK-ALL" >
-								<s:date name="#attr.currentRow.packageDate" format="dd/MM/yyyy" />
+								<s:date name="#attr.currentRow.wpDate" format="dd/MM/yyyy" />
 							</display:column>
 
 							<display:column headerClass="pagetableth" class="pagetabletd"
@@ -97,7 +97,7 @@ function setWpId(elem){
 							<display:column headerClass="pagetableth" class="pagetabletd"
 								title="Name" titleKey="wp.name" style="width:13%;text-align:left">
 								<a
-									href="${pageContext.request.contextPath}/tender/worksPackage!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&sourcepage=search"><s:property
+									href="${pageContext.request.contextPath}/tender/worksPackage-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&sourcepage=search"><s:property
 										value='%{#attr.currentRow.name}' /> </a>
 							</display:column>
 

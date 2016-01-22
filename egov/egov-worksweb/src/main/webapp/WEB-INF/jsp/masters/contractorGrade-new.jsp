@@ -44,31 +44,39 @@
     	<script src="<egov:url path='resources/js/works.js'/>"></script> 
 	</head>  
 	<body onload="roundOffMaxMinAmount();">
+	
+		<div class="new-page-header">
+			Create Contractor Grade
+		</div>
+		
     	<s:if test="%{hasErrors()}">
-        	<div class="errorstyle">
+        	<div class="alert alert-danger">
           		<s:actionerror/>
           		<s:fielderror/>
         	</div>
     	</s:if>
+    	
 		<s:if test="%{hasActionMessages()}">
         	<div class="messagestyle">
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
    
-		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" id="contractorGrade">
+		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" id="contractorGrade" cssClass="form-horizontal form-groups-bordered">
 			<s:token/>
 			<s:hidden name="model.id" />
-			<p>
-				<%@ include file='contractorGrade-form.jsp'%>
-				<s:if test="%{mode!='view'}">
-					<s:submit value="SAVE" method="save" cssClass="buttonfinal" id="saveButton" name="button"/>
-				</s:if>
-				<s:if test="%{model.id==null}" >
-					<input type="button" value="CLEAR" class="buttonfinal" onclick="clearForm(this.form.id)"/>
-				</s:if>
-				<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" />
-			</p>
+			<%@ include file='contractorGrade-form.jsp'%>
+				<div class="row">
+					<div class="col-xs-12 text-center buttonholdersearch">
+						<s:if test="%{mode!='view'}">
+							<s:submit value="Save" method="save" cssClass="btn btn-primary" id="saveButton" name="button"/>&nbsp;
+						</s:if>
+						<s:if test="%{model.id==null}" >
+							<input type="button" value="Clear" class="btn btn-default" onclick="clearForm(this.form.id)"/>&nbsp;
+						</s:if>
+						<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
+				     </div>
+				</div>
 		</s:form> 
 	</body>
 </html>

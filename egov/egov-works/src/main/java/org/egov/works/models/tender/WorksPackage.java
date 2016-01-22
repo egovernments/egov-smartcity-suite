@@ -56,25 +56,30 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
-import org.egov.works.models.workflow.WorkFlow;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class WorksPackage extends WorkFlow {
+public class WorksPackage extends StateAware implements Auditable {
 
     private static final long serialVersionUID = -4874817415037202881L;
 
     public enum WorkPacakgeStatus {
-        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
+        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED, RESUBMITTED;
+
+        @Override
+        public String toString() {
+            return StringUtils.capitalize(name());
+        }
     }
 
     public enum Actions {
@@ -86,6 +91,8 @@ public class WorksPackage extends WorkFlow {
         }
     }
 
+    private Long id;
+
     @NotEmpty(message = "wp.name.is.null")
     @Length(max = 1024, message = "workspackage.name.length")
     private String name;
@@ -93,11 +100,9 @@ public class WorksPackage extends WorkFlow {
     private String description;
     @NotNull(message = "wp.userDepartment.is.null")
     private Department department;
-    @NotNull(message = "wp.preparedBy.is.null")
-    private PersonalInformation preparedBy;
-    @NotNull(message = "wp.packageDate.is.null")
-    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.packagedate")
-    private Date packageDate;
+    @NotNull(message = "wp.wpDate.is.null")
+    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.wpDate")
+    private Date wpDate;
     @NotEmpty(message = "wp.wpNumber.is.null")
     private String wpNumber;
     private String employeeName;
@@ -114,12 +119,22 @@ public class WorksPackage extends WorkFlow {
     private EgwStatus egwStatus;
     private String wpOfflineStatus;
     private SetStatus latestOfflineStatus;
-    private Set<SetStatus> setStatuses = new LinkedHashSet<SetStatus>();
+    private Set<SetStatus> setStatuses = Collections.EMPTY_SET;
     private List<String> worksPackageActions = new LinkedList<String>();
     private String worksPackageStatus;
     private Date approvedDate;
 
     private Set<TenderEstimate> tenderEstimateSet = new HashSet<TenderEstimate>();
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public Long getDocumentNumber() {
         return documentNumber;
@@ -153,20 +168,12 @@ public class WorksPackage extends WorkFlow {
         this.department = department;
     }
 
-    public PersonalInformation getPreparedBy() {
-        return preparedBy;
+    public Date getWpDate() {
+        return wpDate;
     }
 
-    public void setPreparedBy(final PersonalInformation preparedBy) {
-        this.preparedBy = preparedBy;
-    }
-
-    public Date getPackageDate() {
-        return packageDate;
-    }
-
-    public void setPackageDate(final Date packageDate) {
-        this.packageDate = packageDate;
+    public void setWpDate(final Date wpDate) {
+        this.wpDate = wpDate;
     }
 
     public String getWpNumber() {
@@ -198,7 +205,7 @@ public class WorksPackage extends WorkFlow {
 
     @Override
     public String getStateDetails() {
-        return "WorksPackage : " + getWpNumber();
+        return "Works Package : " + getWpNumber();
     }
 
     public String getEmployeeName() {

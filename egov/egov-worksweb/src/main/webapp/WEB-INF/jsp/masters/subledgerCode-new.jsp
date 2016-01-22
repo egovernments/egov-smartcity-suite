@@ -170,159 +170,208 @@
   
   </script>
   <body  onload="onBodyLoad()" class="simple">
-    <s:form action="subledgerCode" theme="simple" name="subledgerCode" > 
+  	<div class="new-page-header">
+		Generate Deposit Code
+	</div>
+    <s:form action="subledgerCode" theme="simple" name="subledgerCode" cssClass="form-horizontal form-groups-bordered"> 
     <s:token/>
     <s:push value="model">  
-    <div id="subledgerCodeError" class="errorstyle" style="display:none;"></div>
+    <div id="subledgerCodeError" class="alert alert-danger" style="display:none;"></div>
     <s:if test="%{hasErrors()}">
-        <div id="errorstyle" class="errorstyle" >
+        <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
           <s:fielderror/>
         </div>
     </s:if>
     <s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
+        <div class="alert alert-success">
         	<s:actionmessage theme="simple"/>
         </div>
     </s:if>
- <div class="formmainbox">
- <div class="insidecontent">
- <div class="rbroundbox2">
- <div class="rbtop2"><div></div></div>
- <div class="rbcontent2">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="table1">
-	 <tr>
-	    <td width="11%" class="whiteboxwk"><s:text name="subledgerCode.type.depositCode" /></td>
-		<td width="21%" class="whitebox2wk">
-		   <input name="depCode" type="radio" id="depCode" onClick="viewInputFields('dc');"  value='%{depCode}'/>
-		</td>
-		<td width="11%" class="whiteboxwk"><s:text name="subledgerCode.type.projectCode" /></td>
-		<td width="21%" class="whitebox2wk">
-		  <input name="prjctCode" type="radio" id="prjctCode" onClick="viewInputFields('pc');"/>
-		</td>  
-	 </tr>	
-	</table>
-	
-   <!-- 
-   	Fields to be shown are defined in python script. This piece of code is to show fields returned from the script and is made mandatory.
-   -->	
-  
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" id="table2">
-		 <tr>
-			<td class="greyboxwk" id="codeName1"><span class="mandatory">*</span><s:text name="depositCode.work.name" /></td>
-	        <td class="greybox2wk"><s:textfield name="codeName" type="text" cssClass="selectwk" id="codeName" value="%{codeName}"/></td>
-	
-	        <td class="greyboxwk" id="description1"><s:text name="depositCode.work.description" /></td>
-	        <td class="greybox2wk"><s:textarea name="description" cols="35" cssClass="selectwk" id="description" value="%{description}"/></td>
-	     </tr>
-	     
-     	 <tr>
-	       <s:if test="%{depCode==true || (prjctCode==true && list.contains('fund') || list.contains('scheme') || list.contains('subScheme')) }" >
-		        <td width="11%" class="whiteboxwk" id="fund1"><span class="mandatory">*</span><s:text name='subledgerCode.fund'/> : </td>
-		        <td width="21%" class="whitebox2wk" >
-		            <s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="fund" id="fund" cssClass="selectwk" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
-		         	<egov:ajaxdropdown id="schemeDropdown" fields="['Text','Value']" dropdownId='scheme' url='estimate/ajaxFinancialDetail!loadSchemes.action' selectedValue="%{scheme.id}"/>
-		         </td>
-		    </s:if>   
-		
-         		<td class="whiteboxwk" id="financialYear1"><span class="mandatory">*</span><s:text name='subledgerCode.financialYear'/> : </td>
-         		<td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="financialYear" id="financialYear" cssClass="selectwk" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" value="%{currentFinancialYearId}" /></td>
-      	</tr> 
-     
-      <%-- <s:if test="%{list.isEmpty()!=true}">  --%> <!-- Need to uncomment -->
-      	<tr>
-       		<s:if test="%{list.contains('department')}" >
-          		 <td width="15%" class="greyboxwk" id="department1" ><span class="mandatory">*</span><s:text name="subledgerCode.executing.department" />:</td>
-           		<td width="53%" class="greybox2wk" ><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="department" id="department" cssClass="selectwk" list="dropdownData.departmentList" listKey="id" listValue="deptName" value="%{department.id}" /></td>
-          	</s:if> 
-          	<!-- Need to uncomment -->
-          	<%-- <s:if test="%{list.contains('fundSource')}" >  --%> 
-           		 <td width="11%" class="greyboxwk"  id="fundSource1"><span class="mandatory">*</span><s:text name="subledgerCode.fundSource.name" />:</td>
-            	<td width="21%" class="greybox2wk">
-                	<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="fundSource" id="fundSource" 
-               			 cssClass="selectwk" list="dropdownData.fundSourceList" listKey="id" listValue="name" value="%{fundSource.id}"/>
-				</td>
-			<%-- </s:if>    --%>       
-       </tr>
-       
-       	<tr>
-       	 	<s:if test="%{list.contains('typeOfWork') || list.contains('subTypeOfWork')}" >
-            	<td class="whiteboxwk"  id="typeOfWork1"><span class="mandatory">*</span><s:text name="subledgerCode.typeOfWork" />:</td>
-            	<td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="typeOfWork" id="typeOfWork" cssClass="selectwk" list="dropdownData.typeOfWorkList" listKey="id" listValue="description" value="%{typeOfWork.id}"/>
-            	<egov:ajaxdropdown id="subTypeOfWorkDropdown" fields="['Text','Value']" dropdownId='subTypeOfWork' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subTypeOfWork.id}"/>
-        		</td>
-			</s:if>
-	 		<s:if test="%{list.contains('subTypeOfWork')}" >
-            	<td class="whiteboxwk"  id="subTypeOfWork1"><span class="mandatory">*</span><s:text name="subledgerCode.subTypeOfWork" />:</td>
-            	<td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="subTypeOfWork" value="%{subTypeOfWork.id}" id="subTypeOfWork" cssClass="selectwk" list="dropdownData.subTypeOfWorkList" listKey="id" listValue="description" onClick="checkTypeOfWork(this);"/></td>
-            </s:if>
-       </tr> 
     
-       <tr>
-         	<s:if test="%{list.contains('function')}" >
-       			<td width="15%" class="greyboxwk" id="function1"><span class="mandatory">*</span><s:text name='subledgerCode.function'/> : </td>
-            	<td width="53%" class="greybox2wk" ><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="function" id="function" cssClass="selectwk" list="dropdownData.functionList" listKey="id" listValue="name" value="%{function.id}" /></td>
-          	</s:if>  
-         	<s:if test="%{list.contains('natureOfWork')}" >
-           		<td width="15%" class="greyboxwk" id="natureOfWork1" ><span class="mandatory">*</span><s:text name="subledgerCode.natureOfWork" />:</td>
-           		<td width="53%" class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="natureOfWork" id="natureOfWork" cssClass="selectwk" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" /></td>
-       		</s:if>
-      </tr>
-        
-       <tr>
-          <s:if test="%{list.contains('zone') || list.contains('ward')}" >
-          		<td width="11%" class="whiteboxwk" id="zone1"><span class="mandatory">*</span><s:text name="subledgerCode.zone" />:</td>
-                <td width="21%" class="whitebox2wk"><s:select id="zone" name="zone" cssClass="selectwk" 
-										list="dropdownData.zoneList" listKey="id" listValue="name" 
-										headerKey="-1" headerValue="%{getText('default.dropdown.select')}"
-										value="%{zone.id}" />	
-										<egov:ajaxdropdown id="populateWard"
-							fields="['Text','Value']" dropdownId='ward'
-							url='masters/ajaxSubledgerCode!populateWard.action' />
-                </td>
-          </s:if>     
-          <s:if test="%{list.contains('ward')}" >     
-                <td width="11%" class="whiteboxwk" id="ward1"><span class="mandatory">*</span><s:text name="subledgerCode.ward" /></td>
-				<td width="21%" class="whitebox2wk" >
-								<s:select id="ward" name="ward" cssClass="selectwk" 
-									list="dropdownData.wardList" listKey="id" listValue="name" 
-									headerKey="-1" headerValue="%{getText('default.dropdown.select')}" value="%{ward.id}" onClick="checkZone(this);"/>
-				</td>
-			</s:if>
-		</tr>  
-		
-		 <tr>
-		    <s:if test="%{list.contains('scheme') || list.contains('subScheme') }" >   
-                <td class="greyboxwk" id="scheme1"><span class="mandatory">*</span><s:text name='subledgerCode.scheme'/> : </td>
-                <td class="greybox2wk" ><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="scheme" id="scheme" cssClass="selectwk" list="dropdownData.schemeList" listKey="id" listValue="name" value="%{scheme.id}"  onClick="checkFund(this);"/>
-                 <egov:ajaxdropdown id="subSchemeDropdown" fields="['Text','Value']" dropdownId='subScheme' url='estimate/ajaxFinancialDetail!loadSubSchemes.action' selectedValue="%{scheme.id}"/>
-                </td>
-             </s:if>
-             <s:if test="%{list.contains('subScheme')}" >   
-                <td class="greyboxwk" id="subScheme1"><span class="mandatory">*</span><s:text name='subledgerCode.subscheme'/> : </td>
-                <td class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="subScheme" id="subScheme" cssClass="selectwk" list="dropdownData.subSchemeList" listKey="id" listValue="name" value="%{subScheme.id}" onClick="checkScheme(this);"/></td>
- 			</s:if>      
-	 	</tr>  
-	 	<%-- </s:if> --%> <!-- Need to uncomment -->
-	 </table>
-	
-	<br>
-	
-	<div id="mandatary" align="right" class="mandatory" style="font-size: 11px; padding-right: 20px;">*
-		<s:text name="message.mandatory" />
+    <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+				<div class="panel-heading">
+					<div class="panel-title"></div>
+				</div>
+				<div class="panel-body no-margin-bottom">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right">
+						    <s:text name="subledgerCode.type.depositCode" />
+						</label>
+						<div class="col-sm-3 add-margin">
+							<input name="depCode" type="radio" id="depCode" onClick="viewInputFields('dc');"  value='%{depCode}'/>
+						</div>
+						<label class="col-sm-2 control-label text-right">
+						    <s:text name="subledgerCode.type.projectCode" />
+						</label>
+						<div class="col-sm-3 add-margin">
+							<input name="prjctCode" type="radio" id="prjctCode" onClick="viewInputFields('pc');"/>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right">
+						    <s:text name="depositCode.work.name" /> <span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:textfield name="codeName" type="text" cssClass="form-control" id="codeName" value="%{codeName}"/>
+						</div>
+						<label class="col-sm-2 control-label text-right">
+						    <s:text name="depositCode.work.description" />
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:textarea name="description" cols="35" cssClass="form-control" id="description" value="%{description}"/>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label id="financialYear1" class="col-sm-2 control-label text-right">
+						    <s:text name='subledgerCode.financialYear'/> <span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="financialYear" id="financialYear" cssClass="form-control" list="dropdownData.financialYearList" listKey="id" listValue="finYearRange" value="%{currentFinancialYearId}" />
+						</div>
+						<s:if test="%{depCode==true || (prjctCode==true && list.contains('fund') || list.contains('scheme') || list.contains('subScheme')) }" >
+							<label class="col-sm-2 control-label text-right">
+							    <s:text name='subledgerCode.fund'/><span class="mandatory"></span>
+							</label>
+							<div class="col-sm-3 add-margin">
+								<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="fund" id="fund" cssClass="form-control" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
+						         	<egov:ajaxdropdown id="schemeDropdown" fields="['Text','Value']" dropdownId='scheme' url='estimate/ajaxFinancialDetail!loadSchemes.action' selectedValue="%{scheme.id}"/>
+							</div>
+					    </s:if>  
+					</div>
+					
+					<div class="form-group">
+						<s:if test="%{list.contains('department')}" >
+			          		 <label class="col-sm-2 control-label text-right">
+							    <s:text name="subledgerCode.executing.department" /> <span class="mandatory"></span>
+							</label>
+							<div class="col-sm-3 add-margin">
+								<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="department" id="department" cssClass="form-control" list="dropdownData.departmentList" listKey="id" listValue="deptName" value="%{department.id}" />
+							</div>
+			          	</s:if> 
+						<label class="col-sm-2 control-label text-right">
+						    <s:text name="subledgerCode.fundSource.name" /> <span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="fundSource" id="fundSource" 
+		               			 cssClass="form-control" list="dropdownData.fundSourceList" listKey="id" listValue="name" value="%{fundSource.id}"/>
+						</div>
+					</div>
+					
+					<s:if test="%{list.contains('typeOfWork') || list.contains('subTypeOfWork') || list.contains('subTypeOfWork')}" >
+						<div class="form-group">
+							<s:if test="%{list.contains('typeOfWork') || list.contains('subTypeOfWork')}" >
+				            	<label class="col-sm-2 control-label text-right">
+								    <s:text name="subledgerCode.typeOfWork" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="typeOfWork" id="typeOfWork" cssClass="form-control" list="dropdownData.typeOfWorkList" listKey="id" listValue="description" value="%{typeOfWork.id}"/>
+					            	<egov:ajaxdropdown id="subTypeOfWorkDropdown" fields="['Text','Value']" dropdownId='subTypeOfWork' url='estimate/ajaxEstimate!subcategories.action' selectedValue="%{subTypeOfWork.id}"/>
+								</div>
+							</s:if>
+							
+							<s:if test="%{list.contains('subTypeOfWork')}" >
+				            	<label class="col-sm-2 control-label text-right">
+								    <s:text name="subledgerCode.subTypeOfWork" /><span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="subTypeOfWork" value="%{subTypeOfWork.id}" id="subTypeOfWork" cssClass="form-control" list="dropdownData.subTypeOfWorkList" listKey="id" listValue="description" onClick="checkTypeOfWork(this);"/>
+								</div>
+				            </s:if>
+						</div>
+					</s:if>
+					
+					<s:if test="%{list.contains('function') || list.contains('natureOfWork')}" >
+						<div class="form-group">
+							<s:if test="%{list.contains('function')}" >
+				       			<label class="col-sm-2 control-label text-right">
+								    <s:text name='subledgerCode.function'/> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="function" id="function" cssClass="form-control" list="dropdownData.functionList" listKey="id" listValue="name" value="%{function.id}" />
+								</div>
+				          	</s:if>  
+							<s:if test="%{list.contains('natureOfWork')}" >
+				           		<label class="col-sm-2 control-label text-right">
+								    <s:text name="subledgerCode.natureOfWork" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" />
+								</div>
+				       		</s:if>
+						</div>
+					</s:if>
+					
+					<s:if test="%{list.contains('zone') || list.contains('ward') || list.contains('ward')}" >
+					<div class="form-group">
+					    <s:if test="%{list.contains('zone') || list.contains('ward')}" >
+				          		<label class="col-sm-2 control-label text-right">
+								    <s:text name="subledgerCode.zone" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<s:select id="zone" name="zone" cssClass="form-control" 
+																list="dropdownData.zoneList" listKey="id" listValue="name" 
+																headerKey="-1" headerValue="%{getText('default.dropdown.select')}"
+																value="%{zone.id}" />	
+																<egov:ajaxdropdown id="populateWard"
+													fields="['Text','Value']" dropdownId='ward'
+													url='masters/ajaxSubledgerCode!populateWard.action' />
+								</div>
+				         </s:if> 
+						
+						<s:if test="%{list.contains('ward')}" >     
+			                <label class="col-sm-2 control-label text-right">
+							    <s:text name="subledgerCode.ward" /><span class="mandatory"></span>
+							</label>
+							<div class="col-sm-3 add-margin">
+								<s:select id="ward" name="ward" cssClass="form-control" 
+													list="dropdownData.wardList" listKey="id" listValue="name" 
+													headerKey="-1" headerValue="%{getText('default.dropdown.select')}" value="%{ward.id}" onClick="checkZone(this);"/>
+							</div>
+						</s:if>
+						
+					</div>
+					</s:if>
+					
+					<s:if test="%{list.contains('scheme') || list.contains('subScheme') }" >
+					<div class="form-group">
+						<s:if test="%{list.contains('scheme') || list.contains('subScheme') }" >   
+			                <label class="col-sm-2 control-label text-right">
+							    <s:text name='subledgerCode.scheme'/> <span class="mandatory"></span>
+							</label>
+							<div class="col-sm-3 add-margin">
+								<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="scheme" id="scheme" cssClass="form-control" list="dropdownData.schemeList" listKey="id" listValue="name" value="%{scheme.id}"  onClick="checkFund(this);"/>
+				                <egov:ajaxdropdown id="subSchemeDropdown" fields="['Text','Value']" dropdownId='subScheme' url='estimate/ajaxFinancialDetail!loadSubSchemes.action' selectedValue="%{scheme.id}"/>
+							</div>
+			             </s:if>
+			             
+			             <s:if test="%{list.contains('subScheme')}" >   
+			                <label class="col-sm-2 control-label text-right">
+							    <s:text name='subledgerCode.subscheme'/><span class="mandatory"></span>
+							</label>
+							<div class="col-sm-3 add-margin">
+								<s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="subScheme" id="subScheme" cssClass="form-control" list="dropdownData.subSchemeList" listKey="id" listValue="name" value="%{subScheme.id}" onClick="checkScheme(this);"/>
+							</div>
+			 			 </s:if> 
+						
+					</div>
+				</s:if>
+					
+					
+				</div>
 	</div>
+    
+     
+    <div class="row">
+		<div class="col-xs-12 text-center buttonholdersearch">
+			<s:submit cssClass="btn btn-primary" value="Save" id="saveButton" name="saveButton" method="save" onclick="return validateBeforeSubmit();"/>
+			&nbsp;
+			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='subledger.close.confirm'/>');"/>
+		</div>
 	</div>
-	<div class="rbtop2"><div></div></div>
-	</div>
-	</div>
-	</div>
-	
-	<!-- To Show Save and Close Buttons -->
-	<div class="buttonholderwk" id="slCodeButtons">
-		<s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" name="saveButton" method="save" onclick="return validateBeforeSubmit();"/>
-	  			&nbsp;
-	 <input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='subledger.close.confirm'/>');"/>
-    </div>
+    
     </s:push>
    </s:form>
   </body>

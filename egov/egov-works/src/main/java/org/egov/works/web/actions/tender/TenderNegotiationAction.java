@@ -480,7 +480,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                     && worksPackage.getCurrentState().getCreatedDate() != null
                     && worksPackage.getEgwStatus().getCode()
                             .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.APPROVED.toString())
-                    && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), worksPackage.getPackageDate())
+                    && !DateConversionUtil.isBeforeByDate(tenderHeader.getTenderDate(), worksPackage.getWpDate())
                     && !DateConversionUtil.isBeforeByDate(new Date(), tenderHeader.getTenderDate());
         return Boolean.TRUE;
     }
@@ -1285,7 +1285,7 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     public String getWpYear() {
         if (worksPackage != null)
-            return abstractEstimateService.getCurrentFinancialYear(worksPackage.getPackageDate()).getFinYearRange();
+            return abstractEstimateService.getCurrentFinancialYear(worksPackage.getWpDate()).getFinYearRange();
         return wpYear;
     }
 
@@ -1429,7 +1429,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public String getApprovedValue() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_STATUS");
+        return TenderResponse.TenderResponseStatus.APPROVED.toString();
     }
 
     public String getLastStatus() {
