@@ -95,4 +95,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/app/boundary.js'/>"></script>
+<script src="<c:url value='/resources/js/app/boundary.js?rnd=${app_release_no}'/>"></script>
