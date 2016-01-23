@@ -114,4 +114,15 @@ public class LineEstimateService {
         final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
         return newLineEstimate;
     }
+
+    @Transactional
+    public void update(final LineEstimate lineEstimate) {
+        for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
+            if (lineEstimateDetails.getLineEstimate() == null) {
+                lineEstimateDetails.setLineEstimate(lineEstimate);
+                lineEstimateDetails.setNameOfWork(lineEstimateDetails.getNameOfWork());
+                lineEstimateDetails.setEstimateAmount(lineEstimateDetails.getEstimateAmount());
+            }
+        lineEstimateRepository.save(lineEstimate);
+    }
 }

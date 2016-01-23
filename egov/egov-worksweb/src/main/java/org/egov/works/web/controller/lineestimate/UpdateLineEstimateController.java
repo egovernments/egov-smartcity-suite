@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.lineestimate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -48,14 +49,18 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -63,6 +68,9 @@ public class UpdateLineEstimateController {
 
     @Autowired
     private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
 
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
@@ -92,6 +100,25 @@ public class UpdateLineEstimateController {
         setDropDownValues(model);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         return loadViewData(model, request, lineEstimate);
+    }
+
+    @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
+    public String updateLineEstimate(@Valid @ModelAttribute("lineEstimate") LineEstimate lineEstimate,
+            final BindingResult errors, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request, final Model model, @RequestParam final String removedLineEstimateDetailsIds)
+                    throws ApplicationException {
+        setDropDownValues(model);
+        if (errors.hasErrors())
+            return loadViewData(model, request, lineEstimate);
+        else {
+            lineEstimate = lineEstimateDetailService.removeDeletedLineEstimateDetails(lineEstimate,
+                    removedLineEstimateDetailsIds);
+            lineEstimateService.update(lineEstimate);
+            setDropDownValues(model);
+            redirectAttributes.addFlashAttribute("lineEstimate", lineEstimate);
+            model.addAttribute("message", "Line Estimate updated successfully");
+            return "redirect:/lineestimate/update/" + lineEstimate.getId();
+        }
     }
 
     private void setDropDownValues(final Model model) {

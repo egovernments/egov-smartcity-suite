@@ -39,11 +39,12 @@
  */
 package org.egov.commons;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.hibernate.search.annotations.Field;
 
-public class CFunction {
+public class CFunction implements Serializable{
 
 	private Long id = null;
 	private String name;

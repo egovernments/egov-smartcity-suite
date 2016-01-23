@@ -85,20 +85,20 @@ public class LineEstimateDetailService {
     public void delete(final LineEstimateDetails lineEstimateDetails) {
         lineEstimateDetailsRepository.delete(lineEstimateDetails);
     }
-    
+
     public LineEstimateDetails getById(final Long id) {
         return lineEstimateDetailsRepository.findOne(id);
     }
-    
+
     @Transactional
-    public LineEstimate removeDeletedLineEstimateDetails(LineEstimate lineEstimate, String removedLineEstimateDetailsIds) {
-        if(null!=removedLineEstimateDetailsIds)
-         for(String id : removedLineEstimateDetailsIds.split(",")){
-             lineEstimate.getLineEstimateDetails().remove(lineEstimateDetailsRepository.findOne(Long.valueOf(id)));
-         }
-         return lineEstimate;
-     }
-    
+    public LineEstimate removeDeletedLineEstimateDetails(final LineEstimate lineEstimate,
+            final String removedLineEstimateDetailsIds) {
+        if (null != removedLineEstimateDetailsIds)
+            for (final String id : removedLineEstimateDetailsIds.split(","))
+                lineEstimate.getLineEstimateDetails().remove(lineEstimateDetailsRepository.findOne(Long.valueOf(id)));
+        return lineEstimate;
+    }
+
     public List<LineEstimateDetails> getAllLineEstimateDetailsByLineEstimateNumber(final LineEstimate lineEstimate) {
         return lineEstimateDetailsRepository.getAllLineEstimateDetailsByLineEstimateId(lineEstimate.getId());
     }
