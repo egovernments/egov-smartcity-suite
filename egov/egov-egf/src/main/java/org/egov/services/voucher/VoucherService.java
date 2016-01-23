@@ -185,7 +185,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     public Department getCurrentDepartment()
     {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
+        final Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByDate(EgovThreadLocals.getUserId(),
                 new Date());
         return assignment.getDepartment();
     }
@@ -193,7 +193,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     public Department getDepartmentForWfItem(final CVoucherHeader cv)
     {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(cv.getCreatedBy().getId(),
+        final Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByDate(cv.getCreatedBy().getId(),
                 new Date());
         return assignment.getDepartment();
     }
