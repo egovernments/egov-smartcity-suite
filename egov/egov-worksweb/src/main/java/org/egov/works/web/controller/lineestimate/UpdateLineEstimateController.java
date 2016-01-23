@@ -51,6 +51,7 @@ import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -99,6 +100,7 @@ public class UpdateLineEstimateController {
                     throws ApplicationException {
         setDropDownValues(model);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
+        model.addAttribute("message", WorksConstants.LINEESTIMATE_CREATE);
         return loadViewData(model, request, lineEstimate);
     }
 
@@ -116,7 +118,7 @@ public class UpdateLineEstimateController {
             lineEstimateService.update(lineEstimate);
             setDropDownValues(model);
             redirectAttributes.addFlashAttribute("lineEstimate", lineEstimate);
-            model.addAttribute("message", "Line Estimate updated successfully");
+            redirectAttributes.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
             return "redirect:/lineestimate/update/" + lineEstimate.getId();
         }
     }
@@ -132,6 +134,8 @@ public class UpdateLineEstimateController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final LineEstimate lineEstimate) {
         model.addAttribute("lineEstimate", lineEstimate);
+        if (request.getParameter("message") != null && request.getParameter("message").equals("update"))
+            model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         return "newLineEstimate-edit";
     }
 }

@@ -37,31 +37,31 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.formatters;
+package org.egov.commons.formatters;
 
 import java.text.ParseException;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.SubScheme;
+import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
-@Component("subSchemeFormatter")
-public class SubSchemeFormatter implements Formatter<SubScheme> {
+@Component("schemeFormatter")
+public class SchemeFormatter implements Formatter<Scheme> {
 
     @Autowired
-    private PersistenceService<SubScheme, Integer> persistenceService;
+    private PersistenceService<Scheme, Integer> persistenceService;
 
     @Override
-    public String print(final SubScheme object, final Locale locale) {
+    public String print(final Scheme object, final Locale locale) {
         return object.getName();
     }
 
     @Override
-    public SubScheme parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(Integer.valueOf(id), SubScheme.class) : null;
+    public Scheme parse(final String id, final Locale locale) throws ParseException {
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Integer.valueOf(id), Scheme.class) : null;
     }
 }

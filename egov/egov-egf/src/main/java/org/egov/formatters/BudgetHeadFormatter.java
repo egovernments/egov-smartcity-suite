@@ -37,31 +37,31 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.formatters;
+package org.egov.formatters;
 
 import java.text.ParseException;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.model.budget.BudgetGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
-@Component("schemeFormatter")
-public class SchemeFormatter implements Formatter<Scheme> {
+@Component("budgetHeadFormatter")
+public class BudgetHeadFormatter implements Formatter<BudgetGroup> {
 
     @Autowired
-    private PersistenceService<Scheme, Integer> persistenceService;
+    private PersistenceService<BudgetGroup, Long> persistenceService;
 
     @Override
-    public String print(final Scheme object, final Locale locale) {
+    public String print(final BudgetGroup object, final Locale locale) {
         return object.getName();
     }
 
     @Override
-    public Scheme parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(Integer.valueOf(id), Scheme.class) : null;
+    public BudgetGroup parse(final String id, final Locale locale) throws ParseException {
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Long.valueOf(id), BudgetGroup.class) : null;
     }
 }

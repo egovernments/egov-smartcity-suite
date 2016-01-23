@@ -246,4 +246,7 @@ public class WorksConstants {
     public static final String WF_STATE_APPROVED_LINEESTIMATE = "APPROVED";
     public static final String WF_STATE_REJECTED_LINEESTIMATE = "REJECTED";
     public static final String WF_STATE_CANCELLED_LINEESTIMATE = "CANCELLED";
+    
+    public static final String LINEESTIMATE_CREATE = "create";
+    public static final String LINEESTIMATE_UPDATE = "update";
 }

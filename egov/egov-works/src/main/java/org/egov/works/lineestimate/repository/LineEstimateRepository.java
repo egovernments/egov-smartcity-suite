@@ -41,16 +41,9 @@ package org.egov.works.lineestimate.repository;
 
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long> {
-
-    LineEstimate findById(Long id);
-    
-    @Query("select le from LineEstimate le where le.lineEstimateNumber =:lineEstimateNumber")
-    LineEstimate getLineEstimateByLineEstimateNumber(@Param("lineEstimateNumber") String lineEstimateNumber);
 
 }

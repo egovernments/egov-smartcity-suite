@@ -46,6 +46,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -77,6 +78,9 @@ public class LineEstimateService {
     @Qualifier("persistenceService")
     private PersistenceService<EgwStatus, Integer> persistenceService;
 
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -86,22 +90,14 @@ public class LineEstimateService {
         this.lineEstimateRepository = lineEstimateRepository;
     }
 
-    public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
-        return persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
-    }
-
     public LineEstimate getLineEstimateById(final Long id) {
-        return lineEstimateRepository.findById(id);
-    }
-
-    public LineEstimate getLineEstimateByLineEstimateNumber(final String lineEstimateNumber) {
-        return lineEstimateRepository.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
+        return lineEstimateRepository.findOne(id);
     }
 
     @Transactional
     public LineEstimate create(final LineEstimate lineEstimate) {
-        lineEstimate.setStatus(getStatusByCodeAndModuleType(WorksConstants.WF_STATE_CREATED_LINEESTIMATE,
-                WorksConstants.MODULE_NAME_LINEESTIMATE));
+        lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULE_NAME_LINEESTIMATE,
+                WorksConstants.WF_STATE_CREATED_LINEESTIMATE));
         lineEstimate.setLineEstimateDetails(lineEstimate.getLineEstimateDetails().parallelStream().collect(Collectors.toList()));
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails())
             lineEstimateDetail.setLineEstimate(lineEstimate);

@@ -46,9 +46,14 @@
 <div class="page-container" id="page-container">
 	<div class="main-content">
 		<div style="font-weight:bold; color:green; text-align:center;">
-			<c:if test="${lineEstimate.getId() != null}">
-				<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-			</c:if>
+			<c:choose>
+				<c:when test="${message.equals('create')}">
+					<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
+				</c:when>
+				<c:otherwise>
+					<spring:message code="lineestimate.update.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
+				</c:otherwise>
+			</c:choose>
 		</div>
 		<form:form name="lineEstimateForm" role="form" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" method="POST">
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>

@@ -39,8 +39,6 @@
  */
 package org.egov.works.lineestimate.service;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -99,7 +97,4 @@ public class LineEstimateDetailService {
         return lineEstimate;
     }
 
-    public List<LineEstimateDetails> getAllLineEstimateDetailsByLineEstimateNumber(final LineEstimate lineEstimate) {
-        return lineEstimateDetailsRepository.getAllLineEstimateDetailsByLineEstimateId(lineEstimate.getId());
-    }
 }

@@ -252,7 +252,9 @@ public class LineEstimate extends StateAware {
     }
 
     public void setLineEstimateDetails(final List<LineEstimateDetails> lineEstimateDetails) {
-        this.lineEstimateDetails = lineEstimateDetails;
+        this.lineEstimateDetails.clear();
+        if(lineEstimateDetails != null)
+            this.lineEstimateDetails.addAll(lineEstimateDetails);
     }
 
     public List<DocumentDetails> getDocumentDetails() {

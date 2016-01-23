@@ -39,22 +39,11 @@
  */
 package org.egov.works.lineestimate.repository;
 
-import java.util.List;
-
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimateDetails, Long> {
-    
-    LineEstimateDetails findById(Long id);
-    
-    @Query("select led from LineEstimateDetails led where led.lineEstimate.id = :parentId")
-    List<LineEstimateDetails> getAllLineEstimateDetailsByLineEstimateId(@Param("parentId") Long parentId);
-    
-    @Query("select led from LineEstimateDetails led where led.estimateNumber =:estimateNumber")
-    LineEstimateDetails getLineEstimateDetailsByEstimateNumber(@Param("estimateNumber") String estimateNumber);
+
 }
