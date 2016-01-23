@@ -124,7 +124,7 @@ public class OpeningBalance
             if (!fundId.equalsIgnoreCase(""))
                 pstmt.setLong(i++, Long.valueOf(fundId));
             if (!deptId.equalsIgnoreCase(""))
-                pstmt.setString(i++, deptId);
+                pstmt.setLong(i++,Long.valueOf( deptId));
             List<Object[]> list= pstmt.list();
             resultset =list;
             
