@@ -143,6 +143,7 @@
 	</s:if>
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	</br>
 		<tr>
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.approval.information" /></span>
@@ -150,6 +151,7 @@
 
 		</tr>
 		</br>
+		<>
 		<tr>
 			<td class="${approverOddCSS}" width="5%">&nbsp;</td>
 			<td class="${approverOddCSS}" id="deptLabel" width="14%"><s:text

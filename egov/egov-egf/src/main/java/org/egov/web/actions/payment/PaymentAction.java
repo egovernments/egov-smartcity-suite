@@ -936,6 +936,8 @@ public class PaymentAction extends BasePaymentAction {
         if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
         paymentService.persist(paymentheader);
+        if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.cancelled"));
         if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             if ("Closed".equals(paymentheader.getState().getValue()))
                 addActionMessage(getMessage("payment.voucher.final.approval"));
@@ -1278,6 +1280,7 @@ public class PaymentAction extends BasePaymentAction {
 
     @ValidationErrorPage(value = MODIFY)
     @SkipValidation
+    @Action(value = "/payment/payment-cancel")
     public String cancelPayment()
     {
         if (LOGGER.isDebugEnabled())

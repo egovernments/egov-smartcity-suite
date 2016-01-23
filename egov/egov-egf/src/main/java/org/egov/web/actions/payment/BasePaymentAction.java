@@ -185,8 +185,7 @@ public class BasePaymentAction extends BaseVoucherAction {
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             } else {
-                final String stateValue = paymentheader.getCurrentState().getValue().split(":")[0] + ":"
-                        + FinancialConstants.WORKFLOW_STATE_REJECTED;
+                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
                 paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
@@ -195,6 +194,10 @@ public class BasePaymentAction extends BaseVoucherAction {
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
+        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
+            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
