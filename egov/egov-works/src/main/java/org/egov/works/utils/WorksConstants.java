@@ -235,4 +235,15 @@ public class WorksConstants {
     public static final String SAVE_ACTION = "Save";
     public static final Object REJECT_ACTION = "Reject";
     public static final Object FORWARD_ACTION = "Forward";
+    
+    // Module types
+    public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
+
+    // Workflow States
+    public static final String WF_STATE_NEW_LINEESTIMATE = "NEW";
+    public static final String WF_STATE_CREATED_LINEESTIMATE = "CREATED";
+    public static final String WF_STATE_CHECKED_LINEESTIMATE = "CHECKED";
+    public static final String WF_STATE_APPROVED_LINEESTIMATE = "APPROVED";
+    public static final String WF_STATE_REJECTED_LINEESTIMATE = "REJECTED";
+    public static final String WF_STATE_CANCELLED_LINEESTIMATE = "CANCELLED";
 }

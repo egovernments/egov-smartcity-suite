@@ -53,6 +53,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -65,6 +66,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.eis.entity.Jurisdiction;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
@@ -136,8 +138,9 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "executingdepartment", nullable = false)
     private Department executingDepartment;
 
-    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<LineEstimateDetails> lineEstimateDetails;
+    @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id DESC ")
+    private List<LineEstimateDetails> lineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
     //TODO : Need to look for multiple document details support
     @Transient

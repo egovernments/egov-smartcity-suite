@@ -178,7 +178,7 @@ public class BudgetGroupHibernateDAO extends GenericHibernateDAO implements Budg
         try
         {
             session = HibernateUtil.getCurrentSession();
-            final Query qry = session.createQuery(" from BudgetGroup where isActive=1 order by name");
+            final Query qry = session.createQuery(" from BudgetGroup where isActive=true order by name");
             budgetHeadList = qry.list();
         } catch (final ValidationException v)
         {

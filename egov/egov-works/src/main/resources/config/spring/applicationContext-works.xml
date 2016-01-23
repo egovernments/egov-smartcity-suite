@@ -580,4 +580,11 @@
 	<bean id="uomService" class="org.egov.works.master.services.UOMService">
 		<property name="type" value="org.egov.common.entity.UOM"/>
 	</bean>
+	<bean id="schemeService" class="org.egov.services.masters.SchemeService">
+      <constructor-arg index="0" value="org.egov.commons.Scheme" />
+    </bean>
+    <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" >
+      <constructor-arg index="0" value="org.egov.commons.SubScheme" />
+    </bean>
+    <bean id="lineEstimateNumberGenerator" class="org.egov.works.lineestimate.service.LineEstimateNumberGenerator"/>
 </beans>
