@@ -41,6 +41,8 @@ package org.egov.adtax.web.controller.hoarding;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -49,6 +51,7 @@ import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
+import org.egov.demand.model.EgDemandDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -88,6 +91,10 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
     public String updateHoarding(@PathVariable final String id, final Model model) {
         final Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
 
+        if(advertisement==null)
+        {   model.addAttribute("message", "msg.collection.updateRecordNotAllowed");
+            return "collectAdvtax-error";
+        }
         Boolean taxAlreadyCollectedForDemandInAnyYear = checkTaxAlreadyCollectedForAdvertisement(advertisement);
 
         // TODO: CHECK renewal process started ?
@@ -98,6 +105,18 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         if (taxAlreadyCollectedForDemandInAnyYear) {
             model.addAttribute("message", "msg.collection.taxAlreadyCollected");
             return "collectAdvtax-error";
+        }
+        
+        if(advertisement!=null && advertisement.getDemandId()!=null){
+        for(EgDemandDetails egDemandDetail: advertisement.getDemandId().getEgDemandDetails())
+            {
+                if (egDemandDetail.getAmount() != null && egDemandDetail.getAmtCollected() != null
+                        && egDemandDetail.getAmtCollected().compareTo(BigDecimal.ZERO) > 0) {
+                    advertisement.setTaxPaidForCurrentYear(true);
+                    break;
+                }
+            }
+            
         }
         model.addAttribute("advertisementPermitDetail", advertisement.getActiveAdvertisementPermit());
         model.addAttribute("advertisementDocuments", advertisement.getDocuments());

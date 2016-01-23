@@ -506,7 +506,7 @@ public class AdvertisementDemandService {
                     demandDetailSet.add(createDemandDetails(
                             ( advertisementPermitDetail.getAdvertisement().getPendingTax()),
                             getDemandReasonByCodeAndInstallment(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX,
-                                    installment),(taxFullyPaidForCurrentYear ? advertisementPermitDetail.getAdvertisement().getPendingTax(): BigDecimal.ZERO)));
+                                    installment),(advertisementPermitDetail.getAdvertisement().getPendingTax())));
                     totalDemandAmount=  totalDemandAmount.add( advertisementPermitDetail.getAdvertisement().getPendingTax());
                 }
                 if( advertisementPermitDetail.getTaxAmount()!=null){

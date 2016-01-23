@@ -72,7 +72,6 @@ $(document).ready(function(){
 		 });
    
    $('#category').change(function(){
-	   
 	   if (this.value === '') {
 			return;
 		} else {

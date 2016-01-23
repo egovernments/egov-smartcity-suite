@@ -73,11 +73,14 @@
 </div>
 <script>
 //this is to reset the sub combobox upon field error
-var subcategory = '${advertisement.subCategory.id}';
-var adminBoundry = '${advertisement.ward.id}';
-var revenueBoundary = '${advertisement.locality.id}';
+
+//this is to reset the sub combobox upon field error
+var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
+var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
+var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 $(window).load(function(){
-  	document.getElementById("applicationNumber").readOnly=true;
+	
+	document.getElementById("applicationNumber").readOnly=true;
 	document.getElementById("applicationDate").readOnly=true;
 	document.getElementById("permissionNumber").readOnly=true;
 	document.getElementById("advertisementnumber").readOnly=true;
