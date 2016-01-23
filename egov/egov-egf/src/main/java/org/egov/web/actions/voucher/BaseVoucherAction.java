@@ -119,10 +119,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected String voucherNumManual;
     protected UserService userMngr;
     protected EisUtilService eisService;
-    private AssignmentService assignmentService;
+    protected AssignmentService assignmentService;
     @Autowired
     private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
-    private SecurityUtils securityUtils;
+    protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
     protected String reversalVoucherDate;
     final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
