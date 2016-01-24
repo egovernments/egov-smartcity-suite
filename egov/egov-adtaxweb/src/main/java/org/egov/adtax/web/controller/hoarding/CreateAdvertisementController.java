@@ -43,20 +43,25 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -71,6 +76,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     /*
      * @ModelAttribute public Hoarding hoarding() { return new Hoarding(); }
@@ -84,14 +92,47 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     public @ResponseBody Double getTaxAmount(@RequestParam final Long unitOfMeasureId,
             @RequestParam final Double measurement, @RequestParam final Long subCategoryId,
             @RequestParam final Long rateClassId) {
-        Double rate = Double.valueOf(0);
-        rate = advertisementRateService.getAmountBySubcategoryUomClassAndMeasurement(subCategoryId, unitOfMeasureId,
-                rateClassId, measurement);
-        if (rate == null)
-            return Double.valueOf(0);
-        // TODO MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
-        return BigDecimal.valueOf(rate).multiply(BigDecimal.valueOf(measurement)).setScale(2, BigDecimal.ROUND_HALF_UP)
-                .doubleValue();
+        AdvertisementRatesDetails rate = null;
+
+
+        rate = advertisementRateService.getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(
+                subCategoryId, unitOfMeasureId, rateClassId, measurement);
+
+        if (rate != null) {
+            // get data based on financial year, if not present, get from
+            // previous year data.
+            // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
+
+            // CHECK WHETHER CALCULATION REQUIRED BASED ON PERUNIT BASIS OR NORMAL
+            // WAY ?
+            List<AppConfigValues> calculateSorByUnit = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.CALCULATESORBYUNIT);
+            if (!calculateSorByUnit.isEmpty()) {
+                if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("NO")) {
+                    return BigDecimal.valueOf(rate.getAmount()).multiply(BigDecimal.valueOf(measurement))
+                            .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+                } else if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("YES")) {
+
+                    BigDecimal unitRate = (rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal.valueOf(rate
+                            .getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO);
+
+                    // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
+                    if (unitRate != BigDecimal.valueOf(0))
+                        return BigDecimal
+                                .valueOf(rate.getAmount())
+                                .multiply(
+                                        (BigDecimal.valueOf(measurement).divide(unitRate, 2, RoundingMode.HALF_UP))
+                                                .setScale(0, RoundingMode.UP)).setScale(2, BigDecimal.ROUND_HALF_UP)
+                                .doubleValue();
+                    else
+                        return Double.valueOf(0);
+                }
+            }
+        }
+
+        return Double.valueOf(0);
+
     }
 
     @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)

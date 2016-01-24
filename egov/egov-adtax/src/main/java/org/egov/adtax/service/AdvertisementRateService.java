@@ -125,6 +125,31 @@ public class AdvertisementRateService {
             return Double.valueOf(0);
         return rate;
     }
+    public AdvertisementRatesDetails getRatesBySubcategoryUomClassFinancialYearAndMeasurement(final Long subCategoryId, final Long unitOfMeasureId,
+            final Long rateClassId, final Double units,CFinancialYear cfinancialYear) {
+        List<AdvertisementRatesDetails> rate = null;
+        if (units != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null)
+            rate = rateDetailRepository.getRatesBySubcategoryUomClassFinancialYearAndMeasurement(units, subCategoryId, unitOfMeasureId,
+                    rateClassId,cfinancialYear.getId());
+        if(rate!=null && rate.size()>0)
+            return rate.get(0);
+        
+        return null;
+    }
+    
+    public AdvertisementRatesDetails getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(final Long subCategoryId, final Long unitOfMeasureId,
+            final Long rateClassId, final Double units) {
+        List<AdvertisementRatesDetails> rate = null;
+
+        if (units != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null)
+            rate = rateDetailRepository.getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(units, subCategoryId, unitOfMeasureId,
+                    rateClassId);
+        if(rate!=null && rate.size()>0)
+            return rate.get(0);
+        
+        return null;
+    }
+    
 
     public List<AdvertisementRatesDetails> getScheduleOfRateSearchResult(final Long category, final Long subCategory,
             final Long unitOfMeasure, final Long classtype, final Long finyear) {
