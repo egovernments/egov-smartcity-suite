@@ -100,9 +100,9 @@
 					return false;
 				}	else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
 						 document.getElementById("workersCapacity").value == 0) {
-					showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
+					/* showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
 					window.scroll(0, 0); 
-					return false;
+					return false; */
 				}
 				if(!verifyDocAttachment()){
 					return false;
@@ -137,6 +137,7 @@
 				} else {
 					document.getElementById("hpheader").style.display='none';
 				}
+				
 				if(dom.get("mode").value=='view'){
 					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments',
 					                     'Forward','Reject','button2','Approve']); 

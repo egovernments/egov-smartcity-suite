@@ -158,7 +158,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
 
         if (checkNullandEmpty(openingBalanceReport.getDeptId())) {
             dept = (Department) persistenceService.find("from Department where id = ?",
-                    Integer.parseInt(openingBalanceReport.getDeptId()));
+                    Long.parseLong(openingBalanceReport.getDeptId()));
             heading = heading + " and " + dept.getName() + " Department ";
         }
         return heading;

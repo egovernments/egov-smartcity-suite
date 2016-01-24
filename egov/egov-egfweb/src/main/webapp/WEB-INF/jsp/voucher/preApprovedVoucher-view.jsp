@@ -85,6 +85,25 @@
 	}
 }
 </style>
+<script>
+	function openSource(){
+		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
+			bootbox.alert('Source is not available');
+		else{
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>'+ '&showMode=view' 
+			window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
+		}   
+			
+	}
+	function checkLength(obj)
+	{
+		if(obj.value.length>1024)
+		{
+			bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+			obj.value = obj.value.substring(1,1024);
+		}
+	}
+</script>
 </head>
 
 <body onload="refreshInbox()">
@@ -110,17 +129,17 @@
 			<jsp:include page="voucherViewHeader.jsp" />
 			<table align="center">
 				<tr>
-					<td class="bluebox"><a href="#" onclick="openSource()"
-						id="sourceLink" />Source</a></td>
+					<td class="bluebox"><a href="#"
+						onclick=" return openSource();">Source</a></td>
 
 				</tr>
 			</table>
 
 
 		</div>
-		
+
 		<div align="center">
-		<br/>
+			<br />
 			<table border="1" width="100%" cellspacing="0">
 				<tr>
 					<th colspan="5"><div class="subheadsmallnew">Account
@@ -171,7 +190,7 @@
 		<br />
 		<s:if test="%{billDetails.subLedgerlist.size()>0}">
 			<div align="center">
-			<br/>
+				<br />
 				<table border="1" width="100%" cellspacing="0">
 					<tr>
 						<th colspan="5"><div class="subheadsmallnew">Sub-ledger
@@ -256,36 +275,7 @@
 		<s:hidden id="id" name="id" value="%{voucherHeader.id}" />
 		<s:hidden id="contraId" name="contraId" value="%{contraVoucher.id}" />
 
-		<script type="text/javascript">
-	function openSource()
-	{
-		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
-			bootbox.alert('Source is not available');
-		else{
-			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>' + '&showMode=view'
-			window.open(url,'width=900, height=700')
 
-		}
-
-	}
-	function checkLength(obj)
-	{
-		if(obj.value.length>1024)
-		{
-			bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
-			obj.value = obj.value.substring(1,1024);
-		}
-	}
-	if(document.getElementById('methodName').value!='' || '<%=request.getParameter("from")%>
-			' == 'null') {
-				if (document.getElementById('wfBtn0'))
-					document.getElementById('wfBtn0').style.display = 'none';
-				if (document.getElementById('wfBtn1'))
-					document.getElementById('wfBtn1').style.display = 'none';
-				document.getElementById('commentsdiv').style.display = 'none';
-				document.getElementById('wfHistoryDiv').style.display = 'none';
-			}
-		</script>
 
 	</s:form>
 

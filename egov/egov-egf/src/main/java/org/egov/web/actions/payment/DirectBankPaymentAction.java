@@ -1091,10 +1091,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
     }
 
-    @SkipValidation
-    public List<String> getValidActions() {
-        return null;
-    }
 
     public Paymentheader getPayment() {
         String paymentid = null;

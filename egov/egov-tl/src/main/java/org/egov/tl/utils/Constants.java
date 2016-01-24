@@ -89,9 +89,11 @@ public class Constants {
 	public static final String WF_STATE_AEE_Approval_Pending = "AEE Approval Pending";
 	public static final String WF_STATE_ARO_Approval_Pending_Town_Planning = "ARO Approval Pending Town-Planning";
 	public static final String WF_STATE_ZO_Approval_Pending = "ZO Approval Pending";
+	public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
+	public static final String WF_STATE_INSPECTION_PENDING="Create License:Sanitary inspector Approve pending";
 	public static final String WF_STATE_LICENSE_NOT_APPROVED = "License Not Approved";
 	public static final String WF_STATE_RENEWAL_PRINT_PENDING = "Renewal Print Pending";
-	public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitory inspector Approval Pending";
+	public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
 
 	// JSP Pages
 	public static final String VIEW_RESULT_PAGE = "result";
@@ -305,7 +307,9 @@ public class Constants {
 
 	public static final String REASON_CANCELLATION_VALUE_3 = "Court Order";
 	public static final String MESSAGE = "message";
+	public static final String GENERATECERTIFICATE = "Generate Certificate";
 	public static final String BUTTONAPPROVE = "Approve";
+	
 	public static final String BUTTONFORWARD = "Forward";
 	public static final String BUTTONREJECT = "Reject";
 	public static final String BUTTONSAVE = "Save";

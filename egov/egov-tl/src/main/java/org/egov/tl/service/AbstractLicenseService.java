@@ -41,6 +41,7 @@ package org.egov.tl.service;
 
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
@@ -195,6 +196,10 @@ public abstract class AbstractLicenseService<T extends License> {
         setAuditEntries(license);
         this.processAndStoreDocument(license.getDocuments());
         this.transitionWorkFlow(license, workflowBean);
+        license.getState().setCreatedBy(license.getCreatedBy());
+        license.getState().setCreatedDate(new Date());
+        license.getState().setLastModifiedBy(license.getCreatedBy());
+        license.getState().setLastModifiedDate(new Date());
         this.licensePersitenceService.persist(license);
     }
 
@@ -663,12 +668,22 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
-        } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        }   else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
+            .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            
+            else {
+            
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            if( BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
+                Assignment commissionerUsr = assignmentService.getPrimaryAssignmentForUser(user.getId());
+                pos = (Position) persistenceService.find("from Position where id=?", commissionerUsr.getPosition().getId());
+            }
             if (null == license.getState()) {
                 WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
@@ -684,6 +699,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
+            }
             }
         }
     }

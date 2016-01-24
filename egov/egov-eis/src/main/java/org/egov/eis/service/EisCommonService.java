@@ -179,6 +179,9 @@ public class EisCommonService {
         return assignmentService.getPrimaryAssignmentForEmployeeByToDate(empId, toDate);
     }
 
+    public Assignment getLatestAssignmentForEmployeeByDate(final Long empId, final Date toDate) {
+        return assignmentService.findByEmployeeAndGivenDate(empId, toDate).get(0);
+     }
     /**
      * Refer to Position master service for the same API
      *

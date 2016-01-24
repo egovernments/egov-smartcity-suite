@@ -103,6 +103,7 @@ public class DocumentNamesMasterController {
                             "Entered Document for the Chosen ApplicationType is made non-mandatory");
             }
         } else {
+            documentNames.setDocumentName(documentNames.getDocumentName().trim());
             documentNames.setActive(true);
             documentNamesService.createDocumentName(documentNames);
             redirectAttrs.addFlashAttribute("documentNames", documentNames);

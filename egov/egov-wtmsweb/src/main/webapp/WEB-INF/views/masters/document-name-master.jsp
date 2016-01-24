@@ -70,8 +70,9 @@
 				</div>
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.document.name" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin"  id="documentNamesdiv">
-					<form:input class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$"  maxlength="32" id="documentName"
+					<form:input class="form-control patternvalidation"  data-pattern="alphanumericwithspaceanddot"  maxlength="32" id="documentName"
 						path="documentName" required="required" />
+						
 					<form:errors path="documentName"
 						cssClass="add-margin error-msg" />
 				</div>

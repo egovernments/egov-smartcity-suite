@@ -306,11 +306,14 @@ public interface FinancialConstants {
     public static final String BUTTONFORWARD = "Forward";
     public static final String BUTTONREJECT = "Reject";
     public static final String BUTTONSAVE = "Save";
+    public static final String BUTTONCANCEL = "Cancel";
     
     public static final String WORKFLOW_STATE_NEW = "NEW";
     public static final String WORKFLOW_STATE_APPROVED = "Approved";
     public static final String WORKFLOW_STATE_REJECTED = "Rejected";
     public static final String WORKFLOW_STATE_FORWARDED = "Forwarded";
+    public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
+
     
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";

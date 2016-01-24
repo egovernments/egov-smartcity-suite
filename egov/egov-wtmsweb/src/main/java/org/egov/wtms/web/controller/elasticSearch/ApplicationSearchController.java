@@ -42,6 +42,7 @@ package org.egov.wtms.web.controller.elasticSearch;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.config.search.Index;
@@ -76,7 +77,7 @@ public class ApplicationSearchController {
     private final ApplicationSearchService applicationSearchService;
     private final SearchService searchService;
     private final CityService cityService;
-    
+
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
@@ -122,7 +123,13 @@ public class ApplicationSearchController {
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
 
-        return searchResult.getDocuments();
+        final List<Document> searchResultFomatted = new ArrayList<Document>(0);
+        for (final Document document : searchResult.getDocuments()) {
+            document.getResource().remove("searchable.mobilenumber");
+            document.getResource().remove("searchable.aadharnumber");
+            searchResultFomatted.add(document);
+        }
+        return searchResultFomatted;
 
     }
 }
