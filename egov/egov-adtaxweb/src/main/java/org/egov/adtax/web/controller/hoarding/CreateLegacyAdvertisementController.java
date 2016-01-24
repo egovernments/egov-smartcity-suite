@@ -62,81 +62,61 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateLegacyAdvertisementController extends HoardingControllerSupport {
-   
-   
+
     @RequestMapping(value = "createLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() == null) {
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() == null)
             advertisementPermitDetail.setAdvertisement(new Advertisement());
-        }
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
         advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
         return "hoarding-createLegacy";
     }
 
-
-    private void validateLegacyHoarding(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
- 
-      if(advertisementPermitDetail.getAgency()==null && advertisementPermitDetail.getOwnerDetail()==null)
-          resultBinder.rejectValue("agency", "invalid.eitherAgencyOrOwnerDetailRequired");
-     
-      if(advertisementPermitDetail.getAdvertisement()!=null &&
-              advertisementPermitDetail.getAdvertisement().getPropertyNumber()==null && advertisementPermitDetail.getAdvertisement().getCategory()!=null
-              && advertisementPermitDetail.getAdvertisement().getCategory().isPropertyMandatory())
-          resultBinder.rejectValue("advertisement.propertyNumber", "invalid.propertyIdIsMandatoryForCategory");
-    
-      //TODO: AUTOGENERATE PERMIT NUMBER,ADVERTISENUMBER,applicationnumber .. ELSE VALIDATE
-      //TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
-   
-    }
-
-    private void validateLegacyApplicationDate(AdvertisementPermitDetail advertisementPermitDetail, BindingResult resultBinder) {
+    private void validateLegacyApplicationDate(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder) {
 
         if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationDate() != null) {
             final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-            if (installmentObj != null && installmentObj.getToDate() != null) {
+            if (installmentObj != null && installmentObj.getToDate() != null)
                 if (advertisementPermitDetail.getApplicationDate()
-                        .after(DateUtils.endOfDay(installmentObj.getToDate()))) {
+                        .after(DateUtils.endOfDay(installmentObj.getToDate())))
                     resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
-                }
-            }
         }
         if (advertisementPermitDetail != null
                 && advertisementPermitDetail.getPermissionstartdate() != null
                 && advertisementPermitDetail.getPermissionenddate() != null
                 && advertisementPermitDetail.getPermissionstartdate().after(
-                        advertisementPermitDetail.getPermissionenddate())) {
+                        advertisementPermitDetail.getPermissionenddate()))
             resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
 
-        }
-
     }
+
     @RequestMapping(value = "createLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
-        validateLegacyHoarding(advertisementPermitDetail,resultBinder);
+        validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         validateLegacyApplicationDate(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-createLegacy";
         storeHoardingDocuments(advertisementPermitDetail);
         advertisementPermitDetail.setIsActive(Boolean.TRUE);
-        advertisementPermitDetail.setStatus(advertisementPermitDetailService.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
+        advertisementPermitDetail.setStatus(advertisementPermitDetailService
+                .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
         final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
         if (installmentObj != null && installmentObj.getFromDate() != null)
             try {
-                advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(formatter.parse(formatter.format(installmentObj.getFromDate())));
+                advertisementPermitDetail.getAdvertisement()
+                        .setPenaltyCalculationDate(formatter.parse(formatter.format(installmentObj.getFromDate())));
             } catch (final ParseException e) {
                 e.printStackTrace();// TODO: CHECK THIS CASE AGAIN.
             }
 
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail,null,null,null,null);
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null);
         redirAttrib.addFlashAttribute("message", "hoarding.create.success");
-        //return "redirect:/hoarding/createLegacy";
-        return "redirect:/hoarding/success/" + advertisementPermitDetail.getId(); 
+        // return "redirect:/hoarding/createLegacy";
+        return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
     }
 
-  
-  
 }

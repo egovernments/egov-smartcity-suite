@@ -76,13 +76,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    /*
-     * @ModelAttribute public Hoarding hoarding() { return new Hoarding(); }
-     */
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
@@ -94,7 +91,6 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             @RequestParam final Long rateClassId) {
         AdvertisementRatesDetails rate = null;
 
-
         rate = advertisementRateService.getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(
                 subCategoryId, unitOfMeasureId, rateClassId, measurement);
 
@@ -105,30 +101,29 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
 
             // CHECK WHETHER CALCULATION REQUIRED BASED ON PERUNIT BASIS OR NORMAL
             // WAY ?
-            List<AppConfigValues> calculateSorByUnit = appConfigValuesService.getConfigValuesByModuleAndKey(
+            final List<AppConfigValues> calculateSorByUnit = appConfigValuesService.getConfigValuesByModuleAndKey(
                     AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.CALCULATESORBYUNIT);
-            if (!calculateSorByUnit.isEmpty()) {
-                if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("NO")) {
+            if (!calculateSorByUnit.isEmpty())
+                if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("NO"))
                     return BigDecimal.valueOf(rate.getAmount()).multiply(BigDecimal.valueOf(measurement))
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                else if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("YES")) {
 
-                } else if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("YES")) {
-
-                    BigDecimal unitRate = (rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal.valueOf(rate
-                            .getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO);
+                    final BigDecimal unitRate = rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal.valueOf(rate
+                            .getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO;
 
                     // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
                     if (unitRate != BigDecimal.valueOf(0))
                         return BigDecimal
                                 .valueOf(rate.getAmount())
                                 .multiply(
-                                        (BigDecimal.valueOf(measurement).divide(unitRate, 2, RoundingMode.HALF_UP))
-                                                .setScale(0, RoundingMode.UP)).setScale(2, BigDecimal.ROUND_HALF_UP)
+                                        BigDecimal.valueOf(measurement).divide(unitRate, 2, RoundingMode.HALF_UP)
+                                                .setScale(0, RoundingMode.UP))
+                                .setScale(2, BigDecimal.ROUND_HALF_UP)
                                 .doubleValue();
                     else
                         return Double.valueOf(0);
                 }
-            }
         }
 
         return Double.valueOf(0);
@@ -157,6 +152,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             @RequestParam String workFlowAction) {
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateApplicationDate(advertisementPermitDetail, resultBinder);
+        validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         if (advertisementPermitDetail.getState() == null)
             advertisementPermitDetail.setStatus(advertisementPermitDetailService
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));

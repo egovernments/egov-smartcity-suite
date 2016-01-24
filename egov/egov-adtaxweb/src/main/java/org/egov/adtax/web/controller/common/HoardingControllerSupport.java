@@ -74,7 +74,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-public class HoardingControllerSupport extends GenericWorkFlowController{
+public class HoardingControllerSupport extends GenericWorkFlowController {
     protected @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
     protected @Autowired AdvertisementService advertisementService;
     protected @Autowired SubCategoryService subCategoryService;
@@ -89,11 +89,12 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
     protected @Autowired ApplicationProperties applicationProperties;
     protected @Autowired AdvertisementDemandService advertisementDemandService;
     protected @Autowired FinancialYearDAO financialYearDAO;
-    
+
     @ModelAttribute("previousFinancialYear")
     public CFinancialYear previousFinancialYear() {
-       return financialYearDAO.getPreviousFinancialYearByDate(new Date());
-     }
+        return financialYearDAO.getPreviousFinancialYearByDate(new Date());
+    }
+
     @ModelAttribute("hoardingCategories")
     public List<HoardingCategory> hoardingCategories() {
         return hoardingCategoryService.getAllActiveHoardingCategory();
@@ -118,7 +119,7 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
     public List<RatesClass> getAllRatesClass() {
         return ratesClassService.getAllRatesClass();
     }
-       
+
     @ModelAttribute("hoardingDocumentTypes")
     public List<HoardingDocumentType> hoardingDocumentTypes() {
         return hoardingDocumentTypeService.getAllDocumentTypes();
@@ -126,34 +127,42 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
 
     @ModelAttribute("revenueZones")
     public List<Boundary> revenueZones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,
+                AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE, AdvertisementTaxConstants.ADMINISTRATION_HIERARCHY_TYPE );
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ZONE,
+                AdvertisementTaxConstants.ADMINISTRATION_HIERARCHY_TYPE);
     }
+
     @ModelAttribute("localities")
     public List<Boundary> localities() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_LOCALITY, AdvertisementTaxConstants.LOCATION_HIERARCHY_TYPE );
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                AdvertisementTaxConstants.BOUNDARYTYPE_LOCALITY, AdvertisementTaxConstants.LOCATION_HIERARCHY_TYPE);
     }
+
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE );
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                AdvertisementTaxConstants.BOUNDARYTYPE_ELECTIONWARD, AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
     }
-    
+
     protected void storeHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
         advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
             document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
+
     protected void updateHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
         advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
             document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
-    
-    protected void validateHoardingDocs(final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder) {
+
+    protected void validateHoardingDocs(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder) {
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
@@ -163,39 +172,49 @@ public class HoardingControllerSupport extends GenericWorkFlowController{
             index++;
         }
     }
-    protected void validateHoardingDocsOnUpdate(final AdvertisementPermitDetail advertisementPermitDetail, final BindingResult resultBinder, RedirectAttributes redirAttrib) {
+
+    protected void validateHoardingDocsOnUpdate(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
-            if (document.getDoctype().isMandatory() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0){
+            if (document.getDoctype().isMandatory() && document.getFiles().size() == 0
+                    && document.getAttachments()[0].getSize() == 0) {
                 resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
                 redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
-            }
-            else if (document.isEnclosed() && document.getFiles().size()==0 && document.getAttachments()[0].getSize() == 0)
-            {
+            } else if (document.isEnclosed() && document.getFiles().size() == 0 && document.getAttachments()[0].getSize() == 0) {
                 resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
                 redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
             }
-                index++;
+            index++;
         }
-       
-        
+
     }
 
     protected Boolean checkTaxAlreadyCollectedForAdvertisement(final Advertisement advertisement) {
-        Boolean taxAlreadyCollectedForDemandInAnyYear=false;
-        if( advertisement!=null &&  advertisement.getDemandId()!=null && advertisement.getDemandId().getEgDemandDetails()!=null)
-        {
-            for (EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails()) {
-              for (EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts()) {
-                if (!collRecpt.isCancelled()) {
-                    taxAlreadyCollectedForDemandInAnyYear=true;
-                    break;
-                }
-            }
-        
-          }
-        }
+        Boolean taxAlreadyCollectedForDemandInAnyYear = false;
+        if (advertisement != null && advertisement.getDemandId() != null
+                && advertisement.getDemandId().getEgDemandDetails() != null)
+            for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
+                for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
+                    if (!collRecpt.isCancelled()) {
+                        taxAlreadyCollectedForDemandInAnyYear = true;
+                        break;
+                    }
         return taxAlreadyCollectedForDemandInAnyYear;
     }
 
+    protected void validateAdvertisementDetails(final AdvertisementPermitDetail advertisementPermitDetail,
+            final BindingResult resultBinder) {
+
+        if (advertisementPermitDetail.getAgency() == null && advertisementPermitDetail.getOwnerDetail() == null)
+            resultBinder.rejectValue("agency", "invalid.eitherAgencyOrOwnerDetailRequired");
+
+        if (advertisementPermitDetail.getAdvertisement() != null &&
+                advertisementPermitDetail.getAdvertisement().getPropertyNumber() == null
+                && advertisementPermitDetail.getAdvertisement().getCategory() != null
+                && advertisementPermitDetail.getAdvertisement().getCategory().isPropertyMandatory())
+            resultBinder.rejectValue("advertisement.propertyNumber", "invalid.propertyIdIsMandatoryForCategory");
+        // TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
+
+    }
 }
