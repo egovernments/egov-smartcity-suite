@@ -142,7 +142,7 @@ public class AdvertisementRateService {
         List<AdvertisementRatesDetails> rate = null;
 
         if (units != null && subCategoryId != null && unitOfMeasureId != null && rateClassId != null)
-            rate = rateDetailRepository.getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(units, subCategoryId, unitOfMeasureId,
+            rate = rateDetailRepository.getRatesBySubcategoryUomClassMeasurementLessthanCurrentFinancialYearAndFinancialYearInDecendingOrder(units, subCategoryId, unitOfMeasureId,
                     rateClassId);
         if(rate!=null && rate.size()>0)
             return rate.get(0);

@@ -77,58 +77,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
 
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-
+   
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
     }
 
-    @RequestMapping(value = "calculateTaxAmount", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody Double getTaxAmount(@RequestParam final Long unitOfMeasureId,
-            @RequestParam final Double measurement, @RequestParam final Long subCategoryId,
-            @RequestParam final Long rateClassId) {
-        AdvertisementRatesDetails rate = null;
-
-        rate = advertisementRateService.getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(
-                subCategoryId, unitOfMeasureId, rateClassId, measurement);
-
-        if (rate != null) {
-            // get data based on financial year, if not present, get from
-            // previous year data.
-            // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
-
-            // CHECK WHETHER CALCULATION REQUIRED BASED ON PERUNIT BASIS OR NORMAL
-            // WAY ?
-            final List<AppConfigValues> calculateSorByUnit = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.CALCULATESORBYUNIT);
-            if (!calculateSorByUnit.isEmpty())
-                if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("NO"))
-                    return BigDecimal.valueOf(rate.getAmount()).multiply(BigDecimal.valueOf(measurement))
-                            .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                else if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("YES")) {
-
-                    final BigDecimal unitRate = rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal.valueOf(rate
-                            .getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO;
-
-                    // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
-                    if (unitRate != BigDecimal.valueOf(0))
-                        return BigDecimal
-                                .valueOf(rate.getAmount())
-                                .multiply(
-                                        BigDecimal.valueOf(measurement).divide(unitRate, 2, RoundingMode.HALF_UP)
-                                                .setScale(0, RoundingMode.UP))
-                                .setScale(2, BigDecimal.ROUND_HALF_UP)
-                                .doubleValue();
-                    else
-                        return Double.valueOf(0);
-                }
-        }
-
-        return Double.valueOf(0);
-
-    }
+  
 
     @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {

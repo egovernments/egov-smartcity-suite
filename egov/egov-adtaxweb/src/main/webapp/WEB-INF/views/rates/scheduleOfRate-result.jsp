@@ -177,9 +177,8 @@
 								code="lbl.unit.rate" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control patternvalidation"
-								maxlength="5" path="unitrate" id="unitrate" />
-						</div>
+							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"	maxlength="5" path="unitrate"  id="unitrate"  required="required"/>
+						</div> 
 			</div>
 			
 			<div>

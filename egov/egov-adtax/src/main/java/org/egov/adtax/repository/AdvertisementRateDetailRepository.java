@@ -83,8 +83,8 @@ public interface AdvertisementRateDetailRepository extends JpaRepository<Adverti
             @Param("subCategory") Long subCategoryId, @Param("uom") Long unitOfMeasureId,
             @Param("ratesClass") Long rateClassId,  @Param("financialYear")  Long cfinancialYear);
     
-    @Query("select A from AdvertisementRatesDetails A where  A.advertisementRate.classtype.id=:ratesClass and A.unitFrom < :units and A.unitTo >= :units and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true order by  A.advertisementRate.financialyear.startingDate desc ")
-    List<AdvertisementRatesDetails> getRatesBySubcategoryUomClassAndMeasurementByFinancialYearInDecendingOrder(@Param("units") Double units,
+    @Query("select A from AdvertisementRatesDetails A where  A.advertisementRate.classtype.id=:ratesClass and A.unitFrom < :units and A.unitTo >= :units and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true  and A.advertisementRate.financialyear.startingDate < current_date  order by  A.advertisementRate.financialyear.startingDate desc ")
+    List<AdvertisementRatesDetails> getRatesBySubcategoryUomClassMeasurementLessthanCurrentFinancialYearAndFinancialYearInDecendingOrder(@Param("units") Double units,
             @Param("subCategory") Long subCategoryId, @Param("uom") Long unitOfMeasureId,
             @Param("ratesClass") Long rateClassId);
 }
