@@ -59,4 +59,14 @@
     <bean id="WorksPackageInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="WorksPackagePersistenceService"/>
     </bean>
+    
+    <bean class="org.egov.works.services.WorksService" id="worksService"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+    
+    <bean id="contractorService" class="org.egov.works.master.services.ContractorService">
+		<property name="type" value="org.egov.works.models.masters.Contractor"/>
+	</bean>
+	
 </beans>
