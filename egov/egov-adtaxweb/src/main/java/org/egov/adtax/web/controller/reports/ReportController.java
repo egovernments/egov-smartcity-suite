@@ -143,7 +143,7 @@ public class ReportController {
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Work Order.pdf");
+        headers.add("content-disposition", "inline;filename=Permit Order.pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
@@ -192,7 +192,7 @@ public class ReportController {
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Work Order.pdf");
+        headers.add("content-disposition", "inline;filename=Demand Notice.pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }

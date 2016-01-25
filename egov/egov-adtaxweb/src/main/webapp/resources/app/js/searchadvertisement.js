@@ -141,17 +141,17 @@ $(document).ready(function(){
 							var url = '/adtax/advertisement/permitOrder/'+ applicationNumber;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
-							window.open(url,'_blank');
+							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 1) {
 							var url = '/adtax/advertisement/demandNotice/'+ applicationNumber;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
-							window.open(url,'_blank');
+							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 2) {
 							var url = '/adtax/hoarding/viewAdvertisement/'+ applicationNumber;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
-							window.open(url,'_blank');
+							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						}
 						
 						}); 

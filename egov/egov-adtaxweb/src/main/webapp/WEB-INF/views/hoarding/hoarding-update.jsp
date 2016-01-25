@@ -338,8 +338,8 @@ var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
 var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 var statuscode = '${advertisementPermitDetail.status.code}';
-$("#rrr input, #rrr textarea, #rrr select").prop("disabled", true);
-if(statuscode=='APPROVED'){
+$("#advertisementform input, #advertisementform textarea, #hoardingdetails select").prop("disabled", true);
+if(statuscode=='APPROVED' || statuscode=='ADTAXAMTPAYMENTPAID' || statuscode=='ADTAXAMTPAYMENTPENDING'){
 	$("#advertisementform input, #advertisementform textarea, #advertisementform select").prop("readonly", true);
 }
 	
