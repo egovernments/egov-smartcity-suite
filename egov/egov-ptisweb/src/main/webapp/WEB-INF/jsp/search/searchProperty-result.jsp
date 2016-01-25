@@ -53,7 +53,7 @@
 				} else if (selectedValue == 'RevisionPetition') {
 					window.location = "../revPetition/revPetition-newForm.action?propertyId=" + assessmentNum;
 				} else if (selectedValue == 'CollectTax') {
-					window.location = "/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=" + assessmentNum;
+					window.location = "/../ptis/search/searchProperty-searchOwnerDetails.action?assessmentNum=" + assessmentNum;
 				} else if (selectedValue == 'EDIT_DATAENTRY') {
 					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
 				} else if (selectedValue == 'ADD_EDIT_DEMAND') {

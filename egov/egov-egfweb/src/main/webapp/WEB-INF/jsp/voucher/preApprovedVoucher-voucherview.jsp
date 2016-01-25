@@ -89,12 +89,7 @@ function onSubmit()
 
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
-<s:if test="%{type=='default'}">
-	<title>General JV-Approval</title>
-</s:if>
-<s:else>
-	<title><s:property value="type" /> JV-Approval</title>
-</s:else>
+<title><s:property value="type" /> Journal Voucher Approval</title>
 </head>
 
 <body onload="refreshInbox()">
@@ -110,28 +105,18 @@ function onSubmit()
 			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
-			<s:if test="%{type=='default'}">
-				<div class="subheadnew">General JV Approval</div>
-			</s:if>
-			<s:else>
 
-				<div class="subheadnew">
-					<s:property value="type" />
-					JV Approval
-				</div>
-			</s:else>
+			<div class="subheadnew">
+				<s:property value="type" />
+				Journal Voucher Approval
+			</div>
 			<div id="listid" style="display: block">
 				<br />
 				<div align="center">
 					<table border="0" width="100%" cellspacing="0">
 						<tr>
-							<s:if test="%{type=='default'}">
-								<td width="25%" class="greybox">General JV Number</td>
-							</s:if>
-							<s:else>
-								<td width="25%" class="greybox"><s:property value="type" />
-									JV Number</td>
-							</s:else>
+							<td width="25%" class="greybox"><s:property value="type" />
+								Journal Voucher Number</td>
 							<td width="25%" class="greybox"><s:property
 									value="%{voucherHeader.voucherNumber}" /></td>
 							<td width="25%" class="greybox">Date</td>

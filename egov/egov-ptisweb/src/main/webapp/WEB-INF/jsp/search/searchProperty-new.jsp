@@ -55,11 +55,11 @@
                	   bootbox.alert("Please enter assessment number");
                	   return false;
                	 } else {
-				    window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+				    //window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
 				    return true;
                	 }
 			}
-			jQuery(document).ready(function(){
+			jQuery(document).ready(function() {
              jQuery("#searchMobileno").click(function(e) {
             	 if(jQuery("#mobileNumber").val() == '') {
                 	 bootbox.alert("Please enter mobile number");
@@ -154,12 +154,12 @@
 								</td>
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:left">
-									    <input type="button" name="CollectTax" id="CollectTax" value="Collect Tax" class="buttonsubmit" onclick="return collectTax();"/>
+									<s:submit name="CollectTax" value="CollectTax" id="CollectTax" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchOwnerDetails.action', 'assessmentform');"></s:submit>
 									</div>
 								</td>
 							</s:if>
 							<s:else>
-								<td class="greybox">&nbsp;</td>
+								<td class="greybox">&nbsp;</td> 
 								<td class="greybox" colspan="2">
 								   <br/>
 									<div class="greybox" style="text-align:center">

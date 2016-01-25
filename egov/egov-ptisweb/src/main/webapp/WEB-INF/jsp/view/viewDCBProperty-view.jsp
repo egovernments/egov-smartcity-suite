@@ -791,7 +791,7 @@
 										<div align="center">
 											<s:if test="%{isCitizen && viewMap.taxExempted == false}">
 												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
-															onclick="window.location='../citizen/collection/collection-generateBill.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
+															onclick="window.location='../citizen/collection/collection-searchOwnerDetails.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
 											</s:if>
 											<s:else> 
 												<input type="button" name="operatorPayBill" id="operatorPayBill" value="Pay Bill" class="buttonsubmit"
