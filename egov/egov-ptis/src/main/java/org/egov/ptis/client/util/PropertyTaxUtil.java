@@ -2446,15 +2446,18 @@ public class PropertyTaxUtil {
         final StringBuffer query = new StringBuffer(300);
         
         query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null ");
-        String totalBalanceCond = " (pmv.aggrCurrDmd + pmv.aggrArrDmd - pmv.aggrArrColl - pmv.aggrCurrColl) ";
+        String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
+        String orderByClause = " order by ";
         if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
-        	query.append(" and "+totalBalanceCond+" >= ").append(fromDemand);
-        	query.append(" and "+totalBalanceCond+" <= ").append(toDemand);
+        	query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+        	query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
         }
-        if(wardId != null && wardId != -1)
+        if(wardId != null && wardId != -1){
         	query.append(" and pmv.ward.id = ").append(wardId);
-        
-        query.append(" order by "+totalBalanceCond+" desc ");
+        }
+        	
+        orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
+        query.append(orderByClause);
 
         final Query qry = persistenceService.getSession().createQuery(query.toString());
         if(limit != null && limit != -1)

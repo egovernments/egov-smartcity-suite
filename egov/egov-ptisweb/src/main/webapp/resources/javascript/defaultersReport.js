@@ -83,6 +83,8 @@ function callAjaxForDefaultersReport() {
 	var fromDemand=jQuery('#fromDemand').val();
 	var toDemand=jQuery('#toDemand').val();
 	var limit=jQuery('#limit').val();
+	var today = new Date();
+	var formattedDate = today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear();
 	
 	jQuery('.report-section').removeClass('display-hide');
 	
@@ -103,7 +105,22 @@ function callAjaxForDefaultersReport() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [
+					               {
+							            "sExtends": "pdf",
+				                        "sPdfMessage": "Report generated on : "+formattedDate,
+				                        "sTitle": "Defaulters Report",
+					                },
+					                {
+							            "sExtends": "xls",
+			                            "sPdfMessage": "Report generated on : "+formattedDate,
+			                            "sTitle": "Defaulters Report"
+						             },{
+							            "sExtends": "print",
+			                            "sPdfMessage": "Report generated on : "+formattedDate,
+			                            "sTitle": "Defaulters Report"
+						             }
+					             ]
 				},
 				aaSorting: [],				
 				columns : [{

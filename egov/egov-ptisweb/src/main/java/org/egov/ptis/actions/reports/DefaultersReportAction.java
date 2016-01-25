@@ -172,7 +172,7 @@ public class DefaultersReportAction extends BaseFormAction {
     		count++;
     		defaultersInfo.setSlNo(count);
     		defaultersInfo.setAssessmentNo(propView.getPropertyId());
-    		defaultersInfo.setOwnerName(propView.getOwnerName());
+    		defaultersInfo.setOwnerName(propView.getOwnerName().contains(",")?propView.getOwnerName().replace(",", " & "):propView.getOwnerName());
     		defaultersInfo.setWardName(propView.getWard().getName());
     		defaultersInfo.setHouseNo(propView.getHouseNo());
     		defaultersInfo.setLocality(propView.getLocality().getName());
