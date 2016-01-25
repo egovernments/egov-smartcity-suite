@@ -220,6 +220,9 @@ public class SearchPropertyAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/search/searchProperty-searchForm")
     public String searchForm() {
+        setAssessmentNum("");
+        setDoorNo("");
+        setMobileNumber("");
         return NEW;
     }
 
