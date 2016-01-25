@@ -48,6 +48,11 @@
             	 bootbox.alert("Please enter mobile number");
             	 return false;
             	 }
+        	 var mobileNo = jQuery("#mobileNumber").val();
+        	 if(mobileNo.length < 10) {
+				  bootbox.alert("Please enter 10 digit mobile number");
+	              return false;
+				  }
              }); 
 		jQuery("#mobileNumber").blur(function(e){
 			  var mobileNo = jQuery("#mobileNumber").val();
@@ -125,7 +130,7 @@
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="mobileNumber" id="mobileNumber" value="%{propertyOwner.mobileNumber}" maxlength="10" onblur="validMobileNumber(this);checkZero(this,'Mobile Number');"/>
+									<s:textfield name="mobileNumber" id="mobileNumber" value="%{mobileNumber}" maxlength="10" onblur="validMobileNumber(this);checkZero(this,'Mobile Number');"/>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>		
