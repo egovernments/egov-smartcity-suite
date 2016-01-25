@@ -123,7 +123,6 @@ public abstract class License extends StateAware {
     private BigDecimal workersCapacity;
 
     private BigDecimal tradeArea_weight;
-    private UnitOfMeasurement uom;
 
     private boolean legacy;
     private Date startDate;
@@ -544,14 +543,6 @@ public abstract class License extends StateAware {
 
     public void setTradeArea_weight(BigDecimal tradeArea_weight) {
         this.tradeArea_weight = tradeArea_weight;
-    }
-
-    public UnitOfMeasurement getUom() {
-        return this.uom;
-    }
-
-    public void setUom(UnitOfMeasurement uom) {
-        this.uom = uom;
     }
 
     public NatureOfBusiness getBuildingType() {

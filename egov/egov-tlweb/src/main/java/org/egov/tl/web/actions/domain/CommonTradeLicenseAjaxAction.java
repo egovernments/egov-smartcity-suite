@@ -40,6 +40,7 @@
 package org.egov.tl.web.actions.domain;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,6 +62,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +90,8 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     public static final String SUBCATEGORY = "subCategory";
     private Long locality;
     private HttpServletResponse response;
+    private Long subCategoryId; 
+    private Long feeTypeId;
 
     /**
      * Populate wards.
@@ -141,6 +146,32 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("zoneName", zoneBoundary.getName());
         jsonObject.put("wardName", wardBoundary.getName());
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(jsonObject.toString(), response.getWriter());
+    }
+    
+    /**
+     * @throws IOException
+     * @throws NoSuchObjectException
+     * @return uom for a subcategory
+     */
+    @Action(value="/domain/commonTradeLicenseAjax-ajaxLoadUomName")   
+    public void ajaxLoadUomName() throws IOException, NoSuchObjectException { 
+        LicenseSubCategory subCategory = licenseSubCategoryService.find("select s from org.egov.tl.entity.LicenseSubCategory s  where s.id ="+subCategoryId);
+        List<UnitOfMeasurement> uomList = new ArrayList<UnitOfMeasurement>();
+        if(subCategory!=null){
+            if(!subCategory.getLicenseSubCategoryDetails().isEmpty()){
+                for(LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails()){
+                    if(scd.getFeeType().getId()==feeTypeId){
+                      uomList.add(scd.getUom());   
+                    }
+                }
+            }
+        }
+
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("uom", uomList.get(0).getName());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(jsonObject.toString(), response.getWriter());
@@ -221,6 +252,22 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
 
     public LicenseSubCategoryService getLicenseSubCategoryService() {
         return licenseSubCategoryService;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
     }
 
 }

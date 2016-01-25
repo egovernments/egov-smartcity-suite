@@ -163,7 +163,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         this.addRelatedEntity("licensee.boundary", Boundary.class);
         this.addRelatedEntity("buildingType", NatureOfBusiness.class);
         this.addRelatedEntity("category", LicenseCategory.class);
-        this.addRelatedEntity("uom", UnitOfMeasurement.class);
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
     }
 

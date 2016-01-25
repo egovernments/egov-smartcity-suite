@@ -43,7 +43,7 @@
 	<head>
 		<title><s:text name="page.title.entertrade" /></title>
  	</head>
-	<body onload="onBodyLoad()">
+	<body>
 		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
                 <div class="row">
                     <div class="col-md-12">
@@ -71,6 +71,7 @@
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden name="id" id="id" />
+							<s:hidden name="feeTypeId" id="feeTypeId" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
 								<div class="panel-title" style="text-align:center">
@@ -221,7 +222,7 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
 					document.getElementById("tradeArea_weight").focus();
 					return false;
-				}	else if (document.getElementById("uom").value == '-1'){
+				}	else if (document.getElementById("uom").value == ""){
 					showMessage('enterLicense_error', '<s:text name="newlicense.uom.null" />');
 					document.getElementById("uom").focus();
 					return false;

@@ -65,6 +65,7 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
@@ -84,7 +85,10 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
     private Map<Integer, Double> legacyInstallmentwiseFees = new LinkedHashMap<>();
-
+    private Long feeTypeId;
+    @Autowired
+    @Qualifier("feeTypeService")
+    private FeeTypeService feeTypeService;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -126,9 +130,9 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 LOCALITY, LOCATION_HIERARCHY_TYPE));
         addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
         addDropdownData("categoryList", licenseCategoryService.findAll());
-        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
                 : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        feeTypeId=feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId(); 
 
     }
 
@@ -169,6 +173,14 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setLegacyInstallmentwiseFees(final Map<Integer, Double> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
+    }
+
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
     }
 
 }
