@@ -148,7 +148,8 @@
 								<s:submit name="payTax" value="Pay tax" id="payTax" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-updateMobileNo.action', 'userDetailsForm');"></s:submit>
 								<input type="button" value="Close" class="button" onClick="return searchForm();" />
 							</div>
-							<div style="text-align:center"><s:text name="Select if mobile number is not available"></s:text></div>
+							<div>&nbsp;</div>
+							<div style="text-align:center"><s:text name="Select Pay Tax button if mobile number is not available"></s:text></div>
 						</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>	
