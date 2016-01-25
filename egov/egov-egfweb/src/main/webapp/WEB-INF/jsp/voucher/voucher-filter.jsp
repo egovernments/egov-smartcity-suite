@@ -40,7 +40,6 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
-	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<td class="bluebox"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
@@ -91,7 +90,6 @@
 	</s:if>
 </tr>
 <tr>
-	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">

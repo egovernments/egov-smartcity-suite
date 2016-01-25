@@ -61,7 +61,7 @@
 <body>
 	<s:form action="billRegisterReport" name="billRegisterReport"
 		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 		<font style='color: red; font-weight: bold'>
 			<p class="error-block" id="lblError"></p>
@@ -70,7 +70,7 @@
 			<div class="subheadnew">
 				<s:text name="bill.register.report" />
 			</div>
-		</div>
+		
 		<table align="center" width="100%" cellpadding="0" cellspacing="0">
 			<tr>
 				<jsp:include page="../voucher/voucher-filter.jsp" />
@@ -117,6 +117,8 @@
 			</tr>
 
 		</table>
+		</div>
+		
 		<div class="buttonbottom">
 			<s:submit method="billSearch" value="Search" cssClass="buttonsubmit"
 				onclick="return validate();" />
