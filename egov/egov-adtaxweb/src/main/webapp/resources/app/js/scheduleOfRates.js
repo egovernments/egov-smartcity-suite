@@ -89,10 +89,10 @@ jQuery(document).ready(function ($) {
 			});
 
 	
-	$('#unitrate').keypress(function(e) {
+/*	$('#unitrate').keypress(function(e) {
 		var k = e.charCode;
 		return(k == 0 || (k >= 48 && k <= 57));
-	});
+	});*/
 	
 	$('#schedleOfrateBtn').click(function() {  
 			$('#scheduleOfRateformResult').attr('method', 'post');

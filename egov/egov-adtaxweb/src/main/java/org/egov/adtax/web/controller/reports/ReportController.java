@@ -156,7 +156,7 @@ public class ReportController {
             final Map<String, Object> reportParams = new HashMap<String, Object>();
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
-            reportParams.put("advertisementtitle", WordUtils.capitalize("Advertisement Permit Order"));
+            reportParams.put("advertisementtitle", WordUtils.capitalize("Advertisement Demand Notice"));
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("advertisementnumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
@@ -210,7 +210,7 @@ public class ReportController {
             final HttpSession session) {
         final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
                 .findByApplicationNumber(applicationNumber);
-        return generatePermitOrder(advertisementPermitDetails, session, null);
+        return generateDemandNotice(advertisementPermitDetails, session, null);
     }
 
     @RequestMapping(value = "/permitOrder/{applicationNumber}", method = RequestMethod.GET)
