@@ -131,7 +131,7 @@
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="mobileNumber" id="mobileNumber" value="%{propertyOwner.mobileNumber}" maxlength="10" onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+									<s:textfield name="mobileNumber" id="mobileNumber"  value="%{mobileNumber}" maxlength="10" onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>		
@@ -148,6 +148,7 @@
 								<s:submit name="payTax" value="Pay tax" id="payTax" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-updateMobileNo.action', 'userDetailsForm');"></s:submit>
 								<input type="button" value="Close" class="button" onClick="return searchForm();" />
 							</div>
+							<div style="text-align:center"><s:text name="Select if mobile number is not available"></s:text></div>
 						</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>	

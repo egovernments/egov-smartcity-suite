@@ -761,6 +761,10 @@ public class SearchPropertyAction extends BaseFormAction {
             return NEW;
         } else {
             setPropertyOwner(basicProperty.getPrimaryOwner());
+            setMobileNumber(getPropertyOwner().getMobileNumber());
+            if (StringUtils.isBlank(propertyOwner.getMobileNumber())) {
+                propertyOwner.setMobileNumber("N/A");
+            }
             for (final PropertyOwnerInfo propOwner : basicProperty.getPropertyOwnerInfo()) {
                 final List<Address> addrSet = propOwner.getOwner().getAddress();
                 for (final Address address : addrSet) {
