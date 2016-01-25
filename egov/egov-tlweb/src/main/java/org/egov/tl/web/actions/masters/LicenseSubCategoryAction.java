@@ -236,7 +236,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	                scDetails.setSubCategory(subCategory);
 	                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
 	                scDetails.setRateType(scDetails.getRateType());
-	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId(), true)); 
+	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId())); 
         	        subCategory.addLicenseSubCategoryDetails(scDetails);
 	            }
 	        } 

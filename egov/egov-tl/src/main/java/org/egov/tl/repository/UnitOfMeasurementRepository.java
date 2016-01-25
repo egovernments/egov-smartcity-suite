@@ -41,6 +41,8 @@
 package org.egov.tl.repository;
 
 
+import java.util.List;
+
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -49,6 +51,9 @@ import org.springframework.stereotype.Repository;
 @Repository 
 public interface UnitOfMeasurementRepository extends JpaRepository<UnitOfMeasurement,Long> {
 
-UnitOfMeasurement findByName(String name);
+UnitOfMeasurement findByNameContainingIgnoreCase(String name);
 
+UnitOfMeasurement findByCodeContainingIgnoreCase(String code);
+
+List<UnitOfMeasurement> findAllByActiveTrue();
 }
