@@ -37,10 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
-<%@taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <link href="<egov:url path='/resources/css/displaytagFormatted.css'/>"
 	rel="stylesheet" type="text/css" />
