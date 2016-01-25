@@ -125,7 +125,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 	        licenseFee=Constants.LICENSE_FEE_TYPE;
-		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
+		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAll()));
 		addDropdownData("feeTypeList", feeTypeService.findAll());
 		addDropdownData("rateTypeList", Arrays.asList(RateTypeEnum.values()));
 		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
@@ -213,7 +213,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public String save() throws NumberFormatException, ApplicationException {
 		try {
 			if(categoryId!=null){
-				subCategory.setCategory(licenseCategoryService.find("from LicenseCategory where id=?", categoryId));
+				subCategory.setCategory(licenseCategoryService.findById(categoryId));
 			}
 			subCategory.getLicenseSubCategoryDetails().clear();
 			populateSubCategoryDetails();
