@@ -92,9 +92,9 @@ public class AdvertisementRateService {
 
     public AdvertisementRate findScheduleOfRateByCategorySubcategoryUomAndClass(final HoardingCategory category,
             final SubCategory subCategory, final UnitOfMeasure unitofmeasure, final RatesClass classtype,
-            final CFinancialYear financialYear, final Double unitrate) {
+            final CFinancialYear financialYear) {
         return ratesRepository.findScheduleOfRateByCategorySubcategoryUomAndClass(category, subCategory, unitofmeasure,
-                classtype, financialYear, unitrate);
+                classtype, financialYear);
     }
 
     public void deleteAllInBatch(final List<AdvertisementRatesDetails> existingRateDetails) {

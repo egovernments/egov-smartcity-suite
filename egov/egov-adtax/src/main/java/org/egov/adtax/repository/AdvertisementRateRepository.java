@@ -53,9 +53,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdvertisementRateRepository extends JpaRepository<AdvertisementRate, Long> {
 
-    @Query("select A from AdvertisementRate A where A.category=:category and A.classtype=:ratesClass and A.unitofmeasure=:uom and A.subCategory=:subCategory and A.active=true and A.financialyear=:financialYear and A.unitrate=:unitrate")
+    @Query("select A from AdvertisementRate A where A.category=:category and A.classtype=:ratesClass and A.unitofmeasure=:uom and A.subCategory=:subCategory and A.active=true and A.financialyear=:financialYear ")
     AdvertisementRate findScheduleOfRateByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
             @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure,
-            @Param("ratesClass") RatesClass ratesClass, @Param("financialYear") CFinancialYear financialYear, @Param ("unitrate") Double unitrate);
+            @Param("ratesClass") RatesClass ratesClass, @Param("financialYear") CFinancialYear financialYear);
 
 }

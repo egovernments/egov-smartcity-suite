@@ -149,7 +149,7 @@ public class ScheduleOfRateController {
         // TODO: validate, whether details are correct
 
         existingRateobject = advertisementRateService.findScheduleOfRateByCategorySubcategoryUomAndClass(rate.getCategory(),
-                rate.getSubCategory(), rate.getUnitofmeasure(), rate.getClasstype(), rate.getFinancialyear(), rate.getUnitrate());
+                rate.getSubCategory(), rate.getUnitofmeasure(), rate.getClasstype(), rate.getFinancialyear());
        
         for (final AdvertisementRatesDetails advDtl : rate.getAdvertisementRatesDetails()) {
             if (existingRateobject != null)
@@ -162,6 +162,7 @@ public class ScheduleOfRateController {
         if (existingRateobject != null) {
             advertisementRateService.deleteAllInBatch(existingRateobject.getAdvertisementRatesDetails());
             existingRateobject.setAdvertisementRatesDetails(rateDetails);
+            existingRateobject.setUnitrate(rate.getUnitrate());
             rate = advertisementRateService.createScheduleOfRate(existingRateobject);
         } else {
             rate.getAdvertisementRatesDetails().clear();
