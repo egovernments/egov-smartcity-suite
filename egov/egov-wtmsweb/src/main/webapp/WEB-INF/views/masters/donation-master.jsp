@@ -155,5 +155,5 @@
 	            type="text/javascript"></script>
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
-	           <script src="<c:url value='/resources/js/app/connectiondetails.js'/>"></script>
-	           <script src="<c:url value='/resources/js/app/donation-master.js'/>"></script>					
+	           <script src="<c:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
+	           <script src="<c:url value='/resources/js/app/donation-master.js?rnd=${app_release_no}'/>"></script>					

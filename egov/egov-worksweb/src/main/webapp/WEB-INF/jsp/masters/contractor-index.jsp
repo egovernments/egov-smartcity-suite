@@ -37,86 +37,207 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%@ include file="/includes/taglibs.jsp"%>
 <html>
-<title><s:text name="contractor.list" /></title>
+<title><s:text name="contractor.master.title" /></title>
 <body>
- <s:if test="%{hasActionMessages()}">
-       <div id="msgsDiv" class="messagestyle">
-        	<s:actionmessage theme="simple"/>
-        </div>
-    </s:if>	
-<div class="formmainbox"><div class="insidecontent">
-  <div class="rbroundbox2">
-	<div class="rbtop2"><div></div></div>
+    
 	
-	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-          
-          <tr>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-            <td colspan="6" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer"><s:text name="contractor.contDetails" /></div></td>
-              </tr>
-              <tr>
-                <td width="12%" class="tablesubheadwk"><s:text name="contractor.code" /></td>
-                <td width="12%" class="tablesubheadwk"><s:text name="contractor.name" /></td>
-               <td width="14%" class="tablesubheadwk"><!--<s:text name="sor.edit" />/--><s:text name="sor.view" /></td>
-                </tr>
-              </table>
-			<% 
-							int count=0;
-						%>
-					<s:iterator  id="detailsIterator" value="contractorList"> 
-						<% 
-							count++;
-						%>
-					</s:iterator>
-				<% if(count>20){ %>
+	
+	<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								
+								<div class="panel-heading">
+									<div class="panel-title text-center no-float">
+										<s:if test="%{hasActionMessages()}">
+											<div id="msgsDiv">
+												<s:actionmessage theme="simple" />
+											</div>
+										</s:if>
+									</div>
+									
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Contractor Code
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											123123
+										</div>
+										<div class="col-xs-3 add-margin">
+											Name
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Correspondence Address
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											Address1
+										</div>
+										<div class="col-xs-3 add-margin">
+											Payment Address 
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											Address2
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Contact Person  
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ
+										</div>
+										<div class="col-xs-3 add-margin">
+											Email 
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ@XYZ.COM
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Narration
+										</div>
+										<div class="col-xs-9 add-margin view-content">
+											-
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											PAN No 
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											BKEPD123SDW
+										</div>
+									
+										<div class="col-xs-3 add-margin">
+											TIN No	
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											123SDe
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Bank
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											XYZ Bank
+										</div>
+										<div class="col-xs-3 add-margin">
+											IFSC Code
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											IND12331
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											Bank Account Number
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											45906123123
+										</div>
+										<div class="col-xs-3 add-margin">
+											PWD Approval Code
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											-
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 add-margin">
+											Exempted From
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											12/12/2015
+										</div>
+									</div>
+								</div>
+							</div>					
+						</div>
+				</div>
 
-				<div style=" height:350px" class="scrollerboxaddestimate">
-				<%}%>
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                
-                <s:iterator id="rateIterator" value="contractorList" status="row_status">
-                <tr>
-                	<td width="12%"><s:property value="%{code}" /></td>
-					<td width="13%"><s:property value="%{name}" /> </td>				
-					<td width="13%">
-						<table width="80" border="0" cellpadding="0" cellspacing="2">
-                  		<tr>                    		
-                    		<td width="20"><a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{id}'/>&mode=edit"><s:text name="sor.edit" /></a></td>
-                    		 <td width="20"><a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{id}'/>&mode=edit"><img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
-                    		 <td width="20"><a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{id}'/>&mode=view"><s:text name="sor.view" /></a></td>
-                    		 <td width="20"><a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{id}'/>&mode=view"><img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" /></a></td>
-                    	</tr>
-                		</table>
-                	</td>
+				<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								
+								<div class="panel-heading">
+									<div class="panel-title">
+										Contractor Details
+									</div>
+									
+								</div>
+								<div class="panel-body">
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th>S. No.</th>
+												<th>Department</th>
+												<th>Registration Number</th>
+												<th>Contractor Class</th>
+												<th>Status</th>
+												<th>From Date</th>
+												<th>To Date</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>1</td>
+												<td>XYZ</td>
+												<td>4560</td>
+												<td>-</td>
+												<td>1</td>
+												<td>23/01/2014</td>
+												<td>23/01/2014</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>XYZ</td>
+												<td>4560</td>
+												<td>-</td>
+												<td>1</td>
+												<td>23/01/2014</td>
+												<td>23/01/2014</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>					
+						</div>
+				</div>
 
-					</tr>
-				</s:iterator>
-                <td colspan="6" class="shadowwk"></td>
-            </table> 
-			<% if(count>20){ %>
-			</div>
-			<%}%>
-			</td>
-          </tr>
-        </table>
-        <div class="rbbot2"><div></div></div>
-      </div>
-	  
-</div>
-  </div>
+				
 
-<div class="buttonholderwk">
-  <input type="submit" name="closeButton" id="closeButton" value="CLOSE" class="buttonfinal" onclick="window.close();" />
-&nbsp;&nbsp;</div>
+				<div class="row text-center">
+					<div class="add-margin">
+						<input type="submit" name="VIEW" Class="btn btn-primary" value="View"
+							id="VIEW" onclick="viewData();" /> <input type="submit"
+							name="create" Class="btn btn-primary" value="Create" id="CREATE"
+							name="button" onclick="createNew();" /> <input type="submit"
+							name="closeButton" id="closeButton" value="Close"
+							Class="btn btn-default" onclick="window.close();" />
+					</div>
+				</div>
+<script type="text/javascript">
 
+function createNew() {
+	window.location = '${pageContext.request.contextPath}/masters/contractor-newform.action';
+}
+ 			
+function viewData() {
+	var id = '<s:property value="%{model.id}"/>';
+	window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=view&id='+id;
+}
+				
+</script>
+		
 </body>
-
 </html>
-
-			

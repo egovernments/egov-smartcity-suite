@@ -1,0 +1,3 @@
+Insert into eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname,version) values (nextval('seq_eg_wf_types'),(select id from eg_module where name='Works Management'),'WorksPackage','/egworks/tender/worksPackage-edit.action?id=:ID&sourcepage=inbox',1,now(),1,now(), 'Y', 'N', 'org.egov.works.models.tender.WorksPackage', 'Works Package', 0 );
+
+--rollback delete from eg_wf_types where type = 'WorksPackage';

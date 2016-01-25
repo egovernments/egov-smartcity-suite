@@ -41,10 +41,12 @@ package org.egov.tl.service;
 
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 import java.io.File;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,7 +72,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.repository.ModuleRepository;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -195,6 +196,10 @@ public abstract class AbstractLicenseService<T extends License> {
         setAuditEntries(license);
         this.processAndStoreDocument(license.getDocuments());
         this.transitionWorkFlow(license, workflowBean);
+        license.getState().setCreatedBy(license.getCreatedBy());
+        license.getState().setCreatedDate(new Date());
+        license.getState().setLastModifiedBy(license.getCreatedBy());
+        license.getState().setLastModifiedDate(new Date());
         this.licensePersitenceService.persist(license);
     }
 
@@ -303,15 +308,14 @@ public abstract class AbstractLicenseService<T extends License> {
             throw new ApplicationRuntimeException("license.number.exist");
         addLegacyDemand(legacyInstallmentwiseFees, license);
         this.processAndStoreDocument(license.getDocuments());
-        LicenseAppType newAppType = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
-        license.setLicenseAppType(newAppType);
+        license.setLicenseAppType((LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' "));
         license.getLicensee().setLicense(license);
-        LicenseStatus status = (LicenseStatus) persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACTIVE);
-        license.updateStatus(status);
-        String runningApplicationNumber = applicationNumberGenerator.generate();
-        license.setApplicationNumber(runningApplicationNumber);
+        license.updateStatus((LicenseStatus) persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACTIVE));
+        license.setApplicationNumber(applicationNumberGenerator.generate());
         setAuditEntries(license);
         license.setLegacy(true);
+        license.setActive(true);
+        license.generateLicenseNumber( getNextRunningLicenseNumber("egtl_license_number"));
         this.licensePersitenceService.persist(license);
     }
 
@@ -553,8 +557,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
         license.setStatus(underWorkflowStatus);
     }*/
-    public String getNextRunningLicenseNumber(String feeType) {
-        return sequenceNumberGenerator.getNextSequence(feeType).toString();
+    public Serializable getNextRunningLicenseNumber(String feeType) {
+        return sequenceNumberGenerator.getNextSequence(feeType);
     }
 
     /**
@@ -630,9 +634,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
         license.setStatus(status);
         license.setCreationAndExpiryDateForEnterLicense();
-        String nextRunningLicenseNumber = getNextRunningLicenseNumber(
-                "egtl_license_number");
-        license.generateLicenseNumber(nextRunningLicenseNumber);
+        license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
         return license;
     }
 
@@ -666,12 +668,22 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
-        } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        }   else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
+            .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            
+            else {
+            
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            if( BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
+                Assignment commissionerUsr = assignmentService.getPrimaryAssignmentForUser(user.getId());
+                pos = (Position) persistenceService.find("from Position where id=?", commissionerUsr.getPosition().getId());
+            }
             if (null == license.getState()) {
                 WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
@@ -687,6 +699,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
+            }
             }
         }
     }

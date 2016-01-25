@@ -170,7 +170,9 @@ function searchTemplate(){
 	var typeOfWork="";
 	var subTypeOfWork="";
 	var estimateTemplateCode="";
-	
+
+	console.log(dom.get('codeSearch'));
+
 	if(dom.get("codeSearch").value!=''){
 		estimateTemplateCode=dom.get("codeSearch").value;
 	}
@@ -185,36 +187,57 @@ function searchTemplate(){
 }
 </script>
 
-
-<table  width="100%" border="0" cellspacing="0" cellpadding="0">
- 		<tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">Estimate Template</div></td>
-              </tr>
- 		<tr>
-                <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.work.type" />:</td>
-                <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="parentCategory" id="parentCategory" cssClass="selectwk" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{parentCategory.id}" onChange="setupSubTypes(this);"/>
-                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='category' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{category.id}"  afterSuccess="loadSubType" />
-                </td>
-
-                <td class="whiteboxwk"><s:text name="estimate.work.subtype" />:</td>
-                <td class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="category" value="%{category.id}" id="category" cssClass="selectwk" list="dropdownData.categoryList" listKey="id" listValue="description"/>
-                </td>
-        </tr>
-        <tr>
-        	<td class="greyboxwk"><s:text name="estimate.search.estimate.template" />:</td>
-        	<td class="greybox2wk">  <div class="yui-skin-sam">
-                <div id="codeSearch_autocomplete">
-                <div><s:textfield id="codeSearch" type="text" name="templateCode" class="selectwk" /></div>
-                <span id="codeSearchResults"></span>
-                </div>
-                </div>
-                <egov:autocomplete name="codeSearch" width="20" field="codeSearch" url="ajaxEstimateTemplate-searchAjax.action?status=1&" queryQuestionMark="false" results="codeSearchResults" paramsFunction="codeSearchParameters" handler="codeSearchSelectionHandler" forceSelectionHandler="codeSelectionEnforceHandler" afterHandler="afterCodeResults"/>
-                <span class='warning' id="improperCodeSelectionWarning"></span>
-                <div id="loadImageForCode" style="display:none"><img src="/egi/resources/erp2/images/loading.gif" />Loading Template codes. Please wait..</div>
-            </td>
-            <td colspan="2" class="greybox2wk"><input type="button"  class="buttonadd" onclick="getTemplateForCode()" value="Submit" id="codeSubmitButton" name="codeSubmitButton"/>    			
-  </td>
-        </tr>
-        <tr><td class="whiteboxwk"><input type="button"  class="buttonadd" onclick="searchTemplate()" value="Search Estimate Template" id="searchTemplateButton" name="searchTemplateButton"/></td>
-        <td colspan="3" class="whiteboxwk"><s:text name="estimate.rate.disclaimer"/></td></tr>
-</table>
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   Estimate Template
+		</div>
+	</div>
+	<div class="panel-body">
+	   
+	  <div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.type" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="parentCategory" id="parentCategory" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{parentCategory.id}" onChange="setupSubTypes(this);"/>
+                <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='category' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{category.id}"  afterSuccess="loadSubType" /> 
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.work.subtype" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="category" value="%{category.id}" id="category" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
+			</div>
+		</div>
+		
+		<div class="form-group no-margin-bottom">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="estimate.search.estimate.template" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<div id="codeSearch_autocomplete">
+					<div class="right-inner-addon">
+					    <s:textfield id="codeSearch" type="text" name="templateCode" class="form-control" />
+					    <i id="loadImageForCode" class="fa fa-circle-o-notch fa-spin" style="display:none"></i>
+	    			</div>    
+	                <span id="codeSearchResults"></span>
+	                <egov:autocomplete name="codeSearch" width="20" field="codeSearch" url="ajaxEstimateTemplate-searchAjax.action?status=1&" queryQuestionMark="false" results="codeSearchResults" paramsFunction="codeSearchParameters" handler="codeSearchSelectionHandler" forceSelectionHandler="codeSelectionEnforceHandler" afterHandler="afterCodeResults"/>						               
+                </div> 
+			</div>
+			<div class="col-sm-5 add-margin">
+			   <input type="button" class="btn btn-primary" onclick="getTemplateForCode()" value="Submit" id="codeSubmitButton" name="codeSubmitButton"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-3">
+			   <input type="button" class="btn btn-primary full-width mtb-5" onclick="searchTemplate()" value="Search Estimate Template" id="searchTemplateButton" name="searchTemplateButton"/>
+	            <div id="improperCodeSelectionWarning" class="alert alert-warning no-margin" style="display:none;">
+				  <strong>Warning!</strong> Indicates a warning that might need attention.
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>

@@ -91,7 +91,11 @@
 		<property name="pwdApprovalCode" type="string">
 			<column name="PWD_APPROVAL_CODE" length="50" />
 		</property>
-		
+		<property name="exemptionForm" column="EXEMPTION">
+			<type name="org.hibernate.type.EnumType">       
+				<param name="enumClass">org.egov.works.models.masters.ExemptionForm</param>     
+			</type>   
+		</property> 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />

@@ -119,10 +119,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected String voucherNumManual;
     protected UserService userMngr;
     protected EisUtilService eisService;
-    private AssignmentService assignmentService;
+    protected AssignmentService assignmentService;
     @Autowired
     private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
-    private SecurityUtils securityUtils;
+    protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
     protected String reversalVoucherDate;
     final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -231,7 +231,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                     voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
                 } else {
-                        final String stateValue = voucherHeader.getCurrentState().getValue().split(":")[0] + ":" + FinancialConstants.WORKFLOW_STATE_REJECTED;
+                        final String stateValue =  FinancialConstants.WORKFLOW_STATE_REJECTED;
                         voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);

@@ -116,6 +116,6 @@ function validate(){
 }
 </script>
 
-<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
-<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

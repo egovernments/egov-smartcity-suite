@@ -48,25 +48,25 @@ body {
 	background-color: #FFFFFF;
 	}
 	   
-a:link {
+a:link:not(.btn):not([data-tabidx]) {
 	color: #0066cc;
 	font-family: regular;
 	font-size: 10px;
 	}
 	
-a:visited {
+a:visited:not(.btn):not([data-tabidx]) {
 	color: #0066cc;
 	font-family: regular;
 	font-size: 10px;
 	}
 	
-a:hover {
+a:hover:not(.btn):not([data-tabidx]) {
 	color: #CC0000;
 	font-family: regular;
 	font-size: 10px;
 	}
 
-a:active {
+a:active:not(.btn):not([data-tabidx]) {
 	color: #0066cc;
 	font-family: regular;
 	font-size: 10px;
@@ -337,10 +337,15 @@ input.buttonsubmit:hover, input.buttonsubmit:active, input.buttonsubmit:focus, i
 	font-weight: normal;
 	color: #cc0000;
 	}
+	
+.mandatory1
+{
+	color:red;
+}
+	
 .bold {
-	font-weight: bold;	
 	font-family:semibold;
-	}
+}
 	
 div.buttonbottom {
 	margin-bottom: 10px;
@@ -608,3 +613,71 @@ a.fileclear
 	margin-left:5px;
 }
 
+.new-page-header
+{
+	font-family: semibold;
+    font-size: 20px;
+    color: #6b4f2c;
+    text-align: center;
+    padding: 0 15px 15px;	
+}
+
+.icon-inputgroup
+{	
+	line-height:20px !important;
+}
+
+#settingstab
+{
+	margin-bottom:10px;
+}
+
+.right-inner-addon {
+    position: relative;
+}
+.right-inner-addon input {
+    padding-right: 30px;    
+}
+.right-inner-addon i {
+    position: absolute;
+    right: 0px;
+    padding: 10px 12px;
+    pointer-events: none;
+}
+
+.btn.full-width{
+  width:100%;
+}
+
+.btn.mtb-5, .mtb-5
+{
+	margin-top:5px;
+	margin-bottom:5px;
+}
+
+.no-margin
+{
+	margin:0 !important;
+}
+
+.mt-5
+{
+	margin-top:5px !important;
+}
+
+.mb-5
+{
+	margin-bottom:5px !important;
+}
+
+.no-margin-bottom
+{
+	margin-bottom:0px !important;
+}
+
+.small-note-title
+{
+	color: black;
+    font-family: regular;
+    font-size: 70%;
+}

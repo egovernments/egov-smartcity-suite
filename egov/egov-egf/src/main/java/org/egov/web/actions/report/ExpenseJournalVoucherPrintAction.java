@@ -52,6 +52,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -69,6 +70,8 @@ import org.hibernate.SQLQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
+		
+		@Result(name = ExpenseJournalVoucherPrintAction.PRINT ,location="expenseJournalVoucherPrint-print.jsp"),
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf" }),
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -79,9 +82,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @ParentPackage("egov")
 public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
-    String jasperpath = "/org/egov/web/actions/report/expenseJournalVoucherReport.jasper";
+    String jasperpath = "/reports/templates/expenseJournalVoucherReport.jasper";
     private static final long serialVersionUID = 1L;
-    private static final String PRINT = "print";
+    static final String PRINT = "print";
     private CVoucherHeader voucher = new CVoucherHeader();
     List<Object> voucherReportList = new ArrayList<Object>();
     InputStream inputStream;
@@ -218,7 +221,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
             final String amountInWords = billamount == null ? " " : NumberToWord.convertToWord(billamount.toPlainString());
             paramMap.put("certificate", getText("ejv.report.text", new String[] { amountInFigures, amountInWords }));
         }
-        paramMap.put("ulbName", getUlbName());
+        paramMap.put("ulbName", ReportUtil.getCityName());
 
         return paramMap;
     }

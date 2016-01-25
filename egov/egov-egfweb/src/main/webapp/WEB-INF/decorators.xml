@@ -45,6 +45,7 @@
          <pattern>/commonyui/egov/ChartOfaccountsMenuTree.jsp</pattern>
         <pattern>/*Ajax.action</pattern>
         <pattern>/*Ajax.do</pattern>
+         <pattern>/*ajax*</pattern>
          <pattern>/*Process.jsp*</pattern>
         <pattern>/*decorate=false*</pattern>
          <pattern>eGov_COA.jsp</pattern>

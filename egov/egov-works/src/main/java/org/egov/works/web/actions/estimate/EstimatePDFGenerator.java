@@ -190,13 +190,14 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             addZoneYearHeaderWithOutEstimateNo(estimate, estimateFinancialYear);
             document.add(createActivitiesTable(estimate));
             document.add(spacer());
-            final PdfPTable approvaldetailsTable = createApprovalDetailsTable(estimate);
 
-            if (approvaldetailsTable.getRows().size() != 1) {
-                document.add(makePara("Approval Details"));
-                document.add(spacer());
-                document.add(approvaldetailsTable);
-            }
+            final PdfPTable approvaldetailsTable = createApprovalDetailsTable(estimate);
+            // TODO:Fixme - commented final out workflow history final details since ordering final of approval is final not
+            // getting final listed properly
+            /*
+             * if (approvaldetailsTable.getRows().size() != 1) { document.add(makePara("Approval Details"));
+             * document.add(spacer()); document.add(approvaldetailsTable); }
+             */
 
             if (isSkipBudgetCheck()) {
                 final PdfPTable depositWorksAppropriationTable = createDepositAppropriationTable(estimate);

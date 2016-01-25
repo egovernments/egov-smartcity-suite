@@ -41,7 +41,7 @@
 function goToPath(){
 	if(dom.get("department").options[dom.get("department").selectedIndex].value>0){
 	window.open("${pageContext.request.contextPath}/estimate/searchEstimate.action?execDept="+
-	dom.get("department").options[dom.get("department").selectedIndex].value+"&source=wp"+"&wpdate="+dom.get("packageDate").value,"",
+	dom.get("department").options[dom.get("department").selectedIndex].value+"&source=wp"+"&wpdate="+dom.get("wpDate").value,"",
 	 			"height=600,width=900,scrollbars=yes,left=0,top=0,status=yes");
 	}
 	else
@@ -55,7 +55,7 @@ function goToPath(){
 }
 function update(elemValue) {
 	var eId="";
-	var estIds = elemValue.split(',');
+	var estIds = elemValue.toString().split(",");
 	var eleLen =estIds.length;
 	for(var i=0;i<eleLen;i++)
 	{
@@ -84,7 +84,7 @@ function update(elemValue) {
 	 	 }
 	  }
 	}
-	var actionUrl = '${pageContext.request.contextPath}/tender/ajaxWorksPackage!estimateList.action';
+	var actionUrl = '${pageContext.request.contextPath}/tender/ajaxWorksPackage-estimateList.action';
 	var params    = 'estId=' + eId;
 	var updatePage = 'worksPackage_estimatelist';
 	<s:if test="%{sourcepage=='inbox' 
@@ -120,26 +120,26 @@ function deleterow(obj)
 </script>
 <table id="wpDetailsTable" width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-          	<td colspan="5" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" />
+          	<td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" />
           	</div><div class="headplacer"><s:text name="wp.detils"/></div></td>
           	<td align="right" class="headingwk" style="border-left-width: 0px">
        		<a id="addHref" href="#" onclick="goToPath();return false;">
        		<img border="0" alt="Add Estimates" src="/egi/resources/erp2/images/add.png" /></a>
        		</td>
        	</tr>
-       	<td width="3%" class="tablesubheadwk">
+       	<td width="5%" class="tablesubheadwk">
 			<s:text name='estimate.search.slno' />
 		</td>
-		<td width="25%" class="tablesubheadwk">
+		<td width="15%" class="tablesubheadwk">
 			<s:text name='estimate.search.estimateNo' />
 		</td>
-		<td width="35%" class="tablesubheadwk" style="WORD-BREAK:BREAK-ALL">
+		<td width="40%" class="tablesubheadwk" style="WORD-BREAK:BREAK-ALL">
 			<s:text name='estimate.search.name' />
 		</td>
-		<td width="20%" class="tablesubheadwk">
+		<td width="10%" class="tablesubheadwk">
 			<s:text name='estimate.search.estimateDate' />
 		</td>
-		<td width="35%" class="tablesubheadwk">
+		<td width="15%" class="tablesubheadwk">
 			<s:text name='estimate.search.total' />
 		</td>
 		<td width="10%" class="tablesubheadwk">
@@ -156,25 +156,25 @@ function deleterow(obj)
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" id="estimateListTable" name="estimateListTable">
 	<s:iterator var="e" value="abstractEstimateList" status="s">
 	<tr>
-		<td width="3%"  class="whitebox3wk">&nbsp;&nbsp;&nbsp;&nbsp;
+		<td width="5%"  class="whitebox3wk">&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type="text" name="slNo" id="slNo" disabled="true" size="1" value='<s:property value='%{#s.index+1}' />'/>
 		</td>
-		<td width="25%" class="whitebox3wk">&nbsp;&nbsp;&nbsp;&nbsp;
+		<td width="15%" class="whitebox3wk">&nbsp;&nbsp;&nbsp;&nbsp;
 			<s:property value='%{estimateNumber}' /><s:hidden name="estId" id="estId" value="%{id}"/>
 		</td>
-		<td width="35%" class="whiteboxwkwrap" style="WORD-BREAK:BREAK-ALL">
+		<td width="40%" class="whiteboxwkwrap" style="WORD-BREAK:BREAK-ALL">
 			<s:property value='%{name}' />
 		</td>
-		<td width="20%" class="whitebox3wk">&nbsp;&nbsp;
+		<td width="10%" class="whitebox3wk">&nbsp;&nbsp; 
 			<s:property value='%{estimateDate}' />
 		</td>
-		<td width="35%" class="whitebox3wk">
+		<td width="15%" class="whitebox3wk">
 			<div align="right">
 				<s:property value='%{workValueIncludingTaxes.formattedString}' />
 				<s:hidden name="wvIncldTaxes" id="wvIncldTaxes" value="%{workValueIncludingTaxes.formattedString}"/>
 			</div>
 		</td>
-		<td align="right" class="headingwk" style="border-left-width: 0px">
+		<td align="right" width="10%" class="headingwk" style="border-left-width: 0px">
        		<a id="delHref" href="#" onclick="deleterow(this)">
        		<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
        	</td>

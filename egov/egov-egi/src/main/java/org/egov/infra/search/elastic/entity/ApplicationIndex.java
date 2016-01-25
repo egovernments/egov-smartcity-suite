@@ -137,6 +137,9 @@ public class ApplicationIndex extends AbstractAuditable {
     @Searchable(name = "aadharnumber", group = Searchable.Group.SEARCHABLE)
     private String aadharNumber;
 
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private Integer elapsedDays;
+
     @Override
     public Long getId() {
         return id;
@@ -265,6 +268,14 @@ public class ApplicationIndex extends AbstractAuditable {
 
     public void setAadharNumber(final String aadharNumber) {
         this.aadharNumber = aadharNumber;
+    }
+
+    public Integer getElapsedDays() {
+        return elapsedDays;
+    }
+
+    public void setElapsedDays(final Integer elapsedDays) {
+        this.elapsedDays = elapsedDays;
     }
 
 }

@@ -50,10 +50,8 @@
 }
 
 </style>
-<script src="../resources/js/jquery-1.7.2.min.js"></script>
 <script>
-var jq = jQuery.noConflict(true);
-
+jQuery.noConflict();
 function createAssetIDFormatter(el, oRecord, oColumn){
 var hiddenFormatter = function(el, oRecord, oColumn, oData) {
     var value = (YAHOO.lang.isValue(oData))?oData:"";
@@ -197,7 +195,7 @@ function setAssetTableMessage(){
 	
 function createNewImageFormatter(baseURL){
 	var newImageFormatter = function(el, oRecord, oColumn, oData) {
-	    markup='<a href="#">Create Asset</a>';
+	    markup='<a href="javascript:void(0);">Create Asset</a>';
 	    el.innerHTML = markup;
 	}
 	return newImageFormatter;
@@ -206,7 +204,7 @@ function createNewImageFormatter(baseURL){
 function createDeleteImageFormatter(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
 	    var imageURL="/egi/resources/erp2/images/cancel.png";
-	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Delete" align="absmiddle"></a>';
+	    markup='<a href="javascript:void(0);"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Delete" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
 	return deleteImageFormatter;
@@ -215,7 +213,7 @@ function createDeleteImageFormatter(baseURL){
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
 	    var imageURL="/egi/resources/erp2/images/add.png";
-	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Add" align="absmiddle"></a>';
+	    markup='<a href="javascript:void(0);"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Add" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
 	return addImageFormatter;
@@ -224,7 +222,7 @@ function createAddImageFormatter(baseURL){
 function createSearchImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
 	    var imageURL="/egi/resources/erp2/images/magnifier.png";
-	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Search" align="absmiddle"></a>';
+	    markup='<a href="javascript:void(0);"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Search" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
 	return searchImageFormatter;
@@ -246,30 +244,35 @@ function update(elemValue) {
 	}
 }
 
-jq(document).on('click', '.assetCode', function(){
-	var indexNum = jq(this).attr("name").substring(jq(this).attr("name").indexOf('[')+1,jq(this).attr("name").indexOf(']'));
-	var assetId = jq('#assetyui-rec'+indexNum).val();
+jQuery(document).on('click', '.assetCode', function(){
+	var indexNum = jQuery(this).attr("name").substring(jQuery(this).attr("name").indexOf('[')+1,jQuery(this).attr("name").indexOf(']'));
+	var assetId = jQuery('#assetyui-rec'+indexNum).val();
 	var url = "${pageContext.request.contextPath}/../egassets/assetmaster/asset-showform.action?id="+assetId+"&userMode=view";
 	window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
 });
 
 </script>
-<div class="errorstyle" id="asset_error" style="display:none;"></div>
-<table id="assetsHeaderTable" width="100%" border="0" cellspacing="0"
-	cellpadding="0">
-	<tr>
-		<td colspan="7" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
-		<div class="headplacer"><s:text name="estimate.title.assets"/></div></td>
-	</tr>
-	<s:hidden name="assetStatus" id="assetstatus"/>
-	<tr>
-		<td colspan="7">
-			<div class="yui-skin-sam">
+
+<s:hidden name="assetStatus" id="assetstatus"/>
+<div id="assetsHeaderTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		   <s:text name="estimate.title.assets"/>
+		</div>
+	</div>
+	<div class="panel-body">		
+		<div class="alert alert-danger" id="asset_error" style="display:none;"></div>
+	    <div class="form-group no-margin-bottom">
+	    	<div class="yui-skin-sam">
 				<div id="assetTable"></div>
-				<div id="altMassage" style="display:none;">
+				<div id="altMassage" class="mtb-5" style="display:none;">
 					<s:text name="estimate.assets.table.message"/>
 				</div>
 			</div>
+	    </div>
+	</div>
+</div>
+
 			<script>
                 makeAssetsTable();
                 
@@ -296,10 +299,3 @@ jq(document).on('click', '.assetCode', function(){
 		          
 		         </s:iterator>
                 </script>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="7" class="shadowwk"></td>
-	</tr>
-
-</table>

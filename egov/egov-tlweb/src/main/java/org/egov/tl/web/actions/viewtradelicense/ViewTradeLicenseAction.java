@@ -39,7 +39,9 @@
  */
 package org.egov.tl.web.actions.viewtradelicense;
 
-import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -58,9 +60,6 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 @ParentPackage("egov")
 @Results({
         @Result(name = "auditReport", type = "redirectAction", location = "auditReport", params = {"moduleName", "TL",
@@ -70,7 +69,7 @@ import javax.servlet.http.HttpSession;
         @Result(name = Constants.CNCCERTIFICATE, location = "viewTradeLicense-" + Constants.CNCCERTIFICATE + ".jsp"),
         @Result(name = Constants.PFACERTIFICATE, location = "viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp")
 })
-public class ViewTradeLicenseAction extends BaseLicenseAction implements ServletRequestAware {
+public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> implements ServletRequestAware {
     private static final long serialVersionUID = 1L;
 
     private final String CITIZENUSER = "citizenUser";
@@ -156,7 +155,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         return "noc";
     }
 
-    @SuppressWarnings("unchecked")
+    
     public String createNoc() {
         this.setLicenseIdIfServletRedirect();
         TradeLicense modifiedTL = this.tradeLicense;
@@ -164,7 +163,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         this.tradeLicense.setSandBuckets(modifiedTL.getSandBuckets());
         this.tradeLicense.setWaterBuckets(modifiedTL.getWaterBuckets());
         this.tradeLicense.setDcpExtinguisher(modifiedTL.getDcpExtinguisher());
-        String runningNumber = this.tradeLicenseService.getNextRunningLicenseNumber(Constants.TL_PROVISIONAL_NOC_NUMBER);
+        String runningNumber = this.tradeLicenseService.getNextRunningLicenseNumber(Constants.TL_PROVISIONAL_NOC_NUMBER).toString();
         this.tradeLicense.generateNocNumber(runningNumber);
         // this.service().endWorkFlowForLicense(tradeLicense);
         LicenseStatus activeStatus = (LicenseStatus) this.persistenceService
@@ -240,9 +239,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction implements Servlet
         return super.approveRenew();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected AbstractLicenseService licenseService() {
+    protected AbstractLicenseService<TradeLicense> licenseService() {
         return this.tradeLicenseService;
     }
 

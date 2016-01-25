@@ -201,5 +201,5 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 
-<script src="<c:url value='/resources/js/app/applicationsearch.js'/>"
+<script src="<c:url value='/resources/js/app/applicationsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

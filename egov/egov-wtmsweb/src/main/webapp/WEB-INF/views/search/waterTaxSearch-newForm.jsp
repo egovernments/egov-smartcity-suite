@@ -207,7 +207,7 @@
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 
 
-<script src="<c:url value='/resources/js/app/connectionsearch.js'/>"
+<script src="<c:url value='/resources/js/app/connectionsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 	
 

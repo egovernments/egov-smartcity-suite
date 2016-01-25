@@ -125,7 +125,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private static final String EMPTY_STRING = "";
     private static final long serialVersionUID = 1L;
     private VoucherService voucherService;
-    private CVoucherHeader voucherHeader;
+    private CVoucherHeader voucherHeader = new CVoucherHeader();
     private EgBillregister egBillregister = new EgBillregister();
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     protected WorkflowBean workflowBean = new WorkflowBean();
@@ -203,14 +203,14 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             getHeaderMandateFields();
             if (isFieldMandatory("department"))
                 preApprovedVoucherList = getPersistenceService()
-                .findAllBy(
-                        " from EgBillregister br where br.status=? and br.egBillregistermis.egDepartment.id=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
-                        egwStatus, getCurrentDepartment().getId());
+                        .findAllBy(
+                                " from EgBillregister br where br.status=? and br.egBillregistermis.egDepartment.id=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
+                                egwStatus, getCurrentDepartment().getId());
             else
                 preApprovedVoucherList = getPersistenceService()
-                .findAllBy(
-                        " from EgBillregister br where br.status=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
-                        egwStatus);
+                        .findAllBy(
+                                " from EgBillregister br where br.status=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
+                                egwStatus);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(preApprovedVoucherList);
@@ -392,7 +392,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     {
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
                 "classpath:org/serviceconfig-Bean.xml", "classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml",
-        "classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml" });
+                "classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml" });
         voucherHeader = (CVoucherHeader) persistenceService.find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
         if (voucherHeader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA))
         {
@@ -480,7 +480,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             addActionMessage(getText(
                     egBillregister.getExpendituretype() + ".voucher.created",
                     new String[] { voucherHeader.getVoucherNumber(),
-                        voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
+                            voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
 
         } catch (final ValidationException e)
         {
@@ -512,7 +512,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("voucher id=======" + parameters.get(VHID)[0]);
         methodName = "update";
-        voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]),false);
+        voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
         populateWorkflowBean();
         transitionWorkFlow(voucherHeader, workflowBean);
         persistenceService.applyAuditing(voucherHeader.getState());
@@ -520,7 +520,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         type = billsService.getBillTypeforVoucher(voucherHeader);
         if (null == type)
             type = "default";
-        if (parameters.get(ACTIONNAME)[0].contains("aa_reject"))
+        if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("billVoucher.file.canceled"));
         else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if ("Closed".equals(voucherHeader.getState().getValue()))
@@ -559,8 +559,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             } else {
-                final String stateValue = voucherHeader.getCurrentState().getValue().split(":")[0] + ":"
-                        + FinancialConstants.WORKFLOW_STATE_REJECTED;
+                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
                 voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
@@ -570,6 +569,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
+        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
+            voucherHeader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
@@ -650,9 +653,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         Integer userId = null;
         if (parameters.get("actionName")[0].contains("approve"))
             userId = parameters.get("approverUserId") != null ? Integer.valueOf(parameters.get("approverUserId")[0]) :
-                EgovThreadLocals.getUserId().intValue();
-            else
-                userId = voucherHeader.getCreatedBy().getId().intValue();
+                    EgovThreadLocals.getUserId().intValue();
+        else
+            userId = voucherHeader.getCreatedBy().getId().intValue();
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("User selected id is : " + userId);
@@ -780,7 +783,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                 names.put(
                         gl.getGlcodeId().getGlcode(),
                         ((CFunction) getPersistenceService().find(" from CFunction where id=?", Long.valueOf(gl.getFunctionId())))
-                        .getName());
+                                .getName());
 
             // get subledger.
             final List<CGeneralLedgerDetail> gldetailList = getPersistenceService().findAllBy(
@@ -981,7 +984,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
             final Map<String, Object> tempMap) throws ApplicationException
-            {
+    {
         final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
         tempMap.put("detailtype", detailtype.getDescription());
         tempMap.put("detailtypeid", detailtype.getId());
@@ -1000,7 +1003,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             tempMap.put(Constants.DETAILCODE, entityType.getCode());
         }
         return tempMap;
-            }
+    }
 
     public void setupDropDownForSL(final List<Long> glcodeIdList)
     {

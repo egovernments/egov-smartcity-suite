@@ -26,9 +26,9 @@ rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllCoaCodes")){
 String query="select glcode||'`-`'||name||'`~`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true order by glcode ";
-System.out.println("query :"+query);
+//System.out.println("query :"+query);
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
-System.out.println("rs.size :"+rs.size());
+//System.out.println("rs.size :"+rs.size());
 }
 else if(request.getParameter("type").equalsIgnoreCase("getAllCoaCodesExceptCashBank")){
 String query="SELECT glcode ||'`-`'||NAME ||'`~`'||ID AS \"code\" FROM chartofaccounts   WHERE classification = 4 AND isactiveforposting = true AND parentid  not in(select id  from chartofaccounts where purposeid in ( SELECT ID FROM egf_accountcode_purpose WHERE UPPER (NAME) = UPPER ('Cash In Hand') OR UPPER (NAME) = UPPER ('Bank Codes') OR UPPER (NAME) = UPPER ('Cheque In Hand')) ) "+
@@ -254,7 +254,7 @@ try{
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }catch(Exception e)
 		{
-	//System.out.println(e.getMessage());
+	System.out.println(e.getMessage());
 		}
 
 }
@@ -272,7 +272,7 @@ try{
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }catch(Exception e)
 		{
-	//System.out.println(e.getMessage());
+	System.out.println(e.getMessage());
 		}
 
 }
@@ -339,11 +339,11 @@ else if(request.getParameter("type").equalsIgnoreCase("getAllFunctionCode")){
 }
 int i = 0;
 try{
-System.out.println("resultset"+rs);
+//System.out.println("resultset"+rs);
 if(rs!=null)
 {
-System.out.println("resultset size:"+rs.size());
-System.out.println("resultset first value:"+rs.get(0));
+//System.out.println("resultset size:"+rs.size());
+//System.out.println("resultset first value:"+rs.get(0));
 int size = rs.size();
 while(size!=0){
 if(i > 0)

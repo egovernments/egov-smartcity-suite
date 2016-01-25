@@ -53,17 +53,12 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Accountdetailkey;
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -74,15 +69,17 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
     @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-    @Result(name = ContractorAction.VIEW_CONTRACTOR, location = "contractor-viewContractor.jsp"),
+    @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
     @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
-    @Result(name = ContractorAction.INDEX, location = "contractor-index.jsp"),
-    @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp")
+    @Result(name = ContractorAction.SUCCESS, location = "contractor-success.jsp"),
+    @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp"),
+    @Result(name = ContractorAction.VIEW, location = "contractor-view.jsp")
 })
 public class ContractorAction extends SearchFormAction {
 
@@ -90,22 +87,22 @@ public class ContractorAction extends SearchFormAction {
 
     private static final Logger logger = Logger.getLogger(ContractorAction.class);
 
-    public static final String VIEW_CONTRACTOR = "viewContractor";
+    public static final String SEARCH_CONTRACTOR = "searchContractor";
     public static final String SEARCH = "search";
-    public static final String INDEX = "index";
+    public static final String SUCCESS = "success";
     public static final String EDIT = "edit";
+    public static final String VIEW = "view";
     @Autowired
     private ContractorService contractorService;
     private Contractor contractor = new Contractor();
+
+    private Map<String, String> exmptionMap = ContractorService.exemptionForm;
 
     private List<Contractor> contractorList = null;
     private List<ContractorDetail> actionContractorDetails = new LinkedList<ContractorDetail>();
     private Long id;
     private String mode;
-    @Autowired
-    private AccountdetailkeyHibernateDAO accountdetailKeyHibDAO;
-    @Autowired
-    private RoleService roleService;
+    
     @Autowired
     private UserService userService;
     private WorksService worksService;
@@ -124,13 +121,12 @@ public class ContractorAction extends SearchFormAction {
     private Long gradeId;
     private Date searchDate;
     private boolean sDisabled;
-    
+
     private Integer statusId;
     private List<ContractorDetail> contractorDetailList = null;
     private PersistenceService<ContractorDetail, Long> contractorDetailService;
     private Integer rowId;
-    private boolean hasRoleMapped;
-    
+
     private Map<String, Object> criteriaMap = null;
 
     public ContractorAction() {
@@ -148,25 +144,28 @@ public class ContractorAction extends SearchFormAction {
     }
 
     public String list() {
-    	contractorList = contractorService.getAllContractors();
-        return INDEX;
+        contractorList = contractorService.getAllContractors();
+        return SUCCESS;
     }
 
     @Action(value = "/masters/contractor-edit")
     public String edit() {
         contractor = contractorService.findById(contractor.getId(), false);
-        return EDIT;
+        if (mode.equals("edit"))
+            return EDIT;
+        else
+            return VIEW;
     }
 
     @Override
     @Action(value = "/masters/contractor-search")
     public String search() {
-        return VIEW_CONTRACTOR;
+        return SEARCH_CONTRACTOR;
     }
-    
-    @Action(value = "/masters/contractor-viewContractor")
-    public String viewContractor() {
-        return VIEW_CONTRACTOR;
+
+    @Action(value = "/masters/contractor-searchContractor")
+    public String searchContractor() {
+        return SEARCH_CONTRACTOR;
     }
 
     @Action(value = "/masters/contractor-viewResult")
@@ -174,17 +173,25 @@ public class ContractorAction extends SearchFormAction {
         setPageSize(WorksConstants.PAGE_SIZE);
         contractorList = contractorService.getContractorListForCriterias(createCriteriaMap());
         super.search();
-        return VIEW_CONTRACTOR;
+        return SEARCH_CONTRACTOR;
     }
 
     @Action(value = "/masters/contractor-save")
     public String save() {
         populateContractorDetails(mode);
-        getHasRoleMapped();
         contractor = contractorService.persist(contractor);
-        createAccountDetailKey(contractor);
-        addActionMessage(getText("contractor.save.success"));
-        return list();
+        if (mode == null || mode.equals(""))
+            contractorService.createAccountDetailKey(contractor);
+
+        // TODO:Fixme - Added temporarily since AccountDetailKey was not persisting. Need to find the fix for this and remove
+        // below line of code
+        contractorService.persist(contractor);
+        if (StringUtils.isBlank(mode))
+            addActionMessage(getText("contractor.save.success", new String[] {contractor.getCode()}));
+            else
+            addActionMessage(getText("contractor.modified.success"));
+        return SUCCESS;
+
     }
 
     @Action(value = "/masters/contractor-searchPage")
@@ -208,17 +215,7 @@ public class ContractorAction extends SearchFormAction {
 
     }
 
-    protected void createAccountDetailKey(final Contractor cont) {
-        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
-        final Accountdetailkey adk = new Accountdetailkey();
-        adk.setGroupid(1);
-        adk.setDetailkey(cont.getId().intValue());
-        adk.setDetailname(accountdetailtype.getAttributename());
-        adk.setAccountdetailtype(accountdetailtype);
-        accountdetailKeyHibDAO.create(adk);
-    }
-
-    protected void populateContractorDetails(String mode) {
+    protected void populateContractorDetails(final String mode) {
         contractor.getContractorDetails().clear();
 
         for (final ContractorDetail contractorDetail : actionContractorDetails)
@@ -226,13 +223,12 @@ public class ContractorAction extends SearchFormAction {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus((EgwStatus) egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade().getId() == null)
-                    contractorDetail.setGrade(null);
+                    contractorDetail.setGrade(null); 
                 else
-                    contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
+                    contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
-                if (mode.equals("edit")) {
+                if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
-                }
                 contractor.addContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
@@ -246,16 +242,16 @@ public class ContractorAction extends SearchFormAction {
                 if (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                    contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId());
+                    contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
-                if (mode.equals("edit")) {
+                if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
-                }
                 contractor.addContractorDetail(contractorDetail);
             }
     }
 
     protected boolean validContractorDetail(final ContractorDetail contractorDetail) {
+
         if (contractorDetail != null && contractorDetail.getDepartment() != null && contractorDetail.getStatus() != null
                 && contractorDetail.getDepartment().getId() != null && contractorDetail.getStatus().getId() != null)
             return true;
@@ -281,6 +277,7 @@ public class ContractorAction extends SearchFormAction {
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
         addDropdownData("bankList", bankHibernateDAO.findAll());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
+
     }
 
     public Long getId() {
@@ -359,6 +356,14 @@ public class ContractorAction extends SearchFormAction {
     public void setSearchDate(final Date searchDate) {
         this.searchDate = searchDate;
     }
+    
+    public Map<String, String> getExmptionMap() {
+        return exmptionMap;
+    }
+
+    public void setExmptionMap(final Map<String, String> exmptionMap) {
+        this.exmptionMap = exmptionMap;
+    }
 
     /**
      * @return the statusId
@@ -409,21 +414,7 @@ public class ContractorAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-    	return contractorService.prepareQuery(createCriteriaMap());
-    }
-
-    public boolean getHasRoleMapped() {
-        final Role role = roleService.getRoleByName(WorksConstants.EDIT_ENABLE_ROLE_NAME);
-        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-        if (role != null && user != null && !user.getRoles().isEmpty())
-            for (final Role userRoleObj : user.getRoles())
-                if (role.getId() == userRoleObj.getId())
-                    hasRoleMapped = true;
-        return hasRoleMapped;
-    }
-
-    public void setHasRoleMapped(final boolean hasRoleMapped) {
-        this.hasRoleMapped = hasRoleMapped;
+        return contractorService.prepareQuery(createCriteriaMap());
     }
 
     public Integer getRowId() {
@@ -433,14 +424,15 @@ public class ContractorAction extends SearchFormAction {
     public void setRowId(final Integer rowId) {
         this.rowId = rowId;
     }
-    //TODO: Need to remove this method after getting better alternate option
-    private ContractorDetail setPrimaryDetails(ContractorDetail contractorDetail) {
-    	User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-    	contractorDetail.setCreatedBy(user);
-    	contractorDetail.setCreatedDate(new Date());
-    	return contractorDetail;
+
+    // TODO: Need to remove this method after getting better alternate option
+    private ContractorDetail setPrimaryDetails(final ContractorDetail contractorDetail) {
+        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+        contractorDetail.setCreatedBy(user);
+        contractorDetail.setCreatedDate(new Date());
+        return contractorDetail;
     }
-    
+
     private Map<String, Object> createCriteriaMap() {
         criteriaMap = new HashMap<String, Object>();
         criteriaMap.put(WorksConstants.CONTRACTOR_NAME, contractorName);
@@ -451,4 +443,5 @@ public class ContractorAction extends SearchFormAction {
         criteriaMap.put(WorksConstants.SEARCH_DATE, searchDate);
         return criteriaMap;
     }
+
 }

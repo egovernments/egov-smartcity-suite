@@ -90,8 +90,8 @@ public class Contractor extends BaseModel implements EntityType {
     @Length(max = 1024, message = "contractor.narration.length")
     private String narration;
 
-    @Length(max = 14, message = "contractor.panNumber.length")
-    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.panNumber.alphaNumeric")
+    @Length(max = 10, message = "contractor.panNumber.length")
+    @OptionalPattern(regex = Constants.PANNUMBER, message = "contractor.panNumber.alphaNumeric")
     private String panNumber;
 
     @Length(max = 14, message = "contractor.tinNumber.length")
@@ -111,6 +111,8 @@ public class Contractor extends BaseModel implements EntityType {
     @Length(max = 50, message = "contractor.pwdApprovalCode.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
     private String pwdApprovalCode;
+
+    private ExemptionForm exemptionForm;
 
     @Valid
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
@@ -223,6 +225,14 @@ public class Contractor extends BaseModel implements EntityType {
 
     public List<ContractorDetail> getContractorDetails() {
         return contractorDetails;
+    }
+
+    public ExemptionForm getExemptionForm() {
+        return exemptionForm;
+    }
+
+    public void setExemptionForm(final ExemptionForm exemptionForm) {
+        this.exemptionForm = exemptionForm;
     }
 
     public void setContractorDetails(final List<ContractorDetail> contractorDetails) {

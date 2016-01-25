@@ -199,7 +199,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         processWorkflow(NEW);
         licenseService().licensePersitenceService().persist(license());
         // Generate PFA Certificate on final approval
-        if (Constants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        if (Constants.GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             reportId = ReportViewerUtil.addReportToSession(reportService.createReport(prepareReportInputData(license())), getSession());
             return "report";
             //return Constants.PFACERTIFICATE;
@@ -407,8 +407,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public void processWorkflow(String processType) {
         populateWorkflowBean();
         if (processType.equalsIgnoreCase(NEW)) {
+            if(!Constants.BUTTONSAVE.equals(workFlowAction))
             licenseService().transitionWorkFlow(license(), workflowBean);
         } else if (processType.equalsIgnoreCase("Renew")) {
+           if(! Constants.BUTTONSAVE.equals(workFlowAction))
             licenseService().processWorkflowForRenewLicense(license(), workflowBean);
 
         }
