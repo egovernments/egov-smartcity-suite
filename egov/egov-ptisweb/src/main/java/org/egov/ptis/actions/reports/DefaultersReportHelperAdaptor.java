@@ -37,82 +37,38 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.ptis.bean;
+package org.egov.ptis.actions.reports;
 
-import java.math.BigDecimal;
+import java.lang.reflect.Type;
 
-public class DefaultersInfo {
-	
-	private Integer slNo;
-	private String assessmentNo;
-	private String ownerName;
-	private String wardName;
-	private String houseNo;
-	private String locality;
-	private String mobileNumber;
-	private BigDecimal arrearsDue;
-	private BigDecimal currentDue;
-	private BigDecimal totalDue;
-	
-	public Integer getSlNo() {
-		return slNo;
-	}
-	public void setSlNo(Integer slNo) {
-		this.slNo = slNo;
-	}
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
-	public String getOwnerName() {
-		return ownerName;
-	}
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
-	public String getWardName() {
-		return wardName;
-	}
-	public void setWardName(String wardName) {
-		this.wardName = wardName;
-	}
-	public String getHouseNo() {
-		return houseNo;
-	}
-	public void setHouseNo(String houseNo) {
-		this.houseNo = houseNo;
-	}
-	public String getLocality() {
-		return locality;
-	}
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
-	public BigDecimal getArrearsDue() {
-		return arrearsDue;
-	}
-	public void setArrearsDue(BigDecimal arrearsDue) {
-		this.arrearsDue = arrearsDue;
-	}
-	public BigDecimal getCurrentDue() {
-		return currentDue;
-	}
-	public void setCurrentDue(BigDecimal currentDue) {
-		this.currentDue = currentDue;
-	}
-	public BigDecimal getTotalDue() {
-		return totalDue;
-	}
-	public void setTotalDue(BigDecimal totalDue) {
-		this.totalDue = totalDue;
-	}
-	
+import org.egov.ptis.bean.DefaultersInfo;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+public class DefaultersReportHelperAdaptor implements JsonSerializer<DefaultersInfo> {
+
+    @Override
+    public JsonElement serialize(final DefaultersInfo defaultersInfoObj, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (defaultersInfoObj != null) {
+        	jsonObject.addProperty("slNo", defaultersInfoObj.getSlNo());
+            jsonObject.addProperty("assessmentNo", defaultersInfoObj.getAssessmentNo());
+            jsonObject.addProperty("ownerName", defaultersInfoObj.getOwnerName());
+            jsonObject.addProperty("wardName", defaultersInfoObj.getWardName());
+
+            jsonObject.addProperty("houseNo", defaultersInfoObj.getHouseNo());
+            jsonObject.addProperty("locality", defaultersInfoObj.getLocality());
+            jsonObject.addProperty("mobileNumber", defaultersInfoObj.getMobileNumber());
+
+            jsonObject.addProperty("arrearsDue", defaultersInfoObj.getArrearsDue());
+            jsonObject.addProperty("currentDue", defaultersInfoObj.getCurrentDue());
+            jsonObject.addProperty("totalDue", defaultersInfoObj.getTotalDue());
+        }
+        return jsonObject;
+    }
+
 }

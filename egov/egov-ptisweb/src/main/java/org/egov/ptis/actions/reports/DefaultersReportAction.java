@@ -39,93 +39,54 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.DefaultersInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Query;
-import org.hibernate.transform.Transformers;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
-import ar.com.fdvs.dj.core.DynamicJasperHelper;
-import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
-import ar.com.fdvs.dj.domain.AutoText;
-import ar.com.fdvs.dj.domain.DynamicReport;
-import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
-import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.constants.Border;
-import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.Page;
-import ar.com.fdvs.dj.domain.constants.Transparency;
-import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Transactional(readOnly = true)
-@ResultPath("/WEB-INF/jsp/")
 @Namespace("/reports")
-@Results({ @Result(name = "new", location = "reports/defaultersReport-new.jsp")})
+@Results({ @Result(name = DefaultersReportAction.RESULT_SEARCH, location = "reports/defaultersReport-search.jsp") })
 public class DefaultersReportAction extends BaseFormAction {
 
-	private static final String RESULT_NEW = "new";
-	private static final String RESULT_RESULT = "result";
-	private static final String REPORT_TITLE = "Chennai Muncipal Corporation";
-	private static final String REPORT_NO_DATA = "No Data";
 	private static final Logger LOGGER = Logger.getLogger(DefaultersReportAction.class);
-	private static final int MB = 1024 * 1024;
-	private Integer zoneId;
-	private Integer wardId;
-	private String partNo;
-	private Map<Long, String> ZoneBndryMap;
-	private String amountRange;
-	private Boundary ward;
-	private ByteArrayOutputStream outputBytes;
-	private List<DefaultersInfo> defaulters = new ArrayList<DefaultersInfo>();
-	private Integer reportId = -1;
-	private Style STYLE_BLANK = Style.createBlankStyle("oddRowNoStyle");
-	private Boolean resultPage = FALSE;
+	public static final String RESULT_SEARCH = "search";
+	private Long wardId;
+	private String fromDemand;
+    private String toDemand;
+    private Integer limit;
+	@Autowired
+    private BoundaryService boundaryService;
+	@Autowired
+    public PropertyTaxUtil propertyTaxUtil;
 
 	@Override
 	public Object getModel() {
@@ -133,340 +94,130 @@ public class DefaultersReportAction extends BaseFormAction {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void prepare() {
-		@SuppressWarnings("unchecked")
-		List<Boundary> zoneList = persistenceService.findAllBy("FROM BoundaryImpl BI "
-				+ "WHERE BI.boundaryType.name=? " + "AND BI.boundaryType.heirarchyType.name=? "
-				+ "AND BI.isHistory='N' " + "ORDER BY BI.id", ZONE_BNDRY_TYPE,
-				ELECTION_HIERARCHY_TYPE);
-		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
-		prepareWardDropDownData(zoneId != null && !zoneId.equals(-1),
-				wardId != null && !wardId.equals(-1));
-		if (wardId == null || wardId.equals(-1)) {
-			addDropdownData("partNumbers", Collections.EMPTY_LIST);
-		} else {
-			addDropdownData(
-					"partNumbers",
-					getPersistenceService()
-							.findAllBy(
-									"SELECT distinct pmv.partNo FROM PropertyMaterlizeView pmv WHERE pmv.ward.id = ? order by pmv.partNo asc",
-									getWardId()));
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void prepareReportInfo() {
-		LOGGER.debug("Entered into prepareReportInfo method");
-		String boundaryQuery = "FROM BoundaryImpl BI " + "WHERE BI.id = ? "
-				+ "AND BI.boundaryType.name = ? " + "AND BI.boundaryType.heirarchyType.name = ? "
-				+ "AND BI.isHistory = 'N' " + "ORDER BY BI.id";
-		ward = (Boundary) persistenceService.find(boundaryQuery, getWardId(), WARD_BNDRY_TYPE,
-				ELECTION_HIERARCHY_TYPE);
-		String[] amounts = amountRange.split(" ");
-		StringBuilder query = new StringBuilder(100);
-		query.append(
-				"select str(pmv.ward.boundaryNum) as wardNo, pmv.partNo as partNo, pmv.propertyId as indexNo, pmv.houseNo as houseNo, pmv.ownerName as ownerName, ")
-				.append("year(dmv.fromDate) as fromYear, year(dmv.toDate) as toYear, (pmv.aggrArrDmd - pmv.aggrArrColl) as arrearsDue, (pmv.aggrCurrDmd - pmv.aggrCurrColl) as currentDue,")
-				.append("  (pmv.aggrArrDmd - pmv.aggrArrColl + pmv.aggrCurrDmd - pmv.aggrCurrColl) as total ")
-				.append("from DefaultersMaterializedView dmv, PropertyMaterlizeView pmv where dmv.basicPropertyId = pmv.basicPropertyID and pmv.propTypeMstrID.code not in ('")
-				.append(OWNERSHIP_TYPE_STATE_GOVT).append("', '").append(OWNERSHIP_TYPE_CENTRAL_GOVT_50)
-				.append("') ").append("and pmv.zone.id = :zoneId and pmv.ward.id = :wardId ");
-		if (amounts[0].equals("100001")) {
-			query.append("and (pmv.aggrArrDmd - pmv.aggrArrColl) > :fromAmt ");
-		} else {
-			query.append("and (pmv.aggrArrDmd - pmv.aggrArrColl) between :fromAmt and :toAmt ");
-		}
-		if (partNo != null && !partNo.equals("-1")) {
-			query.append("and pmv.partNo = :partNo ");
-		}
-		query.append("order by to_number(regexp_substr(pmv.houseNo, '" + PATTERN_BEGINS_WITH_1TO9
-				+ "')), pmv.houseNo asc");
-		Query hqlQry = getPersistenceService().getSession().createQuery(query.toString())
-				.setInteger("zoneId", zoneId).setInteger("wardId", wardId)
-				.setBigDecimal("fromAmt", new BigDecimal(amounts[0]));
-		if (!amounts[0].equals("100001")) {
-			hqlQry.setBigDecimal("toAmt", new BigDecimal(amounts[1]));
-		}
-		if (partNo != null && !partNo.equals("-1")) {
-			hqlQry.setString("partNo", partNo);
-		}
-		List<DefaultersInfo> defaultersInfo = hqlQry.setResultTransformer(
-				Transformers.aliasToBean(DefaultersInfo.class)).list();
-		defaulters.addAll(defaultersInfo);
-		LOGGER.debug("Exit from prepareReportInfo method");
-	}
-
-	@SuppressWarnings("unchecked")
-	private void prepareWardDropDownData(boolean zoneExists, boolean wardExists) {
-		LOGGER.debug("Entered into prepareWardDropDownData method");
-		LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
-		if (zoneExists && wardExists) {
-			List<Boundary> wardNewList = new ArrayList<Boundary>();
-			wardNewList = getPersistenceService().findAllBy(
-					"FROM BoundaryImpl BI " + "WHERE BI.boundaryType.name=? "
-							+ "AND BI.parent.id = ? " + "AND BI.isHistory='N' "
-							+ "ORDER BY BI.name ", WARD_BNDRY_TYPE, getZoneId());
-			addDropdownData("Wards", wardNewList);
-		} else {
-			addDropdownData("Wards", Collections.EMPTY_LIST);
-		}
-		LOGGER.debug("Exit from prepareWardDropDownData method");
+		if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into prepare method");
+        super.prepare();
+		final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
+                REVENUE_HIERARCHY_TYPE);
+        addDropdownData("wardList", wardList);
+        addDropdownData("limitList", buildLimitList());
 	}
 
 	@SkipValidation
-	@Action(value = "/defaultersReport-newForm")
-	public String newForm() {
-		return RESULT_NEW;
+	@Action(value = "/defaultersReport-search")
+	public String search() {
+		return RESULT_SEARCH;
 	}
-
-	@ValidationErrorPage(value = "new")
-	@Action(value = "/defaultersReport-generateReport", results = { @Result(name = RESULT_RESULT, location = "/defaultersReport-result.jsp") })
-	public String generateReport() {
-		LOGGER.debug("Entered into generateReport");
-		Long startTime = System.currentTimeMillis();
-		prepareReportInfo();
-		if (defaulters.isEmpty()) {
-			setResultPage(TRUE);
-			return RESULT_NEW;
-		}
-		try {
-			JasperPrint jasperPrint = generateDefaultersReport(defaulters);
-			outputBytes = new ByteArrayOutputStream(1 * MB);
-			JasperExportManager.exportReportToPdfStream(jasperPrint, outputBytes);
-		} catch (Exception e) {
-			LOGGER.error("Error while getting pdf stream from Jasper", e);
-			throw new ApplicationRuntimeException("Error while getting pdf stream from Jasper", e);
-		}
-		ReportOutput reportOutput = new ReportOutput();
-		reportOutput.setReportOutputData(outputBytes.toByteArray());
-		reportOutput.setReportFormat(FileFormat.PDF);
-		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
-		LOGGER.info("Defaulters report took = " + ((System.currentTimeMillis() - startTime) / 1000)
-				+ "sec(s)....");
-		return RESULT_RESULT;
+	
+	private List<Integer> buildLimitList(){
+		List<Integer> limitList = new ArrayList<Integer>();
+		limitList.add(10);
+		limitList.add(50);
+		limitList.add(100);
+		limitList.add(500);
+		limitList.add(1000);
+		return limitList;
 	}
+	
+	/**
+     * Invoked by Defaulters Report. Shows list of defaulters
+     */
+    @SuppressWarnings("unchecked")
+    @Action(value = "/defaultersReport-getDefaultersList")
+    public void getDefaultersList() {
+        List<DefaultersInfo> resultList = new ArrayList<DefaultersInfo>();
+        String result = null;
+        final Query query = propertyTaxUtil
+                .prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit);
+        resultList = prepareOutput(query.list());
+        // for converting resultList to JSON objects.
+        // Write back the JSON Response.
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        final HttpServletResponse response = ServletActionContext.getResponse();
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        try {
+            IOUtils.write(result, response.getWriter());
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-	private JasperPrint generateDefaultersReport(List<DefaultersInfo> defaulters)
-			throws JRException, ColumnBuilderException, ClassNotFoundException {
-		FastReportBuilder drb = new FastReportBuilder();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		Calendar today = Calendar.getInstance();
-		today.setTime(new Date());
-		today.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH) - 1);
-		String reportDateStr = sdf.format(today.getTime());
-		drb.setPrintBackgroundOnOddRows(false).setWhenNoData(REPORT_NO_DATA, null)
-				.setDefaultStyles(getTitleStyle(), getSubTitleStyle(), STYLE_BLANK, STYLE_BLANK)
-				.setDetailHeight(20).setUseFullPageWidth(true).setTitleHeight(50)
-				.setPageSizeAndOrientation(Page.Page_A4_Landscape())
-				.setOddRowBackgroundStyle(STYLE_BLANK).setWhenResourceMissingShowKey();
+    /**
+     * @param object
+     * @return
+     */
+    private Object toJSON(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DefaultersInfo.class,
+                new DefaultersReportHelperAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    /**
+     * @param propertyViewList
+     * @return List of Defaulters
+     */
+    private List<DefaultersInfo> prepareOutput(final List<PropertyMaterlizeView> propertyViewList) {
+    	List<DefaultersInfo> defaultersList = new ArrayList<DefaultersInfo>();
+    	DefaultersInfo defaultersInfo = null;
+    	BigDecimal totalDue = BigDecimal.ZERO;
+    	int count=0;
+    	for (final PropertyMaterlizeView propView : propertyViewList){
+    		defaultersInfo = new DefaultersInfo();
+    		totalDue = BigDecimal.ZERO;
+    		count++;
+    		defaultersInfo.setSlNo(count);
+    		defaultersInfo.setAssessmentNo(propView.getPropertyId());
+    		defaultersInfo.setOwnerName(propView.getOwnerName());
+    		defaultersInfo.setWardName(propView.getWard().getName());
+    		defaultersInfo.setHouseNo(propView.getHouseNo());
+    		defaultersInfo.setLocality(propView.getLocality().getName());
+    		defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber())?propView.getMobileNumber():"NA"));
+    		defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
+    		defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
+    		totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue());
+    		defaultersInfo.setTotalDue(totalDue);
+    		defaultersList.add(defaultersInfo);
+    	}
+    	
+    	return defaultersList;
+    	
+    }
 
-		drb.addColumn("Ward No", "wardNo", String.class.getName(), 2, getTextStyleLeftBorder(),
-				getHeaderStyleLeftAlign())
-				.addColumn("Part No", "partNo", String.class.getName(), 2, getTextStyle(),
-						getHeaderStyleLeftAlign())
-				.addColumn("Index No", "indexNo", String.class.getName(), 5, getTextStyle(),
-						getHeaderStyleLeftAlign())
-				.addColumn("House No", "houseNo", String.class.getName(), 5, getTextStyle(),
-						getHeaderStyleLeftAlign())
-				.addColumn("Property Owner Name", "ownerName", String.class.getName(), 15,
-						getTextStyle(), getHeaderStyleLeftAlign())
-				.addColumn("From Year", "fromYear", Integer.class.getName(), 2, getTextStyle(),
-						getHeaderStyleLeftAlign())
-				.addColumn("To Year", "toYear", Integer.class.getName(), 2, getTextStyle(),
-						getHeaderStyleLeftAlign())
-				.addColumn("Arrears Balance", "arrearsDue", BigDecimal.class.getName(), 3,
-						getAmountStyle(), getHeaderStyleRightAlign())
-				.addColumn("Current Balance", "currentDue", BigDecimal.class.getName(), 3,
-						getAmountStyle(), getHeaderStyleRightAlign())
-				.addColumn("Total", "total", BigDecimal.class.getName(), 3, getAmountStyle(),
-						getHeaderStyleRightAlign());
-
-		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X, AutoText.POSITION_HEADER,
-				AutoText.ALIGMENT_RIGHT, AutoText.DEFAULT_WIDTH, AutoText.DEFAULT_WIDTH);
-		String reportSubTitle = " List of Defaulters ";
-
-		if (ward != null) {
-			reportSubTitle += " for Ward No: " + ward.getBoundaryNum();
-		}
-
-		if (StringUtils.isNotBlank(partNo) && !partNo.equals("-1")) {
-			reportSubTitle += " and Part No : " + partNo + "\\n";
-		}
-		if (reportDateStr != null) {
-			reportSubTitle += "          (As on date " + reportDateStr + ")";
-		}
-
-		drb.setTitle(REPORT_TITLE).setTitleStyle(getTitleStyle())
-				.setSubtitle(reportSubTitle + "\\n").setSubtitleStyle(getSubTitleStyle());
-		DynamicReport dr = drb.build();
-		dr.setWhenNoDataShowColumnHeader(false);
-		dr.setWhenNoDataShowTitle(false);
-		JRDataSource ds = new JRBeanCollectionDataSource(defaulters);
-		return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds);
-	}
-
-	@ValidationErrorPage(value = "new")
-	public void validateGenerateReport() {
-		LOGGER.debug("Entered into validateReport method");
-
-		if (getZoneId() == null || getZoneId() == -1) {
-			addActionError(getText("mandatory.zone"));
-		}
-
-		if (getWardId() == null || getWardId() == -1) {
-			addActionError(getText("mandatory.ward"));
-		}
-
-		if ("-1".equals(amountRange)) {
-			addActionError(getText("mandatory.amountRange"));
-		}
-
-		LOGGER.debug("Exiting from validateReport method");
-	}
-
-	private Style getAmountStyle() {
-		Style amountStyle = new Style("amount");
-		amountStyle.setTextColor(Color.BLACK);
-		amountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
-		amountStyle.setVerticalAlign(VerticalAlign.MIDDLE);
-		amountStyle.setFont(new Font(10, Font._FONT_VERDANA, false));
-		amountStyle.setPaddingRight(5);
-		amountStyle.setTransparency(Transparency.OPAQUE);
-		amountStyle.setBorderRight(Border.THIN);
-		amountStyle.setBorderBottom(Border.THIN);
-		return amountStyle;
-	}
-
-	private Style getTextStyle() {
-		Style textStyle = new Style("textStyle");
-		textStyle.setTextColor(Color.BLACK);
-		textStyle.setHorizontalAlign(HorizontalAlign.LEFT);
-		textStyle.setFont(new Font(10, Font._FONT_VERDANA, false));
-		textStyle.setPaddingLeft(5);
-		textStyle.setTransparency(Transparency.OPAQUE);
-		textStyle.setBorderRight(Border.THIN);
-		textStyle.setBorderBottom(Border.THIN);
-		textStyle.setVerticalAlign(VerticalAlign.MIDDLE);
-		// textStyle.setStretchWithOverflow(true);
-		return textStyle;
-	}
-
-	private Style getTextStyleLeftBorder() {
-		Style textStyle = getTextStyle();
-		textStyle.setName("textStyleLeftBorder");
-		textStyle.setBorderLeft(Border.THIN);
-		return textStyle;
-	}
-
-	private Style getSubTitleStyle() {
-		Style subTitleStyle = new Style("subTitleStyle");
-		subTitleStyle.setFont(new Font(12, Font._FONT_ARIAL, true, false, false));
-		subTitleStyle.setTextColor(Color.BLACK);
-		subTitleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-
-		return subTitleStyle;
-	}
-
-	private Style getTitleStyle() {
-		Style titleStyle = new Style("titleStyle");
-		titleStyle.setFont(Font.VERDANA_BIG_BOLD);
-		titleStyle.setTextColor(Color.BLACK);
-		titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-		titleStyle.setVerticalAlign(VerticalAlign.MIDDLE);
-		return titleStyle;
-	}
-
-	private Style getHeaderStyle() {
-		Style headerStyle = new Style("header");
-		headerStyle.setFont(new Font(12, Font._FONT_ARIAL, true, false, false));
-		headerStyle.setBorder(Border.THIN);
-		headerStyle.setTextColor(Color.BLACK);
-		headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-		headerStyle.setVerticalAlign(VerticalAlign.MIDDLE);
-		headerStyle.setTransparency(Transparency.OPAQUE);
-		headerStyle.setStretchWithOverflow(true);
-		headerStyle.setPaddingLeft(5);
-		return headerStyle;
-	}
-
-	private Style getHeaderStyleLeftAlign() {
-		Style headerStyle = getHeaderStyle();
-		headerStyle.setName("headerStyleLeftAlign");
-		headerStyle.setHorizontalAlign(HorizontalAlign.LEFT);
-		return headerStyle;
-	}
-
-	private Style getHeaderStyleRightAlign() {
-		Style headerStyle = getHeaderStyle();
-		headerStyle.setName("headerStyleRightAlign");
-		headerStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
-		headerStyle.setPaddingRight(10);
-
-		return headerStyle;
-	}
-
-	public Integer getZoneId() {
-		return zoneId;
-	}
-
-	public void setZoneId(Integer zoneId) {
-		this.zoneId = zoneId;
-	}
-
-	public Integer getWardId() {
+	public Long getWardId() {
 		return wardId;
 	}
 
-	public void setWardId(Integer wardId) {
+	public void setWardId(Long wardId) {
 		this.wardId = wardId;
 	}
 
-	public Map<Long, String> getZoneBndryMap() {
-		return ZoneBndryMap;
+	public String getFromDemand() {
+		return fromDemand;
 	}
 
-	public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
-		ZoneBndryMap = zoneBndryMap;
+	public void setFromDemand(String fromDemand) {
+		this.fromDemand = fromDemand;
 	}
 
-	public String getAmountRange() {
-		return amountRange;
+	public String getToDemand() {
+		return toDemand;
 	}
 
-	public void setAmountRange(String amountRange) {
-		this.amountRange = amountRange;
+	public void setToDemand(String toDemand) {
+		this.toDemand = toDemand;
 	}
 
-	public Integer getReportId() {
-		return reportId;
+	public Integer getLimit() {
+		return limit;
 	}
 
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
-	}
-
-	public String getPartNo() {
-		return partNo;
-	}
-
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
-	}
-
-	public List<DefaultersInfo> getDefaulters() {
-		return defaulters;
-	}
-
-	public void setDefaulters(List<DefaultersInfo> defaulters) {
-		this.defaulters = defaulters;
-	}
-
-	public Boolean getResultPage() {
-		return resultPage;
-	}
-
-	public void setResultPage(Boolean resultPage) {
-		this.resultPage = resultPage;
+	public void setLimit(Integer limit) {
+		this.limit = limit;
 	}
 
 }

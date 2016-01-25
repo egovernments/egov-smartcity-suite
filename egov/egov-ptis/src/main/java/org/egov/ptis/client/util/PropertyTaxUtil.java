@@ -2432,4 +2432,33 @@ public class PropertyTaxUtil {
                 request.getSession().getAttribute("cityGrade").toString():null);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
+    
+    /**
+     * Prepare query for Defaulters report
+     * @param wardId
+     * @param fromDemand
+     * @param toDemand
+     * @param limit
+     * @return
+     */
+    public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand,
+            final String toDemand, final Integer limit) {
+        final StringBuffer query = new StringBuffer(300);
+        
+        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null ");
+        String totalBalanceCond = " (pmv.aggrCurrDmd + pmv.aggrArrDmd - pmv.aggrArrColl - pmv.aggrCurrColl) ";
+        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
+        	query.append(" and "+totalBalanceCond+" >= ").append(fromDemand);
+        	query.append(" and "+totalBalanceCond+" <= ").append(toDemand);
+        }
+        if(wardId != null && wardId != -1)
+        	query.append(" and pmv.ward.id = ").append(wardId);
+        
+        query.append(" order by "+totalBalanceCond+" desc ");
+
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        if(limit != null && limit != -1)
+        	qry.setMaxResults(limit);
+        return qry;
+    }
 }
