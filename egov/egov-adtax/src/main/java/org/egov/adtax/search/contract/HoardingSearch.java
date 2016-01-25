@@ -61,13 +61,13 @@ public class HoardingSearch {
     private BigDecimal penaltyAmount;
     private int totalHoardingInAgency;
     private String hordingIdsSearchedByAgency;
-   
+    private String permitStatus;
 
     public String getAdvertisementNumber() {
         return advertisementNumber;
     }
 
-    public void setAdvertisementNumber(String advertisementNumber) {
+    public void setAdvertisementNumber(final String advertisementNumber) {
         this.advertisementNumber = advertisementNumber;
     }
 
@@ -171,7 +171,7 @@ public class HoardingSearch {
         return pendingDemandAmount;
     }
 
-    public void setPendingDemandAmount(BigDecimal pendingDemandAmount) {
+    public void setPendingDemandAmount(final BigDecimal pendingDemandAmount) {
         this.pendingDemandAmount = pendingDemandAmount;
     }
 
@@ -179,7 +179,7 @@ public class HoardingSearch {
         return penaltyAmount;
     }
 
-    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+    public void setPenaltyAmount(final BigDecimal penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
 
@@ -187,7 +187,7 @@ public class HoardingSearch {
         return totalHoardingInAgency;
     }
 
-    public void setTotalHoardingInAgency(int totalHoardingInAgency) {
+    public void setTotalHoardingInAgency(final int totalHoardingInAgency) {
         this.totalHoardingInAgency = totalHoardingInAgency;
     }
 
@@ -195,8 +195,16 @@ public class HoardingSearch {
         return hordingIdsSearchedByAgency;
     }
 
-    public void setHordingIdsSearchedByAgency(String hordingIdsSearchedByAgency) {
+    public void setHordingIdsSearchedByAgency(final String hordingIdsSearchedByAgency) {
         this.hordingIdsSearchedByAgency = hordingIdsSearchedByAgency;
     }
-    
+
+    public String getPermitStatus() {
+        return permitStatus;
+    }
+
+    public void setPermitStatus(final String permitStatus) {
+        this.permitStatus = permitStatus;
+    }
+
 }

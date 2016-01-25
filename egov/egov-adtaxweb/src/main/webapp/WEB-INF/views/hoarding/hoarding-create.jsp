@@ -82,13 +82,14 @@ $('#Forward').click(function(e){
 	if($('#advertisementform').valid()){
 		console.log('valid');
 		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
-			if($('#measurement').val() <= 0)
+			if($('#measurement').val() <= 0){
 				bootbox.alert('Please enter valid measurement');
 				e.preventDefault();
+			}else 
+				document.forms['advertisementform'].submit();
 		}else{
 			e.preventDefault();
 		}
-		document.forms['advertisementform'].submit();
 	}
 	e.preventDefault();
 });

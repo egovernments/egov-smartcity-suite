@@ -240,4 +240,8 @@
 	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
 	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-search.jsp"/>
     </definition>
+    <definition name="advertisement-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/advertisement-search.jsp"/>
+    </definition>
 </tiles-definitions>

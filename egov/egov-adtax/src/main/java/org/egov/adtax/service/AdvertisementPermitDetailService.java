@@ -59,8 +59,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +85,7 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-    
+
     @Autowired
     @Qualifier("adtaxWorkflowCustomDefaultImpl")
     private AdtaxWorkflowCustomDefaultImpl adtaxWorkflowCustomDefaultImpl;
@@ -97,9 +95,6 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AdTaxNumberGenerator adTaxNumberGenerator;
-
-    @Autowired
-    private CityService cityService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -177,7 +172,7 @@ public class AdvertisementPermitDetailService {
                     advertisementPermitDetail.getAdvertisement().getDemandId());
         roundOfAllTaxAmount(advertisementPermitDetail);
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        if (approvalPosition != null && additionalRule != null && org.apache.commons.lang.StringUtils.isNotEmpty(workFlowAction))
+        if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         return advertisementPermitDetail;
@@ -223,10 +218,12 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
             hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
             hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            hoardingSearchResult.setAgencyName(result.getAgency()!=null?result.getAgency().getName():"");
+            hoardingSearchResult.setAgencyName(result.getAgency() != null ? result.getAgency().getName() : "");
             hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
-            if (result.getAdvertisement().getDemandId() != null ) {
-                if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency()!=null) {
+            hoardingSearchResult.setPermitStatus(result.getStatus().getCode());
+            hoardingSearchResult.setPermissionNumber(result.getPermissionNumber());
+            if (result.getAdvertisement().getDemandId() != null)
+                if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                             .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
@@ -264,14 +261,13 @@ public class AdvertisementPermitDetailService {
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                     hoardingSearchResults.add(hoardingSearchResult);
                 }
-            }
         });
-        if (agencyWiseHoardingList.size() > 0){
-             List<HoardingSearch> agencyWiseFinalHoardingList = new ArrayList< HoardingSearch>();
-             agencyWiseHoardingList.forEach((key, value) -> {
-                 agencyWiseFinalHoardingList.add(value);
+        if (agencyWiseHoardingList.size() > 0) {
+            final List<HoardingSearch> agencyWiseFinalHoardingList = new ArrayList<HoardingSearch>();
+            agencyWiseHoardingList.forEach((key, value) -> {
+                agencyWiseFinalHoardingList.add(value);
             });
-             return agencyWiseFinalHoardingList;
+            return agencyWiseFinalHoardingList;
         }
         return hoardingSearchResults;
 
@@ -286,7 +282,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
             hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
             hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            hoardingSearchResult.setAgencyName(result.getAgency()!=null?result.getAgency().getName():"");
+            hoardingSearchResult.setAgencyName(result.getAgency() != null ? result.getAgency().getName() : "");
             hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
             hoardingSearchResults.add(hoardingSearchResult);
         });
@@ -302,7 +298,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setAdvertisementNumber(result.getAdvertisement().getAdvertisementNumber());
             hoardingSearchResult.setApplicationNumber(result.getApplicationNumber());
             hoardingSearchResult.setApplicationFromDate(result.getApplicationDate());
-            hoardingSearchResult.setAgencyName(result.getAgency()!=null?result.getAgency().getName():"");
+            hoardingSearchResult.setAgencyName(result.getAgency() != null ? result.getAgency().getName() : "");
             hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
             hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
             hoardingSearchResults.add(hoardingSearchResult);
@@ -319,5 +315,9 @@ public class AdvertisementPermitDetailService {
         if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+    }
+
+    public AdvertisementPermitDetail findByApplicationNumber(final String applicationNumber) {
+        return advertisementPermitDetailRepository.findByApplicationNumber(applicationNumber);
     }
 }

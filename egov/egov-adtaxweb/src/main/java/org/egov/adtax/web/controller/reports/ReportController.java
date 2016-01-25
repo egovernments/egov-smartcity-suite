@@ -54,13 +54,13 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infstr.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -115,11 +115,11 @@ public class ReportController {
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("permitNumber", advertisementPermitDetail.getPermissionNumber());
             if (advertisementPermitDetail.getAgency() != null
-                    && StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
+                    && org.apache.commons.lang.StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
                 reportParams.put("agencyname",
                         advertisementPermitDetail.getAgency().getName() + "/" + advertisementPermitDetail.getOwnerDetail());
             else if (advertisementPermitDetail.getAgency() != null
-                    && StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
+                    && org.apache.commons.lang.StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
                 reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
             else
                 reportParams.put("agencyname", advertisementPermitDetail.getOwnerDetail());
@@ -161,11 +161,11 @@ public class ReportController {
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("advertisementnumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
             if (advertisementPermitDetail.getAgency() != null
-                    && StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
+                    && org.apache.commons.lang.StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail()))
                 reportParams.put("agencyname",
                         advertisementPermitDetail.getAgency().getName() + "/" + advertisementPermitDetail.getOwnerDetail());
             else if (advertisementPermitDetail.getAgency() != null
-                    && StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
+                    && org.apache.commons.lang.StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail()))
                 reportParams.put("agencyname", advertisementPermitDetail.getAgency().getName());
             else
                 reportParams.put("agencyname", advertisementPermitDetail.getOwnerDetail());
@@ -203,5 +203,25 @@ public class ReportController {
         final byte[] byteData = errorMessage.getBytes();
         errorMessage = "";
         return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/demandNotice/{applicationNumber}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final String applicationNumber,
+            final HttpSession session) {
+        final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
+                .findByApplicationNumber(applicationNumber);
+        return generatePermitOrder(advertisementPermitDetails, session, null);
+    }
+
+    @RequestMapping(value = "/permitOrder/{applicationNumber}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> viewPermitOrderReport(@PathVariable final String applicationNumber,
+            final HttpSession session) {
+        final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
+                .findByApplicationNumber(applicationNumber);
+        if (!AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED
+                .equalsIgnoreCase(advertisementPermitDetails.getStatus().getCode()))
+            advertisementPermitDetailService.updateStateTransition(advertisementPermitDetails, Long.valueOf(0), "",
+                    AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, AdvertisementTaxConstants.WF_PERMITORDER_BUTTON);
+        return generatePermitOrder(advertisementPermitDetails, session, null);
     }
 }
