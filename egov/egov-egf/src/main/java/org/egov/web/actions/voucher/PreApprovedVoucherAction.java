@@ -137,6 +137,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private SecurityUtils securityUtils;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
     private List<EgBillregister> preApprovedVoucherList;
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
@@ -1050,7 +1052,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         if (field.equals("vouchernumber"))
         {
             String vNumGenMode = "Manual";
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+            vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
                 mandatoryFields.add("vouchernumber");
                 return true;

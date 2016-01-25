@@ -131,6 +131,8 @@ public class PaymentAction extends BasePaymentAction {
     private Paymentheader paymentheader = new Paymentheader();
     @Qualifier("paymentService")
     private @Autowired PaymentService paymentService;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
     @Qualifier("voucherService")
     private @Autowired VoucherService voucherService;
     private Integer bankaccount, bankbranch;
@@ -811,7 +813,7 @@ public class PaymentAction extends BasePaymentAction {
                     paymentService.validateForRTGSPayment(contingentList, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
             }
 
-            if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Payment"))) {
+            if (!"Auto".equalsIgnoreCase(voucherTypeForULB.readVoucherTypes("Payment"))) {
                 headerFields.add("vouchernumber");
                 mandatoryFields.add("vouchernumber");
             }
@@ -1207,7 +1209,7 @@ public class PaymentAction extends BasePaymentAction {
                 errors.add(new ValidationError("exp", "Invalid Access"));
                 throw new ValidationException(errors);
             }
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Payment");
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode))
         {
             voucherNumberPrefix = paymentheader.getVoucherheader().getVoucherNumber()
@@ -1253,7 +1255,7 @@ public class PaymentAction extends BasePaymentAction {
                         .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
         loadbankBranch(paymentheader.getVoucherheader().getFundId());
         getAdvanceRequisitionDetails();
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Payment");
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
             voucherNumberPrefix = paymentheader.getVoucherheader().getVoucherNumber()
                     .substring(0, Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
@@ -1413,7 +1415,7 @@ public class PaymentAction extends BasePaymentAction {
                 || paymentheader.getVoucherheader().getVoucherDate().equals(""))
             throw new ValidationException(Arrays.asList(new ValidationError("payment.voucherdate.empty",
                     "payment.voucherdate.empty")));
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Payment");
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode) && (voucherNumberSuffix == null || voucherNumberSuffix.equals("")))
             throw new ValidationException(Arrays.asList(new ValidationError("payment.vouchernumber.empty",
                     "payment.vouchernumber.empty")));
@@ -1434,7 +1436,7 @@ public class PaymentAction extends BasePaymentAction {
         if (paymentheader.getVoucherheader().getVoucherDate() == null
                 || paymentheader.getVoucherheader().getVoucherDate().equals(""))
             addFieldError("paymentheader.voucherheader.voucherDate", getMessage("payment.voucherdate.empty"));
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Payment");
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode) && (voucherNumberSuffix == null || voucherNumberSuffix.equals("")))
             addFieldError("paymentheader.voucherheader.voucherNumber", getMessage("payment.vouchernumber.empty"));
         if (parameters.get("paymentheader.bankaccount.bankbranch.id")[0].equals("-1"))
@@ -2144,7 +2146,4 @@ public class PaymentAction extends BasePaymentAction {
         return paymentheader.getState().getValue();
     }
 
-    public String getStateType() {
-        return paymentheader.getStateType();
-    }
 }

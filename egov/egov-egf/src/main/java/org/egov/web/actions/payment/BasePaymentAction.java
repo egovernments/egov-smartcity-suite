@@ -91,6 +91,8 @@ public class BasePaymentAction extends BaseVoucherAction {
     private static Logger LOGGER = Logger.getLogger(BasePaymentAction.class);
     @Autowired
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
@@ -161,7 +163,7 @@ public class BasePaymentAction extends BaseVoucherAction {
     public boolean shouldshowVoucherNumber()
     {
         String vNumGenMode = "Manual";
-        vNumGenMode = new VoucherTypeForULB().readVoucherTypes(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        vNumGenMode = voucherTypeForULB.readVoucherTypes(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
             mandatoryFields.add("vouchernumber");
             return true;
@@ -196,8 +198,9 @@ public class BasePaymentAction extends BaseVoucherAction {
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-            .withDateInfo(currentDate.toDate());
+            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());

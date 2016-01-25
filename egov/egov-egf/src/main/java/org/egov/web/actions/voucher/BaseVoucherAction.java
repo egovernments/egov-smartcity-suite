@@ -122,6 +122,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected AssignmentService assignmentService;
     @Autowired
     private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
     protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
     protected String reversalVoucherDate;
@@ -744,9 +746,9 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
         {
             String vNumGenMode = "Manual";
             if (voucherHeader.getType() != null && voucherHeader.getType().equalsIgnoreCase("Journal Voucher"))
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+                vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             else
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherHeader.getType());
+                vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherHeader.getType());
             if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
                 mandatoryFields.add("vouchernumber");
                 return true;
@@ -977,6 +979,7 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
     public FinancingSourceService getFinancingSourceService() {
         return financingSourceService;
     }
+
 
 
 }

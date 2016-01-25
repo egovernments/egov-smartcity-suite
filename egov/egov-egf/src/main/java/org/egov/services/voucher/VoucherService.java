@@ -140,6 +140,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     private ChartOfAccountsDAO coaDAO;
     @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
+    @Autowired
     private FunctionDAO functionDAO;
     @Autowired
     private AssignmentService assignmentService;
@@ -526,7 +528,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("autoVoucherType FOR MODIFIED VOUCHER :" + autoVoucherType);
 
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherNumType);
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherNumType);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("new fund id :" + voucherHeader.getFundId().getId());
         if (LOGGER.isDebugEnabled())
@@ -708,9 +710,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         String vNumGenMode = null;
         if (null != voucherHeader.getType()
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+            vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
         else
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherTypeBean.getVoucherNumType());
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherTypeBean.getVoucherNumType());
         final String autoVoucherType = EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME, voucherTypeBean
                 .getVoucherNumType()
                 .toLowerCase(), "", FinancialConstants.CATEGORYFORVNO);
@@ -730,9 +732,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         String vNumGenMode = null;
         if (null != voucherHeader.getType()
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+            vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
         else
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherTypeBean.getVoucherNumType());
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherTypeBean.getVoucherNumType());
         final String autoVoucherType = EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME, voucherTypeBean
                 .getVoucherNumType()
                 .toLowerCase(), "", FinancialConstants.CATEGORYFORVNO);

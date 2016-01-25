@@ -129,6 +129,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private @Autowired PersistenceService persistenceService;
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
     private @Autowired CreateVoucher createVoucher;
     public List<CChartOfAccounts> purchaseBillGlcodeList = new ArrayList<CChartOfAccounts>();
     public List<CChartOfAccounts> worksBillGlcodeList = new ArrayList<CChartOfAccounts>();
@@ -651,7 +653,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting updateVoucherHeader...");
         final EGovernCommon eGovernCommon = new EGovernCommon();
-        String vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Payment");
+        String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         String autoVoucherType = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
         String manualVoucherNumber = "";
         if (parameters.get("voucherNumberSuffix") != null)
