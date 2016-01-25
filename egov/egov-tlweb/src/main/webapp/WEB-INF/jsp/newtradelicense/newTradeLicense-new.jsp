@@ -137,9 +137,20 @@
 				} else {
 					document.getElementById("hpheader").style.display='none';
 				}
+  				var currentState=document.getElementById("currentWfstate").value;
+				if(currentState=='Create License:Commissioner Approved')	
+					{
+					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
+					jQuery(".show-row").hide(); 
+					jQuery('#approverComments').removeAttr('<span class="mandatory"></span>');
+					jQuery('#approverDepartment').removeAttr('<span class="mandatory"></span>');
+					jQuery('#approverDesignation').removeAttr('<span class="mandatory"></span>');
+					jQuery('#approverPositionId').removeAttr('<span class="mandatory"></span>');
+					jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					}	
 				
 				if(dom.get("mode").value=='view'){
-					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments',
+					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
 					                     'Forward','Reject','button2','Approve']); 
 	                  //remove onclick event for propertyno search button
 					  jQuery("#searchImg").removeAttr("onclick");
@@ -446,7 +457,9 @@
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden id="mode" name="mode" value="%{mode}" />
+							<s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}" />
 							<s:hidden name="id" id="id" />
+							
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
                             <s:if test="%{mode=='edit'}">

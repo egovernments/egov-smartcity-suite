@@ -149,6 +149,13 @@ String path = request.getContextPath();
 						<option value="-1">
 							<s:text name="license.default.select" />
 						</option>
+						 <s:if test="%{roleName.contains('ULB OPERATOR') || roleName.contains('CSC OPERATOR')}">
+									<s:if test="%{#attr.license.isPaid() != true && (#attr.license.status.statusCode=='ACK' || #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
+									 	<option value="/integration/licenseBillCollect.action?licenseId=">
+											<s:text name="Collect Fee" />
+										</option>
+								 	</s:if>
+								</s:if> 
 						<s:if test="%{#attr.license.status.statusCode!='CAN'}">
 							<s:if test="%{#attr.license.status.statusCode!='UWF'}">
 								<s:if test="%{roleName.contains('TLAPPROVER')}">
@@ -156,13 +163,13 @@ String path = request.getContextPath();
 										<s:text name="Cancel Trade" />
 									</option>
 								</s:if>
-								<s:if test="%{roleName.contains('TLCREATOR')}">
+								<%-- <s:if test="%{roleName.contains('TLCREATOR')}">
 									<s:if test="%{#attr.license.disablePrintCertificate() != true}">
 										<option value="/viewtradelicense/viewTradeLicense-duplicateCertificate.action?model.id=">
 											<s:text name="Print License" />
 										</option>
 									</s:if>
-								</s:if>
+								</s:if> --%>
 								<s:if test="%{#attr.license.status.statusCode=='ACT'}">
 									<s:if test="%{roleName.contains('TLCREATOR')}">
 										<option value="/transfer/transferTradeLicense-newForm.action?licenseId=">
@@ -175,13 +182,7 @@ String path = request.getContextPath();
 										</s:if>
 									</s:if>
 								</s:if>
-								 <s:if test="%{roleName.contains('ULB OPERATOR') || roleName.contains('CSC OPERATOR')}">
-									<s:if test="%{#attr.license.isPaid() != true && (#attr.license.status.statusCode=='ACK' || #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
-									 	<option value="/integration/licenseBillCollect.action?licenseId=">
-											<s:text name="Collect Fee" />
-										</option>
-								 	</s:if>
-								</s:if> 
+								
 							</s:if>
 							<s:if test="%{roleName.contains('TLCREATOR')}">
 								<s:if test="%{#attr.license.licenseNumber != null && #attr.license.licenseNumber != ''}">

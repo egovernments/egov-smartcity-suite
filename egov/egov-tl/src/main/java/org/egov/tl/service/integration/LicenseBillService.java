@@ -463,7 +463,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
              */
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                     Constants.WF_STATE_COLLECTION_PENDING, null);
-            license2.getState();
+           
             license2.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
             .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());

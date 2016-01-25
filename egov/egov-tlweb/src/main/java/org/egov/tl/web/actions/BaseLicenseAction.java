@@ -407,10 +407,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public void processWorkflow(String processType) {
         populateWorkflowBean();
         if (processType.equalsIgnoreCase(NEW)) {
-            if(!Constants.BUTTONSAVE.equals(workFlowAction))
+            if(!Constants.BUTTONSUBMIT.equals(workFlowAction))
             licenseService().transitionWorkFlow(license(), workflowBean);
         } else if (processType.equalsIgnoreCase("Renew")) {
-           if(! Constants.BUTTONSAVE.equals(workFlowAction))
+           if(! Constants.BUTTONSUBMIT.equals(workFlowAction))
             licenseService().processWorkflowForRenewLicense(license(), workflowBean);
 
         }

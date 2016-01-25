@@ -312,7 +312,7 @@ public class Constants {
 	
 	public static final String BUTTONFORWARD = "Forward";
 	public static final String BUTTONREJECT = "Reject";
-	public static final String BUTTONSAVE = "Save";
+	public static final String BUTTONSUBMIT = "Submit";
 	public static final String BUTTONGENERATEDCERTIFICATE = "GeneratedCertificate";
 	public static final String BUTTONGENERATEDREJECTCERTIFICATE = "GeneratedREJECTCertificate";
 	public static final String BUTTONPRINTCOMPLETED = "PrintCompleted";

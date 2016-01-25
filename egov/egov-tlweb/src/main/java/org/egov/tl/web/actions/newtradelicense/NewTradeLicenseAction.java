@@ -112,7 +112,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public String approve() {
 
         tradeLicense = this.tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-       if (Constants.BUTTONSAVE.equals(workFlowAction) && mode.equalsIgnoreCase(VIEW) &&  license().getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null && !tradeLicense.isPaid() &&
+      if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW) &&  tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
             ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
@@ -126,12 +126,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 license().generateLicenseNumber(nextRunningLicenseNumber);
               
              }
-            if(BUTTONAPPROVE.equals(workFlowAction) &&(Constants.BUTTONFORWARD.equals(workFlowAction) && license().getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) ))
-            {
-              LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                        .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
-                license().setStatus(activeStatus);
-            }
+            
+        }
+        if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && tradeLicense.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
+        {
+          LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                    .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
+            license().setStatus(activeStatus);
         }
         if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
             LicenseStatus activeStatus = (LicenseStatus) persistenceService

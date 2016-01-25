@@ -668,16 +668,12 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
-        }   else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        }   
+        else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             license.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
             .withDateInfo(currentDate.toDate());
         } else {
-            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
-            
-            else {
-            
-            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+           if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
             if( BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             {
@@ -700,7 +696,7 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }
-            }
+          
         }
     }
 
