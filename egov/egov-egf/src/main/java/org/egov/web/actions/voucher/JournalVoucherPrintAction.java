@@ -95,7 +95,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 public class JournalVoucherPrintAction extends BaseFormAction {
-    String jasperpath = "/org/egov/web/actions/voucher/journalVoucherReport.jasper";
+    String jasperpath = "/reports/templates/journalVoucherReport.jasper";
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
     private CVoucherHeader voucher = new CVoucherHeader();

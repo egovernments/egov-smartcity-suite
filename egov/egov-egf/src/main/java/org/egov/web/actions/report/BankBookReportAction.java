@@ -107,7 +107,7 @@ public class BankBookReportAction extends BaseFormAction {
     private static final String RECEIPT = "Receipt";
     private static final String SURRENDERED = "Surrendered";
     private static final Logger LOGGER = Logger.getLogger(BankBookReportAction.class);
-    String jasperpath = "/org/egov/web/actions/report/bankBookReport.jasper";
+    String jasperpath = "/reports/templates/bankBookReport.jasper";
     List<Paymentheader> paymentHeaderList = new ArrayList<Paymentheader>();
     private List<BankBookEntry> bankBookEntries = new ArrayList<BankBookEntry>();
     private List<BankBookViewEntry> bankBookViewEntries = new ArrayList<BankBookViewEntry>();

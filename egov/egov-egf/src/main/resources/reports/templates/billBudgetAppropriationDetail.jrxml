@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetAppropriationDetail" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-01-22T18:21:31 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetAppropriationDetail" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="dc61a781-a5d5-448a-97e4-83fe60f67975">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -36,7 +38,7 @@
 	<detail>
 		<band height="180" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="93" width="101" height="23" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="93" width="101" height="23" isPrintWhenDetailOverflows="true" uuid="de4db118-78b8-4409-8653-1e2a9413588d"/>
 				<box topPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -47,10 +49,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{departmentName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{departmentName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="101" y="93" width="89" height="23" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="101" y="93" width="89" height="23" isPrintWhenDetailOverflows="true" uuid="84db21d7-7d9a-4d92-b4a5-85002d1a0d37"/>
 				<box topPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -61,10 +63,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{AccountCode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AccountCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="190" y="93" width="238" height="23" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="190" y="93" width="238" height="23" isPrintWhenDetailOverflows="true" uuid="5a337604-2615-4f2b-82b9-df66420dac8f"/>
 				<box topPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -75,10 +77,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{functionName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{functionName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="428" y="93" width="128" height="23" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="93" width="128" height="23" isPrintWhenDetailOverflows="true" uuid="6fd7cff4-d3bc-453b-accf-8772e575a1c5"/>
 				<box topPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -89,10 +91,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fundName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fundName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="71" width="101" height="22"/>
+				<reportElement x="0" y="71" width="101" height="22" uuid="f052d621-2ff6-4a2d-89da-79b209146163"/>
 				<box topPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -106,7 +108,7 @@
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="101" y="71" width="89" height="22"/>
+				<reportElement x="101" y="71" width="89" height="22" uuid="c3077db9-5000-42e4-b79b-9bb518d6a6a2"/>
 				<box topPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -121,7 +123,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="190" y="71" width="238" height="22"/>
+				<reportElement x="190" y="71" width="238" height="22" uuid="77700806-780c-4ab8-a1c2-0c42c68ee06e"/>
 				<box topPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -135,7 +137,7 @@
 				<text><![CDATA[Function]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="428" y="71" width="128" height="22"/>
+				<reportElement x="428" y="71" width="128" height="22" uuid="e8d1a896-01aa-48fe-b29f-c96587ed8b2d"/>
 				<box topPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -149,7 +151,7 @@
 				<text><![CDATA[Fund]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="116" width="72" height="26"/>
+				<reportElement x="0" y="116" width="72" height="26" uuid="fd906674-0336-4da6-9e4c-7453d1ae1b13"/>
 				<box topPadding="10">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -160,10 +162,10 @@
 				<textElement textAlignment="Left">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{financialYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{financialYear}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="0" y="142" width="72" height="20"/>
+				<reportElement x="0" y="142" width="72" height="20" uuid="b986e9d0-36d7-42b8-a5b2-e2055432c6e5"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -174,10 +176,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{budgetedAmtForYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{budgetedAmtForYear}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="72" y="116" width="98" height="26"/>
+				<reportElement x="72" y="116" width="98" height="26" uuid="7080e5c8-a20a-4a36-b06f-76adf61d2bff"/>
 				<box topPadding="10">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -192,7 +194,7 @@
 ]]></text>
 			</staticText>
 			<textField pattern="###0.00">
-				<reportElement x="72" y="142" width="98" height="20"/>
+				<reportElement x="72" y="142" width="98" height="20" uuid="e674a9a8-c129-48c1-956f-e11a84653f82"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -203,10 +205,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{soFarAppropriated}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{soFarAppropriated}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="170" y="142" width="78" height="20"/>
+				<reportElement x="170" y="142" width="78" height="20" uuid="0f217e87-7448-48f5-8ba2-12e3da036319"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -217,10 +219,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{balance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{balance}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="170" y="116" width="78" height="26"/>
+				<reportElement x="170" y="116" width="78" height="26" uuid="a95e023e-d33b-4eba-b576-8597ad10ca26"/>
 				<box topPadding="10">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -234,7 +236,7 @@
 				<text><![CDATA[Balance ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="248" y="116" width="102" height="26"/>
+				<reportElement x="248" y="116" width="102" height="26" uuid="cc31ed18-7f46-43d6-ac46-f0958983d36d"/>
 				<box topPadding="10">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -249,7 +251,7 @@
 ]]></text>
 			</staticText>
 			<textField pattern="###0.00">
-				<reportElement x="248" y="142" width="102" height="20"/>
+				<reportElement x="248" y="142" width="102" height="20" uuid="b53c2cc6-0189-4b76-bd90-1ebc59b3fcf5"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -260,10 +262,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{currentBillAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{currentBillAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="350" y="116" width="118" height="26"/>
+				<reportElement x="350" y="116" width="118" height="26" uuid="ff704445-fd9a-4b3a-8a0a-4660716891f2"/>
 				<box topPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -277,7 +279,7 @@
 				<text><![CDATA[Cumulative including current bill]]></text>
 			</staticText>
 			<textField pattern="###0.00">
-				<reportElement x="350" y="142" width="118" height="20"/>
+				<reportElement x="350" y="142" width="118" height="20" uuid="26741fda-60cd-434c-b9e3-a33394a87666"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -288,10 +290,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cumilativeIncludingCurrentBill}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cumilativeIncludingCurrentBill}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="468" y="142" width="88" height="20"/>
+				<reportElement x="468" y="142" width="88" height="20" uuid="f939ce3f-d43b-471e-981b-73c1e296cd4d"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -302,10 +304,10 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{currentBalanceAvailable}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{currentBalanceAvailable}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="468" y="116" width="88" height="26"/>
+				<reportElement x="468" y="116" width="88" height="26" uuid="146eaa68-477b-456d-b90a-c52113b0830d"/>
 				<box topPadding="10">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -319,7 +321,7 @@
 				<text><![CDATA[Balance Available (Rs)]]></text>
 			</staticText>
 			<frame>
-				<reportElement x="0" y="11" width="556" height="60"/>
+				<reportElement x="0" y="11" width="556" height="60" uuid="a0eb1ab3-4793-4dbc-a9d5-95a3b4dde035"/>
 				<box topPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -328,19 +330,17 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="190" y="31" width="288" height="24"/>
+					<reportElement x="190" y="31" width="288" height="24" uuid="4fec6f6a-9b3f-4225-aa6f-5c3437c6fdc9"/>
 					<box topPadding="3" leftPadding="3"/>
-					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{budgetApprNumber}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{budgetApprNumber}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="10" y="31" width="170" height="24"/>
+					<reportElement x="10" y="31" width="170" height="24" uuid="284c2719-33c2-4981-a1cf-a3d29f438294"/>
 					<box topPadding="3" leftPadding="3"/>
-					<textElement/>
 					<text><![CDATA[Budget Appropriation Number :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="112" y="1" width="333" height="28"/>
+					<reportElement x="112" y="1" width="333" height="28" uuid="2ed35715-d748-4aac-a6f3-87e4d030b5b8"/>
 					<box topPadding="3"/>
 					<textElement textAlignment="Center">
 						<font size="11" isBold="true"/>
@@ -349,7 +349,7 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement x="0" y="167" width="556" height="9"/>
+				<reportElement x="0" y="167" width="556" height="9" uuid="3fc807e7-0b83-423b-847e-c58b47bfbdc2"/>
 			</frame>
 		</band>
 	</detail>

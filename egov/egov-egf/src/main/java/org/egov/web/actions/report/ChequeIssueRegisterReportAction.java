@@ -99,7 +99,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
      */
     private static final long serialVersionUID = -5452940328051657821L;
     private static final String MULTIPLE = "Multiple";
-    String jasperpath = "/org/egov/web/actions/report/chequeIssueRegisterReport.jasper";
+    String jasperpath = "/reports/templates/chequeIssueRegisterReport.jasper";
     private List<ChequeIssueRegisterDisplay> chequeIssueRegisterList = new ArrayList<ChequeIssueRegisterDisplay>();
     PersistenceService persistenceService;
     private Date fromDate;
