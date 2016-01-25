@@ -93,40 +93,40 @@
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox"> 
-									<s:text name="OwnerName" /><span class="mandatory1">*</span>:
+									<s:text name="OwnerName" />:
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="name" id="name" value="%{propertyOwner.name}" readonly="true"/>
+								<span style="font-weight:bold"><s:property value="%{propertyOwner.name}"/></span>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>	
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="doorNo" /><span class="mandatory1">*</span>:
+									<s:text name="doorNo" />:
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="doorNo" id="doorNo" value="%{doorNo}" readonly="true"/>
+								<span style="font-weight:bold"><s:property value="%{doorNo}"/></span>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>	
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="existing.mobileno" /><span class="mandatory1">*</span>:
+									<s:text name="existing.mobileno" />:
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="propertyOwner.mobileNumber" id="propertyOwner.mobileNumber" value="%{propertyOwner.mobileNumber}" readonly="true"/>
+								<span style="font-weight:bold"><s:property value="%{propertyOwner.mobileNumber}"/></span>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>	
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
-									<s:text name="new.mobileno" />:
+									<s:text name="new.mobileno" /><span class="mandatory1">*</span>:
 								</td>
 								
 								<td class="bluebox">
