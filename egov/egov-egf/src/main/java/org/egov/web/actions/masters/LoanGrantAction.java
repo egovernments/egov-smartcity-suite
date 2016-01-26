@@ -133,8 +133,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                 ((LoanGrantHeader) getModel()).getId());
         final SchemeBankaccount account = (SchemeBankaccount) persistenceService.find("from SchemeBankaccount where subScheme=?",
                 loanGrantHeader.getSubScheme());
-        setFundId(loanGrantHeader.getSubScheme().getScheme().getFund().getId());
-        setBank_branch(account.getBankAccount().getBankbranch().getId());
+        setFundId(loanGrantHeader.getSubScheme().getScheme().getFund().getId().intValue());
+        setBank_branch(account.getBankAccount().getBankbranch().getId().intValue());
         final List<Bankaccount> accNumList = persistenceService.findAllBy(
                 "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=1 order by ba.chartofaccounts.glcode",
                 bank_branch, fundId);
@@ -148,8 +148,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         addDropdownData("bankbranchList", branchList);
         fundingAgencyList = new ArrayList<FundingAgency>();
         fundingAgencyList.addAll(persistenceService.findAllBy(" from FundingAgency where isActive=1 order by name"));
-        schemeId = loanGrantHeader.getSubScheme().getScheme().getId();
-        subSchemeId = loanGrantHeader.getSubScheme().getId();
+        schemeId = loanGrantHeader.getSubScheme().getScheme().getId().intValue();
+        subSchemeId = loanGrantHeader.getSubScheme().getId().intValue();
         projectCodeList = new ArrayList<LoanGrantBean>();
         final String strQuery = "select pc.id as id , pc.code as code, pc.name as name from egw_projectcode pc," +
                 " egf_subscheme_project sp where pc.id= sp.projectcodeid and sp.subschemeid=" + subSchemeId;

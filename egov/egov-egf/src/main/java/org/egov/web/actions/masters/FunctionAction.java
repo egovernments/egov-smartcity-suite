@@ -126,8 +126,8 @@ public class FunctionAction extends BaseFormAction {
 
             EgovMasterDataCaching.getInstance().removeFromCache("egi-function");
             function.setLevel(parentLevel);
-            function.setCreated(new Date());
-            function.setModifiedBy(getLoggedInUser());
+//            function.setCreated(new Date());
+//            function.setModifiedBy(getLoggedInUser());
 
             funcNameStr.append(function.getCode()).append("-").append(function.getName());
 
@@ -190,7 +190,7 @@ public class FunctionAction extends BaseFormAction {
             funcOld.setName(funcNameStr.toString());
             funcOld.setCode(function.getCode());
             funcOld.setIsActive(function.isIsActive());
-            funcOld.setModifiedBy(getLoggedInUser());
+//            funcOld.setModifiedBy(getLoggedInUser());
             funcOld.setFuncNameActual(function.getFuncNameActual());
 
             // Reading the parentFunc value at the start and then updating at the end due to StaleObjectException

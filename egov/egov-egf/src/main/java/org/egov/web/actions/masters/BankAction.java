@@ -133,13 +133,8 @@ public class BankAction extends BaseFormAction {
             if (bank.getId() == null) {
                 // TODO Dirty Code can be avoided by extending BaseModel for Bank
                 final Date currentDate = new Date();
-                bank.setCreated(currentDate);
-                bank.setLastmodified(currentDate);
-                bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
                 bankService.persist(bank);
             } else {
-                bank.setLastmodified(new Date());
-                bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
                 bankService.update(bank);
             }
             addActionMessage(getText("Bank Saved Successfully"));

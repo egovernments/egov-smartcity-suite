@@ -208,12 +208,12 @@ public class FinancingSourceAction extends BaseFormAction {
                 if (fundsource.getType().equalsIgnoreCase("Shared Source")) {
                     sharedFundSource = new SharedFundSource();
                     sharedFundSource.setSubSchemeId(fundsource.getSubSchemeId());
-                    sharedFundSource.setFundSourceId(financingSourceService.findById(fundsource.getId(), false));
+                    sharedFundSource.setFundSourceId(financingSourceService.findById(fundsource.getId().intValue(), false));
                     sharedFundSource.setAmount(fundsource.getSourceAmount());
                     shrdFSrcPerSer.persist(sharedFundSource);
                 } else {
                     fundsource = checkRelatedEntities(fundsource);
-                    fundsource.setCreated(new Date());
+//                    fundsource.setCreated(new Date());
                     fundsource.setCreatedBy(user);
                     financingSourceService.persist(fundsource);
                 }

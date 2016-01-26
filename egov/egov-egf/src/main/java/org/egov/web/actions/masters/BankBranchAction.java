@@ -101,7 +101,6 @@ public class BankBranchAction extends JQueryGridActionSupport {
         final Date currentDate = new Date();
         final Bankbranch bankBranch = new Bankbranch();
         bankBranch.setBank(bank);
-        bankBranch.setCreated(currentDate);
         populateBankBranchDetail(bankBranch);
         bankBranchService.persist(bankBranch);
     }
@@ -119,8 +118,6 @@ public class BankBranchAction extends JQueryGridActionSupport {
 
     private void populateBankBranchDetail(final Bankbranch bankBranch) {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        bankBranch.setModifiedby(BigDecimal.valueOf(Long.valueOf(EgovThreadLocals.getUserId())));
-        bankBranch.setLastmodified(new Date());
         bankBranch.setBranchcode(request.getParameter("branchcode"));
         bankBranch.setBranchname(request.getParameter("branchname"));
         bankBranch.setBranchaddress1(request.getParameter("branchaddress1"));

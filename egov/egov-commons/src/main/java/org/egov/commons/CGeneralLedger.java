@@ -43,18 +43,46 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "GENERALLEDGER")
+@SequenceGenerator(name = CGeneralLedger.SEQ_GENERALLEDGER, sequenceName = CGeneralLedger.SEQ_GENERALLEDGER, allocationSize = 1)
 public class CGeneralLedger {
 	
+	public static final String SEQ_GENERALLEDGER = "SEQ_GENERALLEDGER";
+	
+	@Id
+	@GeneratedValue(generator = SEQ_GENERALLEDGER, strategy = GenerationType.SEQUENCE)
 	private Long id = null;
 	private Integer voucherlineId;
 	private Date effectiveDate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="glcodeId")
 	private CChartOfAccounts glcodeId;
 	private String glcode;
 	private Double debitAmount;
 	private Double creditAmount;
 	private String description;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="voucherHeaderId")
 	private CVoucherHeader voucherHeaderId;
 	private Integer functionId;
+	
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="generalLedgerId", targetEntity=CGeneralLedgerDetail.class)
 	private Set<CGeneralLedgerDetail> generalLedgerDetails = new HashSet<CGeneralLedgerDetail>();
 
 	/**

@@ -1060,7 +1060,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadBankAccountsBySubscheme...");
 
         final SubScheme subScheme = (SubScheme) persistenceService.find("from SubScheme where id = " + subSchemeId);
-        fundId = subScheme.getScheme().getFund().getId();
+        fundId = subScheme.getScheme().getFund().getId().intValue();
         final String[] strArray = typeOfAccount.split(",");
         accNumList = persistenceService.findAllBy(
                 " from Bankaccount where fund.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,
@@ -1347,7 +1347,7 @@ public class CommonAction extends BaseFormAction {
             entitiesList = new ArrayList<EntityType>();
         else {
             final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                    "from Accountdetailtype where id=? order by name", accountDetailType);
+                    "from Accountdetailtype where id=? order by name", accountDetailType.longValue());
             final String table = detailType.getFullQualifiedName();
             final Class<?> service = Class.forName(table);
             String simpleName = service.getSimpleName();
@@ -1373,7 +1373,7 @@ public class CommonAction extends BaseFormAction {
             entitiesList = new ArrayList<EntityType>();
         else {
             final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                    "from Accountdetailtype where id=? order by name", accountDetailType);
+                    "from Accountdetailtype where id=? order by name", accountDetailType.longValue());
             final String table = detailType.getFullQualifiedName();
             final Class<?> service = Class.forName(table);
             String simpleName = service.getSimpleName();
@@ -1382,7 +1382,7 @@ public class CommonAction extends BaseFormAction {
             final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                     .getServletContext());
             final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
-            entitiesList = (List<EntityType>) entityService.filterActiveEntities(startsWith, 20, detailType.getId());
+            entitiesList = (List<EntityType>) entityService.filterActiveEntities(startsWith, 20, detailType.getId().intValue());
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadEntitesBy20.");

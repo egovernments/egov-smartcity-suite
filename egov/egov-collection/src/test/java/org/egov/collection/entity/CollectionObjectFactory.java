@@ -130,10 +130,6 @@ public class CollectionObjectFactory {
 		bankbranch.setBranchcity("branch city");
 		bankbranch.setIsactive(1);
 		bankbranch.setBank(createBank());
-		bankbranch.setCreated(new Date());
-		bankbranch.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
-		bankbranch.setLastmodified(new Date());
 		session.saveOrUpdate(bankbranch);
 		return bankbranch;
 	}
@@ -143,10 +139,6 @@ public class CollectionObjectFactory {
 		bank.setCode("TEST" + getRandomNumber());
 		bank.setName("Test Bank" + getRandomNumber());
 		bank.setIsactive(1);
-		bank.setCreated(new Date());
-		bank.setLastmodified(new Date());
-		bank.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
 		session.saveOrUpdate(bank);
 		return bank;
 	}
@@ -496,9 +488,7 @@ public class CollectionObjectFactory {
 		account.setName("testAccountName" + glCode);
 		account.setIsActiveForPosting(true);
 		account.setCreatedBy(user);
-		account.setModifiedBy(user);
 		account.setCreatedDate(date);
-		account.setModifiedDate(date);
 		account.setType('I');
 		session.saveOrUpdate(account);
 		return account;
@@ -974,10 +964,8 @@ public class CollectionObjectFactory {
 	public Functionary createFunctionary() {
 		Functionary functionary = new Functionary();
 		functionary.setCode(BigDecimal.valueOf(10102));
-		functionary.setCreatetimestamp(new Date());
 		functionary.setIsactive(true);
 		functionary.setName("Test Functionary");
-		functionary.setUpdatetimestamp(new Date());
 		return functionary;
 	}
 
@@ -988,9 +976,6 @@ public class CollectionObjectFactory {
 		newFundsource.setName(name + getRandomNumber());
 		newFundsource.setLlevel(BigDecimal.valueOf(0));
 		newFundsource.setIsactive(true);
-		newFundsource.setCreated(date);
-		newFundsource.setLastmodified(date);
-		newFundsource.setModifiedby(BigDecimal.valueOf(1));
 		newFundsource.setIsnotleaf(true);
 		session.saveOrUpdate(newFundsource);
 		return newFundsource;
@@ -1054,7 +1039,6 @@ public class CollectionObjectFactory {
 		fund.setCode(code + getRandomNumber());
 		fund.setLlevel(BigDecimal.valueOf(0));
 		fund.setIsactive(1);
-		fund.setCreated(new Date());
 		session.saveOrUpdate(fund);
 		return fund;
 	}
@@ -1366,7 +1350,6 @@ public class CollectionObjectFactory {
 		subscheme.setValidto(new Date());
 		subscheme.setScheme(scheme);
 		subscheme.setIsactive("1");
-		subscheme.setLastmodifieddate(new Date());
 		session.saveOrUpdate(subscheme);
 		return subscheme;
 	}
@@ -1429,10 +1412,8 @@ public class CollectionObjectFactory {
 	public Functionary createSavedFunctionary() {
 		Functionary functionary = new Functionary();
 		functionary.setCode(BigDecimal.valueOf(10102));
-		functionary.setCreatetimestamp(new Date());
 		functionary.setIsactive(true);
 		functionary.setName("Test Functionary");
-		functionary.setUpdatetimestamp(new Date());
 		session.saveOrUpdate(functionary);
 		return functionary;
 	}
@@ -1469,9 +1450,7 @@ public class CollectionObjectFactory {
 		coa.setName("testcoa");
 		coa.setIsActiveForPosting(true);
 		coa.setCreatedBy(user);
-		coa.setModifiedBy(user);
 		coa.setCreatedDate(date);
-		coa.setModifiedDate(date);
 		coa.setPurposeId((long) 4);
 		coa.setType('I');
 		session.saveOrUpdate(coa);

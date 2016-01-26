@@ -41,12 +41,28 @@ package org.egov.commons;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "GENERALLEDGERDETAIL")
+@SequenceGenerator(name = CGeneralLedgerDetail.SEQ_GENERALLEDGERDETAIL, sequenceName = CGeneralLedgerDetail.SEQ_GENERALLEDGERDETAIL, allocationSize = 1)
 public class CGeneralLedgerDetail {
+	
+	public static final String SEQ_GENERALLEDGERDETAIL = "SEQ_GENERALLEDGERDETAIL";
+	
+	@Id
+	@GeneratedValue(generator = SEQ_GENERALLEDGERDETAIL, strategy = GenerationType.SEQUENCE)
 	private Long id;
 	private Integer generalLedgerId;
 	private Integer detailKeyId;
 	private Integer detailTypeId;
 	private BigDecimal amount;
+	
 	public Long getId() {
 		return id;
 	}

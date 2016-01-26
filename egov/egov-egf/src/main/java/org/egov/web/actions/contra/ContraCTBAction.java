@@ -287,7 +287,7 @@ public class ContraCTBAction extends BaseVoucherAction
             return false;
         }
         final BigDecimal cashBalance = egovCommon.getCashBalance(voucherHeader.getVoucherDate(), contraBean.getCashInHand(),
-                voucherHeader.getFundId().getId());
+                voucherHeader.getFundId().getId().intValue());
 
         if (cashBalance.compareTo(contraBean.getAmount()) == -1) {
             addActionError(getText("contra.validate.cashbalance1", new String[] { "" + cashBalance }));

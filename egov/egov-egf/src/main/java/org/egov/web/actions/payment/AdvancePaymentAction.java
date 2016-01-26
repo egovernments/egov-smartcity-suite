@@ -212,7 +212,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 }
                 else
                     throw new ValidationException(e.getErrors());
-            populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId());
+            populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId().intValue());
         } catch (final NumberFormatException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
@@ -304,7 +304,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private void loadAjaxedDropDowns() {
         populateFund();
         loadBankBranch(fund);
-        populateBankAccounts(paymentheader.getBankaccount().getBankbranch().getId(), fund.getId());
+        populateBankAccounts(paymentheader.getBankaccount().getBankbranch().getId().intValue(), fund.getId().intValue());
     }
 
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
@@ -579,7 +579,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
             if (!advanceDetail.getEgAdvanceReqpayeeDetailses().isEmpty())
                 for (final EgAdvanceReqPayeeDetails payeeDetail : advanceDetail.getEgAdvanceReqpayeeDetailses()) {
                     try {
-                        entity = paymentService.getEntity(payeeDetail.getAccountDetailType().getId(),
+                        entity = paymentService.getEntity(payeeDetail.getAccountDetailType().getId().intValue(),
                                 payeeDetail.getAccountdetailKeyId());
                         if (entity == null)
                             throw new ValidationException(Arrays.asList(new ValidationError("no.entity.for.detailkey", getText(
@@ -593,7 +593,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                             || org.apache.commons.lang.StringUtils.isBlank(entity.getBankname())
                             || org.apache.commons.lang.StringUtils.isBlank(entity.getBankaccount())
                             || org.apache.commons.lang.StringUtils.isBlank(entity.getIfsccode())) {
-                        populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId());
+                        populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId().intValue());
                         LOGGER.error(getText("validate.paymentMode.rtgs.subledger.details", new String[] { entity.getCode() + "-"
                                 + entity.getName() }));
                         errors.add(new ValidationError("validate.paymentMode.rtgs.subledger.details", getText(
@@ -612,7 +612,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
 
         if (advanceRequisition != null && advanceRequisition.getEgAdvanceReqMises().getVoucherheader() != null
                 && advanceRequisition.getEgAdvanceReqMises().getVoucherheader().getStatus() != 4) {
-            populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId());
+            populateBankAccounts(Integer.parseInt(commonBean.getBankId().split("-")[1]), fund.getId().intValue());
             throw new ValidationException(Arrays.asList(new ValidationError("arf.payment.uniqueCheck.validate.message",
                     getText("arf.payment.uniqueCheck.validate.message",
                             new String[] { advanceRequisition.getAdvanceRequisitionNumber() }))));

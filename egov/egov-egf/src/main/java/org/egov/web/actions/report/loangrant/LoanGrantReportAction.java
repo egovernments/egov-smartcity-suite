@@ -129,7 +129,7 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
                 .find("from Accountdetailtype  where name='PROJECTCODE'");
         final Accountdetailtype agencyType = (Accountdetailtype) persistenceService
                 .find("from Accountdetailtype  where name='FundingAgency'");
-        searchGCList = lgService.searchGC(schemeId, subSchemeId, fromDate, toDate, agencyId, pcType.getId(), agencyType.getId(),
+        searchGCList = lgService.searchGC(schemeId, subSchemeId, fromDate, toDate, agencyId, pcType.getId().intValue(), agencyType.getId().intValue(),
                 fundId);
         //
         if (searchGCList == null || searchGCList.size() == 0)
@@ -159,7 +159,7 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
         for (final Object obj : searchGCList)
         {
             final LoanGrantBean lg = (LoanGrantBean) obj;
-            if (lg.getDetailType() == pcType.getId())
+            if (lg.getDetailType() == pcType.getId().intValue())
             {
                 allAssetCodes = "";
                 List<String> assetCodeList = null;
@@ -211,7 +211,7 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
         clearMessages();
         final Accountdetailtype agencyType = (Accountdetailtype) persistenceService
                 .find("from Accountdetailtype  where name='FundingAgency'");
-        repaymentList = lgService.getLoanBy(schemeId, agencyId, agencyType.getId(), fundId);
+        repaymentList = lgService.getLoanBy(schemeId, agencyId, agencyType.getId().intValue(), fundId);
         if (repaymentList == null || repaymentList.size() == 0)
             throw new ValidationException(Arrays.asList(new ValidationError("No Records Found", "no.records.found")));
         BigDecimal soFarPaid = BigDecimal.ZERO;// get The amount

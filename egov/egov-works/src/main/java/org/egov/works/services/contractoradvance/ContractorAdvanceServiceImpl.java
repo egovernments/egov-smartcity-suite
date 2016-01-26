@@ -424,7 +424,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             final Functionary func = (Functionary) persistenceService.find(" from  Functionary where upper(name) = ?",
                     "UAC");
             if (func != null)
-                workflowFunctionaryId = func.getId();
+                workflowFunctionaryId = func.getId().intValue();
         }
         return workflowFunctionaryId;
     }

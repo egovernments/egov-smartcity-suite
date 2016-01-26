@@ -379,7 +379,7 @@ public class ReceiptAction extends BaseFormAction {
         } else // to load branch list and account list while returning after an
             // error
             if (getServiceName() != null && receiptMisc.getFund() != null) {
-                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
+                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId().intValue());
                 ajaxBankRemittanceAction.setFundName(fund.getName());
                 ajaxBankRemittanceAction.bankBranchList();
                 addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
@@ -389,7 +389,7 @@ public class ReceiptAction extends BaseFormAction {
                 if (bankBranchId != null && bankBranchId != 0) {
                     final Bankbranch branch = (Bankbranch) bankBranchDAO.findById(bankBranchId, false);
 
-                    ajaxBankRemittanceAction.setBranchId(branch.getId());
+                    ajaxBankRemittanceAction.setBranchId(branch.getId().intValue());
                     ajaxBankRemittanceAction.accountList();
                     addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
                 } else
@@ -445,24 +445,24 @@ public class ReceiptAction extends BaseFormAction {
        // final ReceiptHeader receiptHeader = new ReceiptHeader();
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
-        final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
+        final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId().intValue());
         Functionary functionary = null;
         Scheme scheme = null;
         SubScheme subscheme = null;
         try {
             if (receiptMisc.getIdFunctionary() != null)
-                functionary = functionaryDAO.functionaryById(receiptMisc.getIdFunctionary().getId());
+                functionary = functionaryDAO.functionaryById(receiptMisc.getIdFunctionary().getId().intValue());
             if (receiptMisc.getScheme() != null && receiptMisc.getScheme().getId() != -1)
-                scheme = schemeDAO.getSchemeById(receiptMisc.getScheme().getId());
+                scheme = schemeDAO.getSchemeById(receiptMisc.getScheme().getId().intValue());
             if (receiptMisc.getSubscheme() != null && receiptMisc.getSubscheme().getId() != -1)
-                subscheme = subSchemeDAO.getSubSchemeById(receiptMisc.getSubscheme().getId());
+                subscheme = subSchemeDAO.getSubSchemeById(receiptMisc.getSubscheme().getId().intValue());
         } catch (final Exception e) {
             LOGGER.error("Error in getting functionary for id [" + receiptMisc.getIdFunctionary().getId() + "]", e);
         }
 
         Fundsource fundSource = null;
         if (receiptMisc.getFundsource() != null && receiptMisc.getFundsource().getId() != null)
-            fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId());
+            fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId().intValue());
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
 
@@ -990,7 +990,7 @@ public class ReceiptAction extends BaseFormAction {
 
             } else if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() != null)
                 instrumentHeader.setBankId((Bank) bankDAO.findById(
-                        Integer.valueOf(instrumentHeader.getBankId().getId()), false));
+                        Integer.valueOf(instrumentHeader.getBankId().getId().intValue()), false));
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
             instrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
             instrumentHeaderList.add(instrumentHeader);

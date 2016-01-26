@@ -185,8 +185,8 @@ public class FundAction extends BaseFormAction {
             fundOld.setIdentifier(fund.getIdentifier());
             fundOld.setIsactive(fund.getIsactive());
             fundOld.setLlevel(parentLevel);
-            fundOld.setLastmodified(new Date());
-            fundOld.setModifiedby(getLoggedInUser());
+//            fundOld.setLastmodified(new Date());
+//            fundOld.setModifiedby(getLoggedInUser());
 
             if (fund.getFund() != null && fund.getFund().getId() != null)
                 parentFund.setIsnotleaf(true);

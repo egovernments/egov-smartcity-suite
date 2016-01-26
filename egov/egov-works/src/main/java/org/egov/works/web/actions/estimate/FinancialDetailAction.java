@@ -343,9 +343,9 @@ public class FinancialDetailAction extends BaseFormAction {
             abstractEstimate.setDepositCode(depositCodeService.findById(depositCodeId, false));
 
         if (getMaxFinancingSource(financingSourceList).getFundSource() != null
-                && commonsService.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId()) != null)
+                && commonsService.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
             abstractEstimate.setFundSource(commonsService.fundsourceById(getMaxFinancingSource(financingSourceList)
-                    .getFundSource().getId()));
+                    .getFundSource().getId().intValue()));
 
         abstractEstimate = abstractEstimateService.persistFinancialDetail(financialDetail, abstractEstimate);
         // to lazy load the financial detail id.
@@ -497,7 +497,7 @@ public class FinancialDetailAction extends BaseFormAction {
     protected void populateSubSchemeList(final AjaxFinancialDetailAction ajaxFinancialDetailAction,
             final boolean schemePopulated, final boolean datePresent) {
         if (schemePopulated && datePresent) {
-            ajaxFinancialDetailAction.setSchemeId(financialDetail.getScheme().getId());
+            ajaxFinancialDetailAction.setSchemeId(financialDetail.getScheme().getId().intValue());
             ajaxFinancialDetailAction.setEstimateDate(financialDetail.getAbstractEstimate().getEstimateDate());
             ajaxFinancialDetailAction.loadSubSchemes();
             addDropdownData("subSchemeList", ajaxFinancialDetailAction.getSubSchemes());
@@ -508,7 +508,7 @@ public class FinancialDetailAction extends BaseFormAction {
     protected void populateSchemeList(final AjaxFinancialDetailAction ajaxFinancialDetailAction,
             final boolean fundPopulated, final boolean datePresent) {
         if (fundPopulated && datePresent) {
-            ajaxFinancialDetailAction.setFundId(financialDetail.getFund().getId());
+            ajaxFinancialDetailAction.setFundId(financialDetail.getFund().getId().intValue());
             ajaxFinancialDetailAction.setEstimateDate(financialDetail.getAbstractEstimate().getEstimateDate());
             ajaxFinancialDetailAction.loadSchemes();
             addDropdownData("schemeList", ajaxFinancialDetailAction.getSchemes());

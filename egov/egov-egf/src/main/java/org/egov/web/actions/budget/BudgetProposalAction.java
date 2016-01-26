@@ -316,7 +316,7 @@ public class BudgetProposalAction extends BaseFormAction {
         final List<Fund> fundList = masterCache.get("egi-fund");
         fundMap = new HashMap<Integer, Fund>();
         for (final Fund f : fundList)
-            fundMap.put(f.getId(), f);
+            fundMap.put(f.getId().intValue(), f);
         final List<Department> deptList = masterCache.get("egi-department");
         deptMap = new HashMap<Integer, Department>();
         for (final Department d : deptList)

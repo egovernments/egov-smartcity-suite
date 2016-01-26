@@ -39,69 +39,100 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "BANKBRANCH")
+@SequenceGenerator(name = Bankbranch.SEQ_BANKBRANCH, sequenceName = Bankbranch.SEQ_BANKBRANCH, allocationSize = 1)
 public class Bankbranch implements java.io.Serializable {
 
         private static final long serialVersionUID = 1L;
+        public static final String SEQ_BANKBRANCH = "SEQ_BANKBRANCH";
 
-        private Integer id;
+        @Id
+    	@GeneratedValue(generator = SEQ_BANKBRANCH, strategy = GenerationType.SEQUENCE)
+    	private Long id;
 
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "BANKID")
         private Bank bank;
 
+        @Length(max = 50)
+        @NotNull
         private String branchcode;
 
+        @Length(max = 50)
+        @NotNull
         private String branchname;
 
+        @Length(max = 50)
+        @NotNull
         private String branchaddress1;
 
+        @Length(max = 50)
         private String branchaddress2;
 
+        @Length(max = 50)
         private String branchcity;
 
+        @Length(max = 50)
         private String branchstate;
 
+        @Length(max = 50)
         private String branchpin;
 
+        @Length(max = 15)
         private String branchphone;
 
+        @Length(max = 15)
         private String branchfax;
 
+        @Length(max = 50)
         private String contactperson;
 
+        @NotNull
         private int isactive;
 
-        private Date created;
-
-        private Date lastmodified;
-
-        private BigDecimal modifiedby;
-
+        @Length(max = 250)
         private String narration;
 
+        @Length(max = 50)
         private String branchMICR;
 
+        @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="bankbranch", targetEntity=Bankaccount.class)
+        @NotNull
         private Set<Bankaccount> bankaccounts = new HashSet<Bankaccount>(0);
 
         public Bankbranch() {
                 //For hibernate to work
         }
 
-        public Bankbranch(String branchcode, String branchname, String branchaddress1, int isactive, Date created, Date lastmodified, BigDecimal modifiedby) {
+        public Bankbranch(String branchcode, String branchname, String branchaddress1, int isactive) {
                 this.branchcode = branchcode;
                 this.branchname = branchname;
                 this.branchaddress1 = branchaddress1;
                 this.isactive = isactive;
-                this.created = created;
-                this.lastmodified = lastmodified;
-                this.modifiedby = modifiedby;
         }
 
         public Bankbranch(Bank bank, String branchcode, String branchname, String branchaddress1, String branchaddress2, String branchcity, String branchstate, String branchpin, String branchphone, String branchfax, String contactperson, int isactive,
-                        Date created, Date lastmodified, BigDecimal modifiedby, String narration, String branchMICR, Set<Bankaccount> bankaccounts) {
+                        String narration, String branchMICR, Set<Bankaccount> bankaccounts) {
                 this.bank = bank;
                 this.branchcode = branchcode;
                 this.branchname = branchname;
@@ -114,9 +145,6 @@ public class Bankbranch implements java.io.Serializable {
                 this.branchfax = branchfax;
                 this.contactperson = contactperson;
                 this.isactive = isactive;
-                this.created = created;
-                this.lastmodified = lastmodified;
-                this.modifiedby = modifiedby;
                 this.narration = narration;
                 this.branchMICR = branchMICR;
                 this.bankaccounts = bankaccounts;
@@ -124,11 +152,11 @@ public class Bankbranch implements java.io.Serializable {
         public boolean isAccountsExist(){
             return (this.bankaccounts!=null && !this.bankaccounts.isEmpty()) ;
         }
-        public Integer getId() {
+        public Long getId() {
                 return this.id;
         }
 
-        public void setId(Integer id) {
+        public void setId(Long id) {
                 this.id = id;
         }
 
@@ -218,30 +246,6 @@ public class Bankbranch implements java.io.Serializable {
 
         public void setContactperson(String contactperson) {
                 this.contactperson = contactperson;
-        }
-
-       public Date getCreated() {
-                return this.created;
-        }
-
-        public void setCreated(Date created) {
-                this.created = created;
-        }
-
-        public Date getLastmodified() {
-                return this.lastmodified;
-        }
-
-        public void setLastmodified(Date lastmodified) {
-                this.lastmodified = lastmodified;
-        }
-
-        public BigDecimal getModifiedby() {
-                return this.modifiedby;
-        }
-
-        public void setModifiedby(BigDecimal modifiedby) {
-                this.modifiedby = modifiedby;
         }
 
         public String getNarration() {

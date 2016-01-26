@@ -42,17 +42,42 @@ package org.egov.commons;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "EGF_ACCOUNTCODE_PURPOSE")
+@SequenceGenerator(name = EgfAccountcodePurpose.SEQ_EGF_ACCOUNTCODE_PURPOSE, sequenceName = EgfAccountcodePurpose.SEQ_EGF_ACCOUNTCODE_PURPOSE)
 public class EgfAccountcodePurpose implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
+	public static final String SEQ_EGF_ACCOUNTCODE_PURPOSE = "SEQ_EGF_ACCOUNTCODE_PURPOSE";
 
+	@Id
+	@GeneratedValue(generator = SEQ_EGF_ACCOUNTCODE_PURPOSE, strategy = GenerationType.SEQUENCE)
 	private Integer id;
 
+	@Length(max = 250)
+	@Column(unique = true)
 	private String name;
 
-	private Set chartofaccountses = new HashSet(0);
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="purposeId", targetEntity=CChartOfAccounts.class)
+    private Set<CChartOfAccounts> chartofaccountses = new HashSet<CChartOfAccounts>(0);
 
-	private Set funds = new HashSet(0);
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="egfAccountcodePurpose", targetEntity=Fund.class)
+	private Set<Fund> funds = new HashSet<Fund>(0);
 
 	public EgfAccountcodePurpose() {
 		//For hibernate to work

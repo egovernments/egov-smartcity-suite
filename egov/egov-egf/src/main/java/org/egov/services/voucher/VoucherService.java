@@ -428,24 +428,24 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         .valueOf(generalLedger
                                 .getId().toString()));
 
-                for (final CGeneralLedgerDetail gledgerDetail : gledgerDetailList) {
-                    subLedgerDetail = new VoucherDetails();
-                    subLedgerDetail.setAmount(gledgerDetail.getAmount().setScale(2));
-                    subLedgerDetail.setGlcode((CChartOfAccounts) coaDAO.findById(generalLedger.getGlcodeId().getId(), false));
-                    subLedgerDetail.setSubledgerCode(generalLedger.getGlcodeId().getGlcode());
-                    final Accountdetailtype accountdetailtype = voucherHibDAO.getAccountDetailById(gledgerDetail
-                            .getDetailTypeId());
-                    subLedgerDetail.setDetailType(accountdetailtype);
-                    subLedgerDetail.setDetailTypeName(accountdetailtype.getName());
-                    final EntityType entity = voucherHibDAO.getEntityInfo(gledgerDetail.getDetailKeyId(),
-                            accountdetailtype.getId());
-                    subLedgerDetail.setDetailCode(entity.getCode());
-                    subLedgerDetail.setDetailKeyId(gledgerDetail.getDetailKeyId());
-                    subLedgerDetail.setDetailKey(entity.getName());
-                    subLedgerDetail.setFunctionDetail(generalLedger.getFunctionId() != null ? generalLedger.getFunctionId()
-                            .toString() : "0");
-                    subLedgerlist.add(subLedgerDetail);
-                }
+				for (final CGeneralLedgerDetail gledgerDetail : gledgerDetailList) {
+					subLedgerDetail = new VoucherDetails();
+					subLedgerDetail.setAmount(gledgerDetail.getAmount().setScale(2));
+					subLedgerDetail.setGlcode((CChartOfAccounts) coaDAO.findById(generalLedger.getGlcodeId().getId(), false));
+					subLedgerDetail.setSubledgerCode(generalLedger.getGlcodeId().getGlcode());
+					final Accountdetailtype accountdetailtype = voucherHibDAO.getAccountDetailById(gledgerDetail
+							.getDetailTypeId());
+					subLedgerDetail.setDetailType(accountdetailtype);
+					subLedgerDetail.setDetailTypeName(accountdetailtype.getName());
+					final EntityType entity = voucherHibDAO.getEntityInfo(gledgerDetail.getDetailKeyId(),
+							accountdetailtype.getId().intValue());
+					subLedgerDetail.setDetailCode(entity.getCode());
+					subLedgerDetail.setDetailKeyId(gledgerDetail.getDetailKeyId());
+					subLedgerDetail.setDetailKey(entity.getName());
+					subLedgerDetail.setFunctionDetail(generalLedger.getFunctionId() != null ? generalLedger.getFunctionId()
+							.toString() : "0");
+					subLedgerlist.add(subLedgerDetail);
+				}
 
             }
         } catch (final HibernateException e) {
@@ -549,63 +549,63 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             voucherHeader.setFiscalPeriodId(Integer.parseInt(fiscalPeriodIdStr));
             if (!voucherHeader.getFundId().equals(existingVH.getFundId())) {
 
-                // String vDate = FORMATDDMMYYYY.format(voucherHeader.getVoucherDate());
-                final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
-                        autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
-                existingVH.setVoucherNumber(strVoucherNumber);
-                final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Voucher type  : " + vType);
-                String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
-                for (int i = eg_voucher.length(); i < 10; i++)
-                    eg_voucher = "0" + eg_voucher;
-                existingVH.setCgvn(vType + eg_voucher);
+				// String vDate = FORMATDDMMYYYY.format(voucherHeader.getVoucherDate());
+				final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId().intValue(),
+						autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+				existingVH.setVoucherNumber(strVoucherNumber);
+				final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("Voucher type  : " + vType);
+				String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
+				for (int i = eg_voucher.length(); i < 10; i++)
+					eg_voucher = "0" + eg_voucher;
+				existingVH.setCgvn(vType + eg_voucher);
 
-            } else if (!voucherHeader.getVoucherDate().equals(existingVH.getVoucherDate()))
-            {
-                // A financial Year can have multiple fiscalPeriod so comparing previous and new financial year id
-                final CFiscalPeriod fiscalPeriod = (CFiscalPeriod) persistenceService.find(" from CFiscalPeriod where id=?",
-                        Long.valueOf(fiscalPeriodIdStr));
-                final String financialYearId = financialYearDAO.getFinancialYearId(Constants.DDMMYYYYFORMAT2.format(existingVH
-                        .getVoucherDate()));
-                final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long
-                        .valueOf(financialYearId));
-                if (existingVH.getFiscalPeriodId().equals(voucherHeader.getFiscalPeriodId())
-                        && fiscalPeriod.getFinancialYearId().longValue() == financialYear.getId().longValue()) {
-                    final String vDate = Constants.DDMMYYYYFORMAT2.format(voucherHeader.getVoucherDate());
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("Voucher Number  : " + existingVH.getVoucherNumber());
-                    final String strTempVoucherNumber = existingVH.getVoucherNumber();
-                    String strVoucherNumber = "";
-                    final String newDate[] = vDate.split("/");
-                    final String voucherArr[] = strTempVoucherNumber.split("/");
-                    strVoucherNumber = voucherArr[0] + "/" + voucherArr[1] + "/" + voucherArr[2] + "/" + newDate[1] + "/"
-                            + voucherArr[4];
-                    existingVH.setVoucherNumber(strVoucherNumber);
-                } else {
-                    final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
-                            autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
-                    existingVH.setVoucherNumber(strVoucherNumber);
-                    final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("Voucher type  : " + vType);
-                    String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
-                    for (int i = eg_voucher.length(); i < 10; i++)
-                        eg_voucher = "0" + eg_voucher;
-                    existingVH.setCgvn(vType + eg_voucher);
+			} else if (!voucherHeader.getVoucherDate().equals(existingVH.getVoucherDate()))
+			{
+				// A financial Year can have multiple fiscalPeriod so comparing previous and new financial year id
+				final CFiscalPeriod fiscalPeriod = (CFiscalPeriod) persistenceService.find(" from CFiscalPeriod where id=?",
+						Long.valueOf(fiscalPeriodIdStr));
+				final String financialYearId = financialYearDAO.getFinancialYearId(Constants.DDMMYYYYFORMAT2.format(existingVH
+						.getVoucherDate()));
+				final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long
+						.valueOf(financialYearId));
+				if (existingVH.getFiscalPeriodId().equals(voucherHeader.getFiscalPeriodId())
+						&& fiscalPeriod.getFinancialYearId().longValue() == financialYear.getId().longValue()) {
+					final String vDate = Constants.DDMMYYYYFORMAT2.format(voucherHeader.getVoucherDate());
+					if (LOGGER.isDebugEnabled())
+						LOGGER.debug("Voucher Number  : " + existingVH.getVoucherNumber());
+					final String strTempVoucherNumber = existingVH.getVoucherNumber();
+					String strVoucherNumber = "";
+					final String newDate[] = vDate.split("/");
+					final String voucherArr[] = strTempVoucherNumber.split("/");
+					strVoucherNumber = voucherArr[0] + "/" + voucherArr[1] + "/" + voucherArr[2] + "/" + newDate[1] + "/"
+							+ voucherArr[4];
+					existingVH.setVoucherNumber(strVoucherNumber);
+				} else {
+					final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId().intValue(),
+							autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+					existingVH.setVoucherNumber(strVoucherNumber);
+					final String vType = voucherHeader.getFundId().getIdentifier() + "/" + autoVoucherType + "/CGVN";
+					if (LOGGER.isDebugEnabled())
+						LOGGER.debug("Voucher type  : " + vType);
+					String eg_voucher = eGovernCommon.getEg_Voucher(vType, existingVH.getFiscalPeriodId().toString());
+					for (int i = eg_voucher.length(); i < 10; i++)
+						eg_voucher = "0" + eg_voucher;
+					existingVH.setCgvn(vType + eg_voucher);
 
-                }
-            }
-            // If only the voucher number is modified then just appending the manual voucher number
-            else if ("Manual".equalsIgnoreCase(vNumGenMode)
-                    && !existingVH.getVoucherNumber().substring(Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH)
-                            ).equalsIgnoreCase(voucherHeader.getVoucherNumber())) {
-                final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(),
-                        autoVoucherType,
-                        voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
-                // existingVH.setVoucherNumber(existingVH.getVoucherNumber().substring(0,
-                // Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH))+voucherHeader.getVoucherNumber());
-                existingVH.setVoucherNumber(strVoucherNumber);
+				}
+			}
+			// If only the voucher number is modified then just appending the manual voucher number
+			else if ("Manual".equalsIgnoreCase(vNumGenMode)
+					&& !existingVH.getVoucherNumber().substring(Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH)
+							).equalsIgnoreCase(voucherHeader.getVoucherNumber())) {
+				final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId().intValue(),
+						autoVoucherType,
+						voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+				// existingVH.setVoucherNumber(existingVH.getVoucherNumber().substring(0,
+				// Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH))+voucherHeader.getVoucherNumber());
+				existingVH.setVoucherNumber(strVoucherNumber);
 
             }
             // conn.close();
@@ -716,7 +716,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         final String autoVoucherType = EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME, voucherTypeBean
                 .getVoucherNumType()
                 .toLowerCase(), "", FinancialConstants.CATEGORYFORVNO);
-        final String vocuherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType,
+        final String vocuherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId().intValue(), autoVoucherType,
                 voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
         voucherHeader.setVoucherNumber(vocuherNumber);
 
@@ -738,7 +738,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         final String autoVoucherType = EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME, voucherTypeBean
                 .getVoucherNumType()
                 .toLowerCase(), "", FinancialConstants.CATEGORYFORVNO);
-        final String vocuherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType,
+        final String vocuherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId().intValue(), autoVoucherType,
                 voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
         voucherHeader.setVoucherNumber(vocuherNumber);
         /*
@@ -1255,7 +1255,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         egBillPaydetailes = new HashSet<EgBillPayeedetails>(0);
                     final EgBillPayeedetails egBillPaydetail = new EgBillPayeedetails();
                     egBillPaydetail.setEgBilldetailsId(egBilldetail);
-                    egBillPaydetail.setAccountDetailTypeId(subledgerDetail.getDetailType().getId());
+                    egBillPaydetail.setAccountDetailTypeId(subledgerDetail.getDetailType().getId().intValue());
                     egBillPaydetail.setAccountDetailKeyId(subledgerDetail.getDetailKeyId());
                     if (egBilldetail.getDebitamount().compareTo(BigDecimal.ZERO) == 1)
                         egBillPaydetail.setDebitAmount(subledgerDetail.getAmount());

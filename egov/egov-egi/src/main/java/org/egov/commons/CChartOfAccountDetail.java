@@ -39,23 +39,49 @@
  */
 package org.egov.commons;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-public class CChartOfAccountDetail extends BaseModel {
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "CHARTOFACCOUNTDETAIL")
+@SequenceGenerator(name = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, sequenceName = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL)
+public class CChartOfAccountDetail extends AbstractAuditable {
 
 	private static final long serialVersionUID = 1L;
-	//private Long id;
+	public static final String SEQ_CHARTOFACCOUNTDETAIL = "SEQ_CHARTOFACCOUNTDETAIL";
+	
+	@Id
+	@GeneratedValue(generator = SEQ_CHARTOFACCOUNTDETAIL, strategy = GenerationType.SEQUENCE)
+	private Long id;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="glCodeId", unique = true)
 	private CChartOfAccounts glCodeId;
+	
+	@ManyToOne
+	@JoinColumn(name="detailTypeId", unique = true)
 	private Accountdetailtype detailTypeId;
 
-/*	public Long getId() {
+	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
-*/
+
+	@JsonIgnore
 	public CChartOfAccounts getGlCodeId() {
 		return glCodeId;
 	}

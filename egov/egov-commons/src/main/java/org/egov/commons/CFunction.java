@@ -39,24 +39,46 @@
  */
 package org.egov.commons;
 
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.hibernate.search.annotations.Field;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-public class CFunction {
+@Entity
+@Table(name = "FUNCTION")
+@SequenceGenerator(name = CFunction.SEQ_FUNCTION, sequenceName = CFunction.SEQ_FUNCTION, allocationSize = 1)
+public class CFunction extends AbstractAuditable{
 
+	private static final long serialVersionUID = -2683551268665801819L;
+	public static final String SEQ_FUNCTION = "SEQ_FUNCTION";
+	
+	@Id
+	@GeneratedValue(generator = SEQ_FUNCTION, strategy = GenerationType.SEQUENCE)
 	private Long id = null;
 	private String name;
 	private String code;
 	private String type;
+	
+	@Column(name = "LLEVEL")
 	private int level;
 	private Long parentId;
 	private boolean isActive;
-	private Date created;
-	private Date lastModified;
-	private String modifiedBy;
 	private int isNotLeaf;
+	
+	@Transient
 	private String funcNameActual;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PARENTCODE")
 	private CFunction function;
 	/**
 	 * @return Returns the id.
@@ -101,20 +123,6 @@ public class CFunction {
 	}
 
 	/**
-	 * @return Returns the created.
-	 */
-	public Date getCreated() {
-		return created;
-	}
-
-	/**
-	 * @param created The created to set.
-	 */
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	/**
 	 * @return Returns the isActive.
 	 */
 	public boolean isIsActive() {
@@ -141,20 +149,6 @@ public class CFunction {
 	}
 
 	/**
-	 * @return Returns the lastModified.
-	 */
-	public Date getLastModified() {
-		return lastModified;
-	}
-
-	/**
-	 * @param lastModified The lastModified to set.
-	 */
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	/**
 	 * @return Returns the lLevel.
 	 */
 	public int getLevel() {
@@ -166,20 +160,6 @@ public class CFunction {
 	 */
 	public void setLevel(int level) {
 		this.level = level;
-	}
-
-	/**
-	 * @return Returns the modifiedBy.
-	 */
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-
-	/**
-	 * @param modifiedBy The modifiedBy to set.
-	 */
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
 	}
 
 	/**

@@ -630,7 +630,7 @@ public class ChallanAction extends BaseFormAction {
             else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
             if (instrumentHeader.getBankId() != null)
-                instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId().getId())));
+                instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId().getId().intValue())));
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
             instrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
             instrumentHeaderList.add(instrumentHeader);
@@ -673,7 +673,7 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.setSource(Source.SYSTEM.toString());
 
         receiptHeader.getReceiptMisc().setFund(
-                commonsServiceImpl.fundById(receiptHeader.getReceiptMisc().getFund().getId()));
+                commonsServiceImpl.fundById(receiptHeader.getReceiptMisc().getFund().getId().intValue()));
 
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_ID,

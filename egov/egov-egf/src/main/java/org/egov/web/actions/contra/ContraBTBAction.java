@@ -695,7 +695,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     }
 
     public boolean checkIfInterFund() {
-        contraBean.setFromFundId(voucherHeader.getFundId().getId());
+        contraBean.setFromFundId(voucherHeader.getFundId().getId().intValue());
         if (contraBean.getToFundId() != null && contraBean.getFromFundId() != null
                 && !contraBean.getFromFundId().equals(contraBean.getToFundId()))
             return true;
@@ -1501,8 +1501,8 @@ public class ContraBTBAction extends BaseVoucherAction {
         if (contraVoucher != null
                 && contraVoucher.getFromBankAccountId() != null)
             addDropdownData("fromAccNumList", getAccountNumbers(contraVoucher
-                    .getFromBankAccountId().getBankbranch().getId(), contraBean
-                    .getFromFundId(), "RECEIPTS_PAYMENTS,RECEIPTS"));
+                    .getFromBankAccountId().getBankbranch().getId().intValue(), contraBean
+                    .getFromFundId().intValue(), "RECEIPTS_PAYMENTS,RECEIPTS"));
         else if (contraBean.getFromBankId() != null
                 && !contraBean.getFromBankId().equals("-1")) {
             final String fromBankId = contraBean.getFromBankId();
@@ -1521,8 +1521,8 @@ public class ContraBTBAction extends BaseVoucherAction {
             addDropdownData("fromAccNumList", Collections.EMPTY_LIST);
         if (contraVoucher != null && contraVoucher.getToBankAccountId() != null)
             addDropdownData("toAccNumList", getAccountNumbers(contraVoucher
-                    .getToBankAccountId().getBankbranch().getId(), contraBean
-                    .getToFundId(), "RECEIPTS_PAYMENTS,PAYMENTS"));
+                    .getToBankAccountId().getBankbranch().getId().intValue(), contraBean
+                    .getToFundId().intValue(), "RECEIPTS_PAYMENTS,PAYMENTS"));
         else if (contraBean.getToBankId() != null
                 && !contraBean.getToBankId().equals("-1")) {
             final String toBankId = contraBean.getToBankId();
@@ -1599,7 +1599,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         if (voucherHeader.getFundId() != null
                 && voucherHeader.getFundId().getId() != null) {
             fromBankBranchMap = getBankBranches(voucherHeader.getFundId()
-                    .getId(), "RECEIPTS_PAYMENTS,RECEIPTS");
+                    .getId().intValue(), "RECEIPTS_PAYMENTS,RECEIPTS");
             toBankBranchMap = getBankBranches(contraBean.getToFundId(),
                     "RECEIPTS_PAYMENTS,PAYMENTS");
         } else {
@@ -1635,7 +1635,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                     contraVoucher.getFromBankAccountId().getChartofaccounts()
                     .getGlcode()))
                 contraBean.setSourceGlcode(generalled.getGlcode());
-        contraBean.setFromFundId(voucherHeader.getFundId().getId());
+        contraBean.setFromFundId(voucherHeader.getFundId().getId().intValue());
         contraBean.setFromBankAccountId(contraVoucher.getFromBankAccountId()
                 .getId().toString());
         fromAccnumnar = contraVoucher.getFromBankAccountId().getNarration();
@@ -1671,7 +1671,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         contraBean.setFromBankId(fromBankAndBranchId);
         contraBean.setToBankId(toBankAndBranchId);
         contraBean.setToFundId(contraVoucher.getToBankAccountId().getFund()
-                .getId());
+                .getId().intValue());
         final List exludeStatusList = getExcludeStatusListForInstruments();
         final InstrumentVoucher instrumentVoucher = (InstrumentVoucher) persistenceService
                 .find(

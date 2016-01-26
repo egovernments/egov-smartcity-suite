@@ -912,7 +912,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         if (voucherHeader.getFundId() != null)
         {
             common.setTypeOfAccount(typeOfAccount);
-            common.setFundId(voucherHeader.getFundId().getId());
+            common.setFundId(voucherHeader.getFundId().getId().intValue());
             common.setAsOnDate(currentDate);
             common.ajaxLoadBanksWithApprovedPayments();
             addDropdownData("bankbranchList", common.getBankBranchList());
@@ -924,7 +924,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         if (getBankbranch() != null)
         {
             common.setTypeOfAccount(typeOfAccount);
-            common.setFundId(voucherHeader.getFundId().getId());
+            common.setFundId(voucherHeader.getFundId().getId().intValue());
             // common.ajaxLoadBankAccounts();
             common.setBranchId(getBankbranch());
             common.setAsOnDate(currentDate);

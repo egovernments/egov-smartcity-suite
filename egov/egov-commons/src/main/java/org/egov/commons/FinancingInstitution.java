@@ -41,12 +41,30 @@ package org.egov.commons;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "Financial_Institution")
+@SequenceGenerator(name = FinancingInstitution.SEQ_FINANCINGINSTITUTION, sequenceName = FinancingInstitution.SEQ_FINANCINGINSTITUTION, allocationSize = 1)
 public class FinancingInstitution implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	public static final String SEQ_FINANCINGINSTITUTION = "SEQ_FINANCINGINSTITUTION";
 
+	@Id
+	@GeneratedValue(generator=SEQ_FINANCINGINSTITUTION, strategy=GenerationType.SEQUENCE)
 	private Integer id;
-
+	
+	@NotNull
+	@Length(max=250)
 	private String name;
 
 	public Integer getId() {

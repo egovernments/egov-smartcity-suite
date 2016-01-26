@@ -852,7 +852,7 @@ public class CreateVoucher {
 
         try {
             personalInformationDAO.getEmployeeByFunctionary(department.getId(), next_desig.getId(),
-                    boundaryForUser.getId(), functionary.getId());
+                    boundaryForUser.getId(), functionary.getId().intValue());
         } catch (final TooManyValuesException e) {
             LOGGER.error(e.getMessage(), e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1536,7 +1536,7 @@ public class CreateVoucher {
             if (null != headerdetails.get(VoucherConstant.MODULEID))
                 vNumGenMode = "Auto";
 
-            final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(fundByCode.getId(), voucherNumberPrefix,
+            final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(fundByCode.getId().intValue(), voucherNumberPrefix,
                     voucherDate, vNumGenMode, voucherNumber);
             cVoucherHeader.setVoucherNumber(strVoucherNumber);
 
@@ -2542,7 +2542,7 @@ public class CreateVoucher {
             final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
             df.format(reversalVoucher.getVoucherDate());
 
-            final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(originalVoucher.getFundId().getId(),
+            final String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(originalVoucher.getFundId().getId().intValue(),
                     autoVoucherType,
                     reversalVoucher.getVoucherDate(), vNumGenMode, reversalVoucher.getVoucherNumber());
             reversalVoucher.setVoucherNumber(strVoucherNumber);

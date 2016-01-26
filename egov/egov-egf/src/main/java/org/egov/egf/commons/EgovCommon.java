@@ -1540,7 +1540,7 @@ public class EgovCommon {
         final EntityTypeService entityService = (EntityTypeService) wac
                 .getBean(simpleName);
         return (List<EntityType>) entityService.getAllActiveEntities(detailType
-                .getId());
+                .getId().intValue());
     }
 
     /**

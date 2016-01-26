@@ -41,39 +41,66 @@ package org.egov.commons;
 
 import java.util.Date;
 
-public class EgSurrenderedCheques implements java.io.Serializable {
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "EG_SURRENDERED_CHEQUES")
+@SequenceGenerator(name = EgSurrenderedCheques.SEQ_EG_SURRENDERED_CHEQUES, sequenceName = EgSurrenderedCheques.SEQ_EG_SURRENDERED_CHEQUES, allocationSize = 1)
+public class EgSurrenderedCheques extends AbstractAuditable implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
+	public static final String SEQ_EG_SURRENDERED_CHEQUES = "SEQ_EG_SURRENDERED_CHEQUES";
 
-	private Integer id;
+	@Id
+	@GeneratedValue(generator = SEQ_EG_SURRENDERED_CHEQUES, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BANKACCOUNTID")
+	@NotNull
 	private Bankaccount bankaccount;
 
+	@Length(max = 20)
+	@NotNull
 	private String chequenumber;
 
+	@Length(max = 7)
+	@NotNull
 	private Date chequedate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "VHID")
+	@NotNull
 	private CVoucherHeader voucherheader;
-
-	private Date lastmodifieddate;
 
 	public EgSurrenderedCheques() {
 		//For hibernate to work
 	}
 
-	public EgSurrenderedCheques(Bankaccount bankaccount, String chequenumber, Date chequedate, CVoucherHeader voucherheader, Date lastmodifieddate) {
+	public EgSurrenderedCheques(Bankaccount bankaccount, String chequenumber, Date chequedate, CVoucherHeader voucherheader) {
 		this.bankaccount = bankaccount;
 		this.chequenumber = chequenumber;
 		this.chequedate = chequedate;
 		this.voucherheader = voucherheader;
-		this.lastmodifieddate = lastmodifieddate;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -108,13 +135,4 @@ public class EgSurrenderedCheques implements java.io.Serializable {
 	public void setVoucherheader(CVoucherHeader voucherheader) {
 		this.voucherheader = voucherheader;
 	}
-
-	public Date getLastmodifieddate() {
-		return this.lastmodifieddate;
-	}
-
-	public void setLastmodifieddate(Date lastmodifieddate) {
-		this.lastmodifieddate = lastmodifieddate;
-	}
-
 }

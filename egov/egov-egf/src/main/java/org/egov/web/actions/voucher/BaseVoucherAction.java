@@ -307,7 +307,7 @@ protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
     protected void loadFundSource() {
         if (headerFields.contains("fundsource") && null != voucherHeader.getVouchermis().getSubschemeid()) {
             final List<Fundsource> fundSourceList = financingSourceService.getFinancialSourceBasedOnSubScheme(voucherHeader
-                    .getVouchermis().getSubschemeid().getId());
+                    .getVouchermis().getSubschemeid().getId().intValue());
             addDropdownData("fundsourceList", fundSourceList);
         }
     }

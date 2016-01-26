@@ -364,5 +364,15 @@
       <constructor-arg index="0" value="org.egov.commons.SubScheme" />
      </bean>
 
+    <bean id="accountdetailtypeService" class="org.egov.service.AccountdetailtypeService" />
+	<bean id="cFinancialYearService" class="org.egov.service.CFinancialYearService" />
+	<bean id="fundsourceService" class="org.egov.service.FundsourceService" />
+	<bean id="fundService" class="org.egov.service.FundService" />
+	<bean id="cChartOfAccountsService" class="org.egov.service.CChartOfAccountsService"/>
+	<bean id="departmentService" class="org.egov.infra.admin.master.service.DepartmentService"/>
+	<bean id="functionaryService" class="org.egov.service.FunctionaryService" />
+	<bean id="cFunctionService" class="org.egov.service.CFunctionService" />
+	<bean id="employeeService" class="org.egov.eis.service.EmployeeService" />
+
 	
 </beans>
