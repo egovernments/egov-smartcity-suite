@@ -53,7 +53,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Required;
 
 @Entity
 @Table(name = "egtl_validity")
@@ -65,24 +64,28 @@ public class Validity extends AbstractPersistable<Long>{
 	@Id
 	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
-
-	@Required
+	
+	
+	@NotNull
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "natureOfBusiness", nullable = false)
 	private NatureOfBusiness natureOfBusiness;
 	
-	@NotNull
+	
 	@ManyToOne
-    @JoinColumn(name = "licenseCategory", nullable = false)
+    @JoinColumn(name = "licenseCategory")
 	private LicenseCategory licenseCategory;
 	
-	@Max(30) 
+	@Max(31) 
 	private Integer day=0;
+
 	@Max(3) 
 	private Integer week=0;
 	@Max(11) 
+	
 	private Integer month=0;
 	@Max(99) 
+	
 	private Integer year=0;
 	public NatureOfBusiness getNatureOfBusiness() {
 		return natureOfBusiness;
