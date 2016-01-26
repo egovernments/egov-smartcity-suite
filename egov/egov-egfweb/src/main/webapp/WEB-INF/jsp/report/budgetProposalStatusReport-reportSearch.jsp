@@ -268,13 +268,13 @@
 
 	 	if(mode =="function"){
 	 		if(dept == 0 || fundType == 'Select' || budgetType == 'Select'){
-		 		alert("Select all fields");
+		 		bootbox.alert("Select all fields");
 		 		return false;
 			}
 	 	}
 	 	if(mode =="department"){
 	 		if(fundType == 'Select' || budgetType == 'Select'){
-		 		alert("Select all fields");
+		 		bootbox.alert("Select all fields");
 		 		return false;
 			}
 	 	}		 	

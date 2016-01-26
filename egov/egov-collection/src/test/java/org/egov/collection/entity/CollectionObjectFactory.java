@@ -115,7 +115,6 @@ public class CollectionObjectFactory {
 		bankaccount.setAccountnumber("123456789");
 		bankaccount.setAccounttype("NATIONALISED BANKS");
 		bankaccount.setIsactive(1);
-		bankaccount.setCurrentbalance(BigDecimal.valueOf(10000));
 		bankaccount.setFund(createFund("testFund"));
 		bankaccount.setChartofaccounts(createCOA(this.getRandomNumber(99999999)+""));
 		bankaccount.setBankbranch(createBankBranch());

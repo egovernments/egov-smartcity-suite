@@ -153,7 +153,15 @@ function makeReadyOnly() {
 		jQuery("#usageId").attr('disabled', 'disabled');
 		jQuery("#structureClassId").attr('disabled', 'disabled');
 		jQuery("#fromDate").attr('disabled', 'disabled');
-	}
+	} 
+	if(mode == 'view') {
+		jQuery("#zoneId").attr('disabled', 'disabled');
+		jQuery("#usageId").attr('disabled', 'disabled');
+		jQuery("#structureClassId").attr('disabled', 'disabled');
+		jQuery("#fromDate").attr('disabled', 'disabled');
+		jQuery("#categoryAmount").attr('disabled', 'disabled');
+		jQuery("")
+	} 
 }
 </script>
 </head> 
@@ -178,6 +186,9 @@ function makeReadyOnly() {
 	<s:if test="%{mode == 'edit'}">
 	<div class="headingbg"><s:text name="unit.rate.master.update.title"/></div>
 	</s:if>
+	<s:if test="%{mode == 'view'}">
+	<div class="headingbg"><s:text name="unit.rate.master.view.title"/></div>
+	</s:if>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td class="greybox" width="20%">&nbsp;</td>
@@ -193,7 +204,7 @@ function makeReadyOnly() {
 			</tr>
 			<tr>
 				<td class="greybox" width="20%">&nbsp;</td>
-				<td class="greybox" width="30%"><s:text name="unit.rate.usage"/><span class="mandatory1">*</span> :</td>
+				<td class="greybox" width="30%"><s:text name="unit.rate.usage"/><span id="spanMandatory" class="mandatory1">*</span> :</td>
 				<td class="greybox" width="30%">
 			   	<s:select headerKey="-1"
 					headerValue="%{getText('default.select')}" name="usageId"
@@ -240,15 +251,10 @@ function makeReadyOnly() {
 		    	<s:submit value="Add" name="Add"
 						id='Add' cssClass="buttonsubmit"  onclick="return validateData('add');" />  
 			
-				<s:submit value="Edit" name="Edit"
-						id='Edit' cssClass="buttonsubmit" onclick="return validateData('edit');" /> 
-				<s:submit value="View" name="view"
-						id='view' cssClass="buttonsubmit" onclick="return validateData('view');" />  
-						</s:if>
-					<s:elseif test="%{mode == 'edit'}">
-						<s:submit value="Update" name="Update"
-						id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 
-						</s:elseif> 
+			</s:if>
+		    <s:elseif test="%{mode == 'edit'}">
+						<s:submit value="Update" name="Update" id='Update' cssClass="buttonsubmit" onclick="return validateData('update');" /> 
+		     </s:elseif> 
 				<input type="button" name="button2" id="button2" value="Close"  class="button" onclick="window.close();" />
 			</div>
 	</div>

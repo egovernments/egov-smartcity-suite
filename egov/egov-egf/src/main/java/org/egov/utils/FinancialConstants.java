@@ -301,5 +301,20 @@ public interface FinancialConstants {
 
     // after this date or if this date is null will use financial year wise rolling sequence for RTGS numbering
     public static final Date RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE = new GregorianCalendar(1900 + 115, 2, 31).getTime();
+    
+    public static final String BUTTONAPPROVE = "Approve";
+    public static final String BUTTONFORWARD = "Forward";
+    public static final String BUTTONREJECT = "Reject";
+    public static final String BUTTONSAVE = "Save";
+    public static final String BUTTONCANCEL = "Cancel";
+    
+    public static final String WORKFLOW_STATE_NEW = "NEW";
+    public static final String WORKFLOW_STATE_APPROVED = "Approved";
+    public static final String WORKFLOW_STATE_REJECTED = "Rejected";
+    public static final String WORKFLOW_STATE_FORWARDED = "Forwarded";
+    public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
 
+    
+    public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
+    public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
 }

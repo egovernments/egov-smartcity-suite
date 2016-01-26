@@ -100,9 +100,9 @@
 					return false;
 				}	else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
 						 document.getElementById("workersCapacity").value == 0) {
-					showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
+					/* showMessage('newLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
 					window.scroll(0, 0); 
-					return false;
+					return false; */
 				}
 				if(!verifyDocAttachment()){
 					return false;
@@ -137,8 +137,20 @@
 				} else {
 					document.getElementById("hpheader").style.display='none';
 				}
+  				var currentState=document.getElementById("currentWfstate").value;
+				if(currentState=='Create License:Commissioner Approved')	
+					{
+					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
+					jQuery(".show-row").hide(); 
+					jQuery('#approverComments').removeAttr('<span class="mandatory"></span>');
+					jQuery('#approverDepartment').removeAttr('<span class="mandatory"></span>');
+					jQuery('#approverDesignation').removeAttr('<span class="mandatory"></span>');
+					jQuery('#approverPositionId').removeAttr('<span class="mandatory"></span>');
+					jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					}	
+				
 				if(dom.get("mode").value=='view'){
-					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments',
+					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
 					                     'Forward','Reject','button2','Approve']); 
 	                  //remove onclick event for propertyno search button
 					  jQuery("#searchImg").removeAttr("onclick");
@@ -312,7 +324,7 @@
  					var oRow = src.parentNode.parentNode;
  					if (oRow.rowIndex == 2) 
  					{
- 						alert("Cannot delete the first row!");
+ 						bootbox.alert("Cannot delete the first row!");
  						return;
  					} 
  					else
@@ -326,7 +338,7 @@
 			
 			function checkLength(obj,val){
 				if(obj.value.length>val) {
-					alert('Max '+val+' digits allowed')
+					bootbox.alert('Max '+val+' digits allowed')
 					obj.value = obj.value.substring(0,val);
 				}
 			}	
@@ -376,7 +388,7 @@
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
-								alert(data.errorDetails.errorMessage);
+								bootbox.alert(data.errorDetails.errorMessage);
 							} else{
 								if(data.boundaryDetails!=null){
 									jQuery("#boundary").val(data.boundaryDetails.localityId)
@@ -390,7 +402,7 @@
 							console.log('error:'+e.message);
 							document.getElementById("propertyNo").value="";
 							resetOnPropertyNumChange();
-							alert("Error getting property details");
+							bootbox.alert("Error getting property details");
 						}
 					});
             	} else{
@@ -445,7 +457,9 @@
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden id="mode" name="mode" value="%{mode}" />
+							<s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}" />
 							<s:hidden name="id" id="id" />
+							
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
                             <s:if test="%{mode=='edit'}">

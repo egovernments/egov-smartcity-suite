@@ -50,7 +50,7 @@
      	/*To check whether Start Date is Greater than End Date*/
      	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
      	{
- 	    	alert('Start Date cannot be greater than End Date');
+     		bootbox.alert('Start Date cannot be greater than End Date');
  	    	document.getElementById('startDate').value='';
  	    	document.getElementById('endDate').value='';
  	    	document.getElementById('startDate').focus();
@@ -59,7 +59,7 @@
      	   /*to check whether the End Date is greater than the Current Date*/
      	if( compareDate(formatDate6(currentDate),formatDate6(endDate)) == 1 )
      	{
-     		alert('End Date cannot be greater than Current Date');
+     		bootbox.alert('End Date cannot be greater than Current Date');
      		document.getElementById('endDate').value='';
      		document.getElementById('endDate').focus();	
      		return false;	
@@ -107,12 +107,7 @@
 			 //  loadWaitingImage(); 
 			   return sQuery+"&glCode="+document.getElementById("glCode1").value;
 		   } 
-		   
-		   
-		   /*oAutoCompEntityForJV.generateRequest = function(sQuery) {
-			   alert("inside");
-			    return "?startsWith=" + sQuery + "&glCode="+document.getElementById("glCode1").value;
-			};*/
+
 		   oAutoCompEntityForJV.queryDelay = 0.5;
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
@@ -120,18 +115,15 @@
 		   oAutoCompEntityForJV.forceSelection = true;
 		   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 		   oAutoCompEntityForJV.useIFrame = true;
-		 /*  oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
-			   clearWaitingImage();
+		   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+			   																																																																																																																																																																																																																																																																																																																																								// clearWaitingImage();
 		           var pos = YAHOO.util.Dom.getXY(oTextbox);
 		           pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
 		           oContainer.style.width=300;
 		           YAHOO.util.Dom.setXY(oContainer,pos);
 		           return true;
-		   };*/
-		   oAutoCompEntityForJV.formatResult = function(oResultData, sQuery, sResultMatch) {
-				var data = oResultData.toString();
-			    return data.split("`~`")[0];
-			};
+
+			};  
 	}
 	function splitAccountCodes(obj) 
 	{	

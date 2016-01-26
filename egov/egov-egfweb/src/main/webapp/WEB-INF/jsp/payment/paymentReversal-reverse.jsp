@@ -211,7 +211,7 @@ function onloadTask(){
 	var message = '<s:property value="message"/>';
 	var voucherHeaderId = <s:property value="voucherHeader.id"/>;
 	if(message != ''){
-		alert(message);
+		bootbox.alert(message);
 		document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher!loadvoucherview.action?vhid="+voucherHeaderId;
 		document.forms[0].submit();
 	}

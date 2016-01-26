@@ -52,10 +52,12 @@
 	src="/EGF/resources/javascript/calendar.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
-	   <meta http-equiv="Content-Type"
+<meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
-	<script type="text/javascript" src="/EGF/resources/javascript/autocomplete-debug.js"></script> 
-	<script type="text/javascript" src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <title>Journal voucher Create</title>
 </head>
 
@@ -162,44 +164,8 @@
 		</script>
 				<br />
 				<div class="subheadsmallnew" /></div>
-				<!-- <div class="mandatory1" align="left">* Mandatory Fields</div> -->
-				<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-					<%@include file="voucherWorkflow.jsp"%>
-				</s:if>
-				<div align="center">
-					<table border="0" width="100%">
-						<tr>
-							<td style="width: 5%"></td>
-							<td class="bluebox">Comments</td>
-							<td class="bluebox"><s:textarea name="comments"
-									id="comments" cols="110" rows="3" onblur="checkLength(this)" /></td>
-							<td>
-						</tr>
-						<br />
-					</table>
-				</div>
-				<div align="center" class="buttonbottom" id="buttondiv">
-					<s:iterator value="%{getValidActions('')}" var="p">
-						<s:if test="%{description !='Cancel'}">
-							<s:submit type="submit" cssClass="buttonsubmit"
-								value="%{description}" id="%{name}" name="%{name}"
-								method="create"
-								onclick="return validateJV('save','%{name}','%{description}')" />
-						</s:if>
-					</s:iterator>
-					<input type="submit" class="buttonsubmit" value="Send for Approval"
-						id="%{aa_approve}" name="%{aa_approve}"
-						onclick="return validateAndSubmitJV('save','%{aa_approve}','%{Send for Approval}');" />
-					<input type="reset" id="Reset" value="Cancel" class="button" /> <input
-						type="button" value="Close" onclick="javascript:window.close()"
-						class="button" />
-				</div>
-				<!-- 		
-	<div class="buttonbottom" style="padding-bottom:10px;">
-		<s:submit type="submit" cssClass="buttonsubmit" value="Save & Close" id="save&close" name="save&close" method="create" onclick="return validateJV('close')"/> 
-   		<input type="reset" id="Reset" value="Cancel" class="buttonsubmit"/>
-		<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-	</div>  -->
+				<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
+				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 				<br />
 			</div>
 		</div>
@@ -258,17 +224,17 @@
 				}
 			}	
 			function validateApproverUser(name,value){
-				//alert("action name"+name);     
+				//bootbox.alert("action name"+name);     
 				document.getElementById("actionName").value= name;
-				//alert("button value"+value);  
+				//bootbox.alert("button value"+value);  
 				<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 					if(!validateUser(name,value)){ return false; }
 				</s:if>
 				return true;
 			}
-	function validateAndSubmitJV(btnval,name,value)
+	function onSubmit()
 	{
-		if(validateJV(btnval,name,value)){
+		if(validateJV()){
 				document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
 	    		document.forms[0].submit();
 				
@@ -276,12 +242,9 @@
 				return false;
 				}
 	}
-	function validateJV(btnval,name,value)
+	function validateJV()
 	{
-	 // alert("inside validate jv");  
-	// alert(document.getElementById('billDetailTable'));
-	
-	   document.getElementById("buttonValue").value=btnval;
+	   //document.getElementById("buttonValue").value=btnval;
 		document.getElementById('lblError').innerHTML ="";
 		var cDate = new Date();
 		
@@ -430,10 +393,13 @@ function showMessage(message){
 		if( document.forms[0].elements[i].id!='Close')
 		document.forms[0].elements[i].disabled =true;
 	} 
-	alert(message);
-	var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
-	document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
-	document.forms[0].submit();      
+	//bootbox.alert(message);
+	bootbox.alert(message, function() {
+		var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
+		document.forms[0].action = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
+		document.forms[0].submit(); 
+	});
+	     
 	
 }
 

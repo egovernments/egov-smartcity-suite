@@ -198,13 +198,13 @@ function validate()
 	
 
 	if(expType == "-1"){
-		alert("Please select Bill Type");
+		bootbox.alert("Please select Bill Type");
 		return false;
 		}
 	
 	
 	 if (fromDate > toDate) {
-		alert("Invalid Date Range! From Date cannot be after To Date!");
+		bootbox.alert("Invalid Date Range! From Date cannot be after To Date!");
 		return false;
 		}  
 

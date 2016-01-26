@@ -64,9 +64,9 @@
 		var success = '<s:property value="success"/>';
 							
 		if (success == 'yes') {
-			alert("Fund Created Successfully");
+			bootbox.alert("Fund Created Successfully");
 		} else if((success == 'no')){
-			alert("Fund Could Not be Created");
+			bootbox.alert("Fund Could Not be Created");
 		}
 							
 		if (close == 'true') {
@@ -76,11 +76,11 @@
 						
 	function validate(){
 		if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-			alert("Please enter Fund Code");
+			bootbox.alert("Please enter Fund Code");
 			return false;
 		}
 		if(document.getElementById('name').value == null || document.getElementById('name').value==''){
-			alert("Please enter Fund Name");
+			bootbox.alert("Please enter Fund Name");
 			return false;
 		}
 		return true;

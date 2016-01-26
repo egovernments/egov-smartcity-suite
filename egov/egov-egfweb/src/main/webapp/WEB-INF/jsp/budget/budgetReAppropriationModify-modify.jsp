@@ -73,7 +73,7 @@
 					}
 				}				
 				if(invalidAmount == true){
-					alert(invalidMessage);
+					bootbox.alert(invalidMessage);
 					return false;	
 				}
 				return true;
@@ -95,9 +95,9 @@
 					document.getElementById('deleted').innerHTML = o.responseText;
 					element = document.getElementById('deleted');
 					if(document.getElementById('deleteGrid').value == 'true')
-						alert("Re Appropriation deleted successfully");
+						bootbox.alert("Re Appropriation deleted successfully");
 					else
-						alert("Re Appropriation could not be deleted");
+						bootbox.alert("Re Appropriation could not be deleted");
 			        },
 			     failure: function(o) {
 			     }
@@ -126,14 +126,14 @@
 		    }
 			function validateMandatoryFields(){
 				if(document.getElementById('financialYear').value==0){
-					alert('Please select a Financial year');
+					bootbox.alert('Please select a Financial year');
 					return false;
 				}
 				return true;
 			}
 			function validateForApproval(){
 				if(null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("Please select User");
+					bootbox.alert("Please select User");
 					return false;
 				}
 				return validateAmount();

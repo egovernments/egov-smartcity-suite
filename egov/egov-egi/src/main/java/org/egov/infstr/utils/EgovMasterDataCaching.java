@@ -82,10 +82,11 @@ public class EgovMasterDataCaching {
 	
 	private EgovMasterDataCaching() {
 		
+		if(CACHE_MANAGER==null){
 		    Configuration config = new ConfigurationBuilder().eviction()
 		             .maxEntries(20000).strategy(EvictionStrategy.LIRS).expiration()
-		             .wakeUpInterval(5000L)
-		             .maxIdle(120000L)
+		             .wakeUpInterval(1000*60*60L) //1hr
+		             .maxIdle(1000*60*60*24L)     //24hr
 		            .locking()
 		              .concurrencyLevel(10000).isolationLevel(IsolationLevel.REPEATABLE_READ)
 		              .lockAcquisitionTimeout(12000L).useLockStriping(false)
@@ -93,7 +94,7 @@ public class EgovMasterDataCaching {
 		              .transactionManagerLookup(new GenericTransactionManagerLookup()).recovery()
 		            .build();
 		    CACHE_MANAGER = new DefaultCacheManager(config);
-		
+		}
 	}
 	
 	/**
@@ -440,5 +441,11 @@ public class EgovMasterDataCaching {
 			throw new ApplicationRuntimeException("Error occurred in EgovMasterDataCaching resultSetToArrayList", e);
 		}
 		return list;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		CACHE_MANAGER.stop();
+		super.finalize();
 	}
 }

@@ -340,23 +340,23 @@ function setTotalAmount()
 			{
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued From');
 					return false;
 				}
 				if(dom.get('inFavourOf') && dom.get('inFavourOf').value=="")
 				{
-					alert('Please enter valid data for the \'In Favour Of\' field');
+					bootbox.alert('Please enter valid data for the \'In Favour Of\' field');
 					return false;
 				}
 				
 				if(document.getElementById('selectedRows').value=='' || document.getElementById('selectedRows').value==0)
 				{
-					alert('Please select the payment voucher');
+					bootbox.alert('Please select the payment voucher');
 					return false;
 				}
 				if(dom.get('rtgsRefNo') && (dom.get('rtgsRefNo').value=='' ||dom.get('rtgsRefNo').value=='0'||dom.get('rtgsDate').value=='0'|| dom.get('rtgsDate').value==''))
 				{
-					alert('Please enter RTGS reference number and date ');
+					bootbox.alert('Please enter RTGS reference number and date ');
 					return false;
 				}
 				<s:if test="%{paymentMode!='cheque'  && paymentMode!='rtgs'}">
@@ -372,13 +372,13 @@ function setTotalAmount()
 			{
 				if(isNaN(obj.value))
 				{
-					alert('Cheque number contains alpha characters.');
+					bootbox.alert('Cheque number contains alpha characters.');
 					obj.value='';
 					return false;
 				}
 				if(obj.value.length!=6)
 				{
-					alert("Cheque number must be 6 digits long.");
+					bootbox.alert("Cheque number must be 6 digits long.");
 					obj.value='';
 					return false;
 				}
@@ -387,7 +387,7 @@ function setTotalAmount()
 				var pattNegative=/-/i;
 				if(obj.value.match(pattPeriod)!=null || obj.value.match(pattNegative)!=null )
 				{
-					alert('Cheque number should contain only numbers');
+					bootbox.alert('Cheque number should contain only numbers');
 					obj.value='';
 					return false;
 				}
@@ -397,7 +397,7 @@ function setTotalAmount()
 					
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued From');
 					obj.value='';
 					return false;
 				}
@@ -413,13 +413,13 @@ function setTotalAmount()
 			{
 				if(isNaN(obj.value))
 				{
-					alert('Cheque number contains alpha characters.');
+					bootbox.alert('Cheque number contains alpha characters.');
 					obj.value='';
 					return false;
 				}
 				if(obj.value.length!=6)
 				{
-					alert("Cheque number must be 6 digits long.");
+					bootbox.alert("Cheque number must be 6 digits long.");
 					obj.value='';
 					return false;
 				}
@@ -428,7 +428,7 @@ function setTotalAmount()
 				var pattNegative=/-/i;
 				if(obj.value.match(pattPeriod)!=null || obj.value.match(pattNegative)!=null )
 				{
-					alert('Cheque number should contain only numbers');
+					bootbox.alert('Cheque number should contain only numbers');
 					obj.value='';
 					return false;
 				}
@@ -438,7 +438,7 @@ function setTotalAmount()
 					
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued From');
 					obj.value='';
 					return false;
 				}
@@ -466,12 +466,12 @@ function setTotalAmount()
 					res = res.split('~');
 					if(res[1]=='false')
 					{
-						alert('Enter valid cheque number or This Cheque number has been already used');
+						bootbox.alert('Enter valid cheque number or This Cheque number has been already used');
 						document.getElementById('chequeNumber'+parseInt(res[0])).value='';
 					}
 			    },
 			    failure: function(o) {
-			    	alert('failure');
+			    	bootbox.alert('failure');
 			    }
 			}
 				var callbackReassign = {
@@ -480,12 +480,12 @@ function setTotalAmount()
 					res = res.split('~');
 					if(res[1]=='false')
 					{
-						alert('This cheque number is not there in the surrendered list');     
+						bootbox.alert('This cheque number is not there in the surrendered list');     
 						document.getElementById('chequeNumber'+parseInt(res[0])).value='';
 					}
 			    },
 			    failure: function(o) {
-			    	alert('failure');
+			    	bootbox.alert('failure');
 			    }
 			}
 			function nextChqNo(obj) 
@@ -497,7 +497,7 @@ function setTotalAmount()
 			}
 			function validateChequeDateForNonChequeMode(){
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
-				//alert("sizseled"+noOfSelectedRows);
+				//bootbox.alert("sizseled"+noOfSelectedRows);
 				var chkCount=0;
 				var isSelected=0;
 				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
@@ -505,21 +505,21 @@ function setTotalAmount()
 				var chequeNo=document.getElementById('chequeNumber0').value;
 				
 				if(chequeNo==null || chequeNo==''){
-					alert("Please enter a valid cheque Number");
+					bootbox.alert("Please enter a valid cheque Number");
 						return false;   
 				}
 				if(isNaN( Date.parse( chequeDate))) {                
-					alert("Please enter a valid cheque date");
+					bootbox.alert("Please enter a valid cheque date");
 					return false;
 				 }
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					
 					if(document.getElementById('isSelected'+index).checked){
-					//alert(document.getElementById('isSelected'+index).checked);
+					//bootbox.alert(document.getElementById('isSelected'+index).checked);
 					if( compareDate(paymentDate,chequeDate) == -1){     
-					  //  alert(paymentDate+"----"+chequeDate);      
-						alert('Cheque Date cannot be less than  payment Date');
+					  //  bootbox.alert(paymentDate+"----"+chequeDate);      
+						bootbox.alert('Cheque Date cannot be less than  payment Date');
 						document.getElementById('chequeDt').value='';
 						document.getElementById('chequeDt').focus();
 						return false;
@@ -533,25 +533,25 @@ function setTotalAmount()
 
 			function validateChequeDateForRtgsMode(){
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
-				//alert("sizseled"+noOfSelectedRows);
+				//bootbox.alert("sizseled"+noOfSelectedRows);
 				var chkCount=0;
 				var isSelected=0;
 				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
 				var chequeDate=dom.get('rtgsDate').value;
 				
 				if(isNaN( Date.parse( chequeDate))) {                
-					alert("Please enter a valid cheque date");
+					bootbox.alert("Please enter a valid cheque date");
 					return false;
 				 }
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					
 					if(document.getElementById('isSelected'+index).checked){
-					//alert(document.getElementById('isSelected'+index).checked);
+					//bootbox.alert(document.getElementById('isSelected'+index).checked);
 					chkCount++;
 					if( compareDate(paymentDate,chequeDate) == -1){     
-					  //  alert(paymentDate+"----"+chequeDate);      
-						alert('Cheque Date cannot be less than  payment Date');
+					  //  bootbox.alert(paymentDate+"----"+chequeDate);      
+						bootbox.alert('Cheque Date cannot be less than  payment Date');
 						document.getElementById('rtgsDate').value='';
 						document.getElementById('rtgsDate').focus();
 						return false;

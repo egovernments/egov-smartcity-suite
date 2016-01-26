@@ -43,16 +43,12 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-  <!-- <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+  <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
-        <put-attribute name="header" value=""/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
-    
-      <definition name="ajax_base_layout" template="/WEB-INF/views/template/ajaxmain.jsp">
-        <put-attribute name="body" value=""/>
-      </definition>
 
     <definition name="error" template="/WEB-INF/views/template/error.jsp"/>
 	
@@ -62,75 +58,6 @@
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
-    
-<definition name="feetype-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.feetype.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feetype/feetype-new.jsp"/>
-</definition>
-
-<definition name="feetype-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.feetype.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feetype/feetype-view.jsp"/>
-</definition>
-
-<definition name="feetype-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.feetype.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feetype/feetype-edit.jsp"/>
-</definition>
-
-
-
-<definition name="feetype-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.feetype.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feetype/feetype-new.jsp"/>
-</definition>
-
-<definition name="feetype-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.feetype.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feetype/feetype-view.jsp"/>
-</definition>
-
-<definition name="feetype-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.feetype.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feetype/feetype-edit.jsp"/>
-</definition>
-
-<definition name="feematrix-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.feematrix.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-new.jsp"/>
-</definition>
-
-<definition name="feematrix-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.feematrix.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-view.jsp"/>
-</definition>
-
-<definition name="feematrix-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.feematrix.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-edit.jsp"/>
-</definition>
-<definition name="feematrix-result" template= "/WEB-INF/views/feematrix/feematrix-result.jsp" />
-	
-
-
-<definition name="validity-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.validity.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/validity/validity-new.jsp"/>
-</definition>
-<definition name="validity-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.validity.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/validity/validity-result.jsp"/>
-</definition>
-
-<definition name="validity-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.validity.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/validity/validity-view.jsp"/>
-</definition>
-
-<definition name="validity-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.validity.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/validity/validity-edit.jsp"/>
-</definition> -->
 
 <definition name="openingbalance" template="/WEB-INF/jsp/activity/openingbalance.jsp" />
 

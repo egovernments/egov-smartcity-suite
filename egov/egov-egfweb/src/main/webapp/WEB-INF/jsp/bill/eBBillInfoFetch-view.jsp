@@ -288,7 +288,7 @@
 				if (isProcess == 'true' && (variance != 0 && (variance < -20 || variance > 20))) {
 					comments = jQuery('#comments'+i).val();
 					if (comments.trim().length == 0) {
-						alert("Please enter Remarks for Consumer: " + jQuery('#consumer'+i).val() + " and for Account: " + jQuery('#account'+i).val());
+						bootbox.alert("Please enter Remarks for Consumer: " + jQuery('#consumer'+i).val() + " and for Account: " + jQuery('#account'+i).val());
 						return false;
 					}
 				}
@@ -301,7 +301,7 @@
 			for (var i = 0; i < size; i++) {
 				comments = jQuery('#comments'+i).val();
 				if (comments.trim().length == 0 && document.getElementById("checkbox"+i+"").checked) {
-					alert("Please enter Remarks for Consumer: " + jQuery('#consumer'+i).val() + " and for Account: " + jQuery('#account'+i).val());
+					bootbox.alert("Please enter Remarks for Consumer: " + jQuery('#consumer'+i).val() + " and for Account: " + jQuery('#account'+i).val());
 					return false;
 				}
 			}
@@ -328,20 +328,20 @@
 			
 			if((name=="Forward" || name=="forward") && value=="-1")
 			{
-				alert("Please select the Approver Department");
+				bootbox.alert("Please select the Approver Department");
 				document.getElementById("approverDepartment").focus();
 				return false;
 			}
 			var value=document.getElementById("approverDesignation").value;
 			if((name=="Forward" || name=="forward") && value=="-1")
 			{
-				alert("Please select the approver designation");
+				bootbox.alert("Please select the approver designation");
 				document.getElementById("approverDesignation").focus();
 				return false;
 			}
 		    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1")
 		    {
-		    	alert("Please Select the Approver");
+		    	bootbox.alert("Please Select the Approver");
 				document.getElementById("approverPositionId").focus();
 				return false;
 		    }
@@ -358,7 +358,7 @@
 	  		}
 	  	}  
 	  	if(anyRowSelection == "N"){
-	  		alert("Select at least one row to approve/forward/reject");
+	  		bootbox.alert("Select at least one row to approve/forward/reject");
 	  		return false;
 	  	}
 	  	

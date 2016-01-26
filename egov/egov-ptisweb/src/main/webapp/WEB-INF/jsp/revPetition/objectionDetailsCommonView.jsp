@@ -42,7 +42,7 @@
 <!--View Property Details -  Start   -->
 <script>
   function generateRejectionLetter(){ 
-	alert("Generating Rejection Letter");
+	bootbox.alert("Generating Rejection Letter");
 	window.location = "${pageContext.request.contextPath}/objection/rejectionLetter-print.action?model.id="+'<s:property value="objection.id"/>';
 	}
 	</script>
@@ -125,34 +125,34 @@
 					</th>
 				</tr>
 				<tr>
-					<td class="greybox">
+					<td class="blueborderfortd">
 						<div align="center">
 							<s:property value="%{objectionNumber}" />
 						</div>
 					</td>
 					<s:date name="recievedOn" var="recievedOnId" format="dd/MM/yyyy" />
-					<td class="greybox">
+					<td class="blueborderfortd">
 						<div align="center">
 							<s:property default="N/A" value="%{recievedOnId}" />
 						</div>
 					</td>
-					<td class="greybox">
+					<td class="blueborderfortd">
 						<div align="center">
 							<s:property default="N/A" value="%{recievedBy}" />
 						</div>
 					</td>
-					<td class="greybox">
+					<td class="blueborderfortd">
 						<div align="center">
 							<s:property default="N/A" value="%{remarks}" />
 						</div>
 					</td>
 					
-					<td class="greybox">
+					<td class="blueborderfortd">
 						<div align="center">
 							<s:property default="N/A" value="%{details}" />
 						</div>
 					</td>
-					<td class="greybox">
+					<td class="blueborderfortd">
 						<div align="center">
 							<s:property default="N/A" value="%{egwStatus.description}" />
 						</div>
@@ -199,7 +199,7 @@
 						<tr>
 				
 							<s:date name="plannedHearingDt" var="plannedHearingDtId" format="dd/MM/yyyy" />
-							<td class="greybox">
+							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{plannedHearingDtId}" />-
 										<s:property default=" " value="%{hearingTime}" />-
@@ -207,7 +207,7 @@
 								</div>
 							</td>
 							
-							<td class="greybox">
+							<td class="blueborderfortd">
 								<div align="center">
 									<s:if test="%{inspectionRequired}">Yes</s:if>
 									<s:elseif test="%{inspectionRequired == null}">N/A</s:elseif>
@@ -216,17 +216,16 @@
 								</div>
 							</td>
 							
-							<td class="greybox">
+							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{hearingDetails}" />
 								</div>
 							</td>
-							<td class="greybox">
+							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{egwStatus.description}" />
 								</div>
 							</td>
-							<td class="greybox"></td>
 						</tr>
 					</s:iterator>
 				</table>
@@ -266,18 +265,18 @@
 					</tr>
 					<s:iterator value="%{inspections}">
 						<tr>
-						<td class="greybox">
+						<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{inspectionRemarks}" />
 								</div>
 							</td>
 							
-							<td class="greybox">
+							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{egwStatus.description}" />
 								</div>
 							</td>
-							<td class="greybox">	<div align="center">
+							<td class="blueborderfortd">	<div align="center">
 							<s:if test="%{generateSpecialNotice}">Yes</s:if>
 									<s:else>No</s:else>
 							</div></td>
@@ -311,19 +310,16 @@
 							<s:text name="outcome.date" />
 						</th>
 						
-						<th class="bluebgheadtd">
-							
-						</th>
 					</tr>
 				
 						<tr>
-						<td class="greybox">
+						<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{remarks}" />
 								</div>
 						</td>
 						<s:date name="dateOfOutcome" var="dateOfOutcomeFmt" format="dd/MM/yyyy" />
-						<td class="greybox">
+						<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{dateOfOutcomeFmt}" />
 								</div>

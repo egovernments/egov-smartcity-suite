@@ -80,7 +80,9 @@
                         <div class="text-center">
                                                        
                             <button type="submit" id=bView name="view" class="btn btn-primary"><spring:message code="lbl.button.view"/></button>
+                            <c:if test="${roleName.contains('PROPERTY ADMINISTRATOR')}">
                             <button type="button" id=bCreate name="create" class="btn btn-primary"><spring:message code="lbl.button.create"/></button>
+                            </c:if>
                             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
                             	<spring:message code="lbl.close"/>
                             </button>

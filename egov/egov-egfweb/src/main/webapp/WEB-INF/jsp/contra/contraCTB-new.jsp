@@ -164,7 +164,7 @@ success: function(o) {
 		populateschemeid({fundId:fundid})
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -286,7 +286,7 @@ function amountFormat(){
 			
 			if(dom.get('result').value=='sucess')
 			{
-				alert("Transaction Succesfully Completed and VoucherNumber is :  "+voucherNumber);
+				bootbox.alert("Transaction Succesfully Completed and VoucherNumber is :  "+voucherNumber);
 				if(dom.get('saveMode').value=='saveclose'){
 					window.close();
 				}else if(dom.get('saveMode').value=='saveview'){

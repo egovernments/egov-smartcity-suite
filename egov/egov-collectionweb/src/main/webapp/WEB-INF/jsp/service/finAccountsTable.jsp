@@ -74,7 +74,7 @@
 					loadSLAccountCode();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -139,7 +139,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -224,7 +224,7 @@ success: function(o) {
 			</s:iterator>
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function updateGridSLDropdownGL(field,index,value){
@@ -281,7 +281,7 @@ success: function(o) {
 		
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 

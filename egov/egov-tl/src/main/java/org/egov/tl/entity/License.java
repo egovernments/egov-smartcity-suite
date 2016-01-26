@@ -39,13 +39,6 @@
  */
 package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -59,6 +52,14 @@ import org.egov.tl.entity.objection.LicenseObjection;
 import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class License extends StateAware {
 
@@ -97,11 +98,6 @@ public abstract class License extends StateAware {
     protected BigDecimal deduction;
     protected Set<LicenseDemand> demandSet;
     protected BigDecimal swmFee;
-    private String docImageNumber;
-    //this field is not received from application 
-    // this is identified by the screen like is it "New" Apllication or Renewal of Application
-    private LicenseAppType licenseAppType;
-
     // PWD
     protected String servicetaxNumber;
     @OptionalPattern(regex = Constants.alphaNumericwithspecialchar, message = "license.tin.number.alphaNumeric")
@@ -114,208 +110,534 @@ public abstract class License extends StateAware {
     protected BigDecimal minSolvency;
     protected BigDecimal avgAnnualTurnover;
     protected String feeExemption;
-    private String officeEmailId;
     protected BigDecimal violationFee;
-    
+    private String docImageNumber;
+    //this field is not received from application
+    // this is identified by the screen like is it "New" Apllication or Renewal of Application
+    private LicenseAppType licenseAppType;
+    private String officeEmailId;
     private String propertyNo;
     private String ownershipType;
     private String address;
     private LicenseCategory category;
     private BigDecimal workersCapacity;
 
-    private BigDecimal tradeArea_weight; 
-    private UnitOfMeasurement uom;
-    
+    private BigDecimal tradeArea_weight;
+
     private boolean legacy;
     private Date startDate;
+
     public abstract String generateApplicationNumber(String runningNumber);
 
-    public abstract String generateLicenseNumber(String runningNumber);
+    public abstract String generateLicenseNumber(Serializable runningNumber);
 
     public abstract void setCreationAndExpiryDate();
 
     public abstract void setCreationAndExpiryDateForEnterLicense();
 
     public abstract void updateExpiryDate(Date renewalDate);
-    
+
     public abstract List<LicenseDocument> getDocuments();
 
-    public abstract void setDocuments(final List<LicenseDocument> documents);
+    public abstract void setDocuments(List<LicenseDocument> documents);
 
     public LicenseDemand getLicenseDemand() {
-        return licenseDemand;
+        return this.licenseDemand;
     }
 
-    public void setLicenseDemand(final LicenseDemand licenseDemand) {
+    public void setLicenseDemand(LicenseDemand licenseDemand) {
         this.licenseDemand = licenseDemand;
     }
 
-    public License create(final List<FeeMatrix> feeList, final LicenseAppType appType, final NatureOfBusiness nature,
-            final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters, final BigDecimal totalAmount,
-            final String runningNumber, final String feeType, final Module module) {
-        raiseNewDemand(feeList, nature, appType, installment, egDemandReasonMasters, totalAmount, module);
-        generateApplicationNumber(runningNumber);
-        return this;
-    }
-
-    public License renew(final List<FeeMatrix> feeList, final LicenseAppType appType, final NatureOfBusiness nature,
-            final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters, final BigDecimal totalAmount,
-            final String runningNumber, final String feeType, final Module module, final Date renewalDate) {
-        raiseDemandForRenewal(feeList, nature, appType, installment, egDemandReasonMasters, totalAmount, module, renewalDate);
-        return this;
-    }
-
     public Date getApplicationDate() {
-        return applicationDate;
+        return this.applicationDate;
+    }
+
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
     public String getApplicationNumber() {
-        return applicationNumber;
+        return this.applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
     }
 
     public Boundary getBoundary() {
-        return boundary;
+        return this.boundary;
+    }
+
+    public void setBoundary(Boundary boundary) {
+        this.boundary = boundary;
     }
 
     public String getCompanyDetails() {
-        return companyDetails;
+        return this.companyDetails;
+    }
+
+    public void setCompanyDetails(String companyDetails) {
+        this.companyDetails = companyDetails;
     }
 
     public Date getDateOfCreation() {
-        return dateOfCreation;
+        return this.dateOfCreation;
+    }
+
+    public void setDateOfCreation(Date dateOfCreation) {
+        this.dateOfCreation = dateOfCreation;
     }
 
     public Date getDateOfExpiry() {
-        return dateOfExpiry;
+        return this.dateOfExpiry;
+    }
+
+    public void setDateOfExpiry(Date dateOfExpiry) {
+        this.dateOfExpiry = dateOfExpiry;
     }
 
     public BigDecimal getDeduction() {
-        return deduction;
+        return this.deduction;
+    }
+
+    public void setDeduction(BigDecimal deduction) {
+        this.deduction = deduction;
     }
 
     public Set<LicenseDemand> getDemandSet() {
-        return demandSet;
+        return this.demandSet;
+    }
+
+    public void setDemandSet(Set<LicenseDemand> demandSet) {
+        this.demandSet = demandSet;
     }
 
     public String getFeeTypeStr() {
-        return feeTypeStr;
+        return this.feeTypeStr;
+    }
+
+    public void setFeeTypeStr(String feeTypeStr) {
+        this.feeTypeStr = feeTypeStr;
     }
 
     public String getInspectionDetails() {
-        return inspectionDetails;
+        return this.inspectionDetails;
+    }
+
+    public void setInspectionDetails(String inspectionDetails) {
+        this.inspectionDetails = inspectionDetails;
     }
 
     public boolean getIsActive() {
-        return isActive;
+        return this.isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public Licensee getLicensee() {
-        return licensee;
+        return this.licensee;
+    }
+
+    public void setLicensee(Licensee licensee) {
+        this.licensee = licensee;
     }
 
     public Long getLicenseeZoneId() {
-        return licenseeZoneId;
+        return this.licenseeZoneId;
+    }
+
+    public void setLicenseeZoneId(Long licenseeZoneId) {
+        this.licenseeZoneId = licenseeZoneId;
     }
 
     public String getLicenseNumber() {
-        return licenseNumber;
+        return this.licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public Long getLicenseZoneId() {
-        return licenseZoneId;
+        return this.licenseZoneId;
+    }
+
+    public void setLicenseZoneId(Long licenseZoneId) {
+        this.licenseZoneId = licenseZoneId;
     }
 
     public String getNameOfEstablishment() {
-        return nameOfEstablishment;
+        return this.nameOfEstablishment;
+    }
+
+    public void setNameOfEstablishment(String nameOfEstablishment) {
+        this.nameOfEstablishment = nameOfEstablishment;
     }
 
     public Integer getNoOfRooms() {
-        return noOfRooms;
+        return this.noOfRooms;
+    }
+
+    public void setNoOfRooms(Integer noOfRooms) {
+        this.noOfRooms = noOfRooms;
     }
 
     public String getOldLicenseNumber() {
-        return oldLicenseNumber;
+        return this.oldLicenseNumber;
+    }
+
+    public void setOldLicenseNumber(String oldLicenseNumber) {
+        this.oldLicenseNumber = oldLicenseNumber;
     }
 
     public BigDecimal getOtherCharges() {
-        return otherCharges;
+        return this.otherCharges;
+    }
+
+    public void setOtherCharges(BigDecimal otherCharges) {
+        this.otherCharges = otherCharges;
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return this.phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getRemarks() {
-        return remarks;
+        return this.remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     public BigDecimal getRentPaid() {
-        return rentPaid;
+        return this.rentPaid;
+    }
+
+    public void setRentPaid(BigDecimal rentPaid) {
+        this.rentPaid = rentPaid;
     }
 
     public String getServicetaxNumber() {
-        return servicetaxNumber;
+        return this.servicetaxNumber;
+    }
+
+    public void setServicetaxNumber(String servicetaxNumber) {
+        this.servicetaxNumber = servicetaxNumber;
     }
 
     public LicenseStatus getStatus() {
-        return status;
+        return this.status;
+    }
+
+    public void setStatus(LicenseStatus status) {
+        this.status = status;
     }
 
     public String getTempLicenseNumber() {
-        return tempLicenseNumber;
+        return this.tempLicenseNumber;
+    }
+
+    public void setTempLicenseNumber(String tempLicenseNumber) {
+        this.tempLicenseNumber = tempLicenseNumber;
     }
 
     public String getTinNumber() {
-        return tinNumber;
+        return this.tinNumber;
+    }
+
+    public void setTinNumber(String tinNumber) {
+        this.tinNumber = tinNumber;
     }
 
     public LicenseSubCategory getTradeName() {
-        return tradeName;
+        return this.tradeName;
+    }
+
+    public void setTradeName(LicenseSubCategory tradeName) {
+        this.tradeName = tradeName;
     }
 
     public boolean isRentalAgreement() {
-        return rentalAgreement;
+        return this.rentalAgreement;
     }
 
-    public void raiseNewDemand(final List<FeeMatrix> feeMatrixList, final NatureOfBusiness nature, final LicenseAppType applType,
-            final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters, final BigDecimal totalAmount,
-            final Module module) {
-        demandSet = new LinkedHashSet<LicenseDemand>();
-        final LicenseDemand licenseDemand = new LicenseDemand();
-        demandSet.add(licenseDemand.createDemand(feeMatrixList, nature, applType, installment, this, egDemandReasonMasters,
+    public void setRentalAgreement(boolean rentalAgreement) {
+        this.rentalAgreement = rentalAgreement;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public Set<LicenseStatusValues> getLicenseStatusValuesSet() {
+        return this.licenseStatusValuesSet;
+    }
+
+    public void setLicenseStatusValuesSet(Set<LicenseStatusValues> licenseStatusValuesSet) {
+        this.licenseStatusValuesSet = licenseStatusValuesSet;
+    }
+
+    public void addLicenseStatusValuesSet(LicenseStatusValues licenseStatusValues) {
+        this.licenseStatusValuesSet.add(licenseStatusValues);
+    }
+
+    public String getLicenseCheckList() {
+        return this.licenseCheckList;
+    }
+
+    public void setLicenseCheckList(String licenseCheckList) {
+        this.licenseCheckList = licenseCheckList;
+    }
+
+    public LicenseTransfer getLicenseTransfer() {
+        return this.licenseTransfer;
+    }
+
+    public void setLicenseTransfer(LicenseTransfer licenseTransfer) {
+        this.licenseTransfer = licenseTransfer;
+    }
+
+    public BigDecimal getSwmFee() {
+        return this.swmFee;
+    }
+
+    public void setSwmFee(BigDecimal swmFee) {
+        this.swmFee = swmFee;
+    }
+
+    public String getDocImageNumber() {
+        return this.docImageNumber;
+    }
+
+    public void setDocImageNumber(String docImageNumber) {
+        this.docImageNumber = docImageNumber;
+    }
+
+    public String getCompanyPanNumber() {
+        return this.companyPanNumber;
+    }
+
+    public void setCompanyPanNumber(String companyPanNumber) {
+        this.companyPanNumber = companyPanNumber;
+    }
+
+    public String getVatNumber() {
+        return this.vatNumber;
+    }
+
+    public void setVatNumber(String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
+
+    public String getNamePowerOfAttorney() {
+        return this.namePowerOfAttorney;
+    }
+
+    public void setNamePowerOfAttorney(String namePowerOfAttorney) {
+        this.namePowerOfAttorney = namePowerOfAttorney;
+    }
+
+    public String getFeeExemption() {
+        return this.feeExemption;
+    }
+
+    public void setFeeExemption(String feeExemption) {
+        this.feeExemption = feeExemption;
+    }
+
+    public BigDecimal getMinSolvency() {
+        return this.minSolvency;
+    }
+
+    public void setMinSolvency(BigDecimal minSolvency) {
+        this.minSolvency = minSolvency;
+    }
+
+    public BigDecimal getAvgAnnualTurnover() {
+        return this.avgAnnualTurnover;
+    }
+
+    public void setAvgAnnualTurnover(BigDecimal avgAnnualTurnover) {
+        this.avgAnnualTurnover = avgAnnualTurnover;
+    }
+
+    public String getBankIfscCode() {
+        return this.bankIfscCode;
+    }
+
+    public void setBankIfscCode(String bankIfscCode) {
+        this.bankIfscCode = bankIfscCode;
+    }
+
+    public String getOfficeEmailId() {
+        return this.officeEmailId;
+    }
+
+    public void setOfficeEmailId(String officeEmailId) {
+        this.officeEmailId = officeEmailId;
+    }
+
+    public List<LicenseObjection> getObjections() {
+        return this.objections;
+    }
+
+    public void setObjections(List<LicenseObjection> objections) {
+        this.objections = objections;
+    }
+
+    public BigDecimal getViolationFee() {
+        return this.violationFee;
+    }
+
+    public void setViolationFee(BigDecimal violationFee) {
+        this.violationFee = violationFee;
+    }
+
+    public String getAuditDetails() {
+        return "";
+    }
+
+    public String getPropertyNo() {
+        return this.propertyNo;
+    }
+
+    public void setPropertyNo(String propertyNo) {
+        this.propertyNo = propertyNo;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public LicenseCategory getCategory() {
+        return this.category;
+    }
+
+    public void setCategory(LicenseCategory category) {
+        this.category = category;
+    }
+
+    public String getOwnershipType() {
+        return this.ownershipType;
+    }
+
+    public void setOwnershipType(String ownershipType) {
+        this.ownershipType = ownershipType;
+    }
+
+    public BigDecimal getTradeArea_weight() {
+        return this.tradeArea_weight;
+    }
+
+    public void setTradeArea_weight(BigDecimal tradeArea_weight) {
+        this.tradeArea_weight = tradeArea_weight;
+    }
+
+    public NatureOfBusiness getBuildingType() {
+        return this.buildingType;
+    }
+
+    public void setBuildingType(NatureOfBusiness buildingType) {
+        this.buildingType = buildingType;
+    }
+
+    public BigDecimal getWorkersCapacity() {
+        return this.workersCapacity;
+    }
+
+    public void setWorkersCapacity(BigDecimal workersCapacity) {
+        this.workersCapacity = workersCapacity;
+    }
+
+    public LicenseAppType getLicenseAppType() {
+        return this.licenseAppType;
+    }
+
+    public void setLicenseAppType(LicenseAppType licenseAppType) {
+        this.licenseAppType = licenseAppType;
+    }
+
+    public boolean isLegacy() {
+        return this.legacy;
+    }
+
+    public void setLegacy(boolean legacy) {
+        this.legacy = legacy;
+    }
+
+    public Date getStartDate() {
+        return this.startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public License create(List<FeeMatrix> feeList, LicenseAppType appType, NatureOfBusiness nature,
+                          Installment installment, Set<EgDemandReasonMaster> egDemandReasonMasters, BigDecimal totalAmount,
+                          String runningNumber, String feeType, Module module) {
+        this.raiseNewDemand(feeList, nature, appType, installment, egDemandReasonMasters, totalAmount, module);
+        this.generateApplicationNumber(runningNumber);
+        return this;
+    }
+
+    public License renew(List<FeeMatrix> feeList, LicenseAppType appType, NatureOfBusiness nature,
+                         Installment installment, Set<EgDemandReasonMaster> egDemandReasonMasters, BigDecimal totalAmount,
+                         String runningNumber, String feeType, Module module, Date renewalDate) {
+        this.raiseDemandForRenewal(feeList, nature, appType, installment, egDemandReasonMasters, totalAmount, module, renewalDate);
+        return this;
+    }
+
+    public void raiseNewDemand(List<FeeMatrix> feeMatrixList, NatureOfBusiness nature, LicenseAppType applType,
+                               Installment installment, Set<EgDemandReasonMaster> egDemandReasonMasters, BigDecimal totalAmount,
+                               Module module) {
+        this.demandSet = new LinkedHashSet<LicenseDemand>();
+        LicenseDemand licenseDemand = new LicenseDemand();
+        this.demandSet.add(licenseDemand.createDemand(feeMatrixList, nature, applType, installment, this, egDemandReasonMasters,
                 totalAmount, module));
-        setDemandSet(demandSet);
+        this.setDemandSet(this.demandSet);
     }
 
-    public License raiseDemandForRenewal(final List<FeeMatrix> feeMatrixList, final NatureOfBusiness nature,
-            final LicenseAppType applType, final Installment installment, final Set<EgDemandReasonMaster> egDemandReasonMasters,
-            final BigDecimal totalAmount, final Module module, final Date renewalDate) {
+    public License raiseDemandForRenewal(List<FeeMatrix> feeMatrixList, NatureOfBusiness nature,
+                                         LicenseAppType applType, Installment installment, Set<EgDemandReasonMaster> egDemandReasonMasters,
+                                         BigDecimal totalAmount, Module module, Date renewalDate) {
         List<EgDemandDetails> oldDetails = new ArrayList<EgDemandDetails>();
-        for (final LicenseDemand demand : getDemandSet()) {
+        for (LicenseDemand demand : this.getDemandSet()) {
             if (demand.getIsHistory().equalsIgnoreCase("N"))
-                oldDetails = addOldDemandDetailsToCurrent(demand);
+                oldDetails = this.addOldDemandDetailsToCurrent(demand);
             demand.setIsHistory("Y");
         }
-        getDemandSet().add(
+        this.getDemandSet().add(
                 new LicenseDemand().renewDemand(feeMatrixList, nature, applType, installment, this, egDemandReasonMasters,
                         totalAmount, module, renewalDate, oldDetails));
         return this;
     }
 
-    public License raiseDemandForViolationFee(final Installment installment, final License license)
-    {
-        for (final LicenseDemand demand : getDemandSet())
+    public License raiseDemandForViolationFee(Installment installment, License license) {
+        for (LicenseDemand demand : this.getDemandSet())
             if (demand.getIsHistory().equalsIgnoreCase("N"))
-                getDemandSet()
+                this.getDemandSet()
                         .add(demand.setViolationFeeForHawker(installment, license, license.getTradeName().getLicenseType()
                                 .getModule()));
         return this;
     }
 
-    public List<EgDemandDetails> addOldDemandDetailsToCurrent(final LicenseDemand demand) {
-        final List<EgDemandDetails> oldDetails = new ArrayList<EgDemandDetails>();
+    public List<EgDemandDetails> addOldDemandDetailsToCurrent(LicenseDemand demand) {
+        List<EgDemandDetails> oldDetails = new ArrayList<EgDemandDetails>();
         if (demand.getIsHistory().equalsIgnoreCase("N"))
-            for (final EgDemandDetails dd : demand.getEgDemandDetails())
+            for (EgDemandDetails dd : demand.getEgDemandDetails())
                 oldDetails.add((EgDemandDetails) dd.clone());
         return oldDetails;
     }
@@ -323,328 +645,41 @@ public abstract class License extends StateAware {
     /**
      * will give the difference to expiry date if date is passed expiry date then it will give no of months passed with isExpired
      * set to true if date is prioror to the date of expiry then it will give no of months to expire and isExpired set to false
-     * 
+     *
      * @param date
      * @return
      */
-    public String getDateDiffToExpiryDate(final Date date) {
+    public String getDateDiffToExpiryDate(Date date) {
         boolean isExpired = false;
         int monthDiff;
-        if (date.after(dateOfExpiry)) {
+        if (date.after(this.dateOfExpiry)) {
             isExpired = true;
-            monthDiff = LicenseUtils.getNumberOfMonths(dateOfExpiry, date);
+            monthDiff = LicenseUtils.getNumberOfMonths(this.dateOfExpiry, date);
         } else {
             isExpired = false;
-            monthDiff = LicenseUtils.getNumberOfMonths(date, dateOfExpiry);
+            monthDiff = LicenseUtils.getNumberOfMonths(date, this.dateOfExpiry);
         }
         return isExpired + "/" + monthDiff;
     }
 
-    public void setActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public void setApplicationDate(final Date applicationDate) {
-        this.applicationDate = applicationDate;
-    }
-
-    public void setApplicationNumber(final String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-    }
-
-    public void setBoundary(final Boundary boundary) {
-        this.boundary = boundary;
-    }
-
-    public void setCompanyDetails(final String companyDetails) {
-        this.companyDetails = companyDetails;
-    }
-
-    public void setDateOfCreation(final Date dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
-    }
-
-    public void setDateOfExpiry(final Date dateOfExpiry) {
-        this.dateOfExpiry = dateOfExpiry;
-    }
-
-    public void setDeduction(final BigDecimal deduction) {
-        this.deduction = deduction;
-    }
-
-    public void setDemandSet(final Set<LicenseDemand> demandSet) {
-        this.demandSet = demandSet;
-    }
-
-    public void setFeeTypeStr(final String feeTypeStr) {
-        this.feeTypeStr = feeTypeStr;
-    }
-
-    public void setInspectionDetails(final String inspectionDetails) {
-        this.inspectionDetails = inspectionDetails;
-    }
-
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public void setLicensee(final Licensee licensee) {
-        this.licensee = licensee;
-    }
-
-    public void setLicenseeZoneId(final Long licenseeZoneId) {
-        this.licenseeZoneId = licenseeZoneId;
-    }
-
-    public void setLicenseNumber(final String licenseNumber) {
-        this.licenseNumber = licenseNumber;
-    }
-
-    public void setLicenseZoneId(final Long licenseZoneId) {
-        this.licenseZoneId = licenseZoneId;
-    }
-
-    public void setNameOfEstablishment(final String nameOfEstablishment) {
-        this.nameOfEstablishment = nameOfEstablishment;
-    }
-
-    public void setNoOfRooms(final Integer noOfRooms) {
-        this.noOfRooms = noOfRooms;
-    }
-
-    public void setOldLicenseNumber(final String oldLicenseNumber) {
-        this.oldLicenseNumber = oldLicenseNumber;
-    }
-
-    public void setOtherCharges(final BigDecimal otherCharges) {
-        this.otherCharges = otherCharges;
-    }
-
-    public void setPhoneNumber(final String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setRemarks(final String remarks) {
-        this.remarks = remarks;
-    }
-
-    public void setRentalAgreement(final boolean rentalAgreement) {
-        this.rentalAgreement = rentalAgreement;
-    }
-
-    public void setRentPaid(final BigDecimal rentPaid) {
-        this.rentPaid = rentPaid;
-    }
-
-    public void setServicetaxNumber(final String servicetaxNumber) {
-        this.servicetaxNumber = servicetaxNumber;
-    }
-
-    public void setStatus(final LicenseStatus status) {
-        this.status = status;
-    }
-
-    public void setTempLicenseNumber(final String tempLicenseNumber) {
-        this.tempLicenseNumber = tempLicenseNumber;
-    }
-
-    public void setTinNumber(final String tinNumber) {
-        this.tinNumber = tinNumber;
-    }
-
-    public void setTradeName(final LicenseSubCategory tradeName) {
-        this.tradeName = tradeName;
-    }
-
-    public Set<LicenseStatusValues> getLicenseStatusValuesSet() {
-        return licenseStatusValuesSet;
-    }
-
-    public void setLicenseStatusValuesSet(final Set<LicenseStatusValues> licenseStatusValuesSet) {
-        this.licenseStatusValuesSet = licenseStatusValuesSet;
-    }
-
-    public void addLicenseStatusValuesSet(final LicenseStatusValues licenseStatusValues) {
-        licenseStatusValuesSet.add(licenseStatusValues);
-    }
-
-    public String getLicenseCheckList() {
-        return licenseCheckList;
-    }
-
-    public void setLicenseCheckList(final String licenseCheckList) {
-        this.licenseCheckList = licenseCheckList;
-    }
-
-    public LicenseTransfer getLicenseTransfer() {
-        return licenseTransfer;
-    }
-
-    public void setLicenseTransfer(final LicenseTransfer licenseTransfer) {
-        this.licenseTransfer = licenseTransfer;
-    }
-
-    public BigDecimal getSwmFee() {
-        return swmFee;
-    }
-
-    public void setSwmFee(final BigDecimal swmFee) {
-        this.swmFee = swmFee;
-    }
-
-    public String getDocImageNumber() {
-        return docImageNumber;
-    }
-
-    public void setDocImageNumber(final String docImageNumber) {
-        this.docImageNumber = docImageNumber;
-    }
-
-    public String getCompanyPanNumber() {
-        return companyPanNumber;
-    }
-
-    public String getVatNumber() {
-        return vatNumber;
-    }
-
-    public String getNamePowerOfAttorney() {
-        return namePowerOfAttorney;
-    }
-
-    public String getFeeExemption() {
-        return feeExemption;
-    }
-
-    public BigDecimal getMinSolvency() {
-        return minSolvency;
-    }
-
-    public void setMinSolvency(final BigDecimal minSolvency) {
-        this.minSolvency = minSolvency;
-    }
-
-    public BigDecimal getAvgAnnualTurnover() {
-        return avgAnnualTurnover;
-    }
-
-    public void setAvgAnnualTurnover(final BigDecimal avgAnnualTurnover) {
-        this.avgAnnualTurnover = avgAnnualTurnover;
-    }
-
-    public void setCompanyPanNumber(final String companyPanNumber) {
-        this.companyPanNumber = companyPanNumber;
-    }
-
-    public void setVatNumber(final String vatNumber) {
-        this.vatNumber = vatNumber;
-    }
-
-    public void setNamePowerOfAttorney(final String namePowerOfAttorney) {
-        this.namePowerOfAttorney = namePowerOfAttorney;
-    }
-
-    public void setFeeExemption(final String feeExemption) {
-        this.feeExemption = feeExemption;
-    }
-
-    public String getBankIfscCode() {
-        return bankIfscCode;
-    }
-
-    public void setBankIfscCode(final String bankIfscCode) {
-        this.bankIfscCode = bankIfscCode;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("License={");
-        str.append("  licenseNumber=").append(licenseNumber == null ? "null" : licenseNumber.toString());
-        str.append("  dateOfCreation=").append(dateOfCreation == null ? "null" : dateOfCreation.toString());
-        str.append("  dateOfExpiry=").append(dateOfExpiry == null ? "null" : dateOfExpiry.toString());
-        str.append("  applicationNumber=").append(applicationNumber == null ? "null" : applicationNumber.toString());
-        str.append("  applicationDate=").append(applicationDate == null ? "null" : applicationDate.toString());
-        str.append("  address=").append(address == null ? "null" : address.toString());
-        str.append("  servicetaxNumber=").append(servicetaxNumber == null ? "null" : servicetaxNumber.toString());
-        str.append("  isActive=").append(isActive);
-        str.append("  status=").append(status == null ? "null" : status.toString());
-        str.append("  tinNumber=").append(tinNumber == null ? "null" : tinNumber.toString());
-        str.append("  boundary=").append(boundary == null ? "null" : boundary.toString());
-        str.append("  tradeName=").append(tradeName == null ? "null" : tradeName.toString());
-        str.append("  tempLicenseNumber=").append(tempLicenseNumber == null ? "null" : tempLicenseNumber.toString());
-        str.append("  inspectionDetails=").append(inspectionDetails == null ? "null" : inspectionDetails.toString());
-        str.append("  nameOfEstablishment=").append(nameOfEstablishment == null ? "null" : nameOfEstablishment.toString());
-        str.append("  remarks=").append(remarks == null ? "null" : remarks.toString());
-        str.append("  companyDetails=").append(companyDetails == null ? "null" : companyDetails.toString());
-        str.append("  rentalAgreement=").append(rentalAgreement);
-        str.append("  rentPaid=").append(rentPaid == null ? "null" : rentPaid.toString());
-        str.append("  buildingType=").append(buildingType == null ? "null" : buildingType.toString());
-        str.append("  licenseDemand=").append(licenseDemand == null ? "null" : licenseDemand.toString());
-        str.append("  licensee=").append(licensee == null ? "null" : licensee.toString());
-        str.append("  phoneNumber=").append(phoneNumber == null ? "null" : phoneNumber.toString());
-        str.append("  noOfRooms=").append(noOfRooms == null ? "null" : noOfRooms.toString());
-        str.append("  oldLicenseNumber=").append(oldLicenseNumber == null ? "null" : oldLicenseNumber.toString());
-        str.append("  otherCharges=").append(otherCharges == null ? "null" : otherCharges.toString());
-        str.append("  deduction=").append(deduction == null ? "null" : deduction.toString());
-        str.append("  licenseZoneId=").append(licenseZoneId);
-        str.append("  licenseeZoneId=").append(licenseeZoneId);
-        str.append("  licenseTransfer=").append(licenseTransfer == null ? "null" : licenseTransfer.toString());
-        str.append("  licenseCheckList=").append(licenseCheckList == null ? "null" : licenseCheckList.toString());
-        str.append("  demandSet=").append(demandSet == null ? "null" : demandSet.toString());
-        str.append("  feeTypeStr=").append(feeTypeStr == null ? "null" : feeTypeStr.toString());
-        str.append("  SwmFee=").append(swmFee == null ? "null" : swmFee.toString());
-        str.append("  docImageNumber=").append(docImageNumber == null ? "null" : docImageNumber.toString());
-        str.append("  propertyNo=").append(propertyNo == null ? "null" : propertyNo.toString());
-        str.append("  category=").append(category == null ? "null" : category.toString());
-        str.append("  ownershipType=").append(ownershipType == null ? "null" : ownershipType.toString());
-        str.append("  workersCapacity=").append(workersCapacity == null ? "null" : workersCapacity.toString());
-        str.append("}");
-        return str.toString();
-    }
-
-    public void updateStatus(final LicenseStatus currentStatus) {
-        setStatus(currentStatus);
-        final LicenseStatusValues statusValues = new LicenseStatusValues();
+    public void updateStatus(LicenseStatus currentStatus) {
+        this.setStatus(currentStatus);
+        LicenseStatusValues statusValues = new LicenseStatusValues();
         statusValues.setLicenseStatus(currentStatus);
     }
 
-    public String getOfficeEmailId() {
-        return officeEmailId;
-    }
-
-    public void setOfficeEmailId(final String officeEmailId) {
-        this.officeEmailId = officeEmailId;
-    }
-
-    public List<LicenseObjection> getObjections() {
-        return objections;
-    }
-
-    public void setObjections(final List<LicenseObjection> objections) {
-        this.objections = objections;
-    }
-
-    public BigDecimal getViolationFee() {
-        return violationFee;
-    }
-
-    public void setViolationFee(final BigDecimal violationFee) {
-        this.violationFee = violationFee;
-    }
-
     public License acceptTransfer() {
-        final String tempApplicationNumber = getApplicationNumber();
-        setApplicationNumber(getLicenseTransfer().getOldApplicationNumber());
-        getLicenseTransfer().setOldApplicationNumber(tempApplicationNumber);
+        String tempApplicationNumber = this.getApplicationNumber();
+        this.setApplicationNumber(this.getLicenseTransfer().getOldApplicationNumber());
+        this.getLicenseTransfer().setOldApplicationNumber(tempApplicationNumber);
 
-        final String tempApplicantName = licensee.getApplicantName();
-        getLicensee().setApplicantName(getLicenseTransfer().getOldApplicantName());
-        getLicenseTransfer().setOldApplicantName(tempApplicantName);
+        String tempApplicantName = this.licensee.getApplicantName();
+        this.getLicensee().setApplicantName(this.getLicenseTransfer().getOldApplicantName());
+        this.getLicenseTransfer().setOldApplicantName(tempApplicantName);
 
-        final String tempNameOfEstalishment = getNameOfEstablishment();
-        setNameOfEstablishment(getLicenseTransfer().getOldNameOfEstablishment());
-        getLicenseTransfer().setOldNameOfEstablishment(tempNameOfEstalishment);
+        String tempNameOfEstalishment = this.getNameOfEstablishment();
+        this.setNameOfEstablishment(this.getLicenseTransfer().getOldNameOfEstablishment());
+        this.getLicenseTransfer().setOldNameOfEstablishment(tempNameOfEstalishment);
 
         //TODO -- Commented for Phoenix migration
        /* final Address tempAddress = licensee.getAddress();
@@ -652,67 +687,65 @@ public abstract class License extends StateAware {
         //getLicensee().setAddress(getLicenseTransfer().getOldAddress());
         getLicenseTransfer().setOldAddress(tempAddress);
         */
-        final Boundary tempBoundary = getLicensee().getBoundary();
-        getLicensee().setBoundary(getLicenseTransfer().getBoundary());
-        getLicenseTransfer().setBoundary(tempBoundary);
+        Boundary tempBoundary = this.getLicensee().getBoundary();
+        this.getLicensee().setBoundary(this.getLicenseTransfer().getBoundary());
+        this.getLicenseTransfer().setBoundary(tempBoundary);
 
-        final String tempPhoneNumber = getPhoneNumber();
-        setPhoneNumber(getLicenseTransfer().getOldPhoneNumber());
-        getLicenseTransfer().setOldPhoneNumber(tempPhoneNumber);
+        String tempPhoneNumber = this.getPhoneNumber();
+        this.setPhoneNumber(this.getLicenseTransfer().getOldPhoneNumber());
+        this.getLicenseTransfer().setOldPhoneNumber(tempPhoneNumber);
 
-        final String tempHomePhoneNumber = getLicensee().getPhoneNumber();
-        getLicensee().setPhoneNumber(getLicenseTransfer().getOldHomePhoneNumber());
-        getLicenseTransfer().setOldHomePhoneNumber(tempHomePhoneNumber);
+        String tempHomePhoneNumber = this.getLicensee().getPhoneNumber();
+        this.getLicensee().setPhoneNumber(this.getLicenseTransfer().getOldHomePhoneNumber());
+        this.getLicenseTransfer().setOldHomePhoneNumber(tempHomePhoneNumber);
 
-        final String tempMobilePhoneNumber = getLicensee().getMobilePhoneNumber();
-        getLicensee().setMobilePhoneNumber(getLicenseTransfer().getOldMobileNumber());
-        getLicenseTransfer().setOldMobileNumber(tempMobilePhoneNumber);
+        String tempMobilePhoneNumber = this.getLicensee().getMobilePhoneNumber();
+        this.getLicensee().setMobilePhoneNumber(this.getLicenseTransfer().getOldMobileNumber());
+        this.getLicenseTransfer().setOldMobileNumber(tempMobilePhoneNumber);
 
-        final String tempEmailId = getLicensee().getEmailId();
-        getLicensee().setEmailId(getLicenseTransfer().getOldEmailId());
-        getLicenseTransfer().setOldEmailId(tempEmailId);
+        String tempEmailId = this.getLicensee().getEmailId();
+        this.getLicensee().setEmailId(this.getLicenseTransfer().getOldEmailId());
+        this.getLicenseTransfer().setOldEmailId(tempEmailId);
 
-        final String tempUniqueId = getLicensee().getUid();
-        getLicensee().setUid(getLicenseTransfer().getOldUid());
-        getLicenseTransfer().setOldUid(tempUniqueId);
+        String tempUniqueId = this.getLicensee().getUid();
+        this.getLicensee().setUid(this.getLicenseTransfer().getOldUid());
+        this.getLicenseTransfer().setOldUid(tempUniqueId);
         return this;
     }
 
     public String getWorkflowIdentityForTransfer() {
-        final StringBuilder workflowIdentity = new StringBuilder();
-        workflowIdentity.append("ApplNo:").append(getLicenseTransfer().getOldApplicationNumber());
-        workflowIdentity.append(",LicenseNo:").append(getLicenseNumber());
-        workflowIdentity.append(",LicenseId:").append(getId());
-        workflowIdentity.append(",LicenseTransferId:").append(getLicenseTransfer().getId());
+        StringBuilder workflowIdentity = new StringBuilder();
+        workflowIdentity.append("ApplNo:").append(this.getLicenseTransfer().getOldApplicationNumber());
+        workflowIdentity.append(",LicenseNo:").append(this.getLicenseNumber());
+        workflowIdentity.append(",LicenseId:").append(this.getId());
+        workflowIdentity.append(",LicenseTransferId:").append(this.getLicenseTransfer().getId());
         return workflowIdentity.toString();
     }
 
     public String getWorkflowIdentityForCreate() {
-        final StringBuilder workflowIdentity = new StringBuilder();
-        workflowIdentity.append("ApplNo:").append(getLicenseTransfer().getOldApplicationNumber());
-        workflowIdentity.append(",LicenseId:").append(getId());
+        StringBuilder workflowIdentity = new StringBuilder();
+        workflowIdentity.append("ApplNo:").append(this.getLicenseTransfer().getOldApplicationNumber());
+        workflowIdentity.append(",LicenseId:").append(this.getId());
         return workflowIdentity.toString();
     }
 
     public String getWorkflowIdentityForModify() {
-        final StringBuilder workflowIdentity = new StringBuilder();
-        workflowIdentity.append("ApplNo:").append(getLicenseTransfer().getOldApplicationNumber());
-        workflowIdentity.append(",LicenseNo:").append(getLicenseNumber());
-        workflowIdentity.append(",LicenseId:").append(getId());
+        StringBuilder workflowIdentity = new StringBuilder();
+        workflowIdentity.append("ApplNo:").append(this.getLicenseTransfer().getOldApplicationNumber());
+        workflowIdentity.append(",LicenseNo:").append(this.getLicenseNumber());
+        workflowIdentity.append(",LicenseId:").append(this.getId());
         return workflowIdentity.toString();
     }
 
-    public License updateCollectedForExisting(final License license) {
+    public License updateCollectedForExisting(License license) {
 
-        final EgDemand licenseDemand = license.getCurrentDemand();
+        EgDemand licenseDemand = license.getCurrentDemand();
         // Installment licIntallment=licenseDemand.getEgInstallmentMaster();
-        if (licenseDemand != null)
-        {
-            final Set<EgDemandDetails> demanddetails = licenseDemand.getEgDemandDetails();
+        if (licenseDemand != null) {
+            Set<EgDemandDetails> demanddetails = licenseDemand.getEgDemandDetails();
             BigDecimal tot_amt = BigDecimal.ZERO;
-            for (final EgDemandDetails dd : demanddetails)
-            {
-                final BigDecimal demandAmount = dd.getAmount().subtract(dd.getAmtRebate());
+            for (EgDemandDetails dd : demanddetails) {
+                BigDecimal demandAmount = dd.getAmount().subtract(dd.getAmtRebate());
                 tot_amt = tot_amt.add(demandAmount);
                 dd.setAmtCollected(demandAmount);
             }
@@ -724,7 +757,7 @@ public abstract class License extends StateAware {
 
     public EgDemand getCurrentDemand() {
         EgDemand currentDemand = null;
-        for (final EgDemand demand : demandSet)
+        for (EgDemand demand : this.demandSet)
             if (demand.getIsHistory().equalsIgnoreCase("N")) {
                 currentDemand = demand;
                 break;
@@ -733,20 +766,15 @@ public abstract class License extends StateAware {
     }
 
     public boolean isPaid() {
-        boolean paid = false;
-        final BigDecimal totBal = getTotalBalance();
-        if (totBal.equals(BigDecimal.ZERO))
-            paid = true;
-       // return paid;
-        return true;
+        return this.getTotalBalance().equals(BigDecimal.ZERO);
     }
 
     public boolean isViolationFeePending() {
         boolean paid = false;
         BigDecimal totBal = BigDecimal.ZERO;
-        for (final EgDemand demand : demandSet)
+        for (EgDemand demand : this.demandSet)
             if (demand.getIsHistory().equals("N"))
-                for (final EgDemandDetails dd : demand.getEgDemandDetails())
+                for (EgDemandDetails dd : demand.getEgDemandDetails())
                     if (dd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.VIOLATION_FEE_DEMAND_REASON)) {
                         if (!dd.getAmount().subtract(dd.getAmtCollected()).equals(BigDecimal.ZERO))
                             totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
@@ -758,18 +786,17 @@ public abstract class License extends StateAware {
 
     public boolean isWorkFlowStateRejected() {
         boolean workFlowStateRejected = false;
-        if (getState() != null && getState().getValue().contains("Rejected"))
-            workFlowStateRejected = getState().getValue().contains("Rejected");
+        if (this.getState() != null && this.getState().getValue().contains("Rejected"))
+            workFlowStateRejected = this.getState().getValue().contains("Rejected");
         return workFlowStateRejected;
     }
 
-    public BigDecimal getTotalBalance()
-    {
+    public BigDecimal getTotalBalance() {
         BigDecimal totBal = BigDecimal.ZERO;
 
-        for (final EgDemand demand : demandSet)
+        for (EgDemand demand : this.demandSet)
             if (demand.getIsHistory().equals("N"))
-                for (final EgDemandDetails dd : demand.getEgDemandDetails()) {
+                for (EgDemandDetails dd : demand.getEgDemandDetails()) {
                     if (!dd.getAmount().subtract(dd.getAmtCollected()).equals(BigDecimal.ZERO))
                         totBal = totBal.add(dd.getAmount().subtract(dd.getAmtCollected()));
                     if (!dd.getAmtRebate().equals(BigDecimal.ZERO))
@@ -777,96 +804,4 @@ public abstract class License extends StateAware {
                 }
         return totBal;
     }
-
-    public String getAuditDetails() {
-        return "";
-    }
-
-    public String getPropertyNo() {
-        return propertyNo;
-    }
-
-    public void setPropertyNo(String propertyNo) {
-        this.propertyNo = propertyNo;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public LicenseCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(LicenseCategory category) {
-        this.category = category;
-    }
-
-    public String getOwnershipType() {
-        return ownershipType;
-    }
-
-    public void setOwnershipType(String ownershipType) {
-        this.ownershipType = ownershipType;
-    }
-
-    public BigDecimal getTradeArea_weight() {
-        return tradeArea_weight;
-    }
-
-    public void setTradeArea_weight(BigDecimal tradeArea_weight) {
-        this.tradeArea_weight = tradeArea_weight;
-    }
-
-    public UnitOfMeasurement getUom() {
-        return uom;
-    }
-
-    public void setUom(UnitOfMeasurement uom) {
-        this.uom = uom;
-    }
-
-    public NatureOfBusiness getBuildingType() {
-        return buildingType;
-    }
-
-    public void setBuildingType(NatureOfBusiness buildingType) {
-        this.buildingType = buildingType;
-    }
-
-    public BigDecimal getWorkersCapacity() {
-        return workersCapacity;
-    }
-
-    public void setWorkersCapacity(BigDecimal workersCapacity) {
-        this.workersCapacity = workersCapacity;
-    }
-
-	public LicenseAppType getLicenseAppType() {
-		return licenseAppType;
-	}
-
-	public void setLicenseAppType(LicenseAppType licenseAppType) {
-		this.licenseAppType = licenseAppType;
-	}
-
-    public boolean isLegacy() {
-        return legacy;
-    }
-
-    public void setLegacy(boolean legacy) {
-        this.legacy = legacy;
-    }
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
 }

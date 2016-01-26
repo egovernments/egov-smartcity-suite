@@ -41,15 +41,22 @@ package org.egov.tl.service.masters;
 
 import java.util.List;
 
-import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.repository.UnitOfMeasurementRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UnitOfMeasurementService extends PersistenceService<UnitOfMeasurement, Long> {
+@Transactional(readOnly = true)
+public class UnitOfMeasurementService{
 
-    public UnitOfMeasurementService() {
-        setType(UnitOfMeasurement.class);
+    @Autowired
+    private UnitOfMeasurementRepository unitOfMeasurementRepository;
+    
+    @Transactional
+    public UnitOfMeasurement create(UnitOfMeasurement unitOfMeasurement){
+        return  unitOfMeasurementRepository.save(unitOfMeasurement);
     }
 
     /**
@@ -58,7 +65,7 @@ public class UnitOfMeasurementService extends PersistenceService<UnitOfMeasureme
      * @return
      */
     public UnitOfMeasurement findUOMByName(final String name) {
-        return this.find("From UnitOfMeasurement where upper(name)=?", name.toUpperCase());
+        return  unitOfMeasurementRepository.findByNameContainingIgnoreCase(name);
     }
 
     /**
@@ -67,14 +74,22 @@ public class UnitOfMeasurementService extends PersistenceService<UnitOfMeasureme
      * @return
      */
     public UnitOfMeasurement findUOMByCode(final String code) {
-        return this.find("From UnitOfMeasurement where upper(code)=?", code.toUpperCase());
+        return  unitOfMeasurementRepository.findByCodeContainingIgnoreCase(code);
     }
 
     /**
      * @return list of active UOM's
      */
     public List<UnitOfMeasurement> findAllActiveUOM() {
-        return findAllBy("From UnitOfMeasurement where active='t'");
+        return unitOfMeasurementRepository.findAllByActiveTrue();
+    }
+    
+    public UnitOfMeasurement findById(Long uomId){
+        return unitOfMeasurementRepository.findOne(uomId);
+    }
+    
+    public List<UnitOfMeasurement> findAll(){
+        return unitOfMeasurementRepository.findAll();
     }
 
 }

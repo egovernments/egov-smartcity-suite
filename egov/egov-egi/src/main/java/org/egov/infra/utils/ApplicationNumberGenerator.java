@@ -49,9 +49,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.hibernate.exception.SQLGrammarException;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ApplicationNumberGenerator {
     private static final String APP_NUMBER_SEQ_PREFIX = "SEQ_APPLICATION_NUMBER%s";
-    private static final DateTimeFormatter DATE_FORMATER = DateTimeFormat.forPattern("yyyy");
+   
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
 
@@ -69,7 +66,7 @@ public class ApplicationNumberGenerator {
     @Transactional
     public String generate() {
         try {
-            final String currentYear = DATE_FORMATER.print(new LocalDate());
+            final String currentYear = DateUtils.currentDateToYearFormat();
             final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
             Serializable sequenceNumber;
             try {

@@ -39,45 +39,41 @@
  */
 package org.egov.tl.service;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public class FeeService extends PersistenceService<FeeMatrix, Long> {
+    public static final Logger LOGGER = Logger.getLogger(FeeService.class);
     public static final String FEE_BY_NAME_TYPE_NATURE = "FEE_BY_NAME_TYPE_NATURE";
     public static final String CNC = "CNC";
     public static final String PFA = "PFA";
-    public static final Logger LOGGER = Logger.getLogger(FeeService.class);
     public static final String HOM = "HOM";
+
+    public FeeService(Class<FeeMatrix> entityType) {
+        super(entityType);
+    }
+
     @Autowired
     private FeeMatrixService feeMatrixService;
 
     @SuppressWarnings("unchecked")
-    public List<FeeMatrix> getFeeList(final LicenseSubCategory tradeName, final LicenseAppType appType,
-            final NatureOfBusiness natureOfBusiness) {
+    public List<FeeMatrix> getFeeList(LicenseSubCategory tradeName, LicenseAppType appType,
+                                      NatureOfBusiness natureOfBusiness) {
         LOGGER.debug("tradeName:::" + tradeName);
-        return findAllByNamedQuery(FEE_BY_NAME_TYPE_NATURE, tradeName.getId(), appType.getId());
+        return this.findAllByNamedQuery(FEE_BY_NAME_TYPE_NATURE, tradeName.getId(), appType.getId());
     }
 
-    /**
-     * @param tradeName -- is mandatory
-     * @param appType --is mandatory
-     * @param tradeNatureId
-     * @param otherCharges --will be added to sum
-     * @param deduction -- will be subtracted from sum
-     * @return calculatedFee This api will also set the LicenseNumber prefix when new class is added needs to update the api to
-     * set corresponding prefix(fee type) eg: TradeLicense has PFA or CNC HospitalLicense has HOM only put loggers
-     */
-    public BigDecimal calculateFee(final License license) {
+    public BigDecimal calculateFee(License license) {
         BigDecimal totalFee = BigDecimal.ZERO;
       /*  boolean isPFA = false;
         final List<FeeMatrix> feeList = feeMatrixService.getFeeLifest(license);
@@ -93,14 +89,14 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
         return totalFee;
     }
 
-    public BigDecimal calculateFeeForExisting(final License license, final LicenseSubCategory tradeName, final LicenseAppType appType,
-            final NatureOfBusiness natureOfBusiness, final BigDecimal otherCharges, final BigDecimal deduction) {
+    public BigDecimal calculateFeeForExisting(License license, LicenseSubCategory tradeName, LicenseAppType appType,
+                                              NatureOfBusiness natureOfBusiness, BigDecimal otherCharges, BigDecimal deduction) {
         BigDecimal totalFee = BigDecimal.ZERO;
         boolean isPFA = false;
 
-        final List<FeeMatrix> feeList = getFeeList(tradeName, appType, natureOfBusiness);
+        List<FeeMatrix> feeList = this.getFeeList(tradeName, appType, natureOfBusiness);
         if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.TRADELICENSE)) {
-            for (final FeeMatrix fee : feeList) {
+            for (FeeMatrix fee : feeList) {
                 if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
                     isPFA = true;
                 totalFee = totalFee.add(fee.getAmount());
@@ -109,11 +105,11 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
         return totalFee;
     }
 
-    public void setFeeType(final List<FeeMatrix> feeList, final License license) {
+    public void setFeeType(List<FeeMatrix> feeList, License license) {
         boolean isPFA = false;
 
         if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.TRADELICENSE)) {
-            for (final FeeMatrix fee : feeList)
+            for (FeeMatrix fee : feeList)
                 if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
                     isPFA = true;
             if (isPFA)
@@ -123,7 +119,7 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
         } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.HOSPITALLICENSE))
             license.setFeeTypeStr(HOM);
         else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.HAWKERLICENSE)) {
-            for (final FeeMatrix fee : feeList)
+            for (FeeMatrix fee : feeList)
                 if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
                     isPFA = true;
             if (isPFA)
@@ -131,7 +127,7 @@ public class FeeService extends PersistenceService<FeeMatrix, Long> {
             else
                 license.setFeeTypeStr(CNC);
         } else if (license.getClass().getSimpleName().equalsIgnoreCase(Constants.WATERWORKSLICENSE)) {
-            for (final FeeMatrix fee : feeList)
+            for (FeeMatrix fee : feeList)
                 if (fee.getFeeType().getName().equalsIgnoreCase(PFA))
                     isPFA = true;
             if (isPFA)

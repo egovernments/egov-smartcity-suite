@@ -167,5 +167,5 @@
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/meterEntry.js'/>"></script>
-<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/meterEntry.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>

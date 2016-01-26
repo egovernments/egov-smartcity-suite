@@ -311,8 +311,10 @@ $(document).ready(function(){
 					'rateClassId' : $('#rateClass').val()
 					}
 			}).done(function(value) {
-				//alert(value);
-				$('#taxAmount').val(value); 
+				if(value==0)
+					 $('#taxAmount').val(''); 
+					else
+						$('#taxAmount').val(value); 
 			
 			});
 		}

@@ -54,7 +54,7 @@
     		var fiscalYearStartDate="01/04/"+endDate.substr(endDate.length-4,4);
     	if(compareDate(fiscalYearStartDate,strtDate) == -1 )
    		{ 
-	       alert("Start Date and End Date should be in same financial year");
+	       bootbox.alert("Start Date and End Date should be in same financial year");
 	       document.getElementById('startDate').focus();
 	       return false;
 	    
@@ -63,7 +63,7 @@
     	/*To check whether Start Date is Greater than End Date*/
     	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
     	{
-	    	alert('Start Date cannot be greater than End Date');
+	    	bootbox.alert('Start Date cannot be greater than End Date');
 	    	document.getElementById('startDate').value='';
 	    	document.getElementById('endDate').value='';
 	    	document.getElementById('startDate').focus();
@@ -72,7 +72,7 @@
     	   /*to check whether the End Date is greater than the Current Date*/
     	if( compareDate(formatDate6(currentDate),formatDate6(endDate)) == 1 )
     	{
-    		alert('End Date cannot be greater than Current Date');
+    		bootbox.alert('End Date cannot be greater than Current Date');
     		document.getElementById('endDate').value='';
     		document.getElementById('endDate').focus();	
     		return false;	
@@ -164,7 +164,7 @@
 				document.getElementById('entityName').value=entity_array[0].split("`-`")[1];
 				
 			}else{
-				alert("Invalid entity selected.");
+				bootbox.alert("Invalid entity selected.");
 				document.getElementById('accEntitycode').value="";
 				document.getElementById('accEntityKey').value="";
 				document.getElementById('entityName').value="";

@@ -116,7 +116,7 @@ function paintAlternateColorForRows() {
 function checkHouseNoStartsWithNo(field) {
 	var pattern = /^0+$/; 
 	if (pattern.test(field.value)) {
-		alert('House number should not contain only zeros');
+		bootbox.alert('House number should not contain only zeros');
 		field.value="";
 		field.focus();
 		return false;

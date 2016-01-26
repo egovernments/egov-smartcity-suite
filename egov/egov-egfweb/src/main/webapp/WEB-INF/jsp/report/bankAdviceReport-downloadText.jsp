@@ -160,13 +160,13 @@
 			var finYearId = document.getElementById('financialYearId').value;
 			
 			if (monthValue == null || monthValue.trim().length == 0 || monthValue == undefined) {
-				alert('Please select month');				
+				bootbox.alert('Please select month');				
 				document.getElementById('month').focus();
 				return false;
 			}
 			
 			if (finYearId == null || finYearId.trim().length == 0 || finYearId == undefined) {
-				alert('Please select financial year');				
+				bootbox.alert('Please select financial year');				
 				document.getElementById('financialYearId').focus();
 				return false;
 			}

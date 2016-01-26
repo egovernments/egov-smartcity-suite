@@ -117,7 +117,7 @@ function setDefault()
 	var target="<%=(request.getAttribute("alertMessage"))%>";
 	if(target!="null")
 	{
-		alert("<%=request.getAttribute("alertMessage")%>");
+		bootbox.alert("<%=request.getAttribute("alertMessage")%>");
 	}
 	
 }

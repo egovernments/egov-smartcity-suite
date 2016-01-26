@@ -246,7 +246,7 @@
 				var endDate = document.getElementById('endDate').value;
 				if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 				{
-							alert('Start Date cannot be greater than End Date');
+					bootbox.alert('Start Date cannot be greater than End Date');
 							document.getElementById('startDate').value='';
 							document.getElementById('endDate').value='';
 							document.getElementById('startDate').focus();
@@ -573,7 +573,7 @@
 						
 						 %>
 						 <script>
-							 alert("Error :<%=e.getMessage()%>");
+						 bootbox.alert("Error :<%=e.getMessage()%>");
 						 </script>
 						 <%
 					}

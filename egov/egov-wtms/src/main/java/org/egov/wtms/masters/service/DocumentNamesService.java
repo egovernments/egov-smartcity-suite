@@ -98,6 +98,10 @@ public class DocumentNamesService {
     public List<DocumentNames> findByApplicationType(final ApplicationType applicationType) {
         return documentNamesRepository.findByApplicationType(applicationType);
     }
+    
+    public DocumentNames findByApplicationTypeAndDocumentName(final ApplicationType applicationType,final String documentName) {
+        return documentNamesRepository.findByApplicationTypeAndDocumentName(applicationType,documentName);
+    }
 
     public List<DocumentNames> getAllActiveDocumentNamesByApplicationType(final ApplicationType applicationType) {
         return documentNamesRepository.findByActiveTrueAndApplicationTypeOrderByIdAsc(applicationType);

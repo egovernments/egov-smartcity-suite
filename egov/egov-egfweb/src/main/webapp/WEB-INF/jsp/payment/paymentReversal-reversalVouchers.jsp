@@ -199,11 +199,11 @@
 		var fromDate = document.getElementById('fromDate').value;
 		var toDate = document.getElementById('toDate').value;
 		if(fromDate == ''){
-			alert('Select From Date');
+			bootbox.alert('Select From Date');
 			return false;
 		}
 		if(toDate == ''){
-			alert('Select To Date');
+			bootbox.alert('Select To Date');
 			return false;
 		}
 		return true;

@@ -61,7 +61,7 @@ var callback = {
 			},
 			failure: function(o) {
 			document.getElementById('loading').style.display ='none';
-			alert("Search failed! Please try again");
+			bootbox.alert("Search failed! Please try again");
 			}
 		}
 function getData(){
@@ -75,7 +75,7 @@ function getData(){
 	}
 	var chequeCondition="&chequeOrRTGS="+chequeOrRTGS;	
 	for(var i=0 ; i < dateNm.length; i++){
-		//alert(dateNm[i].checked);
+		//bootbox.alert(dateNm[i].checked);
 		if(dateNm[i].checked)
 		var dtVal=dateNm[i].value;
 	}
@@ -121,7 +121,7 @@ function validateData(dateNm1){
 	var bank = document.getElementById('bank').value;
 	var bankAccount = document.getElementById('accountNumber').value;
 	 if(bank != -1 && bankAccount == -1){
-		 alert("Please select a Bank Account");
+		 bootbox.alert("Please select a Bank Account");
 		 return false;
 	 }
 	return true;	
@@ -130,7 +130,7 @@ function validateData(dateNm1){
 function validateBank(){
 	var bank = document.getElementById('bank').value;
 	if(bank == -1){
-		alert("Please select a Bank")
+		bootbox.alert("Please select a Bank")
 		return false;
 	}
 	return true;
@@ -149,7 +149,7 @@ function populateAccNumbers(bankBranch){
 function onLoadTask(){
 	document.getElementById('asdat1').style.display='none';
 	document.getElementById('dateran').style.display='none';
-	//alert("---"+typeOfAcc);
+	//bootbox.alert("---"+typeOfAcc);
     populatebank({typeOfAccount:typeOfAcc})
 }
 function loaddate(dateTypeObj){

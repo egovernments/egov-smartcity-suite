@@ -169,6 +169,10 @@ function callAjaxByBoundary() {
 							"sTitle" : "Name"
 						},
 						{
+							"data" : "houseNo",
+							"sTitle" : "Door No"
+						},
+						{
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
@@ -234,34 +238,29 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(3, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
-						updateTotalFooter(6, api);
-						updateTotalFooter(7, api);
-						updateTotalFooter(8, api);
-						updateTotalFooter(9, api);
-						updateTotalFooter(10, api);
-						updateTotalFooter(11, api);
-						updateTotalFooter(12, api);
-						updateTotalFooter(13, api);
-						updateTotalFooter(14, api);
-						updateTotalFooter(15, api);
-						updateTotalFooter(16, api);
-						updateTotalFooter(17, api);
-						updateTotalFooter(18, api);
-						updateTotalFooter(19, api);
+						for(var i=2;i<=20;i++)
+						{
+						  updateTotalFooter(i, api);	
+						}
 					}
 				},
 				"aoColumnDefs" : [ {
-					"aTargets" : [ 1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
+					"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}
 				} ]
 			});
+	
+			if(jQuery("#mode").val() === "property")
+			{
+				reportdatatable.fnSetColumnVis( 1, true );
+			}
+			else
+			{
+				reportdatatable.fnSetColumnVis( 1, false );
+			}
+	
 }
 
 

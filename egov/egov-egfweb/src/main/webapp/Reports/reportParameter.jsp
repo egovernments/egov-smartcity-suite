@@ -156,7 +156,7 @@ function fillNeibrAfterSplitFunction(obj,neibrObjName)
 					}
 					else
 					{
-						alert('Invalid Code\nPlease use autocomplete option');
+						bootbox.alert('Invalid Code\nPlease use autocomplete option');
 						neibrObj.value='';
 						obj.value='';
 						return;
@@ -171,7 +171,7 @@ function fillNeibrAfterSplitFunction(obj,neibrObjName)
  	{
 		if(obj.value!='' && temp.length<2)
 		{
-			alert('Invalid Code\nPlease use autocomplete option');
+			bootbox.alert('Invalid Code\nPlease use autocomplete option');
 			neibrObj.value='';
 			obj.value='';	
 			return;

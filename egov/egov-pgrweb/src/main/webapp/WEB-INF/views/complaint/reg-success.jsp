@@ -190,4 +190,4 @@
 var lat = '${complaint.lat}';
 var lng = '${complaint.lng}';
 </script>
-<script src="<c:url value='/resources/js/app/complaintsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/complaintsuccess.js?rnd=${app_release_no}'/>"></script>

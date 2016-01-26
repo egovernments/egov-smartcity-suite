@@ -177,13 +177,13 @@
 	function validateMandatoryFields(){
 		var finId=document.getElementById('finYearId').value;
 		if(finId==-1){
-			alert("Select Financial Year");
+			bootbox.alert("Select Financial Year");
 			return false;
 		}
 		return true;
 	}
 	function init(){
-	//alert(document.getElementById("mode").value);
+	//bootbox.alert(document.getElementById("mode").value);
 	}
 	</script>
 </body>

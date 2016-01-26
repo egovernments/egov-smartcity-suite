@@ -152,7 +152,7 @@ window.close();
  		 LOGGER.info("Exception in Jsp Page "+ e.getMessage());
  		 %> 
  		 <script>
- 		 alert("Error :<%=e.getMessage()%>");
+ 		bootbox.alert("Error :<%=e.getMessage()%>");
  		 </script>
  		 <%
  		 }

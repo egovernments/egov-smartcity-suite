@@ -41,10 +41,10 @@ package org.egov.adtax.search.contract;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.adtax.entity.enums.HoardingStatus;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 
 public class HoardingSearch {
-    private String hoardingNumber;
+    private String advertisementNumber;
     private String applicationNumber;
     private String permissionNumber;
     private String agencyName;
@@ -56,17 +56,19 @@ public class HoardingSearch {
     private Long revenueInspector;
     private Long adminBoundryParent;
     private Long adminBoundry;
-    private HoardingStatus status;
+    private AdvertisementStatus status;
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
     private int totalHoardingInAgency;
     private String hordingIdsSearchedByAgency;
-    public String getHoardingNumber() {
-        return hoardingNumber;
+    private String permitStatus;
+
+    public String getAdvertisementNumber() {
+        return advertisementNumber;
     }
 
-    public void setHoardingNumber(final String hoardingNumber) {
-        this.hoardingNumber = hoardingNumber;
+    public void setAdvertisementNumber(final String advertisementNumber) {
+        this.advertisementNumber = advertisementNumber;
     }
 
     public String getApplicationNumber() {
@@ -157,11 +159,11 @@ public class HoardingSearch {
         this.adminBoundry = adminBoundry;
     }
 
-    public HoardingStatus getStatus() {
+    public AdvertisementStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final HoardingStatus status) {
+    public void setStatus(final AdvertisementStatus status) {
         this.status = status;
     }
 
@@ -169,7 +171,7 @@ public class HoardingSearch {
         return pendingDemandAmount;
     }
 
-    public void setPendingDemandAmount(BigDecimal pendingDemandAmount) {
+    public void setPendingDemandAmount(final BigDecimal pendingDemandAmount) {
         this.pendingDemandAmount = pendingDemandAmount;
     }
 
@@ -177,7 +179,7 @@ public class HoardingSearch {
         return penaltyAmount;
     }
 
-    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+    public void setPenaltyAmount(final BigDecimal penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
 
@@ -185,7 +187,7 @@ public class HoardingSearch {
         return totalHoardingInAgency;
     }
 
-    public void setTotalHoardingInAgency(int totalHoardingInAgency) {
+    public void setTotalHoardingInAgency(final int totalHoardingInAgency) {
         this.totalHoardingInAgency = totalHoardingInAgency;
     }
 
@@ -193,8 +195,16 @@ public class HoardingSearch {
         return hordingIdsSearchedByAgency;
     }
 
-    public void setHordingIdsSearchedByAgency(String hordingIdsSearchedByAgency) {
+    public void setHordingIdsSearchedByAgency(final String hordingIdsSearchedByAgency) {
         this.hordingIdsSearchedByAgency = hordingIdsSearchedByAgency;
     }
-    
+
+    public String getPermitStatus() {
+        return permitStatus;
+    }
+
+    public void setPermitStatus(final String permitStatus) {
+        this.permitStatus = permitStatus;
+    }
+
 }

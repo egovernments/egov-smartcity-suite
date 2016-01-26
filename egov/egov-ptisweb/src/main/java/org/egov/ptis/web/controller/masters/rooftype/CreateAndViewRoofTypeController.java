@@ -43,6 +43,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.master.service.RoofTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateAndViewRoofTypeController {
 
     private final RoofTypeService roofTypeService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public CreateAndViewRoofTypeController(final RoofTypeService roofTypeService) {
@@ -81,7 +85,9 @@ public class CreateAndViewRoofTypeController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showRoofTypes() {
+    public String showRoofTypes(Model model) {
+        String roleName = roofTypeService.getRolesForUserId(securityUtils.getCurrentUser().getId());
+        model.addAttribute("roleName",roleName);
         return "roofType-search";
     }
 

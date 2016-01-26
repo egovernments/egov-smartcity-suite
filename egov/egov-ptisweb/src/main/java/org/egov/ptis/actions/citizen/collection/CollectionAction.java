@@ -44,13 +44,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -60,6 +63,7 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
@@ -69,6 +73,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -76,9 +81,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Namespace("/citizen/collection")
 @ResultPath("/WEB-INF/jsp/")
 @Results({
-    @Result(name = CollectionAction.RESULT_COLLECTTAX, location = "citizen/collection/collection-collectTax.jsp"),
-    @Result(name = CollectionAction.RESULT_TAXPAID, location = "citizen/collection/collection-taxPaid.jsp")
-})
+        @Result(name = CollectionAction.RESULT_COLLECTTAX, location = "citizen/collection/collection-collectTax.jsp"),
+        @Result(name = CollectionAction.RESULT_TAXPAID, location = "citizen/collection/collection-taxPaid.jsp"),
+        @Result(name = CollectionAction.USER_DETAILS, location = "citizen/collection/collection-ownerDetails.jsp"),
+        @Result(name = CollectionAction.UPDATEMOBILE_FORM, location = "citizen/collection/collection-updateMobileNo.jsp") })
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
@@ -90,12 +96,20 @@ public class CollectionAction extends BaseFormAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
     public static final String RESULT_COLLECTTAX = "collectTax";
     public static final String RESULT_TAXPAID = "taxPaid";
+    protected static final String USER_DETAILS = "ownerDetails";
+    protected static final String UPDATEMOBILE_FORM = "updateMobileNo";
 
     private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private PTBillServiceImpl ptBillServiceImpl;
+    private BasicProperty basicProperty;
+    private User propertyOwner;
+
     private String collectXML;
     private String assessmentNumber;
+    private String doorNo;
+    private String mobileNumber;
+
     private Long userId;
 
     @Autowired
@@ -111,6 +125,7 @@ public class CollectionAction extends BaseFormAction {
         final User usr = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
         setUserId(usr.getId().longValue());
         EgovThreadLocals.setUserId(usr.getId());
+        basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
         LOGGER.debug("Exit from prepare method");
     }
 
@@ -122,12 +137,10 @@ public class CollectionAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered method generatePropertyTaxBill, assessment Number: " + assessmentNumber);
 
-        final BasicProperty basicProperty = basicPropertyService
-                .findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
-
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
-        final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
+        final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty
+                .getProperty());
         final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
 
@@ -137,11 +150,11 @@ public class CollectionAction extends BaseFormAction {
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable.setUserId(userId);
-        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
-                .getWard().getBoundaryNum().toString()));
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
+                .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
         try {
-            collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable),"UTF-8");
+            collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(propertyTaxBillable), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -149,6 +162,37 @@ public class CollectionAction extends BaseFormAction {
             LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
 
         return RESULT_COLLECTTAX;
+    }
+
+    @Action(value = "/collection-searchOwnerDetails")
+    public String searchOwnerDetails() {
+        if (null != basicProperty) {
+            setPropertyOwner(basicProperty.getPrimaryOwner());
+        }
+        setMobileNumber(getPropertyOwner().getMobileNumber());
+        if (StringUtils.isBlank(propertyOwner.getMobileNumber())) {
+            propertyOwner.setMobileNumber("N/A");
+        }
+        for (final PropertyOwnerInfo propOwner : basicProperty.getPropertyOwnerInfo()) {
+            final List<Address> addrSet = propOwner.getOwner().getAddress();
+            for (final Address address : addrSet) {
+                setDoorNo(address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
+                break;
+            }
+        }
+        return USER_DETAILS;
+    }
+
+    @Action(value = "/collection-updateMobileNo")
+    public String updateMobileNo() {
+        if (null != basicProperty) {
+            setPropertyOwner(basicProperty.getPrimaryOwner());
+        }
+        if (StringUtils.isNotBlank(mobileNumber)) {
+            propertyOwner.setMobileNumber(mobileNumber);
+            userService.updateUser(propertyOwner);
+        }
+        return UPDATEMOBILE_FORM;
     }
 
     public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
@@ -211,6 +255,38 @@ public class CollectionAction extends BaseFormAction {
 
     public void setPtBillServiceImpl(final PTBillServiceImpl ptBillServiceImpl) {
         this.ptBillServiceImpl = ptBillServiceImpl;
+    }
+
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
+
+    public void setBasicProperty(BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
+
+    public User getPropertyOwner() {
+        return propertyOwner;
+    }
+
+    public void setPropertyOwner(User propertyOwner) {
+        this.propertyOwner = propertyOwner;
+    }
+
+    public String getDoorNo() {
+        return doorNo;
+    }
+
+    public void setDoorNo(String doorNo) {
+        this.doorNo = doorNo;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
 }

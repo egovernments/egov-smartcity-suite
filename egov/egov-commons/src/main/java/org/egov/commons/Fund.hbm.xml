@@ -41,7 +41,7 @@
         <property name="createdby" type="big_decimal">
             <column name="CREATEDBY" precision="22" scale="0" />
         </property>
-        <property name="isnotleaf" type="java.lang.Boolean">
+        <property name="isnotleaf" >
             <column name="ISNOTLEAF" precision="1" scale="0" />
         </property>
         <property name="identifier" type="java.lang.Character">

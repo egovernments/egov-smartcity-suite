@@ -116,4 +116,4 @@
 			</div>				
 		</div>
 </c:if>
-<script src="<c:url value='/resources/js/app/commonworkflow.js'/>"></script>
+<script src="<c:url value='/resources/js/app/commonworkflow.js?rnd=${app_release_no}'/>"></script>

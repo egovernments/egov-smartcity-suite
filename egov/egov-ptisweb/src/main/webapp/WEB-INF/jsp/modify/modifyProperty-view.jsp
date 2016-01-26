@@ -194,7 +194,7 @@
 					jQuery('tr.floordetails').show();
 				}
 				if (propType == "Apartments") {
-					alert("Please select Apartment/Complex Name");
+					bootbox.alert("Please select Apartment/Complex Name");
 				}
 			}
 

@@ -40,6 +40,7 @@
 
 package org.egov.tl.web.actions.search;
 
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -48,32 +49,31 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.BaseLicenseService;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
 @Results({
-    @Result(name = SearchLicenseAction.COMMON_FORM, location = "searchLicense-commonForm.jsp"),
-    @Result(name = SearchLicenseAction.CANCEL_LICENSE, type = "redirectAction", location = "cancelLicense-newForm", params = {
-            "namespace", "/cancellation", "licenseId", "${licenseId}" })
+        @Result(name = SearchLicenseAction.COMMON_FORM, location = "searchLicense-commonForm.jsp"),
+        @Result(name = SearchLicenseAction.CANCEL_LICENSE, type = "redirectAction", location = "cancelLicense-newForm", params = {
+                "namespace", "/cancellation", "licenseId", "${licenseId}"})
 })
 public class SearchLicenseAction extends BaseFormAction {
 
+    public static final String COMMON_FORM = "commonForm";
+    public static final String CANCEL_LICENSE = "Cancel License";
     /**
      *
      */
     private static final long serialVersionUID = 2620387601260939372L;
-    protected static final String COMMON_FORM = "commonForm";
     private String mode;
     private String licenseNumber;
     private Long licenseId;
+
     @Autowired
-    private BaseLicenseService baseLicenseService;
-    public static final String CANCEL_LICENSE = "Cancel License";
+    private TradeLicenseService tradeLicenseService;
 
     @Override
     public Object getModel() {
@@ -84,58 +84,60 @@ public class SearchLicenseAction extends BaseFormAction {
     /**
      * Generalised method to give search license screen to perform different transactions like cancel, Objection, Suspension,
      * Renewal Notice etc
+     *
      * @return
      */
     @SkipValidation
     @Action(value = "/search/searchLicense-commonForm")
     public String commonForm() {
-        return COMMON_FORM;
+        return SearchLicenseAction.COMMON_FORM;
     }
 
     /**
      * Generalised method to redirect the form page to different transactional form pages
+     *
      * @return
      */
-    @ValidationErrorPage(value = COMMON_FORM)
+    @ValidationErrorPage(value = SearchLicenseAction.COMMON_FORM)
     @Action(value = "/search/searchLicense-commonSearch")
     public String commonSearch() {
-        final TradeLicense tradeLicense = baseLicenseService.getTradeLicenseByLicenseNum(licenseNumber);
+        TradeLicense tradeLicense = this.tradeLicenseService.getTradeLicenseByLicenseNum(this.licenseNumber);
         if (tradeLicense == null) {
-            addActionError(getText("validation.license.doesnot.exists"));
-            return COMMON_FORM;
+            this.addActionError(this.getText("validation.license.doesnot.exists"));
+            return SearchLicenseAction.COMMON_FORM;
         }
-        if (CANCEL_LICENSE.equals(mode))
+        if (SearchLicenseAction.CANCEL_LICENSE.equals(this.mode))
             if (tradeLicense.getStatus() != null &&
-            (tradeLicense.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_CANCELLED) ||
-                    tradeLicense.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_UNDERWORKFLOW))) {
-                addActionError(getText("validation.cannotPerform.licenseCancel"));
-                return COMMON_FORM;
+                    (tradeLicense.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_CANCELLED) ||
+                            tradeLicense.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_UNDERWORKFLOW))) {
+                this.addActionError(this.getText("validation.cannotPerform.licenseCancel"));
+                return SearchLicenseAction.COMMON_FORM;
             }
-        licenseId = tradeLicense.getId();
-        return mode;
+        this.licenseId = tradeLicense.getId();
+        return this.mode;
     }
 
     public String getMode() {
-        return mode;
+        return this.mode;
     }
 
-    public void setMode(final String mode) {
+    public void setMode(String mode) {
         this.mode = mode;
     }
 
     public String getLicenseNumber() {
-        return licenseNumber;
+        return this.licenseNumber;
     }
 
-    public void setLicenseNumber(final String licenseNumber) {
+    public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
     public Long getLicenseId() {
-        return licenseId;
+        return this.licenseId;
     }
 
-    public void setLicenseId(final Long licenseId) {
+    public void setLicenseId(Long licenseId) {
         this.licenseId = licenseId;
     }
 

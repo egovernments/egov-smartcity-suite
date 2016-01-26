@@ -50,12 +50,12 @@
 		<property  name="createdDate" type="java.util.Date">
 			<column length="7" name="CREATEDDATE" not-null="true" />
 		</property>
-		<property  name="modifiedDate" type="java.util.Date">
+		<property  name="lastModifiedDate" type="java.util.Date">
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
 		<many-to-one class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" name="createdBy"
 			not-null="true" />
-		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="modifiedBy"
+		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="lastModifiedBy"
 			not-null="true" />
 		<property  name="name" type="java.lang.String">
 			<column length="50" name="NAME" not-null="true" unique="true" />

@@ -69,7 +69,7 @@ function getZoneWard(){
 			console.log("failed");
 			jQuery('#zoneName').val('');
 			jQuery('#wardName').val('');
-			alert("No boundary details mapped for locality")
+			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
 }

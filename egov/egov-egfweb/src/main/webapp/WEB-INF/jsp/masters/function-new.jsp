@@ -49,9 +49,9 @@
 							var success = '<s:property value="success"/>';
 
 							if (success == 'yes') {
-								alert("Function Created Successfully");
+								bootbox.alert("Function Created Successfully");
 								} else if((success == 'no')){
-									alert("Function Could Not be Created");
+									bootbox.alert("Function Could Not be Created");
 									}
 							
 							if (close == 'true') {
@@ -63,11 +63,11 @@
 						
 						function validate(){
 							if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-								alert("Please enter Function Code");
+								bootbox.alert("Please enter Function Code");
 								return false;
 							}
 							if(document.getElementById('name').value == null || document.getElementById('name').value==''){
-								alert("Please enter Function Name");
+								bootbox.alert("Please enter Function Name");
 								return false;
 							}
 							return true;

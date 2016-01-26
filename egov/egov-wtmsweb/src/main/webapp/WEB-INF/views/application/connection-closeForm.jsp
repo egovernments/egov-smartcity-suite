@@ -121,9 +121,9 @@
 <script>
 
 if($('#validationMessage').val()!='')
-	alert($('#validationMessage').val());
+	bootbox.alert($('#validationMessage').val());
 function validate(){
-	//alert(document.forms[0].action);
+	//bootbox.alert(document.forms[0].action);
 
 	var radioValue = $("input[name='closeConnectionType']:checked").val();
     var ar=document.getElementsByName('closeConnectionType');
@@ -132,6 +132,6 @@ function validate(){
 }
 </script>
 
-<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
-<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

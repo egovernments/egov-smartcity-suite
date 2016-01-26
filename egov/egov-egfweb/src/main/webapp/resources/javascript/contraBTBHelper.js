@@ -38,7 +38,7 @@
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 function loadBank(fund){
-	//alert(fund.options[fund.selectedIndex].value);
+	//bootbox.alert(fund.options[fund.selectedIndex].value);
 	loadFromDepartment();
 	populatefromBankId({fundId:fund.options[fund.selectedIndex].value,typeOfAccount:"RECEIPTS_PAYMENTS,RECEIPTS"})	
 	checkInterFund();
@@ -123,7 +123,7 @@ success: function(o) {
 		document.getElementById('fromAccnumnar').value=fromNarration;	
 		},
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -134,7 +134,7 @@ success: function(o) {
 		document.getElementById('toAccnumnar').value=toNarration;	
 		},
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 
@@ -144,12 +144,12 @@ success: function(o) {
 		var obj = document.getElementById("fromAccountNumber");
 		var bankBr = document.getElementById("fromBankId");
 		if (bankBr.selectedIndex == -1) {
-			alert("Select Bank Branch and Account No!!");
+			bootbox.alert("Select Bank Branch and Account No!!");
 			return;
 		}
 
 		if (obj.selectedIndex == -1) {
-			alert("Select Account No!!");
+			bootbox.alert("Select Account No!!");
 			return;
 		}
 		var accNo = obj.options[obj.selectedIndex].text;
@@ -165,8 +165,8 @@ function checkInterFund(){
 	var toFund=document.getElementById('toFundId').value;
 	var splitStr = new Array();
 	var temp;
-	//alert("hi"+toFund);
-	//alert("from fund"+fromFund);
+	//bootbox.alert("hi"+toFund);
+	//bootbox.alert("from fund"+fromFund);
 	if(fromFund!="" && toFund!="")
 	{
 		if(fromFund!=toFund)
@@ -183,13 +183,13 @@ function checkInterFund(){
 		document.getElementById('interFundRow').style.visibility="visible";	
 	}
 	else{
-		//alert("from fund="+fromFund+"toFund="+toFund);
+		//bootbox.alert("from fund="+fromFund+"toFund="+toFund);
 		document.getElementById('interFundRow').style.visibility="hidden";	
 	}
 		
 	}
 	else if(fromFund=="" || toFund==""){
-		//alert("min else if");
+		//bootbox.alert("min else if");
 		document.getElementById('interFundRow').style.visibility="hidden";	
 	}
 }
@@ -199,7 +199,7 @@ function checkInterFund(){
 		{
 			if(document.getElementById('voucherDate').value=='')
 			{
-				alert("Please Select the Voucher Date!!");
+				bootbox.alert("Please Select the Voucher Date!!");
 				obj.options.value=-1;
 				return;
 			}
@@ -217,7 +217,7 @@ function checkInterFund(){
 		{
 			if(document.getElementById('voucherDate').value=='')
 			{
-				alert("Please Select the Voucher Date!!");
+				bootbox.alert("Please Select the Voucher Date!!");
 				obj.options.value=-1;
 				return;
 			}
@@ -250,9 +250,9 @@ function checkInterFund(){
 			var 	month=getMonthNo(sp_date[1]);
 			var app_config_Date_value=new Date(sp_date[2],month-1,sp_date[0]);
 			var voucherDateChk=new Date(vh_split[2],vh_split[1]-1,vh_split[0]);
-			//alert(voucher_date);
-			//alert("Check app date"+app_config_Date_value);
-			//alert("Check app date"+voucherDateChk);
+			//bootbox.alert(voucher_date);
+			//bootbox.alert("Check app date"+app_config_Date_value);
+			//bootbox.alert("Check app date"+voucherDateChk);
 			
 				if(parseFloat(document.getElementById('fromBankBalance').value)==-1 || parseFloat(document.getElementById('toBankBalance').value)==-1)
 				{
@@ -265,11 +265,11 @@ function checkInterFund(){
 					{
 						
 						if(fundFlowNotGeneratedAlert!=''){
-							alert(fundFlowNotGeneratedAlert);
+							bootbox.alert(fundFlowNotGeneratedAlert);
 							return false;
 						}else{
 							if(document.getElementById('bankBalanceMandatory').value)
-							alert(insuffientAlert);
+								bootbox.alert(insuffientAlert);
 							return false;
 						}
 					}else{
@@ -287,7 +287,7 @@ function checkInterFund(){
 				}
 				var Amount = document.getElementById("amount").value;
 				if(Amount<=0){
-					alert("Amount should be greater than zero ");
+					bootbox.alert("Amount should be greater than zero ");
 					return false;
 				}
 				document.getElementById("fromFundId").disabled=false;

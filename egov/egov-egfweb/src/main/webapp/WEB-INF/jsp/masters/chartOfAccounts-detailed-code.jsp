@@ -50,7 +50,7 @@
 		}
 		function validateAndSubmit(obj){
 			if(document.getElementById('glCode').value == null || document.getElementById('glCode').value==''){
-				alert("Please enter account code");
+				bootbox.alert("Please enter account code");
 				return false;
 			}
 			var value = obj.value;

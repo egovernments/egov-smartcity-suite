@@ -75,11 +75,11 @@
 	recoveryDetailTableNew.addRow({SlNo:recoveryDetailTableNew.getRecordSet().getLength()+1});
 		var index = '<s:property value="#stat.index"/>';
 		updateLabel('serialNo',index,parseInt(index)+1);
-//		alert(""+index);
+//		bootbox.alert(""+index);
 		updateLabel('voucherNumberLabel',index,'<s:property value="voucherNumber"/>');
-	//		alert(""+index);
+	//		bootbox.alert(""+index);
 		updateLabel('voucherDateLabel',index,'<s:property value="voucherDate"/>');
-		//	alert(""+index);
+		//	bootbox.alert(""+index);
 		updateLabel('voucherNameLable',index,'<s:property value="voucherName"/>');
 		updateLabel('partyNameLable',index,"<s:property value="partyName"/>");
 		updateLabel('partyCodeLable',index,'<s:property value="partyCode"/>');

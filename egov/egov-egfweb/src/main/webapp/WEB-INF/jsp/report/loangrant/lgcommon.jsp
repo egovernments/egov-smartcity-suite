@@ -92,7 +92,7 @@ function loadChanges(obj)
 function autocompleteSchemeBy20LG()
 {
 	     oACDS = new YAHOO.widget.DS_XHR("/EGF/voucher/common!ajaxLoadSchemeBy20.action", [ "~^"]);
-	    // alert("helllpo");
+	    // bootbox.alert("helllpo");
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	  

@@ -206,8 +206,7 @@
 			<thead>
 				<tr>
 					<th rowspan="2"><spring:message code="lbl.number" /> </th>
-					<th colspan="1"><spring:message code="lbl.userName" /> </th>
-					<th colspan="3"><spring:message code="lbl.demand" /> </th>
+					<th colspan="4"><spring:message code="lbl.demand" /> </th>
 					<th colspan="3"><spring:message code="lbl.collection" /></th>
 					<th colspan="3"><spring:message code="lbl.balance" /> </th>
 				</tr>
@@ -265,6 +264,6 @@
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/dCBReport.js'/>"></script>
+	src="<c:url value='/resources/js/app/dCBReport.js?rnd=${app_release_no}'/>"></script>
 
 

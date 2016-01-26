@@ -41,222 +41,175 @@
 
 <html>
 <title><s:text name="sor.list" /></title>
+<style>
+body
+{
+  font-size: 14px;
+  font-family:regular;
+}
+</style>
 
-<script type="text/javascript">
-     
-	function validate(){	
-		document.forms[0].action='<%=request.getContextPath()%>/masters/scheduleOfRate-searchSorDetails.action';
-		document.forms[0].submit();
-	}
-	</script>
-	<body>
-		<s:if test="%{hasErrors()}">
-       		 <div class="errorstyle">
-          		<s:actionerror/>
-          		<s:fielderror/>
-        	</div>
-    	</s:if>
-   		<s:if test="%{hasActionMessages()}">
-       		<div id="msgsDiv" class="messagestyle">
-        		<s:actionmessage theme="simple"/>
-        	</div>
-    	</s:if>
-		<s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate-searchSorDetails.action" theme="simple">			
-			<div class="navibarshadowwk">
+<body>
+<s:hidden name="id" id="id" />
+<div class="new-page-header">
+	<s:text name="search.sorRate.header" />
+</div>
+
+<s:if test="%{hasErrors()}">
+	<div class="alert alert-danger">
+		<s:actionerror/>
+   		<s:fielderror/>
+    </div>
+ </s:if>
+  	
+<s:if test="%{hasActionMessages()}">
+	<div id="msgsDiv" class="messagestyle">
+    	<s:actionmessage theme="simple"/>
+	</div>
+</s:if>
+<div id="sor.sorError" class="alert alert-danger" style="display: none;"></div>
+<s:form name="searchSORForm" id="searchSORForm" action="/masters/scheduleOfRate-searchSorDetails.action" theme="simple" cssClass="form-horizontal form-groups-bordered" >			
+<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+	<div class="panel-heading">
+		<div class="panel-title">
+		    <s:text name='title.search.criteria' />
+		</div>
+	</div>
+	<div class="panel-body">
+	    <s:if test="%{scheduleCategoryList.size != 0}">
+		   <div class="form-group">
+				<label class="col-sm-2 control-label text-right">
+				    <s:text name="master.sor.category" /><span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategoryId" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code"/>
+				</div>
 			</div>
-			<div class="formmainbox">
-			<div class="insidecontent">
-			<div class="rbroundbox2">
-			<div class="rbtop2"><div></div></div>
-			<div class="rbcontent2">
-			<table id="formTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td>
-						&nbsp;
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<table id="sorSearchTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td colspan="4">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="4" class="headingwk">
-									<div class="arrowiconwk">
-										<img src="/egi/resources/erp2/images/arrow.gif" />
-									</div>
-									<div class="headplacer">
-										<s:text name='title.search.criteria' />
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td width="11%" class="whiteboxwk">
-									<font color="red">*</font>
-									<s:text name="master.sor.category" />:
-								</td>
-								<td width="21%" class="whitebox2wk">
-									<s:if test="%{scheduleCategoryList.size != 0}">
-										<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}"
-										name="scheduleCategoryId" id="scheduleCategory" cssClass="selectwk"
-										list="dropdownData.scheduleCategoryList" listKey="id"
-										listValue="code"/>
-									</s:if>
-								</td>
-								<td width="11%" class="whiteboxwk">
-									&nbsp;
-								</td>
-								<td width="21%" class="whitebox2wk">
-									&nbsp;
-								</td>
-							</tr>
-							<tr>
-								<td width="11%" class="greyboxwk">
-									<s:text name="master.sor.code" />:
-								</td>
-								<td width="21%" class="greybox2wk">
-									<s:textfield name="code" id="code" cssClass="selectwk"/>
-								</td>
-								<td width="15%" class="greyboxwk">
-									<s:text name="master.sor.description" />:
-								</td>
-								<td width="53%" class="greybox2wk">
-									<s:textfield name="description" id="description" cssClass="selectwk"/>
-								</td>
-							</tr>							
-							<tr>
-								<td>
-									&nbsp;
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-									<div class="buttonholdersearch">
-										<input type="submit" class="buttonadd" value="Search" id="searchButton" name="button" 
-											 onClick="validate()" />
-										<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="button"
-											onclick="window.close();" />
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-								<div>
-									<table width="100%" border="0" cellspacing="0" cellpadding="0">
-										<tr>
-											<td colspan="7" class="headingwk">
-												<div class="arrowiconwk">
-													<img src="/egi/resources/erp2/images/arrow.gif" />
-												</div>
-												<div class="headplacer">
-													<s:text name="title.search.result" />
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<td>
-											<s:if test="%{searchResult.fullListSize != 0 && displData=='yes'}">
-												<display:table name="searchResult" pagesize="30" uid="currentRow"
-													cellpadding="0" cellspacing="0" requestURI=""
-													style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
-													
-													<display:column headerClass="pagetableth" class="pagetabletd" 
-														title="Sl.No" titleKey="column.title.SLNo"
-														style="width:4%;text-align:right" >
-														<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
-													</display:column>
-													
-													<display:column headerClass="pagetableth" class="pagetabletd" 
-														title="Category Type" titleKey="master.sor.category"
-														style="width:10%;text-align:left" property="scheduleCategory.code">
-													</display:column>
-													
-													<display:column headerClass="pagetableth" class="pagetabletd" 
-														title="SOR Code" titleKey="master.sor.code"
-														style="width:10%;text-align:left" property="code">
-													</display:column>
-													
-													<display:column headerClass="pagetableth" class="pagetabletd" 
-														title="SOR Decsription" titleKey="master.sor.description"
-														style="width:51%;text-align:left" property="description">
-													</display:column>
-													
-													<display:column headerClass="pagetableth" class="pagetabletd" 
-														title="Unit of Measure" titleKey="master.sor.uom"
-														style="width:9%;text-align:left" property="uom.uom">
-													</display:column>
-																									
-													<display:column headerClass="pagetableth" class="pagetabletd" 
-														title="Action" style="width:13%;text-align:left" >
-														<table width="100" border="0" cellpadding="0" cellspacing="2">
-															<tr> <egov-authz:authorize actionName="WorksSOREditAutho">                   		
-															  	<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-																		<s:text name="sor.edit" /></a>
-																</td>
-																<td width="20">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-																		<img src='/egi/resources/erp2/images/page_edit.png' alt="Edit Data" width="16" height="16" border="0" align="absmiddle" />
-																	</a>
-																</td>
-																<td width="20">&#47;
-																</td>
-																</egov-authz:authorize>
-																<egov-authz:authorize actionName="WorksSORViewAutho">
-																<td width="20" align="right">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-																		<s:text name="sor.view" />
-																	</a>
-																</td>
-																<td width="20" align="left">
-																	<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-																		<img src='/egi/resources/erp2/images/book_open.png' alt="View Data" width="16" height="16" border="0" align="absmiddle" />
-																	</a>
-																</td>
-															 </egov-authz:authorize>
-															</tr>
-														</table>
-													</display:column>
-											</display:table>
-												</s:if>
-												<s:elseif test="%{searchResult.fullListSize == 0 && displData=='noData'}">
-													<div >	
-														<table width="100%" border="0" cellpadding="0"
-														cellspacing="0">
-															<tr>
-																<td align="center">
-																	<font color="red"><s:text name="label.no.records.found"/></font>
-																</td>
-															</tr>
-														</table>
-													</div>
-												</s:elseif>
-											</td>
-										</tr>
-										<tr>
-										    <td colspan="6">
-										    	<div align="right" class="mandatory">* <s:text name="message.mandatory" /></div>
-											</td>
-										 </tr> 
-									</table>
-								</div>
-								</td>
-							</tr>
-							
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4" class="shadowwk"></td>
-				</tr>
+		</s:if>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.code" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="code" id="code" cssClass="form-control"/>
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			    <s:text name="master.sor.description" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textarea name="description" cols="45"  rows="3" id="description" cssClass="form-control" maxlength = "4000"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 text-center buttonholdersearch">
+		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" name="button" onClick="validate()" /> &nbsp;
+		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
+	</div>
+</div>
+<s:if test="%{searchResult.fullListSize != 0 && displData=='yes'}">
+	<div class="row report-section">
+		<div class="col-md-12 table-header text-left">
+		  <s:text name="title.search.result" />
+		</div>
+		
+		<div class="col-md-12 report-table-container">
+			<s:text id="select"	name="%{getText('column.title.select')}"></s:text>
+			<s:text id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
+			<s:text id="sorCode" name="%{getText('master.sor.code')}"></s:text>
+			<s:text id="sorDescription" name="%{getText('master.sor.description')}"></s:text>
+			<s:text id="sorRate" name="%{getText('master.sor.rate')}"></s:text>
+			<s:text id="unitOfMeasure" name="%{getText('master.sor.uom')}"></s:text>
+			<s:text id="startDate" name="%{getText('master.sor.startDate')}"></s:text>
+			<s:text id="endDate" name="%{getText('master.sor.endDate')}"></s:text>
+		
+			<display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI=""	class="table table-hover">
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${select}"
+				style="width:2%;" titleKey="column.title.select">
+				<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setSorId('<s:property value='%{#attr.currentRow.id}'/>');" />
+				</display:column>
 				
-			</table>
-			</div>
-			<div class="rbbot2"><div></div>	</div>
-			</div>
-			</div>
-			</div>
-		</s:form>
-	</body>
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${slNo}"style="width:4%;text-align:right" >
+					<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
+				</display:column>
+				
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorCode}" style="width:5%;text-align:left" property="code">
+				</display:column>
+				
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorDescription}" style="width:51%;text-align:left" property="description">
+				</display:column>
+				
+				<display:column headerClass="pagetableth" class="pagetabletd"  title="${unitOfMeasure}" style="width:9%;text-align:left" property="uom.uom">
+				</display:column>
+
+				<display:column headerClass="pagetableth" class="pagetabletd"  title="${sorRate}" style="width:10%;text-align:left">
+					<s:property value="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).rate" />
+				</display:column>
+									
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${startDate}" style="width:10%;text-align:left" >
+					<s:date name="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).validity.startDate" format="dd/MM/yyyy"/>
+				</display:column>
+				
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${endDate}" style="width:10%;text-align:left" >
+					<s:date name="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).validity.endDate" format="dd/MM/yyyy"/>
+				</display:column>
+																	
+			</display:table>
+		</div>
+	</div>
+</s:if>
+<s:elseif test="%{searchResult.fullListSize == 0 && displData=='noData'}">
+	<div class="row report-section">
+		<div class="col-md-12 table-header text-left">
+		  <s:text name="title.search.result" />
+		</div>
+		<div class="col-md-12 text-center report-table-container">
+		   <div class="alert alert-warning no-margin"><s:text name="label.no.records.found"/></div>
+		</div>
+	</div>
+</s:elseif>
+</s:form>
+	
+<script type="text/javascript">		
+function viewData() {
+    if (document.getElementById('id').value == '' || document.getElementById('id').value == null) {
+        showMessage('sor.sorError', '<s:text name="master.sor.select.error" />');
+        window.scrollTo(0, 0);
+        return false;
+    } else
+		window.open("${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?mode=view&id="+dom.get('id').value+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+   		return true;
+}
+
+function modifyData() {
+    if (document.getElementById('id').value == '' || document.getElementById('id').value == null) {
+        showMessage('sor.sorError', '<s:text name="master.sor.select.error" />');
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.open("${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?mode=edit&id="+dom.get('id').value+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+    	return true;
+}		
+
+function setSorId(val) {
+	document.getElementById('id').value = val;
+}
+
+function validate(){	
+	document.forms[0].action='${pageContext.request.contextPath}/masters/scheduleOfRate-searchSorDetails.action';
+	document.forms[0].submit();
+}
+</script>
+
+<s:if test="%{searchResult.fullListSize != 0}">
+	<div align="center">
+		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick=" return viewData();" /> 
+		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" /> 
+		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
+	</div>
+</s:if>
+</body>
 </html>

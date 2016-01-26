@@ -48,6 +48,13 @@ $('#onlinePaymentReportSearch').click(function(e){
 		var transid = $("#transid").val();
 		oTable= $('#onlinePaymentReport-table');
 		$('#onlinePayment-header').show();
+		
+		console.log('district name --->'+districtname);
+		
+		var resultInfo="Online Payment Report Result for District: "+ (districtname?districtname:"All Districts") +" and Ulb: " +(ulbname?ulbname:"All Ulbs")+ "  and from Date: " + (fromdate?fromdate:"All Dates") + " and to Date: " + (todate?todate:"All Dates") +" and Transaction id: " + (transid?transid: "All transaction ids");
+		
+		$('#resultinfo').html(resultInfo);
+		
 		oTable.dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
@@ -59,16 +66,19 @@ $('#onlinePaymentReportSearch').click(function(e){
 				"aButtons" : [ 
 				               {
 					             "sExtends": "pdf",
+					             "sPdfMessage": resultInfo, 
 		                         "sTitle": "Online Payment Report",
 		                         "sPdfOrientation": "landscape"
 		                        	 
 				                },
 				                {
 						             "sExtends": "xls",
-		                             "sTitle": "Online Payment Report"
+						             "sPdfMessage": resultInfo,
+						             "sTitle": "Online Payment Report"
 					             },
 					             {
 						             "sExtends": "print",
+						             "sPdfMessage": resultInfo,
 		                             "sTitle": "Online Payment Report"
 					       }]
 				
@@ -103,6 +113,7 @@ $('#onlinePaymentReportSearch').click(function(e){
 				}
 				
 		);
+		
 		e.stopPropagation();
 	});
 

@@ -148,7 +148,7 @@
 		function validateSearch(){
 			var region = document.getElementById('region').value;
 			if(region == ""){
-				 alert("Please select Region");
+				 bootbox.alert("Please select Region");
 				 return false;
 			}
 			return true;

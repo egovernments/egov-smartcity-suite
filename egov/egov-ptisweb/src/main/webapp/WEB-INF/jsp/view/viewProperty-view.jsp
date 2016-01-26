@@ -75,7 +75,7 @@
 			jQuery(document).ready( function () {
 				jQuery('#payBill').click( function () {
 					var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
-					window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+					window.location = '/../ptis/search/searchProperty-searchOwnerDetails.action?assessmentNum='+propertyId;
 				});
 			});
 		</script>
@@ -112,11 +112,11 @@
 					<div align="center">
 						<s:if test="%{isCitizen}">
 							<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
-										onclick="window.location='../citizen/collection/collection-generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
+										onclick="window.location='../citizen/collection/collection-searchOwnerDetails.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
 						</s:if>
 						<s:else> 
 							<input type="button" name="operatorPayBill" id="operatorPayBill" value="Pay Bill" class="buttonsubmit"
-										onclick="window.location='/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=<s:property value="%{propertyId}" />';" />
+										onclick="window.location='/../ptis/search/searchProperty-searchOwnerDetails.action?assessmentNum=<s:property value="%{propertyId}" />';" />
 						</s:else>
 					</div>
 				</s:if>

@@ -42,6 +42,8 @@ package org.egov.ptis.web.controller.masters.wall;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.master.service.WallTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateAndViewWallTypeController {
 
     private final WallTypeService wallTypeService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public CreateAndViewWallTypeController(final WallTypeService wallTypeService) {
@@ -81,6 +86,8 @@ public class CreateAndViewWallTypeController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showWallTypes(final Model model) {
+        String roleName = wallTypeService.getRolesForUserId(securityUtils.getCurrentUser().getId());
+        model.addAttribute("roleName",roleName);
         return "wallType-main";
     }
 

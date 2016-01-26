@@ -187,7 +187,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))
         {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
-                    Integer.parseInt(generalLedgerReportBean.getDepartmentId()));
+                    Long.parseLong(generalLedgerReportBean.getDepartmentId()));
             heading = heading + " under " + dept.getName() + " ";
         }
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
@@ -207,7 +207,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getFieldId()))
         {
             final Boundary ward = (Boundary) persistenceService.find("from Boundary where id = ?",
-                    Integer.parseInt(generalLedgerReportBean.getFieldId()));
+                    Long.parseLong(generalLedgerReportBean.getFieldId()));
             heading = heading + " in " + ward.getName() + " Field ";
         }
         return heading;

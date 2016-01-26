@@ -101,7 +101,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -235,7 +235,7 @@
 		return function(el, oRecord, oColumn, oData) {
 			var value = (YAHOO.lang.isValue(oData))?oData:"";
 			var index=getIndexForTableType(tableType);
-			//alert("hiii");
+			//bootbox.alert("hiii");
 			var fieldName = prefix+"[" + index + "]" +  suffix;
 			var idt=oColumn.getKey()+oRecord.getId();
 			var id=idt.replace("-","");
@@ -282,7 +282,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	                  
 }
@@ -290,7 +290,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 		var branchId=obj.value;
 		selectedname=obj.name;
 		
-		//alert("object in get branch>>"+selectedname);
+		//bootbox.alert("object in get branch>>"+selectedname);
 		var url = '../voucher/common!ajaxLoadBranchAccountNumbers.action?branchId='+branchId;
 		YAHOO.util.Connect.asyncRequest('POST', url, bankAccountList, null);
 	
@@ -310,7 +310,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 	
 		
 		<s:iterator var="p" value="fixedDepositList" status="fixedDep_staus">
-		//alert('<s:property value="#fixedDep_staus.index"/>'+"   "+ind);
+		//bootbox.alert('<s:property value="#fixedDep_staus.index"/>'+"   "+ind);
 		
 		if('<s:property value="#fixedDep_staus.index"/>'==ind){
 		
@@ -321,7 +321,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			 {
 				res1[i]=new Array(accSize);
 				resId[i]=new Array(accSize);
-				///alert(accSize);
+				///bootbox.alert(accSize);
 				
 				if(j<accSize){
 					res1[i][j]='<s:property value="accountnumber"/>'+"-"+'<s:property value="%{chartofaccounts.glcode}"/>';
@@ -334,14 +334,14 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 		
 		}
 		</s:iterator>    
-		//alert(res1.length);
+		//bootbox.alert(res1.length);
 		var accNumid1=selectedname;
 		accNumid1=accNumid1.replace('Branch','Account');
-		//alert("accnum "+accNumid);
+		//bootbox.alert("accnum "+accNumid);
 		var x=document.getElementById(accNumid1);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
-				//alert(res1);     
+				//bootbox.alert(res1);     
 				var k=0;    
  							for(var i=0;i<res1.length;i++)
  							{ 
@@ -357,9 +357,9 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 				var docs=o.responseText;               
 				res=docs.split("$");
 				var accNumid=selectedname;
-				//alert("docs "+docs);
+				//bootbox.alert("docs "+docs);
 				accNumid=accNumid.replace('Branch','Account');
-				//alert("accnum "+accNumid);
+				//bootbox.alert("accnum "+accNumid);
 				var x=document.getElementById(accNumid);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
@@ -374,7 +374,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			}
 		},                                         
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	            
@@ -395,7 +395,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 		document.getElementById(id).value=data[2];   // vouchderid
 		patt1 = name.match("outFlowVoucher.voucherNumber");
 		patt2 = name.match("inFlowVoucher.voucherNumber");
-		//alert(name+" >>> hi name");                     
+		//bootbox.alert(name+" >>> hi name");                     
 		              
 		if(patt1=="outFlowVoucher.voucherNumber"){
 			onlyName=name.replace(".outFlowVoucher.voucherNumber","")
@@ -404,7 +404,7 @@ function createCheckboxFieldFormatter(tableType,prefix,suffix,type){
 			onlyName=name.replace(".inFlowVoucher.voucherNumber","")
 		}
 		else{
-			alert("inside Challan reciept voucher");
+			bootbox.alert("inside Challan reciept voucher");
 			onlyName=name.replace(".challanReceiptVoucher.voucherNumber","")
 			loadChequeNoAndDate(data[2],onlyName);
 			

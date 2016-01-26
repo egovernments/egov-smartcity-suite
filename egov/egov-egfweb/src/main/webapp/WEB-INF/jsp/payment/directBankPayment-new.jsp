@@ -107,7 +107,7 @@
 	var showMode='<s:property value="showMode"/>';	
 		var totaldbamt=0,totalcramt=0;
 		var OneFunctionCenter= <s:property value="isRestrictedtoOneFunctionCenter"/>; 
-		//alert(">>.."+OneFunctionCenter);                 
+		//bootbox.alert(">>.."+OneFunctionCenter);                 
 		var makeVoucherDetailTable = function() {
 			<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>                                   
 			var voucherDetailColumns = [                   
@@ -160,7 +160,7 @@
 					check();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -256,7 +256,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -420,7 +420,7 @@ function validateAppoveUser(name,value){
 			</s:if>
 			<s:else>
 				if( (value == 'Approve' || value == 'Forward' || value=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("please select User");
+					bootbox.alert("please select User");
 					//document.getElementById('lblError').innerHTML ="Please Select the user";
 					return false;
 				}
@@ -432,12 +432,12 @@ function validateAppoveUser(name,value){
 
 function	onLoadTask_new()
 {
-	//alert(showMode);                                                      
+	//bootbox.alert(showMode);                                                      
 	if(button!=null && button!="")
 	{
 		if(document.getElementById("Errors").innerHTML=='')  
 		{
-			alert(succesMessage);
+			bootbox.alert(succesMessage);
 			if(button=="Save_Close")
 				{
 				window.close();
@@ -461,7 +461,7 @@ function	onLoadTask_new()
  	{
  		
  		<s:if test="%{showMode=='nonbillPayment'}">
-			//alert('<s:property value="showMode"/>');
+			//bootbox.alert('<s:property value="showMode"/>');
 			if(document.getElementById("Errors").innerHTML!='')
 			{
 			document.getElementById('buttondiv').style.display="none";

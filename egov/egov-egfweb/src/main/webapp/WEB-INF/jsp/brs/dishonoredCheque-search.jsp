@@ -122,14 +122,14 @@ function dishonorSelectedChq() {
 			}
 
 			if(flag=="false" && flag!=""){
-				alert("Please Choose only cheques from the same Receipt No.");
+				bootbox.alert("Please Choose only cheques from the same Receipt No.");
 				return false;
 			}
 
 		}
 	}
 	if(value.length==0){
-		alert("Please Choose Cheques to Dishonor.");
+		bootbox.alert("Please Choose Cheques to Dishonor.");
 		return false;
 	}
 

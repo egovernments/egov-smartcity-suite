@@ -373,7 +373,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {
@@ -441,7 +441,7 @@ var	url = path+"/voucher/common-ajaxLoadCheckList.action?billSubtypeId="+obj.val
 				document.getElementById("checkListsTable["+(Len)+"].val").options[<s:property value="#stat.index"/>]=new Option("<s:property value='value'/>", "<s:property value='key'/>");
 			</s:iterator>
 			document.getElementById("checkListsTable["+(Len)+"].val").value='na';
-			//alert("1");
+			//bootbox.alert("1");
 			}
 			}
 			
@@ -450,7 +450,7 @@ var	url = path+"/voucher/common-ajaxLoadCheckList.action?billSubtypeId="+obj.val
 	  }
  	};
 	req2.open("GET", url, true);
-	//alert(url)
+	//bootbox.alert(url)
 	req2.send(null);
 
 }
@@ -600,7 +600,7 @@ autocompleteEntitiesBy20();
 document.getElementById("budgetReappRow").style.display="none";
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
 var net=document.getElementById('billDetailsTableNet[0].glcodeDetail');
-//alert("hii"+net.value+"text"+net.text);                         
+//bootbox.alert("hii"+net.value+"text"+net.text);                         
 net.options[0] =new Option("----Choose----","-1");
 var i=1;           
 <s:iterator value="netPayList" status="stat">
@@ -638,7 +638,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {

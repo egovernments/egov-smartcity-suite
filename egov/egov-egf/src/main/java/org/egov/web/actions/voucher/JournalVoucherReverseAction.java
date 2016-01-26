@@ -57,6 +57,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
@@ -219,7 +220,7 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return voucherHeader;
     }
 

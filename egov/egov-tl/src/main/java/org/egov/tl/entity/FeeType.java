@@ -95,14 +95,14 @@ public class FeeType extends AbstractAuditable {
     }
 
 	@Override
-	protected void setId(Long id) {
+	public void setId(Long id) {
 		
 		this.id=id;
 	}
 
 	@Override
 	public Long getId() {
-		return this.id;
+		return id;
 		
 	}
 

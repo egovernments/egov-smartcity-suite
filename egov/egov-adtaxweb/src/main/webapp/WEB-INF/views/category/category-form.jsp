@@ -37,79 +37,107 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="categoryform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoardingCategory" commandName="hoardingCategory">
-			<div class="panel panel-primary" data-collapsed="0"> 
+		<form:form id="categoryform" method="post"
+			class="form-horizontal form-groups-bordered"
+			modelAttribute="hoardingCategory" commandName="hoardingCategory">
+			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">
 					<div class="panel-title">
-						<strong><spring:message code="title.category.details"/></strong>
+						<strong><spring:message code="title.category.details" /></strong>
 					</div>
 				</div>
-				<div class="panel-body custom-form"> 										
-					<div class="form-group"> 
-                    	  
-                           		<c:choose>
-									<c:when test="${empty hoardingCategory.id}">
-									<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.code"/><span class="mandatory"></span></label>
-                            		 <div class="col-sm-3 add-margin">
-                        				<form:input type="text" cssClass="form-control patternvalidation" 
-                        	  					data-pattern="alphanumericwithspacehyphenunderscore"  maxlength="25" path="code" id="categorycode" required="required"/>
-                               			<form:errors path="code" cssClass="error-msg" />
-                              		 </div>
-                        			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.name"/><span class="mandatory"></span></label>
-                               			<div class="col-sm-3 add-margin">
-                               			
-                               			<form:input type="text" cssClass="form-control patternvalidation" 
-                        	      			data-pattern="alphanumericwithspacehyphenunderscore" maxlength="49" path="name" id="classdesc" required="required"/>
-                               				<form:errors path="name" cssClass="error-msg" />
-                               			
-                               			<form:input type="hidden" cssClass="form-control" path="id" />
-                               			</div>
-                               		</c:when>
-                               		<c:otherwise>
-                        		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.code"/><span class="mandatory"></span></label>
-                               			 <div class="col-sm-3 add-margin">
-                               			<form:input type="hidden" cssClass="form-control" path="id" />
-                               			<form:input type="text" cssClass="form-control patternvalidation" 
-                        	  					data-pattern="alphanumericwithspacehyphenunderscore"  maxlength="25" path="code" id="categorycode" readonly="true" required="required"/>
-                               			<form:errors path="code" cssClass="error-msg" />
-                        				</div>
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.name"/><span class="mandatory"></span></label>
-                               			<div class="col-sm-3 add-margin">
-                               			<form:input type="text" cssClass="form-control" path="name" id="classdesc" required="required" readonly="true" />
-                               			<form:errors path="name" cssClass="error-msg" />
-                           				</div>
-                               		</c:otherwise>
-                               	</c:choose>
-                        </div>    
-                  	<div class="form-group"> 
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.active"/><span class="mandatory"></span></label>
-                        	<div class="col-sm-1 add-margin">
-								<form:checkbox path="active" id="classactive" />
-								<form:errors path="active" cssClass="error-msg" />
-							</div>
-                    </div>
-           		</div>
-        	</div>
-        	<div class="row">
+				<div class="panel-body custom-form">
+					<div class="form-group">
+
+						<c:choose>
+							<c:when test="${empty hoardingCategory.id}">
+								<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.category.code" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text"
+										cssClass="form-control patternvalidation"
+										data-pattern="alphanumericwithspacehyphenunderscore"
+										maxlength="25" path="code" id="categorycode"
+										required="required" />
+									<form:errors path="code" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.category.name" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:textarea cssClass="form-control patternvalidation"
+										path="name" id="classdesc" rows="4" cols="4"
+										readonly="readonly" />
+									<form:errors path="name" cssClass="error-msg" />
+
+									<form:input type="hidden" cssClass="form-control" path="id" />
+								</div>
+							</c:when>
+							<c:otherwise>
+								<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.category.code" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="hidden" cssClass="form-control" path="id" />
+									<form:input type="text"
+										cssClass="form-control patternvalidation"
+										data-pattern="alphanumericwithspacehyphenunderscore"
+										maxlength="25" path="code" id="categorycode" readonly="true"
+										required="required" />
+									<form:errors path="code" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-4 control-label text-right"><spring:message
+										code="lbl.category.name" /><span class="mandatory"></span></label>
+								<div class="col-sm-1 add-margin">
+									<form:input type="text" cssClass="form-control" path="name"
+										id="classdesc" required="required" readonly="true" />
+
+									<form:errors path="name" cssClass="error-msg" />
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.category.active" /><span class="mandatory"></span></label>
+						<div class="col-sm-1 add-margin">
+							<form:checkbox path="active" id="classactive"
+								cssClass="form-control" />
+							<form:errors path="active" cssClass="error-msg" />
+						</div>
+
+						<label class="col-sm-5 control-label text-right"><spring:message
+								code="lbl.property.id" /><span class="mandatory"></span></label>
+						<div class="col-sm-1 add-margin">
+							<form:checkbox path="propertyMandatory"
+								id="classPropertyMandatory" cssClass="form-control" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+					<button type="submit" class="btn btn-primary">
+						<spring:message code="lbl.submit" />
+					</button>
 					<c:if test="${empty hoardingCategory.id}">
-						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+						<button type="reset" class="btn btn-default">
+							<spring:message code="lbl.reset" />
+						</button>
 					</c:if>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					<a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</form:form>
-	</div>	
+	</div>
 </div>
-				
-	
+
 
 

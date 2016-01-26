@@ -39,15 +39,25 @@
  */
 package org.egov.tl.service.masters;
 
-import org.egov.infstr.services.PersistenceService;
+import java.util.List;
+
 import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.repository.LicenseCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class LicenseCategoryService extends PersistenceService<LicenseCategory, Integer> {
+@Transactional(readOnly = true)
+public class LicenseCategoryService{
 
-    public LicenseCategoryService() {
-        setType(LicenseCategory.class);
+    
+    @Autowired
+    private LicenseCategoryRepository licenseCategoryRepository;
+    
+    @Transactional
+    public LicenseCategory create(LicenseCategory licenseCategory){
+        return  licenseCategoryRepository.save(licenseCategory);
     }
     
     /**
@@ -56,7 +66,7 @@ public class LicenseCategoryService extends PersistenceService<LicenseCategory, 
      * @return
      */
     public LicenseCategory findCategoryByName(final String name) {
-        return this.find("From LicenseCategory where upper(name)=?", name.toUpperCase()); 
+        return licenseCategoryRepository.findByNameContainingIgnoreCase(name); 
     }
 
     /**
@@ -65,7 +75,16 @@ public class LicenseCategoryService extends PersistenceService<LicenseCategory, 
      * @return
      */
     public LicenseCategory findCategoryByCode(final String code) {
-        return this.find("From LicenseCategory where upper(code)=?", code.toUpperCase());
+        return licenseCategoryRepository.findByCodeContainingIgnoreCase(code);
+    }
+    
+    
+    public LicenseCategory findById(Long categoryId){
+        return licenseCategoryRepository.findOne(categoryId);
+    }
+    
+    public List<LicenseCategory> findAll(){
+        return licenseCategoryRepository.findAll();
     }
 
 }

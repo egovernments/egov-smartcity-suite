@@ -75,7 +75,7 @@
 <body>
 	<div id="container">
 		<iframe id="report" name="report"
-			src='/EGF/report/billPaymentVoucherPrint-ajaxPrint.action?id=<s:property value="id"/>'></iframe>  
+			src='/EGF/report/billPaymentVoucherPrint-ajaxPrint.action?id=<s:property value="id"/>'></iframe>
 	</div>
 	<s:form name="billPaymentVoucherPrint" action="billPaymentVoucherPrint"
 		theme="simple">

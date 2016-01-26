@@ -367,8 +367,8 @@ function refreshnow(now){
 }
 
 function inboxloadmethod(){
-	//alert('came to my parent'+focussedmenu);
-	//alert('Nature of work'+now);
+	//bootbox.alert('came to my parent'+focussedmenu);
+	//bootbox.alert('Nature of work'+now);
 	clearnow();
 	if(focussedmenu == 'worklist'){
 		worklist();

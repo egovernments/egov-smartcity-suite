@@ -53,7 +53,7 @@ function checkUniqueBankCode(obj) {
 				}
 			},
 			failure : function(oResponse) {
-				alert("Server error occurred");
+				bootbox.alert("Server error occurred");
 			}
 		};
 		YAHOO.util.Connect.asyncRequest("GET", url, callback);
@@ -73,7 +73,7 @@ function checkUniqueBankName(obj) {
 				}
 			},
 			failure : function(oResponse) {
-				alert("Server error occurred");
+				bootbox.alert("Server error occurred");
 			}
 		};
 		YAHOO.util.Connect.asyncRequest("GET", url, callback);
@@ -95,7 +95,7 @@ function check_MICR(e) {
 			datatype : 'text',
 			success : function(data) {
 				if (data == 'false') {
-					alert('MICR code already exist');
+					bootbox.alert('MICR code already exist');
 					jQuery(e.target).val("");
 				}
 			}
@@ -144,7 +144,7 @@ function initializeGrid() {
 						             {name : 'contactperson', index : 'contactperson', width : 80, editable : true, editoptions : {size : 25}}, 
 						             {name : 'branchphone', index : 'branchphone', width : 80, editable : true, editoptions : {size : 25}}, 
 						             {name : 'narration', index : 'narration', width : 80, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}}, 
-						             {name : 'isActive', index : 'isActive', width : 80, sortable : false, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "1:0"}} 
+						             {name : 'isActive', index : 'isActive', width : 80, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}} 
 						            ],
 						rowNum : 20,
 						rowList : [ 20, 30, 40, 50 ],
@@ -165,7 +165,7 @@ function initializeGrid() {
 												caption : "Account Details",
 												url : 'bankAccount.action?mode=LIST_BRANCH_ACC&q=2&bankBranchId='+ row_id,
 												editurl : 'bankAccount.action?mode=CRUD&bankBranchId='+ row_id,
-												colNames : [ 'ID', 'Account No:', 'Fund', 'Account Type', 'Description', 'Pay To', 'Usage Type', 'Active' , 'GlCode'],
+												colNames : [ 'ID', 'Account No', 'Fund', 'Account Type', 'Description', 'Pay To', 'Usage Type', 'Active' , 'GlCode'],
 												colModel : [{name : 'id', index : 'id', key : true, hidden : true, width : 55, editable : true, editoptions : {readonly : true, size : 10}},
 												            {name : 'accountnumber', index : 'accountnumber', width : 80, key : true, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : {size : 25}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
 												            {name : 'fundname', index : 'fundname', width : 130, editable : true, edittype : "select", editoptions : {value : fundJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
@@ -192,6 +192,7 @@ function initializeGrid() {
 										closeAfterEdit:true,
 										resize : true,
 										editCaption: "Edit Bank Account",
+										bSubmit: "Save Bank Account",
 										beforeShowForm:function(response,data){
 											jQuery("#accounttype").prop('disabled',true);
 											jQuery("#glcode").prop('disabled',true);
@@ -204,6 +205,7 @@ function initializeGrid() {
 										closeAfterAdd:true,
 										resize : true,
 										addCaption: "Add Bank Account",
+										bSubmit: "Save Bank Account",
 										beforeShowForm:function(response,data){
 											jQuery("#accounttype").prop('disabled',false);
 											jQuery("#glcode").prop('disabled',false);
@@ -233,6 +235,7 @@ function initializeGrid() {
 					closeAfterEdit:true,
 					checkOnUpdate:true,
 					checkOnSubmit:true,					
+					bSubmit: "Save Bank Branch",
 					editCaption: "Edit Bank Branch",
 					resize : true,
 					afterSubmit: function(response,data){
@@ -242,6 +245,7 @@ function initializeGrid() {
 				{
 					closeAfterAdd:true,
 					checkOnUpdate:true,
+					bSubmit: "Save Bank Branch",
 					addCaption: "Add Bank Branch",
 					resize : true,
 					afterSubmit: function(response,data){

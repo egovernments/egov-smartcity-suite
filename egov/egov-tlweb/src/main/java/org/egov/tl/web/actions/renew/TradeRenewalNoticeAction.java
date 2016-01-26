@@ -45,49 +45,43 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.BaseLicenseService;
-import org.egov.tl.service.TradeService;
+import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-@Result(name = Constants.RENEWALNOTICE, location = "tradeRenewalNotice-"+Constants.RENEWALNOTICE+".jsp")
+        @Result(name = Constants.RENEWALNOTICE, location = "tradeRenewalNotice-" + Constants.RENEWALNOTICE + ".jsp")
 })
 public class TradeRenewalNoticeAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
-    protected TradeLicense tradeLicense = new TradeLicense();
-    private TradeService ts;
 
-    /* to log errors and debugging information */
-    private final Logger LOGGER = Logger.getLogger(getClass());
+    protected TradeLicense tradeLicense = new TradeLicense();
+
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
 
     @Override
     public License getModel() {
-        return tradeLicense;
+        return this.tradeLicense;
     }
 
     @Override
     protected License license() {
-        return tradeLicense;
+        return this.tradeLicense;
     }
 
     @Override
-    protected BaseLicenseService service() {
-        ts.getPersistenceService().setType(TradeLicense.class);
-        return ts;
+    protected AbstractLicenseService licenseService() {
+        return this.tradeLicenseService;
     }
 
-@Action(value="/renew/tradeRenewalNotice-renewalNotice")
+    @Action(value = "/renew/tradeRenewalNotice-renewalNotice")
     public String renewalNotice() {
-        LOGGER.debug("Trade License Renewal Notice Elements are:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense);
-        tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id=?", tradeLicense.getId());
-        LOGGER.debug("Exiting from the renewalNotice method:<<<<<<<<<<>>>>>>>>>>>>>:");
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.tradeLicense.getId());
         return Constants.RENEWALNOTICE;
-    }
-
-    public void setTs(final TradeService ts) {
-        this.ts = ts;
     }
 
 }

@@ -77,9 +77,9 @@
 		var success = '<s:property value="success"/>';
 
 		if (success == 'yes') {
-			alert("Fund Modified Successfully");
+			bootbox.alert("Fund Modified Successfully");
 			} else if((success == 'no')){
-				alert("Fund Could Not be Modified");
+				bootbox.alert("Fund Could Not be Modified");
 				}
 		
 		if (close == 'true') {
@@ -108,11 +108,11 @@
 	
 	function validate(){
 		if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-			alert("Please enter Code");
+			bootbox.alert("Please enter Code");
 			return false;
 		}
 		if(document.getElementById('fundNameActual').value == null || document.getElementById('fundNameActual').value==''){
-			alert("Please enter Name");
+			bootbox.alert("Please enter Name");
 			return false;
 		}
 		return true;

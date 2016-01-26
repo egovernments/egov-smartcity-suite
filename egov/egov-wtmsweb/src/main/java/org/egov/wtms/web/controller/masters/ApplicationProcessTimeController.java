@@ -46,7 +46,6 @@ import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,24 +55,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequestMapping(value = "/masters")
 public class ApplicationProcessTimeController {
     private final ConnectionCategoryService connectionCategoryService;
-    
+
     private final ApplicationTypeService applicationTypeService;
-    
+
     private final ApplicationProcessTimeService applicationProcessTimeService;
-    
+
     @Autowired
-    public ApplicationProcessTimeController(final ApplicationTypeService applicationTypeService,final ConnectionCategoryService connectionCategoryService,
+    public ApplicationProcessTimeController(final ApplicationTypeService applicationTypeService,
+            final ConnectionCategoryService connectionCategoryService,
             final ApplicationProcessTimeService applicationProcessTimeService) {
         this.connectionCategoryService = connectionCategoryService;
         this.applicationTypeService = applicationTypeService;
         this.applicationProcessTimeService = applicationProcessTimeService;
     }
-    
+
     @RequestMapping(value = "/applicationProcessTime", method = GET)
     public String viewForm(@ModelAttribute ApplicationProcessTime applicationProcessTime, final Model model) {
         applicationProcessTime = new ApplicationProcessTime();
@@ -82,29 +81,29 @@ public class ApplicationProcessTimeController {
         model.addAttribute("applicationTypes", applicationTypeService.findAll());
         return "application-process-time-master";
     }
-    
+
     @RequestMapping(value = "/applicationProcessTime", method = RequestMethod.POST)
-    public String addApplicationProcessTimeMasterData(@ModelAttribute ApplicationProcessTime applicationProcessTime,
+    public String addApplicationProcessTimeMasterData(
+            @ModelAttribute final ApplicationProcessTime applicationProcessTime,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "application-process-time-master";
-       // applicationType, category
+        // applicationType, category
         ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
-        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(applicationProcessTime.getApplicationType(),applicationProcessTime.getCategory());
-        if (applicationprocessTime==null){
-            
-        applicationProcessTime.setActive(true);
-        applicationProcessTimeService.createApplicationProcessTime(applicationProcessTime);
-        redirectAttrs.addFlashAttribute("applicationProcessTime", applicationProcessTime);
-        model.addAttribute("message", "Application Process Time Data created successfully");
-        }
-        else
-        {
-        applicationprocessTime.setProcessingTime(applicationProcessTime.getProcessingTime());
-        applicationProcessTimeService.updateApplicationProcessTime(applicationprocessTime);
-        redirectAttrs.addFlashAttribute("applicationProcessTime", applicationprocessTime);
-        model.addAttribute("message", "Application Process Time Data updated successfully");
-            
+        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(
+                applicationProcessTime.getApplicationType(), applicationProcessTime.getCategory());
+        if (applicationprocessTime == null) {
+
+            applicationProcessTime.setActive(true);
+            applicationProcessTimeService.createApplicationProcessTime(applicationProcessTime);
+            redirectAttrs.addFlashAttribute("applicationProcessTime", applicationProcessTime);
+            model.addAttribute("message", "Application Process Time Data created successfully");
+        } else {
+            applicationprocessTime.setProcessingTime(applicationProcessTime.getProcessingTime());
+            applicationProcessTimeService.updateApplicationProcessTime(applicationprocessTime);
+            redirectAttrs.addFlashAttribute("applicationProcessTime", applicationprocessTime);
+            model.addAttribute("message", "Application Process Time Data updated successfully");
+
         }
         return "application-process-time-success";
     }

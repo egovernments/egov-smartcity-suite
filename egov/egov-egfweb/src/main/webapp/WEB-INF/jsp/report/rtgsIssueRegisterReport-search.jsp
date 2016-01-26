@@ -256,11 +256,11 @@ function validateFund(){
 	var fund = document.getElementById('fundId').value;
 	var bank = document.getElementById('bank');
 	if(fund == -1){
-		alert("Please select a Fund");
+		bootbox.alert("Please select a Fund");
 		return false;
 	}
 	if(fund == -1 && bank.options.length==1){
-		alert("Please select a Fund");
+		bootbox.alert("Please select a Fund");
 		return false;
 	}
 	return true;
@@ -270,7 +270,7 @@ function alertWhileSelectingDepartment(){
 	if(department == -1){
 		return true;
 	}else{
-		alert("The payments that are not of the selected department in the respective RTGS transaction will be not be shown here. Please unselect department if you wish to see all the payments in the RTGS transactions");
+		bootbox.alert("The payments that are not of the selected department in the respective RTGS transaction will be not be shown here. Please unselect department if you wish to see all the payments in the RTGS transactions");
 		return true;
 		}
 	

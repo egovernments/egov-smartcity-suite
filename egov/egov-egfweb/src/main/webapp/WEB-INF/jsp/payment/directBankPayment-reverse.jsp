@@ -139,7 +139,7 @@
 					check();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -231,7 +231,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -342,7 +342,7 @@
  function onLoadTask_reverse() {
         if (button != null && button != "") {
 				if (document.getElementById("Errors").innerHTML == '') {
-				alert(succesMessage);
+				bootbox.alert(succesMessage);
 						if (button == "Reverse_Close") {
 							window.close();
 						} else if (button == "Reverse_View") {

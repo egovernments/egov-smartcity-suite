@@ -51,7 +51,7 @@
 		var tbl = document.getElementById('docAttachmentTab');
 		var checkListval=getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked;
 		if(checkListval!=true){
-			alert("Please Check the Check List before attaching.");
+			bootbox.alert("Please Check the Check List before attaching.");
 			return false; 
 		} 
 	}

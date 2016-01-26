@@ -143,7 +143,7 @@
 				{
 				if(document.getElementById("recoveryId").value=="")
 				{
-				alert("Please Select Recovery");
+				bootbox.alert("Please Select Recovery");
 				obj.value="-1";
 				return false;
 				}

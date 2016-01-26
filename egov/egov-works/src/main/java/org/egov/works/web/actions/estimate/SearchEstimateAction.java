@@ -336,7 +336,6 @@ public class SearchEstimateAction extends SearchFormAction {
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
-        // populatePreparedByList(ajaxEstimateAction, execDept != null);
         addDropdownData("estimateCreatedByList",
                 abstractEstimateService.findAllBy("select distinct createdBy from AbstractEstimate"));
         if ("wp".equals(source))
@@ -589,17 +588,6 @@ public class SearchEstimateAction extends SearchFormAction {
             addDropdownData("categoryList", Collections.emptyList());
     }
 
-    protected void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction,
-            final boolean executingDeptPopulated) {
-        if (executingDeptPopulated) {
-            ajaxEstimateAction.setExecutingDepartment(execDept);
-            ajaxEstimateAction.usersInExecutingDepartment();
-
-            addDropdownData("preparedByList", ajaxEstimateAction.getUsersInExecutingDepartment());
-        } else
-            addDropdownData("preparedByList", Collections.emptyList());
-    }
-
     public String displayEstimaeOrWpSearch() {
         if (StringUtils.isNotBlank(estimateOrWpSearchReq)
                 && ("both".equalsIgnoreCase(estimateOrWpSearchReq) || "estimate"
@@ -713,7 +701,7 @@ public class SearchEstimateAction extends SearchFormAction {
                     logger.error("Date Conversion Error :" + e.getMessage());
                     addFieldError("parse exception", "Date Conversion Error");
                 }
-                sb.append(" and trunc(ae.approvedDate)<=? ");
+                sb.append(" and ae.approvedDate <= ? ");
                 paramList.add(workspacDate);
             }
 
@@ -821,14 +809,14 @@ public class SearchEstimateAction extends SearchFormAction {
                             .getState().getOwnerPosition().getId());
                     addFieldError("result not found",
                             "Work package is already created for the Estimate with Work Package No " + wp.getWpNumber()
-                                    + " dated on " + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy")
+                                    + " dated on " + DateUtils.getFormattedDate(wp.getWpDate(), "dd/MM/yyyy")
                                     + " and " + "it is drafts of " + assignment.getEmployee().getName());
                 } else
                     addFieldError(
                             "result not found",
                             "Work package is already created for the Estimate with Work Package No: "
                                     + wp.getWpNumber() + " dated on "
-                                    + DateUtils.getFormattedDate(wp.getPackageDate(), "dd/MM/yyyy") + " and it is in "
+                                    + DateUtils.getFormattedDate(wp.getWpDate(), "dd/MM/yyyy") + " and it is in "
                                     + wp.getEgwStatus().getDescription() + " status");
             } else
                 addFieldError("result not found", "No results found for search parameters");
@@ -917,7 +905,8 @@ public class SearchEstimateAction extends SearchFormAction {
         final Assignment assignment = assignmentService.getPrimaryAssignmentForEmployeeByToDate(
                 worksService.getCurrentLoggedInUserId(),
                 new Date());
-        setLoginUserDeptName(assignment.getDepartment().getName());
+        if (assignment != null)
+            setLoginUserDeptName(assignment.getDepartment().getName());
     }
 
     // Get the roles for the logged in user

@@ -92,6 +92,13 @@
 			cascade="all">
 			<column name="ID_LICENSE_SUB_TYPE" />
 		</many-to-one>
+		
+    	 <bag name="licenseSubCategoryDetails" cascade="all-delete-orphan" inverse="true">
+            <key>
+                <column name="subcategory_id" precision="22" scale="0" not-null="true"/>
+            </key>
+            <one-to-many class="org.egov.tl.entity.LicenseSubCategoryDetails" />
+        </bag>  
 	</class>
 	<query name="SUBCATEGORY_BY_NAME">
 		<![CDATA[

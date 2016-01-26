@@ -95,11 +95,11 @@ $(document).ready(function(){
 		if($.inArray(ext, fileformats) > -1){
 			//do something    
 			}else{
-			alert(ext+" file format is not allowed");
+				bootbox.alert(ext+" file format is not allowed");
 			return;
 		}
 		
-		//alert('ext'+ext);
+		//bootbox.alert('ext'+ext);
 		
 		if(e.target.files.length>0)
 		{

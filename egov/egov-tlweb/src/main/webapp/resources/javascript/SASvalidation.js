@@ -78,16 +78,16 @@ function checkAlphaNumeric(obj)
  var finalStr; 
  var validchars="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
  
- //alert("LengthfromSASvalidation="+len);
+ //bootbox.alert("LengthfromSASvalidation="+len);
  //if(trimAll(obj.value)!="" && obj.value!=null)
  if(obj.value!=null || obj.value!="")
  {
  	for(i=0;i<len && isNotAlphaNumric=="false";i++)
  	{
- 		//alert("Str()="+str.charAt(i));
+ 		//bootbox.alert("Str()="+str.charAt(i));
  		if(str.charAt(0)=="" || str.charAt(0)==null)
  		{
- 			//alert("Hii");
+ 			//bootbox.alert("Hii");
  			str=trimAll(obj.value);
  		}
  		character=str.charAt(i);
@@ -98,7 +98,7 @@ function checkAlphaNumeric(obj)
  			//isnumber="false";
  			//finalStr=character;
  			j++;
- 			//alert("finalStr="+finalStr);
+ 			//bootbox.alert("finalStr="+finalStr);
  		}
  		else
  		{
@@ -108,10 +108,10 @@ function checkAlphaNumeric(obj)
  	
  	if(isNotAlphaNumric=="true")
  	{
- 		alert("Please enter a valid character!!");
+ 		bootbox.alert("Please enter a valid character!!");
  		//obj.value=trimAll(str.substr(0,j));
  		obj.value=str.substr(0,j);
- 		//alert("SubString="+obj.value);
+ 		//bootbox.alert("SubString="+obj.value);
  		obj.focus();
  		return false;
  	}
@@ -139,7 +139,7 @@ function validVocNumber(obj)
    for (i = 0; i < strString.length && blnResult == true; i++)
       {
       strChar = strString.charAt(i);
-      //alert("Char="+strChar);
+      //bootbox.alert("Char="+strChar);
       j=j+1;
       if (strValidChars.indexOf(strChar) == -1)
          {
@@ -148,7 +148,7 @@ function validVocNumber(obj)
       }
      if(blnResult==false)
      {
-     	alert("Please enter a valid voucher number!!");
+    	 bootbox.alert("Please enter a valid voucher number!!");
      	obj.value=strString.substr(0,j);
      	return false;
      }
@@ -162,17 +162,17 @@ function checkZero(obj)
 {
 	var val;
 	var Objvalue=obj.value;
-	//alert("inside checkZero val="+obj.value+obj.readOnly);
+	//bootbox.alert("inside checkZero val="+obj.value+obj.readOnly);
 	if(obj.readOnly==false && obj.value!=null && obj.value!="")	
 	{
-		//alert("Objvalue.isNaN()="+isNaN(Objvalue));
+		//bootbox.alert("Objvalue.isNaN()="+isNaN(Objvalue));
 		if(!isNaN(Objvalue))
 		{
 			val=eval(obj.value);			
-			//alert("val="+val);
+			//bootbox.alert("val="+val);
 			if(val==0)
 			{
-				alert("Series of Zeroes is Not a Valid voucher Number!!");
+				bootbox.alert("Series of Zeroes is Not a Valid voucher Number!!");
 				obj.value="";
 				obj.focus();
 				return false;
@@ -191,8 +191,8 @@ function changeCase(obj)
 	var str1;
 	
 	var len=str2.length;
-	//alert("Length="+len);   
-	//alert("I m called");
+	//bootbox.alert("Length="+len);   
+	//bootbox.alert("I m called");
 	
         if(str2!="" && str2!=null && len>0)
 	{
@@ -211,7 +211,7 @@ function checkNumber(obj)
     {
 	    if(isNaN(obj.value))
 	    {
-	    alert('Please Enter Only Numeric Value');
+	    	bootbox.alert('Please Enter Only Numeric Value');
 	    obj.value="";
 	    obj.focus();
 	    return false;
@@ -239,7 +239,7 @@ function validNumber(obj)
    for (i = 0; i < strString.length && blnResult == true; i++)
       {
       strChar = strString.charAt(i);
-      //alert("Char="+strChar);
+      //bootbox.alert("Char="+strChar);
       j=j+1;
       if (strValidChars.indexOf(strChar) == -1)
          {
@@ -248,7 +248,7 @@ function validNumber(obj)
       }
      if(blnResult==false)
      {
-     	alert("Please enter a valid number!!");
+    	 bootbox.alert("Please enter a valid number!!");
      	obj.value=strString.substr(0,j);
      	return false;
      }
@@ -264,12 +264,12 @@ function validNumber(obj)
     var idx;
     var tbl=document.getElementById('floor_table');
     var col=tbl.rows[1].cells.length-1;
-       //alert("OBJ="+obj.value);
+       //bootbox.alert("OBJ="+obj.value);
  	if(col>1)
 	{		
 		if(obj.parentNode!=null)
 		{
-			//alert("beforecalBuildingTax(obj)->obj.parentNode!=null");
+			//bootbox.alert("beforecalBuildingTax(obj)->obj.parentNode!=null");
 			td=obj.parentNode;
 			idx=td.cellIndex;
 		}
@@ -280,10 +280,10 @@ function validNumber(obj)
 	}
 	else
 	{
-		//alert("beforecalBuildingTax(obj)->obj.parentNode==null");
+		//bootbox.alert("beforecalBuildingTax(obj)->obj.parentNode==null");
 		idx=0;
 	}
-	//alert("Index="+idx);
+	//bootbox.alert("Index="+idx);
 	return idx;  
 }*/
 
@@ -303,16 +303,16 @@ function checkNotNumber(obj)
  var finalStr; 
  var invalidchars="0123456789";
  
- //alert("LengthfromSASvalidation="+len);
+ //bootbox.alert("LengthfromSASvalidation="+len);
  //if(trimAll(obj.value)!="" && obj.value!=null)
  if(obj.value!=null || obj.value!="")
  {
  	for(i=0;i<len && isnumber=="false";i++)
  	{
- 		//alert("Str()="+str.charAt(i));
+ 		//bootbox.alert("Str()="+str.charAt(i));
  		if(str.charAt(0)=="" || str.charAt(0)==null)
  		{
- 			//alert("Hii");
+ 			//bootbox.alert("Hii");
  			str=trimAll(obj.value);
  		}
  		character=str.charAt(i);
@@ -323,7 +323,7 @@ function checkNotNumber(obj)
  			//isnumber="false";
  			//finalStr=character;
  			j++;
- 			//alert("finalStr="+finalStr);
+ 			//bootbox.alert("finalStr="+finalStr);
  		}
  		else
  		{
@@ -333,10 +333,10 @@ function checkNotNumber(obj)
  	
  	if(isnumber=="true")
  	{
- 		alert("Please enter a valid character!!");
+ 		bootbox.alert("Please enter a valid character!!");
  		//obj.value=trimAll(str.substr(0,j));
  		obj.value=str.substr(0,j);
- 		//alert("SubString="+obj.value);
+ 		//bootbox.alert("SubString="+obj.value);
  		obj.focus();
  		return false;
  	}
@@ -382,13 +382,13 @@ function validateCollectionDate(paymentYear,collectionDate)
 	var prevYear=pmntYear.substr(0,4);
 	var nextYear=eval(prevYear)+eval(0001);
 	
-	/*alert("Payment year="+pmntYear+"CollectionYear="+collectionDate);	
-	alert("Substring Year="+prevYear+"Substring Collection="+collDate.substr(6,4));	
-	alert("Financial Year="+prevYear+"-"+nextYear);*/
+	/*bootbox.alert("Payment year="+pmntYear+"CollectionYear="+collectionDate);	
+	bootbox.alert("Substring Year="+prevYear+"Substring Collection="+collDate.substr(6,4));	
+	bootbox.alert("Financial Year="+prevYear+"-"+nextYear);*/
 	
 	if(collDate.substr(6,4) > nextYear || collDate.substr(6,4) <prevYear)
 	{
-		//alert("The collection date should be between the payment year!!");
+		//bootbox.alert("The collection date should be between the payment year!!");
 		//obj.value="";
 		return false;
 	}
@@ -397,7 +397,7 @@ function validateCollectionDate(paymentYear,collectionDate)
 	{
 		if(collDate.substr(6,4)==nextYear)
 		{
-			//alert("ENTERED NEXT YEAR");
+			//bootbox.alert("ENTERED NEXT YEAR");
 			if(collDate.substr(3,2)>3)
 			{
 				return false;
@@ -424,7 +424,7 @@ function validateCollectionDate(paymentYear,collectionDate)
 
 		if(collDate.substr(6,4)==prevYear)
 		{
-			//alert("ENTERED PREVIOUS YEAR");
+			//bootbox.alert("ENTERED PREVIOUS YEAR");
 			if(collDate.substr(3,2)<4)
 			{
 				return false;
@@ -467,10 +467,10 @@ function checkFdateTdate(fromDate,toDate)
 {
 	//ENTERED DATE FORMAT MM/DD/YYYY
 	
-	//alert('I hv entered the function');
-	//alert('From Year'+fromDate.substr(6,4)+'To'+toDate.substr(6,4));
-	//alert('From Month'+fromDate.substr(0,2)+'To'+toDate.substr(0,2));
-	//alert('From Date'+fromDate.substr(3,2)+'To'+toDate.substr(3,2));
+	//bootbox.alert('I hv entered the function');
+	//bootbox.alert('From Year'+fromDate.substr(6,4)+'To'+toDate.substr(6,4));
+	//bootbox.alert('From Month'+fromDate.substr(0,2)+'To'+toDate.substr(0,2));
+	//bootbox.alert('From Date'+fromDate.substr(3,2)+'To'+toDate.substr(3,2));
 	
 	if(fromDate.substr(6,4) > toDate.substr(6,4))
 	{
@@ -581,10 +581,10 @@ function validateNotEmpty(obj)
 {
    var strTemp = obj.value;
    strTemp = trimAll(strTemp);
-   //alert('length :'+strTemp.length);
+   //bootbox.alert('length :'+strTemp.length);
    if(strTemp.length <= 0)
    {
-      alert('Please Fill in the value');
+	   bootbox.alert('Please Fill in the value');
       obj.focus();
       return false;
    }
@@ -611,27 +611,27 @@ function IsNumeric(sText)
 
    function IsValidYear(Year)
 {
-	//alert("IsValidYear");
+	//bootbox.alert("IsValidYear");
 	var d = new Date();
 	var curr_date = d.getFullYear();
-	//alert("Year" + Year);
+	//bootbox.alert("Year" + Year);
 
 
 	if( (Year<1900) || (Year>curr_date))
 	{
-		//alert("IsValidYear 1");
+		//bootbox.alert("IsValidYear 1");
 		return false;
 	}
 	else
 	{
-		//alert("IsValidYear 2");
+		//bootbox.alert("IsValidYear 2");
 		return true;
 	}
 }
 
 function removeAllOptions(selectbox)
 {
-	//alert("selectbox: " + selectbox);
+	//bootbox.alert("selectbox: " + selectbox);
 	var i;
 	for(i=selectbox.options.length-1;i>=0;i--)
 	{
@@ -648,7 +648,7 @@ function IsNum(str)
  var i=0;
  var character;
   
- //alert("Length="+len);
+ //bootbox.alert("Length="+len);
  for(i=0;i<len;i++)
  {
  	character=str.charAt(i);
@@ -674,7 +674,7 @@ function checkAlphabet(obj)
    {
 	   if(!objRegExp.test(obj.value))
 	   {
-		   alert('Please Enter Only Alphabets');
+		   bootbox.alert('Please Enter Only Alphabets');
 		   obj.value="";
 		   obj.focus();
 		   return false;
@@ -690,14 +690,14 @@ function checkNumberMandatory(obj)
 
     if ( obj.value =="" )
     {
-    alert('should not blank');
+    	bootbox.alert('should not blank');
     obj.focus();
     return false;
     }
 
     else  if(isNaN(obj.value))
     {
-    alert('Enter only numeric value.');
+    	bootbox.alert('Enter only numeric value.');
     obj.value="";
     obj.focus();
     return false;
@@ -716,7 +716,7 @@ function validateEmail( obj)
           {
           if(!objRegExp.test(obj.value))
           {
-          alert('Please Enter Valid Email Address');
+        	  bootbox.alert('Please Enter Valid Email Address');
           obj.value="";
           obj.focus();
           return false;
@@ -737,20 +737,20 @@ function validatingYear(obj)
 {
 	Year=obj.value;
 
-	//alert("Year"+Year);
+	//bootbox.alert("Year"+Year);
 	var d = new Date();
 	var curr_date = d.getFullYear();
-	//alert("curr_date" + curr_date);
+	//bootbox.alert("curr_date" + curr_date);
 
 	/*if(Year=="")
 	{
-		alert("Pls enter the Year of Construction!!");
+		bootbox.alert("Pls enter the Year of Construction!!");
 		obj.focus();
 	}*/
 
 	if(Year!="" && ((Year<1900) || (Year>curr_date)))
 	{
-		alert("Not A ValidYear!! Pls Enter the year between 1900 And "+ curr_date);
+		bootbox.alert("Not A ValidYear!! Pls Enter the year between 1900 And "+ curr_date);
 		//obj.value="";
 		obj.focus(); //+documnet.viewPropertyForm.yrOfConstr.focus);
 		return false;
@@ -767,7 +767,7 @@ function validatingYear(obj)
 
 function deleteOwner(obj)
 {
-	//alert(">>>>>Inside deleteOwner SAS");
+	//bootbox.alert(">>>>>Inside deleteOwner SAS");
 	var delRow = obj.parentNode.parentNode;
 	//var tbl = delRow.parentNode.parentNode;
 	var rIndex = delRow.rowIndex;
@@ -776,7 +776,7 @@ function deleteOwner(obj)
     
     var tbl=document.getElementById('nameTable');
     var rowo=tbl.rows.length;
-   //alert("No. of Owners="+rowo);
+   //bootbox.alert("No. of Owners="+rowo);
     
     if(rowo<=11)
     {
@@ -785,7 +785,7 @@ function deleteOwner(obj)
 
     if(rowo<=2)
 	{
-		alert("This Owner can not be deleted");
+    	bootbox.alert("This Owner can not be deleted");
 		return false;
 	}
 	else
@@ -802,14 +802,14 @@ function deleteOwner(obj)
 
 function deleteTenant(obj)
 {
-	//alert(">>>>>Inside deleteTenant");
+	//bootbox.alert(">>>>>Inside deleteTenant");
 	var delRow = obj.parentNode.parentNode;
 	var tblT = delRow.parentNode.parentNode;
 	var rIndex = delRow.rowIndex;
 	//if(rIndex == 0)
 	var tbl=document.getElementById('nameTenantTable');
 	var rowt=tbl.rows.length;
-	//alert("rowt="+rowt);
+	//bootbox.alert("rowt="+rowt);
 	if(rowt<=11)
 	{
 		document.getElementById('addTenantBtn').disabled=false;
@@ -819,9 +819,9 @@ function deleteTenant(obj)
 	{
 
 		tblT.deleteRow(rIndex);
-		//alert("No tenants");
+		//bootbox.alert("No tenants");
 
-		//alert("2222tenantExists="+document.sasForm.tenantExists.value);
+		//bootbox.alert("2222tenantExists="+document.sasForm.tenantExists.value);
 		return true;
 	}
 	else
@@ -842,7 +842,7 @@ function addOwner()
 
     var tbl = document.getElementById('nameTable');
     var rowO=tbl.rows.length;
-    //alert("rowO="+rowO);
+    //bootbox.alert("rowO="+rowO);
     if(rowO<11)
     {
     	if(document.getElementById('nameRow') != null)
@@ -851,7 +851,7 @@ function addOwner()
 			var lastRow = tbl.rows.length;
 			/*if(document.viewPropertyForm.firstName[lastRow-1].value="" || document.viewPropertyForm.firstName[lastRow].value==null)
 			{
-			alert("Please Enter Owner FirstName ");
+			bootbox.alert("Please Enter Owner FirstName ");
 			document.viewPropertyForm.firstName[lastRow-1].focus();
 			return false;
 			}*/
@@ -862,7 +862,7 @@ function addOwner()
 	}
 	else
 	{
-	alert("Im in else");
+		bootbox.alert("Im in else");
 		//var tbl = document.getElementById('nameTable');
 		var lastRow = tbl.rows.length;
 		var txt1 = 'firstName';
@@ -886,7 +886,7 @@ function addOwner()
 
 function addTenant()
 {
-  //alert("Inside addTenant");
+  //bootbox.alert("Inside addTenant");
       var tbl = document.getElementById('nameTenantTable');
       var rowT=tbl.rows.length;
       if(rowT<11)
@@ -995,17 +995,17 @@ function createTextNodes(tbl,lastRow,txt1, txt2, txt3, txt4, btnName)
 function reorderColumns(tbl, col)
 {
 
-	//alert("Inside reorderColumns");
-	//alert("col="+col);
+	//bootbox.alert("Inside reorderColumns");
+	//bootbox.alert("col="+col);
 	for(j=col; j<tbl.rows[1].cells.length; j++)
 	{
-		//alert("j="+j);
+		//bootbox.alert("j="+j);
 		for (var i=1; i<tbl.rows.length; i++)
 		{
-			//alert("data="+tbl.rows[i].cells[col].childNodes[0].value);
+			//bootbox.alert("data="+tbl.rows[i].cells[col].childNodes[0].value);
 			if(tbl.rows[i].cells[j].childNodes[0].value == "Delete")
 			{
-				//alert("id="+tbl.rows[i].cells[j].childNodes[0].id);
+				//bootbox.alert("id="+tbl.rows[i].cells[j].childNodes[0].id);
 				tbl.rows[i].cells[j].childNodes[0].id=j;
 			}
 		}
@@ -1048,7 +1048,7 @@ function addPropOwner()
 	}
 	else
 	{
-	alert("Im in else");		
+		bootbox.alert("Im in else");		
 		var lastRow = tbl.rows.length;
 		var txt1 = 'firstName';
 		var txt2 = 'middleName';
@@ -1078,7 +1078,7 @@ function deleteSpecificOwner(obj)
 	  return true;
 	}
 	else
-	alert("This Owner can not be deleted");
+		bootbox.alert("This Owner can not be deleted");
 
 }
 
@@ -1086,7 +1086,7 @@ function deleteSpecificOwner(obj)
 // this is to get the current row column(cursor) place
 function getControlInBranch(obj,controlName)  
 { 
- //alert("inside sas-->"+obj.getAttribute ('id'));
+ //bootbox.alert("inside sas-->"+obj.getAttribute ('id'));
  if (!obj || !(obj.getAttribute('id'))) return null; 
  // check if the object itself has the name
  if (obj.getAttribute ('id') == controlName) return obj;

@@ -60,18 +60,18 @@ $(document).ready(function(){
 });
 
 function property(src){
-	//alert(src);
+	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/ptis.pdf');
 }
 
 
 function water(src){
-	//alert(src);
+	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/wcms.pdf');
 }
 
 function grievance(src){
-	//alert(src);
+	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
 }
 

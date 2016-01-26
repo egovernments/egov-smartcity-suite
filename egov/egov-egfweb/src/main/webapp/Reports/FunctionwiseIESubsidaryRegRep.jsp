@@ -134,17 +134,17 @@
 
 			if (document.getElementById('fundLst').value=="")
 			{
-				alert("Please select Fund ");
+				bootbox.alert("Please select Fund ");
 				return false;
 			}
 			 if(strtDate.length==0)
 			{
-				alert("please select start date ");
+				 bootbox.alert("please select start date ");
 				return false;
 			}
 			if(compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 			{
-				alert('Start Date can not be greater than End Date');
+				bootbox.alert('Start Date can not be greater than End Date');
 				document.getElementById('startDate').focus();
 				return false;
 			}
@@ -404,7 +404,7 @@
 			LOGGER.info("Exception in Jsp Page:"+e.getMessage());
 			%>
 		 	<script>
-			 alert("Error :<%=e.getMessage()%>");
+		 	bootbox.alert("Error :<%=e.getMessage()%>");
 		 	</script>
 		 	<%
 		}

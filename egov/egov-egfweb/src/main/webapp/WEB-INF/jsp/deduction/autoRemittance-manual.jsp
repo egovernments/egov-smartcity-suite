@@ -143,7 +143,7 @@ function loadDrawingOfficer(obj)
 
 function loadLastRundate(obj)
 {
-	//alert(obj.value);
+	//bootbox.alert(obj.value);
 	<s:iterator value="lastRunDateMap" var="s">
 	if(obj.value=='<s:property value="%{key}"/>')
 	{

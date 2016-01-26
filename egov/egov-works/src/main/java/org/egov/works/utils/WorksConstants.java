@@ -64,7 +64,7 @@ public class WorksConstants {
     public static final String QUERY_GETACTIVEDEPOSITCODES_BY_CODE_OR_DESC = "EGW_getActiveDepositCodesByCodeOrDescription";
 
     public static final String WORKORDER_LASTSTATUS = "WorkOrder.laststatus";
-    public static final String WORKSPACKAGE_LASTSTATUS = "WorksPackage.laststatus";
+    public static final String WP_LAST_STATUS = "WP_LAST_STATUS";
     public static final String TENDERRESPONSE_LASTSTATUS = "TenderResponse.laststatus";
     public static final String QUERY_GETSTATUSDATEBYOBJECTID_TYPE_DESC = "getStatusDateByObjectId_Type_Desc";
     public static final String CAPITAL_WORKS = "Capital Works";
@@ -215,7 +215,11 @@ public class WorksConstants {
     public static final String ACTION_WF_HISTORY = "WorkFlow History";
     public static final String ACTION_VIEW_DOCUMENT = "View Document";
     public static final String ACTION_COPY_ESTIMATE = "Copy Estimate";
+    public static final String WORKS_VIEW_OFFLINE_STATUS_VALUE = "View offline status";
+    public static final String WORKS_SETSTATUS_VALUE = "Set Status";
 
+    public static final String WP_OFFLINE_STATUS = "WP_OFFLINE_STATUS";
+    
     public static final String GRADE = "grade";
     public static final String MIN_AMOUNT = "minAmount";
     public static final String MAX_AMOUNT = "maxAmount";
@@ -226,4 +230,9 @@ public class WorksConstants {
     public static final String STATUS_ID = "statusId";
     public static final String GRADE_ID = "gradeId";
     public static final String SEARCH_DATE = "searchDate";
+    
+    public static final String CANCEL_ACTION = "Cancel";
+    public static final String SAVE_ACTION = "Save";
+    public static final Object REJECT_ACTION = "Reject";
+    public static final Object FORWARD_ACTION = "Forward";
 }

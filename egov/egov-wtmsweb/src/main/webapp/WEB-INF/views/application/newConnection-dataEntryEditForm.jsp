@@ -42,11 +42,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
+<script src="<c:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
-		<form:form role="form" action="/wtms/application/newConnection-createExisting" 
+		<form:form role="form" action="/wtms/application/newConnection-dataEntryForm" 
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			commandName="waterConnectionDetails"
 			cssClass="form-horizontal form-groups-bordered"
@@ -115,7 +115,7 @@
 		 loadPropertyDetails();
 		
 			function validate(){
-				//alert(document.forms[0].action);
+				//bootbox.alert(document.forms[0].action);
 				if($('#connectionType').val() !='METERED')
 					{
 						$('#monthlyFee').attr('required', 'required');

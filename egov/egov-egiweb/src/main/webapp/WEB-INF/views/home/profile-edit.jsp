@@ -84,9 +84,9 @@
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 						</div>
 						
-						<div class="col-sm-1">
-							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
-						</div>
+						<label for="field-1" class="col-sm-1 control-label">
+							<spring:message code="lbl.email"/>
+						</label>
 						
 						<div class="col-sm-3">
 							<form:input path="emailId" cssClass="form-control" id="emailId" placeholder="abc@xyz.com" maxlength="50"/>
@@ -101,9 +101,9 @@
 							<form:input path="altContactNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="altContactNumber" placeholder="8080808080" maxlength="10"/>
 						</div>
 						
-						<div class="col-sm-1">
-							<label for="field-1" class="control-label"><spring:message code="lbl.dob" /></label>
-						</div>
+						<label for="field-1" class="col-sm-1 control-label">
+							<spring:message code="lbl.dob" />
+						</label>
 						
 						<div class="col-sm-3 add-margin">
 							<form:input path="dob" cssClass="form-control datepicker"  data-inputmask="'mask': 'd/m/y'" id="dob" placeholder="24/01/1992"/>
@@ -111,21 +111,23 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.pan"/></label>
+						
+						<label for="field-1" class="col-sm-3 control-label">
+							<spring:message code="lbl.aadhar"/>
+						</label>
 						
 						<div class="col-sm-2 add-margin">
+							<form:input path="aadhaarNumber" cssClass="form-control" placeholder="123456789012" maxlength="12"/>
+							<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
+						</div>
+						
+						<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.pan"/></label>
+						
+						<div class="col-sm-3 add-margin">
 							<form:input path="pan" cssClass="form-control" placeholder="AHWPU1117T" maxlength="10"/>
 							<form:errors path="pan" cssClass="add-margin error-msg"/>
 						</div>
 						
-						<div class="col-sm-1">
-							<label for="field-1" class="control-label"><spring:message code="lbl.aadhar"/></label>
-						</div>
-						
-						<div class="col-sm-3 add-margin">
-							<form:input path="aadhaarNumber" cssClass="form-control" placeholder="123456789012" maxlength="12"/>
-							<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
-						</div>
 					</div>
 					
 					<div class="form-group">

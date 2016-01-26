@@ -50,28 +50,28 @@
 function validateFields() {
 	<s:if test="%{isFieldMandatory('executingDepartment')}">
 		if(document.getElementById('department').value == '0') {
-			alert("Please select a Department");
+			bootbox.alert("Please select a Department");
 			return false;
 		}
 	</s:if>
 	if(document.getElementById('budgetHeadId').value == '0') {
-		alert("Please select a Budget Head");
+		bootbox.alert("Please select a Budget Head");
 		return false;
 	}
 	<s:if test="%{isFieldMandatory('function')}">
 	if(document.getElementById('function').value == '0') {
-		alert("Please select a Function");
+		bootbox.alert("Please select a Function");
 		return false;
 	}
 	</s:if>
 	<s:if test="%{isFieldMandatory('fund')}">
 	if(document.getElementById('fund').value == '0') {
-		alert("Please select a Fund")
+		bootbox.alert("Please select a Fund")
 		return false;
 	}
 	</s:if>
 	if(document.getElementById('asOnDate').value == '' ) {
-		alert("Please select the As On Date");
+		bootbox.alert("Please select the As On Date");
 		return false;
 	}
 

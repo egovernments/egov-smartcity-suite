@@ -203,13 +203,13 @@
 			}
 			function updateDate(obj)
 			{
-				//alert("Before"+obj); 
-				//alert("obj.name"+obj.name);
-				//alert("obj.value"+obj.value); 
+				//bootbox.alert("Before"+obj); 
+				//bootbox.alert("obj.name"+obj.name);
+				//bootbox.alert("obj.value"+obj.value); 
 				document.getElementById(obj).value=obj.value;         
-			//	alert("After"+obj);            
-				//alert("obj.name"+obj.name);          
-			//	alert("obj.value"+obj.value);         
+			//	bootbox.alert("After"+obj);            
+				//bootbox.alert("obj.name"+obj.name);          
+			//	bootbox.alert("obj.value"+obj.value);         
 			}
 			function validate()
 			{
@@ -217,7 +217,7 @@
 				
 				if(document.getElementById('selectedRows').value=='' || document.getElementById('selectedRows').value==0)
 				{
-					alert('Please select the payment voucher');
+					bootbox.alert('Please select the payment voucher');
 					return false;
 				}
 				
@@ -230,7 +230,7 @@
 			}
 		function validateForRtgsMode(){
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
-				//alert("sizseled"+noOfSelectedRows);      
+				//bootbox.alert("sizseled"+noOfSelectedRows);      
 				var chkCount=0;     
 				var index;
 				var isSelected=0;
@@ -246,14 +246,14 @@
 					var paymentDate= document.getElementsByName("value["+index+"].tempPaymentDate")[0].value; 
 						if(document.getElementById('isSelected'+index).checked){
 							chkCount++;                 
-							alert("cheque Date"+chequeDate +"paymentDate"+paymentDate) ;   
-							alert(compareDate(paymentDate,chequeDate))  ;     
+							bootbox.alert("cheque Date"+chequeDate +"paymentDate"+paymentDate) ;   
+							bootbox.alert(compareDate(paymentDate,chequeDate))  ;     
 							if( compareDate(paymentDate,chequeDate) == -1){     
-								alert('Cheque Date cannot be less than  payment Date');
+								bootbox.alert('Cheque Date cannot be less than  payment Date');
 								return false;           
 							 } 
 							if(chkCount==noOfSelectedRows){ 
-								//alert("hi"); 
+								//bootbox.alert("hi"); 
 								return true;}                      
 						}                               
 					<s:set var="listCount" value="%{#listCount+1}"/>                      

@@ -131,7 +131,7 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox"><s:text
-								name="openingBalance.financialYear" /><span class="mandatory">*</span></td>
+								name="openingBalance.financialYear" /><span class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select name="finYear" id="finYear"
 								list="dropdownData.financialYearList" listKey="id"
 								listValue="finYearRange" headerKey=""
@@ -167,7 +167,7 @@
 				</div>
 			</div>
 		</s:push>
-		<span class="mandatory">
+		<span >
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="openingBalanceReport-result.jsp" />
 			</div>

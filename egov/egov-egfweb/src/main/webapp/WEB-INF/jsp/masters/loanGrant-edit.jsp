@@ -197,7 +197,7 @@ var makeProjectDetailTable = function() {
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -255,7 +255,7 @@ var makeSanctionedAmountTable = function() {
 				updateTotalAmount('sanctioned','grant');
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -384,7 +384,7 @@ var makeUnsanctionedAmountTable = function() {
 				updateTotalAmount('unsanctioned','grant');
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -513,7 +513,7 @@ var makeRevisedAmountTable = function() {
 				updateTotalAmount('revised','grant');
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -642,7 +642,7 @@ var makeReceiptTable = function() {
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -916,7 +916,7 @@ var makeReceiptTable = function() {
 		var fundIdValue=fund.options[fund.selectedIndex].value;
 		if(fundIdValue==-1)
 		{
-			alert("Select fund first");
+			bootbox.alert("Select fund first");
 			document.getElementById('bank_branch').options[0].selected=true;
 			return;		
 		}
@@ -930,7 +930,7 @@ var makeReceiptTable = function() {
 		var fundIdValue=fund.options[fund.selectedIndex].value;
 		if(fundIdValue==-1)
 		{
-			alert("Select fund first");
+			bootbox.alert("Select fund first");
 			document.getElementById('bankaccount').options[0].selected=true;
 			return;		
 		}

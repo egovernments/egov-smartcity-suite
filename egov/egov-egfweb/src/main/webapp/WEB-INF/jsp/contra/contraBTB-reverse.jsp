@@ -126,10 +126,10 @@
  function onLoadTask_reverse() {
 		       
 				var button = '<s:property value="button"/>';
-				alert(button);
+				bootbox.alert(button);
 				if (button != null && button != "") {
 				if (document.getElementById("Errors").innerHTML == '') {
-				alert('<s:text name="contra.reverse.transaction.success"/>');
+				bootbox.alert('<s:text name="contra.reverse.transaction.success"/>');
 						if (button == "Reverse_Close") {
 							window.close();
 						} else if (button == "Reverse_View") {
@@ -146,7 +146,7 @@
 				}
 				else
 				{
-				alert('disabling');
+				bootbox.alert('disabling');
 				disableControls(0,true);
 				}
 				document.getElementById('button').disabled=false;

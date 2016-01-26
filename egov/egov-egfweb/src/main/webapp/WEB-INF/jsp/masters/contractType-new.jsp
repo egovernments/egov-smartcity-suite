@@ -50,9 +50,9 @@
 							var success = '<s:property value="success"/>';
 
 							if (success == 'yes') {
-								alert("Contract Type Created Successfully");
+								bootbox.alert("Contract Type Created Successfully");
 								} else if((success == 'no')){
-									alert("Contract Type Could Not be Created");
+									bootbox.alert("Contract Type Could Not be Created");
 									}
 												
 							if (close == 'true') {

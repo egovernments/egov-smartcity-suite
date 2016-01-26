@@ -121,7 +121,7 @@
 				</s:if>
 				<script>
 		for ( var i = 0; i < document.forms[0].length; i++) {
-		//alert(document.forms[0].elements[i].name);
+		//bootbox.alert(document.forms[0].elements[i].name);
 			if (document.forms[0].elements[i].name == 'fromDate'
 					|| document.forms[0].elements[i].name == 'toDate'
 					|| document.forms[0].elements[i].type == 'submit' || document.forms[0].elements[i].name == 'mode') {

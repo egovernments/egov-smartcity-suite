@@ -872,7 +872,7 @@ b, label, strong{
         }
         
         .login-content-margin {
-            margin: 4% auto 2% auto;
+            margin: 1% auto 0% auto;
         }
         
         .citizen-screens{
@@ -1400,32 +1400,6 @@ b, label, strong{
             .errorbot2 div { background: url(../images/bl.gif) no-repeat bottom left; }
             .errorbot2 { background: url(../images/br.gif) no-repeat bottom right; }
             
-            td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
-            {
-                width:auto;
-                height: 30px;
-                padding: 5px 10px;
-                .font-size(12px);
-                line-height: 1.5;
-                border-radius: 3px;
-                background-color: @whitecolor;
-                background-image: none;
-                border: 1px solid #CCC;
-                webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-                box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-                -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-                -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-                transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-            }
-
-            td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[type="text"]:focus, td.bluebox select:focus, textarea:focus
-            {
-              border-color: #FBA81A;
-              outline: 0;
-              -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(251, 190, 101, 0.6);
-              box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(253, 154, 10, 0.6);
-            }
-            
             input[type="text"]:read-only, textarea:read-only, textarea:disabled, input[type="text"]:disabled, input[type="text"]:-moz-read-only, select[disabled], textarea[disabled],input[disabled]
             {
                 background-color: #eceded !important;
@@ -1448,12 +1422,6 @@ b, label, strong{
             .margin-5
             {
                 margin:5px;
-            }
-            
-            td.bluebox.setborder, td.greybox.setborder{
-                border:1px solid #84B1AD;
-                border-top:0;
-                border-left:0;
             }
             
             .oldbuttonsection;
@@ -1551,6 +1519,37 @@ b, label, strong{
             {
                 display: none !important;
             }
+        }
+        
+        td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
+        {
+            width:auto;
+            height: 30px;
+            padding: 5px 10px;
+            .font-size(12px);
+            line-height: 1.5;
+            border-radius: 3px;
+            background-color: @whitecolor;
+            background-image: none;
+            border: 1px solid #CCC;
+            webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+
+        td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[type="text"]:focus, td.bluebox select:focus, td.bluebox textarea:focus, td.greybox textarea:focus
+        {
+            border-color: #66afe9;
+		    outline: 0;
+		    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+		    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+        }
+        
+        td.bluebox.setborder, td.greybox.setborder{
+            border:1px solid #84B1AD;
+            border-top:0;
         }
         
     }

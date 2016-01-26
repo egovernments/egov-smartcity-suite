@@ -97,7 +97,7 @@
 
 
 
-<script src="<c:url value='/resources/js/app/connectionCommonsearch.js'/>"
+<script src="<c:url value='/resources/js/app/connectionCommonsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 	
 

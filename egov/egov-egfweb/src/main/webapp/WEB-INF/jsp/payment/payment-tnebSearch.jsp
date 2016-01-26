@@ -149,20 +149,20 @@
 					document.getElementById('vouchermis.departmentid').disabled=false;
 				var region = document.getElementById('region').value;
 				if(region == ""){
-					 alert("Please select Region");
+					 bootbox.alert("Please select Region");
 					 return false;
 				}
 				var month = document.getElementById('month').value;
 				var year = document.getElementById('year').value;
 				if(month!=""){
 					if(year == ""){
-						 alert("Please select Year");
+						 bootbox.alert("Please select Year");
 					  return false;
 					}
 				}
 				if(year!=""){
 					if(month == ""){
-						 alert("Please select Month");
+						 bootbox.alert("Please select Month");
 					  return false;
 					}
 				}

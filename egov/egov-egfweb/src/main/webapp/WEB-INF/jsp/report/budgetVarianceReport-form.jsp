@@ -115,7 +115,7 @@ function exportPdf(){
 function validateData(){
 	var asOnDate =  Date.parse(document.getElementById('asOnDate').value);
 	if(asOnDate == ''){
-		alert("Please enter a valid date")
+		bootbox.alert("Please enter a valid date")
 		return false;
 	}
 	<s:if test="%{isFieldMandatory('executingDepartment')}">
@@ -152,7 +152,7 @@ function validateData(){
 function checkMandatoryField(fieldName){
 	var field = document.getElementById(fieldName);
 	if(field.value == -1){
-		alert("Please select a "+fieldName)
+		bootbox.alert("Please select a "+fieldName)
 		return false;
 	}
 	return true;

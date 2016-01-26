@@ -72,7 +72,7 @@
 						
 					if(record.getData("isExhustedL") =="Yes" || record.getData("nextChqPresent")=="Yes"){
 						
-						alert("cannot be deleted");
+						bootbox.alert("cannot be deleted");
 					}else{
 						this.deleteRow(record);
 						var index = chequeRangeArray.indexOf(record.getData("fromChqNo")+"-"+record.getData("toChqNo")+"-"+record.getData("deptId")+"-"+record.getData("serialNo"));

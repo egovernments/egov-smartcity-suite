@@ -39,12 +39,8 @@
  */
 package org.egov.tl.web.actions.objection;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -62,35 +58,47 @@ import org.egov.tl.service.objection.ObjectionService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Results({
-@Result(name = Constants.NEW, location = "objection-"+Constants.NEW+".jsp"),
-@Result(name = "message", location = "objection-message.jsp"),
-@Result(name = "approve", location = "objection-approve.jsp"),
-@Result(name = "prenotice", location = "objection-prenotice.jsp"),
-@Result(name = "prenoticeletter", location = "objection-prenoticeletter.jsp"),
-@Result(name = "showcausenotice", location = "objection-showcausenotice.jsp"),
-@Result(name = "scnoticeletter", location = "objection-scnoticeletter.jsp")
+        @Result(name = Constants.NEW, location = "objection-" + Constants.NEW + ".jsp"),
+        @Result(name = "message", location = "objection-message.jsp"),
+        @Result(name = "approve", location = "objection-approve.jsp"),
+        @Result(name = "prenotice", location = "objection-prenotice.jsp"),
+        @Result(name = "prenoticeletter", location = "objection-prenoticeletter.jsp"),
+        @Result(name = "showcausenotice", location = "objection-showcausenotice.jsp"),
+        @Result(name = "scnoticeletter", location = "objection-scnoticeletter.jsp")
 })
 public class ObjectionAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = 1L;
+
+    private WorkflowBean workflowBean = new WorkflowBean();
+    private LicenseObjection objection = new LicenseObjection();
+    private List<String> activityTypeList;
     private Long licenseId;
-    protected WorkflowBean workflowBean = new WorkflowBean();
-    protected LicenseUtils licenseUtils;
     private Map<Integer, String> objectionReasons;
     private LicenseStatusValues lsv;
-    private LicenseObjection objection = new LicenseObjection();
-    @Autowired
-@Qualifier("objectionService")
-    protected ObjectionService objectionService;
     private License license;
     private String roleName;
+
+    @Autowired
+    @Qualifier("objectionService")
+    protected ObjectionService objectionService;
+    @Autowired
+    protected LicenseUtils licenseUtils;
     @Autowired
     private SecurityUtils securityUtils;
+
+
+    public ObjectionAction() {
+        super();
+    }
 
     public LicenseStatusValues getLsv() {
         return lsv;
@@ -103,8 +111,6 @@ public class ObjectionAction extends GenericWorkFlowAction {
     public Map<Integer, String> getObjectionReasons() {
         return licenseUtils.getObjectionReasons();
     }
-
-    private List<String> activityTypeList;
 
     public List<String> getActivityTypeList() {
         return activityTypeList;
@@ -136,10 +142,6 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     public void setLicenseId(final Long licenseId) {
         this.licenseId = licenseId;
-    }
-
-    public ObjectionAction() {
-        super();
     }
 
     public License getLicense() {
@@ -174,7 +176,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-newForm")
+    @Action(value = "/objection/objection-newForm")
     public String newForm() {
         license = (License) persistenceService.find("from License where id=?", licenseId);
         objection.setLicense(license);
@@ -183,13 +185,13 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     @ValidationErrorPage(Constants.NEW)
     @Validations(
-            requiredFields = { @RequiredFieldValidator(
+            requiredFields = {@RequiredFieldValidator(
                     fieldName = "name", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "address", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "objectionDate", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
                     fieldName = "details", message = "", key = Constants.REQUIRED), @RequiredFieldValidator(
-                    fieldName = "reason", message = "", key = Constants.REQUIRED) })
-    @Action(value="/objection/objection-create")
+                    fieldName = "reason", message = "", key = Constants.REQUIRED)})
+    @Action(value = "/objection/objection-create")
     public String create() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.recordObjection(objection, licenseId, workflowBean);
@@ -199,7 +201,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
 
     /**
      * this will receive response or inspection details
-     * 
+     *
      * @return
      */
     public void prepareShowForApproval() {
@@ -213,7 +215,7 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-showForApproval")
+    @Action(value = "/objection/objection-showForApproval")
     public String showForApproval() {
         objectionService.setContextName(ServletActionContext.getRequest().getContextPath());
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
@@ -257,14 +259,14 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-preNotice")
+    @Action(value = "/objection/objection-preNotice")
     public String preNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         return "prenotice";
     }
 
     @SkipValidation
-@Action(value="/objection/objection-preliminaryNotice")
+    @Action(value = "/objection/objection-preliminaryNotice")
     public String preliminaryNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         generateNotice("_PreNotice");
@@ -272,14 +274,14 @@ public class ObjectionAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-@Action(value="/objection/objection-scNotice")
+    @Action(value = "/objection/objection-scNotice")
     public String scNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         return "showcausenotice";
     }
 
     @SkipValidation
-@Action(value="/objection/objection-showCauseNotice")
+    @Action(value = "/objection/objection-showCauseNotice")
     public String showCauseNotice() {
         objection = objectionService.findByNamedQuery(LicenseObjection.BY_ID, objection.getId());
         generateNotice("_SCNotice");

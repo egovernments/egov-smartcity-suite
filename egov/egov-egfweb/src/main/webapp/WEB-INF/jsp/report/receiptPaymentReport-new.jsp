@@ -249,7 +249,7 @@
 	 	var fromDate =  Date.parse(document.getElementById('fromDate').value);
 		var toDate =  Date.parse(document.getElementById('toDate').value);
 	 		if(finYr == 0 || period == 0 || currency == 0){
-		 		alert("Please select Mandatory fields");
+		 		bootbox.alert("Please select Mandatory fields");
 		 		return false;
 			}
 	 		return true;
@@ -260,16 +260,16 @@
 	 		}
 	 		else{
 	 		  if(isNaN(fromDate)||isNaN(toDate)){
-	 			alert("Please enter a valid date");
+	 			bootbox.alert("Please enter a valid date");
 	 			return false;
 	 	   	 }
 	 	}
 	}
 
 	function bodyOnLoad(){
-		//alert("hi");
+		//bootbox.alert("hi");
 		var period='<s:property value="model.period"/>';
-		//alert("period >> "+period);  
+		//bootbox.alert("period >> "+period);  
 		if(period == 'Date Range')
 			document.getElementById('dateran').style.display ="inline";
 		else

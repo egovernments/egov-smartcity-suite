@@ -39,21 +39,7 @@
  */
 package org.egov.tl.web.actions.newtradelicense;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,10 +47,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -73,283 +56,247 @@ import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.MotorDetails;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.service.BaseLicenseService;
+import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeMatrixService;
-import org.egov.tl.service.TradeService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
-import org.egov.tl.web.actions.domain.CommonTradeLicenseAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 @ParentPackage("egov")
 @Results({
-	@Result(name = Constants.EDIT, location = "editTradeLicense-" + Constants.EDIT + ".jsp"),
-	@Result(name = Constants.NEW, location = "newTradeLicense-" + Constants.NEW + ".jsp"),
-	@Result(name = Constants.MESSAGE, location = "editTradeLicense-" + Constants.MESSAGE + ".jsp")
+        @Result(name = Constants.EDIT, location = "editTradeLicense-" + Constants.EDIT + ".jsp"),
+        @Result(name = Constants.NEW, location = "newTradeLicense-" + Constants.NEW + ".jsp"),
+        @Result(name = Constants.MESSAGE, location = "editTradeLicense-" + Constants.MESSAGE + ".jsp")
 })
 public class EditTradeLicenseAction extends BaseLicenseAction {
-	private static final long serialVersionUID = 1L;
-	private TradeLicense tradeLicense = new TradeLicense();
-	private TradeService ts;
-	private PersistenceService<TradeLicense, Long> tps;
-	private boolean isOldLicense = false;
-	@Autowired
-	private BoundaryService boundaryService;
-	@Autowired
-	private SecurityUtils securityUtils;
-	private List<LicenseDocumentType> documentTypes = new ArrayList<>();
-	private String mode;
-	private Map<String, String> ownerShipTypeMap;
-	@Autowired
-	@Qualifier("licenseCategoryService")
-	private LicenseCategoryService licenseCategoryService;
-	@Autowired
-	@Qualifier("licenseSubCategoryService")
-	private LicenseSubCategoryService licenseSubCategoryService;
-	@Autowired
-	private BaseLicenseService baseLicenseService;
-	@Autowired
-	@Qualifier("unitOfMeasurementService")
-	private UnitOfMeasurementService unitOfMeasurementService;
-	@Autowired
-	private FeeMatrixService feeMatrixService;
-	BigDecimal totalAmount = BigDecimal.ZERO;
-	private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
-	private List<MotorDetails> installedMotorList = new ArrayList<MotorDetails>();
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(EditTradeLicenseAction.class);
 
-	private Long id;
-	public EditTradeLicenseAction() {
-		super();
-		tradeLicense.setLicensee(new Licensee());
-	}
+    private TradeLicense tradeLicense = new TradeLicense();
+    private boolean isOldLicense;
+    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
+    private String mode;
+    private Map<String, String> ownerShipTypeMap;
+    private BigDecimal totalAmount = BigDecimal.ZERO;
+    private List<MotorDetails> installedMotorList = new ArrayList<MotorDetails>();
+    private Long id;
 
-	/* to log errors and debugging information */
-	private final Logger LOGGER = Logger.getLogger(getClass());
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
 
-	@Override
-	public License getModel() {
-		return tradeLicense;
-	}
+    @Autowired
+    private FeeMatrixService feeMatrixService;
 
-	public void setModel(final TradeLicense tradeLicense) {
-		this.tradeLicense = tradeLicense;
-	}
+    public EditTradeLicenseAction() {
+        this.tradeLicense.setLicensee(new Licensee());
+    }
 
-	public void prepareBeforeEdit() {
-		LOGGER.debug("Entering in the prepareBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
-		prepareNewForm();
-		setDocumentTypes(service().getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
-		Long id = null;
-		if (tradeLicense.getId() == null)
-			if (getSession().get("model.id") != null) {
-				id = (Long) getSession().get("model.id");
-				getSession().remove("model.id");
-			}
-			else
-				id = tradeLicense.getId();
-		else
-			id = tradeLicense.getId();
-		tradeLicense = (TradeLicense) persistenceService.find("from TradeLicense where id = ?", id);
-		if (tradeLicense.getOldLicenseNumber() != null)
-			isOldLicense = org.apache.commons.lang.StringUtils.isNotBlank(tradeLicense.getOldLicenseNumber());
-		final Boundary licenseboundary = boundaryService.getBoundaryById(tradeLicense.getBoundary().getId());
-		List cityZoneList = new ArrayList();
-		//  cityZoneList = licenseUtils.getAllZone();
-		tradeLicense.setLicenseZoneList(cityZoneList);
-		if (licenseboundary.getName().contains("Zone"))
-			addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, Collections.EMPTY_LIST);
-		else if (tradeLicense.getLicensee().getBoundary() != null)
-			addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE,
-					new ArrayList(tradeLicense.getBoundary().getParent().getChildren())); 
+    @Override
+    public License getModel() {
+        return this.tradeLicense;
+    }
+
+    public void setModel(TradeLicense tradeLicense) {
+        this.tradeLicense = tradeLicense;
+    }
+
+    public void prepareBeforeEdit() {
+        this.prepareNewForm();
+        this.setDocumentTypes(this.tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
+        Long id = null;
+        if (this.tradeLicense.getId() == null)
+            if (this.getSession().get("model.id") != null) {
+                id = (Long) this.getSession().get("model.id");
+                this.getSession().remove("model.id");
+            } else
+                id = this.tradeLicense.getId();
+        else
+            id = this.tradeLicense.getId();
+        this.tradeLicense = this.tradeLicenseService.getLicenseById(id);
+        if (this.tradeLicense.getOldLicenseNumber() != null)
+            this.isOldLicense = StringUtils.isNotBlank(this.tradeLicense.getOldLicenseNumber());
+        Boundary licenseboundary = this.boundaryService.getBoundaryById(this.tradeLicense.getBoundary().getId());
+        List cityZoneList = new ArrayList();
+        //  cityZoneList = licenseUtils.getAllZone();
+        this.tradeLicense.setLicenseZoneList(cityZoneList);
+        if (licenseboundary.getName().contains("Zone"))
+            this.addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, Collections.EMPTY_LIST);
+        else if (this.tradeLicense.getLicensee().getBoundary() != null)
+            this.addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE,
+                    new ArrayList(this.tradeLicense.getBoundary().getParent().getChildren()));
 
 
-		final Long userId = securityUtils.getCurrentUser().getId(); 
-		if (userId != null)
-			setRoleName(licenseUtils.getRolesForUserId(userId));
+        Long userId = this.securityUtils.getCurrentUser().getId();
+        if (userId != null)
+            this.setRoleName(this.licenseUtils.getRolesForUserId(userId));
 
-		LOGGER.debug("Exiting from the prepareBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
+        this.setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
+        List<Boundary> localityList = this.boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                LOCALITY, LOCATION_HIERARCHY_TYPE);
+        this.addDropdownData("localityList", localityList);
+        this.addDropdownData("tradeTypeList", this.tradeLicenseService.getAllNatureOfBusinesses());
+        this.addDropdownData("categoryList", this.licenseCategoryService.findAll());
+        this.addDropdownData("uomList", this.unitOfMeasurementService.findAllActiveUOM());
+        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
+                licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
 
-		setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
-		final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-				LOCALITY, LOCATION_HIERARCHY_TYPE);
-		addDropdownData("localityList", localityList);
-		addDropdownData("tradeTypeList", baseLicenseService.getAllNatureOfBusinesses());
-		addDropdownData("categoryList", licenseCategoryService.findAll());
-		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
-
-		final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction = new CommonTradeLicenseAjaxAction();
-		populateSubCategoryList(ajaxTradeLicenseAction,tradeLicense.getCategory()!=null);
-
-	}
-
-	/**
-	 * @param ajaxTradeLicenseAction
-	 * @param categoryPopulated
-	 */
-	protected void populateSubCategoryList(final CommonTradeLicenseAjaxAction ajaxTradeLicenseAction, final boolean categoryPopulated)  {
-		if (categoryPopulated) {
-			ajaxTradeLicenseAction.setCategoryId(tradeLicense.getCategory().getId());
-			ajaxTradeLicenseAction.setLicenseSubCategoryService(licenseSubCategoryService);
-			ajaxTradeLicenseAction.populateSubCategory();
-			addDropdownData("subCategoryList", ajaxTradeLicenseAction.getSubCategoryList());
-		} else
-			addDropdownData("subCategoryList", Collections.emptyList());  
-	}
+    }
 
 
-	@SkipValidation
-	@Action(value = "/newtradelicense/editTradeLicense-beforeEdit")
-	public String beforeEdit() {
-		mode=EDIT;
-		return NEW;
-	}
-	public void setupBeforeEdit() {
-		LOGGER.debug("Entering in the setupBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
-		prepareBeforeEdit();
-		setupWorkflowDetails();
-		LOGGER.debug("Exiting from the setupBeforeEdit method:<<<<<<<<<<>>>>>>>>>>>>>:");
-	}
+    @SkipValidation
+    @Action(value = "/newtradelicense/editTradeLicense-beforeEdit")
+    public String beforeEdit() {
+        this.mode = EDIT;
+        return NEW;
+    }
 
-	public void prepare ()
-	{
-		if(id!= null) {
-			tradeLicense = tps.findById(id, false);     
-		}
-	}
+    public void setupBeforeEdit() {
+        this.prepareBeforeEdit();
+        this.setupWorkflowDetails();
+    }
 
-	@ValidationErrorPageExt(
-			action = "edit", makeCall = true, toMethod = "setupBeforeEdit")
-	@Action(value = "/newtradelicense/editTradeLicense-edit")
-	public String edit() {
-		LOGGER.debug("Edit Trade License Trade License Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + tradeLicense.toString());
-		if (tradeLicense.getState() == null && !isOldLicense)
-			service().transitionWorkFlow(tradeLicense, workflowBean); 
-		if (!isOldLicense)
-			processWorkflow(NEW);
-		if (installedMotorList != null) {
-			final List<MotorDetails> motorDetailsList = new ArrayList<MotorDetails>();
-			final Iterator<MotorDetails> motorDetails = installedMotorList.iterator();
-			while (motorDetails.hasNext()) {
-				final MotorDetails installedMotor = motorDetails.next();
-				if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
-						&& installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
-						&& installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0){
-					installedMotor.setLicense(tradeLicense);
-					motorDetailsList.add(installedMotor);
-				}
-			}
-			if (!tradeLicense.getInstalledMotorList().isEmpty()) {
-				for (final MotorDetails md : tradeLicense.getInstalledMotorList()) 
-					tradeLicense.getInstalledMotorList().remove(getPersistenceService().findById(md.getId(), false));
-			}
-			if(installedMotorList!=null  && !installedMotorList.isEmpty()){
-				tradeLicense.getInstalledMotorList().clear();
-				tradeLicense.getInstalledMotorList().addAll(motorDetailsList);
-			}
-		}
+    @Override
+    public void prepare() {
+        if (this.id != null) {
+            this.tradeLicense = this.tradeLicenseService.getLicenseById(this.id);
+        }
+    }
 
-		service().processAndStoreDocument(tradeLicense.getDocuments());
+    @ValidationErrorPageExt(
+            action = "edit", makeCall = true, toMethod = "setupBeforeEdit")
+    @Action(value = "/newtradelicense/editTradeLicense-edit")
+    public String edit() {
+        if (this.tradeLicense.getState() == null && !this.isOldLicense)
+            this.tradeLicenseService.transitionWorkFlow(this.tradeLicense, this.workflowBean);
+        if (!this.isOldLicense)
+            this.processWorkflow(NEW);
+        if (this.installedMotorList != null) {
+            List<MotorDetails> motorDetailsList = new ArrayList<MotorDetails>();
+            Iterator<MotorDetails> motorDetails = this.installedMotorList.iterator();
+            while (motorDetails.hasNext()) {
+                MotorDetails installedMotor = motorDetails.next();
+                if (installedMotor != null && installedMotor.getHp() != null && installedMotor.getNoOfMachines() != null
+                        && installedMotor.getHp().compareTo(BigDecimal.ZERO) != 0
+                        && installedMotor.getNoOfMachines().compareTo(Long.valueOf("0")) != 0) {
+                    installedMotor.setLicense(this.tradeLicense);
+                    motorDetailsList.add(installedMotor);
+                }
+            }
+            if (!this.tradeLicense.getInstalledMotorList().isEmpty()) {
+                for (MotorDetails md : this.tradeLicense.getInstalledMotorList())
+                    this.tradeLicense.getInstalledMotorList().remove(this.getPersistenceService().findById(md.getId(), false));
+            }
+            if (this.installedMotorList != null && !this.installedMotorList.isEmpty()) {
+                this.tradeLicense.getInstalledMotorList().clear();
+                this.tradeLicense.getInstalledMotorList().addAll(motorDetailsList);
+            }
+        }
 
-		LicenseAppType newAppType = (LicenseAppType)persistenceService.find("from  LicenseAppType where name='New' ");
-		tradeLicense.setLicenseAppType(newAppType);
+        this.tradeLicenseService.processAndStoreDocument(this.tradeLicense.getDocuments());
 
-		tradeLicense= (TradeLicense)  persistenceService.update(tradeLicense); 
-		List<FeeMatrixDetail> feeList = feeMatrixService.findFeeList(tradeLicense);
-		totalAmount = service().recalculateDemand(feeList,tradeLicense);
+        LicenseAppType newAppType = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
+        this.tradeLicense.setLicenseAppType(newAppType);
+
+        this.tradeLicense = (TradeLicense) this.persistenceService.update(this.tradeLicense);
+        List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeList(this.tradeLicense);
+        this.totalAmount = this.tradeLicenseService.recalculateDemand(feeList, this.tradeLicense);
 
 		/*
-		 * if (tradeLicense.getOldLicenseNumber() != null) doAuditing(AuditModule.TL, AuditEntity.TL_LIC, AuditEvent.MODIFIED,
+         * if (tradeLicense.getOldLicenseNumber() != null) doAuditing(AuditModule.TL, AuditEntity.TL_LIC, AuditEvent.MODIFIED,
 		 * tradeLicense.getAuditDetails());
 		 */
-		LOGGER.debug("Exiting from the edit method:<<<<<<<<<<>>>>>>>>>>>>>:");
-		return Constants.MESSAGE;
+        this.LOGGER.debug("Exiting from the edit method:<<<<<<<<<<>>>>>>>>>>>>>:");
+        return Constants.MESSAGE;
 
-	}
+    }
 
-	@Override
-	public boolean acceptableParameterName(final String paramName) {
-		final List<String> nonAcceptable = Arrays.asList(new String[] { "licensee.boundary.parent", "boundary.parent",
-		"tradeName.name" });
-		final boolean retValue = super.acceptableParameterName(paramName);
-		return retValue ? !nonAcceptable.contains(paramName) : retValue;
-	}
+    @Override
+    public boolean acceptableParameterName(String paramName) {
+        List<String> nonAcceptable = Arrays.asList("licensee.boundary.parent", "boundary.parent",
+                "tradeName.name");
+        boolean retValue = super.acceptableParameterName(paramName);
+        return retValue ? !nonAcceptable.contains(paramName) : retValue;
+    }
 
-	public WorkflowBean getWorkflowBean() {
-		return workflowBean;
-	}
+    public WorkflowBean getWorkflowBean() {
+        return this.workflowBean;
+    }
 
-	@Override
-	protected License license() {
-		return tradeLicense;
-	}
+    public void setWorkflowBean(WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
 
-	@Override
-	protected BaseLicenseService service() {
-		ts.getPersistenceService().setType(TradeLicense.class);
-		return ts;
-	}
+    @Override
+    protected License license() {
+        return this.tradeLicense;
+    }
 
-	public void setTs(final TradeService ts) {
-		this.ts = ts;
-	}
+    @Override
+    protected AbstractLicenseService licenseService() {
+        return this.tradeLicenseService;
+    }
 
-	public void setWorkflowBean(final WorkflowBean workflowBean) {
-		this.workflowBean = workflowBean;
-	}
+    public boolean getIsOldLicense() {
+        return this.isOldLicense;
+    }
 
-	public boolean getIsOldLicense() {
-		return isOldLicense;
-	}
+    public void setIsOldLicense(boolean isOldLicense) {
+        this.isOldLicense = isOldLicense;
+    }
 
-	public void setIsOldLicense(final boolean isOldLicense) {
-		this.isOldLicense = isOldLicense;
-	}
+    public List<LicenseDocumentType> getDocumentTypes() {
+        return this.documentTypes;
+    }
 
-	public List<LicenseDocumentType> getDocumentTypes() {
-		return documentTypes;
-	}
+    public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
 
-	public void setDocumentTypes(List<LicenseDocumentType> documentTypes) {
-		this.documentTypes = documentTypes;
-	}
+    public String getMode() {
+        return this.mode;
+    }
 
-	public String getMode() {
-		return mode;
-	}
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
 
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
+    public Map<String, String> getOwnerShipTypeMap() {
+        return this.ownerShipTypeMap;
+    }
 
-	public Map<String, String> getOwnerShipTypeMap() {
-		return ownerShipTypeMap;
-	}
+    public void setOwnerShipTypeMap(Map<String, String> ownerShipTypeMap) {
+        this.ownerShipTypeMap = ownerShipTypeMap;
+    }
 
-	public void setOwnerShipTypeMap(Map<String, String> ownerShipTypeMap) {
-		this.ownerShipTypeMap = ownerShipTypeMap;
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	public void setTps(PersistenceService<TradeLicense, Long> tps) {
-		this.tps = tps;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public List<MotorDetails> getInstalledMotorList() {
+        return this.installedMotorList;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public List<MotorDetails> getInstalledMotorList() {
-		return installedMotorList;
-	}
-
-	public void setInstalledMotorList(List<MotorDetails> installedMotorList) {
-		this.installedMotorList = installedMotorList;
-	}
+    public void setInstalledMotorList(List<MotorDetails> installedMotorList) {
+        this.installedMotorList = installedMotorList;
+    }
 
 }

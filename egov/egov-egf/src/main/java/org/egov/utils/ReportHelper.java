@@ -111,23 +111,15 @@ public class ReportHelper {
     public InputStream exportXls(InputStream inputStream, final String jasperPath, final Map<String, Object> paramMap,
             final List<Object> dataSource)
             throws JRException, IOException {
-        final JRXlsExporter exporterXLS = new JRXlsExporter();
-        exporterXLS.setParameter(JRExporterParameter.JASPER_PRINT, setUpAndGetJasperPrint(jasperPath, paramMap, dataSource));
-        exporterXLS.setParameter(JRExporterParameter.OUTPUT_STREAM, outputBytes);
-        exporterXLS.setParameter(JRXlsAbstractExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, true);
-        exporterXLS.exportReport();
+        JasperExportManager.exportReportToXmlStream(setUpAndGetJasperPrint(jasperPath, paramMap, dataSource), outputBytes);
         inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
         closeStream(reportStream);
         return inputStream;
     }
 
     public InputStream exportXls(InputStream inputStream, final JasperPrint jasperPrint) throws JRException, IOException {
-        final JRXlsExporter exporterXLS = new JRXlsExporter();
         outputBytes = new ByteArrayOutputStream(1 * MB);
-        exporterXLS.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-        exporterXLS.setParameter(JRExporterParameter.OUTPUT_STREAM, outputBytes);
-        exporterXLS.setParameter(JRXlsAbstractExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, true);
-        exporterXLS.exportReport();
+        JasperExportManager.exportReportToXmlStream(jasperPrint, outputBytes);
         inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
         closeStream(reportStream);
         return inputStream;

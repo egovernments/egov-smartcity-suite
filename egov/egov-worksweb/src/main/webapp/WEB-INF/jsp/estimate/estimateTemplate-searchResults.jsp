@@ -67,8 +67,7 @@ if(code==""){
      
 	     <display:table name="searchResult" pagesize="30"
 			uid="currentRow" cellpadding="0" cellspacing="0"
-			requestURI=""
-			style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
+			requestURI="" class="table table-hover">
 	                           
 	        <s:if test="%{sourcePage.equals('searchForEstimate')}">
 	     		<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
@@ -144,14 +143,9 @@ if(code==""){
 	     </s:if>
 	 </s:if> 
 	 <s:elseif test="%{searchResult.fullListSize == 0}">
-		  <div>
-			<table width="100%" border="0" cellpadding="0" 	cellspacing="0">
-				<tr>
-				   <td align="center">
-					 <font color="red"><s:text name="search.result.no.estimate.template" /></font>
-				   </td>
-			    </tr>
-			</table>
-		  </div>
+	        <br/>
+			<div class="col-md-6 col-md-offset-3 text-center report-table-container">
+			   <div class="alert alert-warning no-margin"><s:text name="search.result.no.estimate.template" /></div>
+			</div>
 	</s:elseif>   
  </div>

@@ -54,7 +54,7 @@ var toDateStr="";
 		document.getElementById('error').innerHTML="";
 		
 		var reportType = document.getElementById('reportType').value;
-		//alert(reportType);
+		//bootbox.alert(reportType);
 		var today = new Date();
 var dd = today.getDate();
 var mm = today.getMonth()+1; //January is 0!
@@ -64,23 +64,23 @@ today = dd+'/'+mm+'/'+yyyy;
 
 				if (reportType == 'daterange') {
 			if (document.getElementById('fromDate').value == '') {
-				alert('Please select From Date');
+				bootbox.alert('Please select From Date');
 				return false;
 			}  if (document.getElementById('toDate').value == '') {
-				alert('Please select To Date');
+				bootbox.alert('Please select To Date');
 				return false;
 			}  if (document.getElementById('fundId').value == '') {
-				alert('Please select Fund');
+				bootbox.alert('Please select Fund');
 				return false;
 			}  if(document.getElementById('toDate').value >today ) 
 				{
 
-				alert("To date cannot be greater than current date");
+				bootbox.alert("To date cannot be greater than current date");
 				return false;
 				}
  
 			 if( compareDate(formatDate6(document.getElementById('fromDate').value),formatDate6(document.getElementById('toDate').value)) == -1 ){
-				alert('Start Date cannot be greater than End Date');
+				bootbox.alert('Start Date cannot be greater than End Date');
 				document.getElementById('fromDate').value='';
 				document.getElementById('toDate').value='';
 				document.getElementById('fromDate').focus();
@@ -88,7 +88,7 @@ today = dd+'/'+mm+'/'+yyyy;
 			}
 		} else if (reportType == 'asondate') {
 			if (document.getElementById('toDate').value == '') {
-				alert('Please select As On Date');
+				bootbox.alert('Please select As On Date');
 				return false;
 			}
 			document.getElementById('fromDate').value='';
@@ -149,7 +149,7 @@ today = dd+'/'+mm+'/'+yyyy;
 		
 		 var functionCode1=functionName+"~"+functionId;
 
-		// alert(functionCode1);
+		// bootbox.alert(functionCode1);
 		if(functionId==0){
 			functionCode1="";
 			functionId="";

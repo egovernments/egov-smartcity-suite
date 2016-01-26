@@ -86,6 +86,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -159,6 +160,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
     private BigDecimal balance;
     private ScriptService scriptService;
+   	private ChartOfAccounts chartOfAccounts;
 
     public BigDecimal getBalance() {
         return balance;
@@ -169,7 +171,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         return voucherHeader;
 
@@ -813,11 +815,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     voucherHeader);
             HibernateUtil.getCurrentSession().flush();
 
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data",
                         "Transaction Failed")));
         } catch (final HibernateException e) {
@@ -1090,10 +1091,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
     }
 
-    @SkipValidation
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        return paymentWorkflowService.getValidActions(getPayment());
-    }
 
     public Paymentheader getPayment() {
         String paymentid = null;
@@ -1260,5 +1257,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public void setCreateVoucher(final CreateVoucher createVoucher) {
         this.createVoucher = createVoucher;
     }
+
+	public ChartOfAccounts getChartOfAccounts() {
+		return chartOfAccounts;
+	}
+
+	public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+		this.chartOfAccounts = chartOfAccounts;
+	}
 
 }

@@ -111,7 +111,7 @@ function checkBeforeSubmitReportDetails()
 
 	if(document.adminBndryPropReportForm.zoneNo.options[document.adminBndryPropReportForm.zoneNo.selectedIndex].text=="Choose")
 		{
-			alert("Please select Zone Number");
+			bootbox.alert("Please select Zone Number");
 			document.adminBndryPropReportForm.zoneNo.focus();
 			return false;
 		}
@@ -119,35 +119,35 @@ function checkBeforeSubmitReportDetails()
 	if(((fromSitalArea == "From Area" || fromSitalArea == "") && (toSitalArea != "To Area" && toSitalArea != "")) || 
 		((fromSitalArea != "From Area" && fromSitalArea !="") && (toSitalArea == "To Area" || toSitalArea == "")))
 		{
-			alert("In case of Sital Area, Both From Area and To Area are mandatory");
+			bootbox.alert("In case of Sital Area, Both From Area and To Area are mandatory");
 			document.adminBndryPropReportForm.fromSitalArea.focus();
 			return false;
 		}
 	if(((fromBuiltUpArea == "From Area" || fromBuiltUpArea == "") && (toBuiltUpArea != "To Area" && toBuiltUpArea != "")) || 
 		((fromBuiltUpArea != "From Area" && fromBuiltUpArea !="") && (toBuiltUpArea == "To Area" || toBuiltUpArea == "")))
 		{
-			alert("In case of Total Built Up Area, Both From Area and To Area are mandatory");
+			bootbox.alert("In case of Total Built Up Area, Both From Area and To Area are mandatory");
 			document.adminBndryPropReportForm.fromBuiltUpArea.focus();
 			return false;
 		}
 	if(((fromCurrentDemand == "From Demand" || fromCurrentDemand == "") && (toCurrentDemand != "To Demand" && toCurrentDemand != "")) || 
 		((fromCurrentDemand != "From Demand" && fromCurrentDemand !="") && (toCurrentDemand == "To Demand" || toCurrentDemand == "")))
 		{
-			alert("In case of Current Demand, Both From Demand and To Demand are mandatory");
+			bootbox.alert("In case of Current Demand, Both From Demand and To Demand are mandatory");
 			document.adminBndryPropReportForm.fromCurrentDemand.focus();
 			return false;
 		}
 	if(((fromArrearDemand == "From Demand" || fromArrearDemand == "") && (toArrearDemand != "To Demand" && toArrearDemand != "")) || 
 		((fromArrearDemand != "From Demand" && fromArrearDemand !="") && (toArrearDemand == "To Demand" || toArrearDemand == "")))
 		{
-			alert("In case of Arrear Demand, Both From Demand and To Demand are mandatory");
+			bootbox.alert("In case of Arrear Demand, Both From Demand and To Demand are mandatory");
 			document.adminBndryPropReportForm.fromArrearDemand.focus();
 			return false;
 		}
 	if(((fromTotalDemand == "From Demand" || fromTotalDemand == "") && (toTotalDemand != "To Demand" && toTotalDemand != "")) || 
 		((fromTotalDemand != "From Demand" && fromTotalDemand !="") && (toTotalDemand == "To Demand" || toTotalDemand == "")))
 		{
-			alert("In case of Total Demand, Both From Demand and To Demand are mandatory");
+			bootbox.alert("In case of Total Demand, Both From Demand and To Demand are mandatory");
 			document.adminBndryPropReportForm.fromTotalDemand.focus();
 			return false;
 		}
@@ -158,7 +158,7 @@ function checkBeforeSubmitReportDetails()
 		{
 			if(fromSitalArea > toSitalArea)
 			{
-				alert("To Sital Area should be greater than From Sital Area");
+				bootbox.alert("To Sital Area should be greater than From Sital Area");
 				document.adminBndryPropReportForm.fromSitalArea.focus();
 				return false;
 			}
@@ -167,7 +167,7 @@ function checkBeforeSubmitReportDetails()
 		{
 			if(fromBuiltUpArea > toBuiltUpArea)
 			{
-				alert("To Built Up Area should be greater than From Built Up Area");
+				bootbox.alert("To Built Up Area should be greater than From Built Up Area");
 				document.adminBndryPropReportForm.fromBuiltUpArea.focus();
 				return false;
 			}
@@ -176,7 +176,7 @@ function checkBeforeSubmitReportDetails()
 		{
 			if(fromCurrentDemand > toCurrentDemand)
 			{
-				alert("To Current Demand should be greater than From Current Demand");
+				bootbox.alert("To Current Demand should be greater than From Current Demand");
 				document.adminBndryPropReportForm.fromCurrentDemand.focus();
 				return false;
 			}
@@ -185,7 +185,7 @@ function checkBeforeSubmitReportDetails()
 		{
 			if(fromArrearDemand > toArrearDemand)
 			{
-				alert("To Arrear Demand should be greater than From Arrear Demand");
+				bootbox.alert("To Arrear Demand should be greater than From Arrear Demand");
 				document.adminBndryPropReportForm.fromArrearDemand.focus();
 				return false;
 			}
@@ -194,7 +194,7 @@ function checkBeforeSubmitReportDetails()
 		{
 			if(fromTotalDemand > toTotalDemand)
 			{
-				alert("To Total Demand should be greater than From Total Demand");
+				bootbox.alert("To Total Demand should be greater than From Total Demand");
 				document.adminBndryPropReportForm.fromTotalDemand.focus();
 				return false;
 			}
@@ -220,7 +220,7 @@ function checkFromArea(obj)
 	fromArea = obj.value;
 	if(fromArea < 0 && fromArea != 'From Area')
 	{
-		alert("From Area should be greater than or equal to 0");
+		bootbox.alert("From Area should be greater than or equal to 0");
 		obj.value="";
 		obj.focus();
 		return false;
@@ -232,7 +232,7 @@ function checkToArea(obj)
 	toArea = obj.value;
 	if(toArea >= 9999999 && toArea != 'To Area')
 	{
-		alert("To Area should be less than 99,99,999");
+		bootbox.alert("To Area should be less than 99,99,999");
 		obj.value="";
 		obj.focus();
 		return false;
@@ -244,7 +244,7 @@ function checkFromDemand(obj)
 	fromDemand = obj.value;
 	if(fromDemand < -99999999 && fromDemand != 'From Demand')
 	{
-		alert("From Demand should be greater than or equal to -9,99,99,999");
+		bootbox.alert("From Demand should be greater than or equal to -9,99,99,999");
 		obj.value="";
 		obj.focus();
 		return false;
@@ -256,7 +256,7 @@ function checkToDemand(obj)
 	toDemand = obj.value;
 	if(toDemand >= 99999999 && toDemand != 'To Demand')
 	{
-		alert("To Demand should be less than 9,99,99,999");
+		bootbox.alert("To Demand should be less than 9,99,99,999");
 		obj.value="";
 		obj.focus();
 		return false;
@@ -271,7 +271,7 @@ function checkForNumeric(obj,msg,text)
 	{
 		if(isNaN(value))
 		{
-			alert("Please Enter valid "+msg);
+			bootbox.alert("Please Enter valid "+msg);
 			objt.value="";
 			objt.focus();
 			return false;

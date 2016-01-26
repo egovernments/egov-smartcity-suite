@@ -715,7 +715,7 @@ function createDropdownFormatterDetailCode(prefix){
 		}
 	    },
 	    failure: function(o) {
-	    	alert('failure');
+	    	bootbox.alert('unable to load subledger details');
 	    }
 	}	
 
@@ -917,7 +917,7 @@ success: function(o) {
 	}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('unable to load subledger details');
     }
 }
 function getDetailType(val){
@@ -1042,11 +1042,11 @@ success: function(o) {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('unable to load subledger details');
     }
 }
 function loaddropdown(){
-alert(coming);
+bootbox.alert(coming);
 	
 }
 function updateDebitAmount()
@@ -1127,7 +1127,7 @@ var callbackCode = {
 		}
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('unable to load subledger details');
     }
 }
 
@@ -1437,7 +1437,7 @@ function checkLength(obj)
 {
 	if(obj.value.length>1024)
 	{
-		alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1,1024);
 	}
 }
@@ -1566,7 +1566,7 @@ HideImage(entobj);
 	
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function splitEntitiesDetailCode(obj)

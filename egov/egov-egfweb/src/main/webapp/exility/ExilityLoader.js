@@ -68,7 +68,7 @@ function loadPageManager(){
 			script.language = 'javascript';
 			script.src = '../Exility/PageValidator.js';
 			head.appendChild(script);
-alert('You had not loaded Exility. Loading them as I show this. Take few secods to press OK so that Exility gets time to get loaded');
+bootbox.alert('You had not loaded Exility. Loading them as I show this. Take few secods to press OK so that Exility gets time to get loaded');
 
 			return;
 		}

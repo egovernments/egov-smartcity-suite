@@ -48,7 +48,7 @@
 	function validate(){
 		if(document.getElementById('accEntity.accountdetailtype.id').value == "" 
 				|| document.getElementById('accEntity.accountdetailtype.id').value=='---- Choose ----'){
-			alert("Please Select Sub Code For");
+			bootbox.alert("Please Select Sub Code For");
 			return false;
 		}
 		return true;

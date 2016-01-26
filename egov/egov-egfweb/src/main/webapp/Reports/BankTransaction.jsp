@@ -121,7 +121,7 @@ function ButtonPress()
 		var fiscalYearStartDate="01/04/"+eDate.substr(eDate.length-4,4);
 		if(compareDate(fiscalYearStartDate,sDate) == -1 )
 		{ 
-		   alert("Start Date and End Date should be in same financial year");
+			bootbox.alert("Start Date and End Date should be in same financial year");
 		   document.getElementById('startDate').focus();
 		   return;
 		} 
@@ -129,7 +129,7 @@ function ButtonPress()
 	/*To check whether Start Date is Greater than End Date*/
 	if( compareDate(formatDate6(sDate),formatDate6(eDate)) == -1 )
 	{
-		alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 		document.getElementById('startDate').value='';
 		document.getElementById('endDate').value='';
 		document.getElementById('startDate').focus();
@@ -139,7 +139,7 @@ function ButtonPress()
 	/*to check whether the End Date is greater than the Current Date*/
 		if( compareDate(formatDate6("<%=currDate%>"),formatDate6(eDate)) == 1 )
 		{
-			alert('End Date cannot be greater than Current Date');
+			bootbox.alert('End Date cannot be greater than Current Date');
 			document.getElementById('endDate').value='';
 			document.getElementById('endDate').focus();	
 			return;	
@@ -394,7 +394,7 @@ function buttonPrint()
 		 System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -471,7 +471,7 @@ function buttonPrint()
 		 System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

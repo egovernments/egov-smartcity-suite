@@ -61,7 +61,7 @@ function ButtonPress(arg)
 	{
 		if(document.RemitRecoveryForm.recovery.value == "0")
 		{
-			alert("Select Recovery Name");		
+			bootbox.alert("Select Recovery Name");		
 			var temp="document.RemitRecoveryForm.recovery.focus();";
 			setTimeout(temp,0);	
 			return;
@@ -110,7 +110,7 @@ function setDefault()
 	var target="<%=(request.getAttribute("alertMessage"))%>";
 	if(target!="null")
 	{
-		alert("<%=request.getAttribute("alertMessage")%>");
+		bootbox.alert("<%=request.getAttribute("alertMessage")%>");
 	}	
 }
 function hideColumn()

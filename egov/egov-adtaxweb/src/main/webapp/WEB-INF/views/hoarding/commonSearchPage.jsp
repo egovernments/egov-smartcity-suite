@@ -50,7 +50,7 @@
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.no"/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="hoardingnumber" path="hoardingNumber"/>
+                            <form:input type="text" class="form-control" id="advertisementNumber" path="advertisementNumber"/>
                         </div>
                     </div>
                     <div class="form-group">

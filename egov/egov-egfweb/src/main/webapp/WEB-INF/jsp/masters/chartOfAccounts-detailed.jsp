@@ -45,15 +45,15 @@
 <script type="text/javascript">
 		function validateAndSubmit(){
 			if(document.getElementById('glCode').value == null || document.getElementById('glCode').value==''){
-				alert("Please enter Parent GlCode");
+				bootbox.alert("Please enter Parent GlCode");
 				return false;
 			}
 			if(document.getElementById('model.name').value == null || document.getElementById('model.name').value==''){
-				alert("Please enter Name");
+				bootbox.alert("Please enter Name");
 				return false;
 			}
 			if(document.getElementById('newGlcode').value == null || document.getElementById('newGlcode').value==''){
-				alert("Please enter Account Code");
+				bootbox.alert("Please enter Account Code");
 				return false;
 			}
 			document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-create.action';
@@ -78,7 +78,7 @@
 			document.getElementById('glCode').readOnly = true
 			}
 			else {
-			alert("Invalid Parent Account Code selected. Please select from auto complete");
+			bootbox.alert("Invalid Parent Account Code selected. Please select from auto complete");
 			}
 		}
 	</script>

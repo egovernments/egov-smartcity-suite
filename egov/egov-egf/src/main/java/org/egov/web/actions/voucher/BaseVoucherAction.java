@@ -70,44 +70,61 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.financingsource.FinancingSourceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
-public class BaseVoucherAction extends BaseFormAction {
+public class BaseVoucherAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
     protected final String INVALIDPAGE = "invalidPage";
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final Logger LOGGER = Logger.getLogger(BaseVoucherAction.class);
+    // sub class should add getter and setter this workflowBean
+    protected WorkflowBean workflowBean = new WorkflowBean();
     public CVoucherHeader voucherHeader = new CVoucherHeader();
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     protected String voucherNumManual;
     protected UserService userMngr;
     protected EisUtilService eisService;
-
+    protected AssignmentService assignmentService;
+    @Autowired
+    private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
+    protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
     protected String reversalVoucherDate;
     final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -133,7 +150,7 @@ public class BaseVoucherAction extends BaseFormAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
 
         return voucherHeader;
     }
@@ -195,6 +212,63 @@ public class BaseVoucherAction extends BaseFormAction {
         mandatoryFields.add("voucherdate");
     }
 
+    protected void populateWorkflowBean() {
+        workflowBean.setApproverPositionId(approverPositionId);
+        workflowBean.setApproverComments(approverComments);
+        workflowBean.setWorkFlowAction(workFlowAction);
+        workflowBean.setCurrentState(currentState);
+    }
+    public void transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
+
+        if (null != voucherHeader.getId())
+                wfInitiator = getWorkflowInitiator(voucherHeader);
+
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (wfInitiator.equals(userAssignment)) {
+                    voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+                } else {
+                        final String stateValue =  FinancialConstants.WORKFLOW_STATE_REJECTED;
+                        voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
+                }
+
+        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                .withDateInfo(currentDate.toDate());
+        } else {
+                if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                        pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+                if (null == voucherHeader.getState()) {
+                        final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
+                                        null, null, workflowBean.getCurrentState(), null);
+                        voucherHeader.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+                } else if (voucherHeader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                    voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+                else {
+                        final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
+                                        null, null, voucherHeader.getCurrentState().getValue(), null);
+                        voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+                }
+        }
+}
+
+protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
+        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(voucherHeader.getCreatedBy().getId());
+        return wfInitiator;
+}
+
     public boolean isOneFunctionCenter() {
         setOneFunctionCenterValue();
         return voucherHeader.getIsRestrictedtoOneFunctionCenter();
@@ -226,7 +300,7 @@ public class BaseVoucherAction extends BaseFormAction {
                 && null != voucherHeader.getVouchermis().getSchemeid())
             addDropdownData(
                     "subschemeList",
-                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name",
+                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name",
                             voucherHeader.getVouchermis().getSchemeid().getId()));
     }
 
@@ -672,9 +746,9 @@ public class BaseVoucherAction extends BaseFormAction {
         {
             String vNumGenMode = "Manual";
             if (voucherHeader.getType() != null && voucherHeader.getType().equalsIgnoreCase("Journal Voucher"))
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+                vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             else
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherHeader.getType());
+                vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherHeader.getType());
             if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
                 mandatoryFields.add("vouchernumber");
                 return true;
@@ -877,5 +951,35 @@ public class BaseVoucherAction extends BaseFormAction {
     public void setVoucherNames(final Map<String, List<String>> voucherNames) {
         this.voucherNames = voucherNames;
     }
+
+    public AssignmentService getAssignmentService() {
+        return assignmentService;
+    }
+
+    public void setAssignmentService(AssignmentService assignmentService) {
+        this.assignmentService = assignmentService;
+    }
+
+    public SimpleWorkflowService<CVoucherHeader> getVoucherHeaderWorkflowService() {
+        return voucherHeaderWorkflowService;
+    }
+
+    public void setVoucherHeaderWorkflowService(SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService) {
+        this.voucherHeaderWorkflowService = voucherHeaderWorkflowService;
+    }
+
+    public SecurityUtils getSecurityUtils() {
+        return securityUtils;
+    }
+
+    public void setSecurityUtils(SecurityUtils securityUtils) {
+        this.securityUtils = securityUtils;
+    }
+
+    public FinancingSourceService getFinancingSourceService() {
+        return financingSourceService;
+    }
+
+
 
 }

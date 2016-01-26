@@ -238,10 +238,8 @@ public class WaterTaxUtils {
         return documentName;
     }
 
-    public String getCityName() {
-        return null != cityService.getCityByURL(EgovThreadLocals.getDomainName()).getPreferences() ? cityService
-                .getCityByURL(EgovThreadLocals.getDomainName()).getPreferences().getMunicipalityName() : cityService
-                .getCityByURL(EgovThreadLocals.getDomainName()).getName();
+    public String getMunicipalityName() {
+        return EgovThreadLocals.getMunicipalityName();
     }
 
     public String getCityCode() {
@@ -252,7 +250,7 @@ public class WaterTaxUtils {
             final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code, new String[] { applicantName, approvalComment,
-                getCityName() }, locale);
+                getMunicipalityName() }, locale);
         return smsMsg;
     }
 
@@ -261,7 +259,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
     }
 

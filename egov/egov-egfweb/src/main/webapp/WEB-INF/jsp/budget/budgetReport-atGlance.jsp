@@ -48,7 +48,7 @@
 	{
 		if(document.getElementById('financialYear').value==0)
 		{
-			alert('Please select a financial year');
+			bootbox.alert('Please select a financial year');
 			return false;
 		}
 		else

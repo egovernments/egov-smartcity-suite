@@ -62,9 +62,9 @@
 		var success = '<s:property value="success"/>';
 
 		if (success == 'yes') {
-			alert("UserDefinedCodes Modified Successfully");
+			bootbox.alert("UserDefinedCodes Modified Successfully");
 			} else if((success == 'no')){
-				alert("UserDefinedCodes Could Not be Modified");
+				bootbox.alert("UserDefinedCodes Could Not be Modified");
 				}
 		
 		if (close == 'true') {
@@ -93,15 +93,15 @@
 	function validate(){
 		if(document.getElementById('accEntity.accountdetailtype.id').value == "" 
 				|| document.getElementById('accEntity.accountdetailtype.id').value=='---- Choose ----'){
-			alert("Please Select Sub Code For");
+			bootbox.alert("Please Select Sub Code For");
 			return false;
 		}
 		if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-			alert("Please enter Code");
+			bootbox.alert("Please enter Code");
 			return false;
 		}
 		if(document.getElementById('name').value == null || document.getElementById('name').value==''){
-			alert("Please enter Name");
+			bootbox.alert("Please enter Name");
 			return false;
 		}
 		return true;

@@ -39,7 +39,40 @@
   --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<script>
+jQuery(document).ready(function(){
+	 jQuery('#subCategory').change(function() {
+		console.log("came jursidiction"+jQuery('#subCategory').val());
+		getUom();
+	});
+	 <s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
+	 if(jQuery('#subCategory').val()!='-1'){
+		 getUom();
+	 }
+	</s:if>  
+});
 
+function getUom(){
+	jQuery.ajax({
+		url: "../domain/commonTradeLicenseAjax-ajaxLoadUomName.action", 
+		type: "GET",
+		data: {
+			subCategoryId : jQuery('#subCategory').val(),
+			feeTypeId :  jQuery('#feeTypeId').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			jQuery('#uom').val(response.uom);
+		}, 
+		error: function (response) {
+			console.log("failed");
+			jQuery('#uom').val('');
+			bootbox.alert("No UOM mapped for SubCategory")
+		}
+	});
+}
+</script>
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title"><s:text name='license.details.lbl' /></div>
 </div>
@@ -66,19 +99,18 @@
     <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"  />
-    </div>
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
+    </div> 
 </div>
 
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.premises.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.uom.lbl' /><span class="mandatory"></span></label>
+     <div class="col-sm-3 add-margin">
+        <s:textfield name="uom" maxlength="8" id="uom" value="%{uom}"  readOnly="true" class="form-control"  />
+    </div>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.premises.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}" cssClass="form-control patternvalidation"  data-pattern="number"  />
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.uom.lbl' /><span class="mandatory"></span></label>
-    <div class="col-sm-3 add-margin">
-         <s:select name="uom" id="uom" list="dropdownData.uomList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{uom.id}" class="form-control"  />
     </div>
 </div>
 

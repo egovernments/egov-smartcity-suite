@@ -86,4 +86,7 @@ public class FeeTypeService  {
 	public FeeType findByCode(String code){
 		return feeTypeRepository.findByCode(code);
 	}
+	public FeeType findById(Long id){
+            return feeTypeRepository.findOne(id);
+    }
 }

@@ -89,7 +89,7 @@ var fieldId = '<s:property value="model.field.id"/>';
 var functionCode1=functionName+"~"+functionId;
 	if(deptId == ""){
 		deptId = "";
-		//alert("Hi2");
+		//bootbox.alert("Hi2");
 	}
 if(functionaryId==0){
 functionaryId="";

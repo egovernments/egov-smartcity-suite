@@ -61,7 +61,6 @@ import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -77,7 +76,6 @@ import org.egov.masters.dao.MastersDAOFactory;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EisUtilService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.works.utils.WorksConstants;
@@ -92,8 +90,6 @@ public class WorksService {
     private CommonsService commonsService;
     private PersistenceService persistenceService;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-    @Autowired
-    private EisUtilService eisService;
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -1076,21 +1072,17 @@ public class WorksService {
     }
 
     public List<Department> getAllDeptmentsForLoggedInUser() {
-        // load the primary and secondary assignment departments of the logged
-        // in user
-        final Employee employee = employeeService.getEmployeeById(getCurrentLoggedInUserId());
-        final HashMap<String, String> paramMap = new HashMap<String, String>();
-        paramMap.put("code", employee.getCode());
-        final List<EmployeeView> listEmployeeView = eisService.getEmployeeInfoList(paramMap);
+        // load the primary and secondary assignment departments of the logged in user
+        final List<Assignment> assignmentsList = assignmentService
+                .getAllActiveEmployeeAssignmentsByEmpId(getCurrentLoggedInUserId());
+        employeeService.getEmployeeById(getCurrentLoggedInUserId());
         final List<Department> departmentList = new ArrayList<Department>();
-        if (listEmployeeView != null)
-            for (final EmployeeView employeeView : listEmployeeView) {
-                employeeView.getDepartment().getName();
-                if (employeeView.getPrimary())
-                    departmentList.add(0, employeeView.getDepartment());
+        if (assignmentsList != null)
+            for (final Assignment assignment : assignmentsList)
+                if (assignment.getPrimary())
+                    departmentList.add(0, assignment.getDepartment());
                 else
-                    departmentList.add(employeeView.getDepartment());
-            }
+                    departmentList.add(assignment.getDepartment());
         return departmentList;
     }
 

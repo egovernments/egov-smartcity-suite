@@ -129,7 +129,7 @@ function checkMiscAttributes(obj)
 		
 		if(mis!=document.getElementById('miscattributes').value)
 		{
-			alert('Selected bills do not have same attributes. Please select bills with same attributes');
+			bootbox.alert('Selected bills do not have same attributes. Please select bills with same attributes');
 			obj.checked =false;
 			return;
 			
@@ -147,7 +147,7 @@ function check()
 {
 	if(document.getElementById('miscount').value==0)
 	{
-		alert('Please select a bill before making the payment');
+		bootbox.alert('Please select a bill before making the payment');
 		return false;
 	}
 	if(document.getElementById('vouchermis.departmentid'))
@@ -195,7 +195,7 @@ function selectAllPension(element){
 	if(element.checked == true)	{
 		var salcnt=checkpensionForSameMisAttribs('pensionList',length);
 		if(salcnt!=0){
-		 alert("Selected Bills doesnot have same attributes");
+		 bootbox.alert("Selected Bills doesnot have same attributes");
 		  document.getElementById('salSelectAll').checked =false; }
 		else
 		checkAll('pensionList',length);

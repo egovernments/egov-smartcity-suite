@@ -58,7 +58,7 @@ var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var fieldName = "templateActivities[" + oRecord.getCount() + "]." + oColumn.getKey();
     var id=oColumn.getKey()+oRecord.getId();
     if(oColumn.getKey()=='percentage'){
-    	el.innerHTML="<center><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectamountwk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);calculateTotalPercentage();' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></center>";
+    	el.innerHTML="<div class='text-right'><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectamountwk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);calculateTotalPercentage();' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></div>";
     }else{
    		el.innerHTML="<center><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='slnowk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></center>";
     }
@@ -77,10 +77,10 @@ var temptActvDataTable;
 var makeTmptActvDataTable = function() {
 	var cellEditor=new YAHOO.widget.TextboxCellEditor()
 	var tmptActvColumnDefs = [ 
-		{key:"stageOrderNo", label:'Stage Order No<span class="mandatory">*</span>', width:100,formatter:sTextboxFormatter},
-		{key:"description", width:650,label:'Stage Description<span class="mandatory">*</span>', formatter:textboxDescFormatter, resizeable:true},		
-		{key:"percentage",label:'Percentage of Stage<span class="mandatory">*</span>',width:100, formatter:pTextBoxFormatter},
-		{key:'TemptActvDelete',label:'Delete',width:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
+		{key:"stageOrderNo", label:'Stage Order No<span class="mandatory"></span>', minWidth:100,formatter:sTextboxFormatter},
+		{key:"description", width:450,label:'Stage Description<span class="mandatory"></span>', formatter:textboxDescFormatter, resizeable:true},		
+		{key:"percentage",label:'Percentage of Stage<span class="mandatory"></span>',minWidth:100, formatter:pTextBoxFormatter},
+		{key:'TemptActvDelete',label:'Delete',minWidth:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	var temptActvDataSource = new YAHOO.util.DataSource(); 
 	temptActvDataTable = new YAHOO.widget.DataTable("tmptAtctTable",tmptActvColumnDefs, temptActvDataSource,{MSG_EMPTY:"<s:text name='milestoneTemplate.activity.initial.table.message'/>"});
@@ -155,40 +155,39 @@ function calculateTotalPercentage(){
 </script>		
       
        
-		<table id="temptActvTable" width="100%" border="0" cellspacing="0" cellpadding="0">              	
-              	<tr>
-                	<td colspan="9" class="headingwk" style="border-right-width: 0px" align="left">
-                		<div class="arrowiconwk"><image src="/egi/resources/erp2/images/arrow.gif" /></div>
-                		<div class="headplacer" >Template Activity Details</div>
-                	</td>
-                	<td  align="right" class="headingwk" style="border-left-width: 0px">
-                	<s:if test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
-                	</s:if>
-                	<s:else>
-                		<a id="temptActvRow" href="#" onclick="validatePercentage();return false;"><img height="16" border="0" width="16" alt="Add Template Activity" src="/egi/resources/erp2/images/add.png" /></a>
-                	</s:else>
-                	</td>
-              	</tr>
-              	<tr>
-                	<td>
-                		<div class="yui-skin-sam">
+       
+
+		<div id="temptActvTable"  class="panel panel-primary" data-collapsed="0" style="text-align:left">
+				<div class="panel-heading">
+					<div class="panel-title">
+					  Template Activity Details
+					  
+						<s:if test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
+	                	</s:if>
+	                	<s:else>
+							<div class="pull-right">
+				   
+						      <a id="temptActvRow" href="#" onclick="validatePercentage();return false;" class="btn btn-primary">
+					   	       <i class="fa fa-plus"></i> Add Template Activity
+					   	      </a>
+						   
+					   		</div>
+					   </s:else>
+					  
+					</div>
+				</div>
+				<div class="panel-body no-margin-bottom">
+					<div class="form-group no-margin-bottom">
+						<div class="yui-skin-sam">
                 	    	<div id="tmptAtctTable" align="center"></div>  
-                		</div>                  	
-                    </td>
-                 </tr>
-              	<tr>
-                	<td>
-						<div id="totalPercentage" align="right">
-							<table>
-								<tr>
-									<td width="30%" class="whiteboxwk"><s:text name="milestone.template.activity.label.total.percentage" />:</td>
-                					<td width="30%" class="whitebox2wk"><div id="totalValue"></div>
-								</tr>
-							</table>
-						</div>
-                    </td>
-                </tr>
-             </table>
+                		</div> 
+                		<div class="text-right" style="padding-right:112px;">
+                		   <s:text name="milestone.template.activity.label.total.percentage" /> : <span id="totalValue"></span>
+                		</div>
+					</div>
+					
+				</div>
+       </div>	
               	
 	<script>
 		makeTmptActvDataTable();

@@ -61,9 +61,9 @@
 		var success = '<s:property value="success"/>';
 
 		if (success == 'yes') {
-			alert("ContractType Modified Successfully");
+			bootbox.alert("ContractType Modified Successfully");
 			} else if((success == 'no')){
-				alert("ContractType Could Not be Modified");
+				bootbox.alert("ContractType Could Not be Modified");
 				}
 		
 		if (close == 'true') {

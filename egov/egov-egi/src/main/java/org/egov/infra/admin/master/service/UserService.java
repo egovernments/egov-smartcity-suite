@@ -127,4 +127,8 @@ public class UserService {
     public List<User> getAllEmployeeUsers() {
         return userRepository.findByTypeAndActiveTrueOrderByNameAsc(UserType.EMPLOYEE);
     }
+
+    public List<User> getUsersByUsernameAndRolename(final String userName, final String roleName) {
+        return userRepository.findUsersByUserAndRoleName(userName, roleName);
+    }
 }

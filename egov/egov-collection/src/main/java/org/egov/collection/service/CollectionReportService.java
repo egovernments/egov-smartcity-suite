@@ -77,15 +77,15 @@ public class CollectionReportService {
         if (StringUtils.isNotBlank(toDate))
             queryStr.append(" and opv.transactiondate<=:toDate ");
         if (StringUtils.isNotBlank(transactionId))
-            queryStr.append(" and opv.transactionnumber=:transactionId ");
+            queryStr.append(" and opv.transactionnumber like :transactionnumber ");
         queryStr.append(" order by receiptdate desc ");
 
         final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
 
         if (StringUtils.isNotBlank(districtName))
             query.setString("districtName", districtName);
-        if (StringUtils.isNotBlank(transactionId))
-            query.setString("transactionnumber", transactionId);
+        if (StringUtils.isNotBlank(ulbName))
+            query.setString("ulbName", ulbName);
         try {
             if (StringUtils.isNotBlank(fromDate))
                 query.setDate("fromDate", dateFormatter.parse(fromDate));
@@ -94,8 +94,8 @@ public class CollectionReportService {
         } catch (final ParseException e) {
             LOGGER.error("Exception parsing Date" + e.getMessage());
         }
-        if (StringUtils.isNotBlank(ulbName))
-            query.setString("ulbName", ulbName);
+        if (StringUtils.isNotBlank(transactionId))
+            query.setString("transactionnumber",  "%"+transactionId+"%");
         queryStr.append(" order by opv.receiptdate desc");
         query.setResultTransformer(new AliasToBeanResultTransformer(OnlinePaymentResult.class));
         return query;

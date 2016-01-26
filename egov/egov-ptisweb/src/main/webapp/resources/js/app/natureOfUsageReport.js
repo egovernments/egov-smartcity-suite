@@ -115,7 +115,7 @@ jQuery('#ward').change(
 						jQuery('#block').html("");
 						jQuery('#block').append(
 								"<option value='-1'>All</option>");
-						alert("No block details mapped for waard");
+						bootbox.alert("No block details mapped for waard");
 					}
 				});
 			}

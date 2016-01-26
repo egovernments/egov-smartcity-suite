@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-28T18:13:00 -->
+<!-- 2016-01-19T14:01:41 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -366,10 +366,10 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="70">
+		<band height="84">
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="-1" width="555" height="39" isRemoveLineWhenBlank="true" uuid="b3727cdf-b51b-4016-8222-8b2fbb36738c">
-					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )==CollectionConstants.COLLECTION_TYPE_COUNTER]]></printWhenExpression>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="-1" width="555" height="31" isRemoveLineWhenBlank="true" uuid="b3727cdf-b51b-4016-8222-8b2fbb36738c">
+					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )==CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
@@ -381,10 +381,24 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[This is computer generated receipt. Signature is not neccessary.Except Online payment the receipt is subject to realisation of cheque.]]></text>
+				<text><![CDATA[This is computer generated receipt. Signature is not neccessary.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="125" y="48" width="430" height="20" uuid="06a77f7a-3216-4c15-8942-bda2610cec55"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="32" width="234" height="20" uuid="06a77f7a-3216-4c15-8942-bda2610cec55"/>
+				<box leftPadding="1" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Collected By : "+$F{createdBy}.getName()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="455" y="32" width="100" height="20" uuid="4ec66e14-7f22-4fa2-82b0-2a9888c341f7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -395,8 +409,8 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Collected By : "+$F{createdBy}.getName()]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[Commissioner]]></text>
+			</staticText>
 		</band>
 	</summary>
 </jasperReport>

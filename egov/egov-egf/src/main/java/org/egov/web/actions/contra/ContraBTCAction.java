@@ -79,6 +79,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -115,6 +116,8 @@ public class ContraBTCAction extends BaseVoucherAction {
     private ChequeService chequeService;
     private String showMode;
     private String saveType;
+    @Autowired
+	private ChartOfAccounts chartOfAccounts;
 
     @Override
     public void prepare() {
@@ -667,11 +670,10 @@ public class ContraBTCAction extends BaseVoucherAction {
             final List<Transaxtion> transactions = cv.createTransaction(null,
                     accountdetails, subledgerDetails, voucher);
             HibernateUtil.getCurrentSession().flush();
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-            if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader
                     .getVoucherDate())))
                 throw new ValidationException(
                         Arrays

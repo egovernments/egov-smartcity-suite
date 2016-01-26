@@ -101,13 +101,13 @@ function ButtonPress()
 	
 	/*if(compareDate(formatDateToDDMMYYYY1(endDate),formatDateToDDMMYYYY1(dbDate)) == -1 )
 	{
-		alert('End Date should be less than or equal to '+dbDate);
+		bootbox.alert('End Date should be less than or equal to '+dbDate);
 		document.getElementById('endDate').focus();
 		return false;
 	}*/
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
@@ -119,7 +119,7 @@ function ButtonPress()
 	 document.getElementById('fundName').value=fObj.options[fObj.selectedIndex].text;
 	 fObj=fObj.options[fObj.selectedIndex].value;
 	 var fsObj = document.getElementById('fundSource_id');
-	//alert("fsObj....."+fsObj.selectedIndex);
+	//bootbox.alert("fsObj....."+fsObj.selectedIndex);
 	if(fsObj!='' && fsObj.selectedIndex!=-1 && fsObj.options[fsObj.selectedIndex].value!=''){
 		 document.getElementById('fundSource_name_in').value=' in '+fsObj.options[fsObj.selectedIndex].text;	 
 		 fsObj=fsObj.options[fsObj.selectedIndex].value;
@@ -182,7 +182,7 @@ function buttonPrint()
 function beforeRefresh()
 {
 
-alert("hi");
+	bootbox.alert("hi");
 }
 
 
@@ -330,7 +330,7 @@ alert("hi");
 			LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -411,7 +411,7 @@ alert("hi");
 		 LOGGER.info("Exception in Jsp Page "+ e.getMessage());
 		 %> 
 		 <script>
-		 alert("Error :<%=e.getMessage()%>"); 
+		 bootbox.alert("Error :<%=e.getMessage()%>"); 
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

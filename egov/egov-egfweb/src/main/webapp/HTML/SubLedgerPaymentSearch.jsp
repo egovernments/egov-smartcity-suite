@@ -95,7 +95,7 @@ function ButtonPress()
 
 				if( compareDate(formatDate6(voucherDateFrom),formatDate6(voucherDateTo)) == -1 )
 				{
-					alert('Start Date cannot be greater than End Date');
+					bootbox.alert('Start Date cannot be greater than End Date');
 					document.getElementById('voucherDateFrom').focus();
 					return false;
 				}
@@ -325,7 +325,7 @@ function beforeRefreshPage(dc){
 		var tabObj=dc.grids['paymentSearchGrid'];
 		if(!tabObj)	return false;
 		if(tabObj.length<2){
-			alert("No Data");
+			bootbox.alert("No Data");
 
 		}
 		for(var i=1;i<tabObj.length;i++){
@@ -401,7 +401,7 @@ function getDetails(obj,cgn,vStatus,v2,v3){
 	var vStatus2=v2;
 	var vStatus3=v3;
 	var vStatus1=vStatus.substring(0,1);
-	//alert("cgn1-------"+cgn1);
+	//bootbox.alert("cgn1-------"+cgn1);
 	var cgn2=cgn1.substring(0,3);
 	var typeObj=document.getElementById('paymentType');
 	type=typeObj.options[typeObj.selectedIndex].value;
@@ -685,7 +685,7 @@ function getDetails(obj,cgn,vStatus,v2,v3){
 				%>
 
 					<script>
-						var table=document.getElementById('paymentSearchGrid'); // alert(table.innerHTML);
+						var table=document.getElementById('paymentSearchGrid'); // bootbox.alert(table.innerHTML);
 						for (var i=0;i<table.rows.length;i++)
 						{	var k=0;
 							for (var j=table.rows[i].cells.length-1; j >= k ; j--)
@@ -699,7 +699,7 @@ function getDetails(obj,cgn,vStatus,v2,v3){
 						//changeColor();
 						var table=document.getElementById('paymentSearchGrid');
 						var j=0;
-						for(var i=0;table.rows[0].cells.length;i++){//alert((table.rows[0].cells[5].innerHTML).toUpperCase());
+						for(var i=0;table.rows[0].cells.length;i++){//bootbox.alert((table.rows[0].cells[5].innerHTML).toUpperCase());
 							var oo=table.rows[0].cells[i]
 							if((oo.innerHTML).toUpperCase()=='STATUS')
 							{ j=i; break;}
@@ -707,14 +707,14 @@ function getDetails(obj,cgn,vStatus,v2,v3){
 
 						for(var i=1;i<table.rows.length;i++)
 						{
-					 			var status1=table.rows[i].cells[j].innerHTML; //alert(status1);//.innerHTML;
+					 			var status1=table.rows[i].cells[j].innerHTML; //bootbox.alert(status1);//.innerHTML;
 					 			var rev;
 					 			if(status1 = 'Reversed')
-					 			{ //alert("in reversed");
-					 				table.rows[i].className='rowRev'; //alert(table.rows[i]);
+					 			{ //bootbox.alert("in reversed");
+					 				table.rows[i].className='rowRev'; //bootbox.alert(table.rows[i]);
 					 			}
 					 			else if(status1=='Reversal')
-					 			{//alert("in reversal");
+					 			{//bootbox.alert("in reversal");
 
 					 				table.rows[i].className='rowRev2';
 					 			}
@@ -723,7 +723,7 @@ function getDetails(obj,cgn,vStatus,v2,v3){
 									//var trObj=PageManager.DataService.getRow(statusObj);
 					 				//table.rows[i].className='no';
 								}
-							//alert("end");
+							//bootbox.alert("end");
 					  	 	}
 
 					</script>

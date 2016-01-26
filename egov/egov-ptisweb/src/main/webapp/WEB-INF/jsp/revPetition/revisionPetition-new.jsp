@@ -57,7 +57,7 @@
 			function validateRecordObjection(){
 				document.getElementById("lblError").style.display='none';
 			if(dom.get('details').value==''){
-					alert('Please enter Revision Petition Details');
+					bootbox.alert('Please enter Revision Petition Details');
 					return false;
 				}
 				return true;

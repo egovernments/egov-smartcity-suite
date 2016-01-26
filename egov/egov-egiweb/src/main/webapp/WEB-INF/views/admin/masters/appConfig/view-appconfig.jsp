@@ -40,7 +40,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
-<script src="<c:url value='/resources/js/app/viewappconfig.js'/>"></script>
+<script src="<c:url value='/resources/js/app/viewappconfig.js?rnd=${app_release_no}'/>"></script>
 
 <table class="table table-bordered datatable" id="view-appConfig-type">
 </table>

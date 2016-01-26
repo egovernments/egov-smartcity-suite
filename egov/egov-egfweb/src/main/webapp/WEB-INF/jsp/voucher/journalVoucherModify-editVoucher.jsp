@@ -235,7 +235,7 @@
 
 	<script type="text/javascript">
 function validateApproverUser(name,value){
-//	alert("name value"+name);    
+//	bootbox.alert("name value"+name);    
 	document.getElementById("actionName").value= name;
 	<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 		if(!validateUser(name,value)){
@@ -270,7 +270,7 @@ function validateJV(saveMode,name,value)
 		return false;
 	}
 
-	//alert("---"+VhType);
+	//bootbox.alert("---"+VhType);
 	if(VhType=='Works'){
 		var chkd1=vhDate.split('/');
 		var chkd2=restrictionDate[1].split('/');
@@ -278,7 +278,7 @@ function validateJV(saveMode,name,value)
 		var restrictionDt=new Date(chkd2[2],chkd2[1]-1,chkd2[0]);
 
 		if(voucherDt>=restrictionDt){
-			alert(" Cannot Modify Works JV Date to greater than "+restrictionDate[1]);
+			bootbox.alert(" Cannot Modify Works JV Date to greater than "+restrictionDate[1]);
 			return false;
 		}
 	}
@@ -323,13 +323,13 @@ function validateJV(saveMode,name,value)
 		var cgn = '<s:property value='%{cgn}'/>' ;
 		if(target == 'success' ){
 			if(saveMode == 'saveclose'){
-				alert("Voucher modified sucessfully with voucher number =  "+voucherNumber );
+				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber );
 				window.close();
 			}else if(saveMode == 'saveview'){
-				alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
+				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
 				window.open('preApprovedVoucher!loadvoucherview.action?vhid=<s:property value='%{voucherHeader.id}'/>','Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}else if(saveMode == 'saveprint'){
-				alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
+				bootbox.alert("Voucher modified sucessfully with voucher number =  "+voucherNumber);
 				window.open('journalVoucherPrint!print.action?id=<s:property value='%{voucherHeader.id}'/>','','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
 			}
 		}

@@ -159,6 +159,6 @@
 					</div>
 					</div>
 					</div>
-					<script	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-					<script src="<c:url value='/resources/js/app/dataEntryEditDemand.js'/>"></script>
-				<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>	
+					<script	src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
+					<script src="<c:url value='/resources/js/app/dataEntryEditDemand.js?rnd=${app_release_no}'/>"></script>
+				<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>	

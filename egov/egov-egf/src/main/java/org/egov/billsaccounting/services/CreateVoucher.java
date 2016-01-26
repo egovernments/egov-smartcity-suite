@@ -165,6 +165,8 @@ public class CreateVoucher {
     @Autowired
     private AppConfigService appConfigService;
     @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
+    @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
     @Qualifier("persistenceService")
@@ -188,7 +190,6 @@ public class CreateVoucher {
     @Autowired
     private ChartOfAccounts chartOfAccounts;
 
-    private ChartOfAccounts engine;
     @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
     @Autowired
@@ -1271,7 +1272,7 @@ public class CreateVoucher {
                 && headerdetails.get(VoucherConstant.DESCRIPTION).toString().length() > 250)
             throw new ValidationException(Arrays.asList(new ValidationError("voucher.description.exceeds.max.length",
                     "Narration exceeds maximum length")));
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes(headerdetails.get(VoucherConstant.VOUCHERTYPE)
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes(headerdetails.get(VoucherConstant.VOUCHERTYPE)
                 .toString());
         if (vNumGenMode != "Auto" && headerdetails.get(VoucherConstant.VOUCHERNUMBER) != null)
         {
@@ -1502,9 +1503,9 @@ public class CreateVoucher {
 
             // -- Voucher Type checking. --START
             if (FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherType))
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+                vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             else
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherType);
+                vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherType);
             // --END --
             voucherType = voucherType.toUpperCase().replaceAll(" ", "");
 
@@ -2308,11 +2309,10 @@ public class CreateVoucher {
                 }
             final List<Transaxtion> transactions = createTransaction(null, accountdetails, subledgerdetails, vh);
             HibernateUtil.getCurrentSession().flush();
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
                 throw new ApplicationRuntimeException("Voucher creation Failed");
         } catch (final Exception e)
         {
@@ -2492,11 +2492,10 @@ public class CreateVoucher {
             }
             final List<Transaxtion> transactions = createTransaction(null, accountdetails, subledgerdetails, reversalVoucher);
             HibernateUtil.getCurrentSession().flush();
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             // SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(reversalVoucher.getVoucherDate())))
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(reversalVoucher.getVoucherDate())))
                 throw new ApplicationRuntimeException("Voucher Reversal Failed");
         } catch (final ValidationException e) {
             LOGGER.error(ERR, e);
@@ -2537,9 +2536,9 @@ public class CreateVoucher {
                         .replaceAll(" ", ""));
             String vNumGenMode = null;
             if (FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(reversalVoucher.getType()))
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+                vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             else
-                vNumGenMode = new VoucherTypeForULB().readVoucherTypes(reversalVoucher.getType());
+                vNumGenMode = voucherTypeForULB.readVoucherTypes(reversalVoucher.getType());
             final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
             df.format(reversalVoucher.getVoucherDate());
 
@@ -2661,9 +2660,9 @@ public class CreateVoucher {
                 validateVoucherType(headerdetails.get(VoucherConstant.VOUCHERTYPE).toString());
                 if (FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(headerdetails.get(
                         VoucherConstant.VOUCHERTYPE).toString()))
-                    vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+                    vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
                 else
-                    vNumGenMode = new VoucherTypeForULB().readVoucherTypes(headerdetails.get(VoucherConstant.VOUCHERTYPE)
+                    vNumGenMode = voucherTypeForULB.readVoucherTypes(headerdetails.get(VoucherConstant.VOUCHERTYPE)
                             .toString());
                 if (!"Auto".equalsIgnoreCase(vNumGenMode) && (value == null || ((String) value).isEmpty())
                         && headerdetails.get(VoucherConstant.MODULEID) == null)

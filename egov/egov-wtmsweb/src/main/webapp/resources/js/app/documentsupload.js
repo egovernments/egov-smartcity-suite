@@ -49,7 +49,7 @@ $(document).ready(function(){
 			//do something    
 		}
 		else{
-			alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, .txt and .xml format documents only");
+			bootbox.alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, .txt and .xml format documents only");
 			$( this ).val('');
 			return false;
 		}	
@@ -61,12 +61,12 @@ $(document).ready(function(){
 			var fileSize = this.files[0].size; // in bytes
 			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
 			if(charlen > 50){
-				alert('File length should not exceed 50 characters!');
+				bootbox.alert('File length should not exceed 50 characters!');
 				fileInput.replaceWith(fileInput.val('').clone(true));
 				return false;			
 			} 
 			else if(fileSize > maxSize){
-				alert('File size should not exceed '+ inMB +' MB!');
+				bootbox.alert('File size should not exceed '+ inMB +' MB!');
 				fileInput.replaceWith(fileInput.val('').clone(true));
 				return false;
 			}			

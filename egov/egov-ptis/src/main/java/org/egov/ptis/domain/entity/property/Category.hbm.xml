@@ -91,7 +91,7 @@
 	</class>
 
 	<query name="BASERATE_BY_OCCUPANCY_ZONE">
-        <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
+        <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.IsHistory = 'N' and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>
 
 	<query name="BASERENT_BY_OCCUPANCY_AREA_STRUCTURE">
         <![CDATA[select bc from BoundaryCategory bc where bc.bndry.id = ? and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and ((? between bc.fromDate and bc.toDate) or (? between bc.fromDate and bc.toDate)) order by bc.fromDate]]></query>

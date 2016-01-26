@@ -175,23 +175,23 @@ function getDataList(){
 		var fiscalYearStartDate="01/04/"+(endDate.substr(endDate.length-4,4)-1);
 		else
 		var fiscalYearStartDate="01/04/"+endDate.substr(endDate.length-4,4);
-		//alert("fiscalYearStartDate :" + fiscalYearStartDate);
+		//bootbox.alert("fiscalYearStartDate :" + fiscalYearStartDate);
 		if(compareDate(fiscalYearStartDate,startDate) == -1 )
 		{ 
-		   alert("Start Date  should be in same financial year");
+			bootbox.alert("Start Date  should be in same financial year");
 		   document.getElementById('startDate').focus();
 		   return;
 		}
 		if(compareDate(fiscalYearStartDate,endDate) == -1 )
 		{ 
-		   alert(" End Date should be in same financial year");
+			bootbox.alert(" End Date should be in same financial year");
 		   document.getElementById('endDate').focus();
 		   return;
 		}
 		 /*to check whether the Start Date is greater than the End Date*/
 		if( compareDate(formatDate6(startDate),formatDate6(endDate)) == -1 )
 			{
-				alert('Start Date cannot be greater than End Date');
+			bootbox.alert('Start Date cannot be greater than End Date');
 				document.getElementById('startDate').value='';
 				document.getElementById('endDate').value='';
 				document.getElementById('startDate').focus();
@@ -201,7 +201,7 @@ function getDataList(){
 		   /*to check whether the End Date is greater than the Current Date*/
 		if( compareDate(formatDate6("<%=currDate%>"),formatDate6(endDate)) == 1 )
 		{
-			alert('End Date cannot be greater than Current Date');
+			bootbox.alert('End Date cannot be greater than Current Date');
 			document.getElementById('endDate').value='';
 			document.getElementById('endDate').value='';
 		
@@ -210,7 +210,7 @@ function getDataList(){
 
 
 	
-	//alert(document.getElementById("displayCondition").value);
+	//bootbox.alert(document.getElementById("displayCondition").value);
 	if(document.getElementById('displayCondition').value!=0)
 		document.rptBillReg.submit();
 }
@@ -359,7 +359,7 @@ function getDataList(){
 			 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 			 %> 
 			 <script>
-			 alert("Error :<%=e.getMessage()%>"); 
+			 bootbox.alert("Error :<%=e.getMessage()%>"); 
 			 //PageManager.DataService.setQueryField('endDate',null);
 			 </script>
 			 <%  }  %>	 
@@ -423,7 +423,7 @@ For <%= request.getAttribute("fundName") %>,<%= request.getAttribute("functionar
 			LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

@@ -127,10 +127,10 @@ function openSearch(obj,index){
 		var type = document.getElementById('glCode1');
 		type.value = a[0];
 		rptGLCode = a[0];
-		//alert(rptGLCode+" code");
+		//bootbox.alert(rptGLCode+" code");
 		rptAccName = a[1];
-		//alert(rptAccName);
-		//alert("value "+a[2]);
+		//bootbox.alert(rptAccName);
+		//bootbox.alert("value "+a[2]);
 		document.getElementById('chartOfAccounts_id1').value = a[2];
 		document.getElementById('glCode1').value=a[0]+","+a[1];
 		//getDetailData(a[0]);
@@ -141,7 +141,7 @@ function openSearch(obj,index){
 
 function ButtonPress()
 {
-	//alert("search");
+	//bootbox.alert("search");
 	if (!PageValidator.validateForm())
 	{
 		document.getElementById('startDate').value='';
@@ -156,30 +156,30 @@ function ButtonPress()
 	accCode_1=aCode1;
 	if(aCode1.length==0)
 	{
-		alert("please select  Account Code");
+		bootbox.alert("please select  Account Code");
 		return;
 	}
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
 			return false;
 		}
-	//alert("acc code "+accCode_1);
+	//bootbox.alert("acc code "+accCode_1);
 	PageManager.DataService.setQueryField('glCode1',accCode_1);
 	 document.getElementById('fromBean').value = 1;
 
 	 fObj = document.getElementById('fund_id');
 	 fObj=fObj.options[fObj.selectedIndex].value;
-	// alert("fobj "+fObj);
+	// bootbox.alert("fobj "+fObj);
 	 var fsObj = document.getElementById('fundSource_id');
 	 fsObj=fsObj.options[fsObj.selectedIndex].value;
 	// cgn=document.getElementById("cgn").value;
 		//gl1=document.getElementById("glCode1").value;
 	forRE=document.getElementById("revEntry").value;
-	//alert(forRE);
+	//bootbox.alert(forRE);
 	 document.JournalBook.submit();
 
 }
@@ -326,7 +326,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -429,7 +429,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

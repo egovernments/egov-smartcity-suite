@@ -290,7 +290,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 			}
 		}
 		else{
-			alert("This row can not be deleted");
+			bootbox.alert("This row can not be deleted");
 		}
 		}	
 		
@@ -555,7 +555,7 @@ function printVoucher(){
 				document.forms[0].elements[i].disabled =true;
 				
 			}
-				alert("FundFlow Report not Generated to check Bank Balance. Please generate Report First");
+				bootbox.alert("FundFlow Report not Generated to check Bank Balance. Please generate Report First");
 	
 		</s:if>	
 	</s:if>	

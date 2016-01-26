@@ -120,7 +120,7 @@ function uniqueChecking(url, tablename, columnname, fieldobj, uppercase, lowerca
 				if (request.status == 200) {
 					var response = request.responseText.split("^");
 					if (response[0] == "false") {
-						alert("Entered " + columnname + " already exists. ");
+						bootbox.alert("Entered " + columnname + " already exists. ");
 						document.getElementById(fieldobj).value = "";
 						document.getElementById(fieldobj).focus();
 					}
@@ -230,7 +230,7 @@ function checkUniqueForTwoKeys(url, tablename, columnname1, fieldobj1, columnnam
 				if (request.status == 200) {
 					var response = request.responseText.split("^");
 					if (response[0] == "false") {
-						alert("Entered " + columnname1 + " already exists for " + columnname2 + ". ");
+						bootbox.alert("Entered " + columnname1 + " already exists for " + columnname2 + ". ");
 						document.getElementById(fieldobj1).value = "";
 						document.getElementById(fieldobj1).focus();
 					}
@@ -309,7 +309,7 @@ function isRecordExists(url, tableName, whereClause, fieldObj) {
 				if (request.status == 200) {
 					var response = request.responseText.split("^");
 					if (response[0] == "false") {
-						alert(columnname + " already Selected. ");
+						bootbox.alert(columnname + " already Selected. ");
 						document.getElementById(fieldObj).value = "";
 						document.getElementById(fieldObj).focus();
 					}
@@ -382,12 +382,12 @@ function loadSelectDataForThreeCols(url, tablename, columnname1, columnname2, co
 }
 function trimAll(strValue) {
 	var objRegExp = /^(\s*)$/;
-      // alert("strValue"+strValue);
+      // bootbox.alert("strValue"+strValue);
 
       //check for all spaces
 	if (objRegExp.test(strValue)) {
 		strValue = strValue.replace(objRegExp, "");
-        // alert("strValue-------"+strValue);
+        // bootbox.alert("strValue-------"+strValue);
 		if (strValue.length == 0) {
 			return strValue;
 		}

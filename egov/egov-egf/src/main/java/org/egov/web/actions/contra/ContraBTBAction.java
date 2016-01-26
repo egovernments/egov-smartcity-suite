@@ -77,6 +77,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -162,6 +163,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     private CVoucherHeader voucherHeader2;
     private CVoucherHeader voucherHeaderDes;
     private CVoucherHeader voucherHeader4;
+	private ChartOfAccounts chartOfAccounts;
 
     @Override
     public void prepare() {
@@ -463,11 +465,10 @@ public class ContraBTBAction extends BaseVoucherAction {
                     accountdetails, subledgerDetails, voucher);
             HibernateUtil.getCurrentSession().flush();
 
-            final ChartOfAccounts engine = ChartOfAccounts.getInstance();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-            if (!engine.postTransaxtions(txnList, formatter.format(voucher
+            if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucher
                     .getVoucherDate())))
                 throw new ValidationException(
                         Arrays
@@ -497,7 +498,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             HibernateUtil.getCurrentSession().flush();
             Transaxtion txnList2[] = new Transaxtion[transactions2.size()];
             txnList2 = transactions2.toArray(txnList2);
-            if (!engine.postTransaxtions(txnList2, formatter.format(voucherHeader2
+            if (!chartOfAccounts.postTransaxtions(txnList2, formatter.format(voucherHeader2
                     .getVoucherDate())))
                 throw new ValidationException(
                         Arrays
@@ -575,7 +576,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         voucherHeader = (CVoucherHeader) super.getModel();
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA);
         if (voucherHeader.getName() == null
@@ -1406,12 +1407,11 @@ public class ContraBTBAction extends BaseVoucherAction {
                         null, accountdetails, subledgerDetails, voucher);
                 HibernateUtil.getCurrentSession().flush();
 
-                final ChartOfAccounts engine = ChartOfAccounts.getInstance();
                 Transaxtion txnList[] = new Transaxtion[transactions.size()];
                 txnList = transactions.toArray(txnList);
                 final SimpleDateFormat formatter = new SimpleDateFormat(
                         DD_MMM_YYYY);
-                if (!engine.postTransaxtions(txnList, formatter.format(voucher
+                if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucher
                         .getVoucherDate())))
                     throw new ValidationException(Arrays
                             .asList(new ValidationError(
@@ -1808,4 +1808,12 @@ public class ContraBTBAction extends BaseVoucherAction {
     public void setFromAccnumnar(final String fromAccnumnar) {
         this.fromAccnumnar = fromAccnumnar;
     }
+
+	public ChartOfAccounts getChartOfAccounts() {
+		return chartOfAccounts;
+	}
+
+	public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+		this.chartOfAccounts = chartOfAccounts;
+	}
 }

@@ -138,9 +138,9 @@ public class VoucherReport {
 
     private CGeneralLedger getGeneralLedger(final Integer voucherId, final CGeneralLedger voucherLineId) {
         //persistenceService.setType(CGeneralLedger.class);
-        return (CGeneralLedger) persistenceService.find(
+    	return (CGeneralLedger) persistenceService.find(
                 "from CGeneralLedger where voucherHeaderId.id=? and glcode=? and voucherlineId=?", Long.valueOf(voucherId),
-                voucherLineId.getGlcode(), voucherLineId.getId());
+                voucherLineId.getGlcode(), voucherLineId.getVoucherlineId());
     }
 
     public void setDepartment(final Department department) {

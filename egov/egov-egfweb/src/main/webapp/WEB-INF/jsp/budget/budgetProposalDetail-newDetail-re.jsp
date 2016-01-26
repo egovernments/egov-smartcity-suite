@@ -64,7 +64,7 @@
     function onLoadTask(){
     	showMessage = '<s:property value="showMessage"/>';
     	if(showMessage == 'true' && '<s:property value="getActionMessage()"/>' != ''){
-    		alert('<s:property value="getActionMessage()"/>');
+    		bootbox.alert('<s:property value="getActionMessage()"/>');
     		document.getElementById('budgetDetail_executingDepartment').value=-1;
     		var functionid="";
     		<s:if test="%{searchfunctionid!=0}">
@@ -146,13 +146,13 @@
 										estimate = true;
 								}				
 								if(estimate && anticipatory){
-									alert('Estimate amount and Anticipatory amount must be a number');
+									bootbox.alert('Estimate amount and Anticipatory amount must be a number');
 									return false;
 								}else if(estimate){
-									alert('Estimate amount must be a number');
+									bootbox.alert('Estimate amount must be a number');
 									return false;
 								}else if(anticipatory){
-									alert('Anticipatory amount must be a number');
+									bootbox.alert('Anticipatory amount must be a number');
 									return false;
 								}
 								document.budgetDetailForm.submit();
@@ -165,7 +165,7 @@
 								if(con==false)
 								    return false;*/
 								if(null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-									alert("Please select User");
+									bootbox.alert("Please select User");
 									return false;
 								}
 								    validate();
@@ -178,26 +178,26 @@ function validateSearch()
  var result=true;
 if(document.getElementById('financialYear').value==0 )
 	{
-	alert("Select Financial Year");
+	bootbox.alert("Select Financial Year");
 	result=false;
 	}
 
 if(document.getElementById('budgetDetail_budget').value==0 )
 {
-alert("Select Budget");
+bootbox.alert("Select Budget");
 result=false;
 }
 
 if(document.getElementById('budgetDetail_executingDepartment').value==0 )
 {
-alert("select Department");
+bootbox.alert("select Department");
 result=false;
 
 }
 
 if(document.getElementById('budgetDetail_filtered_function').value==0 )
 	{
-	alert("Select Function");
+	bootbox.alert("Select Function");
 	result=false;
 	}
 return result;

@@ -42,11 +42,11 @@
 <script>
 function validateData(){
 	if(document.getElementById('financialYear').value == -1){
-		alert("Please select a Financial Year")
+		bootbox.alert("Please select a Financial Year")
 		return false;
 	}
 	if(document.getElementById('budget').value == -1){
-		alert("Please select a Budget")
+		bootbox.alert("Please select a Budget")
 		return false;
 	}
 	return true;	

@@ -78,7 +78,7 @@ function ButtonPress(arg)
 		
 	if(document.DocumentTypeForm.partyTypeId.options[document.DocumentTypeForm.partyTypeId.selectedIndex].value==0)
 	{
-		alert("Select Applied To !!!!");
+		bootbox.alert("Select Applied To !!!!");
 		return false;
 	}
 		
@@ -92,7 +92,7 @@ function ButtonPress(arg)
 		var parentCode=document.DocumentTypeForm.parentId.options[document.DocumentTypeForm.parentId.selectedIndex].text;
 			if(parentCode==codeVal)
 			{
-				alert("Code and Parent Code cannot be same!!!!");
+				bootbox.alert("Code and Parent Code cannot be same!!!!");
 				return false;
 			}
 		
@@ -109,7 +109,7 @@ function ButtonPress(arg)
 		var appliedToCode=document.DocumentTypeForm.partyTypeId.options[document.DocumentTypeForm.partyTypeId.selectedIndex].text;
 			if(appliedToCode==codeVal)
 			{
-				alert("Code and Applied To cannot be same!!!!");
+				bootbox.alert("Code and Applied To cannot be same!!!!");
 				return false;
 			}
 
@@ -140,7 +140,7 @@ function uniqueCheckForDocumentCode()
 		booleanValue=uniqueCheckingBoolean('../commonyui/egov/uniqueCheckAjax.jsp', 'egw_typeofwork', 'CODE', 'code', 'no', 'no');
 			if(booleanValue==false)
 			{
-				alert("This Code already used for some other Document Type!!!!");
+				bootbox.alert("This Code already used for some other Document Type!!!!");
 				return false;
 			}
 	<%
@@ -158,7 +158,7 @@ function uniqueCheckForDocumentCode()
 
 			if(booleanValue==false)
 			{
-			alert("This Code already used for some other Document Type!!!!");
+				bootbox.alert("This Code already used for some other Document Type!!!!");
 			return false;
 			}		
 		}	
@@ -179,7 +179,7 @@ function setDefault()
 	var target='<%=(request.getAttribute("alertMessage"))%>';
 	if(target!="null")
 	{
-		alert('<%=request.getAttribute("alertMessage")%>');
+		bootbox.alert('<%=request.getAttribute("alertMessage")%>');
 	}
 	
 	var buttonType="${buttonType}";		

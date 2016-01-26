@@ -49,9 +49,9 @@
 		
 		var makeVoucherDetailTable = function() {
 			var OneFunctionCenter= <s:property value="isRestrictedtoOneFunctionCenter"/>; 
-		//	alert("HHiii"+OneFunctionCenter+"<<<>>>>>") ;                             
+		//	bootbox.alert("HHiii"+OneFunctionCenter+"<<<>>>>>") ;                             
 				<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>                                                   
-				//alert(OneFunctionCenter);                  
+				//bootbox.alert(OneFunctionCenter);                  
 				var voucherDetailColumns = [                                       
 				{key:"functionid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},         
 				{key:"function",label:'Function Name',hidden:true, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},                            
@@ -99,7 +99,7 @@
 					loadSlFunction();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -162,7 +162,7 @@
 	var OneFunctionCenter= <s:property value="isRestrictedtoOneFunctionCenter"/>;       
 	var makeSubLedgerTable = function() {
 		//var OneFunctionCenter= <s:property value="isRestrictedtoOneFunctionCenter"/>;  
-		//alert("OneFunctionCenter"+OneFunctionCenter);        
+		//bootbox.alert("OneFunctionCenter"+OneFunctionCenter);        
 		<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>                                    
 		var subledgerColumns = [                         
 		    {key:"functionDetail",label:'Function Name',hidden:true, formatter:createSLDropdownFormatterFuncJV(SUBLEDGERLIST,".functionDetail"),dropdownOptions:funcOptions},
@@ -215,7 +215,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -303,7 +303,7 @@ success: function(o) {
 	loadSlFunction();// load the functions in the SL grid after validation fails.
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 function updateGridSLDropdownGL(field,index,value){
@@ -361,7 +361,7 @@ success: function(o) {
 		
     },
     failure: function(o) {
-    	alert('failure');
+    	bootbox.alert('failure');
     }
 }
 

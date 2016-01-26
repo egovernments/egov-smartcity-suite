@@ -74,7 +74,7 @@ $(document).ready(function(){
 	$('#bplCardHolderName').removeAttr('required');
 	
 	if($('#validationMessage').val()!='')
-		alert($('#validationMessage').val());
+		bootbox.alert($('#validationMessage').val());
 	
 	$('#connectionCategorie').change(function(){
 		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
@@ -166,7 +166,7 @@ $(document).ready(function(){
 			
 		}, 
 		error: function (response) {
-			alert('json fail');
+			bootbox.alert('json fail');
 			console.log("failed");
 		}
 	});

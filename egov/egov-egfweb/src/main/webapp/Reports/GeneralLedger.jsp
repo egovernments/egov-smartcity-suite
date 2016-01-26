@@ -149,7 +149,7 @@ function onBodyLoad()
 	}*/
 	if(PageManager.DataService.getQueryField('fundName') != null)
 	{
-		//alert(PageManager.DataService.getQueryField('fundName'));
+		//bootbox.alert(PageManager.DataService.getQueryField('fundName'));
 }
 	if(document.getElementById('startDate').value && document.getElementById('endDate').value && document.getElementById('glCode1').value)
 	{
@@ -172,7 +172,7 @@ function onBodyLoad()
                   {
                   	var codes2=req2.responseText;
                   	var a = codes2.split("^");
-					var codes = a[0]; //alert(acccodeArray);
+					var codes = a[0]; //bootbox.alert(acccodeArray);
 					acccodeArray=codes.split("+");
 					codeObj = new YAHOO.widget.DS_JSArray(acccodeArray);
                   }
@@ -269,10 +269,10 @@ function openSearch(obj,index){
 		var type = document.getElementById('glCode1');
 		type.value = a[0];
 		rptGLCode = a[0];
-		//alert(rptGLCode+" code");
+		//bootbox.alert(rptGLCode+" code");
 		rptAccName = a[1];
-		//alert(rptAccName);
-		//alert("value "+a[2]);
+		//bootbox.alert(rptAccName);
+		//bootbox.alert("value "+a[2]);
 		document.getElementById('chartOfAccounts_id1').value = a[2];
 		//document.getElementById('glCode1').value=a[0]+","+a[1];
 		document.getElementById('glCode1').value=a[0];
@@ -284,7 +284,7 @@ function openSearch(obj,index){
 
 function ButtonPress()
 {
-	//alert("search");
+	//bootbox.alert("search");
 	if (!PageValidator.validateForm())
 	{
 		//document.getElementById('startDate').value='';
@@ -299,24 +299,24 @@ function ButtonPress()
 	accCode_1=aCode1;
 	if(aCode1.length==0)
 	{
-		alert("please select  Account Code");
+		bootbox.alert("please select  Account Code");
 		return;
 	}
 	if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			alert('Start Date cannot be greater than End Date');
+		bootbox.alert('Start Date cannot be greater than End Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
 			return false;
 		}
-	//alert("acc code "+accCode_1);
+	//bootbox.alert("acc code "+accCode_1);
 	PageManager.DataService.setQueryField('glCode1',accCode_1);
 	 document.getElementById('fromBean').value = 1;
 
 	 fObj = document.getElementById('fund_id');
 	 fObj=fObj.options[fObj.selectedIndex].value;
-	// alert("fobj "+fObj);
+	// bootbox.alert("fobj "+fObj);
 	 var fsObj = document.getElementById('fundSource_id');
 	 if(fsObj.value!='')
 		fsObj=fsObj.options[fsObj.selectedIndex].value;
@@ -324,7 +324,7 @@ function ButtonPress()
 	 deptObj=document.getElementById('departmentId');
 	 if(deptObj.value!='' && deptObj.selectedIndex!=-1){
 			//deptName=deptObj.options[deptObj.selectedIndex].text;
-			//alert("DepartmentName="+deptName);
+			//bootbox.alert("DepartmentName="+deptName);
 			 document.getElementById('dept_name_for').value=' under '+deptObj.options[deptObj.selectedIndex].text+ ' Department';
 			deptObj=deptObj.options[deptObj.selectedIndex].value;
 		}else{
@@ -334,7 +334,7 @@ function ButtonPress()
 		functionaryObj=document.getElementById('functionaryId');
 		if(functionaryObj.value!='' && functionaryObj.selectedIndex!=-1){
 			//functionaryName=functionaryObj.options[functionaryObj.selectedIndex].text;
-			//alert("functionaryName="+functionaryName);
+			//bootbox.alert("functionaryName="+functionaryName);
 			//subtitle=" in "+functionaryName+" Functionary";
 			document.getElementById('functionary_name_in').value=' in '+functionaryObj.options[functionaryObj.selectedIndex].text+' functionary';
 			functionaryObj=functionaryObj.options[functionaryObj.selectedIndex].value;
@@ -346,7 +346,7 @@ function ButtonPress()
 			//fieldObj=fieldObj.options[fieldObj.selectedIndex].value;
 			document.getElementById('field_name_in').value=' in '+fieldObj.options[fieldObj.selectedIndex].text+' field';
 			//fieldName=fieldObj.options[fieldObj.selectedIndex].text;
-			//alert("fieldName="+fieldName);
+			//bootbox.alert("fieldName="+fieldName);
 			//subtitle=" under "+fieldName+" Field";
 		}else{
 		document.getElementById('field_name_in').value='';
@@ -359,12 +359,12 @@ function ButtonPress()
 		}else{
 			document.getElementById('functionCode_name').value='';
 		}
-		//alert("Subtitle"+subtitle);
+		//bootbox.alert("Subtitle"+subtitle);
 		//return subtitle;
 	// cgn=document.getElementById("cgn").value;
 		//gl1=document.getElementById("glCode1").value;
 	//forRE=document.getElementById("forRevEntry").value;
-	//alert(document.getElementById("functionCodeId").value);
+	//bootbox.alert(document.getElementById("functionCodeId").value);
 	
 	       
 	 document.GeneralLedger.submit();
@@ -553,7 +553,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%
@@ -673,7 +673,7 @@ function buttonPrint()
 		 LOGGER.error("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

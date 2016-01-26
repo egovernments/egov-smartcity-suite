@@ -47,17 +47,17 @@
 	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
 <script type="text/javascript"
-	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js'/>"></script>
+	src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js?rnd=${app_release_no}'/>"></script>
 <script>
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;
 		var j;
 		var curRow = getRow(obj).rowIndex;
-		//alert('cur row '+curRow +' lastRow'+lastRow);
+		//bootbox.alert('cur row '+curRow +' lastRow'+lastRow);
 		if (lastRow == 1) {
-			alert('You cannot delete this row.');
+			bootbox.alert('You cannot delete this row.');
 			return false;
 		} else {
 		

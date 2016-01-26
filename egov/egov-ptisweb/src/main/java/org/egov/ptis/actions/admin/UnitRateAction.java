@@ -40,7 +40,9 @@
 package org.egov.ptis.actions.admin;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
 
 import java.util.Collections;
 import java.util.Date;
@@ -59,6 +61,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -80,10 +83,16 @@ public class UnitRateAction extends BaseFormAction {
     private Long zoneId;
     private Long usageId;
     private Long structureClassId;
+    private Long categoryId;
     private String ackMessage;
     private String mode = "";
+    private String roleName;
+
     @Autowired
     private BoundaryService boundaryService;
+
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     List<BoundaryCategory> bndryCatList;
 
@@ -110,13 +119,31 @@ public class UnitRateAction extends BaseFormAction {
         addDropdownData("ZoneList", zoneList);
         addDropdownData("UsageList", usageList);
         addDropdownData("StructureClassificationList", structureClassificationList);
+
+        final Long userId = (Long) session().get(SESSIONLOGINID);
+        if (userId != null)
+            setRoleName(propertyTaxUtil.getRolesForUserId(userId));
     }
 
     @SkipValidation
     @Action(value = "/unitRate-newForm")
     public String newForm() {
-        mode = NEW;
-        return RESULT_NEW;
+        if (roleName.contains(ROLE_PTADMINISTRATOR.toUpperCase())) {
+            if (mode.equals(EDIT)) {
+                if (categoryId != null && categoryId != -1) {
+                    category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+                    setUsageId(category.getPropUsage().getId());
+                    setStructureClassId(category.getStructureClass().getId());
+                }
+                return RESULT_NEW;
+            } else {
+                mode = NEW;
+                return RESULT_NEW;
+            }
+        } else {
+            return SEARCH_FORM;
+        }
+
     }
 
     @SkipValidation
@@ -188,22 +215,6 @@ public class UnitRateAction extends BaseFormAction {
         if (hasErrors()) {
             return SEARCH_FORM;
         } else {
-            List<BoundaryCategory> bndryCatList = getPersistenceService()
-                    .findAllBy(" from BoundaryCategory bc where bc.bndry.id = ? "
-                                    + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? order by bc.fromDate desc",
-                            zoneId, usageId, structureClassId);
-            category = (bndryCatList != null) ? bndryCatList.get(0).getCategory() : null;
-            return RESULT_NEW;
-        }
-    }
-
-    @SkipValidation
-    @Action(value = "/unitRate-view")
-    public String view() {
-        validateSearch();
-        if (hasErrors()) {
-            return SEARCH_FORM;
-        } else {
             StringBuilder mainStr = new StringBuilder(400);
             mainStr.append("From BoundaryCategory bndryCat where bndryCat.bndry.id=:zone ");
             if (usageId != null && usageId != -1) {
@@ -212,6 +223,7 @@ public class UnitRateAction extends BaseFormAction {
             if (structureClassId != null && structureClassId != -1) {
                 mainStr.append(" and bndryCat.category.structureClass.id=:stucture");
             }
+            mainStr.append(" and bndryCat.category.IsHistory = 'N'");
             final Query query = getPersistenceService().getSession().createQuery(mainStr.toString());
             query.setLong("zone", zoneId);
             if (usageId != null && usageId != -1) {
@@ -221,22 +233,79 @@ public class UnitRateAction extends BaseFormAction {
                 query.setLong("stucture", structureClassId);
             }
             bndryCatList = query.list();
-            mode = VIEW;
+            if (bndryCatList.isEmpty()) {
+                addActionError(getText("no.unit.rate.exists"));
+            }
             return SEARCH_FORM;
         }
+    }
+
+    @SkipValidation
+    @Action(value = "/unitRate-view")
+    public String view() {
+        if (categoryId != null && categoryId != -1) {
+            category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+        }
+        setUsageId(category.getPropUsage().getId());
+        setStructureClassId(category.getStructureClass().getId());
+        mode = VIEW;
+        return RESULT_NEW;
     }
 
     @SkipValidation
     @Action(value = "/unitRate-update")
     public String update() {
         Category catFromDb = null;
-        if (category != null && category.getId() != null) {
-            catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
+        Category existingCategory = (Category) getPersistenceService()
+                .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
+                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? ",
+                        zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
+        if (existingCategory != null) {
+            addActionError(getText("unit.rate.exists.for.combination"));
+            mode = EDIT;
+            return RESULT_NEW;
+        } else {
+            if (category != null && category.getId() != null && category.getId() != -1) {
+                catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
+            }
+            if (catFromDb != null) {
+                catFromDb.setIsHistory('Y');
+                Date toDate = catFromDb.getToDate();
+                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
+                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
+                    catFromDb.setToDate(newToDate);
+                }
+            }
+            Category categoryObj = new Category();
+            categoryObj.setCategoryAmount(category.getCategoryAmount());
+            categoryObj.setFromDate(category.getFromDate());
+            PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
+                    usageId);
+            StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
+                    "from StructureClassification where id = ? ", structureClassId);
+            Boundary zone = boundaryService.getBoundaryById(zoneId);
+            categoryObj.setPropUsage(usage);
+            categoryObj.setStructureClass(structureClass);
+            categoryObj.setIsHistory('N');
+            categoryObj.setToDate(catFromDb.getToDate());
+            categoryObj.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
+                    .concat("-").concat(categoryObj.getCategoryAmount().toString()));
+
+            BoundaryCategory boundaryCategory = new BoundaryCategory();
+            boundaryCategory.setCategory(categoryObj);
+            boundaryCategory.setBndry(zone);
+            boundaryCategory.setFromDate(categoryObj.getFromDate());
+            boundaryCategory.setToDate(categoryObj.getFromDate());
+
+            Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
+            boundaryCategorySet.add(boundaryCategory);
+
+            categoryObj.setCatBoundaries(boundaryCategorySet);
+            getPersistenceService().persist(categoryObj);
+            getPersistenceService().update(catFromDb);
+            setAckMessage("Unit Rate is updated successfully!");
+            return RESULT_ACK;
         }
-        catFromDb.setCategoryAmount(category.getCategoryAmount());
-        getPersistenceService().update(catFromDb);
-        setAckMessage("Unit Rate is updated successfully!");
-        return RESULT_ACK;
     }
 
     @Override
@@ -259,20 +328,8 @@ public class UnitRateAction extends BaseFormAction {
     }
 
     public void validateSearch() {
-        if (mode.equals(VIEW)) {
-            if (zoneId == null || zoneId == -1) {
-                addActionError(getText("unit.rate.zone.required"));
-            }
-        } else {
-            if (zoneId == null || zoneId == -1) {
-                addActionError(getText("unit.rate.zone.required"));
-            }
-            if (usageId == null || usageId == -1) {
-                addActionError(getText("unit.rate.usage.required"));
-            }
-            if (structureClassId == null || structureClassId == -1) {
-                addActionError(getText("unit.rate.structure.classification.required"));
-            }
+        if (zoneId == null || zoneId == -1) {
+            addActionError(getText("unit.rate.zone.required"));
         }
     }
 
@@ -322,6 +379,22 @@ public class UnitRateAction extends BaseFormAction {
 
     public void setBndryCatList(List<BoundaryCategory> bndryCatList) {
         this.bndryCatList = bndryCatList;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
 }

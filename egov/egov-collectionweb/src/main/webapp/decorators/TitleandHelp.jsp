@@ -128,7 +128,7 @@
     <head>
         <%@ include file="/includes/meta.jsp" %>
 		<title>eGov  -<%=name%></title>
-		<link rel="stylesheet" type="text/css" media="all" href="<c:url value='../../commons/css/egov.css'/>" />
+		<link rel="stylesheet" type="text/css" media="all" href="<c:url value='../../commons/css/egov.css?rnd=${app_release_no}'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/reset/reset.css'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/fonts/fonts.css'/>" />
 		<script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>

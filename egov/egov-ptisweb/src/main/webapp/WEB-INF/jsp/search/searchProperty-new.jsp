@@ -52,53 +52,53 @@
 			function collectTax() {
 				var propertyId = jQuery("#assessmentNum").val();
 				if(propertyId == '') {
-               	   alert("Please enter assessment number");
+               	   bootbox.alert("Please enter assessment number");
                	   return false;
                	 } else {
-				    window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+				    //window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
 				    return true;
                	 }
 			}
-			jQuery(document).ready(function(){
+			jQuery(document).ready(function() {
              jQuery("#searchMobileno").click(function(e) {
             	 if(jQuery("#mobileNumber").val() == '') {
-                	 alert("Please enter mobile number");
+                	 bootbox.alert("Please enter mobile number");
                 	 return false;
                 	 }
                  });
              
              jQuery("#searchDoorno").click(function(e) {
             	 if(jQuery("#doorNo").val() == '') {
-                	 alert("Please enter door number");
+                	 bootbox.alert("Please enter door number");
                 	 return false;
                 	 }
                  });
              jQuery("#searchByassmentno").click(function(e) {  
             	 if(jQuery("#assessmentNum").val() == '') {
-                	 alert("Please enter assessment number");
+                	 bootbox.alert("Please enter assessment number");
                 	 return false;
                 	 }
                  });
              jQuery("#searchByBndry").click(function(e) { 
             	 if(jQuery("#zoneId").val() == -1 && jQuery("#wardId").val() == -1) {
-                	 alert("Please select either zone or ward");
+                	 bootbox.alert("Please select either zone or ward");
                 	 return false;
                 	 }
                  });
              jQuery("#searchByowner").click(function(e) {
 		            if(jQuery("#locationId").val() == -1) {
-		           	  alert("Please select location");
+		           	  bootbox.alert("Please select location");
 		           	  return false;
 		           	 }
 		            if(jQuery("#ownerName").val() == '') {
-	               	  alert("Please enter owner name");
+	               	  bootbox.alert("Please enter owner name");
 	               	  return false;
 	               	 }
 	            });
 
              jQuery("#searchByDemand").click(function(e) { 
             	 if(jQuery("#fromDemand").val() == '' || jQuery("#toDemand").val() == '') {
-                	 alert("Please enter from and to demand data");
+                	 bootbox.alert("Please enter from and to demand data");
                 	 return false;
                 	 }
                  });
@@ -154,12 +154,12 @@
 								</td>
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:left">
-									    <input type="button" name="CollectTax" id="CollectTax" value="Collect Tax" class="buttonsubmit" onclick="return collectTax();"/>
+									<s:submit name="CollectTax" value="CollectTax" id="CollectTax" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchOwnerDetails.action', 'assessmentform');"></s:submit>
 									</div>
 								</td>
 							</s:if>
 							<s:else>
-								<td class="greybox">&nbsp;</td>
+								<td class="greybox">&nbsp;</td> 
 								<td class="greybox" colspan="2">
 								   <br/>
 									<div class="greybox" style="text-align:center">

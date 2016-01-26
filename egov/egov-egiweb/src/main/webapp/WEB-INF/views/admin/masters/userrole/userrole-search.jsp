@@ -91,4 +91,4 @@
 			</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/userrole.js'/>"></script>
+<script src="<c:url value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>

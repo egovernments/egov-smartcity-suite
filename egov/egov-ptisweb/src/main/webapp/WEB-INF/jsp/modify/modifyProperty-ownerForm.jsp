@@ -51,7 +51,7 @@
 		for (var i=0, max=all.length; i < max; i++) {
 			if (all[i].name.substr(18,9)=="firstName") {
 				if (all[i].value==null || all[i].value=="") {
-					alert("Please enter valid owner name");
+					bootbox.alert("Please enter valid owner name");
 					all[i].focus();
 					return false;
 				}

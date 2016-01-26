@@ -142,10 +142,10 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 
-<script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/appconfig.js?rnd=${app_release_no}' context='/egi'/>"></script>
 			<script>
 			var cmdaindex=0;
 	var moduleid = '${appConfig.module.id}';

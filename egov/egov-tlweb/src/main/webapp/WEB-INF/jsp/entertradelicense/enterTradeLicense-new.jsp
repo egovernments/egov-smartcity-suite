@@ -42,7 +42,128 @@
 <html>
 	<head>
 		<title><s:text name="page.title.entertrade" /></title>
-		<script>
+ 	</head>
+	<body>
+		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
+                <div class="row">
+                    <div class="col-md-12">
+                     <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
+                     <s:if test="%{applicationNumber!=null}">
+                    	 <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num" /> : <s:property value="%{applicationNumber}" /></div>
+                 	</s:if>
+               		<s:if test="%{hasErrors()}">
+						<div align="center" class="error-msg" >
+							<s:actionerror />
+							<s:fielderror/>
+						</div>			 
+					</s:if>
+					<s:if test="%{hasActionMessages()}">
+						<div class="messagestyle">
+							<s:actionmessage theme="simple" />
+						</div>
+					</s:if>
+                 	
+                 	<s:form name="registrationForm" action="enterTradeLicense-enterExisting" theme="css_xhtml"  enctype="multipart/form-data" 
+					cssClass="form-horizontal form-groups-bordered" validate="true" >    
+					<s:push value="model"> 
+							<s:token/>
+							<s:hidden name="actionName" value="create" />
+							<s:hidden id="detailChanged" name="detailChanged" />
+							<s:hidden id="applicationDate" name="applicationDate" />
+							<s:hidden name="id" id="id" />
+							<s:hidden name="feeTypeId" id="feeTypeId" />
+                        <div class="panel panel-primary" data-collapsed="0">
+                            <div class="panel-heading">
+								<div class="panel-title" style="text-align:center">
+										<s:text name='page.title.entertrade' /> 
+								</div>
+                                <ul class="nav nav-tabs" id="settingstab">
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
+                                </ul>
+                            </div>
+                            
+                             <div class="panel-body custom-form">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tradedetails">
+													
+											<div class="form-group">
+											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
+											    <div class="col-sm-3 add-margin">
+											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
+											    </div>
+											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
+											     <div class="col-sm-3 add-margin">
+											      	<s:date name="dateOfCreation" id="dateOfCreationformat" format="dd/MM/yyyy" />
+													<s:textfield  name="dateOfCreation" id="dateOfCreation" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{dateOfCreationformat}" />
+											   </div> 
+											</div>		
+                                             <%@ include file='../common/licensee.jsp'%>
+	                                         <%@ include file='../common/address.jsp'%>
+	                                         <%@ include file='../common/license.jsp'%>
+	                                         
+	                                         <div class="panel-heading custom_form_panel_heading">
+											    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
+											</div>
+											
+											<div class="col-md-12">
+											<table class="table table-bordered">
+												<thead>
+													<tr>
+														<th><s:text name='license.fin.year'/></th>
+														<th><s:text name='license.fee.amount'/></th>
+													</tr>
+												</thead>
+												<tbody>
+												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="status">
+													<tr>
+														<c:set value="${LIFee.key}-${fn:substring(LIFee.key+1,2, 4)}" var="finyear"/>
+														<td><s:textfield  name="" cssClass="form-control" readonly="true" value="%{#attr.finyear}" tabindex="-1"/></td>
+														<td><s:textfield name="legacyInstallmentwiseFees[%{#attr.LIFee.key}]" cssClass="form-control patternvalidation" value="%{#attr.LIFee.value}" data-pattern="decimalvalue"/> </td>
+													</tr>
+												</s:iterator>
+												</tbody>
+												<tfoot>
+													<tr>
+														<td class="error-msg" colspan="2">
+															<s:text  name="license.legacy.info">
+																<s:param>${finyear}</s:param>
+															</s:text>
+														</td>
+													</tr>
+												</tfoot>
+											</table>
+											</div>
+											
+                                    </div>
+                                    <div class="tab-pane fade" id="tradeattachments"> 
+                                        <div>
+											<%@include file="../common/documentUpload.jsp" %>
+										</div>
+                                    </div>
+                            	</div>
+                            </div>
+                        </div> 
+                        <div class="row">
+							<div class="text-center">
+								<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateForm();">
+									Save</button>
+								<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+									Close</button>
+							</div>
+						</div>
+                        </s:push>  
+                    </s:form> 
+                    </div>
+                </div>
+                <script>
+					jQuery(".datepicker").datepicker({
+						format: "dd/mm/yyyy",
+						autoclose: true 
+					}); 
+				</script>
+        <script src="../resources/app/js/newtrade.js"></script>
+        <script>
 	
 			function validateForm() {
 				if (document.getElementById("oldLicenseNumber").value == '' || document.getElementById("oldLicenseNumber").value == null){
@@ -101,7 +222,7 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
 					document.getElementById("tradeArea_weight").focus();
 					return false;
-				}	else if (document.getElementById("uom").value == '-1'){
+				}	else if (document.getElementById("uom").value == ""){
 					showMessage('enterLicense_error', '<s:text name="newlicense.uom.null" />');
 					document.getElementById("uom").focus();
 					return false;
@@ -119,191 +240,6 @@
 					}
   			}
 
-			var motorcnt = 0;
-			var rowcnt = 1; // special counter to keep track of the number of Rows for id & name values
-			var labelCnt = 1; // special counter to keep track of the number of Rows for id & name values
-					
-			function findtotalHP() { 
-				var tot = 0;
-				for( var i=0; i<=motorcnt ;i++) {			  		
-			  		if(document.getElementById('installedMotorList['+i+'].hp')!=null && document.getElementById('installedMotorList['+i+'].noOfMachines')) {
-			 			chkDecimal(document.getElementById('installedMotorList['+i+'].hp'));
-			  			chkNum(document.getElementById('installedMotorList['+i+'].noOfMachines'));
-			  			if(document.getElementById('installedMotorList['+i+'].hp') && document.getElementById('installedMotorList['+i+'].hp').value != '' && document.getElementById('installedMotorList['+i+'].noOfMachines') && document.getElementById('installedMotorList['+i+'].noOfMachines').value != '') {
-			  				tot +=parseFloat(document.getElementById('installedMotorList['+i+'].hp').value)*parseInt(document.getElementById('installedMotorList['+i+'].noOfMachines').value);
-			  	 		}
-			  		}
-			  	}
-			  	document.getElementById("totalHP").value = tot;
-			}
-	
-			function showhide(id) {
-				if (document.getElementById("motorInstalled").checked) {
-					if(motorcnt<1){
-						addMotorRowToTable(false);
-					}
-					document.getElementById('tb2Create').style.display='';
-					document.getElementById("addmoremotor").style.display='';
-					document.getElementById("hpheader").style.display='';
-					document.getElementById('totalHP').value=0;
-				} else {
-					var table = document.getElementById('tb2Create');
-					var rowCount = table.rows.length;
-					if(rowCount>2){  // to skip table header
-						for (var i=rowCount-1; i >= 2; i--) {
-							table.deleteRow(i);
-						}
-						motorcnt=0;
-					}
-					addMotorRowToTable(false);
-					document.getElementById('totalHP').value=0;
-					document.getElementById('tb2Create').style.display='none';
-					document.getElementById("totalHP").value="";
-					document.getElementById("addmoremotor").style.display='none';
-					document.getElementById("hpheader").style.display='none';
-				}
-			}
-
-			function detailchange(){
-				document.getElementById("detailChanged").value = 'true';
-			}
-	
-			function addMotorRowToTable(populateslab,key,motorhpvalue,machines){
-				if(!populateslab){
-					detailchange();
-				}
-	
-				if (document.getElementById('tb2Create').style.display=='none') {
-				  	document.getElementById('tb2Create').style.display='';
-				}
-				  
-			  	var browser=navigator.appName;
-			  	var tbl = document.getElementById('tb2Create');
-			  	var lastRow = tbl.rows.length;
-			  	// if there's no header row in the table, then iteration = lastRow + 1
-				if (lastRow==1) {
-				  	var row = tbl.insertRow(lastRow);
-					var labelnoofmac;
-					var cellRight = row.insertCell(0);
-					cellRight.setAttribute("align","left");
-					labelnoofmac = document.createElement('label');
-					labelnoofmac.appendChild(document.createTextNode('No. of Machines'))
-					cellRight.appendChild(labelnoofmac);
-					var hspower;
-					var cellRight = row.insertCell(1);
-					cellRight.setAttribute("align","left");
-					hspower = document.createElement('label');
-					hspower.appendChild(document.createTextNode('Horse Power'))
-					cellRight.appendChild(hspower);
-					
-				  	<s:if test="%{!sControlDisabled}">
-						var adddel;
-						var cellRight = row.insertCell(2);
-						cellRight.setAttribute("align","left");
-						adddel = document.createElement('label');
-						adddel.appendChild(document.createTextNode('Actions'))
-						cellRight.appendChild(adddel);
-					</s:if>
-				}
-				 			  
-				var lastRow = tbl.rows.length;
-				var iteration = lastRow;
-				var row = tbl.insertRow(lastRow);
-				//1st column
-				var noOfMachines;  
-				var cellRight = row.insertCell(0);
-				cellRight.setAttribute("align","left");
-				noOfMachines = document.createElement('input');
-				noOfMachines.type = 'number';
-				noOfMachines.size = '10';
-				noOfMachines.onBlur= 'checkLength(this,3)';
-				noOfMachines.className = "form-control";
-				<s:if test="%{sControlDisabled}">
-				  noOfMachines.disabled="<s:property value='%{sControlDisabled}' />";
-				</s:if>
-				noOfMachines.name = 'installedMotorList['+motorcnt+'].noOfMachines' ;
-				noOfMachines.id = 'installedMotorList['+motorcnt+'].noOfMachines' ;
-				if(machines!=null && machines!='') {
-				  	noOfMachines.value = machines;
-				}
-				
-				if(browser=='Microsoft Internet Explorer'){
-				    noOfMachines.onblur=totalHP;
-				} else {
-				    noOfMachines.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
-				}
-				cellRight.appendChild(noOfMachines);
-				    
-				//2nd column
-				var cellRight = row.insertCell(1);
-				cellRight.setAttribute("align","left");
-				horsepower = document.createElement('input');
-				horsepower.type = 'number';
-				horsepower.size = '10';
-				horsepower.onBlur = 'checkLength(this,3)';
-				horsepower.className = "form-control";
-				<s:if test="%{sControlDisabled}">
-				  	horsepower.disabled="<s:property value='%{sControlDisabled}' />";
-				</s:if>
-				  
-				horsepower.name = 'installedMotorList['+motorcnt+'].hp' ;
-				horsepower.id = 'installedMotorList['+motorcnt+'].hp' ;
-				
-				if(motorhpvalue!=null && motorhpvalue!=''){	
-				  	horsepower.value = motorhpvalue;
-				}
-				
-				if(browser=='Microsoft Internet Explorer'){
-				    horsepower.onblur=totalHP;
-				} else{
-				    horsepower.setAttribute('onBlur', 'checkLength(this,3);findtotalHP();' );
-				}
-				  
-				 cellRight.appendChild(horsepower);
-				
-				  //3rd column
-				<s:if test="%{!sControlDisabled}">  
-					var oCell = row.insertCell(2);
-					oCell.innerHTML = "<span class='add-padding' style='cursor:pointer;' id='addImg"+motorcnt+"' onclick='addMotorRowToTable(false);'><i class='fa fa-plus'></i></span><span class='add-padding' style='cursor:pointer;' id='delImg"+motorcnt+"'  onclick='removeRow1(this);'><i class='fa fa-trash'></i></span>";
-				</s:if>
-				 motorcnt++;  
-
-			}
-			
-			function removeRow1(src){  
-				var tbl = document.getElementById('tb2Create');
-				var lastRow = tbl.rows.length;
-				if(lastRow>=3) {
- 					var oRow = src.parentNode.parentNode;
- 					if (oRow.rowIndex == 2) 
- 					{
- 						alert("Can not delete the first row!");
- 						return;
- 					}
- 					else
- 					{
- 					document.all('tb2Create').deleteRow(oRow.rowIndex);
- 					}
- 					findtotalHP();  
-				 	detailchange();
-				}
-			}
-			
-			function checkLength(obj,val){
-				if(obj.value.length>val) {
-					alert('Max '+val+' digits allowed')
-					obj.value = obj.value.substring(0,val);
-				}
-			}	
-	
-			function formatCurrency(obj) {
-       			if(obj.value=="") {
-        			return;
-        		} else {
-            		obj.value=(parseFloat(obj.value)).toFixed(2);
-       			}
-    		}
-
 			// Calls propertytax REST api to retrieve property details for an assessment no
 			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
     		function callPropertyTaxRest(){
@@ -316,7 +252,7 @@
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
-								alert(data.errorDetails.errorMessage);
+								bootbox.alert(data.errorDetails.errorMessage);
 							} else{
 								if(data.boundaryDetails!=null){
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
@@ -326,169 +262,16 @@
 							}
 						},
 						error:function(e){
-							console.log('error:'+e.message);
 							document.getElementById("propertyNo").value="";
 							resetOnPropertyNumChange();
-							alert("Error getting property details");
+							bootbox.alert("Error getting property details");
 						}
 					});
             	} else{
 					showMessage('enterLicense_error', '<s:text name="newlicense.propertyNo.null" />');
-            		document.getElementById("propertyNo").focus();
                 }
-            }
-
-            function resetOnPropertyNumChange(){
-            	var propertyNo = jQuery("#propertyNo").val();
-               	if(propertyNo!="" && propertyNo!=null){
-            		document.getElementById("address").disabled="true";
-	            	document.getElementById("boundary").disabled="true"; 
-            	} else {
-                    document.getElementById("address").disabled=false;
-	            	document.getElementById("boundary").disabled=false;  
-                }
-            	document.getElementById("boundary").value='-1';
-            	document.getElementById("zoneName").value="";
-            	document.getElementById("wardName").value="";
-            	document.getElementById("address").value="";
             }
 
  		</script>
- 		
- 	</head>
-	<body onload="onBodyLoad()">
-		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
-                <div class="row">
-                    <div class="col-md-12">
-                     <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  format="dd/MM/yyyy"/></div>
-                     <s:if test="%{applicationNumber!=null}">
-                    	 <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num" /> : <s:property value="%{applicationNumber}" /></div>
-                 	</s:if>
-               		<s:if test="%{hasErrors()}">
-						<div align="center" class="error-msg" >
-							<s:actionerror />
-							<s:fielderror/>
-						</div>			 
-					</s:if>
-					<s:if test="%{hasActionMessages()}">
-						<div class="messagestyle">
-							<s:actionmessage theme="simple" />
-						</div>
-					</s:if>
-                 	
-                 	<s:form name="registrationForm" action="enterTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" 
-					cssClass="form-horizontal form-groups-bordered" validate="true" >    
-					<s:push value="model"> 
-							<s:token/>
-							<s:hidden name="actionName" value="create" />
-							<s:hidden id="detailChanged" name="detailChanged" />
-							<s:hidden id="applicationDate" name="applicationDate" />
-							<s:hidden name="id" id="id" />
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <div class="panel-heading">
-								<div class="panel-title" style="text-align:center">
-										<s:text name='page.title.entertrade' /> 
-								</div>
-                            
-                                <ul class="nav nav-tabs" id="settingstab">
-                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
-                                </ul>
-                            </div>
-                            
-                             <div class="panel-body custom-form">
-                                <div class="tab-content">
-                                    <div class="tab-pane fade active in" id="tradedetails">
-													
-											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
-											    <div class="col-sm-3 add-margin">
-											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
-											    </div>
-											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
-											     <div class="col-sm-3 add-margin">
-											      	<s:date name="dateOfCreation" id="dateOfCreationformat" format="dd/MM/yyyy" />
-													<s:textfield  name="dateOfCreation" id="dateOfCreation" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{dateOfCreationformat}" />
-											   </div> 
-											</div>		
-                                    
-	                                         <%@ include file='../common/licensee.jsp'%>
-	                                          <%@ include file='../common/address.jsp'%>
-	                                         <%@ include file='../common/license.jsp'%>
-	                                         
-	                                         
-	                                         <div class="panel-heading custom_form_panel_heading">
-											    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
-											</div>
-											
-											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.motor.installed" /></label>
-											    <div class="col-sm-3 add-margin text-left">
-											         	<s:checkbox theme="simple" key="motorInstalled" tabindex="17" onclick="showhide('addmoremotor')" label="motorInstalled" id="motorInstalled" disabled="%{sDisabled}" />
-											    </div>
-											</div>
-											<div class="form-group">
-											    <table class="table table-bordered" style="width:80%;margin:10px auto" id="tb2Create">
-															<th id="hpheader" style="display: none;" colspan="3" class="bluebgheadtd" align="center">
-																<b><s:text name="license.horsepower" /></b>
-															</th>
-												</table>			
-											</div>
-											<script>
-												<s:iterator var="p" value="installedMotorList">
-													addMotorRowToTable(true,'<s:property value="key"/>',  '<s:property value="#p.hp"/>', '<s:property value="#p.noOfMachines"/>');
-												</s:iterator>
-											</script>
-											
-											<div class="form-group" id="addmoremotor">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.horsepower" /><span class="mandatory"></span></label>
-											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="totalHP" readonly="true" disabled="%{sDisabled}"  onBlur="trimAll(this.value);" id="totalHP" cssClass="form-control" />
-											    </div>		
-											</div>
-											
-											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name="license.total.workersCapacity" /><span class="mandatory"></span></label>
-											    <div class="col-sm-3 add-margin">	
-											    	<s:textfield name="workersCapacity" size="8" maxlength="8" onBlur="trimAll(this.value);" id="workersCapacity" cssClass="form-control patternvalidation" data-pattern="number" />
-											    </div>		
-											</div>
-											
-											<script>
-												 if(document.getElementById("motorInstalled").checked){															
-													document.getElementById("addmoremotor").style.display='';
-												}else{
-													document.getElementById("addmoremotor").style.display='none';
-												} 														
-												findtotalHP();
-											</script>
-                                    </div>
-                                    <div class="tab-pane fade" id="tradeattachments"> 
-                                        <div>
-												<%@include file="../common/documentUpload.jsp" %>
-										</div>
-                                    </div>
-                            	</div>
-                            </div>
-                        </div> 
-                        <div class="row">
-							<div class="text-center">
-								<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateForm();">
-									Save</button>
-								<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
-									Close</button>
-							</div>
-						</div>
-                        </s:push>  
-                    </s:form> 
-                    </div>
-                </div>
-                <script>
-					jQuery(".datepicker").datepicker({
-						format: "dd/mm/yyyy",
-						autoclose: true 
-					}); 
-				</script>
-        <script src="../resources/app/js/newtrade.js"></script>
     </body>
 </html>

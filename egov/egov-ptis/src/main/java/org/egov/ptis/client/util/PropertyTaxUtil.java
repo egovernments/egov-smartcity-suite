@@ -2144,15 +2144,15 @@ public class PropertyTaxUtil {
             whereQry = " and pi.wardid = " + param;
             finalWhereQry = " where dcbinfo.block=boundary.id ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
-            innerSelectQry0 = "select distinct pi.upicno as upicno,";
-            innerSelectQry1 = "select upicno as upicno,";
-            arrearGroupBy = ") as arrear group by upicno ";
-            collGroupBy = ") as collection  group by upicno ";
+            innerSelectQry0 = "select distinct pi.upicno as upicno, pi.houseno as doorno,";
+            innerSelectQry1 = "select upicno as upicno,doorno as doorno,";
+            arrearGroupBy = ") as arrear group by upicno,doorno ";
+            collGroupBy = ") as collection  group by upicno,doorno ";
             whereQry = " and pi.blockid = " + param;
-            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", ";
+            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", doorno as \"houseNo\", ";
             finalFrmQry = " )as dcbinfo ";
             finalWhereQry = "";
-            finalGrpQry = " group by dcbinfo.upicno order by dcbinfo.upicno ";
+            finalGrpQry = " group by dcbinfo.upicno,dcbinfo.doorno order by dcbinfo.upicno ";
         }
         // Arrear Demand query union Current Demand query
         unionQueryStr.append(innerSelectQry1).append(arrear_innerCommonQry1).append(innerSelectQry0)
@@ -2431,5 +2431,37 @@ public class PropertyTaxUtil {
     	String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
+    }
+    
+    /**
+     * Prepare query for Defaulters report
+     * @param wardId
+     * @param fromDemand
+     * @param toDemand
+     * @param limit
+     * @return
+     */
+    public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand,
+            final String toDemand, final Integer limit) {
+        final StringBuffer query = new StringBuffer(300);
+        
+        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null ");
+        String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
+        String orderByClause = " order by ";
+        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
+        	query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+        	query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+        }
+        if(wardId != null && wardId != -1){
+        	query.append(" and pmv.ward.id = ").append(wardId);
+        }
+        	
+        orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
+        query.append(orderByClause);
+
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        if(limit != null && limit != -1)
+        	qry.setMaxResults(limit);
+        return qry;
     }
 }

@@ -188,7 +188,7 @@ public class BankAction extends BaseFormAction {
 
     public String getAccountTypesJSON() {
         final List<Object[]> accounttypes = persistenceService
-                .findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=3 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
+                .findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=2 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
         final StringBuilder accountdetailtypeJson = new StringBuilder("{\"\":\"\",");
         for (final Object[] accType : accounttypes) {
             accType[0] = org.egov.infstr.utils.StringUtils.escapeJavaScript((String) accType[0]);

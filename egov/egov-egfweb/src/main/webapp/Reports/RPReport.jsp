@@ -84,7 +84,7 @@ function onLoad()
 	var toDate='<%=request.getParameter("toDate")%>';
 	var rptTitletemp='<%=request.getParameter("rptTittle")%>';
 	fundIdVal='<%=request.getParameter("fundId")%>';
-    // alert("Hi "+fundId);
+    // bootbox.alert("Hi "+fundId);
 	document.getElementById('period').value=p;
 	document.getElementById('fin_Year').value=y;
 	document.getElementById('rupees').value=rs;
@@ -156,17 +156,17 @@ function validateBeforeSubmit(){
 	
 	if(document.getElementById('period').value==0)
 	{ 	
-		alert("Choose Period");
+		bootbox.alert("Choose Period");
 		return false;
 	}
 	if(document.getElementById('period').value==3 && document.getElementById('month').value==0)
 	{
-		alert("Choose Month");
+		bootbox.alert("Choose Month");
 		return false;
 	}
 	if(document.getElementById('rupees').value==0)
 	{
-		alert("Choose Rupees");
+		bootbox.alert("Choose Rupees");
 		return false;
 	}
 	document.getElementById('finYear').value=document.getElementById('fin_Year').value;

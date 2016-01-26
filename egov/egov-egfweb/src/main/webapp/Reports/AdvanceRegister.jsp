@@ -130,14 +130,14 @@ function ButtonPress()
 	
 	strtDate = document.getElementById('startDate').value;
 	endDate = document.getElementById('endDate').value;
-	//alert(endDate);
+	//bootbox.alert(endDate);
 		
 	if(endDate!="")
 	{
 		if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			//alert("Inside compare dt");
-			alert('From Date cannot be greater than To Date');
+			//bootbox.alert("Inside compare dt");
+			bootbox.alert('From Date cannot be greater than To Date');
 			//document.getElementById('startDate').value='';
 			//document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
@@ -146,7 +146,7 @@ function ButtonPress()
 	}
 		
 	
-	//alert(document.getElementById("partytype_id").value);
+	//bootbox.alert(document.getElementById("partytype_id").value);
 	var pTypeObj=document.getElementById("partytype_id");
 	var pNameObj=document.getElementById("accEntityList");
 	var pKeyObj=document.getElementById("accEntityKey");
@@ -154,7 +154,7 @@ function ButtonPress()
 	if(pNameObj.value!="")  
 	{
 		if(pTypeObj.value==""){
-			alert("Select Party Type First !!!");
+			bootbox.alert("Select Party Type First !!!");
 			pTypeObj.focus();
 			return false;
 		}
@@ -170,7 +170,7 @@ function ButtonPress()
 		checkPartyNameForAdvRegister(partyTypeId,paramPartyName,paramPartyKey);
 		 if(validPartyNameArray1=='null')
 		{		
-			alert("Enter Valid Party Name !!!");
+			 bootbox.alert("Enter Valid Party Name !!!");
 			pNameObj.focus();
 			document.getElementById('entityName').value='';
 			document.getElementById('accEntityKey').value='';
@@ -181,7 +181,7 @@ function ButtonPress()
 	}
 	else
 	{
-		alert("Enter Valid Party Name !!!");
+		bootbox.alert("Enter Valid Party Name !!!");
 		pNameObj.focus();
 		document.getElementById('entityName').value='';
 		document.getElementById('accEntityKey').value='';
@@ -195,9 +195,9 @@ function ButtonPress()
 	if(document.getElementById('accEntityKey').value!="")
 	detail_Key=document.getElementById('accEntityKey').value;
 	
-	//alert("party name--->"+document.getElementById("accEntityList").value);
-	//alert("code----->"+document.getElementById("entityName").value);
-	//alert("detail key id--->"+document.getElementById("accEntityKey").value);
+	//bootbox.alert("party name--->"+document.getElementById("accEntityList").value);
+	//bootbox.alert("code----->"+document.getElementById("entityName").value);
+	//bootbox.alert("detail key id--->"+document.getElementById("accEntityKey").value);
 		
 	
 	document.getElementById('fromBean').value = 1;
@@ -207,14 +207,14 @@ function ButtonPress()
 function afterRefreshPage(dc)
 {
 	var afterSub="<%=(request.getParameter("fromBean"))%>";
-	//alert("afterSub"+afterSub);
+	//bootbox.alert("afterSub"+afterSub);
 	
 	if(afterSub != "null")
 	{
 		var partyTypeId=dc.values['partytype_id']
 		var paramFromDate=dc.values['startDate']
 		var paramToDate=dc.values['endDate']
-		//alert(partyTypeId);
+		//bootbox.alert(partyTypeId);
 		
 	
 		if(partyTypeId !="" && partyTypeId != undefined && (paramFromDate!=undefined && paramToDate!=undefined))
@@ -232,7 +232,7 @@ function afterRefreshPage(dc)
 					var a = codes2.split("^");
 					var codes = a[0]; 
 					entityDetailArray=codes.split("+");
-					//alert(entityDetailArray);
+					//bootbox.alert(entityDetailArray);
 					codeObj = new YAHOO.widget.DS_JSArray(entityDetailArray);
 
 				  }
@@ -279,7 +279,7 @@ function getAllPartyName()
       	var paramFromDate = document.getElementById('startDate').value;
 	var paramToDate = document.getElementById('endDate').value;
          	
-      	// alert(partyTypeId);
+      	// bootbox.alert(partyTypeId);
       	
 	if(partyTypeId !="" && (paramFromDate!="" && paramToDate!=""))
 	{
@@ -296,7 +296,7 @@ function getAllPartyName()
                   	var a = codes2.split("^");
 			var codes = a[0]; 
 			entityDetailArray=codes.split("+");
-			//alert(entityDetailArray);
+			//bootbox.alert(entityDetailArray);
 			codeObj = new YAHOO.widget.DS_JSArray(entityDetailArray);
 					
                   }
@@ -320,7 +320,7 @@ function autocompletecode(obj)
 	var currRow=PageManager.DataService.getRow(obj);
 	var coaCodeObj = obj;
 	
-	//alert("rowIndex"+yuiflag[currRow.rowIndex]);
+	//bootbox.alert("rowIndex"+yuiflag[currRow.rowIndex]);
 	if(yuiflag[currRow.rowIndex] == undefined)
  	{
 		
@@ -343,22 +343,22 @@ function autocompletecode(obj)
  function fillNeibrAfterSplit(obj,neibrObjName)
  {  
    	
-   	//alert(document.getElementById("partytype_id").value);
+   	//bootbox.alert(document.getElementById("partytype_id").value);
    	
    	var pTypeObj=document.getElementById("partytype_id");
    	
    	if(pTypeObj.value=="")
    	{
    	
-   	alert("Select Party Type First !!!");
+   		bootbox.alert("Select Party Type First !!!");
    	pTypeObj.focus();
    	return;
    	
    	}
    	
-   	 //alert("party name--->"+document.getElementById("accEntityList").value);
-	 //alert("code----->"+document.getElementById("entityName").value);
-	 //alert("detail key id--->"+document.getElementById("accEntityKey").value);
+   	 //bootbox.alert("party name--->"+document.getElementById("accEntityList").value);
+	 //bootbox.alert("code----->"+document.getElementById("entityName").value);
+	 //bootbox.alert("detail key id--->"+document.getElementById("accEntityKey").value);
    	
    	var temp = obj.value; 
 	temp = temp.split("`-`");
@@ -408,7 +408,7 @@ function checkPartyNameForAdvRegister(arg1,arg2,arg3)
 				var a = codes2.split("^");
 				var codes = a[0]; 
 				validPartyNameArray1=codes.split("+");
-				//alert(validPartyNameArray1);
+				//bootbox.alert(validPartyNameArray1);
 			  }
 		      }
 		};
@@ -451,14 +451,14 @@ function checkDateValidation()
 	
 	if(startDate.length==0)
 	{
-	    alert("Enter From Date !!!");
+		bootbox.alert("Enter From Date !!!");
 	    document.getElementById('partytype_id').value="";
 	    document.getElementById('startDate').focus();
  	    return false;
 	}
 	if(endDate.length==0)
 	{
-	     alert("Enter To Date !!!");
+		bootbox.alert("Enter To Date !!!");
 	     document.getElementById('partytype_id').value="";
 	    document.getElementById('endDate').focus();
 	    return false;
@@ -471,7 +471,7 @@ function checkDateValidation()
  		var fiscalYearStartDate="01/04/"+endDate.split('/')[2];
  	if(compareDate(fiscalYearStartDate,startDate) == -1 )
  	{ 
- 	   alert("Start Date and End Date should be in same financial year");
+ 		bootbox.alert("Start Date and End Date should be in same financial year");
  	   document.getElementById('startDate').focus();
  	   return false;
 	}
@@ -605,7 +605,7 @@ function checkDateValidation()
 		 System.out.println("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 </script>
 		 <%
 		  }

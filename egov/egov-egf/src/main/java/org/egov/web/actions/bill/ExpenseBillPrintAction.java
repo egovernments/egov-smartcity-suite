@@ -104,8 +104,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @org.apache.struts2.convention.annotation.ParentPackage("egov")
 public class ExpenseBillPrintAction extends BaseFormAction {
     final static private Logger LOGGER = Logger.getLogger(ExpenseBillPrintAction.class);
-    String jasperpath = "/org/egov/web/actions/report/expenseBillReport.jasper";
-    String subReportPath = "/org/egov/web/actions/report/budgetAppropriationDetail.jasper";
+    String jasperpath = "/reports/templates/expenseBillReport.jasper";
+    String subReportPath = "/reports/templates/budgetAppropriationDetail.jasper";
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
     String functionName;

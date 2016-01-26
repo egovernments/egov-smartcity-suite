@@ -123,7 +123,7 @@
 			<br /> <br />
 	</s:form>
 	<script>
-		//alert('hi=='+dom.get('target'));
+		//bootbox.alert('hi=='+dom.get('target'));
 		if(dom.get('targetvalue').value=='NONE')
 		{
 			dom.get('listid').style.display='none';

@@ -103,14 +103,14 @@ function fillMonths(obj)
 
 	clearCombo('month');
 	var table = document.getElementById('RecPayTab');
-	//alert(table.rows[2].childNodes[0].innerHTML);
+	//bootbox.alert(table.rows[2].childNodes[0].innerHTML);
 	if(obj.value==3)
 	{
-		//alert(table.rows[2].childNodes[1].innerHTML);
+		//bootbox.alert(table.rows[2].childNodes[1].innerHTML);
 
 		table.rows[1].childNodes[4].innerHTML='';
 		table.rows[1].childNodes[4].innerHTML='<div align="right" valign="center" class="normaltext">Month<span class="leadon">*</span></div>';
-		//alert(table.rows[2].childNodes[1].innerHTML);
+		//bootbox.alert(table.rows[2].childNodes[1].innerHTML);
 		document.getElementById('month').style.display ="block";
 		monthObj.options[0]=new Option('---Choose---');
 		monthObj.options[1]=new Option('January','01');
@@ -155,12 +155,12 @@ function ButtonPress()
 {
 
 		if(document.getElementById('period').value==0)
-		{ 	alert("Choose Period");
+		{ 	bootbox.alert("Choose Period");
 			return;
 		}
 		if(document.getElementById('period').value==3 && document.getElementById('month').value==0)
 		{
-			alert("Choose Month");
+			bootbox.alert("Choose Month");
 			return;
 		}
 		document.getElementById('fromBean').value = 1;

@@ -42,9 +42,31 @@ package org.egov.infra.utils;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.Months;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class DateUtils {
+
+    public static final DateTimeFormatter FORMAT_DATE_TO_YEAR = DateTimeFormat.forPattern("yyyy");
+    public static final DateTimeFormatter TO_DEFAULT_DATE_FORMAT = DateTimeFormat.forPattern("dd/MM/yyyy");
+
+    public static String currentDateToYearFormat() {
+        return toYearFormat(new LocalDate());
+    }
+
+    public static String toYearFormat(final LocalDate date) {
+        return FORMAT_DATE_TO_YEAR.print(date);
+    }
+
+    public static String currentDateToDefaultDateFormat() {
+        return toDefaultDateFormat(new LocalDate());
+    }
+
+    public static String toDefaultDateFormat(final LocalDate date) {
+        return TO_DEFAULT_DATE_FORMAT.print(date);
+    }
 
     public static Date endOfDay(final Date date) {
         return new DateTime(date).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).toDate();
@@ -73,10 +95,11 @@ public class DateUtils {
     public static int getNumberOfYearPassesed(final Date startDate, final Date endDate) {
         return new DateTime(endDate).getYear() - new DateTime(startDate).getYear();
     }
-    
+
     public static int noOfMonths(final Date startDate, final Date endDate) {
-        DateTime sDate = new DateTime(startDate);
-        DateTime eDate = new DateTime(endDate);
-        return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth())).getMonths();
+        final DateTime sDate = new DateTime(startDate);
+        final DateTime eDate = new DateTime(endDate);
+        return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth()))
+                .getMonths();
     }
 }

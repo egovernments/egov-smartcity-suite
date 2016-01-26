@@ -56,7 +56,7 @@ function validateAppNumber(appNumberField) {
 	var appNumberValue =appNumberField.value;	  
 	 var regexPattern=/^[A-Z a-z]{2}\-[APLapl]{4}\d{10}$/;
 	if(!regexPattern.test(appNumberValue)) {
-	  alert('Please enter a valid Application Number');
+		bootbox.alert('Please enter a valid Application Number');
 	  appNumberField.value = "";
 	  return false;
 	}
@@ -66,7 +66,7 @@ function validateLicenseNumber(licenseNumberField) {
 	var licenseNumberValue =licenseNumberField.value;	  
 	 var regexPattern=/^[A-Z a-z]{3}\/\d{10}\/[A-Z a-z]{3}\-\d{4}$/;
 	if(!regexPattern.test(licenseNumberValue)) {
-	  alert('Please enter a valid License Number');
+		bootbox.alert('Please enter a valid License Number');
 	  licenseNumberField.value = "";
 	  return false;
 	}

@@ -64,7 +64,7 @@
 	function checkLength(obj){
 		if(obj.value.length>1024)
 		{
-			alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+			bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 			obj.value = obj.value.substring(1,1024);
 		}
 	}
@@ -80,7 +80,7 @@
 function openSource(){
 	var url = '<s:property value='%{getSourcePath()}' />'
 	if(url!=null && url==""){
-		alert("Source is not available");
+		bootbox.alert("Source is not available");
 		return false;
 	}
 	window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')

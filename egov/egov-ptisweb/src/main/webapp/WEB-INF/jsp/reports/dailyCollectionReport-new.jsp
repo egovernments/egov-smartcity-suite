@@ -74,17 +74,17 @@
 			var userId = document.getElementById("userId").value;
 
 			if (fromDate == null || fromDate == "" || fromDate == 'DD/MM/YYYY') {
-				alert('From Date is mandatory');
+				bootbox.alert('From Date is mandatory');
 				return false;
 			}
 			
 			if (toDate == null || toDate == "" || toDate == 'DD/MM/YYYY') {
-				alert('To Date is mandatory');
+				bootbox.alert('To Date is mandatory');
 				return false;
 			}
 
 			if (userId == null || userId == "" || userId == "-1") {
-				alert('Select Operator');
+				bootbox.alert('Select Operator');
 				return false;
 			}
 			

@@ -41,7 +41,7 @@ var ColVis = function( oDTSettings, oInit )
 	/* Santiy check that we are a new instance */
 	if ( !this.CLASS || this.CLASS != "ColVis" )
 	{
-		alert( "Warning: ColVis must be initialised with the keyword 'new'" );
+		bootbox.alert( "Warning: ColVis must be initialised with the keyword 'new'" );
 	}
 
 	if ( typeof oInit == 'undefined' )
@@ -1076,7 +1076,7 @@ if ( typeof $.fn.dataTable == "function" &&
 }
 else
 {
-	alert( "Warning: ColVis requires DataTables 1.7 or greater - www.datatables.net/download");
+	bootbox.alert( "Warning: ColVis requires DataTables 1.7 or greater - www.datatables.net/download");
 }
 
 

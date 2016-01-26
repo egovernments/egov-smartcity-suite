@@ -271,10 +271,6 @@
 														<tr>
 															<td colspan="6" align="center">
 																<div class="buttonbottom">
-																	<!--              
-							 	<s:submit method="createPayment" value="Save " cssClass="buttonsubmit" onclick="return validate()"/> 
-								<s:submit method="beforeSearch" value="Back " cssClass="buttonsubmit" />
-								<input type="submit" value="Close" onclick="javascript:window.close()" class="button"/>  -->
 																	<s:hidden name="hiddenText" id="hiddenText" />
 																	<s:hidden name="paymentMode" id="paymentMode"
 																		value="%{paymentMode}" />
@@ -439,36 +435,14 @@
 					</td>
 				</tr>
 			</table>
-			<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-
-				<%@include file="../voucher/workflowApproval.jsp"%>
-			</s:if>
+			<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+			<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
 		</div>
 
 		<div class="buttonbottom" id="buttondiv">
 			<s:hidden name="paymentid" value="%{paymentheader.id}" />
 			<s:hidden name="actionname" id="actionName" value="%{action}" />
 			<s:hidden name="billSubType" id="billSubType" value="%{billSubType}" />
-
-			<s:iterator value="%{getValidActions()}" var="p" status="s">
-				<s:submit type="submit" cssClass="buttonsubmit"
-					value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
-					method="create"
-					onclick="return validate('%{name}','%{description}')" />
-			</s:iterator>
-			<input type="submit" class="buttonsubmit" value="Save And Forward"
-				id="uac_asst_approve" name="uac_asst_approve"
-				onclick="return validate('save','uac_asst_approve','Save And Forward');" />
-			<s:if test="%{disableExpenditureType==true}">
-				<input type="button" method="beforeSearch" value="Back "
-					class="buttonsubmit" id="backbtnid" onclick="return back();" />
-			</s:if>
-			<s:else>
-				<s:submit method="beforeSearch" value="Back "
-					cssClass="buttonsubmit" id="backbtnid" onclick="return back();" />
-			</s:else>
-			<input type="submit" value="Close"
-				onclick="javascript:window.close()" class="button" />
 		</div>
 
 		<script>
@@ -504,12 +478,12 @@
 			var putBackAmount = parseFloat(document.getElementById('payableAmt'+index).value);
 			var paymentAmount = obj.value;
 			if(paymentAmount == '' || isNaN(paymentAmount)) {
-				alert('Payment amount should be a numeric value.');
+				bootbox.alert('Payment amount should be a numeric value.');
 				obj.value = putBackAmount.toFixed(vFixedDecimal);
 			}
 			
 			if(paymentAmount > parseFloat(document.getElementById('payableAmt'+index).value) ) {
-				alert('Payment amount should not be greater than Payable amount');
+				bootbox.alert('Payment amount should not be greater than Payable amount');
 				obj.value = putBackAmount.toFixed(vFixedDecimal);
 			}
 			
@@ -524,57 +498,37 @@
 			document.getElementById('paymentAmountspan').innerHTML = document.getElementById('grandTotal').value;
 		}
 		
-		function validateAppoveUser(name,value){
-			//document.getElementById('lblError').innerHTML ="";
-			document.getElementById("actionName").value= name;
-
-			<s:if test="%{wfitemstate =='END'}">
-				if(value == 'Approve' || value == 'Reject') {
-					document.getElementById("approverUserId").value=-1;
-					return true;
-				}
-			</s:if>
-			<s:else>
-				if( (value == 'Approve' || value == 'Forward' || value=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("please select User");
-					//document.getElementById('lblError').innerHTML ="Please Select the user";
-					return false;
-				}
-			</s:else>
-			
-			return true;
-		}
 		
 		
-		function validate(name,value)
+		function onSubmit()
 		{
 			if(dom.get('vouchernumber') && dom.get('vouchernumber').value=='')
 			{
-				alert('Please Enter voucher number');
+				bootbox.alert('Please Enter voucher number');
 				return false;
 			}
 			if(dom.get('voucherdate').value=='')
 			{
-				alert("Please Select the Voucher Date!!");
+				bootbox.alert("Please Select the Voucher Date!!");
 				return false;
 			}
 			if(dom.get('billSubType').value!='TNEB')
 			{
 				if(dom.get('bankbranch').options[dom.get('bankbranch').selectedIndex].value==-1)
 				{
-					alert("Please Select the Bank!!");
+					bootbox.alert("Please Select the Bank!!");
 					return false;
 				}
 				if(dom.get('bankaccount').options[dom.get('bankaccount').selectedIndex].value==-1)
 				{
-					alert("Please Select the Bank Account");
+					bootbox.alert("Please Select the Bank Account");
 					return false;
 				}
 			}
 		
 			if(document.getElementById('grandTotal').value==0 || document.getElementById('grandTotal').value=='NaN')
 			{
-				alert('Payment Amount should be greater than zero!');
+				bootbox.alert('Payment Amount should be greater than zero!');
 				dom.get('tabber1').onclick();
 				return false;
 			}
@@ -583,16 +537,12 @@
 				{
 					if(dom.get("newPartyName").value=='')
 					{
-						alert('Enter Party Name to Chnage');
+						bootbox.alert('Enter Party Name to Chnage');
 						dom.get("newPartyName").focus();
 						return false;
 					}
 				}
 			</s:if>
-			if(!validateAppoveUser(name,value))
-			{
-			return false;
-			}
 			document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
 			document.forms[0].submit();
 			return true;
@@ -601,7 +551,7 @@
 		{
 			if(obj.value.length>250)
 			{
-				alert('Max 250 characters are allowed for comments. Remaining characters are truncated.')
+				bootbox.alert('Max 250 characters are allowed for comments. Remaining characters are truncated.')
 				obj.value = obj.value.substring(1,250);
 			}
 		}

@@ -94,7 +94,7 @@
 					jQuery('#zoneId').val('-1');
 					jQuery('#wardId').val('-1');
 					jQuery('#areaId').val('-1');
-					alert("No boundary details mapped for locality")
+					bootbox.alert("No boundary details mapped for locality")
 				}
 			});
 		});

@@ -38,24 +38,24 @@
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 			function openDetails(obj,ctrlName,screenName,gn,prefix){
-			  // alert("opendetails");
+			  // bootbox.alert("opendetails");
 				var trObj=obj.parentNode.parentNode;
 				var glObj= PageManager.DataService.getControlInBranch(trObj,ctrlName);
 				var filter='';
-				//alert(glObj.type.substring(0,6)+','+glObj.options[glObj.selectedIndex].text)
+				//bootbox.alert(glObj.type.substring(0,6)+','+glObj.options[glObj.selectedIndex].text)
 				if(glObj.type.substring(0,6)=='select' || glObj.type.substring(0,6)=='SELECT')
 					filter = glObj.options[glObj.selectedIndex].text;
 				else
 				 	filter=glObj.value;
-				//alert('filter='+filter);
+				//bootbox.alert('filter='+filter);
 				tempObj=null;
 				if(!filter){
-					alert("select account code first");
+					bootbox.alert("select account code first");
 					return;
 				}
-				//  alert("before oldlist"+trObj.rowIndex+gn+prefix);
+				//  bootbox.alert("before oldlist"+trObj.rowIndex+gn+prefix);
 				var oldList=getOldList(trObj.rowIndex,gn,prefix);
-				//  alert("after oldlist");
+				//  bootbox.alert("after oldlist");
 				var screenData='';
 				var mode=PageManager.DataService.getQueryField("showMode");
 				//Disable all when show Mode="view" Or "Modify"
@@ -64,7 +64,7 @@
 				if(screenName){
 					screenData='&screenName='+screenName;
 				}
-				//alert('before showmodaldialog...filter'+filter);
+				//bootbox.alert('before showmodaldialog...filter'+filter);
 				var sRtn =showModalDialog("/"+getContext()+"/HTML/VMC/AccountDetails.html?accCode="+filter+"&oldList="+oldList+screenData,"","dialogLeft=300;dialogTop=210;dialogWidth=305pt;dialogHeight=300pt;status=no;");
 				
 				if(!sRtn || sRtn.length==0)return;
@@ -136,7 +136,7 @@
 					tempObj.value=rowIdx;
 					tempObj=PageManager.DataService.getControlInBranch(newRow,prefix+"grid_amount");
 					tempObj.value=rowContents[3];
-					//alert(tempObj.value);
+					//bootbox.alert(tempObj.value);
 					tempObj=PageManager.DataService.getControlInBranch(newRow,prefix+"grid_detCode");
 					tempObj.value=rowContents[4];
 				}
@@ -160,7 +160,7 @@
 				for(var i=1;i<tableObj.rows.length;i++)
 				{
 					tempObj=PageManager.DataService.getControlInBranch(tableObj.rows[i],prefix+"grid_rowIndex");
-					//alert("comparing"+tempObj.value+" and"+rowIdx);
+					//bootbox.alert("comparing"+tempObj.value+" and"+rowIdx);
 					if(parseInt(tempObj.value)==rowIdx){
 						result+=";";
 						result+=PageManager.DataService.getControlInBranch(tableObj.rows[i],prefix+"grid_detTypeId").value;
@@ -388,13 +388,13 @@
 					// if only payee details entered and amount is not entered
 							if(eval(dedAmount1)<eval(entitytotal1))
 								{
-									alert(" amount should be equal to the total payee amount in Row "+ i);
+								bootbox.alert(" amount should be equal to the total payee amount in Row "+ i);
 									PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
 									return false;
 								}
 							else if((eval(entitytotal1)!=0)&&eval(dedAmount1)>eval(entitytotal1))
 								{
-									alert(" amount should be equal to the total payee amount in Row "+ i);
+								bootbox.alert(" amount should be equal to the total payee amount in Row "+ i);
 									PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
 									return false;
 								}
@@ -406,7 +406,7 @@
 						{
 							if(eval(dedAmount1) > eval(entitytotal1) || eval(dedAmount1) < eval(entitytotal1) && entitytotal1!= "-0")
 							{
-								alert("Payees amount should be equal to the total amount in Row "+ i);
+								bootbox.alert("Payees amount should be equal to the total amount in Row "+ i);
 								PageManager.DataService.getControlInBranch(gltable.rows[i],columnname).focus();
 								return false;
 							}

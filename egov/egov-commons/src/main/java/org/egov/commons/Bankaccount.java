@@ -63,158 +63,148 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
+
 @Entity
 @Table(name = "BANKACCOUNT")
 @SequenceGenerator(name = Bankaccount.SEQ_BANKACCOUNT, sequenceName = Bankaccount.SEQ_BANKACCOUNT, allocationSize = 1)
 public class Bankaccount extends AbstractAuditable implements java.io.Serializable {
 
-        private static final long serialVersionUID = 1L;
-        public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
-        @DocumentId
-        @Id
-        @GeneratedValue(generator = SEQ_BANKACCOUNT, strategy = GenerationType.SEQUENCE)
-        private Long id;
-        @ManyToOne
-        @JoinColumn(name = "branchid",nullable = true)
-        private Bankbranch bankbranch;
-        @ManyToOne
-        @JoinColumn(name = "glcodeid")
-        private CChartOfAccounts chartofaccounts;
-        @ManyToOne
-        @JoinColumn(name = "fundid")
-        private Fund fund;
-        @NotNull
-        private String accountnumber;
-        private String accounttype;
-        private String narration;
-        @NotNull
-        private int isactive;
-        @NotNull
-        private BigDecimal currentbalance;
-        private String payTo;
-        @Enumerated(EnumType.STRING)
-        @Column(name = "type")
-        private BankAccountType type;
-        @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "bankaccount")
-        private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<EgSurrenderedCheques>(0);
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_BANKACCOUNT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "branchid", nullable = true)
+    private Bankbranch bankbranch;
+    @ManyToOne
+    @JoinColumn(name = "glcodeid")
+    private CChartOfAccounts chartofaccounts;
+    @ManyToOne
+    @JoinColumn(name = "fundid")
+    private Fund fund;
+    @NotNull
+    private String accountnumber;
+    private String accounttype;
+    private String narration;
+    @NotNull
+    private int isactive;
+    private String payTo;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private BankAccountType type;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "bankaccount")
+    private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<EgSurrenderedCheques>(0);
 
-        public Bankaccount() {
-                //For hibernate to work
-        }
+    public Bankaccount() {
+        // For hibernate to work
+    }
 
-        public Bankaccount(Bankbranch bankbranch, String accountnumber, String accounttype, int isactive, Date created, BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance, String payTo, BankAccountType type) {
-                this.bankbranch = bankbranch;
-                this.accountnumber = accountnumber;
-                this.accounttype = accounttype;
-                this.isactive = isactive;
-                this.currentbalance = currentbalance;
-                this.payTo = payTo;
-                this.type = type;
-        }
+    public Bankaccount(Bankbranch bankbranch, String accountnumber, String accounttype, int isactive, Date created,
+            BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance, String payTo, BankAccountType type) {
+        this.bankbranch = bankbranch;
+        this.accountnumber = accountnumber;
+        this.accounttype = accounttype;
+        this.isactive = isactive;
+        this.payTo = payTo;
+        this.type = type;
+    }
 
-        public Bankaccount(Bankbranch bankbranch, CChartOfAccounts chartofaccounts, Fund fund, String accountnumber, String accounttype, String narration, int isactive, Date created, BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance,
-                        String payTo, Set<EgSurrenderedCheques> egSurrenderedChequeses) {
-                this.bankbranch = bankbranch;
-                this.chartofaccounts = chartofaccounts;
-                this.fund = fund;
-                this.accountnumber = accountnumber;
-                this.accounttype = accounttype;
-                this.narration = narration;
-                this.isactive = isactive;
-                this.currentbalance = currentbalance;
-                this.payTo = payTo;
-                this.egSurrenderedChequeses = egSurrenderedChequeses;
-        }
+    public Bankaccount(Bankbranch bankbranch, CChartOfAccounts chartofaccounts, Fund fund, String accountnumber,
+            String accounttype, String narration, int isactive, Date created, BigDecimal modifiedby, Date lastmodified,
+            BigDecimal currentbalance,
+            String payTo, Set<EgSurrenderedCheques> egSurrenderedChequeses) {
+        this.bankbranch = bankbranch;
+        this.chartofaccounts = chartofaccounts;
+        this.fund = fund;
+        this.accountnumber = accountnumber;
+        this.accounttype = accounttype;
+        this.narration = narration;
+        this.isactive = isactive;
+        this.payTo = payTo;
+        this.egSurrenderedChequeses = egSurrenderedChequeses;
+    }
 
-        public Long getId() {
-                return this.id;
-        }
+    public Long getId() {
+        return this.id;
+    }
 
-        public void setId(Long id) {
-                this.id = id;
-        }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        public Bankbranch getBankbranch() {
-                return this.bankbranch;
-        }
+    public Bankbranch getBankbranch() {
+        return this.bankbranch;
+    }
 
-        public void setBankbranch(Bankbranch bankbranch) {
-                this.bankbranch = bankbranch;
-        }
+    public void setBankbranch(Bankbranch bankbranch) {
+        this.bankbranch = bankbranch;
+    }
 
-        public CChartOfAccounts getChartofaccounts() {
-                return this.chartofaccounts;
-        }
+    public CChartOfAccounts getChartofaccounts() {
+        return this.chartofaccounts;
+    }
 
-        public void setChartofaccounts(CChartOfAccounts chartofaccounts) {
-                this.chartofaccounts = chartofaccounts;
-        }
+    public void setChartofaccounts(CChartOfAccounts chartofaccounts) {
+        this.chartofaccounts = chartofaccounts;
+    }
 
-        public Fund getFund() {
-                return this.fund;
-        }
+    public Fund getFund() {
+        return this.fund;
+    }
 
-        public void setFund(Fund fund) {
-                this.fund = fund;
-        }
+    public void setFund(Fund fund) {
+        this.fund = fund;
+    }
 
-        public String getAccountnumber() {
-                return this.accountnumber;
-        }
+    public String getAccountnumber() {
+        return this.accountnumber;
+    }
 
-        public void setAccountnumber(String accountnumber) {
-                this.accountnumber = accountnumber;
-        }
+    public void setAccountnumber(String accountnumber) {
+        this.accountnumber = accountnumber;
+    }
 
-        public String getAccounttype() {
-                return this.accounttype;
-        }
+    public String getAccounttype() {
+        return this.accounttype;
+    }
 
-        public void setAccounttype(String accounttype) {
-                this.accounttype = accounttype;
-        }
+    public void setAccounttype(String accounttype) {
+        this.accounttype = accounttype;
+    }
 
-        public String getNarration() {
-                return this.narration;
-        }
+    public String getNarration() {
+        return this.narration;
+    }
 
-        public void setNarration(String narration) {
-                this.narration = narration;
-        }
+    public void setNarration(String narration) {
+        this.narration = narration;
+    }
 
-        
+    public BankAccountType getType() {
+        return type;
+    }
 
-        public BigDecimal getCurrentbalance() {
-                return this.currentbalance;
-        }
+    public void setType(BankAccountType type) {
+        this.type = type;
+    }
 
-        public void setCurrentbalance(BigDecimal currentbalance) {
-                this.currentbalance = currentbalance;
-        }
-        
-        public BankAccountType getType() {
-                return type;
-        }
+    public Set<EgSurrenderedCheques> getEgSurrenderedChequeses() {
+        return this.egSurrenderedChequeses;
+    }
 
-        public void setType(BankAccountType type) {
-                this.type = type;
-        }
-        
-        public Set<EgSurrenderedCheques> getEgSurrenderedChequeses() {
-                return this.egSurrenderedChequeses;
-        }
+    public void setEgSurrenderedChequeses(Set<EgSurrenderedCheques> egSurrenderedChequeses) {
+        this.egSurrenderedChequeses = egSurrenderedChequeses;
+    }
 
-        public void setEgSurrenderedChequeses(Set<EgSurrenderedCheques> egSurrenderedChequeses) {
-                this.egSurrenderedChequeses = egSurrenderedChequeses;
-        }
+    public String getPayTo() {
+        return payTo;
+    }
 
-        public String getPayTo() {
-                return payTo;
-        }
-
-        public void setPayTo(String payTo) {
-                this.payTo = payTo;
-        }
+    public void setPayTo(String payTo) {
+        this.payTo = payTo;
+    }
 
     public int getIsactive() {
         return isactive;

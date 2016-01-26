@@ -95,6 +95,7 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -212,6 +213,7 @@ public class PropertyTransferService {
                     propertyOwner, order++);
             basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
         }
+        propertyMutation.setMutationDate(new Date());
         basicPropertyService.persist(basicProperty);
     }
 
@@ -341,8 +343,8 @@ public class PropertyTransferService {
             basicProperty.setUnderWorkflow(false);
         } else {
             final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
-            noticeBean.setUlbLogo(cityLogo);
             noticeBean.setMunicipalityName(cityName);
+            BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
             reportParams.put("userId", EgovThreadLocals.getUserId());
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
@@ -351,18 +353,20 @@ public class PropertyTransferService {
             noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
             noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
             noticeBean.setRegDocNo(propertyMutation.getDeedNo());
-            noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
-            noticeBean.setAssessmentNo(propertyMutation.getBasicProperty().getUpicNo());
-            if (propertyMutation.getBasicProperty().getAddress() != null) {
-                PropertyAddress address = propertyMutation.getBasicProperty().getAddress();
+            noticeBean.setAssessmentNo(basicProp.getUpicNo());
+            noticeBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+            if (basicProp.getAddress() != null) {
+                PropertyAddress address = basicProp.getAddress();
+                noticeBean.setOwnerAddress(address.toString());
                 if (StringUtils.isNotBlank(address.getHouseNoBldgApt()))
                     noticeBean.setDoorNo(address.getHouseNoBldgApt());
                 else
                     noticeBean.setDoorNo("N/A");
             }
-
+            PropertyID propertyId = basicProp.getPropertyID();
+            noticeBean.setLocalityName(propertyId.getLocality().getName());
             final ReportRequest reportInput = new ReportRequest(
-                    PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_NOTICE, noticeBean, reportParams);
+                    PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE, noticeBean, reportParams);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {

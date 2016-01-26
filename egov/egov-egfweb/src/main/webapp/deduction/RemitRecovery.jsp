@@ -68,7 +68,7 @@ function onBodyLoad()
 	var target="<%=(request.getAttribute("alertMessage"))%>";
 	if(target!="null")
 	{
-		alert("<%=request.getAttribute("alertMessage")%>");		
+		bootbox.alert("<%=request.getAttribute("alertMessage")%>");		
 	}
 	var buttonType="${buttonType}";	
 	if(buttonType == "saveclose")
@@ -233,21 +233,21 @@ function ButtonPress(arg)
 	var mode="${mode}";
 	if(document.RemitRecoveryForm.fund.value == "0")
 	{
-		alert("Select Fund");
+		bootbox.alert("Select Fund");
 		var temp="document.RemitRecoveryForm.fund.focus();";
 		setTimeout(temp,0);		
 		return;
 	}
 	if(document.RemitRecoveryForm.recovery.value == "0")
 	{
-		alert("Select Recovery Name");		
+		bootbox.alert("Select Recovery Name");		
 		var temp="document.RemitRecoveryForm.recovery.focus();";
 		setTimeout(temp,0);	
 		return;
 	}
 	if(document.RemitRecoveryForm.month.value == "" || document.RemitRecoveryForm.month.value == "0")
 	{
-		alert("Select Month");		
+		bootbox.alert("Select Month");		
 		var temp="document.RemitRecoveryForm.month.focus();";
 		setTimeout(temp,0);	
 		return;
@@ -255,7 +255,7 @@ function ButtonPress(arg)
 	
 	if(document.RemitRecoveryForm.year.value == "0")
 	{
-		alert("Select Year");		
+		bootbox.alert("Select Year");		
 		var temp="document.RemitRecoveryForm.year.focus();";
 		setTimeout(temp,0);	
 		return;
@@ -281,14 +281,14 @@ function ButtonPress(arg)
 	{
 		if(document.RemitRecoveryForm.chequeNo.value=="")
 		{
-			alert("Select Cheque Number!!");
+			bootbox.alert("Select Cheque Number!!");
 			var temp="document.RemitRecoveryForm.chequeNo.focus();";
 			setTimeout(temp,0);	
 			return;
 		}
 		if(document.RemitRecoveryForm.chequeDate.value=="")
 		{
-			alert("Enter Cheque Date!!");
+			bootbox.alert("Enter Cheque Date!!");
 			var temp="document.RemitRecoveryForm.chequeDate.focus();";
 			setTimeout(temp,0);	
 			return;
@@ -298,14 +298,14 @@ function ButtonPress(arg)
 	{
 		if(document.RemitRecoveryForm.newChequeNo.value=="")
 		{
-			alert("Select New Cheque Number!!");			
+			bootbox.alert("Select New Cheque Number!!");			
 			var temp="document.RemitRecoveryForm.newChequeNo.focus();";
 			setTimeout(temp,0);	
 			return;
 		}
 		if(document.RemitRecoveryForm.newChequeDate.value=="")
 		{
-			alert("Enter New Cheque Date!!");
+			bootbox.alert("Enter New Cheque Date!!");
 			var temp="document.RemitRecoveryForm.newChequeDate.focus();";
 			setTimeout(temp,0);	
 			return;
@@ -337,14 +337,14 @@ function validate()
 {
 	if(document.RemitRecoveryForm.bank.value == "0")
 	{
-		alert("Select Bank");
+		bootbox.alert("Select Bank");
 		var temp="document.RemitRecoveryForm.bank.focus();";
 		setTimeout(temp,0);		
 		return;
 	}
 	if(document.RemitRecoveryForm.bankAccount.value == "")
 	{
-		alert("Select Bank Account");		
+		bootbox.alert("Select Bank Account");		
 		var temp="document.RemitRecoveryForm.bankAccount.focus();";
 		setTimeout(temp,0);	
 		return;
@@ -358,13 +358,13 @@ function nextChqNo()
 	var bankBr=document.getElementById("bank");
 	if(bankBr.value=="0")
 	{
-	  alert("Select Bank and Bank Account!!");
+		bootbox.alert("Select Bank and Bank Account!!");
 	  return;
 	}
 
 	if(obj.value=="")
 	{
-	  alert("Select Bank Account!!");
+		bootbox.alert("Select Bank Account!!");
 	  return;
 	}
 	var accNo=obj.options[obj.selectedIndex].text;
@@ -381,13 +381,13 @@ function nextNewChqNo()
 	var bankBr=document.getElementById("bank");
 	if(bankBr.value=="0")
 	{
-	  alert("Select Bank and Bank Account!!");
+		bootbox.alert("Select Bank and Bank Account!!");
 	  return;
 	}
 
 	if(obj.value=="")
 	{
-	  alert("Select Bank Account!!");
+		bootbox.alert("Select Bank Account!!");
 	  return;
 	}
 	var accNo=obj.options[obj.selectedIndex].text;
@@ -409,7 +409,7 @@ function getTotalRemittAmt()
 
 		 	if(isNaN(getControlInBranch(tbl.rows[i],'remittAmt').value))
 			{			
-				alert("Remitt Amount must be an numeric value");	
+		 		bootbox.alert("Remitt Amount must be an numeric value");	
 				getControlInBranch(tbl.rows[i],'remittAmt').value="";			
 				getControlInBranch(tbl.rows[i],'remittAmt').focus();
 				return;
@@ -434,14 +434,14 @@ function validateRmtAmt(obj)
 		{			
 			if(isNaN(getControlInBranch(tbl.rows[i],'remittAmt').value))
 			{			
-				alert("Remitt Amount must be a positive numeric value");	
+				bootbox.alert("Remitt Amount must be a positive numeric value");	
 				getControlInBranch(tbl.rows[i],'remittAmt').value="";			
 				getControlInBranch(tbl.rows[i],'remittAmt').focus();
 				return;
 			}
 			else if(parseFloat(getControlInBranch(tbl.rows[i],'remittAmt').value)<0)
 			{
-				alert("Remitt Amount must be a positive numeric value");	
+				bootbox.alert("Remitt Amount must be a positive numeric value");	
 				getControlInBranch(tbl.rows[i],'remittAmt').value="";			
 				getControlInBranch(tbl.rows[i],'remittAmt').focus();
 				return;
@@ -460,7 +460,7 @@ function validateRmtAmt(obj)
 							{
 								if(eval(getControlInBranch(tbl.rows[i],'remittAmt').value)>eval("<%=rrf.getRemittAmt()[j]%>"))
 								{
-									alert("Remitt Amount cannot be greater than the sum of Deducted Amount and already Remitted Amount!!");
+									bootbox.alert("Remitt Amount cannot be greater than the sum of Deducted Amount and already Remitted Amount!!");
 									getControlInBranch(tbl.rows[i],'remittAmt').value="";
 									getControlInBranch(tbl.rows[i],'remittAmt').focus();
 									return false;
@@ -476,7 +476,7 @@ function validateRmtAmt(obj)
 						{	
 							if((eval(getControlInBranch(tbl.rows[i],'remittAmt').value)-eval("${rd.remittedamt}"))>(eval("${rd.egRemittanceGldtl.gldtlamt}")-eval("${rd.egRemittanceGldtl.remittedamt}")))
 							{
-								alert("Remitt Amount cannot be greater than the sum of Deducted Amount and already Remitted Amount!!");
+								bootbox.alert("Remitt Amount cannot be greater than the sum of Deducted Amount and already Remitted Amount!!");
 								getControlInBranch(tbl.rows[i],'remittAmt').value="";
 								getControlInBranch(tbl.rows[i],'remittAmt').focus();
 								return false;

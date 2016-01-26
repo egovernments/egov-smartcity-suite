@@ -49,17 +49,17 @@
 
 	function validateForMandatory(){
 		if(document.getElementById('approverDept').value == ""){
-			alert("Select approver department");
+			bootbox.alert("Select approver department");
 			document.getElementById('approverDept').focus();
 			return "false";
 		}
 		if(document.getElementById('approverDesig').value == ""){
-			alert("Select approver designation");
+			bootbox.alert("Select approver designation");
 			document.getElementById('approverDesig').focus();
 			return "false";
 		}
 		if(document.getElementById('approverEmpAssignmentId').value == ""){
-			alert("Select approver employee");
+			bootbox.alert("Select approver employee");
 			document.getElementById('approverEmpAssignmentId').focus();
 			return "false";
 		}	

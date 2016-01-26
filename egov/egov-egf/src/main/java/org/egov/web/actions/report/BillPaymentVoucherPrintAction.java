@@ -59,10 +59,11 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.utils.EntityType;
+import org.egov.commons.utils.EntityType; 
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -82,6 +83,7 @@ import org.hibernate.SQLQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
+		@Result(name=BillPaymentVoucherPrintAction.PRINT , location="billPaymentVoucherPrint-print.jsp"),
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=BankPaymentVoucherReport.pdf" }),
                 @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -102,7 +104,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     String paymentMode = "";
     String chequeNoComp = "";
     Long chequeNoCompL;
-    String jasperpath = "/org/egov/web/actions/report/billPaymentVoucherReport.jasper";
+    String jasperpath = "/reports/templates/billPaymentVoucherReport.jasper";
     static final long serialVersionUID = 1L;
     static final String PRINT = "print";
     CVoucherHeader voucher = new CVoucherHeader();
@@ -141,7 +143,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         paramMap.put("rtgsRefNo", rtgsRefNo);
         paramMap.put("paymentMode", paymentMode);
         paramMap.put("rtgsDate", rtgsDate);
-        paramMap.put("ulbName", getUlbName());
+        paramMap.put("ulbName", ReportUtil.getCityName());
         paramMap.put("narration", getPaymentNarration());
 
         return paramMap;
@@ -357,14 +359,14 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     private void generateVoucherReportList() {
         if (voucher != null) {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.equals(vd.getCreditAmount())) {
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue()))==0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd);
                     voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());
                     voucherReportList.add(voucherReport);
                 }
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.equals(vd.getDebitAmount())) {
+            	  if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue()))==0){
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd);
                     voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());

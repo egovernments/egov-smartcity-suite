@@ -40,9 +40,13 @@
 
 package org.egov.tl.web.actions.masters;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -54,11 +58,19 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.RateTypeEnum;
+import org.egov.tl.service.FeeMatrixService;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = LicenseSubCategoryAction.NEW, location = "licenseSubCategory-new.jsp"),
@@ -84,11 +96,25 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	@Autowired
 	@Qualifier("licenseCategoryService")
 	private LicenseCategoryService licenseCategoryService;
+	@Autowired
+	@Qualifier("feeTypeService")
+	private FeeTypeService feeTypeService;
+	@Autowired
+	@Qualifier("unitOfMeasurementService")
+	private UnitOfMeasurementService unitOfMeasurementService;
+	@Autowired
+	@Qualifier("feeMatrixService")
+	private FeeMatrixService feeMatrixService;
+	private boolean feeExists;
 
 	private static final Logger LOGGER = Logger.getLogger(LicenseSubCategoryAction.class);
+	
+	private List<LicenseSubCategoryDetails> subCategoryMappingDetails = new ArrayList<LicenseSubCategoryDetails>();
+	
 
 	// UI field
 	private String userMode;
+	private String licenseFee;
 
 	@Override
 	public Object getModel() {
@@ -98,16 +124,28 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 
 	@Override
 	public void prepare() {
-
-		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
+	        licenseFee=Constants.LICENSE_FEE_TYPE;
+		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAll()));
+		addDropdownData("feeTypeList", feeTypeService.findAll());
+		addDropdownData("rateTypeList", Arrays.asList(RateTypeEnum.values()));
+		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
 			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.entity.LicenseSubCategory order by id")));
 		if (getId() != null){
 			subCategory = licenseSubCategoryService.find("from org.egov.tl.entity.LicenseSubCategory where id=?", getId());
 			setCategoryId(subCategory.getCategory().getId());
+			// To check whether fee is defined for the subcategory
+			if(userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT))){
+	                    List<FeeMatrix> feeMatrixList = feeMatrixService.findBySubCategory(subCategory);
+	                    if(feeMatrixList!=null && !feeMatrixList.isEmpty() && feeMatrixList.size()>0){
+	                        feeExists=true;
+	                    } else {
+	                        feeExists=false;
+	                    }
+	                }
 		}
-	}
+	}      
 
 	/**
 	 * @param licenseCategoryList
@@ -175,8 +213,10 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public String save() throws NumberFormatException, ApplicationException {
 		try {
 			if(categoryId!=null){
-				subCategory.setCategory(licenseCategoryService.find("from LicenseCategory where id=?", categoryId));
+				subCategory.setCategory(licenseCategoryService.findById(categoryId));
 			}
+			subCategory.getLicenseSubCategoryDetails().clear();
+			populateSubCategoryDetails();
 			subCategory = licenseSubCategoryService.persist(subCategory);
 		} catch (final ValidationException valEx) {
 			LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
@@ -189,7 +229,18 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		userMode = SUCCESS;
 		return NEW;
 	}
-
+	
+	protected void populateSubCategoryDetails() {
+	        for (LicenseSubCategoryDetails scDetails : subCategoryMappingDetails) {
+	            if(scDetails!=null){
+	                scDetails.setSubCategory(subCategory);
+	                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
+	                scDetails.setRateType(scDetails.getRateType());
+	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId())); 
+        	        subCategory.addLicenseSubCategoryDetails(scDetails);
+	            }
+	        } 
+	    }
 
 	public String getUserMode() {
 		return userMode;
@@ -238,6 +289,30 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public void setSubCategory(LicenseSubCategory subCategory) {
 		this.subCategory = subCategory;
 	}
+
+    public String getLicenseFee() {
+        return licenseFee;
+    }
+
+    public void setLicenseFee(String licenseFee) {
+        this.licenseFee = licenseFee;
+    }
+
+    public List<LicenseSubCategoryDetails> getSubCategoryMappingDetails() {
+        return subCategoryMappingDetails;
+    }
+
+    public void setSubCategoryMappingDetails(List<LicenseSubCategoryDetails> subCategoryMappingDetails) {
+        this.subCategoryMappingDetails = subCategoryMappingDetails;
+    }
+
+    public boolean isFeeExists() {
+        return feeExists;
+    }
+
+    public void setFeeExists(boolean feeExists) {
+        this.feeExists = feeExists;
+    }
 
 
 }

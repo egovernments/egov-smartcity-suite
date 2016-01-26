@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-01-18T18:22:47 -->
+<!-- 2016-01-20T15:42:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="95dcd61e-c5f2-460d-92a5-6377a010a11d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.collection.constants.*"/>
@@ -124,12 +124,12 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="18" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{reports.title.corporation_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="20">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="110" y="0" width="445" height="20" uuid="fa13f78a-7247-4ebc-bc44-56be5becbc49"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="98" y="0" width="457" height="20" uuid="fa13f78a-7247-4ebc-bc44-56be5becbc49"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -407,50 +407,7 @@
 				<textFieldExpression><![CDATA[$F{receiptMisc}.getIdFunctionary().getName()]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="20">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="0" width="355" height="20" uuid="a3f9ec92-f49d-4f60-a970-1f11b723d3f9"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{paidBy}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="98" y="0" width="102" height="20" uuid="bb8aa43c-8f2c-471e-a99e-239d93560faf"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[Paid By:	]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="98" height="20" uuid="6d637670-80af-4fd2-b3e5-9090fedfe312"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Courier-Bold" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
-		</band>
+		<band/>
 		<band height="20">
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" forecolor="#000000" uuid="adb7d5d6-f18b-4303-b88b-0b73f5575306">

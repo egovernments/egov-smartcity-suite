@@ -109,20 +109,20 @@ function validateNotEmpty( strValue )
  	{
  		if(amt < 0  )
  		{
- 			alert("Please enter Integer for Cheque/DD No.");
+ 			bootbox.alert("Please enter Integer for Cheque/DD No.");
  			objt.value="";
  			objt.focus();
  		}
  		if(isNaN(amt))
  		{
- 			alert("Please enter a Integer for Cheque/DD No.");
+ 			bootbox.alert("Please enter a Integer for Cheque/DD No.");
  			objt.value="";
  			objt.focus();
  		}
  		var amtstr = new String(amt);
  		if(amtstr.indexOf(".") > -1)
  		{
- 			alert("Please enter a Integer for Cheque/DD No.");
+ 			bootbox.alert("Please enter a Integer for Cheque/DD No.");
  			objt.value="";
  			objt.focus();
  		}
@@ -145,14 +145,14 @@ function checkdecimalval(obj,amount)
 	{
 		if(amt < 0 )
 		{
-			alert("Please enter positive value for the amount paid");
+			bootbox.alert("Please enter positive value for the amount paid");
 			objt.focus();
 			return false;
 
 		}
 		if(isNaN(amt))
 		{
-			alert("Please enter a numeric value for the amount paid");
+			bootbox.alert("Please enter a numeric value for the amount paid");
 			objt.focus();
 			return false;
 
@@ -169,7 +169,7 @@ function checkdecimalvalwithneg(obj,amount)
 	{
 		if(isNaN(amt))
 		{
-			alert("Please enter a numeric value for the amount paid");
+			bootbox.alert("Please enter a numeric value for the amount paid");
 			objt.focus();
 			return false;
 
@@ -226,7 +226,7 @@ function checkfornumber(obj,val)
 	{
 	   if(isNaN(value))
 	   {
-		alert("Please enter a numeric value.");
+		bootbox.alert("Please enter a numeric value.");
 		objt.focus();
 		return false;
 	   }
@@ -260,7 +260,7 @@ function checkward()
 	
  if(document.FindForm2.wardid2.value == 0)
  {
-   alert("Please select the Ward first");
+   bootbox.alert("Please select the Ward first");
  }
  else
  {
@@ -272,7 +272,7 @@ function checkward1()
 	
  if(document.FindForm.wardid.value == 0)
  {
-   alert("Please select the Ward first");
+   bootbox.alert("Please select the Ward first");
  }
  else
  {
@@ -285,7 +285,7 @@ function checkforward()
 {
   if(document.dateForm.wardid.value == 0)
  {
-   alert("Please select the Ward first");
+   bootbox.alert("Please select the Ward first");
    return false;
  }
  else
@@ -315,8 +315,8 @@ function setlink()
 function getZoneValue()
 {
 	
-  	//alert('hi');	
-  	//alert('true');
+  	//bootbox.alert('hi');	
+  	//bootbox.alert('true');
 	link ="../maps/getZoneValue.html";
 	win1 =window.open(link,"Zoneidwindow",'scrollbars=yes,resizable=yes,height=450,width=525,status=yes');
 	win1.moveTo(10, 10);
@@ -328,8 +328,8 @@ function getZoneValue()
 function getZoneValueForRep()
 {
 	
-  	//alert('hi');	
-  	//alert('true');
+  	//bootbox.alert('hi');	
+  	//bootbox.alert('true');
 	link ="../maps/getZoneValueForRep.html";
 	win1 =window.open(link,"Zoneidwindow",'scrollbars=yes,resizable=yes,height=450,width=625,status=yes');
 	win1.moveTo(10, 10);
@@ -341,13 +341,13 @@ function getZoneValueForRep()
 function getWardValue()
 {
 	
-  	//alert('hi');	
-  	//alert('true');
+  	//bootbox.alert('hi');	
+  	//bootbox.alert('true');
   	var i = document.GrievanceForm.zoneID.value;
   	
   	if(i==0)
   	{  	
-  		alert('Please choose the zone first.');
+  		bootbox.alert('Please choose the zone first.');
   	}
   	else
   	{	
@@ -382,7 +382,7 @@ function FindFormsubmit1()
 	}
 	else
 	{
-		alert("Please fill in all the values for this method");
+		bootbox.alert("Please fill in all the values for this method");
 		return false;
 	}
 	
@@ -407,7 +407,7 @@ function FindFormsubmit2()
 	}
 	else
 	{
-		alert("Please fill in all the values for this method");
+		bootbox.alert("Please fill in all the values for this method");
 		return false;
 	}
 	
@@ -428,7 +428,7 @@ function FindFormsubmit3()
 	}
 	else
 	{
-		alert("Please fill in all the values for this method");
+		bootbox.alert("Please fill in all the values for this method");
 		return false;
 	}	
 	
@@ -470,7 +470,7 @@ function calculator()
 
 			var   m_currentbalance = eval(document.payment.currentbalance.value);
 			var   m_totalamtpaid= 0.00;
-				//alert('arrpntydmd'+arrtot);
+				//bootbox.alert('arrpntydmd'+arrtot);
 
 			//When a collection is made the collected amt is distributed as Arrears,Penalty(arr),Penalty(curr)and finally PT
 			//listed asper priority i.e whatever is the collnAmt first its taken for Arrears and then for penaltyArrs and so on..
@@ -531,41 +531,41 @@ function calculator()
 		// The current payment balance will become zero and the collection value shud be negative
 		if((collection + tempTotalCurrent > dmdpttot) && (collection>0))
 		{
-			//alert('>>document.payment.currentpaymentcollection.value 1:' + dmdpttot);
+			//bootbox.alert('>>document.payment.currentpaymentcollection.value 1:' + dmdpttot);
 			document.payment.currentpaymentcollection.value =roundoff(dmdpttot);
 			m_totalamtpaid +=dmdpttot;
 			//collection = collection-dmdpttot + m_currentcollection;
 			collection = collection-(dmdpttot - tempTotalCurrent);
-			//alert('collection-(dmdpttot - tempTotalCurrent) : '+collection-(dmdpttot - tempTotalCurrent));
+			//bootbox.alert('collection-(dmdpttot - tempTotalCurrent) : '+collection-(dmdpttot - tempTotalCurrent));
 			document.payment.currentpaymentbalance.value ="0.00";
 		}
 		else //		If the amount collected is less than the demand total all the reamining money goes to demand and collection becomes 0
 		{
-			//alert('>>document.payment.currentpaymentcollection.value 2:' + roundoff(collection + tempTotalCurrent));
+			//bootbox.alert('>>document.payment.currentpaymentcollection.value 2:' + roundoff(collection + tempTotalCurrent));
 			document.payment.currentpaymentcollection.value= roundoff(collection + tempTotalCurrent);
 			m_totalamtpaid += collection;
 			//document.payment.currentpaymentbalance.value=roundoff(dmdpttot- collection - m_currentcollection);
-			//alert('roundoff(dmdpttot- collection - tempTotalCurrent) : '+roundoff(dmdpttot- collection - tempTotalCurrent));
+			//bootbox.alert('roundoff(dmdpttot- collection - tempTotalCurrent) : '+roundoff(dmdpttot- collection - tempTotalCurrent));
 			document.payment.currentpaymentbalance.value=roundoff(dmdpttot- collection - tempTotalCurrent);
 			collection = 0;
 		}
 
 		if (m_totalbalanceamt < 0)
 		{
-			//alert('>>1 totaldemandamt'+totaldemandamt);
-			//alert('>>1 m_totalbalanceamt'+m_totalbalanceamt);			
-			//alert('>>1 m_totalamtpaid'+m_totalamtpaid);
-			//alert('>>1 collection'+collection);			
-			//alert('>>1 tempTotalCurrent'+tempTotalCurrent);			
+			//bootbox.alert('>>1 totaldemandamt'+totaldemandamt);
+			//bootbox.alert('>>1 m_totalbalanceamt'+m_totalbalanceamt);			
+			//bootbox.alert('>>1 m_totalamtpaid'+m_totalamtpaid);
+			//bootbox.alert('>>1 collection'+collection);			
+			//bootbox.alert('>>1 tempTotalCurrent'+tempTotalCurrent);			
 			
 			document.payment.totalbalance.value =  roundoff(m_totalbalanceamt - collection); 		
 		}
 		else
 		{
-			//alert('>>2 totaldemandamt'+totaldemandamt);
-			//alert('>>2 m_totalamtpaid'+m_totalamtpaid);
-			//alert('>>2 collection'+collection);			
-			//alert('>>2 tempTotalCurrent'+tempTotalCurrent);			
+			//bootbox.alert('>>2 totaldemandamt'+totaldemandamt);
+			//bootbox.alert('>>2 m_totalamtpaid'+m_totalamtpaid);
+			//bootbox.alert('>>2 collection'+collection);			
+			//bootbox.alert('>>2 tempTotalCurrent'+tempTotalCurrent);			
 			if(collection==0)
 			{			
 				document.payment.totalbalance.value =  roundoff(totaldemandamt - m_totalamtpaid - collection - tempTotalCurrent); 		
@@ -582,7 +582,7 @@ function calculator()
 function trimalltext(allelemobj)
 {
 	
-	//alert("in trimall"+allelemobj.length);
+	//bootbox.alert("in trimall"+allelemobj.length);
 	for(var i=0; i<allelemobj.length; i++)
 	{
 		if(allelemobj[i].type == "text")
@@ -604,43 +604,43 @@ function submitpaymentCheck()
 
   if(document.payment.collectionLocation[0].checked == false && (document.payment.receiptNumber.value == "" && document.payment.challanNumber.value == ""))
   {
-    	alert("Please fill in the Receipt No./Challan No.");
+    	bootbox.alert("Please fill in the Receipt No./Challan No.");
         return false;  	
   }
   if(document.payment.arrearscollection.value=="" || document.payment.arrearsbalance.value=="" || document.payment.arrearspenaltycollection.value=="" || document.payment.arrearspenaltybalance.value=="" || document.payment.currentpenaltycollection.value=="" || document.payment.currentpenaltybalance.value=="" || document.payment.currentpaymentbalance.value=="" )
   {
-      alert("Please fill in the payment details");
+      bootbox.alert("Please fill in the payment details");
       return false;
   }
   if(document.payment.totalcollection.value == "")
   {
-    alert("Please fill in the amount to be paid");
+    bootbox.alert("Please fill in the amount to be paid");
     return false;
   }
   if(document.payment.arrearsduration[0].checked == false && document.payment.arrearsduration[1].checked == false )
   {
   	if(document.payment.duration[0].checked == false && document.payment.duration[1].checked == false && document.payment.duration[2].checked == false && document.payment.duration[3].checked == false)
   	{
-      alert("Please select the type of payment");
+      bootbox.alert("Please select the type of payment");
       return false;
      } 
   }
   if(document.payment.modeOfPayment[0].checked == false && document.payment.modeOfPayment[1].checked == false && document.payment.modeOfPayment[2].checked == false )
   {
-    alert("Please select the payment type(Cash,Cheque or DD)");
+    bootbox.alert("Please select the payment type(Cash,Cheque or DD)");
     return false;
   }
   if(document.payment.modeOfPayment[1].checked == true)
   {
   	if(document.payment.chequeno.value=="")
   	{
-  		alert("Please fill in the Cheque Number");
+  		bootbox.alert("Please fill in the Cheque Number");
   		document.payment.chequeno.focus();
     	return false;
   	}
   	if(document.payment.chequedate.value=="")
 	{
-		alert("Please fill in the date of cheque");
+		bootbox.alert("Please fill in the date of cheque");
 		document.payment.chequeno.focus();
 		return false;
   	}
@@ -649,13 +649,13 @@ function submitpaymentCheck()
   {
   	if(document.payment.ddno.value=="")
   	{
-  		alert("Please fill in the DD Number");
+  		bootbox.alert("Please fill in the DD Number");
   		document.payment.ddno.focus();
     	return false;
   	}
   	if(document.payment.dddate.value=="")
 	{
-		alert("Please fill in the date of DD");
+		bootbox.alert("Please fill in the date of DD");
 		document.payment.dddate.focus();
 		return false;
   	}
@@ -664,7 +664,7 @@ function submitpaymentCheck()
   {
 	if(document.payment.banksname.value=="")
 	{
-		alert("Please fill in the Name of bank where Cheque or DD was drawn");
+		bootbox.alert("Please fill in the Name of bank where Cheque or DD was drawn");
 		document.payment.banksname.focus();
 		return false;
 	}
@@ -708,11 +708,11 @@ function updateFinalVars()
 	totalAmtinHeads = Math.round(totalAmtinHeads);	
 	var totcoll = Math.round(eval(document.payment.totalcollection.value));
 	
-	//alert("totalAmtinHeads :"+totalAmtinHeads);
-	//alert("eval(document.payment.totalcollection.value) :"+eval(document.payment.totalcollection.value));
+	//bootbox.alert("totalAmtinHeads :"+totalAmtinHeads);
+	//bootbox.alert("eval(document.payment.totalcollection.value) :"+eval(document.payment.totalcollection.value));
 	if(totalAmtinHeads != totcoll)
 	  {
-	      alert("The Total amount collected does not match the collection break up.");
+	      bootbox.alert("The Total amount collected does not match the collection break up.");
 	      return false;
 	  }
 	
@@ -821,7 +821,7 @@ function chequecancelreceipt()
 {
 	if (document.dateForm.receiptno.value == "")
 	{
-	 	alert("please enter a Receipt Number");
+	 	bootbox.alert("please enter a Receipt Number");
 	 	return false;
 	}
 	else
@@ -834,7 +834,7 @@ function chequecancelreceiptconfirm()
 {
 	if (document.ReceiptCancellationConfirm.reason.value == "")
 	{
-	 	alert("please enter a Reason for cancellation of receipt.");
+	 	bootbox.alert("please enter a Reason for cancellation of receipt.");
 	 	return false;
 	}
 	else

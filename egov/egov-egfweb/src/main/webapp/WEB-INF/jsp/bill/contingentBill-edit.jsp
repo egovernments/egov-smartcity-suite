@@ -377,7 +377,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {
@@ -445,7 +445,7 @@ var	url = path+"/voucher/common!ajaxLoadCheckList.action?billSubtypeId="+obj.val
 				document.getElementById("checkListsTable["+(Len)+"].val").options[<s:property value="#stat.index"/>]=new Option("<s:property value='value'/>", "<s:property value='key'/>");
 			</s:iterator>
 			document.getElementById("checkListsTable["+(Len)+"].val").value='na';
-			//alert("1");
+			//bootbox.alert("1");
 			}
 			}
 			
@@ -454,7 +454,7 @@ var	url = path+"/voucher/common!ajaxLoadCheckList.action?billSubtypeId="+obj.val
 	  }
  	};
 	req2.open("GET", url, true);
-	//alert(url)
+	//bootbox.alert(url)
 	req2.send(null);
 
 }
@@ -635,7 +635,7 @@ if(button!=undefined && button!="")
 
 if(document.getElementById("Errors").innerHTML=='')  
 {
-alert(succesMessage);
+bootbox.alert(succesMessage);
 
 if(button=="Save_Close")
 {

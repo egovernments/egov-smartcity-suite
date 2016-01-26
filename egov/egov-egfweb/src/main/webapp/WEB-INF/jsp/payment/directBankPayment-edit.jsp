@@ -153,7 +153,7 @@
 					check();
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}
 			
@@ -245,7 +245,7 @@
 					}
 				}
 				else{
-					alert("This row can not be deleted");
+					bootbox.alert("This row can not be deleted");
 				}
 			}        
 		});
@@ -422,7 +422,7 @@ function validateAppoveUser(name,value){
 			</s:if>
 			<s:else>
 				if( (value == 'Approve' || value == 'Forward' || value=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					alert("please select User");
+					bootbox.alert("please select User");
 					//document.getElementById('lblError').innerHTML ="Please Select the user";
 					return false;
 				}
@@ -439,7 +439,7 @@ function onLoadTask_edit() {
 			   updateVoucherNumber();
 		     if (button != null && button != "") {
 					if (document.getElementById("Errors").innerHTML == '') {
-					alert(succesMessage);
+					bootbox.alert(succesMessage);
 					   if (button == "Save_Close") {
 							window.close();
 						} else if (button == "Save_View") {
@@ -466,7 +466,7 @@ function onLoadTask_edit() {
 			{
 				if(parseFloat(document.getElementById('amount').value)>parseFloat(document.getElementById('availableBalance').value))
 				{
-					alert(insuffiecientBankBalance);
+					bootbox.alert(insuffiecientBankBalance);
 					return false;
 				}
 			}

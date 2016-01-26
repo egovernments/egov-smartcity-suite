@@ -39,89 +39,74 @@
  */
 package org.egov.tl.web.actions.reports;
 
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Action;
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.tl.service.LicenseReportService;
 import org.egov.tl.utils.Constants;
 
+import java.util.List;
+import java.util.Map;
+
 @Results({
-@Result(name = Constants.ZONE_WISE_REPORT, location = "tradeLicenseReports-"+Constants.ZONE_WISE_REPORT+".jsp"),
-@Result(name = Constants.WARD_WISE_REPORT, location = "tradeLicenseReports-"+Constants.WARD_WISE_REPORT+".jsp"),
-@Result(name = Constants.TRADE_WISE_REPORT, location = "tradeLicenseReports-"+Constants.TRADE_WISE_REPORT+".jsp"),
-@Result(name = Constants.LATE_RENEWALS_REPORT, location = "tradeLicenseReports-"+Constants.LATE_RENEWALS_REPORT+".jsp")
+        @Result(name = Constants.ZONE_WISE_REPORT, location = "tradeLicenseReports-" + Constants.ZONE_WISE_REPORT + ".jsp"),
+        @Result(name = Constants.WARD_WISE_REPORT, location = "tradeLicenseReports-" + Constants.WARD_WISE_REPORT + ".jsp"),
+        @Result(name = Constants.TRADE_WISE_REPORT, location = "tradeLicenseReports-" + Constants.TRADE_WISE_REPORT + ".jsp"),
+        @Result(name = Constants.LATE_RENEWALS_REPORT, location = "tradeLicenseReports-" + Constants.LATE_RENEWALS_REPORT + ".jsp")
 })
 public class TradeLicenseReportsAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -5143686000879352737L;
+
     private LicenseReportService licenseReportService;
     private EgovPaginatedList paginateList;
     private Integer zoneId;
     private List<Map<String, Object>> totalList;
 
-    /* to log errors and debugging information */
-    private final Logger LOGGER = Logger.getLogger(getClass());
-
-@Action(value="/reports/tradeLicenseReports-showZoneWiseReport")
+    @Action(value = "/reports/tradeLicenseReports-showZoneWiseReport")
     public String showZoneWiseReport() {
-
-        LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
                 parameters);
         paginateList = licenseReportService.getZoneWiseReportList(pno, Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE);
         totalList = licenseReportService.getTotalsForWardWiseReport(zoneId, Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE);
-        LOGGER.debug("Exiting From the showZoneWiseReport Method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.ZONE_WISE_REPORT;
     }
 
-@Action(value="/reports/tradeLicenseReports-showWardWiseReport")
+    @Action(value = "/reports/tradeLicenseReports-showWardWiseReport")
     public String showWardWiseReport() {
-        LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
                 parameters);
         paginateList = licenseReportService.getWardWiseReportList(zoneId, pno, Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE);
         totalList = licenseReportService.getTotalsForWardWiseReport(zoneId, Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE);
-        LOGGER.debug("Exiting from the showWardWiseReport Method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.WARD_WISE_REPORT;
     }
 
-@Action(value="/reports/tradeLicenseReports-showTradeWiseReport")
+    @Action(value = "/reports/tradeLicenseReports-showTradeWiseReport")
     public String showTradeWiseReport() {
-        LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
                 parameters);
         paginateList = licenseReportService.getTradeWiseReportList(pno, Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE, Constants.TRADELICENSE);
         totalList = licenseReportService.getTotalForTradeWiseReport(Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE, Constants.TRADELICENSE);
-        LOGGER.debug("Exiting from the showTradeWiseReport Method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.TRADE_WISE_REPORT;
     }
 
-@Action(value="/reports/tradeLicenseReports-showLateRenewalsReport")
+    @Action(value = "/reports/tradeLicenseReports-showLateRenewalsReport")
     public String showLateRenewalsReport() {
-        LOGGER.debug("Trade License Report Elements:<<<<<<<<<<>>>>>>>>>>>>>:" + toString());
         final String pno = licenseReportService.getParameterValue(Constants.PARAM_PAGE,
                 parameters);
         paginateList = licenseReportService.getLateRenewalsListReport(pno, Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE);
         totalList = licenseReportService.getTotalForLateRenewalsReport(Constants.TRADELICENSE_MODULENAME,
                 Constants.TRADELICENSE_LICENSETYPE);
-        LOGGER.debug("Exiting from the showLateRenewalsReport Method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.LATE_RENEWALS_REPORT;
     }
 
@@ -151,18 +136,6 @@ public class TradeLicenseReportsAction extends BaseFormAction {
 
     public void setTotalList(final List<Map<String, Object>> totalList) {
         this.totalList = totalList;
-    }
-
-    @Override
-    public String toString()
-    {
-        final StringBuilder str = new StringBuilder();
-        str.append(" TradeLicenseReportsAction={");
-        str.append(" licenseReportService=").append(licenseReportService == null ? "null" : licenseReportService.toString());
-        str.append(" paginateList=").append(paginateList == null ? "null" : paginateList.toString());
-        str.append(" zoneId=").append(zoneId == null ? "null" : zoneId.toString());
-        str.append(" totalList=").append(totalList == null ? "null" : totalList.toString());
-        return str.toString();
     }
 
     @Override

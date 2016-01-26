@@ -46,10 +46,16 @@
 	
 	<context:component-scan base-package="org.egov.adtax" />
 	
-    <bean id="advertisementDemandService" class="org.egov.adtax.service.AdvertisementDemandService">
-	</bean>
+    <bean id="advertisementDemandService" class="org.egov.adtax.service.AdvertisementDemandService"/>
 	
-     <bean id="ADTAXCollectionsInterface" class="org.egov.adtax.service.collection.AdvertisementTaxCollection" >
-   </bean>
-   
+    <bean id="ADTAXCollectionsInterface" class="org.egov.adtax.service.collection.AdvertisementTaxCollection" />
+   	
+   	<bean id="AdvertisementPermitDetailPersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.adtax.entity.AdvertisementPermitDetail" />
+    </bean>
+	
+	<bean id="AdvertisementPermitDetailInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="AdvertisementPermitDetailPersistenceService"/>
+    </bean>
+    <bean id="adtaxWorkflowCustomDefaultImpl" class="org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl" scope="prototype"/>
 </beans>

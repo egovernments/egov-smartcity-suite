@@ -155,7 +155,7 @@
 		{
 			if(document.bankReconciliationForm.recToDate.value == "")
 			{
-				alert("Enter Reconciliation Date");
+				bootbox.alert("Enter Reconciliation Date");
 				return;
 			}
 			else
@@ -163,14 +163,14 @@
 				var dat=validateDate(document.bankReconciliationForm.recToDate.value);
 				if (!dat) 
 				{
-					alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 					document.bankReconciliationForm.recToDate.focus();
 					return;
 				}
 			}
 			if(document.bankReconciliationForm.bankStatementDate.value == "")
 			{
-				alert("Enter Bank Statement Date");
+				bootbox.alert("Enter Bank Statement Date");
 				return;
 			}
 			else
@@ -178,7 +178,7 @@
 				var dat=validateDate(document.bankReconciliationForm.bankStatementDate.value);
 				if (!dat) 
 				{
-					alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 					document.bankReconciliationForm.bankStatementDate.focus();
 					return;
 				}
@@ -189,12 +189,12 @@
 			}
 			if(document.bankReconciliationForm.bankId.options[document.bankReconciliationForm.bankId.selectedIndex].value == 0)
 			{
-				alert("Select Bank");
+				bootbox.alert("Select Bank");
 				return;
 			}
 			if(document.bankReconciliationForm.accId.options[document.bankReconciliationForm.accId.selectedIndex].value == 0)
 			{
-				alert("Select Account Number");
+				bootbox.alert("Select Account Number");
 				return;
 			}
 			/*
@@ -203,26 +203,26 @@
 				
 				if(parseFloat(document.bankReconciliationForm.balAsPerStatement.value) < 0)
 				{
-				alert("Enter Bank Statement Balance");
+				bootbox.alert("Enter Bank Statement Balance");
 				return;
 				}
 				
 			}
 			else
 			{
-				alert("Enter Numeric value for  Bank Statement Balance");
+				bootbox.alert("Enter Numeric value for  Bank Statement Balance");
 				return;
 			}
 			*/
 			
 			if(document.bankReconciliationForm.balAsPerStatement.value == "")
 			{
-				alert("Enter Bank Statement Balance");
+				bootbox.alert("Enter Bank Statement Balance");
 				return;
 			}
 			if(isNaN(parseFloat(document.bankReconciliationForm.balAsPerStatement.value)))
 			{
-				alert("Enter Numeric value for  Bank Statement Balance");
+				bootbox.alert("Enter Numeric value for  Bank Statement Balance");
 				return;
 			}
 			
@@ -236,7 +236,7 @@
 			
 			if(document.bankReconciliationForm.recToDate.value == "")
 			{
-				alert("Enter Reconciliation Date");
+				bootbox.alert("Enter Reconciliation Date");
 				return;
 			}
 			else
@@ -244,14 +244,14 @@
 				var dat=validateDate(document.bankReconciliationForm.recToDate.value);
 				if (!dat) 
 				{
-					alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 					document.bankReconciliationForm.recToDate.focus();
 					return;
 				}
 			}
 			if(document.bankReconciliationForm.bankStatementDate.value == "")
 			{
-				alert("Enter Bank Statement Date");
+				bootbox.alert("Enter Bank Statement Date");
 				return;
 			}
 			else
@@ -259,7 +259,7 @@
 				var dat=validateDate(document.bankReconciliationForm.bankStatementDate.value);
 				if (!dat) 
 				{
-					alert('Invalid date format : Enter Date as dd/mm/yyyy');
+					bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 					document.bankReconciliationForm.bankStatementDate.focus();
 					return;
 				}
@@ -279,7 +279,7 @@
 					var dat=validateDate(val);
 					if (!dat) 
 					{
-						alert('Invalid date format : Enter Date as dd/mm/yyyy');
+						bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 						getControlInBranch(table.rows[i],'bankStatementChqDate').focus();
 						return;
 					}
@@ -287,38 +287,38 @@
 					{
 						if(document.bankReconciliationForm.bankId.options[document.bankReconciliationForm.bankId.selectedIndex].value == 0)
 						{
-							alert("Select Bank");
+							bootbox.alert("Select Bank");
 							return;
 						}
 						if(document.bankReconciliationForm.accId.options[document.bankReconciliationForm.accId.selectedIndex].value == 0)
 						{
-							alert("Select Account Number");
+							bootbox.alert("Select Account Number");
 							return;
 						}	
 						if(compareDate(formatDate6(formatDateToDDMMYYYY4(getControlInBranch(table.rows[i],'bankBookChequeDate').innerHTML)),formatDate6(document.bankReconciliationForm.bankStatementDate.value)) == -1 )
 						{
-							alert('Post Dated Cheque Cannot Be Reconcilied');
+							bootbox.alert('Post Dated Cheque Cannot Be Reconcilied');
 							getControlInBranch(table.rows[i],'bankStatementChqDate').focus();
 							return;
 						
 						}
 						if(compareDate(formatDate6(formatDateToDDMMYYYY4(getControlInBranch(table.rows[i],'bankBookChequeDate').innerHTML)),formatDate6(document.bankReconciliationForm.recToDate.value)) == -1 )
 						{
-							alert('Reconciliation Date cannot be less than Cheque Date');
+							bootbox.alert('Reconciliation Date cannot be less than Cheque Date');
 							getControlInBranch(table.rows[i],'bankStatementChqDate').focus();
 							return;
 
 						}
 						if(compareDate(formatDate6(formatDateToDDMMYYYY4(getControlInBranch(table.rows[i],'bankBookChequeDate').innerHTML)),formatDate6(formatDateToDDMMYYYY4(getControlInBranch(table.rows[i],'bankStatementChqDate').value))) == -1 )
 						{
-							alert('Reconciliation Date cannot be less than Cheque Date');
+							bootbox.alert('Reconciliation Date cannot be less than Cheque Date');
 							getControlInBranch(table.rows[i],'bankStatementChqDate').focus();
 							return;
 
 						}
 						if(compareDate(formatDate6(formatDateToDDMMYYYY4(getControlInBranch(table.rows[i],'bankStatementChqDate').value)),formatDate6(document.bankReconciliationForm.bankStatementDate.value)) == -1 )
 						{
-							alert('Bank Statement Cheque Date cannot be greater than Bank Statement Date');
+							bootbox.alert('Bank Statement Cheque Date cannot be greater than Bank Statement Date');
 							getControlInBranch(table.rows[i],'bankStatementChqDate').focus();
 							return;
 															
@@ -329,7 +329,7 @@
 			}
 			if(!valuePresent)
 			{
-				alert("No Data To Reconcile");
+				bootbox.alert("No Data To Reconcile");
 				return;
 			}
 			document.forms[0].action = "../brs/BankReconciliation.do?submitType=reconcile";
@@ -351,7 +351,7 @@
 		var target="<%=(request.getAttribute("alertMessage"))%>";
 		if(target!="null")
 		{
-			alert("<%=request.getAttribute("alertMessage")%>");
+			bootbox.alert("<%=request.getAttribute("alertMessage")%>");
 			<%	
 			if(request.getAttribute("alertMessage") != null)
 			{
@@ -371,7 +371,7 @@
 		{
 			session.removeAttribute("accNumberList1");
 		%>
-			alert("No Data");
+		bootbox.alert("No Data");
 			document.bankReconciliationForm.bankId.options.selectedIndex=0;
 			document.bankReconciliationForm.accId.options.selectedIndex=0;
 			document.bankReconciliationForm.balAsPerStatement.value="";
@@ -401,7 +401,7 @@
 	{
 		if(compareDate(formatDate6(document.bankReconciliationForm.bankStatementDate.value),formatDate6(document.bankReconciliationForm.recToDate.value)) == -1 )
 		{
-			alert('Reconciliation Date cannot be less than Bank Statement Date');
+			bootbox.alert('Reconciliation Date cannot be less than Bank Statement Date');
 			document.bankReconciliationForm.recToDate.focus();
 			return false;
 						
@@ -417,7 +417,7 @@
 		var cgn1=getControlInBranch(table.rows[row.rowIndex],"cgnum");
 		cgn1=cgn1.innerHTML;
 		var cgn2=cgn1.substring(0,3);
-	//alert(cgn1+"	"+cgn2);
+	//bootbox.alert(cgn1+"	"+cgn2);
 	switch(cgn2){
 		/*
 		case 'CTB':

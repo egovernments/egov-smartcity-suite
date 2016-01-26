@@ -188,17 +188,17 @@ function ButtonPress()
 	} 	
 	if(accCode.value.length==0)
 	{
-		alert("please select Account Code");
+		bootbox.alert("please select Account Code");
 		return;
 	}
 	if(sDate.length==0||eDate.length==0)
 	{
-		alert("please select start dates and end dates");
+		bootbox.alert("please select start dates and end dates");
 		return;
 	}
 	if(document.getElementById('accEntityKey').value=='')
 	{
-		alert('please select a valid Accounting Entity');
+		bootbox.alert('please select a valid Accounting Entity');
 		return;
 	}  	
 		document.getElementById('fromBean').value = 1;
@@ -206,7 +206,7 @@ function ButtonPress()
 		var fuObj=document.getElementById('fund_id');
 		if(fuObj.value!='' && fuObj.selectedIndex!=-1){
 			//fuId=fuObj.options[fuObj.selectedIndex].value;
-			//alert(fuObj.value);       
+			//bootbox.alert(fuObj.value);       
 			document.getElementById("fundName").value=" under "+fuObj.options[fuObj.selectedIndex].text;
 		}else{
 			document.getElementById("fundName").value='';
@@ -223,7 +223,7 @@ function ButtonPress()
 		/*to check whether start date is greater than the end date*/
 		if( compareDate(formatDate6(sDate),formatDate6(eDate)) == -1 )
 		{
-			alert('Start Date cannot be greater than End Date');
+			bootbox.alert('Start Date cannot be greater than End Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
@@ -248,14 +248,14 @@ function ButtonPress()
 		var fiscalYearStartDate="01/04/"+eDate.substr(eDate.length-4,4);
 		if(compareDate(fiscalYearStartDate,sDate) == -1 )
 		{ 
-		   alert("Start Date and End Date should be in same financial year");
+			bootbox.alert("Start Date and End Date should be in same financial year");
 		   document.getElementById('startDate').focus();
 		   return;
 		}
 		 /*to check whether the End Date is greater than the Current Date*/
 		if( compareDate(formatDate6("<%=currDate%>"),formatDate6(eDate)) == 1 )
 		{
-			alert('End Date cannot be greater than Current Date');
+			bootbox.alert('End Date cannot be greater than Current Date');
 			document.getElementById('endDate').value='';
 			document.getElementById('endDate').value='';
 			return;
@@ -422,7 +422,7 @@ function ButtonPress()
 		 LOGGER.info("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 PageManager.DataService.setQueryField('endDate',null);
 		 </script>
 		 <%

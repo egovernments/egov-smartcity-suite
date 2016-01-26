@@ -93,6 +93,7 @@
 	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/jquery-ui-1.8.22.custom.min.js'/>"></script-->
 	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	    <script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
     	<decorator:head/>
     </head>
     

@@ -94,18 +94,18 @@
 			updateFDTableIndex();
 		}
 		if (column.key == 'Delete') { 	
-		//alert(this);
+		//bootbox.alert(this);
 			if(this.getRecordSet().getLength()>1){			
 				this.deleteRow(record);
-				//alert(record);
+				//bootbox.alert(record);
 				allRecords=this.getRecordSet();
-				//alert(allRecord);
+				//bootbox.alert(allRecord);
 				for(var i=0;i<allRecords.getLength();i++){
 					this.updateCell(this.getRecord(i),this.getColumn('SlNo'),""+(i+1));
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -236,7 +236,7 @@
 				}
 			}
 			else{
-				alert("This row can not be deleted");
+				bootbox.alert("This row can not be deleted");
 			}
 		}
 	});
@@ -386,7 +386,7 @@ function createCheckboxFieldFormatterNew(tableType,prefix,suffix,type){
 	return function(el, oRecord, oColumn, oData) {
 		var tableIndex=getIndexForTableType(tableType);
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-	//salert(value);
+	//sbootbox.alert(value);
 		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+tableIndex+"]"+suffix+"' name='"+prefix+"["+tableIndex+"]"+suffix+"' style='width:90px'  onclick='extendFixedDeposit(this);'/>";
 	}                          
 }    
@@ -395,7 +395,7 @@ function checkDate(obj)
 		var dat=validateDate(obj.value);
 		if (!dat && dat!=null) 
 		{
-			alert('Invalid date format : Enter Date as dd/mm/yyyy');
+			bootbox.alert('Invalid date format : Enter Date as dd/mm/yyyy');
 			obj.value="";
 			return;
 		}
@@ -462,7 +462,7 @@ function checkDate(obj)
 			}                   
 		},
 		failure: function(o) {
-			alert('Cannot fetch Funding Agency Grant Amount');
+			bootbox.alert('Cannot fetch Funding Agency Grant Amount');
 		}
 	}
  
@@ -484,7 +484,7 @@ function checkDate(obj)
 			}
 		},
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}                 
 	}
 	function getbranchAccountId(obj){
@@ -502,9 +502,9 @@ function checkDate(obj)
 				var docs=o.responseText;               
 				res=docs.split("$");
 				var accNumid=selectedname;
-				//alert(docs);
+				//bootbox.alert(docs);
 				accNumid=accNumid.replace('Branch','Account');
-				//alert(accNumid.value);
+				//bootbox.alert(accNumid.value);
 				var x=document.getElementById(accNumid);
 				x.length=0;
 				x.options[0]=new Option("----Choose----","-1");  
@@ -520,7 +520,7 @@ function checkDate(obj)
 			}
 		},                                         
 		failure: function(o) {
-			alert('Cannot fetch instrument and account details');
+			bootbox.alert('Cannot fetch instrument and account details');
 		}
 	}
 	            
@@ -532,7 +532,7 @@ function getIndexForTableType(tableType)
 		}
 		
 		else if(tableType=='Childtable'){
-		//alert("hi");
+		//bootbox.alert("hi");
 			return childTableIndex;
 		}
 		
@@ -562,7 +562,7 @@ function updateYUIChildGrid(fdlist, field,index,value){
 }	 
 function updateFDTableIndex()
 {
-	//alert("fdTableIndex >> "+fdTableIndex);
+	//bootbox.alert("fdTableIndex >> "+fdTableIndex);
 	fdTableIndex++;
 }
 
@@ -612,15 +612,15 @@ if(obj.checked){
      		document.getElementById(childBankAccount).options[0]=new Option(selAccount[i].text,selAccount[i].value);
      		}  		
      	}
-     	//alert("PARENT ACCOUNT iD>>"+parentaccId);
-     	//alert("child table value"+document.getElementById(childBankAccount).value);
+     	//bootbox.alert("PARENT ACCOUNT iD>>"+parentaccId);
+     	//bootbox.alert("child table value"+document.getElementById(childBankAccount).value);
      		document.getElementById(childBankAccount).options[0].value=parentaccId; 
      		document.getElementById(childBankAccount).options[0].text=parentText;
-     		//alert("afetr reassigning"+document.getElementById(childBankAccount).value)
+     		//bootbox.alert("afetr reassigning"+document.getElementById(childBankAccount).value)
      		 
      		                                 
 	}else{
-			//alert(abc);
+			//bootbox.alert(abc);
 		childTableDT.addRow({SlNo:childTableDT.getRecordSet().getLength()+1});
 		document.getElementById(childDepositAmount).value=document.getElementById(parentmaturityAmount).value;
 		document.getElementById(childBankBranch).value=document.getElementById(parentBankBranch).value;

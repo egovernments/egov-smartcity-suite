@@ -140,9 +140,7 @@
 											<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.email"/></label>
 										
 										<div class="col-sm-3">
 											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com" />
@@ -157,9 +155,7 @@
 											<form:input type="text" path="altContactNumber" id="altcontact" cssClass="form-control" data-inputmask="'mask': '9999999999'" maxlength="10" placeholder="Mobile Number"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.DOB"/></label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.DOB"/></label>
 										
 										<div class="col-sm-3 add-margin">
 											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" 
@@ -174,10 +170,9 @@
 											<form:input id="DOA" path="dateOfAppointment" type="text" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
-										</div>
-										<div class="col-sm-3 add-margin">
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
+									 	
+									 	<div class="col-sm-3 add-margin">
 											<form:select path="employeeStatus" id="employeeStatus" required="required"
 												cssClass="form-control" cssErrorClass="form-control error">
 												<form:option value="">
@@ -204,11 +199,8 @@
 											<form:errors path="employeeType" cssClass="error-msg" />
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.code"/><span class="mandatory"></span></label>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.code"/><span class="mandatory"></span></label>
 											
-										</div>
-										
 										<div class="col-sm-3">
 											<form:input path="code" id="code" type="text" required="required" cssClass="form-control is_valid_alphanumeric"/>
 											<form:errors path="code" cssClass="add-margin error-msg"/>
@@ -217,21 +209,22 @@
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.pan"/></label>
+									
+										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.aadhar"/></label>
 										
 										<div class="col-sm-2 add-margin">
+											<form:input type="text" id="aadhaarNumber" path="aadhaarNumber" cssClass="form-control is_valid_nuber" maxlength="12"/>
+											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
+										</div>
+										
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.pan"/></label>
+										
+										<div class="col-sm-3 add-margin">
 											<form:input path="pan" id="pan" type="text" cssClass="form-control is_valid_alphanumeric" maxlength="10"/>
 											<form:errors path="pan" cssClass="add-margin error-msg"/>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.aadhar"/></label>
-										</div>
 										
-										<div class="col-sm-3 add-margin">
-											<form:input type="text" id="aadhaarNumber" path="aadhaarNumber" cssClass="form-control is_valid_nuber" maxlength="12"/>
-											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
-										</div>
 									</div>
 									
 								    <c:if test="${not empty image}">
@@ -397,9 +390,7 @@
 											</select>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label">Function</label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label">Function</label>
 										
 										<div class="col-sm-3 add-margin">
 											<select class="form-control" id="functionId">
@@ -427,9 +418,7 @@
 											</select>
 										</div>
 										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label">Functionary</label>
-										</div>
+										<label for="field-1" class="col-sm-1 control-label">Functionary</label>
 										
 										<div class="col-sm-3 add-margin">
 											<select class="form-control" id="functionaryId">

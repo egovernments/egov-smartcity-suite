@@ -49,21 +49,21 @@
 
 <script>
 function onLoadTask(){
-	//alert("asdas");    
+	//bootbox.alert("asdas");    
 	document.getElementById('asset').style.display ='none';      
-	//alert("aaaa");
+	//bootbox.alert("aaaa");
 	document.getElementById('monthRow').style.display='none';
 	document.getElementById('dateran').style.display='none';
 	
 	document.getElementById('fromDate').value="";
 	document.getElementById('toDate').value="";	 
 	document.getElementById('assetCode').value="0";
-	//alert("hiiii");  
+	//bootbox.alert("hiiii");  
 }   
 
 function changeType(obj){
 	var type = obj.value;
-	//alert("---"+type);
+	//bootbox.alert("---"+type);
 	if (type == 'Month'){
 		document.getElementById('monthRow').style.display ="inline";
 		document.getElementById('dateran').style.display ="none";
@@ -85,29 +85,29 @@ function validate(exportValue){
 	var fund=document.getElementById("fundId").value;
 	var finyear=document.getElementById("financialYearId").value;
 	var mon=document.getElementById("month").value;
-	//alert("fundid"+fund);
-	//alert("exportValue"+exportValue);
+	//bootbox.alert("fundid"+fund);
+	//bootbox.alert("exportValue"+exportValue);
 	document.getElementById('exportType').value=exportValue;
 	
 	if(fund==''||fund=='0'){
-		alert("Please select a fund");
+		bootbox.alert("Please select a fund");
 		return false;
 	}
 	if(rpType==''|| rpType=='0'){
-		alert("Please select report generation type");
+		bootbox.alert("Please select report generation type");
 		return false;
 	}
 	
 	if (rpType == 'Month'){
-		//alert("Hi you have selected reporttype month");
+		//bootbox.alert("Hi you have selected reporttype month");
 		document.getElementById('fromDate').value="";
 		document.getElementById('toDate').value="";
 		if(finyear==''|| finyear=='0'){
-			alert("Please select report generation type");
+			bootbox.alert("Please select report generation type");
 			return false;
 		}
 		if(mon==''|| mon=='0'){
-			alert("Please select month");
+			bootbox.alert("Please select month");
 			return false;
 		}
 		
@@ -117,11 +117,11 @@ function validate(exportValue){
 		var toDate =  Date.parse(document.getElementById('toDate').value);
 
 		if(toDate=='' || fromDate==''){
-			alert("Please Enter both From Date and Todate ");
+			bootbox.alert("Please Enter both From Date and Todate ");
 			return false;
 		}
  		if(isNaN(fromDate)||isNaN(toDate)){
- 			alert("Please enter a valid date");
+ 			bootbox.alert("Please enter a valid date");
  			return false;
  	   	 }
  	}
@@ -135,7 +135,7 @@ function validate(exportValue){
 		
 }
 function populateAssetCode(obj){
-	//alert()   
+	//bootbox.alert()   
 	var fund=document.getElementById("fundId").value;
 	if(fund=='23'){
 		document.getElementById('asset').style.display ="inline";

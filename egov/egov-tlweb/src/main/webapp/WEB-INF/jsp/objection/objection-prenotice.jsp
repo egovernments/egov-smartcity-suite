@@ -56,9 +56,9 @@
 					
 		function printLicense() {
 			if(document.getElementById("activityDate").value==''){
-				alert("Please enter Notice Date");return false;
+				bootbox.alert("Please enter Notice Date");return false;
 			} else if(document.getElementById("expectedDateOfResponse").value=='') {
-				alert("Please enter Expected Date of Response");return false;
+				bootbox.alert("Please enter Expected Date of Response");return false;
 			} else {
 				var url = 'objection-preliminaryNotice.action?model.id=<s:property value="model.id"/>';
 				var form = document.createElement("form");

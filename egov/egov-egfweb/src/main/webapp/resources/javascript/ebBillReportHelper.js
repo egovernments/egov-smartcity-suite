@@ -88,14 +88,14 @@
 	}
 	function splitConsumerNumberForSch(obj) 	{	
 		var entity=obj.value;
-		//alert(entity);
+		//bootbox.alert(entity);
 		if(entity.trim()!="")
 		{
 			var entity_array=entity.split("`~`");
 			if(entity_array.length==2)
 			{
 				document.getElementById("code").value=entity_array[0];
-				//alert(document.getElementById("code").value);
+				//bootbox.alert(document.getElementById("code").value);
 			}
 		}
 
@@ -164,20 +164,20 @@
 		var year = document.getElementById('year').value;
 		if(fromDate == "" && toDate == ""){
 			if(month == "" || year == ""){
-			 alert("Enter the month and year or date range");
+				bootbox.alert("Enter the month and year or date range");
 			 return false;
 			}
 		}
 		if(month == "" && year == ""){
 			if(fromDate == "" || toDate == ""){
-			 alert("Enter the month and year or date range");
+				bootbox.alert("Enter the month and year or date range");
 			 return false;
 			}
 		}
 		
 		if(month!=""){
 			if(year == ""){
-				 alert("Please select Year");
+				bootbox.alert("Please select Year");
 			  return false;
 			}
 		}

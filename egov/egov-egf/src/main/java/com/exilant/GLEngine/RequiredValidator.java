@@ -96,7 +96,7 @@ public class RequiredValidator {
     public boolean validateKey(final int detailId, final String keyToValidate) throws TaskFailedException {
 
         final String sql = "select detailKey as \"detailKey\" ,detailName as \"detailName\"," +
-                "glCodeID as \"glCodeID\",groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId="
+                "groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId="
                 + String.valueOf(detailId) + " and detailKey = " + String.valueOf(keyToValidate);
         final List list = HibernateUtil.getCurrentSession().createSQLQuery(sql).list();
         if (list != null && list.size() > 0)

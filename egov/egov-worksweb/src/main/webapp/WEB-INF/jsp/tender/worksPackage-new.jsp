@@ -44,18 +44,25 @@
 </head>
 <body onload="populateDetails();load();noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
 <script src="<egov:url path='resources/js/works.js'/>"></script>
-
+<!-- <script src="../resources/js/jquery-1.7.2.min.js"></script> -->
+<script type="text/javascript" src="<c:url value='/resources/js/prototype.js'/>"></script>
 <script type="text/javascript">
-jQuery("#loadingMask").remove();
+
+/* var jq=jQuery.noConflict(true);
+jq("#loadingMask").remove(); */
 
 window.history.forward(1);
 function noBack() {
 	window.history.forward(); 
 }
 function load(){
-<s:if test="%{sourcepage=='search' || (sourcepage=='inbox' && (model.egwStatus!=null && !(model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED')))}">
-       toggleFields(true,['departmentid','designationId','approverUserId','approverComments']);
-       
+<s:if test="%{sourcepage!='search' && getNextAction()!='END'}">
+	loadDesignationFromMatrix();
+</s:if>
+<s:if test="%{sourcepage=='inbox' && (model.egwStatus!=null && !(model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED'))}">
+       //toggleFields(true,['departmentid','designationId','approverUserId','approverComments']);
+       toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Save',
+		                     'Forward','Reject','button2','Approve']); 
       links=document.workspackageForm.getElementsByTagName("a"); 
 	  for(i=0;i<links.length;i++){	
 		if(links[i].id.indexOf("header_")!=0 && links[i].id!='aprdDatelnk')
@@ -67,52 +74,15 @@ function load(){
 }
 
 
-designationLoadHandler = function(req,res){ 
-  results=res.results;
-  dom.get("designation").value=results[0].Designation;
-}
-
-designationLoadFailureHandler= function(){
-    dom.get("wp_error").style.display='';
-	document.getElementById("wp_error").innerHTML='<s:text name="unable.des"/>';
-}
-
-
-function showDesignation(elem){
-	var empId = elem.options[elem.selectedIndex].value;
-    makeJSONCall(["Designation"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!designationForUser.action',{empID:empId},designationLoadHandler,designationLoadFailureHandler) ;
-}
-function refreshInbox() {
-        var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-}
 function populateDetails()
 {
-	if(dom.get("packageDate").value=='') {
-		 <s:if test="%{model.packageDate==null}">
-			document.workspackageForm.packageDate.value=getCurrentDate();
+	if(dom.get("wpDate").value=='') {
+		 <s:if test="%{model.wpDate==null}">
+			document.workspackageForm.wpDate.value=getCurrentDate();
 		 </s:if>
 	}
-	document.forms[0].hiddenDate.value=document.workspackageForm.packageDate.value;
-	/*<s:if test="%{createdBySelection.toLowerCase().equals('no')}">
-		dom.get('department').disabled=true;
-		dom.get('preparedBy').disabled=true;
-	</s:if>*/
-	<s:else>
-		dom.get("ajaxCall").style.display='';
-	</s:else>
-	<s:if test="%{editableDate.toLowerCase().equals('yes')}">
-		dom.get('packageDate').disabled=false;
-		dom.get("wpDateImg").style.display='';
-	</s:if>
-	<s:else>
-		dom.get('packageDate').disabled=true;
-		dom.get("wpDateImg").style.display='none';
-	</s:else>
+	document.forms[0].hiddenDate.value=document.workspackageForm.wpDate.value;	
+	dom.get('department').disabled=true;	
 }
 function enableSelect(){
    	for(i=0;i<document.workspackageForm.elements.length;i++){
@@ -164,50 +134,6 @@ function enableButtons() {
 
 }
 
-function setupPreparedByList(elem){
-	deptId=elem.options[elem.selectedIndex].value;
-    populatepreparedBy({executingDepartment:deptId,employeeCode:dom.get("loggedInUserEmployeeCode").value});
-    if(dom.get("estimateListTable")!=null && dom.get("estimateListTable").rows.length>0){
-        dom.get("popUpDiv").innerHTML="";
-     	dom.get("popUpDiv").innerHTML='<s:text name="reset.on.dept"/>'+dom.get("msgDiv").innerHTML ;
-		popup('popUpDiv')
-	}
-	
-}
-
-function populatepreparedBy(params){
-	makeJSONCall(['Text','Value','Designation'],'/egworks/estimate/ajaxEstimate!usersInExecutingDepartment.action',params,preparedBySuccessHandler,preparedByFailureHandler) ;
-}
-
-preparedBySuccessHandler=function(req,res){ 
-	enablePreparedBy(); 
-	preparedByDropdown=dom.get("preparedBy");
-	var resLength =res.results.length+1;
-	var dropDownLength = preparedByDropdown.length;
-	for(i=0;i<res.results.length;i++){
-	preparedByDropdown.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
-	if(res.results[i].Value=='null') preparedBy.Dropdown.selectedIndex = i;
-		preparedByDropdown.options[i+1].Designation=res.results[i].Designation;
-	}
-	while(dropDownLength>resLength)
-	{
-		preparedByDropdown.options[res.results.length+1] = null;
-		dropDownLength=dropDownLength-1;
-	}
-	document.getElementById('preparedBy').value='<s:property value="%{empId}" />';
-	if(res.results.length == 1) {
-		disablePreparedBy();
-		document.getElementById('designation').value='<s:property value="%{designation}" />';
-	}
-}
-preparedByFailureHandler=function(){
-	alert('Unable to load preparedBy');
-}
-
-function clearDesignation(elem) {
-    dom.get("designation").value='';
-}
-
 function deleteAllrows(tableID) {
     var table = dom.get(tableID);
     var rowCount = table.rows.length;
@@ -217,11 +143,11 @@ function deleteAllrows(tableID) {
             rowCount--;
              i--;
     }
-     document.forms[0].hiddenDate.value=document.forms[0].packageDate.value;
+     document.forms[0].hiddenDate.value=document.forms[0].wpDate.value;
      dom.get('hiddenDept').value=dom.get('department').value;
   }
 function dateChange(){
-    var pacDate=document.forms[0].packageDate.value;
+    var pacDate=document.forms[0].wpDate.value;
 	var hiddenpacDate=document.forms[0].hiddenDate.value;
 	if(pacDate!='' && hiddenpacDate!= '' && hiddenpacDate!=pacDate){
 	     if(dom.get("estimateListTable")!=null && dom.get("estimateListTable").rows.length>0){
@@ -231,21 +157,9 @@ function dateChange(){
 		 }	
 	}
 }
-function validateBeforeSubmit()
-{
-	   if(dom.get("estimateListTable")==null){
-	  	dom.get("wp_error").innerHTML='<s:text name="estimates.null"/>'; 
-        dom.get("wp_error").style.display='';
-		return false;
-	  }
-	  else if(dom.get("estimateListTable").rows.length<=0)
-	  {
-	  	 dom.get("wp_error").innerHTML='<s:text name="estimates.null"/>'; 
-         dom.get("wp_error").style.display='';
-		 return false;
-	  }
-	  if(dom.get("packageDate").value==""){
-	  	 dom.get("wp_error").innerHTML='<s:text name="wp.packageDate.is.null"/>'; 
+function validateBeforeSubmit() {
+	  if(dom.get("wpDate").value==""){
+	  	 dom.get("wp_error").innerHTML='<s:text name="wp.wpDate.is.null"/>'; 
          dom.get("wp_error").style.display='';
 		 return false;
 	  }
@@ -254,27 +168,39 @@ function validateBeforeSubmit()
          dom.get("wp_error").style.display='';
 		 return false;
 	  }
-	  if(dom.get("preparedBy").value==-1){
-	  	 dom.get("wp_error").innerHTML='<s:text name="wp.preparedBy.is.null"/>'; 
+	  if(dom.get("department").value==-1){
+	  	 dom.get("wp_error").innerHTML='<s:text name="wp.userDepartment.is.null"/>'; 
          dom.get("wp_error").style.display='';
 		 return false;
 	  }
-	  if(dom.get("department").value==-1){
-	  	 dom.get("wp_error").innerHTML='<s:text name="wp.userDepartment.is.null"/>'; 
+	  if(dom.get("tenderFileNumber").value==""){
+	  	 dom.get("wp_error").innerHTML='<s:text name="wp.tenderFileNumber.is.null"/>';  
+         dom.get("wp_error").style.display='';
+		 return false;
+	  }
+	  if(dom.get("estimateListTable")==null){
+  		dom.get("wp_error").innerHTML='<s:text name="estimates.null"/>'; 
+       	dom.get("wp_error").style.display='';
+		return false;
+	  }
+	  else if(dom.get("estimateListTable").rows.length<=0)
+	  {
+	  	 dom.get("wp_error").innerHTML='<s:text name="estimates.null"/>'; 
          dom.get("wp_error").style.display='';
 		 return false;
 	  }
 	   dom.get("wp_error").style.display='none';
 	   dom.get("wp_error").innerHTML='';
 
-	   jQuery(".commontopyellowbg").prepend('<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/bar_loader.gif"> <span id="message">Please wait....</span></div>')
-	   doLoadingMask();
+	
+	  //jq(".commontopyellowbg").prepend('<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/bar_loader.gif"> <span id="message">Please wait....</span></div>')
+	  //doLoadingMask();
 	   
 	   return true;
 }
 
 function rollbackChanges(){
-	document.workspackageForm.packageDate.value=document.forms[0].hiddenDate.value;
+	document.workspackageForm.wpDate.value=document.forms[0].hiddenDate.value;
 	if(dom.get('hiddenDept').value!="")
 		dom.get('department').value=dom.get('hiddenDept').value;
 }
@@ -290,10 +216,19 @@ function validateCancel() {
 }
 
 function validate(text){
-	if(!validateUser(text))
+	/* if(!validateUser(text))
+		return false; */
+	if(!validateBeforeSubmit())
 		return false;
 	enableSelect();
+	document.workspackageForm.action='${pageContext.request.contextPath}/tender/worksPackage-save.action';
+	document.workspackageForm.submit();
 	return true;
+}
+
+function onSubmit() {
+	action = document.getElementById("workFlowAction").value;
+	return validate(action);
 }
 
 function uniqueCheckOntenderFileNumber(obj)
@@ -320,15 +255,6 @@ function disableDepartment(){
 function enableDepartment(){
 	document.getElementById('department').disabled = false;
 }
-
-function disablePreparedBy(){
-	document.getElementById('preparedBy').disabled = true;
-}
-
-function enablePreparedBy(){
-	document.getElementById('preparedBy').disabled = false;
-}
-
 
 </script>
 <div class="errorstyle" id="wp_error" style="display: none;"> 
@@ -384,9 +310,7 @@ function enablePreparedBy(){
 		    <tr>
 		         <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.dept"/>:</td>
 		         <td width="21%" class="greybox2wk"><s:select id="department" name="department" headerKey="-1" headerValue="---select---" 
-		         cssClass="selectwk" list="%{dropdownData.departmentList}"  listKey="id" listValue="deptName" value="%{department.id}"
-		         onChange="setupPreparedByList(this);clearDesignation(this);"/>
-		         <s:hidden name="loggedInUserEmployeeCode" id="loggedInUserEmployeeCode"/>   
+		         cssClass="selectwk" list="%{dropdownData.departmentList}"  listKey="id" listValue="name" value="%{department.id}" />		          
 		          <s:if test="%{dropdownData.departmentList.size==1}" >
 	                <script>
 	                	disableDepartment(); 
@@ -394,12 +318,12 @@ function enablePreparedBy(){
                   </s:if>
 		         </td>
 		         <td width="15%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.date"/>:</td>
-		         <td width="53%" class="greybox2wk"><s:date name="model.packageDate" var="packageDateFormat" format="dd/MM/yyyy"/>
+		         <td width="53%" class="greybox2wk"><s:date name="model.wpDate" var="wpDateFormat" format="dd/MM/yyyy"/>
 		         <s:hidden name="hiddenDate" id="hiddenDate" ></s:hidden> <s:hidden name="hiddenDept" id="hiddenDept" value="%{department.id}"></s:hidden>
-        		 <s:textfield name="packageDate" value="%{packageDateFormat}" id="packageDate" cssClass="selectboldwk" 
+        		 <s:textfield name="wpDate" value="%{wpDateFormat}" id="wpDate" cssClass="selectboldwk" 
         		 onfocus="javascript:vDateType='3';" 
         		 onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="dateChange()"/>
-        		 <a href="javascript:show_calendar('forms[0].packageDate',null,null,'DD/MM/YYYY');" id="dateHref"
+        		 <a href="javascript:show_calendar('forms[0].wpDate',null,null,'DD/MM/YYYY');" id="dateHref"
         		 onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
         		 <img src="/egi/resources/erp2/images/calendar.png" id="wpDateImg" alt="Calendar" width="16" height="16" 
        			  border="0" align="absmiddle" /></a>
@@ -412,25 +336,11 @@ function enablePreparedBy(){
 		         <td width="21%" class=whitebox2wk>
 		         	<s:textfield name="tenderFileNumber" value="%{tenderFileNumber}" id="tenderFileNumber" cssClass="selectwk" onblur="uniqueCheckOntenderFileNumber(this);" />
 		         </td>
-				 <egov:uniquecheck id="wp_error" fields="['Value']" url='tender/ajaxWorksPackage!tenderFileNumberUniqueCheck.action' />
+				 <egov:uniquecheck id="wp_error" fields="['Value']" url='tender/ajaxWorksPackage-tenderFileNumberUniqueCheck.action' />
 		         <td width="11%" class="whiteboxwk">&nbsp;</td>
 		         <td width="21%" class=whitebox2wk>&nbsp;</td>
 		   </tr>
-		   <tr>
-				 <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.emp"/>:</td>
-		         <td width="21%" class="greybox2wk">
-		         <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="empId" 
-		         id="preparedBy" value="%{empId}" cssClass="selectwk" 
-		         list="dropdownData.preparedByList" listKey="id" listValue="employeeName" onchange='showDesignation(this);'/></td>
-		         <s:if test="%{dropdownData.preparedByList.size==1}" >
-	                <script>
-	               	 disablePreparedBy(); 
-	                </script>
-                  </s:if>
-		         <td width="15%" class="greyboxwk"><s:text name="wp.desg"/>:</td>
-		         <td width="53%" class="greybox2wk"><s:textfield name="designation" type="text"  readonly="true"
-		          cssClass="selectboldwk" id="designation" size="45" tabIndex="-1" value="%{designation}"/></td>
-			</tr>
+		   
 			<tr>
 		         <td width="11%" class="whiteboxwk">&nbsp;</td>
 		         <td width="21%" class=whitebox2wk>&nbsp;</td>
@@ -443,7 +353,7 @@ function enablePreparedBy(){
          <tr>
             <td colspan="4">
             <div id="wp_details">
-           		<%@ include file="worksPackage-Details.jsp"%>  
+           		<%@ include file="worksPackage-details.jsp"%>  
             </div>        
             </td> 
           </tr> 
@@ -454,7 +364,10 @@ function enablePreparedBy(){
 	 <tr> 
 		    <td>
 		    <div id="manual_workflow">
-		   		<%@ include file="../workflow/workflow.jsp"%> 
+		   		<s:if test="%{sourcepage!='search'}">
+				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%> 
+				<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+		  </s:if>
 		    </div>
 		    </td>
     </tr>	
@@ -467,11 +380,11 @@ function enablePreparedBy(){
    </div><!-- end of insidecontent -->
    </div><!-- end of formmainbox -->
    <div class="buttonholderwk" id="buttons">
-   <input type="hidden" name="actionName" id="actionName"/> 
+ <%--   <input type="hidden" name="actionName" id="actionName"/> 
    <s:if test="%{(hasErrors() || sourcepage=='inbox' || model.egwStatus==null || 
 	model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED' || model.egwStatus.code=='CREATED') 
 	&& (sourcepage=='inbox' || model.egwStatus==null)}">
-  
+   <input type="submit" class="buttonfinal" value="SAVE" id="save" name="save" onclick="document.forms[0].actionName.value='save';return validate('save');" />	
    <s:iterator value="%{validActions}"> 
 	  <s:if test="%{description!=''}">
 	  	<s:if test="%{description=='CANCEL' && model.wpNumber!=null}">
@@ -482,47 +395,37 @@ function enablePreparedBy(){
 	 </s:else>
 	  </s:if>
 	</s:iterator>
-</s:if>
-	<s:if test="%{model.id==null}"> 
+</s:if> --%>
+	<%-- <s:if test="%{model.id==null}"> 
 	  <input type="button" class="buttonfinal" value="CLEAR" id="clearButton" name="button"
-	   onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage!newform.action','_self');"/>
-	 </s:if>
+	   onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage-newform.action','_self');"/>
+	 </s:if> --%>
 	 <s:if test="%{model.id!=null}">
-	   <input type="button" onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage!viewWorksPackagePdf.action?id=<s:property value='%{model.id}'/>');" 
+	   <input type="button" onclick="window.open('${pageContext.request.contextPath}/tender/worksPackage-viewWorksPackagePdf.action?id=<s:property value='%{model.id}'/>');" 
 	   class="buttonpdf" value="VIEW PDF" id="pdfButton" name="pdfButton" />
 	 </s:if>
-	 <s:if test="%{sourcepage!='search'}">
+	 <s:if test="%{sourcepage=='search'}" >
+		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();"/>&nbsp;
+	</s:if>
+	<%--  <s:if test="%{sourcepage!='search'}">
 		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="confirmClose('<s:text name='wp.close.confirm'/>');"/>
 	</s:if>
 	<s:else>
 		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
-	</s:else>
-	
-  <s:if test="%{sourcepage=='search' 
-  	|| (sourcepage=='inbox' && (model.egwStatus!=null && (model.egwStatus.code=='APPROVED' || model.egwStatus.code=='CANCELLED')))}">
-  	<input type="submit" class="buttonadd" value="View Document" id="docViewButton" onclick="viewDocumentManager(dom.get('docNumber').value);return false;" />
-  </s:if>
-  <s:else>
-	<input type="submit" class="buttonadd" value="Upload Document" id="worksDocUploadButton" onclick="showDocumentManager();return false;" />
-  </s:else>
-	
+	</s:else>	 --%>
 </div>
 </s:form>
 <script>
-if(dom.get("departmentid")!=null) {
-	if(dom.get("departmentid").value!=-1) {
-		populateDesignation();
-	}
-}
+
 <s:if test="%{sourcepage=='inbox' && (model.egwStatus!=null && (model.egwStatus.code!='NEW' || model.egwStatus.code!='REJECTED'))}">
 	disableSelect();
 	enableButtons();
-	showElements(['approverCommentsRow']);
+	showElements(['approverComments']);
 
 </s:if>
 <s:if test="%{sourcepage=='search'}">
-	hideElements(['workflowDetials']);
-	hideElements(['approverCommentsRow']);
+	//hideElements(['workflowDetials']);
+	//hideElements(['approverComments']);
 	disableSelect();
 	disableLinks();
 	enableButtons();	
@@ -531,9 +434,10 @@ if(dom.get("departmentid")!=null) {
 	disableSelect();
 	disableLinks();
 	enableButtons();
-	hideElements(['workflowDetials']);
-	showElements(['approverCommentsRow']);
+	//hideElements(['workflowDetials']);
+	//showElements(['approverCommentsRow']);
 </s:if>
 </script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 </html>

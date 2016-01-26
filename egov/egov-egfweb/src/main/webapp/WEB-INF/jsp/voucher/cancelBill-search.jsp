@@ -64,7 +64,7 @@ function validate()
 		{
 			if( compareDate(formatDateToDDMMYYYY1(strtDate),formatDateToDDMMYYYY1(endDate)) == -1 )
 			{
-				alert('From Date cannot be greater than To Date');
+				bootbox.alert('From Date cannot be greater than To Date');
 				return false;
 		    }
 		 }
@@ -72,7 +72,7 @@ function validate()
 	}
 	else
 	{
-		alert("Please select a fund");
+		bootbox.alert("Please select a fund");
 		return false;
 	}
 }
@@ -92,7 +92,7 @@ function validateCancel()
 	var rows=parseInt(document.getElementById('selectedRows').value);
 	if(rows==0)
 	{
-		alert("Please select atleast one bill");
+		bootbox.alert("Please select atleast one bill");
 		return false;
 	}
 	

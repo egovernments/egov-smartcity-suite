@@ -81,7 +81,7 @@ function onLoad()
 }
 function ButtonPress()
 {
-	//alert("search");
+	//bootbox.alert("search");
 	
 	if (!PageValidator.validateForm())
 	return;
@@ -92,17 +92,17 @@ function ButtonPress()
 	
 	if(strtDate=="")
 	{
-	//alert('Enter either Cheque From date or Cheque To Date');
-	alert('Enter Cheque From date');
+	//bootbox.alert('Enter either Cheque From date or Cheque To Date');
+	bootbox.alert('Enter Cheque From date');
 	return false;
 	}
 	
 	chqNo=document.getElementById("chequeNo").value;
 
 	mode=document.getElementById("mode").value;
-	//alert(mode);
+	//bootbox.alert(mode);
 	if(mode==0 || mode==""){
-		alert('Please Select mode of Payment or Receipt');
+		bootbox.alert('Please Select mode of Payment or Receipt');
 		return false;
 	}
 	
@@ -110,7 +110,7 @@ function ButtonPress()
 	chqNo=document.getElementById("chequeNo").value;
 	
 	fundId=document.getElementById("fundLst").value;
-	//alert(fundId);
+	//bootbox.alert(fundId);
 		
 	if(fundId!="")
 	fundId=document.getElementById("fundLst").value;
@@ -121,8 +121,8 @@ function ButtonPress()
 	{
 		if( compareDate(formatDate6(strtDate),formatDate6(endDate)) == -1 )
 		{
-			//alert("Inside compare dt");
-			alert('From Date cannot be greater than To Date');
+			//bootbox.alert("Inside compare dt");
+			bootbox.alert('From Date cannot be greater than To Date');
 			document.getElementById('startDate').value='';
 			document.getElementById('endDate').value='';
 			document.getElementById('startDate').focus();
@@ -298,7 +298,7 @@ function buttonFlush()
 		 LOGGER.info("Exception in Jsp Page "+ e.getMessage());
 		 %>
 		 <script>
-		 alert("Error :<%=e.getMessage()%>");
+		 bootbox.alert("Error :<%=e.getMessage()%>");
 		 </script>
 		 <%
 		  }                                                

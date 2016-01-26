@@ -48,7 +48,7 @@
     	<s:text name="dishonorcheque.title"/>
     </title>
       <sj:head jqueryui="true" jquerytheme="redmond" loadAtOnce="true"/>
-  <script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>  
+  <script type="text/javascript" src="/EGF/resources/javascript/helper.js?rnd=${app_release_no}"></script>  
   <script type="text/javascript">
 
 
@@ -123,14 +123,14 @@ function dishonorSelectedChq() {
 			}
 
 			if(flag=="false" && flag!=""){
-				alert("Please Choose only cheques from the same Receipt No.");
+				bootbox.alert("Please Choose only cheques from the same Receipt No.");
 				return false;
 			}
 
 		}
 	}
 	if(value.length==0){
-		alert("Please Choose Cheques to Dishonor.");
+		bootbox.alert("Please Choose Cheques to Dishonor.");
 		return false;
 	}
 

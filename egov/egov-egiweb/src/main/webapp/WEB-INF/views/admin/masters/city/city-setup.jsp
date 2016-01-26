@@ -443,4 +443,4 @@
         min-width:200px;
     }
 </style>
-<script src="../../resources/js/app/citysetup.js"></script>
+<script src="../../resources/js/app/citysetup.js?rnd=${app_release_no}"></script>

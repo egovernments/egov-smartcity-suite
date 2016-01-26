@@ -64,11 +64,11 @@
     		return false;
             }
         if(!validateDate(document.getElementById('validfromId').value)){
-			alert("Invalid Date! Start date is greater than current date");
+			bootbox.alert("Invalid Date! Start date is greater than current date");
 			return false;
 		}
         if (compareDate(document.getElementById('validfromId').value,document.getElementById('validtoId').value) == -1){
-            alert("End date should be greater than Start date");
+            bootbox.alert("End date should be greater than Start date");
             undoLoadingMask();
             document.getElementById('validtoId').value = "";
             return false;

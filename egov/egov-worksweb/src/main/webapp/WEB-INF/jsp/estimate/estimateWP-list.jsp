@@ -108,13 +108,13 @@ function setEstimateId(elem){
 	<display:column headerClass="pagetableth" class="pagetabletd"
 		title="Executing Department" titleKey="estimate.search.executingdept"
 		style="width:10%;text-align:left"
-		property="executingDepartment.deptName" />
+		property="executingDepartment.name" />
 
 	<display:column headerClass="pagetableth" class="pagetabletd"
 		title="Name" titleKey="estimate.search.name"
 		style="width:20%;text-align:left">
 		<a
-			href="${pageContext.request.contextPath}/estimate/abstractEstimate!edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&sourcepage=search"><s:property
+			href="${pageContext.request.contextPath}/estimate/abstractEstimate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&sourcepage=search"><s:property
 				value='%{#attr.currentRow.name}' /> </a>
 	</display:column>
 
@@ -137,7 +137,7 @@ function setEstimateId(elem){
 		title="WorkFlow History" titleKey="estimate.wrokflow.history"
 		style="width:8%;text-align:left">
 		<a href="#"
-			onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate!workflowHistory.action?stateValue=<s:property value='%{#attr.currentRow.state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
+			onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue=<s:property value='%{#attr.currentRow.state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
 			History </a>
 	</display:column>
 

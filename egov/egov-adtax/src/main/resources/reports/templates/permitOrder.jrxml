@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-01-20T15:07:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="528"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="municipality" class="java.lang.String"/>
+	<parameter name="district" class="java.lang.String"/>
+	<parameter name="advertisementtitle" class="java.lang.String"/>
+	<parameter name="agencyname" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="workFlowAction" class="java.lang.String"/>
+	<parameter name="category" class="java.lang.String"/>
+	<parameter name="currdate" class="java.lang.String"/>
+	<parameter name="measurement" class="java.lang.Long"/>
+	<parameter name="length" class="java.lang.Long"/>
+	<parameter name="width" class="java.lang.Long"/>
+	<parameter name="height" class="java.lang.Long"/>
+	<parameter name="breadth" class="java.lang.Long"/>
+	<parameter name="permitStartDate" class="java.lang.String"/>
+	<parameter name="permitEndDate" class="java.lang.String"/>
+	<parameter name="unitofmeasure" class="java.lang.String"/>
+	<background>
+		<band height="780" splitType="Stretch">
+			<rectangle>
+				<reportElement x="7" y="5" width="540" height="349" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="7" y="379" width="540" height="400" uuid="2781f9f9-9612-497c-85d7-5e83a8d360fa"/>
+			</rectangle>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" x="19" y="40" width="517" height="300" uuid="27a98bab-d01e-4a95-adf7-8e0ef5518dd2"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="19" y="443" width="517" height="324" uuid="8ebea2f7-0232-41c1-be72-1826d5ac648b"/>
+			</rectangle>
+		</band>
+	</background>
+	<detail>
+		<band height="501" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="42" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{advertisementtitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="27" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="12" width="555" height="15" uuid="e5a39ba9-b981-4b8a-9f6e-3ef8b5e337d2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="70" y="119" width="435" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="8" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Advertisement Tax - "+$P{municipality}+", Permit order for Advertisement</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="119" width="42" height="15" uuid="3c551f20-c6f7-44df-a210-5fbd222c62bc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Subject :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="68" width="190" height="15" uuid="f837c596-4af8-4442-a7b8-e9695e314b59"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Name of the Applicant : <style isBold=\"true\">"+$P{agencyname}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="29" y="83" width="497" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Address : <style isBold=\"true\">"+$P{address}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="98" width="190" height="15" uuid="85b11de5-e4aa-40f0-9a32-d668a72eed14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Classification of advertisement : <style isBold=\"true\">"+$P{category}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="29" y="139" width="483" height="15" uuid="2aa55503-27bf-42cf-bd5c-19473b789c0a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Advertisement measurements :</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="154" width="81" height="12" uuid="03907549-0a41-4517-b39f-0bad55b3f0a1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Measurement]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="29" y="166" width="81" height="12" uuid="7c0bed86-e2cd-4de5-958a-99602474391d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{measurement}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="110" y="154" width="81" height="12" uuid="a2669b80-9743-416f-862e-046ad9348c9d"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unit Of Measure	]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="166" width="81" height="12" uuid="64a8d27b-ce9f-43e0-8ba5-4b2d47e523ca">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{unitofmeasure}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="191" y="154" width="81" height="12" uuid="c8b1fbaf-daef-4ba5-81b5-a4c60ea70ddc"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Length]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="191" y="166" width="81" height="12" uuid="fe73d0d3-248f-404d-958d-1ce64ff28867">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{length}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="154" width="81" height="12" uuid="2df7dab2-2045-4591-9cad-8fd58e708ce5"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Breadth]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="272" y="166" width="81" height="12" uuid="fa14510f-f472-484c-b1d8-5d4df236ca51">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{breadth}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="353" y="154" width="81" height="12" uuid="955a4314-ae2d-4e26-b8e1-d262b8509d4b"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Height]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="353" y="166" width="81" height="12" uuid="08d70f23-827e-4b99-a01a-1a194993175a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{height}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="29" y="184" width="484" height="12" uuid="75010a0e-375b-4e7c-bd14-74a0ede91d42">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="8" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Location of display/exhibition"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="29" y="196" width="486" height="12" uuid="60804bd1-e57d-4b07-8f3c-257b82befd1b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Advertisement valid from :"+$P{permitStartDate}+" to "+$P{permitEndDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="28" y="208" width="484" height="22" uuid="0cd50b5b-87c4-40b3-8e69-4099552c98b6"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="8" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["The advertiser shall abide by the statutory provisions of the Andhra Pradseh Municipalities Act, 1965 and the Rules and by-laws made there under"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="282" width="161" height="15" uuid="c2113ca9-5603-42c8-9c12-4d7e2e09cf3e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[** With Orders of ChairPerson / Mayor **]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="301" width="124" height="15" uuid="63d44e4e-3f6b-4acd-93c6-935361a77db1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : "+$P{currdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="412" y="299" width="100" height="15" uuid="168d7585-fe7a-43b8-80e9-1371c367ba44"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Commissioner]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="412" y="319" width="100" height="15" uuid="22ed6f7c-b693-4035-9d23-64cef967ee5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

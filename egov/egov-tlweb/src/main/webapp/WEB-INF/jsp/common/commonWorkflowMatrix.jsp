@@ -50,7 +50,7 @@ function getUsersByDesignationAndDept() {
 function callAlertForDepartment() {
     var value=document.getElementById("approverDepartment").value;
 	if(value=="-1") {
-		alert("Please select the Approver Department");
+		bootbox.alert("Please select the Approver Department");
 		document.getElementById("approverDepartment").focus();
 		return false;
 	}
@@ -59,7 +59,7 @@ function callAlertForDepartment() {
 function callAlertForDesignation() {
 	var value=document.getElementById("approverDesignation").value;
 	if(value=="-1") {
-		alert("Please select the approver designation");
+		bootbox.alert("Please select the approver designation");
 		document.getElementById("approverDesignation").focus();
 		return false;
 	}
@@ -121,7 +121,7 @@ function populateApprover() {
 				<s:text name="title.approval.information"/>
 			</div>
 		</div>
-		
+		<div class="row show-row"  id="approverDetailHeading">
 		<div class="form-group">
              <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.department"/><span class="mandatory"></span></label>
              <div class="col-sm-3 add-margin">
@@ -148,7 +148,7 @@ function populateApprover() {
 			  			value="%{approverPositionId}" cssClass="form-control" />
              </div>
          </div>
-         
+         </div>
 </s:if>
 
  <div id="workflowCommentsDiv" align="center">

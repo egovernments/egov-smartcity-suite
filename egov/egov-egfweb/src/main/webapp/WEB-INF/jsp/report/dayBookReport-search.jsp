@@ -182,7 +182,7 @@
 				</div>
 		</s:push>
 		
-		<span class="mandatory">
+		<span class="mandatory1">
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="dayBookReport-result.jsp" />
 			</div>

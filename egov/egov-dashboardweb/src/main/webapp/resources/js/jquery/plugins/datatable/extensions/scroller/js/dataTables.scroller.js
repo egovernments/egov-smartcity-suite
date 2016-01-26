@@ -78,7 +78,7 @@ var Scroller = function ( oDTSettings, oOpts ) {
 	/* Sanity check - you just know it will happen */
 	if ( ! this instanceof Scroller )
 	{
-		alert( "Scroller warning: Scroller must be initialised with the 'new' keyword." );
+		bootbox.alert( "Scroller warning: Scroller must be initialised with the 'new' keyword." );
 		return;
 	}
 
@@ -239,7 +239,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 	 *        "bDeferRender": true,
 	 *        "fnInitComplete": function (o) {
 	 *          // Find where row 25 is
-	 *          alert( o.oScroller.fnRowToPixels( 25 ) );
+	 *          bootbox.alert( o.oScroller.fnRowToPixels( 25 ) );
 	 *        }
 	 *      } );
 	 *    } );
@@ -283,7 +283,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 	 *        "bDeferRender": true,
 	 *        "fnInitComplete": function (o) {
 	 *          // Find what row number is at 500px
-	 *          alert( o.oScroller.fnPixelsToRow( 500 ) );
+	 *          bootbox.alert( o.oScroller.fnPixelsToRow( 500 ) );
 	 *        }
 	 *      } );
 	 *    } );
@@ -1183,7 +1183,7 @@ if ( typeof $.fn.dataTable == "function" &&
 }
 else
 {
-	alert( "Warning: Scroller requires DataTables 1.9.0 or greater - www.datatables.net/download");
+	bootbox.alert( "Warning: Scroller requires DataTables 1.9.0 or greater - www.datatables.net/download");
 }
 
 

@@ -400,8 +400,9 @@ public interface PropertyTaxConstants {
     // Others
     public static final String STRING_SEPERATOR = "-";
     /*
-     * it is break date for rent chart and base rate methods, as now we want only rent chart calculation on system for all the
-     * installments, we changed this date to 2020. its just hack
+     * it is break date for rent chart and base rate methods, as now we want
+     * only rent chart calculation on system for all the installments, we
+     * changed this date to 2020. its just hack
      */
     public static final String DATE_CONSTANT = "01/04/2020";
 
@@ -659,6 +660,7 @@ public interface PropertyTaxConstants {
     public static final String PTVALIDATOR_ROLE = "PTValidator";
     public static final String ROLE_ULB_OPERATOR = "ULB Operator";
     public static final String ROLE_COLLECTION_OPERATOR = "Collection Operator";
+    public static final String ROLE_PTADMINISTRATOR = "Property Administrator";
 
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
@@ -947,9 +949,9 @@ public interface PropertyTaxConstants {
     public static final Integer QUARTZ_BULKBILL_JOBS = 5;
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
-            DEMANDRSN_CODE_VACANT_TAX,
-            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
-            DEMANDRSN_CODE_SEWERAGE_TAX, DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
+            DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS,
+            DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_SEWERAGE_TAX, DEMANDRSN_CODE_REBATE,
+            DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
 
     public static final String APPCONFIG_KEY_WARDSFOR_BULKBILL = "WardNum";
     public static final String APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN = "WardNo";
@@ -1031,7 +1033,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX = "ENDORSEMENT";
     public static final String NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE = "Revision Petition SpecialNotice";
     public static final String NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX = "SPECIALNOTICE";
-    public static final String REPORT_TEMPLATENAME_TRANSFER_NOTICE = "transferProperty_notice";
+    public static final String REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE = "mainMutationCertificate";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
@@ -1163,7 +1165,7 @@ public interface PropertyTaxConstants {
             put("02.30 PM", "02.30 PM");
             put("03.00 PM", "03.00 PM");
             put("03.30 PM", "03.30 PM");
-            put("04.00 PM", "04.00 PM"); 
+            put("04.00 PM", "04.00 PM");
             put("04.30 PM", "04.30 PM");
             put("05.00 PM", "05.00 PM");
             put("05.30 PM", "05.30 PM");
@@ -1250,10 +1252,41 @@ public interface PropertyTaxConstants {
     public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
     public static final String CITY_GRADE_CORPORATION = "Corp";
-    public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500"; 
+    public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVED = "UD Revenue Inspector Approved";
-    
+
     public static final String NATURE_OF_USAGE_RESIDENCE = "Residence";
     public static final String GRADE_NAGAR_PANCHAYAT = "NP";
+
+    // Tax Rates
+
+    public static final Map<String, String> TAX_RATES = new HashMap<String, String>() {
+
+        {
+            put("VAC_LAND_TAX", "Vacant Land Tax");
+            put("EDU_CESS", "Education Cess");
+            put("GEN_TAX_RESD", "General Tax Residential");
+            put("LIB_CESS", "Library Cess");
+            put("GEN_TAX_NR", "General Tax Non Residential");
+        }
+    };
+
+    public static final List<String> TAX_RATES_TEMP = new ArrayList<String>() {
+        {
+            add("PRIMARY_SER_CHRG");
+            add("SEW_TAX_RESD");
+            add("SEW_TAX_NR");
+
+        }
+    };
+    
+    //Tax collection SMS
+    public static final String STR_INSTRUMENTTYPE_CHEQUE = "Your cheque no.";  
+    public static final String STR_INSTRUMENTTYPE_DD = "Your DD no.";
+    public static final String STR_WITH_AMOUNT = " with amount :";
+    public static final String STR_FOR_SUBMISSION = "/- has been submitted for Property tax collection. Amount received will be adjusted against the assessment no : ";
+    public static final String STR_REALIZATION = " subject to the realization of instrument.";
+    public static final String STR_FOR_CASH = "We have received a property tax cash payment of Rs.";
+    public static final String STR_FOR_CASH_ADJUSTMENT = "/- and it would be adjusted against your assessment no.";
 }

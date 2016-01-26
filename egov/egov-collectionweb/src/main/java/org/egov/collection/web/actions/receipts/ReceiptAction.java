@@ -663,6 +663,9 @@ public class ReceiptAction extends BaseFormAction {
         getHeaderMandateFields();
         setupDropdownDataExcluding();
 
+        headerFields.remove(CollectionConstants.FUNDSOURCE);
+        headerFields.remove(CollectionConstants.SCHEME);
+        headerFields.remove(CollectionConstants.SUBSCHEME);
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
@@ -743,10 +746,10 @@ public class ReceiptAction extends BaseFormAction {
             if (mandate.equalsIgnoreCase("M"))
                 mandatoryFields.add(header);
         }
-        if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Receipt"))) {
+      /*  if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Receipt"))) {
             headerFields.add("vouchernumber");
             mandatoryFields.add("vouchernumber");
-        }
+        }*/
         mandatoryFields.add("voucherdate");
     }
 
@@ -798,6 +801,7 @@ public class ReceiptAction extends BaseFormAction {
                 receiptHeader.setVoucherNum(voucherNum);
                 receiptHeader.setIsReconciled(Boolean.TRUE);
                 receiptHeader.setManualreceiptdate(manualReceiptDate);
+                receiptHeader.setPayeeName(StringEscapeUtils.unescapeHtml(paidBy));
 
             } else {
                 receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);

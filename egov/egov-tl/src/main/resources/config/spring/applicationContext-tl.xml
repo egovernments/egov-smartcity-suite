@@ -49,100 +49,39 @@
 	default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.tl" />
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
-	<bean id="feeService" class="org.egov.tl.service.FeeService"
-		parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.tl.entity.FeeMatrix" />
+
+	<bean id="feeService" class="org.egov.tl.service.FeeService">
+		<constructor-arg name="entityType" value="org.egov.tl.entity.FeeMatrix"/>
 	</bean>
 
-	<bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean"
-		scope="prototype" />
+	<bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean" scope="prototype" />
 
-	<!-- <bean id="transferLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" index="0" />
-		<constructor-arg
-			value="org.egov.tl.entity.transfer.LicenseTransfer"
-			index="1" />
-	</bean> -->
+    <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="tradeLicensePersistenceService"/>
+    </bean>
 
-	<!-- <bean id="objectionWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" index="0" />
-		<constructor-arg
-			value="org.egov.tl.entity.objection.LicenseObjection"
-			index="1" />
-	</bean> -->
+    <bean id="transferWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="licenseTransferPersistenceService"/>
+    </bean>
 
-	<bean id="baseLicenseService" class="org.egov.tl.service.BaseLicenseService"
-		scope="prototype" abstract="true">
-		<!-- <property name="sequenceGenerator" ref="sequenceGenerator" />
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="eisCommonsManager" ref="eisCommonsManager" /> -->
-		<property name="feeService" ref="feeService" />
-		<!-- <property name="installmentDao" ref="installmentDao" /> -->
+	<bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
+
+	<bean id="licenseReportService" class="org.egov.tl.service.LicenseReportService" scope="prototype"/>
+
+	<bean id="contractorLicenseReportService" class="org.egov.tl.service.ContractorLicenseReportService" parent="licenseReportService" scope="prototype"/>
+
+	<bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
+		<constructor-arg name="licensePersitenceService" ref="tradeLicensePersistenceService"/>
+        <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
+        <property name="transferWorkflowService" ref="transferWorkflowService"/>
 	</bean>
 
-	<!-- <bean id="licenseBillService"
-		class="org.egov.tl.service.integration.LicenseBillService"
-		scope="prototype">
-		<property name="billDao" ref="billDao" />
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
- -->
-	<bean id="licenseReportService"
-		class="org.egov.tl.service.LicenseReportService"
-		scope="prototype">
-		<!-- <property name="persistenceService" ref="persistenceService" />
-		<property name="installmentDao" ref="installmentDao" /> -->
-	</bean>
-
-	<bean id="contractorLicenseReportService"
-		class="org.egov.tl.service.ContractorLicenseReportService"
-		parent="licenseReportService" scope="prototype">
-	</bean>
-
-	<!-- <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" index="0" />
-		<constructor-arg value="org.egov.tl.entity.TradeLicense"
-			index="1" />
-	</bean> -->
-
-	<bean id="tps" parent="persistenceService" scope="prototype">
-		<property name="type"
-			value="org.egov.tl.entity.TradeLicense" />
-	</bean>
-
-	<bean id="ts" class="org.egov.tl.service.TradeService"
-		parent="baseLicenseService" scope="prototype">
-		<property name="tps" ref="tps" />
-		<!-- <property name="eisCommonsManager" ref="eisCommonsManager" /> -->
-		<!-- <property name="tradeLicenseWorkflowService" ref="tradeLicenseWorkflowService" /> -->
-	</bean>
-
-	<!-- <bean id="objectionService"
-		class="org.egov.tl.service.objection.ObjectionService"
-		parent="persistenceService" scope="prototype">
-		<property name="type"
-			value="org.egov.tl.entity.objection.LicenseObjection" />
-		<property name="eisCommonsManager" ref="eisCommonsManager" />
-		<property name="licenseService" ref="ts" />
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
-		<property name="objectionWorkflowService" ref="objectionWorkflowService" />
-	</bean> -->
-
-	<bean id="licenseBill"
-		class="org.egov.tl.service.integration.LicenseBill"
-		scope="prototype">
+	<bean id="licenseBill" class="org.egov.tl.service.integration.LicenseBill" scope="prototype">
 		<property name="moduleName" value="Trade License" />
 		<property name="serviceCode" value="TL" />
-		<!-- <property name="billDao" ref="billDao" /> 
-		<property name="licenseUtils" ref="licenseUtils" />-->
 	</bean>
 
-	<bean id="licenseDocumentTypeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.tl.entity.LicenseDocumentType" />
+	<bean id="licenseDocumentTypeService" class="org.egov.infstr.services.PersistenceService">
+		<constructor-arg name="type" value="org.egov.tl.entity.LicenseDocumentType"/>
 	</bean>
 </beans>

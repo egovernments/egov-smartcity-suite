@@ -198,7 +198,7 @@
 	type="text/javascript"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-<script src="<c:url value='/resources/js/app/search-complaint.js'/>"
+<script src="<c:url value='/resources/js/app/search-complaint.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 <c:if test="${not empty param.crn}">
 <script>
