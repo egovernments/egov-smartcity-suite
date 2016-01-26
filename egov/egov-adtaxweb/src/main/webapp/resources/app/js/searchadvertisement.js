@@ -148,7 +148,7 @@ $(document).ready(function(){
 							$('#adtaxsearchform').attr('action', url);
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 2) {
-							var url = '/adtax/hoarding/viewAdvertisement/'+ applicationNumber;
+							var url = '/adtax/hoarding/adView/'+ applicationNumber;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');

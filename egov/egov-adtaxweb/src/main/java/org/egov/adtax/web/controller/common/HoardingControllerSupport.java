@@ -157,7 +157,8 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
 
     protected void updateHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
         advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
-            document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
+            if(document.getAttachments() != null)
+                document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
 
