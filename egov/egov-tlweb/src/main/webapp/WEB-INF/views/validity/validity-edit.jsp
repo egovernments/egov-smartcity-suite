@@ -39,11 +39,14 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <form:form role="form" action="../update" modelAttribute="validity" id="validityform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-  <%@ include file="validity-form.jsp" %>
-    <input type="hidden" name="validity" value="${validity.id}" />
+  <%@ include file="validity-form.jsp"%>
+  <input type="hidden" name="validity" value="${validity.id}" />
+  </div>
+  </div>
+  </div>
+  </div>
   <div class="form-group">
     <div class="text-center">
       <button type='submit' class='btn btn-primary' id="buttonSubmit">

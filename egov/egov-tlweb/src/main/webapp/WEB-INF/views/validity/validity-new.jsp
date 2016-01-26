@@ -39,11 +39,13 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <form:form role="form" action="create" modelAttribute="validity" id="validityform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
   <%@ include file="validity-form.jsp"%>
-
+  </div>
+  </div>
+  </div>
+  </div>
   <div class="form-group">
     <div class="text-center">
       <button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -53,11 +55,4 @@
     </div>
   </div>
 </form:form>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
+<script> $('#buttonSubmit').click(function(e){ if($('form').valid()){ }else{ e.preventDefault(); }  });</script>
