@@ -37,25 +37,20 @@
 #   
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-function validate(name,value)
+function validate()
 {
 	if(!validateForm_directBankPayment())
 		{
 		undoLoadingMask();
 		return false;
 		}
-	if(!validateAppoveUser(name,value))
-	{
-		undoLoadingMask() ;
-	return false;
-	}
  enableAll();
 if(!updateAndCheckAmount())
 	{
 	undoLoadingMask();
 	return false;
 	}
- 	document.dbpform.action='../payment/directBankPayment-create.action';
+ 	document.dbpform.action='/EGF/payment/directBankPayment-create.action';
 	document.dbpform.submit();
 return true;
 }

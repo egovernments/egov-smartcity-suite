@@ -37,11 +37,11 @@
 	<s:hidden id="workFlowAction" name="workFlowAction" />
 	<table style="width: 100%; text-align: center;">
 		<tr>
-			<td><s:iterator value="%{getValidActions()}" var="name">
-					<s:if test="%{name!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
-							id="%{name}" name="%{name}"
-							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+			<td><s:iterator value="%{getValidActions()}" var="validAction">
+					<s:if test="%{validAction!=''}">
+						<s:submit type="submit" cssClass="buttonsubmit" value="%{validAction}"
+							id="%{validAction}" name="%{validAction}"
+							onclick="return validateWorkFlowApprover('%{validAction}','jsValidationErrors');" />
 					</s:if>
 				</s:iterator> <input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>

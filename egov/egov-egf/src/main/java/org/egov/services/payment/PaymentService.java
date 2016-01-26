@@ -2857,6 +2857,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 bankaccountId.longValue());
         paymentheader.setBankaccount(bankaccount);
         paymentheader.setPaymentAmount(amount);
+        applyAuditing(paymentheader);
         create(paymentheader);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createPaymentHeader.");

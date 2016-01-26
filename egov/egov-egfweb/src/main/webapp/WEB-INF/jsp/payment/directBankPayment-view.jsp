@@ -57,13 +57,13 @@
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript"
 	src="/EGF/resources/javascript/calendar.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
@@ -149,7 +149,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 			{key:"functionid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
 			{key:"function",hidden:true,label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},
 			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>',width:100, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
 			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
 			{key:"debitamount",label:'Debit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
 			{key:"creditamount",label:'Credit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
@@ -162,7 +162,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
    			{key:"functionid",hidden:true,width:90,  formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
    			{key:"function",label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","text")},         
    			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-   			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+   			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
    			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
    			{key:"debitamount",label:'Debit Amount',width:90, className:'bluebgheadtd' ,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
    			{key:"creditamount",label:'Credit Amount',width:90,formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
@@ -228,10 +228,10 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
 			{key:"glcode",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
-			{key:"glcode.id",label:'Account Code <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"glcode.id",label:'Account Code <span class="mandatory1">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
 			{key:"detailTypeName",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-			{key:"detailCode",label:'Code <span class="mandatory">*</span>',width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","validateDetailCodeForJV(this)")},
+			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailCode",label:'Code <span class="mandatory1">*</span>',width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","validateDetailCodeForJV(this)")},
 			{key:"detailKeyId",hidden:true,width:100, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
 			{key:"detailKey",label:'Name',width:180, formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
 			{key:"amount",label:'Amount',width:90, formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
@@ -344,7 +344,7 @@ function printVoucher(){
 					<p class="error-block" id="lblError"></p>
 				</font>
 			</div>
-			<span class="mandatory">
+			<span class="mandatory1">
 				<div id="Errors">
 					<s:actionerror />
 					<s:fielderror />
@@ -368,7 +368,7 @@ function printVoucher(){
 											name="voucherNumber" id="voucherNumber" /></td>
 									<s:hidden name="id" />
 									<td class="bluebox" width="18%"><s:text
-											name="voucher.date" /><span class="mandatory">*</span></td>
+											name="voucher.date" /><span class="mandatory1">*</span></td>
 									<td class="bluebox" width="38%"><input type="text"
 										name="voucherDate"
 										onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -492,18 +492,9 @@ function printVoucher(){
 	</script>
 
 				</s:if>
-				<div align="center">
-					<tr>
-						<td colspan="6"><s:if
-								test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-								<%@include file="../voucher/workflowApproval.jsp"%>
-							</s:if></td>
-					</tr>
-				</div>
 
 
-
-				<SCRIPT type="text/javascript">
+				<script type="text/javascript">
 
 		var frmIndex=0;
 		for(var i=0;i<document.forms[frmIndex].length;i++)
@@ -580,20 +571,17 @@ function printVoucher(){
 							</div>
 						</s:if>
 					</s:if>
-
+					<s:if test="%{showMode!='create' && showMode!='view' }">
+						<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
+						<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+					</s:if>
 
 					<div class="buttonbottom" id="newbuttondiv" align="center">
 						<s:hidden id="paymentid" name="paymentid"
 							value="%{paymentheader.id}" />
 						<s:hidden name="actionname" id="actionName" value="%{action}" />
-						<s:iterator value="%{getValidActions()}" var="p" status="s">
-							<s:submit type="submit" cssClass="buttonsubmit"
-								value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
-								method="sendForApproval"
-								onclick="return balanceCheck(this, '%{name}','%{description}');return false;" />
-						</s:iterator>
-						<input type="button" id="closeButtonNew" value="Close"
-							onclick="javascript:window.close()" class="button" />
+
+
 						<s:submit cssClass="button" id="printPreview1"
 							value="Print Preview" onclick="printVoucher()" />
 					</div>
@@ -617,13 +605,17 @@ if(document.getElementById('actionName').value!='')
 				document.getElementById('balanceAvl').style.display='block';
 			}
 	    </s:if>	    
-	
+	    function onSubmit()
+	    {
+	    	document.forms[0].action='${pageContext.request.contextPath}/payment/directBankPayment-sendForApproval.action';
+    		document.forms[0].submit();
+	    }
 </script>
 				</s:if>
 
 				<div class="subheadsmallnew" />
 			</div>
-			<div class="mandatory" align="left">* Mandatory Fields</div>
+			<div class="mandatory1" align="left">* Mandatory Fields</div>
 			</div>
 
 		</s:push>

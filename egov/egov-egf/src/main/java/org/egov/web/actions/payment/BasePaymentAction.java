@@ -74,14 +74,15 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
                 "/payment"
         }),
         @Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment-viewInboxItem", params = {
-                "namespace",
-                "/payment", "method", "viewInboxItem" }),
+                "namespace", "/payment"
+        }),
         @Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery-viewInboxItem", params = {
-                "namespace",
-                "/deduction" }),
+                "namespace", "/deduction"
+        }),
         @Result(name = "contractoradvancepayment", type = "redirectAction", location = "advancePayment-viewInboxItem", params = {
-                "namespace",
-                "/payment" }) })
+                "namespace", "/payment"
+        })
+})
 public class BasePaymentAction extends BaseVoucherAction {
     /**
      *
