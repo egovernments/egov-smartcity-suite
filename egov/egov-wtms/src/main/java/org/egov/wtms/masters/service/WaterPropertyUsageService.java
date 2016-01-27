@@ -72,7 +72,7 @@ public class WaterPropertyUsageService {
     
 
     
-    public WaterPropertyUsage getByPropertyTypeAndUsageType(final PropertyType propertyType,
+    public WaterPropertyUsage findByPropertyTypeAndUsageType(final PropertyType propertyType,
             final String usagetype) {
        
             return waterPropertyUsageRepository.findByPropertyTypeAndUsageType(propertyType,usagetype);

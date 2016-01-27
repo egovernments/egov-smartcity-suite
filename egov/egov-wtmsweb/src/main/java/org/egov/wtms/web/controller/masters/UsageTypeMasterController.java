@@ -94,7 +94,7 @@ public class UsageTypeMasterController {
         if (resultBinder.hasErrors())
             return "usage-type-master";
         WaterPropertyUsage waterpropertyUsage = new WaterPropertyUsage();
-        waterpropertyUsage = waterPropertyUsageService.getByPropertyTypeAndUsageType(
+        waterpropertyUsage = waterPropertyUsageService.findByPropertyTypeAndUsageType(
                 waterPropertyUsage.getPropertyType(),
                 waterPropertyUsage.getUsagetype().getName().toUpperCase()
                         .trim());
