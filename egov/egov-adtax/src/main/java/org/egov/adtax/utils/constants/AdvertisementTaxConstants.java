@@ -96,4 +96,11 @@ public class AdvertisementTaxConstants {
     public static final String COLLECTION_REMARKS = "Collection done";
     public static final String DEMANDNOTICE = "demandNotice";
     
+    public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
+    public static final String IMAGE_CONTEXT_PATH = "/egi";
+    public static final String ADVERTISEMENTPERMITODERTITLE= "Advertisement Permit Order";
+    public static final String ADVERTISEMENTDEMANDNOTICETITLE=    "Advertisement Demand Notice";
+    
+    
+    
 }
