@@ -205,9 +205,9 @@ public class ViewPropertyAction extends BaseFormAction {
 
                 } else {
                     viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
+                    totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
                             .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap
-                            .get(DEMANDRSN_STR_GENERAL_TAX)
+                            .get(DEMANDRSN_STR_GENERAL_TAX))
                             .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                                     : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
                             .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO

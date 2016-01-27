@@ -344,10 +344,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
             applicableTaxes.add(DEMANDRSN_CODE_GENERAL_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
+            applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
         } else {
             applicableTaxes.add(DEMANDRSN_CODE_VACANT_TAX);
         }
-        applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
         applicableTaxes.add(DEMANDRSN_CODE_LIBRARY_CESS);
         if (isCorporation)
             applicableTaxes.add(DEMANDRSN_CODE_SEWERAGE_TAX);
