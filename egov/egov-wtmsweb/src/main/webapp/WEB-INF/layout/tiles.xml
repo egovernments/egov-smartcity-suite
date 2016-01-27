@@ -226,5 +226,13 @@
         <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/document-master-success.jsp"/>
     </definition>
+    <definition name="usage-type-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master.jsp"/>
+    </definition>
+     <definition name="usage-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-master-success.jsp"/>
+    </definition>
     
 </tiles-definitions>

@@ -46,7 +46,7 @@
 <%--  <form role="form" class="form-horizontal form-groups-bordered"> --%>
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
-	modelAttribute="propertyCategory" id="categoryMasterform"
+	modelAttribute="waterPropertyUsage" id="usageTypeMasterform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
@@ -68,11 +68,12 @@
 					<form:errors path="propertyType"
 						cssClass="add-margin error-msg" />
 				</div>
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category.type" /><span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin"  id="categorydiv">
-					<form:input class="form-control patternvalidation"   data-pattern="alphabetwithspace"  maxlength="24" id="categoryName"
-						path="connectionCategory.name" required="required" />
-					<form:errors path="connectionCategory.name"
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.usagetype" /><span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin"  id="usagediv">
+					<form:input class="form-control patternvalidation"  data-pattern="alphabetwithspace"  maxlength="24" id="usageTypeName"
+						path="usagetype.name" required="required" />
+						
+					<form:errors path="usagetype.name"
 						cssClass="add-margin error-msg" />
 				</div>
 

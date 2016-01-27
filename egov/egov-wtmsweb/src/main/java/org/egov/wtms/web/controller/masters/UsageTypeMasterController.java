@@ -44,11 +44,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import javax.validation.Valid;
 
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.PropertyCategory;
-import org.egov.wtms.masters.service.ConnectionCategoryService;
-import org.egov.wtms.masters.service.PropertyCategoryService;
+
+
+import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.service.PropertyTypeService;
+import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,56 +62,56 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
-public class CategoryMasterController {
+public class UsageTypeMasterController {
 
     private final PropertyTypeService propertyTypeService;
 
-    private final ConnectionCategoryService connectionCategoryService;
+    private final WaterPropertyUsageService waterPropertyUsageService;
 
-    private final PropertyCategoryService propertyCategoryService;
+    private final UsageTypeService usageTypeService;
 
     @Autowired
-    public CategoryMasterController(final PropertyTypeService propertyTypeService,
-            final ConnectionCategoryService connectionCategoryService,
-            final PropertyCategoryService propertyCategoryService) {
+    public UsageTypeMasterController(final PropertyTypeService propertyTypeService,
+            final WaterPropertyUsageService waterPropertyUsageService,
+            final UsageTypeService usageTypeService) {
         this.propertyTypeService = propertyTypeService;
-        this.connectionCategoryService = connectionCategoryService;
-        this.propertyCategoryService = propertyCategoryService;
+        this.waterPropertyUsageService = waterPropertyUsageService;
+        this.usageTypeService = usageTypeService;
 
     }
 
-    @RequestMapping(value = "/categoryMaster", method = GET)
-    public String viewForm(@ModelAttribute PropertyCategory propertyCategory, final Model model) {
-        propertyCategory = new PropertyCategory();
-        model.addAttribute("propertyCategory", propertyCategory);
+    @RequestMapping(value = "/usageTypeMaster", method = GET)
+    public String viewForm(@ModelAttribute WaterPropertyUsage waterPropertyUsage, final Model model) {
+        waterPropertyUsage = new WaterPropertyUsage();
+        model.addAttribute("waterPropertyUsage", waterPropertyUsage);
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
-        return "category-master";
+        return "usage-type-master";
     }
 
-    @RequestMapping(value = "/categoryMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
+    @RequestMapping(value = "/usageTypeMaster", method = RequestMethod.POST)
+    public String addCategoryMasterData(@Valid @ModelAttribute final WaterPropertyUsage waterPropertyUsage,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
-            return "category-master";
-        PropertyCategory propertycategory = new PropertyCategory();
-        propertycategory = propertyCategoryService.getByPropertyTypeAndCategory(
-                propertyCategory.getPropertyType(),
-                connectionCategoryService.findByCode(propertyCategory.getConnectionCategory().getName().toUpperCase()
-                        .trim()));
-        if (propertycategory != null) {
-            redirectAttrs.addFlashAttribute("propertyCategory", propertycategory);
-            model.addAttribute("message", "Entered Category for the Chosen Property Type is already Exists");
+            return "usage-type-master";
+        WaterPropertyUsage waterpropertyUsage = new WaterPropertyUsage();
+        waterpropertyUsage = waterPropertyUsageService.getByPropertyTypeAndUsageType(
+                waterPropertyUsage.getPropertyType(),
+                waterPropertyUsage.getUsagetype().getName().toUpperCase()
+                        .trim());
+        if (waterpropertyUsage != null) {
+            redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyUsage);
+            model.addAttribute("message", "Entered Usage Type for the Chosen Property Type is already Exists");
         } else {
-            ConnectionCategory category = new ConnectionCategory();
-            category = propertyCategory.getConnectionCategory();
-            category.setName(category.getName().trim());
-            category.setActive(true);
-            category.setCode(category.getName().toUpperCase());
-            connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
-            propertyCategoryService.createPropertyCategory(propertyCategory);
-            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
-            model.addAttribute("message", "Category Data created successfully");
+            UsageType usagetype = new UsageType();
+            usagetype = waterPropertyUsage.getUsagetype();
+            usagetype.setName(usagetype.getName().trim());
+            usagetype.setActive(true);
+            usagetype.setCode(usagetype.getName().toUpperCase());
+            usageTypeService.createUsageType(usagetype);
+            waterPropertyUsageService.createPropertyCategory(waterPropertyUsage);
+            redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
+            model.addAttribute("message", "Usage Type Data created successfully");
         }
-        return "category-master-success";
+        return "usage-master-success";
     }
 }
