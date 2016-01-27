@@ -96,6 +96,12 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         try {
             Long approvalPosition = 0l;
             String approvalComment = "";
+            String approverName = "";
+            String nextDesignation = "";
+            if (request.getParameter("approverName") != null)
+                approverName = request.getParameter("approverName");
+            if (request.getParameter("nextDesignation") != null)
+                nextDesignation = request.getParameter("nextDesignation");
             if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
@@ -121,7 +127,11 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                     }
                 } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
                     return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
-
+                else {
+                    redirAttrib.addFlashAttribute("message", "msg.success.forward.on.reject");
+                    redirAttrib.addFlashAttribute("approverName", approverName);
+                    redirAttrib.addFlashAttribute("nextDesign", nextDesignation);
+                }
                 return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
             }
         } catch (final HoardingValidationError e) {

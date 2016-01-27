@@ -342,8 +342,26 @@ $("#locationDiv input, #locationDiv textarea, #locationDiv select").prop("disabl
 if(statuscode=='APPROVED' || statuscode=='ADTAXAMTPAYMENTPAID' || statuscode=='ADTAXAMTPAYMENTPENDING'){
 	$("#adtaxdetailsbody input, #adtaxdetailsbody textarea, #adtaxdetailsbody select").prop("disabled", true);
 }
-	
 
+$( ".workflow-submit" ).click(function( e ) {
+	if($('#advertisementform').valid()){
+		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
+			if(parseInt($('#measurement').val()) <= 0){
+				bootbox.alert('Please enter valid measurement');
+				e.preventDefault();
+				return false;
+			}else{ 
+				document.forms['advertisementform'].submit();
+			}
+		}else{
+			e.preventDefault();
+		}
+	}else {
+		e.preventDefault();
+		return false;
+	}
+});
+	
 
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>

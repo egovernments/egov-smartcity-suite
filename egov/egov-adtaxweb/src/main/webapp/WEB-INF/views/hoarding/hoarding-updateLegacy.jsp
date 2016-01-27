@@ -65,7 +65,7 @@
 
 		</div>					
 		<div class="text-center">
-			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+			<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 			<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 		</div>
 	</form:form>
@@ -78,6 +78,7 @@
 var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
 var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
+
 $(window).load(function(){
 	
 	document.getElementById("applicationNumber").readOnly=true;
@@ -85,6 +86,18 @@ $(window).load(function(){
 	document.getElementById("permissionNumber").readOnly=true;
 	document.getElementById("advertisementnumber").readOnly=true;
 });
+
+$('#submit').click(function(e){
+	if($('#hoardingform').valid()){
+			 if($('#measurement').val() <= 0){
+				bootbox.alert('Please enter valid measurement');
+				e.preventDefault();
+			}else 
+				document.forms['hoardingform'].submit();
+	}
+	else 
+		return false;
+	});
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/app/js/legacyAdvertisement.js'/>"></script>
