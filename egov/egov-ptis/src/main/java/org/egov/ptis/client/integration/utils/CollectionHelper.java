@@ -125,7 +125,7 @@ public class CollectionHelper {
 	public BillReceiptInfo generateMiscReceipt(Payment payment) {
 		if (!isCollectionPermitted()) {
 			throw new ApplicationRuntimeException(
-					"Collection is not allowed - current balance is zero and advance coll exists.");
+					"Collection is not allowed - Fully paid or excess Paid.");
 		}
 		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
 		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.C, null);
@@ -269,10 +269,23 @@ public class CollectionHelper {
 	}
 
 	private boolean isCollectionPermitted() {
-		boolean allowed = thereIsCurrentBalanceToBePaid();
+		boolean allowed = thereIsBalanceToBePaid();
 		LOG.debug("isCollectionPermitted() returned: " + allowed);
 		return allowed;
 	}
+
+        private boolean thereIsBalanceToBePaid() {
+            boolean result = false;
+            BigDecimal balance = BigDecimal.ZERO;
+            for (EgBillDetails bd : bill.getEgBillDetails()) {
+                balance = balance.add(bd.balance());
+                if(balance.compareTo(BigDecimal.ZERO)>0){
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
 
 	private boolean thereIsCurrentBalanceToBePaid() {
 		boolean result = false;
