@@ -287,6 +287,8 @@ public class VoucherHelper {
         final String vDate = Constants.DDMMYYYYFORMAT2.format(voucherDate);
         final String vDateTemp = Constants.DDMMYYYYFORMAT1.format(voucherDate);
         final CFiscalPeriod fiscalPeriod = fiscalDAO.getFiscalPeriodByDate(voucherDate);
+        if(fiscalPeriod==null)
+            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
         final Fund vFund = fundDAO.fundById(fundId);
         final String fundIdentifier = vFund.getIdentifier().toString();
         final String sequenceName = sequenceNameFor(fundIdentifier + "/" + voucherType, fiscalPeriod.getName());
