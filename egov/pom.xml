@@ -75,6 +75,10 @@
 			<id>JBoss Repository</id>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
+		<repository>
+			<id>fdvsolution.public</id>
+			<url>http://nexus.fdvs.com.ar/content/groups/public/</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -617,6 +621,12 @@
 			<!-- VIEWS RELATED END -->
 
 			<!-- REPORTS START -->
+
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>${jasper-report-version}</version>
+			</dependency>
 			<dependency>
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports-fonts</artifactId>
