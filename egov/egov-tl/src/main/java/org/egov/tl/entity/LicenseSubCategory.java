@@ -42,6 +42,7 @@ package org.egov.tl.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
@@ -51,8 +52,9 @@ import org.hibernate.validator.constraints.Length;
  * The Class TradeSubCategory.
  */
 @Unique(fields = { "code" }, id = "id", tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
-public class LicenseSubCategory extends BaseModel {
+public class LicenseSubCategory extends AbstractAuditable {
     private static final long serialVersionUID = 1L;
+    private Long id;
     private LicenseCategory category;
     @Required(message = "tradelic.master.tradesubcategorycode.null")
     @Length(max = 32, message = "tradelic.master.tradesubcategorycode.length")  
@@ -198,6 +200,14 @@ public class LicenseSubCategory extends BaseModel {
 
     public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
         this.licenseSubCategoryDetails = licenseSubCategoryDetails;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

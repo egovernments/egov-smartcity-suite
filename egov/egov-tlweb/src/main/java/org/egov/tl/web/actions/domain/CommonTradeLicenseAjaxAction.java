@@ -158,7 +158,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
      */
     @Action(value="/domain/commonTradeLicenseAjax-ajaxLoadUomName")   
     public void ajaxLoadUomName() throws IOException, NoSuchObjectException { 
-        LicenseSubCategory subCategory = licenseSubCategoryService.find("select s from org.egov.tl.entity.LicenseSubCategory s  where s.id ="+subCategoryId);
+        LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
         List<UnitOfMeasurement> uomList = new ArrayList<UnitOfMeasurement>();
         if(subCategory!=null){
             if(!subCategory.getLicenseSubCategoryDetails().isEmpty()){

@@ -110,8 +110,8 @@ public class CommonAjaxAction extends BaseFormAction {
     private EisCommonService eisCommonService;
     @Autowired
     private  FeeMatrixDetailService feeMatrixDetailService;
-	private LicenseSubCategoryService licenseSubCategoryService;
-	private List<LicenseSubCategory> subCategoryList;
+        private LicenseSubCategoryService licenseSubCategoryService;
+        private List<LicenseSubCategory> subCategoryList;
 
     public InputStream getReturnStream() {
         final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
@@ -203,7 +203,7 @@ public class CommonAjaxAction extends BaseFormAction {
     
     @Action(value="/domain/commonAjax-ajaxPopulateSubCategory")  
     public String ajaxPopulateSubCategory() {
-    subCategoryList = licenseSubCategoryService.findAllBy("select s from org.egov.tl.entity.LicenseSubCategory s  where s.category.id ="+categoryId);
+    subCategoryList = licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
     return "subcategory";       
     }
     
@@ -325,54 +325,54 @@ public class CommonAjaxAction extends BaseFormAction {
         this.licenseUtils = licenseUtils;
     }
 
-	public BoundaryService getBoundaryService() {
-		return boundaryService;
-	}
+        public BoundaryService getBoundaryService() {
+                return boundaryService;
+        }
 
-	public void setBoundaryService(BoundaryService boundaryService) {
-		this.boundaryService = boundaryService;
-	}
+        public void setBoundaryService(BoundaryService boundaryService) {
+                this.boundaryService = boundaryService;
+        }
 
-	public DesignationService getDesignationService() {
-		return designationService;
-	}
+        public DesignationService getDesignationService() {
+                return designationService;
+        }
 
-	public void setDesignationService(DesignationService designationService) {
-		this.designationService = designationService;
-	}
+        public void setDesignationService(DesignationService designationService) {
+                this.designationService = designationService;
+        }
 
-	public EisCommonService getEisCommonService() {
-		return eisCommonService;
-	}
+        public EisCommonService getEisCommonService() {
+                return eisCommonService;
+        }
 
-	public void setEisCommonService(EisCommonService eisCommonService) {
-		this.eisCommonService = eisCommonService;
-	}
+        public void setEisCommonService(EisCommonService eisCommonService) {
+                this.eisCommonService = eisCommonService;
+        }
 
-	public LicenseSubCategoryService getLicenseSubCategoryService() {
-		return licenseSubCategoryService;
-	}
+        public LicenseSubCategoryService getLicenseSubCategoryService() {
+                return licenseSubCategoryService;
+        }
 
-	public void setLicenseSubCategoryService(
-			LicenseSubCategoryService licenseSubCategoryService) {
-		this.licenseSubCategoryService = licenseSubCategoryService;
-	}
+        public void setLicenseSubCategoryService(
+                        LicenseSubCategoryService licenseSubCategoryService) {
+                this.licenseSubCategoryService = licenseSubCategoryService;
+        }
 
-	public Long getCategoryId() {
-		return categoryId;
-	}
+        public Long getCategoryId() {
+                return categoryId;
+        }
 
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
-	}
+        public void setCategoryId(Long categoryId) {
+                this.categoryId = categoryId;
+        }
 
-	public List<LicenseSubCategory> getSubCategoryList() {
-		return subCategoryList;
-	}
+        public List<LicenseSubCategory> getSubCategoryList() {
+                return subCategoryList;
+        }
 
-	public void setSubCategoryList(List<LicenseSubCategory> subCategoryList) {
-		this.subCategoryList = subCategoryList;
-	}
+        public void setSubCategoryList(List<LicenseSubCategory> subCategoryList) {
+                this.subCategoryList = subCategoryList;
+        }
 
     public Long getFeeMatrixDetailId() {
         return feeMatrixDetailId;
