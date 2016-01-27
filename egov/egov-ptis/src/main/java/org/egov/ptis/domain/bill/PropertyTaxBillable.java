@@ -142,9 +142,15 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
-
+    // 1st installment starting month
     private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(01).withMonthOfYear(04);
-    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(10).withDayOfMonth(01);     
+    // 2nd installment starting month
+    private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withMonthOfYear(10).withDayOfMonth(01);  
+    //1st installment month after grace period
+    private final DateTime PENALTY_EFFECTIVE_DATE_CUR_FIRST_HALF_JULY = new DateTime().withDayOfMonth(01).withMonthOfYear(07);
+    //2nd installment month after grace period 
+    private final DateTime PENALTY_EFFECTIVE_DATE_CUR_SECOND_HALF_JAN = new DateTime().withMonthOfYear(01).withDayOfMonth(01);     
+
 
     @Autowired
     private RebatePeriodService rebatePeriodService;
@@ -510,7 +516,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
                     if (existingPenaltyDemandDetail == null) {
                         final Date penaltyEffectiveDate = getPenaltyEffectiveDate(installment,
-                                assessmentEffecInstallment, basicProperty.getAssessmentdate());
+                                assessmentEffecInstallment, basicProperty.getAssessmentdate(),currentInstall);
                         if (penaltyEffectiveDate.before(new Date()))
                             penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                     } else
@@ -525,13 +531,19 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     }
 
     private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
-            final Date assmentDate) {
+            final Date assmentDate, final Installment curInstallment) {
         final DateTime installmentDate = new DateTime(installment.getFromDate());
-//        final DateTime installmentToDate = new DateTime(installment.getToDate());
+        final DateTime installmentToDate = new DateTime(installment.getToDate());
         final DateTime firstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_FIRST_HALF.toDate())
                 .withYear(installmentDate.getYear());
         final DateTime secondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_SECOND_HALF.toDate())
                 .withYear(installmentDate.getYear());
+        
+        final DateTime curFirstHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_CUR_FIRST_HALF_JULY.toDate())
+        .withYear(installmentDate.getYear());
+        final DateTime curSecondHalfPeriod = new DateTime(PENALTY_EFFECTIVE_DATE_CUR_SECOND_HALF_JAN.toDate())
+        .withYear(installmentToDate.getYear());
+
         /**
          * If assessment date falls in the installment on which penalty is being
          * calculated then penalty calculation will be effective from two months
@@ -544,10 +556,18 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             penalyDate.set(Calendar.DAY_OF_MONTH, 1);
             return penalyDate.getTime();
         } else if (propertyTaxUtil
-                .between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate()))
-            return firstHalfPeriod.toDate();
-        else
-            return secondHalfPeriod.toDate();
+                .between(firstHalfPeriod.toDate(), installment.getFromDate(), installment.getToDate())){
+            if(installment.equals(curInstallment))
+                return curFirstHalfPeriod.toDate();
+            else 
+                return firstHalfPeriod.toDate();
+        }
+        else{
+            if(installment.equals(curInstallment))
+                return curSecondHalfPeriod.toDate(); 
+            else 
+                return secondHalfPeriod.toDate();
+        }
     }
 
     @Override
