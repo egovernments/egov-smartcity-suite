@@ -69,6 +69,7 @@ import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
@@ -90,7 +91,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
-
+    private Long feeTypeId;
+    @Autowired
+    @Qualifier("feeTypeService")
+    private FeeTypeService feeTypeService;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -175,6 +179,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
                 licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        feeTypeId=feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId(); 
     }
 
     @Override
@@ -262,5 +267,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
     }
 }
