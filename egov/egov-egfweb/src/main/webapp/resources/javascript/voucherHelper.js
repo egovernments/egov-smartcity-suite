@@ -932,16 +932,17 @@ function getRowIndex(obj)
 }
 
 function fillNeibrAfterSplitGlcode(obj)
-{
+{ 
 	var key = obj.value;
 	var temp = obj.value;
 	temp = temp.split("`-`");
 	var currRow=getRowIndex(obj);
-	var acchead= document.getElementById('billDetailslist['+currRow+'].accounthead').value;
+	/*var acchead= document.getElementById('billDetailslist['+currRow+'].accounthead').value;
+	console.log(acchead);
 	if(acchead !=null && acchead !=""){
 		key = key+"`-`";
 		key = key+acchead;
-	}
+	}*/
 	var accCodeid = allGlcodes[key];
 	if(temp.length>1)
 	{ 

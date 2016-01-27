@@ -37,13 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
 <title><s:text name="chartOfAccount.add" /></title>
@@ -59,6 +53,9 @@
 			bootbox.alert("Please enter Account Code");
 			return false;
 		}
+		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-save.action';
+		document.chartOfAccountsForm.submit();
+
 		return true;
 	}
 </script>
@@ -73,13 +70,13 @@
 		<s:actionerror />
 		<s:fielderror />
 		<s:form name="chartOfAccountsForm" action="chartOfAccounts"
-			theme="simple">
+			id="chartOfAccountsForm" theme="simple">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
 				id="chartOfAccountsTable">
 				<tr>
 					<td width="20%" class="bluebox">&nbsp;</td>
 					<td width="10%" class="bluebox"><strong><s:text
-								name="chartOfAccount.accountCode" />:<span class="mandatory">*</span></strong></td>
+								name="chartOfAccount.accountCode" />:<span class="mandatory1">*</span></strong></td>
 					<td width="22%" class="bluebox"><input type="text"
 						readonly="readonly" name="generatedGlcode" id="generatedGlcode"
 						size="10" value='<s:property value="generatedGlcode"/>' /> <input
@@ -87,7 +84,7 @@
 						maxlength='<s:property value="glCodeLengths[model.classification]"/>'
 						value='<s:property value="newGlcode"/>' /></td>
 					<td width="10%" class="bluebox"><strong><s:text
-								name="chartOfAccount.name" />:<span class="mandatory">*</span></strong></td>
+								name="chartOfAccount.name" />:<span class="mandatory1">*</span></strong></td>
 					<td class="bluebox"><input type="text" id="model.name"
 						name="model.name" onKeyDown="textCounter('model.name',100)"
 						onKeyUp="textCounter('model.name',100)"
@@ -147,12 +144,14 @@
 			</table>
 			<br />
 			<br />
-			<input type="hidden" name="parentId"
-				value='<s:property value="parentId"/>' />
-			<s:submit name="Save" value="Save" method="save"
-				onclick="javascript: return validate();" cssClass="buttonsubmit" />
-			<s:submit value="Close" onclick="javascript: self.close()"
-				cssClass="buttonsubmit" />
+			<div class="buttonbottom">
+				<input type="hidden" name="parentId"
+					value='<s:property value="parentId"/>' />
+				<s:submit name="Save" value="Save"
+					onclick="javascript: return validate();" cssClass="buttonsubmit" />
+				<s:submit value="Close" onclick="javascript: self.close()"
+					cssClass="buttonsubmit" />
+			</div>
 			<s:token />
 		</s:form>
 	</div>
