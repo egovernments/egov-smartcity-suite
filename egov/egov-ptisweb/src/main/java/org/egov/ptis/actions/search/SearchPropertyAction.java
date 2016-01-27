@@ -265,6 +265,12 @@ public class SearchPropertyAction extends BaseFormAction {
             return COMMON_FORM;
         }
         checkIsDemandActive(basicProperty.getProperty());
+        if(!applicationType.equalsIgnoreCase(APPLICATION_TYPE_COLLECT_TAX) && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)){
+	        if(basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)){
+	        	addActionError(getText("EWSHS.transaction.error"));
+	            return COMMON_FORM;
+	        }
+        }
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
         if (hasChildPropertyUnderWorkflow) {
             addActionError(getText("error.msg.child.underworkflow"));

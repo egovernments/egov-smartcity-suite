@@ -146,15 +146,16 @@
 											----Choose----
 										</option>
 								
-										<s:if test="%{#attr.currentRowObject.isDemandActive}">
+										<s:if test="%{#attr.currentRowObject.isDemandActive && #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 											<c:if test="${currentRowObject.isTaxExempted == true}">
 												<option value="TaxExemption">
 															<s:text name="TaxExemption"></s:text>
 												</option>
 											</c:if>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
-										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+										<s:if test="%{(roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
+										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))
+										&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.isTaxExempted == false }">
 											<c:if test="${currentRowObject.source == 'D'}">
 												<option value="EDIT_DATAENTRY">
@@ -216,7 +217,8 @@
 									   </c:if>
 									   
 									</s:if>
-									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive}">
+									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive
+									&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.propType != 'VAC_LAND' && currentRowObject.isTaxExempted == false}">
 											<c:if test="${currentRowObject.enableMonthlyUpdate == true && currentRowObject.enableVRApproval == false}">
 												<option value="VacancyRemissionMonthlyUpdate">
