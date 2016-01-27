@@ -42,6 +42,7 @@
 
 <script src="<c:url value='/resources/app/js/feematrix.js' context='/tl'/>"></script>
 <script src="<c:url value='/resources/js/helper.js' context='/tl'/>"></script>
+
 <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0"> 
@@ -76,31 +77,6 @@
 	            </div>
             </div>
             
-             <div class="form-group">
-	            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.feetype" /> <span
-	                class="mandatory"></span> </label>
-	              <div class="col-sm-3 add-margin">
-	                <form:select path="feeType" id="feeType" cssClass="form-control"   required="required"
-	                  cssErrorClass="form-control error">
-	                  <form:option value="">
-	                    <spring:message code="lbl.select" />
-	                  </form:option>
-	                  <form:options items="${feeTypes}" itemValue="id" itemLabel="name" />
-	                </form:select>
-	              </div>
-	              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.financialyear" /> <span
-	                class="mandatory"></span> </label>
-	                <div class="col-sm-3 add-margin">
-	                <form:select path="financialYear" id="financialYear" cssClass="form-control"   required="required"
-	                  cssErrorClass="form-control error">
-	                  <form:option value="">
-	                    <spring:message code="lbl.select" />
-	                  </form:option>
-	                  <form:options items="${financialYears}" itemValue="id" itemLabel="finYearRange" />
-	                </form:select>
-	              </div>
-            </div>
-            
             <div class="form-group">
             	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> <span
 	              class="mandatory"></span> </label>
@@ -127,17 +103,47 @@
             </div>
             
             <div class="form-group">
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.unitofmeasurement" /> <span
+	            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.feetype" /> <span
+	                class="mandatory"></span> </label>
+	              <div class="col-sm-3 add-margin">
+	                <form:select path="feeType" id="feeType" cssClass="form-control"   required="required"
+	                  cssErrorClass="form-control error">
+	                  <form:option value="">
+	                    <spring:message code="lbl.select" />
+	                  </form:option>
+	                  <form:options items="${feeTypes}" itemValue="id" itemLabel="name" />
+	                </form:select>
+	              </div>
+	              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.unitofmeasurement" /> <span
 	              class="mandatory"></span> </label>
-	            <div class="col-sm-3 add-margin">
-	              <form:select path="unitOfMeasurement" id="unitOfMeasurement" cssClass="form-control"   required="required"
-	                cssErrorClass="form-control error">
-	                <form:option value="">
-	                  <spring:message code="lbl.select" />
-	                </form:option>
-	                <form:options items="${unitOfMeasurements}" itemValue="id" itemLabel="name" />
-	              </form:select>
-	            </div>
+		            <div class="col-sm-3 add-margin">
+		              <form:select path="unitOfMeasurement" id="unitOfMeasurement" cssClass="form-control"   required="required"
+		                cssErrorClass="form-control error">
+		                <form:option value="">
+		                  <spring:message code="lbl.select" />
+		                </form:option>
+		                <form:options items="${unitOfMeasurements}" itemValue="id" itemLabel="name" />
+		              </form:select>
+		            </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.rateType" /> </label>
+		            <div class="col-sm-3 add-margin">
+		            	<form:input id="rateType" path="" class="form-control text-left" maxlength="32" readonly="true"/>
+		            </div>
+            
+              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.financialyear" /> <span
+	                class="mandatory"></span> </label>
+	                <div class="col-sm-3 add-margin">
+	                <form:select path="financialYear" id="financialYear" cssClass="form-control"   required="required"
+	                  cssErrorClass="form-control error">
+	                  <form:option value="">
+	                    <spring:message code="lbl.select" />
+	                  </form:option>
+	                  <form:options items="${financialYears}" itemValue="id" itemLabel="finYearRange" />
+	                </form:select>
+	              </div>
             </div>
             
             <div class="form-group text-center">
@@ -264,5 +270,4 @@ function validateDetailsBeforeSubmit(){
     }
     return true;
 }
-
 </script>
