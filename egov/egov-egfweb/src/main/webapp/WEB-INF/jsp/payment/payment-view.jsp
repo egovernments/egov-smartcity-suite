@@ -428,10 +428,16 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
 				<s:if test="%{mode!='view'}">
 					<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
-					<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
 				</s:if>
-				<s:submit cssClass="button" id="printPreview" value="Print Preview"
-					onclick="printVoucher()" />
+				<s:else>
+					<s:submit cssClass="button" id="printPreview" value="Print Preview"
+						onclick="printVoucher()" />
+					<input type="button" name="button2" id="button2" value="Close"
+						class="button" onclick="window.close();" />
+				</s:else>
 			</div>
 
 			<script>

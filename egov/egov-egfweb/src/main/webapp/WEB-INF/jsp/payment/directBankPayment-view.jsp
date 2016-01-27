@@ -573,18 +573,23 @@ function printVoucher(){
 					</s:if>
 					<s:if test="%{showMode!='create' && showMode!='view' }">
 						<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
-						<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+						<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
+						<div class="buttonbottom" id="newbuttondiv" align="center">
+							<s:submit cssClass="button" id="printPreview1"
+								value="Print Preview" onclick="printVoucher()" />
+						</div>
 					</s:if>
-
-					<div class="buttonbottom" id="newbuttondiv" align="center">
-						<s:hidden id="paymentid" name="paymentid"
-							value="%{paymentheader.id}" />
-						<s:hidden name="actionname" id="actionName" value="%{action}" />
-
-
-						<s:submit cssClass="button" id="printPreview1"
-							value="Print Preview" onclick="printVoucher()" />
-					</div>
+					<s:else>
+						<div class="buttonbottom" id="newbuttondiv" align="center">
+							<s:submit cssClass="button" id="printPreview1"
+								value="Print Preview" onclick="printVoucher()" />
+							<input type="button" name="button2" id="button2" value="Close"
+								class="button" onclick="window.close();" />
+						</div>
+					</s:else>
+					<s:hidden id="paymentid" name="paymentid"
+						value="%{paymentheader.id}" />
+					<s:hidden name="actionname" id="actionName" value="%{action}" />
 					<script>
 if(document.getElementById('actionName').value!='')
 		{

@@ -436,7 +436,7 @@
 				</tr>
 			</table>
 			<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
-			<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+			<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 		</div>
 
 		<div class="buttonbottom" id="buttondiv">

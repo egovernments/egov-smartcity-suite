@@ -44,7 +44,7 @@
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<td class="greybox"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
-				<span class="bluebox"><span class="mandatory1"></span></span>
+				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
 		<td class="greybox"><s:select name="fundId" id="fundId"
 				list="dropdownData.fundList" listKey="id" listValue="name"
@@ -58,7 +58,7 @@
 
 		<td class="greybox"><s:text name="voucher.scheme" /> <s:if
 				test="%{isFieldMandatory('scheme')}">
-				<span class="mandatory1"></span>
+				<span class="mandatory1">*</span>
 			</s:if></td>
 		<td class="greybox"><s:select list="dropdownData.schemeList"
 				name="vouchermis.schemeid" id="schemeid" listKey="id"
@@ -76,7 +76,7 @@
 			url="voucher/common-ajaxLoadSubSchemes.action" />
 		<td class="bluebox"><s:text name="voucher.subscheme" /> <s:if
 				test="%{isFieldMandatory('subscheme')}">
-				<span class="mandatory1"></span>
+				<span class="mandatory1">*</span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="vouchermis.subschemeid"
 				id="subschemeid" list="dropdownData.subschemeList" listKey="id"
@@ -91,7 +91,7 @@
 			url="voucher/common-ajaxLoadFundSource.action" />
 		<td class="bluebox"><s:text name="voucher.fundsource" /> <s:if
 				test="%{isFieldMandatory('fundsource')}">
-				<span class="bluebox"><span class="mandatory1"></span></span>
+				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="vouchermis.fundsource"
 				id="fundsourceId" list="dropdownData.fundsourceList" listKey="id"
@@ -104,7 +104,7 @@
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<td class="greybox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
-				<span class="bluebox"><span class="mandatory1"></span></span>
+				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
 		<td class="greybox"><s:select name="vouchermis.departmentid"
 				id="vouchermis.departmentid" list="dropdownData.departmentList"
@@ -116,7 +116,7 @@
 	<s:if test="%{shouldShowHeaderField('field')}">
 		<td class="greybox"><s:text name="voucher.field" /> <s:if
 				test="%{isFieldMandatory('field')}">
-				<span class="mandatory1"></span>
+				<span class="mandatory1">*</span>
 			</s:if></td>
 		<td class="greybox"><s:select name="vouchermis.divisionid"
 				id="vouchermis.divisionid" list="dropdownData.fieldList"
@@ -130,7 +130,7 @@
 	<s:if test="%{shouldShowHeaderField('functionary')}">
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">
-				<span class="bluebox"><span class="mandatory1"></span></span>
+				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="vouchermis.functionary"
 				id="vouchermis.functionary" list="dropdownData.functionaryList"
@@ -141,7 +141,7 @@
 	<s:if test="%{shouldShowHeaderField('function')}">
 		<td class="bluebox"><s:text name="voucher.function" /> <s:if
 				test="%{isFieldMandatory('function')}">
-				<span class="bluebox"><span class="mandatory1"></span></span>
+				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="vouchermis.function"
 				id="vouchermis.function" list="dropdownData.functionList"

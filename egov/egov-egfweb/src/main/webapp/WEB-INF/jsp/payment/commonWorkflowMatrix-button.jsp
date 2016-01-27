@@ -33,9 +33,9 @@
 	    return  onSubmit();
 	}
 </script>
-<div class="buttonbottom" align="center">
+<div class="buttonbottom" >
 	<s:hidden id="workFlowAction" name="workFlowAction" />
-	<table style="width: 100%; text-align: center;">
+	<table style="width: 100%;" >
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="validAction">
 					<s:if test="%{validAction!=''}">
@@ -43,7 +43,7 @@
 							id="%{validAction}" name="%{validAction}"
 							onclick="return validateWorkFlowApprover('%{validAction}','jsValidationErrors');" />
 					</s:if>
-				</s:iterator> <input type="button" name="button2" id="button2" value="Close"
+				</s:iterator></td><td> <input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>
 		</tr>
 	</table>

@@ -562,7 +562,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         loadAjaxedDropDowns();
         // find it last so that rest of the data loaded
         if ("view".equalsIgnoreCase(showMode))
-         {
+        {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("fetching cheque detail ------------------------");
 
@@ -911,15 +911,15 @@ public class DirectBankPaymentAction extends BasePaymentAction {
      * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013",
      * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013"))); } }
      * } return isValFailed; }
-     *
      */
 
     @ValidationErrorPage(value = VIEW)
     @SkipValidation
     @Action(value = "/payment/directBankPayment-viewInboxItem")
     public String viewInboxItem() {
-        paymentheader = paymentService.findById(Long.valueOf((String)getSession().get(PAYMENTID)), false);
+        paymentheader = getPayment();
         showApprove = true;
+        if(paymentheader.getVoucherheader()!=null)
         voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
         return VIEW;
@@ -930,7 +930,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/payment/directBankPayment-sendForApproval")
     public String sendForApproval() {
-        paymentheader = paymentService.findById(Long.valueOf((String)getSession().get(PAYMENTID)), false);;
+   
+            paymentheader = getPayment();
 
         if (paymentheader != null && paymentheader.getState() != null) {
             if (!validateOwner(paymentheader.getState())) {
@@ -1005,8 +1006,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 paymentid = (String) obj;
         } else
             paymentid = parameters.get(PAYMENTID)[0];
-        if (paymentheader == null && paymentid != null)
-            paymentheader = (Paymentheader) HibernateUtil.getCurrentSession().load(Paymentheader.class, Long.valueOf(paymentid));
+        if (paymentid != null)
+            paymentheader = paymentService.findById(Long.valueOf(paymentid),false);
         if (paymentheader == null)
             paymentheader = new Paymentheader();
 
