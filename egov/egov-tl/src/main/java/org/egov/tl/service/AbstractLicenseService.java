@@ -51,6 +51,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -309,7 +310,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void enterExistingLicense(T license, Map<Integer, Double> legacyInstallmentwiseFees) {
+    public void enterExistingLicense(T license, Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber()).isEmpty())
             throw new ApplicationRuntimeException("license.number.exist");
         addLegacyDemand(legacyInstallmentwiseFees, license);
@@ -325,16 +326,15 @@ public abstract class AbstractLicenseService<T extends License> {
         this.licensePersitenceService.persist(license);
     }
 
-    private void addLegacyDemand(Map<Integer, Double> legacyInstallmentwiseFees, T license) {
-        final Module moduleName = getModuleName();
+    private void addLegacyDemand(Map<Integer, BigDecimal> legacyInstallmentwiseFees, T license) {
+        final Module module = getModuleName();
         license.setDemandSet(new HashSet<>());
-        for (Map.Entry<Integer, Double> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet()) {
+        for (Map.Entry<Integer, BigDecimal> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet()) {
             if (legacyInstallmentwiseFee.getValue().doubleValue() > 0) {
-                Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
-                        new DateTime().withYear(legacyInstallmentwiseFee.getKey()).withMonthOfYear(4).withDayOfMonth(1).toDate());
-                EgDemandReasonMaster reasonMaster = demandGenericDao.getDemandReasonMasterByCode("License Fee", moduleName);
+                Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module, legacyInstallmentwiseFee.getKey());
+                EgDemandReasonMaster reasonMaster = demandGenericDao.getDemandReasonMasterByCode("License Fee", module);
                 EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment,
-                        moduleName);
+                        module);
                 if (reason != null) {
                     LicenseDemand licenseDemand = new LicenseDemand();
                     licenseDemand.setIsHistory("N");
@@ -342,10 +342,9 @@ public abstract class AbstractLicenseService<T extends License> {
                     licenseDemand.setCreateDate(new Date());
                     licenseDemand.setLicense(license);
                     licenseDemand.setIsLateRenewal('0');
-                    BigDecimal licenseFee = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue());
                     licenseDemand.getEgDemandDetails()
-                            .add(EgDemandDetails.fromReasonAndAmounts(licenseFee, reason, BigDecimal.ZERO));
-                    licenseDemand.setBaseDemand(licenseFee);
+                            .add(EgDemandDetails.fromReasonAndAmounts(legacyInstallmentwiseFee.getValue(), reason, BigDecimal.ZERO));
+                    licenseDemand.setBaseDemand(legacyInstallmentwiseFee.getValue());
                     license.getDemandSet().add(licenseDemand);
                 }
 
@@ -748,11 +747,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
     
-    public List<Installment> getAllInstallmentsForLicense() {
-        return installmentDao.getInsatllmentByModule(getModuleName());
-    }
-
-   /* public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
+    /* public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
         return tradeLicenseSmsAndEmailService;
     }
 
@@ -760,5 +755,34 @@ public abstract class AbstractLicenseService<T extends License> {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
     }*/
     
+    public List<Installment> getLastFiveYearInstallmentsForLicense() {
+        return installmentDao.fetchInstallments(getModuleName(), new Date(), 6);
+    }
     
+    public Map<String, Map<String, BigDecimal>> getOutstandingFee(T license) {
+        Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+        Installment currentInstallmentYear = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
+        for (LicenseDemand licenseDemand : license.getDemandSet()) {
+            Installment installmentYear = licenseDemand.getEgInstallmentMaster();
+            for (EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
+                String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+                Map<String, BigDecimal> feeByTypes = null;
+                if (outstandingFee.containsKey(demandReason)) {
+                    feeByTypes = outstandingFee.get(demandReason);
+                } else {
+                    feeByTypes = new HashMap<>();
+                    feeByTypes.put("arrear", BigDecimal.ZERO);
+                    feeByTypes.put("current", BigDecimal.ZERO);
+                }
+                if (installmentYear.equals(currentInstallmentYear))
+                    feeByTypes.put("current", demandDetail.getAmount());
+                else
+                    feeByTypes.put("arrear", feeByTypes.get("arrear").add(demandDetail.getAmount()));
+                outstandingFee.put(demandReason, feeByTypes);
+            }
+            
+        }
+        return outstandingFee;  
+        
+    }
 }

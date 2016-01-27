@@ -115,11 +115,15 @@
 													</tr>
 												</thead>
 												<tbody>
-												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="status">
+												<c:set value="" var="startfinyear"/>
+												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="stat">
 													<tr>
-														<c:set value="${LIFee.key}-${fn:substring(LIFee.key+1,2, 4)}" var="finyear"/>
-														<td><s:textfield  name="" cssClass="form-control" readonly="true" value="%{#attr.finyear}" tabindex="-1"/></td>
-														<td><s:textfield name="legacyInstallmentwiseFees[%{#attr.LIFee.key}]" cssClass="form-control patternvalidation" value="%{#attr.LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<c:set value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}" var="finyear"/>
+														<s:if test="#stat.index == 0">
+															<c:set value="${finyear}" var="startfinyear"/>
+														</s:if>
+														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>
@@ -127,7 +131,7 @@
 													<tr>
 														<td class="error-msg" colspan="2">
 															<s:text  name="license.legacy.info">
-																<s:param>${finyear}</s:param>
+																<s:param>${startfinyear}</s:param>
 															</s:text>
 														</td>
 													</tr>

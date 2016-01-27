@@ -129,7 +129,31 @@
 	</div>
 	
 </div>
-
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='license.details.lbl' /></div>
+</div>
+	<div class="panel-body">
+		<div class="col-md-12">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Fee Type</th>
+					<th>Current</th>
+					<th>Arrear</th>
+				</tr>
+			</thead>
+			<tbody>
+			<s:iterator value="outstandingFee" var="fee" status="status">
+				<tr>
+					<td>${fee.key}</td>
+					<td>${fee.value['current']}</td>
+					<td>${fee.value['arrear']}</td>
+				</tr>
+			</s:iterator>
+			</tbody>
+		</table>
+		</div>
+</div>
 <div class="panel-heading  custom_form_panel_heading subheadnew">
     <div class="panel-title"><s:text name='license.title.documentDetails' /></div>
 </div>

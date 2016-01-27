@@ -39,6 +39,9 @@
  */
 package org.egov.tl.web.actions.viewtradelicense;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -256,6 +259,10 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     @SkipValidation
     public void setServletRequest(HttpServletRequest arg0) {
         this.requestObj = arg0;
+    }
+    
+    public Map<String, Map<String,BigDecimal>> getOutstandingFee(){
+        return this.tradeLicenseService.getOutstandingFee(this.license());
     }
 
 }
