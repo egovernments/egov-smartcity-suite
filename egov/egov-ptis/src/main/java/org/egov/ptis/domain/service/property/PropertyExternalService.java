@@ -630,7 +630,7 @@ public class PropertyExternalService {
 
     public List<MasterCodeNamePairDetails> getPropertyTypeMasterDetails() {
         final List<MasterCodeNamePairDetails> propTypeMasterDetailsList = new ArrayList<MasterCodeNamePairDetails>(0);
-        final List<PropertyTypeMaster> propertyTypeMasters = propertyTypeMasterDAO.findAll();
+        final List<PropertyTypeMaster> propertyTypeMasters = propertyTypeMasterDAO.findAllExcludeEWSHS();
         for (final PropertyTypeMaster propertyTypeMaster : propertyTypeMasters) {
             final MasterCodeNamePairDetails propTypeMasterDetails = new MasterCodeNamePairDetails();
             propTypeMasterDetails.setCode(propertyTypeMaster.getCode());

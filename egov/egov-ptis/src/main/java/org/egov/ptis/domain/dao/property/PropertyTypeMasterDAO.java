@@ -59,4 +59,6 @@ public interface PropertyTypeMasterDAO {
 
 	public PropertyTypeMaster update(PropertyTypeMaster propertyTypeMaster);
 
+	public List<PropertyTypeMaster> findAllExcludeEWSHS();
+	
 }

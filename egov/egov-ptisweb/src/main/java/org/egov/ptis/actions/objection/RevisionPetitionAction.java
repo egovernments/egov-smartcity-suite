@@ -311,7 +311,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-                "from PropertyTypeMaster order by orderNo");
+                "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
                 "from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
         final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
