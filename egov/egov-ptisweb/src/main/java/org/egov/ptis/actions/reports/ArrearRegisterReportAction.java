@@ -221,16 +221,15 @@ public class ArrearRegisterReportAction extends ReportFormAction {
                     if (propertyWiseInfo != null) {
                         // initially the block is executed
                         if (unitList.size() == 0) {
-                            unitList.add(propertyWiseInfo.getArrearInstallmentYear());
+                            unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
                             propertyWiseInfoTotal = propertyWiseInfo;
                         }
-                        // executed for second installment in same financial year
-                        else if (unitList.contains(propertyWiseInfo.getArrearInstallmentYear()))
+                        else if (unitList.contains(propertyWiseInfo.getArrearInstallmentDesc()))
                             propertyWiseInfoTotal = addPropertyWiseInfo(propertyWiseInfoTotal, propertyWiseInfo);
-                        else if (!unitList.contains(propertyWiseInfo.getArrearInstallmentYear())) {
+                        else if (!unitList.contains(propertyWiseInfo.getArrearInstallmentDesc())) {
 
                             propertyWiseInfoList.add(propertyWiseInfoTotal);
-                            unitList.add(propertyWiseInfo.getArrearInstallmentYear());
+                            unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
                             propertyWiseInfoTotal = propertyWiseInfo;
                             propertyWiseInfoTotal.setIndexNumber("");
                             propertyWiseInfoTotal.setOwnerName("");
@@ -279,7 +278,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax().add(currInstDmdColMatView.getGeneralTax())
                 .add(currInstDmdColMatView.getPenaltyFinesTax());
 
-        propertyWiseInfo.setArrearInstallmentYear(currInstDmdColMatView.getInstallment().getFinYearRange());
+        propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());
         propertyWiseInfo.setArrearLibraryCess(currInstDmdColMatView.getLibCessTax());
         propertyWiseInfo.setArrearPropertyTax(currInstDmdColMatView.getGeneralTax());
         propertyWiseInfo.setArrearPenalty(currInstDmdColMatView.getPenaltyFinesTax());

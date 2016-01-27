@@ -2176,14 +2176,14 @@ public class PropertyTaxUtil {
      */
     public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
             final Long areaId, final Long localityId) {
-        // Get current financial year
-        final CFinancialYear finYear = financialYearDAO.getFinYearByDate(new Date());
+        // Get current installment
+        final Installment currentInst = getCurrentInstallment();
         final StringBuffer query = new StringBuffer(300);
 
         // Query that retrieves all the properties that has arrears.
         query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
                 + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and idc.installment.fromDate not between  ('"
-                + finYear.getStartingDate() + "') and ('" + finYear.getEndingDate() + "') ");
+                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
         if (localityId != null && localityId != -1)
             query.append(" and pmv.locality.id= :localityId ");

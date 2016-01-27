@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-01-27T17:05:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ArrearRegister_subreport" language="groovy" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -9,7 +11,7 @@
 	<field name="indexNumber" class="java.lang.String"/>
 	<field name="houseNo" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>
-	<field name="arrearInstallmentYear" class="java.lang.String"/>
+	<field name="arrearInstallmentDesc" class="java.lang.String"/>
 	<field name="arrearLibraryCess" class="java.math.BigDecimal"/>
 	<field name="arrearPropertyTax" class="java.math.BigDecimal"/>
 	<field name="arrearPenalty" class="java.math.BigDecimal"/>
@@ -165,7 +167,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{arrearInstallmentYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{arrearInstallmentDesc}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
