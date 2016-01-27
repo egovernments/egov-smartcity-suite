@@ -218,9 +218,13 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
-        reportParams.put("tradeCategory", license.getCategory().getName());
+        reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", license.getAddress());
+        if(EgovThreadLocals.getMunicipalityName().contains("Corporation"))
+        {
+            reportParams.put("carporationulbType", Boolean.TRUE);
+        }
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
         List<LicenseDemand> licDemandList = new ArrayList<LicenseDemand>(license.getDemandSet());
         String startYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());

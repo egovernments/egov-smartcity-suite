@@ -150,7 +150,7 @@ String path = request.getContextPath();
 							<s:text name="license.default.select" />
 						</option>
 						 <s:if test="%{roleName.contains('ULB OPERATOR') || roleName.contains('CSC OPERATOR')}">
-									<s:if test="%{#attr.license.isPaid() != true && (#attr.license.status.statusCode=='ACK' || #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
+									<s:if test="%{#attr.license.isPaid() != true && ( #attr.license.status.statusCode=='UWF') && #attr.license.isWorkFlowStateRejected() != true}">
 									 	<option value="/integration/licenseBillCollect.action?licenseId=">
 											<s:text name="Collect Fee" />
 										</option>
