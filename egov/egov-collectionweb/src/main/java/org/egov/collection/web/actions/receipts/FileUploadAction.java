@@ -1269,7 +1269,7 @@ public class FileUploadAction extends BaseFormAction {
              * EntityTypeService entityService = (EntityTypeService) applicationContext .getBean(simpleName);
              */
             final EntityTypeService entityService = (EntityTypeService) beanProvider.getBean(simpleName);
-            final List entityList = entityService.filterActiveEntities(inputArray[11], -1, accountdetailtype.getId().intValue());
+            final List entityList = entityService.filterActiveEntities(inputArray[11], -1, accountdetailtype.getId());
             EntityType entityType = null;
             if (entityList.size() == 1)
                 entityType = (EntityType) entityList.get(0);

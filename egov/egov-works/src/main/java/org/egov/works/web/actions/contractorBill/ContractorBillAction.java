@@ -413,7 +413,7 @@ public class ContractorBillAction extends BaseFormAction {
                                 && contractorBillRegister.getState().getValue().equalsIgnoreCase("REJECTED"))) {
             final Functionary func = (Functionary) persistenceService.find(" from  Functionary where upper(name) = ?",
                     "UAC");
-            workflowFunctionaryId = func.getId().intValue();
+            workflowFunctionaryId = func.getId();
         }
 
         showSubPartyType = worksService.getWorksConfigValue(BILL_STATUTORYDEDUCTIONS_SHOW_PARTYSUBTYPE);
@@ -1056,10 +1056,10 @@ public class ContractorBillAction extends BaseFormAction {
                     if (fund != null && fund.getId() != null && coa != null && coa.getId() != null
                             && workOrderEstimate.getEstimate().getDepositCode().getId() != null) {
                         final BigDecimal totalAmountDeposited = egovCommon.getDepositAmountForDepositCode(new Date(),
-                                coa.getGlcode(), fund.getCode(), accountdetailtype.getId().intValue(), workOrderEstimate
+                                coa.getGlcode(), fund.getCode(), accountdetailtype.getId(), workOrderEstimate
                                         .getEstimate().getDepositCode().getId().intValue());
                         final List<Integer> projectCodeIdsList = contractorBillService
-                                .getProjCodeIdsListForDepositCode(fund.getId().intValue(), coa.getId(), workOrderEstimate
+                                .getProjCodeIdsListForDepositCode(fund.getId(), coa.getId(), workOrderEstimate
                                         .getEstimate().getDepositCode().getId());
                         if (!projectCodeIdsList.isEmpty())
                             expenditureAmount = contractorBillService.getTotalExpenditure(projectCodeIdsList,
@@ -1298,7 +1298,7 @@ public class ContractorBillAction extends BaseFormAction {
                             billDetails.getEgBillPaydetailes().add(
                                     getEgPayeeDetails(
                                             billDetails,
-                                            adt3.getId().intValue(),
+                                            adt3.getId(),
                                             amount,
                                             isDebit,
                                             false,
@@ -1314,7 +1314,7 @@ public class ContractorBillAction extends BaseFormAction {
                                     Integer.valueOf(workOrder.getContractor().getId().toString()));
                         else
                             billDetails.getEgBillPaydetailes().add(
-                                    getEgPayeeDetails(billDetails, adt1.getId().intValue(), amount, isDebit, false, null, null,
+                                    getEgPayeeDetails(billDetails, adt1.getId(), amount, isDebit, false, null, null,
                                             Integer.valueOf(workOrder.getContractor().getId().toString())));
 
                 }
@@ -1341,7 +1341,7 @@ public class ContractorBillAction extends BaseFormAction {
                             .equals(Long.valueOf(billDetails.getGlcodeid().toString()))) {
                 // Added for card 1078 : Automatic calculation of statutory
                 // recoveries in bill
-                final EgBillPayeedetails egPayeeDtls = getEgPayeeDetails(billDetails, adt.getId().intValue(), amount, isDebit,
+                final EgBillPayeedetails egPayeeDtls = getEgPayeeDetails(billDetails, adt.getId(), amount, isDebit,
                         isTds, payeeDetails.getEgBillPayeeDtls().getRecovery().getId(), payeeDetails
                                 .getEgBillPayeeDtls().getNarration(),
                         adkId);
@@ -1395,14 +1395,14 @@ public class ContractorBillAction extends BaseFormAction {
         egBillRegisterMis.setPartyBillNumber(partyBillNumber);
         if (fdList != null && !fdList.isEmpty()) {
             if (fdList.get(0).getFund() != null && fdList.get(0).getFund().getId() != null)
-                egBillRegisterMis.setFund(commonsService.fundById(fdList.get(0).getFund().getId().intValue()));
+                egBillRegisterMis.setFund(commonsService.fundById(fdList.get(0).getFund().getId()));
             if (fdList.get(0).getFunctionary() != null && fdList.get(0).getFunctionary().getId() != null)
                 egBillRegisterMis.setFunctionaryid(commonsService.getFunctionaryById(fdList.get(0).getFunctionary()
                         .getId().intValue()));
             if (fdList.get(0).getScheme() != null && fdList.get(0).getScheme().getId() != null)
-                egBillRegisterMis.setScheme(commonsService.getSchemeById(fdList.get(0).getScheme().getId().intValue()));
+                egBillRegisterMis.setScheme(commonsService.getSchemeById(fdList.get(0).getScheme().getId()));
             if (fdList.get(0).getSubScheme() != null && fdList.get(0).getSubScheme().getId() != null)
-                egBillRegisterMis.setSubScheme(commonsService.getSubSchemeById(fdList.get(0).getSubScheme().getId().intValue()));
+                egBillRegisterMis.setSubScheme(commonsService.getSubSchemeById(fdList.get(0).getSubScheme().getId()));
             if (!fdList.get(0).getFinancingSources().isEmpty())
                 egBillRegisterMis.setFundsource(fdList.get(0).getFinancingSources().get(0).getFundSource());
             if (fdList.get(0).getFunction() != null)

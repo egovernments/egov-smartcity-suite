@@ -131,7 +131,7 @@ public class SubSchemeAction extends BaseFormAction {
 
         subScheme.setCreatedDate(new Date());
         subScheme.setCreatedBy(getLoggedInUser());
-//        subScheme.setLastmodifieddate(new Date());
+        subScheme.setLastmodifieddate(new Date());
         try {
             subSchemeService.persist(subScheme);
             subSchemeService.getSession().flush();
@@ -153,14 +153,14 @@ public class SubSchemeAction extends BaseFormAction {
     @Action(value = "/masters/subScheme-edit")
     public String edit() {
         if (subSchemeId != null)
-            subScheme.setId(subSchemeId);
+            subScheme.setId(subSchemeId.intValue());
         if (isActive)
             subScheme.setIsactive(true);
         else
             subScheme.setIsactive(false);
 
         subScheme.setLastModifiedBy(getLoggedInUser());
-//        subScheme.setLastmodifieddate(new Date());
+        subScheme.setLastmodifieddate(new Date());
         try {
             subSchemeService.persist(subScheme);
             subSchemeService.getSession().flush();

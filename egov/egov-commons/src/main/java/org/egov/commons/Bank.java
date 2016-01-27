@@ -39,90 +39,68 @@
  */
 package org.egov.commons;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
 
-@Entity
-@Table(name = "BANK")
-@SequenceGenerator(name = Bank.SEQ_BANK, sequenceName = Bank.SEQ_BANK, allocationSize = 1)
-public class Bank extends AbstractAuditable implements java.io.Serializable {
+public class Bank implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
-	public static final String SEQ_BANK = "SEQ_BANK";
 
 	@JsonIgnore
-	@Id
-	@GeneratedValue(generator = SEQ_BANK, strategy = GenerationType.SEQUENCE)
-	private Long id;
+	private Integer id;
 
-	@Length(max = 50)
-	@NotNull
-	@Column(unique = true)
 	private String code;
 
-	@Length(max = 100)
-	@NotNull
-	@Column(unique = true)
 	private String name;
-	
 	@JsonIgnore
-	@Length(max = 250)
 	private String narration;
-	
-	@NotNull
 	@JsonIgnore
 	private int isactive;
-	
 	@JsonIgnore
-	@Length(max = 50)
+	private Date lastmodified;
+	@JsonIgnore
+	private Date created;
+	@JsonIgnore
+	private BigDecimal modifiedby;
+	@JsonIgnore
 	private String type;
-	
 	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="bank", targetEntity=Bankbranch.class)
-    private Set<Bankbranch> bankbranchs = new HashSet<Bankbranch>(0);
+	private Set<Bankbranch> bankbranchs = new HashSet<Bankbranch>(0);
 
 	public Bank() {
 		//For hibernate to work
 	}
 
-	public Bank(String code, String name, int isactive) {
+	public Bank(String code, String name, int isactive, Date lastmodified, Date created, BigDecimal modifiedby) {
 		this.code = code;
 		this.name = name;
 		this.isactive = isactive;
+		this.lastmodified = lastmodified;
+		this.created = created;
+		this.modifiedby = modifiedby;
 	}
 
-	public Bank(String code, String name, String narration, int isactive, String type, Set<Bankbranch> bankbranchs) {
+	public Bank(String code, String name, String narration, int isactive, Date lastmodified, Date created, BigDecimal modifiedby, String type, Set<Bankbranch> bankbranchs) {
 		this.code = code;
 		this.name = name;
 		this.narration = narration;
 		this.isactive = isactive;
+		this.lastmodified = lastmodified;
+		this.created = created;
+		this.modifiedby = modifiedby;
 		this.type = type;
 		this.bankbranchs = bankbranchs;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -148,6 +126,30 @@ public class Bank extends AbstractAuditable implements java.io.Serializable {
 
 	public void setNarration(String narration) {
 		this.narration = narration;
+	}
+
+	public Date getLastmodified() {
+		return this.lastmodified;
+	}
+
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
+	}
+
+	public Date getCreated() {
+		return this.created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public BigDecimal getModifiedby() {
+		return this.modifiedby;
+	}
+
+	public void setModifiedby(BigDecimal modifiedby) {
+		this.modifiedby = modifiedby;
 	}
 
 	public String getType() {

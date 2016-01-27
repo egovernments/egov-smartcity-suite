@@ -40,55 +40,34 @@
 package org.egov.commons;
 
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-
-@Entity
-@Table(name="ACCOUNTDETAILTYPE")
-@SequenceGenerator(name = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, sequenceName = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, allocationSize = 1)
-public class Accountdetailtype extends AbstractAuditable implements java.io.Serializable {
+public class Accountdetailtype implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
-	public static final String SEQ_ACCOUNTDETAILTYPE = "SEQ_ACCOUNTDETAILTYPE";
 
-	@Id
-	@GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+	private Integer id;
 
-	@Column(nullable=false, unique=true)
-	@Length(max=50)
 	private String name;
-	
-	@NotNull
-	@Length(max=50)
+
 	private String description;
 
-	@Length(max=25)
 	private String tablename;
 
-	@Length(max=25)
 	private String columnname;
 
-	@Column(nullable=false, unique=true)
-	@Length(max=50)
 	private String attributename;
 
-	@NotNull
 	private BigDecimal nbroflevels;
 
 	private Boolean isactive;
 
-	@Column(name="FULL_QUALIFIED_NAME")
-	@Length(max=250)
+	private Date created;
+
+	private Date lastmodified;
+
+	private Long modifiedby;
+
 	private String fullQualifiedName;
 
 	//private Accountdetailtype accountdetailtype;
@@ -104,7 +83,7 @@ public class Accountdetailtype extends AbstractAuditable implements java.io.Seri
 		this.nbroflevels = nbroflevels;
 	}
 
-	public Accountdetailtype(String name, String description, String tablename, String columnname, String attributename, BigDecimal nbroflevels, Boolean isactive) {
+	public Accountdetailtype(String name, String description, String tablename, String columnname, String attributename, BigDecimal nbroflevels, Boolean isactive, Date created, Date lastmodified, Long modifiedby) {
 		this.name = name;
 		this.description = description;
 		this.tablename = tablename;
@@ -112,13 +91,16 @@ public class Accountdetailtype extends AbstractAuditable implements java.io.Seri
 		this.attributename = attributename;
 		this.nbroflevels = nbroflevels;
 		this.isactive = isactive;
+		this.created = created;
+		this.lastmodified = lastmodified;
+		this.modifiedby = modifiedby;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -176,6 +158,30 @@ public class Accountdetailtype extends AbstractAuditable implements java.io.Seri
 
 	public void setIsactive(Boolean isactive) {
 		this.isactive = isactive;
+	}
+
+	public Date getCreated() {
+		return this.created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getLastmodified() {
+		return this.lastmodified;
+	}
+
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
+	}
+
+	public Long getModifiedby() {
+		return this.modifiedby;
+	}
+
+	public void setModifiedby(Long modifiedby) {
+		this.modifiedby = modifiedby;
 	}
 
 	/*public Accountdetailtype getAccountdetailtype() {

@@ -321,7 +321,7 @@ public class ChartOfAccounts {
         final List<CChartOfAccountDetail> chList = chartOfAccountDetailService.findAllBy("from CChartOfAccountDetail");
         for (final CChartOfAccountDetail chartOfAccountDetail : chList) {
             final GLParameter parameter = new GLParameter();
-            parameter.setDetailId(chartOfAccountDetail.getDetailTypeId().getId().intValue());
+            parameter.setDetailId(chartOfAccountDetail.getDetailTypeId().getId());
             parameter.setDetailName(chartOfAccountDetail.getDetailTypeId().getAttributename());
             final GLAccount glAccCode = getGlAccCode(chartOfAccountDetail.getGlCodeId(), glAccountCodes);
             final GLAccount glAccId = getGlAccId(chartOfAccountDetail.getGlCodeId(), glAccountIds);

@@ -758,7 +758,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                 rbean.setPartialAmount(remitDtl.getRemittedamt());
                 rbean.setAmount(remitDtl.getRemittedamt());
                 if (remitDtl.getEgRemittanceGldtl() != null) {
-                    rbean.setDetailTypeId(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype().getId().intValue());
+                    rbean.setDetailTypeId(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getAccountdetailtype().getId());
                     rbean.setDetailKeyid(remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailkeyid().intValue());
                     rbean.setRemittance_gl_dtlId(remitDtl.getEgRemittanceGldtl().getId());
                     rbean.setDeductionAmount(remitDtl.getEgRemittanceGldtl().getGldtlamt());
@@ -781,7 +781,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     final EntityType entity = voucherHibDAO.getEntityInfo(remitDtl.getEgRemittanceGldtl()
                             .getGeneralledgerdetail()
                             .getDetailkeyid().intValue(), remitDtl.getEgRemittanceGldtl().getGeneralledgerdetail()
-                            .getAccountdetailtype().getId().intValue());
+                            .getAccountdetailtype().getId());
                     rbean.setPartyCode(entity.getCode());
                     rbean.setPartyName(entity.getName());
                     rbean.setPanNo(entity.getPanno());
@@ -854,7 +854,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     private void loadBankBranchForFundAndType() {
-        common.setFundId(voucherHeader.getFundId().getId().intValue());
+        common.setFundId(voucherHeader.getFundId().getId());
         common.setTypeOfAccount("RECEIPTS_PAYMENTS,PAYMENTS");
         common.ajaxLoadBanksByFundAndType();
         addDropdownData("bankList", common.getBankBranchList());
@@ -867,15 +867,15 @@ public class RemitRecoveryAction extends BasePaymentAction {
         if (paymentheader != null)
         {
             bankaccount = paymentheader.getBankaccount();
-            common.setBranchId(bankaccount.getBankbranch().getId().intValue());
-            common.setBankId(bankaccount.getBankbranch().getBank().getId().intValue());
+            common.setBranchId(bankaccount.getBankbranch().getId());
+            common.setBankId(bankaccount.getBankbranch().getBank().getId());
         } else if (commonBean.getAccountNumberId() != null && !commonBean.getAccountNumberId().equals("-1")
                 && !commonBean.getAccountNumberId().equals(""))
         {
             bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Integer.valueOf(commonBean.getAccountNumberId()));
-            common.setBranchId(bankaccount.getBankbranch().getId().intValue());
-            common.setBankId(bankaccount.getBankbranch().getBank().getId().intValue());
+            common.setBranchId(bankaccount.getBankbranch().getId());
+            common.setBankId(bankaccount.getBankbranch().getBank().getId());
         }
         if (common.getBranchId() != null)
         {

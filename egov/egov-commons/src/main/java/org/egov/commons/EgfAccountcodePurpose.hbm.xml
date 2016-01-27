@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.egov.commons.EgfAccountcodePurpose" table="EGF_ACCOUNTCODE_PURPOSE" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_egf_accountcode_purpose</param>
+            </generator>
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="250" unique="true" />
+        </property>
+        <set name="chartofaccountses" inverse="true">
+            <key>
+                <column name="PURPOSEID" precision="22" scale="0" />
+            </key>
+            <one-to-many class="org.egov.commons.CChartOfAccounts" />
+        </set>
+        <set name="funds" inverse="true">
+            <key>
+                <column name="PURPOSE_ID" precision="2" scale="0" />
+            </key>
+            <one-to-many class="org.egov.commons.Fund" />
+        </set>
+    </class>
+</hibernate-mapping>

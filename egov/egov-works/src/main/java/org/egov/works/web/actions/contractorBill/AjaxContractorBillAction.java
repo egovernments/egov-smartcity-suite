@@ -404,12 +404,12 @@ public class AjaxContractorBillAction extends BaseFormAction {
         else if (estimate.getDepositCode() == null)
             throw new ValidationException("", "The Deposit code is not  defined for Estimate ");
         final BigDecimal accBalAmount = egovCommon.getAccountBalanceTillDate(getBillDate(), coaObj.getGlcode(),
-                fundCode, adt.getId().intValue(), estimate.getDepositCode().getId().intValue(), null);
+                fundCode, adt.getId(), estimate.getDepositCode().getId().intValue(), null);
         final BigDecimal billAccBalAmount = egovCommon.getBillAccountBalanceforDate(getBillDate(), coaObj.getGlcode(), fundCode,
-                adt.getId().intValue(),
+                adt.getId(),
                 estimate.getDepositCode().getId().intValue());
         budgBalance = accBalAmount.add(billAccBalAmount);
-        budgAmount = egovCommon.getDepositAmountForDepositCode(getBillDate(), coaObj.getGlcode(), fundCode, adt.getId().intValue(),
+        budgAmount = egovCommon.getDepositAmountForDepositCode(getBillDate(), coaObj.getGlcode(), fundCode, adt.getId(),
                 estimate.getDepositCode().getId().intValue());
 
     }

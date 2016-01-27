@@ -211,9 +211,9 @@ public class WorksPackageAction extends GenericWorkFlowAction {
 
     private void validateFinancingSource(final List<AbstractEstimate> estimateList) {
         Integer fundSourceId1;
-        fundSourceId1 = abstractEstimateList.get(0).getFundSource().getId().intValue();
+        fundSourceId1 = abstractEstimateList.get(0).getFundSource().getId();
         for (int i = 1; i < abstractEstimateList.size(); i++)
-            if (fundSourceId1 != abstractEstimateList.get(i).getFundSource().getId().intValue())
+            if (fundSourceId1 != abstractEstimateList.get(i).getFundSource().getId())
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "wp.estimate.different.fund.source.not.allowed",
                         "wp.estimate.different.fund.source.not.allowed")));

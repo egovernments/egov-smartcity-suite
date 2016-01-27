@@ -54,6 +54,3 @@
 <%@ taglib uri="/WEB-INF/tags/struts-tags.tld" prefix="s" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="sx" uri="/WEB-INF/tags/struts-dojo-tags.tld" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-

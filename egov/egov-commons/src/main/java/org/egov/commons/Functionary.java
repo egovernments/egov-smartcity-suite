@@ -40,35 +40,22 @@
 package org.egov.commons;
 
 import java.math.BigDecimal;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import org.hibernate.search.annotations.Field;
 
-@Entity
-@Table(name = "FUNCTIONARY")
-@SequenceGenerator(name = Functionary.SEQ_FUNCTIONARY, sequenceName = Functionary.SEQ_FUNCTIONARY, allocationSize = 1)
-public class Functionary extends AbstractAuditable implements java.io.Serializable {
+public class Functionary implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
-	public static final String SEQ_FUNCTIONARY = "SEQ_FUNCTIONARY";
 
-	@Id
-	@GeneratedValue(generator = SEQ_FUNCTIONARY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+	private Integer id;
 
-	@NotNull
 	private BigDecimal code;
-	
-	@Length(max = 256)
-	@NotNull
 	private String name;
+
+	private Date createtimestamp;
+
+	private Date updatetimestamp;
 
 	private Boolean isactive;
 
@@ -76,25 +63,27 @@ public class Functionary extends AbstractAuditable implements java.io.Serializab
 		// For hibernate to work
 	}
 
-	public Functionary(Long id, BigDecimal code, String name) {
+	public Functionary(Integer id, BigDecimal code, String name) {
 		this.id = id;
 		this.code = code;
 		this.name = name;
 	}
 
-	public Functionary(Long id, BigDecimal code, String name, Boolean isactive) {
+	public Functionary(Integer id, BigDecimal code, String name, Date createtimestamp, Date updatetimestamp, Boolean isactive) {
 		this.id = id;
 		this.code = code;
 		this.name = name;
+		this.createtimestamp = createtimestamp;
+		this.updatetimestamp = updatetimestamp;
 		this.isactive = isactive;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -112,6 +101,22 @@ public class Functionary extends AbstractAuditable implements java.io.Serializab
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Date getCreatetimestamp() {
+		return this.createtimestamp;
+	}
+
+	public void setCreatetimestamp(Date createtimestamp) {
+		this.createtimestamp = createtimestamp;
+	}
+
+	public Date getUpdatetimestamp() {
+		return this.updatetimestamp;
+	}
+
+	public void setUpdatetimestamp(Date updatetimestamp) {
+		this.updatetimestamp = updatetimestamp;
 	}
 
 	public Boolean getIsactive() {

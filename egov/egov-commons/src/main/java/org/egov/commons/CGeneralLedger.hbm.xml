@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.commons.CGeneralLedger" table="GENERALLEDGER"> 
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="native">
+				<param name="sequence">SEQ_GENERALLEDGER</param>
+			</generator>
+		</id>	
+
+		<property name="voucherlineId">
+			<column name="VOUCHERLINEID"/>
+		</property>	
+		<property name="effectiveDate">
+			<column name="EFFECTIVEDATE"/>
+		</property>	
+		<property name="glcode">
+			<column name="GLCODE"/>
+		</property>	
+		<many-to-one name="glcodeId" class="org.egov.commons.CChartOfAccounts" fetch="select">
+            <column name="GLCODEID" precision="22" scale="0" />
+        </many-to-one>
+		<property name="debitAmount">
+			<column name="DEBITAMOUNT"/>
+		</property>	
+		<property name="creditAmount">
+			<column name="CREDITAMOUNT"/>
+		</property>	
+		<property name="description">
+			<column name="DESCRIPTION"/>
+		</property>	
+		<many-to-one name="voucherHeaderId" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="VOUCHERHEADERID" precision="22" scale="0" not-null="true"/>
+        </many-to-one>
+		<property name="functionId">
+			<column name="FUNCTIONID"/>
+		</property>	
+		<set name="generalLedgerDetails" cascade="save-update,delete,delete-orphan" inverse="true">
+            <key>
+                <column name="GENERALLEDGERID" precision="22" scale="0"/>
+            </key>
+            <one-to-many class="org.egov.commons.CGeneralLedgerDetail" />
+        </set> 		
+	</class>
+</hibernate-mapping>

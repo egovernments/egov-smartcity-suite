@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.commons.CFunction" table="FUNCTION">
+		<id name="id" type="long" unsaved-value="null">
+			<column name="ID" not-null="true" />
+			<generator class="native">
+				<param name="sequence">SEQ_FUNCTION</param>
+			</generator>
+		</id>
+		<timestamp column="LASTMODIFIED" name="lastModified" access="property" unsaved-value="null" />
+		<property name="name">
+			<column name="NAME" />
+		</property>
+		<property name="code">
+			<column name="CODE" />
+		</property>
+		<property name="type">
+			<column name="TYPE" />
+		</property>
+		<property name="level">
+			<column name="LLEVEL" />
+		</property>
+		<property name="parentId">
+			<column name="PARENTID" />
+		</property>
+		<property name="isActive">
+			<column name="ISACTIVE" />
+		</property>
+		<property name="created">
+			<column name="CREATED" />
+		</property>
+		<property name="modifiedBy">
+			<column name="MODIFIEDBY" />
+		</property>
+		<property name="isNotLeaf">
+			<column name="ISNOTLEAF" />
+		</property>
+	</class>
+</hibernate-mapping>

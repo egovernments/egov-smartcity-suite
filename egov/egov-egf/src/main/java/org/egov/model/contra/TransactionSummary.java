@@ -87,7 +87,7 @@ public class TransactionSummary extends AbstractAuditable{
     private Accountdetailtype accountdetailtype;
     
     @ManyToOne
-    @JoinColumn(name = "FINANCIALYEARID")
+    @JoinColumn(name = "FINANCIALYEARID", nullable = false)
     private CFinancialYear financialyear;
     
     @ManyToOne
@@ -102,8 +102,12 @@ public class TransactionSummary extends AbstractAuditable{
     @JoinColumn(name = "GLCODEID")
     private CChartOfAccounts glcodeid;
     
+    @NotNull
+    @Column(precision = 13, scale = 2)
     private BigDecimal openingdebitbalance;
     
+    @NotNull
+    @Column(precision = 13, scale = 2)
     private BigDecimal openingcreditbalance;
     
     private Integer accountdetailkey;
@@ -123,6 +127,7 @@ public class TransactionSummary extends AbstractAuditable{
     @JoinColumn(name="FUNCTIONID")
     private CFunction functionid;
     
+    @Column(precision = 22, scale = 0)
     private Integer divisionid;
 
     public Long getId() {
@@ -205,11 +210,7 @@ public class TransactionSummary extends AbstractAuditable{
         this.narration = narration;
     }
 
-    public Functionary getFunctionaryid() {
-		return functionaryid;
-	}
-
-	public void setFunctionaryid(final Functionary functionaryid) {
+    public void setFunctionaryid(final Functionary functionaryid) {
         this.functionaryid = functionaryid;
     }
 

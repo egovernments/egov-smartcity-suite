@@ -193,7 +193,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                 .getServletContext());
         final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
-        entityList = (List<EntityType>) entityService.filterActiveEntities(code, -1, adt.getId().intValue());
+        entityList = (List<EntityType>) entityService.filterActiveEntities(code, -1, adt.getId());
 
         if (entityList == null || entityList.isEmpty())
             value = index + "~" + ERROR + "#";
@@ -240,7 +240,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                 .getServletContext());
         final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
-        final List<EntityType> tempEntityList = (List<EntityType>) entityService.filterActiveEntities(filterKey, -1, adt.getId().intValue());
+        final List<EntityType> tempEntityList = (List<EntityType>) entityService.filterActiveEntities(filterKey, -1, adt.getId());
         entityList = new ArrayList<EntityType>();
         for (final EntityType e : tempEntityList) {
             if (e.getName().contains("@") || e.getName().contains("#") || e.getName().contains("$") || e.getName().contains("%")

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.commons.Bank" table="BANK">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_bank</param>
+            </generator>
+        </id>
+        <property name="code" type="string">
+            <column name="CODE" length="50" not-null="true" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="100" not-null="true" unique="true" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="250" />
+        </property>
+        <property name="isactive" type="integer">
+            <column name="ISACTIVE" precision="1" scale="0" not-null="true" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" not-null="true" />
+        </property>
+        <property name="created" type="date">
+            <column name="CREATED" length="7" not-null="true" />
+        </property>
+        <property name="modifiedby" type="big_decimal">
+            <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" length="50" />
+        </property>
+        <set name="bankbranchs" inverse="true">
+            <key>
+                <column name="BANKID" precision="22" scale="0" />
+            </key>
+            <one-to-many class="org.egov.commons.Bankbranch" />
+        </set>
+    </class>
+</hibernate-mapping>

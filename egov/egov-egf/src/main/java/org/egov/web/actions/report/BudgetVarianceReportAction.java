@@ -374,19 +374,19 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             queryParamMap.put("functionId", Integer.parseInt(budgetDetail.getFunction().getId().toString()));
         if (shouldShowHeaderField(Constants.FUND) && budgetDetail.getFund() != null && budgetDetail.getFund().getId() != null
                 && budgetDetail.getFund().getId() != -1 && budgetDetail.getFund().getId() != 0)
-            queryParamMap.put("fundId", budgetDetail.getFund().getId().intValue());
+            queryParamMap.put("fundId", budgetDetail.getFund().getId());
         if (shouldShowHeaderField(Constants.SCHEME) && budgetDetail.getScheme() != null
                 && budgetDetail.getScheme().getId() != null && budgetDetail.getScheme().getId() != -1
                 && budgetDetail.getScheme().getId() != 0)
-            queryParamMap.put("schemeId", budgetDetail.getScheme().getId().intValue());
+            queryParamMap.put("schemeId", budgetDetail.getScheme().getId());
         if (shouldShowHeaderField(Constants.SUBSCHEME) && budgetDetail.getSubScheme() != null
                 && budgetDetail.getSubScheme().getId() != null && budgetDetail.getSubScheme().getId() != -1
                 && budgetDetail.getSubScheme().getId() != 0)
-            queryParamMap.put("subSchemeId", budgetDetail.getSubScheme().getId().intValue());
+            queryParamMap.put("subSchemeId", budgetDetail.getSubScheme().getId());
         if (shouldShowHeaderField(Constants.FUNCTIONARY) && budgetDetail.getFunctionary() != null
                 && budgetDetail.getFunctionary().getId() != null && budgetDetail.getFunctionary().getId() != -1
                 && budgetDetail.getFunctionary().getId() != 0)
-            queryParamMap.put("functionaryId", budgetDetail.getFunctionary().getId().intValue());
+            queryParamMap.put("functionaryId", budgetDetail.getFunctionary().getId());
     }
 
     private void populateActualData(final CFinancialYear financialYear) {

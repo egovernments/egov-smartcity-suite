@@ -82,7 +82,7 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
             final Accountdetailtype accountdetailtype, final Long depositCode, final Date appropriationDate) {
 
         return egovCommon.getDepositAmountForDepositCode(appropriationDate, coa.getGlcode(), fund.getCode(),
-                accountdetailtype.getId().intValue(), depositCode.intValue());
+                accountdetailtype.getId(), depositCode.intValue());
     }
 
     @Override

@@ -229,7 +229,7 @@ public class SalaryBillRegisterAction extends BaseFormAction {
         for (final PreApprovedVoucher row : subledgerList) {
             final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
             billPayeedetails.setAccountDetailKeyId(row.getDetailKeyId());
-            billPayeedetails.setAccountDetailTypeId(row.getDetailType().getId().intValue());
+            billPayeedetails.setAccountDetailTypeId(row.getDetailType().getId());
             billPayeedetails.setCreditAmount(row.getCreditAmount());
             billPayeedetails.setDebitAmount(row.getDebitAmount());
             billPayeedetails

@@ -39,46 +39,46 @@
  */
 package org.egov.commons;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+public class CFinancialYear implements java.io.Serializable {
+    /**
+    * 
+    */
+    private static final long serialVersionUID = -1563670460427134487L;
+    private Long id = null;
+    private String finYearRange = "";
+    private Date startingDate;
+    private Date endingDate;
+    private Integer isActive = 1;
+    private Date created;
+    private Timestamp lastModified;
+    private Integer modifiedBy = 0;
+    private Integer isActiveForPosting = 0;
+    private Integer isClosed = 0;
+    private Integer transferClosingBalance = 0;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+    /**
+     * @return Returns the created.
+     */
+    public Date getCreated() {
+        return created;
+    }
 
-@Entity
-@Table(name="FINANCIALYEAR")
-@SequenceGenerator(name = CFinancialYear.SEQ_CFINANCIALYEAR, sequenceName = CFinancialYear.SEQ_CFINANCIALYEAR, allocationSize = 1)
-public class CFinancialYear extends AbstractAuditable{
+    /**
+     * @param created The created to set.
+     */
+    public void setCreated(final Date created) {
+        this.created = created;
+    }
 
-	private static final long serialVersionUID = 4577944445258780977L;
-	public static final String SEQ_CFINANCIALYEAR = "SEQ_CFINANCIALYEAR";
-	
-	@Id
-	@GeneratedValue(generator=SEQ_CFINANCIALYEAR, strategy=GenerationType.SEQUENCE)
-	private Long id = null;
-	
-	@Column(name="FINANCIALYEAR")
-	private String finYearRange = "";
-	
-	private Date startingDate;
-	private Date endingDate;
-	private Integer isActive = 1;
-	private Integer isActiveForPosting = 0;
-	private Integer isClosed = 0;
-	private Integer transferClosingBalance = 0;
-	
-	/**
-	 * @return Returns the endingDate.
-	 */
-	public Date getEndingDate() {
-		return endingDate;
-	}
+    /**
+     * @return Returns the endingDate.
+     */
+    public Date getEndingDate() {
+        return endingDate;
+    }
 
     /**
      * @param endingDate The endingDate to set.
@@ -150,12 +150,40 @@ public class CFinancialYear extends AbstractAuditable{
         return isClosed;
     }
 
-	/**
-	 * @param isClosed The isClosed to set.
-	 */
-	public void setIsClosed(Integer isClosed) {
-		this.isClosed = isClosed;
-	}
+    /**
+     * @param isClosed The isClosed to set.
+     */
+    public void setIsClosed(final Integer isClosed) {
+        this.isClosed = isClosed;
+    }
+
+    /**
+     * @return Returns the lastModified.
+     */
+    public Timestamp getLastModified() {
+        return lastModified;
+    }
+
+    /**
+     * @param lastModified The lastModified to set.
+     */
+    public void setLastModified(final Timestamp lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    /**
+     * @return Returns the modifiedBy.
+     */
+    public Integer getModifiedBy() {
+        return modifiedBy;
+    }
+
+    /**
+     * @param modifiedBy The modifiedBy to set.
+     */
+    public void setModifiedBy(final Integer modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
 
     /**
      * @return Returns the startingDate.

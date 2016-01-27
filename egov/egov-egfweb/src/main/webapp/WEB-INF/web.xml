@@ -121,7 +121,9 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>applicationTenantResolverFilter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
@@ -156,6 +158,9 @@
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>*.do</url-pattern>
 		<url-pattern>*.jsp</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Execute</filter-name>
@@ -232,7 +237,6 @@
             <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
             <taglib-location>/WEB-INF/tags/tiles-jsp.tld</taglib-location>
         </taglib>
-        
         <taglib>
             <taglib-uri>http://www.springframework.org/tags</taglib-uri>
             <taglib-location>/WEB-INF/tags/spring.tld</taglib-location>

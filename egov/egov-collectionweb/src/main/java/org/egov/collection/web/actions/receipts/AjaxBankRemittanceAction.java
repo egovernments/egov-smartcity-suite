@@ -109,7 +109,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         for (int i = 0; i < queryResults.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResults.get(i);
             final Bankbranch newBankbranch = new Bankbranch();
-            newBankbranch.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()).longValue());
+            newBankbranch.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()));
             newBankbranch.setBranchname(arrayObjectInitialIndex[1].toString());
             bankBranchArrayList.add(newBankbranch);
         }

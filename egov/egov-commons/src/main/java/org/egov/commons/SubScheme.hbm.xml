@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2008 5:15:10 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.commons.SubScheme" table="SUB_SCHEME">
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_SUB_SCHEME </param>
+			</generator>
+		</id>
+		<many-to-one name="scheme" class="org.egov.commons.Scheme"
+			fetch="select">
+			<column name="SCHEMEID" precision="22" scale="0" not-null="true" />
+		</many-to-one>
+		<property name="code" type="string">
+			<column name="CODE" length="50" not-null="true" />
+		</property>
+		<property name="name" type="string">
+			<column name="NAME" length="50" not-null="true" />
+		</property>
+		<property name="validfrom" type="date">
+			<column name="VALIDFROM" length="7" not-null="true" />
+		</property>
+		<property name="validto" type="date">
+			<column name="VALIDTO" length="7" />
+		</property>
+		<property name="isactive" type="string">
+			<column name="ISACTIVE" length="1" not-null="true" />
+		</property>
+		<property name="lastmodifieddate" type="date">
+			<column name="LASTMODIFIEDDATE" length="7" not-null="true" />
+		</property>
+		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department"
+			fetch="select">
+			<column name="department" />
+		</many-to-one>
+		<property name="initialEstimateAmount">
+			<column name="initial_estimate_amount" />
+		</property>
+		<property name="councilLoanProposalNumber" type="string">
+			<column name="council_loan_proposal_number" />
+		</property>
+		<property name="councilAdminSanctionNumber" type="string">
+			<column name="council_admin_sanction_number" />
+		</property>
+		<property name="govtLoanProposalNumber" type="string">
+			<column name="govt_loan_proposal_number" />
+		</property>
+		<property name="govtAdminSanctionNumber" type="string">
+			<column name="govt_admin_sanction_number" />
+		</property>
+		<property name="councilLoanProposalDate" type="date">
+			<column name="council_loan_proposal_date" />
+		</property>
+		<property name="councilAdminSanctionDate" type="date">
+			<column name="council_admin_sanction_date" />
+		</property>
+		<property name="govtLoanProposalDate" type="date">
+			<column name="govt_loan_proposal_date" />
+		</property>
+		<property name="govtAdminSanctionDate" type="date">
+			<column name="govt_admin_sanction_date" />
+		</property>
+		<property name="createdDate" type="date">
+			<column name="CREATEDDATE"></column>
+		</property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
+			<column name="CREATEDBY"></column>
+		</many-to-one>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User">
+			<column name="LASTMODIFIEDBY"></column>
+		</many-to-one>
+
+	</class>
+</hibernate-mapping>

@@ -408,7 +408,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 for (final VoucherDetails voucherDetail : subLedgerlist) {
                     try {
                         type = voucherDetail.getDetailTypeName();
-                        entity = paymentService.getEntity(voucherDetail.getDetailType().getId().intValue(),
+                        entity = paymentService.getEntity(voucherDetail.getDetailType().getId(),
                                 voucherDetail.getDetailKeyId());
                         if (entity == null)
                             throw new ValidationException(Arrays.asList(new ValidationError("No.entity.for.detailkey",

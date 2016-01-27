@@ -366,9 +366,9 @@ public class BankAdviceReportAction extends BaseFormAction {
         .append("  Current Account No: ")
         .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
         .append("  under your bank to the following bank accounts:");
-        reportParams.put("bankName", getBankName(bank.getId().intValue()));
+        reportParams.put("bankName", getBankName(bank.getId()));
         reportParams.put("letterContext", letterContext.toString());
-        reportParams.put("branchName", getBankBranchName(bankbranch.getId().intValue()));
+        reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
         reportParams.put("chequeNumber", "RTGS Ref. No: " + getInstrumentNumber(instrumentnumber.getId()));
         reportParams.put("chequeDate", getInstrumentDate(instrumentnumber.getId()));
@@ -394,9 +394,9 @@ public class BankAdviceReportAction extends BaseFormAction {
         .append("  Current Account No: ")
         .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
         .append("  under your bank to the following bank accounts:");
-        reportParams.put("bankName", getBankName(bank.getId().intValue()));
+        reportParams.put("bankName", getBankName(bank.getId()));
         reportParams.put("letterContext", letterContext.toString());
-        reportParams.put("branchName", getBankBranchName(bankbranch.getId().intValue()));
+        reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
         reportParams.put("chequeNumber", "RTGS Ref. No: " + getInstrumentNumber(instrumentnumber.getId()));
         reportParams.put("chequeDate", getInstrumentDate(instrumentnumber.getId()));
@@ -449,8 +449,8 @@ public class BankAdviceReportAction extends BaseFormAction {
         .append("  Current Account No: ")
         .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : " ")
         .append("  under your bank to the following bank accounts:");
-        reportParams.put("bankName", getBankName(bank.getId().intValue()));
-        reportParams.put("branchName", getBankBranchName(bankbranch.getId().intValue()));
+        reportParams.put("bankName", getBankName(bank.getId()));
+        reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("letterContext", letterContext.toString());
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
         reportParams.put("chequeNumber", "RTGS Ref. No: " + getInstrumentNumber(instrumentnumber.getId()));

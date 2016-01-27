@@ -44,51 +44,18 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
 
-@Entity
-@Table(name="FUNDSOURCE")
-@SequenceGenerator(name = Fundsource.SEQ_FUNDSOURCE, sequenceName = Fundsource.SEQ_FUNDSOURCE, allocationSize = 1)
-@NamedQuery(name = "getListOfFundSourceForCodes", query = "from Fundsource where code in (:param_0)")
-public class Fundsource extends AbstractAuditable{
-	
-	private static final long serialVersionUID = -5767136187522324679L;
-	public static final String SEQ_FUNDSOURCE = "SEQ_FUNDSOURCE";
+public class Fundsource {
 
-	@Id
-	@GeneratedValue(generator=SEQ_FUNDSOURCE, strategy=GenerationType.SEQUENCE)
-	private Long id;
+	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name="PARENTID")
 	private Fundsource fundsource;
 
-	@Column(nullable=false, unique=true)
-	@Length(max=50)
 	private String code;
 
-	@Column(nullable=false, unique=true)
-	@Length(max=50)
 	private String name;
 
-	@Length(max=50)
 	private String type;
 
 	private BigDecimal llevel;
@@ -97,74 +64,79 @@ public class Fundsource extends AbstractAuditable{
 
 	private boolean isnotleaf;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="FINANCIALINSTID")
 	private FinancingInstitution finInstId;
 
-	@Column(name="FUNDING_TYPE")
-	@Length(max=50)
 	private String fundingType;
 
-	@Column(name="LOAN_PERCENTAGE")
 	private Double loanPercentage;
 
-	@Column(name="SOURCE_AMOUNT")
 	private BigDecimal sourceAmount;
 
-	@Column(name="RATE_OF_INTEREST")
 	private Double rateOfIntrest;
 
-	@Column(name="LOAN_PERIOD")
 	private Double loanPeriod;
-	
-	@Column(name="MORATORIUM_PERIOD")
+
 	private Double moratoriumPeriod;
 
-	@Column(name="REPAYMENT_FREQUENCY")
-	@Length(max=15)
 	private String repaymentFrequency;
 
-	@Column(name="NO_OF_INSTALLMENT")
 	private Integer noOfInstallment;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="BANKACCOUNTID")
 	private Bankaccount bankAccountId;
 
-	@Column(name="GOVT_ORDER")
-	@Length(max=250)
 	private String govtOrder;
 
-	@Column(name="GOVT_DATE")
 	private Date govtDate;
 
-	@Column(name="DP_CODE_NUMBER")
-	@Length(max=250)
 	private String dpCodeNum;
 
-	@Column(name="DP_CODE_RESG")
-	@Length(max=250)
 	private String dpCodeResistration;
 
-	@Column(name="FIN_INST_LETTER_NUM")
-	@Length(max=250)
 	private String finInstLetterNum;
 
-	@Column(name="FIN_INST_LETTER_DATE")
 	private Date finInstLetterDate;
 
-	@Column(name="FIN_INST_SCHM_NUM")
-	@Length(max=250)
 	private String finInstSchmNum;
 
-	@Column(name="FIN_INST_SCHM_DATE")
 	private Date finInstSchmDate;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="SUBSCHEMEID")
 	private SubScheme subSchemeId;
 
-	
+	protected User createdBy;
+	protected Date created;
+	protected BigDecimal modifiedby;
+	protected Date lastmodified;
+
+	private Set voucherheaders = new HashSet(0);
+
+	private Set fundsources = new HashSet(0);
+
+	private Set sharedFundSource = new HashSet(0);
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public BigDecimal getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(BigDecimal modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+
+	public Date getLastmodified() {
+		return lastmodified;
+	}
+
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
+	}
+
 	public Fundsource getFundsource() {
 		return this.fundsource;
 	}
@@ -221,6 +193,21 @@ public class Fundsource extends AbstractAuditable{
 		this.isnotleaf = isnotleaf;
 	}
 
+	public Set getVoucherheaders() {
+		return this.voucherheaders;
+	}
+
+	public void setVoucherheaders(Set voucherheaders) {
+		this.voucherheaders = voucherheaders;
+	}
+
+	public Set getFundsources() {
+		return this.fundsources;
+	}
+
+	public void setFundsources(Set fundsources) {
+		this.fundsources = fundsources;
+	}
 
 	public Double getLoanPercentage() {
 		return loanPercentage;
@@ -374,13 +361,27 @@ public class Fundsource extends AbstractAuditable{
 		this.finInstId = finInstId;
 	}
 
-	
+	public Set getSharedFundSource() {
+		return sharedFundSource;
+	}
 
-	public Long getId() {
+	public void setSharedFundSource(Set sharedFundSource) {
+		this.sharedFundSource = sharedFundSource;
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

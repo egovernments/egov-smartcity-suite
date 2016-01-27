@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.commons.Bankbranch" table="BANKBRANCH" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_bankbranch</param>
+            </generator>
+        </id>
+        <many-to-one name="bank" class="org.egov.commons.Bank" fetch="select">
+            <column name="BANKID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="branchcode" type="string">
+            <column name="BRANCHCODE" length="50" not-null="true" />
+        </property>
+        <property name="branchname" type="string">
+            <column name="BRANCHNAME" length="50" not-null="true" />
+        </property>
+        <property name="branchaddress1" type="string">
+            <column name="BRANCHADDRESS1" length="50" not-null="true" />
+        </property>
+        <property name="branchaddress2" type="string">
+            <column name="BRANCHADDRESS2" length="50" />
+        </property>
+        <property name="branchcity" type="string">
+            <column name="BRANCHCITY" length="50" />
+        </property>
+        <property name="branchstate" type="string">
+            <column name="BRANCHSTATE" length="50" />
+        </property>
+        <property name="branchpin" type="string">
+            <column name="BRANCHPIN" length="50" />
+        </property>
+        <property name="branchphone" type="string">
+            <column name="BRANCHPHONE" length="15" />
+        </property>
+        <property name="branchfax" type="string">
+            <column name="BRANCHFAX" length="15" />
+        </property>
+        <property name="contactperson" type="string">
+            <column name="CONTACTPERSON" length="50" />
+        </property>
+        <property name="isactive" type="integer">
+            <column name="ISACTIVE" precision="1" scale="0" not-null="true" /> 
+        </property>
+        <property name="created" type="date">
+            <column name="CREATED" length="7" not-null="true" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" not-null="true" />
+        </property>
+        <property name="modifiedby" type="big_decimal">
+            <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="250" />
+        </property>
+        <property name="branchMICR" type="string">
+            <column name="MICR" length="50" />
+        </property>
+        <set name="bankaccounts" inverse="true">
+            <key>
+                <column name="BRANCHID" precision="22" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="org.egov.commons.Bankaccount" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -42,42 +42,18 @@ package org.egov.commons;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import org.egov.infstr.models.BaseModel;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-@Table(name = "CHARTOFACCOUNTS")
-@SequenceGenerator(name = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, sequenceName = CChartOfAccounts.SEQ_CHARTOFACCOUNTS)
-public class CChartOfAccounts extends AbstractAuditable {
+public class CChartOfAccounts extends BaseModel {
 	private static final long serialVersionUID = 1L;
-	public static final String SEQ_CHARTOFACCOUNTS = "SEQ_CHARTOFACCOUNTS";
 
-	@Id
-	@GeneratedValue(generator = SEQ_CHARTOFACCOUNTS, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
+	//private Long id = null;
 	private String glcode;
 	private String name;
 	private Long purposeId;
-	
-	@Column(name = "DESCRIPTION")
 	private String desc;
 	private Boolean isActiveForPosting;
 	private Long parentId;
-	
-	@Column(name = "SCHEDULEID")
 	private Long schedule;
 	private Character operation;
 	private Character type;
@@ -85,22 +61,9 @@ public class CChartOfAccounts extends AbstractAuditable {
 	private Boolean functionReqd;
 	private Boolean budgetCheckReq;
 	private String majorCode;
-	
-	@Column(name = "CLASS")
 	private Long myClass;
-	
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="glCodeId", targetEntity=CChartOfAccountDetail.class)
 	private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<CChartOfAccountDetail>();
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@JsonIgnore
 	public Set<CChartOfAccountDetail> getChartOfAccountDetails() {
 		return chartOfAccountDetails;
 	}
