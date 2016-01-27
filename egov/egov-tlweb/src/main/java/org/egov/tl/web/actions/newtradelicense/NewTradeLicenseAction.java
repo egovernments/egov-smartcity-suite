@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -103,6 +104,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-newForm")
     public String newForm() {
         tradeLicense.setApplicationDate(new Date());
+      
         return super.newForm();
     }
 
@@ -126,6 +128,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 license().generateLicenseNumber(nextRunningLicenseNumber);
               
              }
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_APPROVED_CODE);
+            license().setEgwStatus(statusChange);
             
         }
         if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && tradeLicense.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
@@ -133,6 +138,11 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
           LicenseStatus activeStatus = (LicenseStatus) persistenceService
                     .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
             license().setStatus(activeStatus);
+            if(Constants.BUTTONFORWARD.equals(workFlowAction) && license().getEgwStatus()!=null && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE) ){
+                EgwStatus statusChange = (EgwStatus) persistenceService
+                        .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_INSPE_CODE);
+                license().setEgwStatus(statusChange);
+            }
         }
         if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
             LicenseStatus activeStatus = (LicenseStatus) persistenceService

@@ -52,6 +52,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -177,6 +178,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         try {
             this.setCheckList();
             populateWorkflowBean();
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_CREATED_CODE);
+            license().setEgwStatus(statusChange);
             licenseService().create(license, workflowBean);
         } catch (RuntimeException e) {
             loadAjaxedDropDowns();
@@ -198,6 +202,12 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     // sub class should get the object of the model and set to license()
     public String approve() {
         processWorkflow(NEW);
+        if(license().getEgwStatus()!=null && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+        {
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_GENECERT_CODE);
+            license().setEgwStatus(statusChange);
+        }
         licenseService().licensePersitenceService().persist(license());
         this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license(), workflowBean.getWorkFlowAction());
         // Generate PFA Certificate on final approval

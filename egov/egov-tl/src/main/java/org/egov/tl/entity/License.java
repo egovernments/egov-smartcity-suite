@@ -39,6 +39,7 @@
  */
 package org.egov.tl.entity;
 
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -67,6 +68,7 @@ public abstract class License extends StateAware {
     @Required(message = "license.applicationdate.err.required")
     protected Date applicationDate;
     protected String applicationNumber;
+    protected EgwStatus egwStatus;
     protected Boundary boundary;
     //this should be NatureOfBusiness only which means it is Permanent or temporary.
     protected NatureOfBusiness buildingType;
@@ -804,4 +806,13 @@ public abstract class License extends StateAware {
                 }
         return totBal;
     }
+
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
+    
 }

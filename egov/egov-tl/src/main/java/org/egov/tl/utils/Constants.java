@@ -394,6 +394,8 @@ public class Constants {
 	public static final String HKR_APPL = "HKR-APPL";
 	public static final String HAWKERLICENSE = "HawkerLicense";
 	public static final String TRADELICENSE = "TradeLicense";
+	public static final String TRADELICENSEMODULE = "TRADELICENSE";
+	
 	public static final String HOSPITALLICENSE = "HospitalLicense";
 	public static final String PWDCONTRACTORLICENSE = "PwdContractorLicense";
 	public static final String ELECTRICALCONTRACTORLICENSE = "ElectricalContractorLicense";
@@ -730,4 +732,11 @@ public class Constants {
 	public static final String LICENSE_BILLNO_SEQ = "SEQ_BILLNO_";
 	
 	public static final String LICENSE_FEE_TYPE="License Fee";
+	
+	public static final String APPLICATION_STATUS_CREATED_CODE = "CREATED";
+        public static final String APPLICATION_STATUS_INSPE_CODE = "INSPECTIONDONE";
+        public static final String APPLICATION_STATUS_APPROVED_CODE = "APPROVED";
+        public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONAMOUNTPAID";
+        public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNUPDATED";
+        public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
 }
