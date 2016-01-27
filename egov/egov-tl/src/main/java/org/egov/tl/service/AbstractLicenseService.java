@@ -111,7 +111,10 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     @Qualifier("feeService")
     protected FeeService feeService;
-
+    
+    @Autowired
+    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    
     @Autowired
     @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
@@ -201,7 +204,10 @@ public abstract class AbstractLicenseService<T extends License> {
         license.getState().setLastModifiedBy(license.getCreatedBy());
         license.getState().setLastModifiedDate(new Date());
         this.licensePersitenceService.persist(license);
+       this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
+        
     }
+   
 
     private BigDecimal raiseNewDemand(List<FeeMatrixDetail> feeList, T license) {
         LicenseDemand ld = new LicenseDemand();
@@ -745,5 +751,14 @@ public abstract class AbstractLicenseService<T extends License> {
     public List<Installment> getAllInstallmentsForLicense() {
         return installmentDao.getInsatllmentByModule(getModuleName());
     }
+
+   /* public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
+        return tradeLicenseSmsAndEmailService;
+    }
+
+    public void setTradeLicenseSmsAndEmailService(TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
+        this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }*/
+    
     
 }

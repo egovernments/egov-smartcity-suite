@@ -81,9 +81,9 @@ import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
@@ -128,6 +128,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected List<String> selectedCheckList;
     protected List<LicenseChecklistHelper> checkList;
     protected String roleName;
+    @Autowired
+    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     protected Integer reportId = -1;
 
     @Autowired
@@ -197,6 +199,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String approve() {
         processWorkflow(NEW);
         licenseService().licensePersitenceService().persist(license());
+        this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license(), workflowBean.getWorkFlowAction());
         // Generate PFA Certificate on final approval
         if (Constants.GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             reportId = ReportViewerUtil.addReportToSession(reportService.createReport(prepareReportInputData(license())), getSession());
@@ -215,6 +218,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
+        reportParams.put("tradeCategory", license.getCategory().getName());
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", license.getAddress());
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
@@ -224,6 +228,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         String installMentYear = startYear + "-" + EndYear;
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+        reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
         BigDecimal demandamt = BigDecimal.ZERO;
 
         for (EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails()) {
