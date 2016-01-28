@@ -42,26 +42,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -77,13 +71,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
 
-   
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(parentBoundaryId);
     }
-
-  
 
     @RequestMapping(value = "subcategories", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
@@ -111,7 +102,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         if (advertisementPermitDetail.getState() == null)
             advertisementPermitDetail.setStatus(advertisementPermitDetailService
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
         if (resultBinder.hasErrors()) {
             prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
             model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
