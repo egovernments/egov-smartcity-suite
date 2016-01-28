@@ -137,7 +137,8 @@ strong {
 .hiddenError {
   display: none;
 }
-.error-msg {
+.error-msg,
+label.error {
   color: #ff0000;
   font-size: 13px;
 }
@@ -190,6 +191,7 @@ strong {
   height: 30px;
   border-radius: 3px;
   border: 1px solid #6b4f2c;
+  margin-right: 5px;
 }
 .oldbuttonsection input.buttonsubmit.normal,
 .oldbuttonsection input.button {
@@ -1235,6 +1237,7 @@ strong {
   height: 30px;
   border-radius: 3px;
   border: 1px solid #6b4f2c;
+  margin-right: 5px;
 }
 .page-container .main-content div.formmainbox input.buttonsubmit.normal,
 .page-container .main-content div.formmainbox input.button {
@@ -1287,6 +1290,7 @@ strong {
   height: 30px;
   border-radius: 3px;
   border: 1px solid #6b4f2c;
+  margin-right: 5px;
 }
 .page-container .main-content input.buttonsubmit.normal,
 .page-container .main-content input.button {

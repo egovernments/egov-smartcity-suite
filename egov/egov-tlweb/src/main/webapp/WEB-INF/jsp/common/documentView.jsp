@@ -45,11 +45,11 @@
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
 	}
 </script>
-<div class="col-sm-12 view-content header-color hidden-xs">
-	<div class="col-sm-1 table-div-column"><s:text name="doctable.sno" /></div>
-    <div class="col-sm-5 table-div-column text-center"><s:text name="doctable.docname" /></div>
-    <div class="col-sm-3 table-div-column text-center"><s:text name="doctable.checklist"/></div>
-    <div class="col-sm-3 table-div-column text-center"><s:text name="doctable.attach.doc" /></div>	
+<div class="form-group col-sm-12 view-content header-color hidden-xs">
+	<div class="col-sm-1 text-center"><s:text name="doctable.sno" /></div>
+    <div class="col-sm-5 text-center"><s:text name="doctable.docname" /></div>
+    <div class="col-sm-3 text-center"><s:text name="doctable.checklist"/></div>
+    <div class="col-sm-3 text-center"><s:text name="doctable.attach.doc" /></div>	
 </div>
 <s:iterator value="model.documents" status="status" var="document">
 	<div class="form-group">
@@ -70,6 +70,5 @@
 				</s:iterator>	
 			</s:else>
        	</div>
-       	<div>&nbsp;</div>
    	</div>
 </s:iterator>

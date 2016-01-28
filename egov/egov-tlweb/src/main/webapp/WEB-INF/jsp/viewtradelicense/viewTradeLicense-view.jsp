@@ -67,14 +67,8 @@
 	</head>
 	<body>
 		<div id="content">
-			<table  width="100%">
-				<tbody>
-					<tr>
-						<td>
-							<div>
-								
-									<div class="formmainbox">
-										<div class="subheadnew" id="headingdiv">
+			<div class="formmainbox panel-primary">
+										<div class="subheadnew text-center" id="headingdiv">
 											<s:text name="page.title.viewtrade" />
 										</div>
 										<table>
@@ -96,25 +90,20 @@
 												</table>
 											</s:push>
 										</s:form>
-									</div>
-								
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>
 				<tr>
 					<td>
-						<input name="button1" type="button" class="button" id="button" onClick="printthis()" value="Print" />
+						<input name="button1" type="button" class="buttonsubmit" id="button" onClick="printthis()" value="Print" />
 					</td>
 					<td>
 						<input name="button2" type="button" class="button" id="button" onclick="closethis()" value="Close" />
 					</td>
 				</tr>
 			</table>
+		</div>
+		</div>
 		</div>
 	</body>
 </html>
