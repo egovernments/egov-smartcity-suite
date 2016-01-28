@@ -62,7 +62,7 @@ public class PaymentBean {
     private String functionaryName;
     private String fundsourceName;
     private String fieldName;
-    private boolean isSelected;
+    private boolean isSelected=false;
     private String billVoucherNumber;
     private Date billVoucherDate;
     private String region;

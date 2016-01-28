@@ -843,13 +843,13 @@ public class PaymentAction extends BasePaymentAction {
                 if (bean.getIsSelected()) {
                     if (chk.equals("")) {
                         chk = "checked";
-                        fundNameStr = bean.getFundName();
-                        functionNameStr = bean.getFunctionName();
-                        deptNameStr = bean.getDeptName();
-                        fundSourceNameStr = bean.getFundsourceName();
-                        schemeStr = bean.getSchemeName();
-                        subSchemeStr = bean.getSubschemeName();
-                        region = bean.getRegion();
+                        fundNameStr = bean.getFundName()==null?"":bean.getFundName();
+                        functionNameStr = bean.getFunctionName()==null?"": bean.getFunctionName();
+                        deptNameStr = bean.getDeptName()==null?"":bean.getDeptName();
+                        fundSourceNameStr =bean.getFundsourceName()==null?"":bean.getFundsourceName();
+                        schemeStr = bean.getSchemeName()==null?"":bean.getSchemeName();
+                        subSchemeStr = bean.getSubschemeName()==null?"":bean.getSubschemeName();
+                        region = bean.getRegion()==null?"":bean.getRegion();
                     }
                     if (region != null) {
                         if (fundNameStr.equals(bean.getFundName()) && deptNameStr.equals(bean.getDeptName())
