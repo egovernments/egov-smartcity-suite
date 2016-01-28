@@ -126,20 +126,23 @@ public class BankAccountAction extends JQueryGridActionSupport {
         AccountCodePurpose purpose = null;
         if (COA == null)
             throw new ApplicationRuntimeException("Given glcode does not exist");
-        else if (COA != null) {
+        if (COA != null) {
             account = bankAccountService.find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?", glCode);
             if (account != null)
                 throw new ApplicationRuntimeException("Given glcode is already mapped to another bank account - "
                         + account.getAccountnumber());
-        } else if (!COA.getIsActiveForPosting())
+        }
+        if (!COA.getIsActiveForPosting())
             throw new ApplicationRuntimeException("Given glcode is not active for posting");
-        else if (COA.getChartOfAccountDetails() != null && !COA.getChartOfAccountDetails().isEmpty())
+        if (COA.getChartOfAccountDetails() != null && !COA.getChartOfAccountDetails().isEmpty())
             throw new ApplicationRuntimeException("Given glcode should not be a control code");
-        else if (COA.getType() != null && !COA.getType().equals('A')) {
+        if (COA.getType() != null && !COA.getType().equals('A')) {
             throw new ApplicationRuntimeException("Given glcode should be of type Assets");
-        } else if (COA.getPurposeId() == null) {
+        } 
+        if (COA.getPurposeId() == null) {
             throw new ApplicationRuntimeException("Given glcode is not mapped with any purpose ");
-        } else if (COA.getPurposeId() != null) {
+        } 
+        if (COA.getPurposeId() != null) {
             purpose = (AccountCodePurpose) persistenceService.find(
                     "select purpose from AccountCodePurpose purpose where purpose.id = ?", COA.getPurposeId());
             if (purpose != null && !purpose.getName().contains("Bank Account Codes"))

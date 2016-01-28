@@ -258,7 +258,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         for (final CVoucherHeader voucherheader : list)
         {
             voucherMap = new HashMap<String, Object>();
-            BigDecimal amt = BigDecimal.ZERO;
+            Double amt = new Double(0);
             voucherHeaderId = voucherheader.getId();
             voucherMap.put("id", voucherHeaderId);
             voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
@@ -267,7 +267,7 @@ public class VoucherStatusReportAction extends BaseFormAction
             voucherMap.put("voucherdate", voucherheader.getVoucherDate());
             voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
             for (final CGeneralLedger detail : voucherheader.getGeneralledger())
-                amt = amt.add(new BigDecimal(detail.getDebitAmount()));
+                amt = amt+detail.getDebitAmount();
             voucherMap.put("amount", amt);
             voucherMap.put("status", getVoucherStatus(voucherheader.getStatus()));
             voucherMap.put("source", getVoucherModule(voucherheader.getModuleId()));

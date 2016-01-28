@@ -919,8 +919,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public String viewInboxItem() {
         paymentheader = getPayment();
         showApprove = true;
-        if(paymentheader.getVoucherheader()!=null)
-        voucherHeader.setId(paymentheader.getVoucherheader().getId());
+        if (paymentheader.getVoucherheader() != null)
+            voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
         return VIEW;
 
@@ -930,8 +930,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/payment/directBankPayment-sendForApproval")
     public String sendForApproval() {
-   
-            paymentheader = getPayment();
+
+        paymentheader = getPayment();
 
         if (paymentheader != null && paymentheader.getState() != null) {
             if (!validateOwner(paymentheader.getState())) {
@@ -945,6 +945,12 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         transitionWorkFlow(paymentheader, workflowBean);
         paymentService.applyAuditing(paymentheader.getState());
         paymentService.persist(paymentheader);
+
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.rejected"));
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
+                    .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.cancelled"));
         else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -956,9 +962,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                 .getOwnerPosition()) }));
             setAction(workflowBean.getWorkFlowAction());
 
-        } else
-            addActionMessage(getText("payment.voucher.rejected", new String[] { paymentService
-                    .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+        }
         showMode = "view";
         return viewInboxItem();
     }
@@ -1007,7 +1011,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         } else
             paymentid = parameters.get(PAYMENTID)[0];
         if (paymentid != null)
-            paymentheader = paymentService.findById(Long.valueOf(paymentid),false);
+            paymentheader = paymentService.findById(Long.valueOf(paymentid), false);
         if (paymentheader == null)
             paymentheader = new Paymentheader();
 

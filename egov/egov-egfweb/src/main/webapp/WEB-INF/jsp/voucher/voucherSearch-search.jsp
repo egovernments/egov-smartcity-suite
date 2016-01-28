@@ -60,7 +60,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Voucher Search" />
 		</jsp:include>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<s:if test="%{showMode=='nonbillPayment'}">
@@ -95,7 +96,8 @@
 						class="mandatory1">*</span></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{tempFromDate}" /><a
+							maxlength="20" value="%{tempFromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('forms[0].fromDate');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
@@ -103,7 +105,8 @@
 					<td class="greybox"><s:text name="voucher.todate" /><span
 						class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{tempToDate}" /><a
+							maxlength="20" value="%{tempToDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 						href="javascript:show_calendar('forms[0].toDate');"
 						style="text-decoration: none">&nbsp;<img
 							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
@@ -332,10 +335,6 @@
 			
 			if(fromDate>todayDateText){
 				bootbox.alert("Invalid Date! from date is greater than current date");
-				return false;
-			}
-			if(toDate>todayDateText){
-				bootbox.alert("Invalid Date! to date is greater than current date");
 				return false;
 			}
 			if (fromDate > toDate) {

@@ -938,6 +938,12 @@ public class PaymentAction extends BasePaymentAction {
         if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
         paymentService.persist(paymentheader);
+
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("payment.voucher.rejected"));
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getMessage("payment.voucher.approved",
+                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.cancelled"));
         else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -946,9 +952,7 @@ public class PaymentAction extends BasePaymentAction {
             else
                 addActionMessage(getMessage("payment.voucher.approved",
                         new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
-        } else
-            addActionMessage(getMessage("payment.voucher.rejected",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+        }
         if (Constants.ADVANCE_PAYMENT.equalsIgnoreCase(paymentheader.getVoucherheader().getName())) {
             getAdvanceRequisitionDetails();
             return "advancePaymentView";

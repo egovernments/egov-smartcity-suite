@@ -17,11 +17,6 @@
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
-		<s:if test="%{getNextAction()!='END'}">
-	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
-	        alert("Please Select the Approver ");
-			return false;
-	    }
 	    if ((name=="Reject" || name=="reject")) {
 	    	var approverComments = document.getElementById("approverComments").value;
 	    	if (approverComments == null || approverComments == "") {
@@ -29,6 +24,12 @@
 				return false;
 	    	}
 		}
+		<s:if test="%{getNextAction()!='END'}">
+	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
+	        alert("Please Select the Approver ");
+			return false;
+	    }
+	   
 	    </s:if>
 	    return  onSubmit();
 	}

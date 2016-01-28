@@ -522,6 +522,13 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         type = billsService.getBillTypeforVoucher(voucherHeader);
         if (null == type)
             type = "default";
+
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("pjv.voucher.rejected", new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
+                    .getOwnerPosition()) }));
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(getText("pjv.voucher.approved",
+                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("billVoucher.file.canceled"));
         else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -531,9 +538,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                 addActionMessage(getText("pjv.voucher.approved",
                         new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
                                 .getOwnerPosition()) }));
-        } else
-            addActionMessage(getText("pjv.voucher.rejected",
-                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
+        }
 
         return "message";
     }
@@ -573,8 +578,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-            voucherHeader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-            .withDateInfo(currentDate.toDate());
+            voucherHeader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
