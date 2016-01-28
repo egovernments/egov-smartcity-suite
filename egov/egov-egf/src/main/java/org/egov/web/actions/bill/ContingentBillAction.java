@@ -151,7 +151,7 @@ public class ContingentBillAction extends BaseBillAction {
     @Override
     public void prepare() {
         super.prepare();
-        accountDetailTypeList = persistenceService.findAllBy("from Accountdetailtype where isactive=1 order by name");
+        accountDetailTypeList = persistenceService.findAllBy("from Accountdetailtype where isactive=true order by name");
         addDropdownData(ACCOUNT_DETAIL_TYPE_LIST, accountDetailTypeList);
         addDropdownData(BILL_SUB_TYPE_LIST, getBillSubTypes());
         addDropdownData(USER_LIST, Collections.EMPTY_LIST);

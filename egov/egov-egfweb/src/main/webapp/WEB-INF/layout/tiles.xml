@@ -82,5 +82,30 @@
 	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-result.jsp"/>
 </definition>
 
+<definition name="accountdetailtype-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-new.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-view.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-edit.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-result.jsp"/>
+</definition>
+
+<definition name="accountdetailtype-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.accountdetailtype.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>
