@@ -91,8 +91,13 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            prepareWorkflow(model, advertisementPermitDetail, new WorkflowContainer());
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+            model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             return "hoarding-update";
+        }
         try {
             Long approvalPosition = 0l;
             String approvalComment = "";
