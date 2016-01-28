@@ -112,7 +112,7 @@
 																		<span class="bluebox"><span class="mandatory1">*</span></span>
 																	</s:if></td>
 																<td class="greybox"><s:property
-																		value="%{billregister.egBillregistermis.egDepartment.deptName}" /></td>
+																		value="%{billregister.egBillregistermis.egDepartment.name}" /></td>
 															</s:if>
 															<s:if test="%{shouldShowHeaderField('functionary')}">
 																<td class="greybox"><strong><s:text

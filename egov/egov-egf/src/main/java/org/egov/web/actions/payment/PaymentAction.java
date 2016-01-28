@@ -81,7 +81,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.advance.EgAdvanceRequisition;
@@ -209,7 +208,7 @@ public class PaymentAction extends BasePaymentAction {
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepare...");
-        mandatoryFields = new ArrayList<String>();
+        // mandatoryFields = new ArrayList<String>();
 
         if (parameters.containsKey("salaryType"))
             setDisableExpenditureType(true);
@@ -326,13 +325,6 @@ public class PaymentAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/payment/payment-beforeSearch")
     public String beforeSearch() throws Exception {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting beforeSearch...");
-
-        // if(validateUser("deptcheck"))
-        voucherHeader.getVouchermis().setDepartmentid(paymentService.getAssignment().getDepartment());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed beforeSearch.");
         return "search";
     }
 
@@ -838,35 +830,30 @@ public class PaymentAction extends BasePaymentAction {
     private String populateBillListFor(final List<PaymentBean> list, String ids) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting populateBillListFor...");
+        String attributes = "";
+        String tempAttributes = "";
         if (list != null) {
             for (final PaymentBean bean : list)
                 if (bean.getIsSelected()) {
                     if (chk.equals("")) {
                         chk = "checked";
-                        fundNameStr = bean.getFundName()==null?"":bean.getFundName();
-                        functionNameStr = bean.getFunctionName()==null?"": bean.getFunctionName();
-                        deptNameStr = bean.getDeptName()==null?"":bean.getDeptName();
-                        fundSourceNameStr =bean.getFundsourceName()==null?"":bean.getFundsourceName();
-                        schemeStr = bean.getSchemeName()==null?"":bean.getSchemeName();
-                        subSchemeStr = bean.getSubschemeName()==null?"":bean.getSubschemeName();
-                        region = bean.getRegion()==null?"":bean.getRegion();
+                        fundNameStr = bean.getFundName() == null ? "" : bean.getFundName();
+                        functionNameStr = bean.getFunctionName() == null ? "" : bean.getFunctionName();
+                        deptNameStr = bean.getDeptName() == null ? "" : bean.getDeptName();
+                        fundSourceNameStr = bean.getFundsourceName() == null ? "" : bean.getFundsourceName();
+                        schemeStr = bean.getSchemeName() == null ? "" : bean.getSchemeName();
+                        subSchemeStr = bean.getSubschemeName() == null ? "" : bean.getSubschemeName();
+                        region = bean.getRegion() == null ? "" : bean.getRegion();
+                        attributes = fundNameStr + "-" + functionNameStr + "-" + deptNameStr + "-" + fundSourceNameStr + "-"
+                                + schemeStr + "-" + subSchemeStr;
                     }
-                    if (region != null) {
-                        if (fundNameStr.equals(bean.getFundName()) && deptNameStr.equals(bean.getDeptName())
-                                && functionNameStr.equals(bean.getFunctionName())) {
-                            billList.add(bean);
-                            ids = ids + bean.getBillId() + ",";
-                        }
-                        else {
-                            if (LOGGER.isDebugEnabled())
-                                LOGGER.debug("Validation Error mismatch in attributes ");
-                            throw new ValidationException(Arrays.asList(new ValidationError("Mismatch in attributes",
-                                    "Mismatch in attributes!!")));
-                        }
-                    } else if (fundNameStr.equals(bean.getFundName()) && deptNameStr.equals(bean.getDeptName())
-                            && fundSourceNameStr.equals(bean.getFundsourceName()
-                                    ) && functionNameStr.equals(bean.getFunctionName())
-                            && schemeStr.equals(bean.getSchemeName()) && subSchemeStr.equals(bean.getSubschemeName())) {
+                    tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-"
+                            + (bean.getFunctionName() == null ? "" : bean.getFunctionName()) + "-"
+                            + (bean.getDeptName() == null ? "" : bean.getDeptName()) + "-"
+                            + (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-"
+                            + (bean.getSchemeName() == null ? "" : bean.getSchemeName()) + "-"
+                            + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
+                    if (attributes.equalsIgnoreCase(tempAttributes)) {
                         billList.add(bean);
                         ids = ids + bean.getBillId() + ",";
                     }
@@ -935,8 +922,6 @@ public class PaymentAction extends BasePaymentAction {
         populateWorkflowBean();
         transitionWorkFlow(paymentheader, workflowBean);
         paymentService.applyAuditing(paymentheader.getState());
-        if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
         paymentService.persist(paymentheader);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))

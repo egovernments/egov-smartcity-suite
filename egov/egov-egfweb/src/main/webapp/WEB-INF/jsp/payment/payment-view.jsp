@@ -239,17 +239,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																		name="comments" id="comments" cols="100" rows="3"
 																		onblur="checkLength(this)" value="%{getComments()}" /></td>
 															</tr>
-														</table> <s:if test="%{paymentheader.state.value != 'NEW'}">
-															<s:if test="%{paymentheader.state.id!=null}">
-																<div id="labelAD" align="center">
-																	<h5>
-																		<a href="#"
-																			onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
-																			History</a>
-																	</h5>
-																</div>
-															</s:if>
-														</s:if>
+														</table> 
 
 													</span>
 

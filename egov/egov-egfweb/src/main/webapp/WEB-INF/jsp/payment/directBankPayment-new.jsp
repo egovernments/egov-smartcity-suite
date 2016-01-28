@@ -53,7 +53,10 @@
 	src="/EGF/resources/javascript/dateValidation.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">

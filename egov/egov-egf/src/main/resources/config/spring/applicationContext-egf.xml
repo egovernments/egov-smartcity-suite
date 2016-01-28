@@ -210,7 +210,7 @@
 		<constructor-arg index="0" value="org.egov.masters.model.AccountEntity" />
     </bean>
     <bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" scope="prototype">
-		
+		<property name="persistenceService" ref="persistenceService"/>
 	</bean> 
 	 <bean id="mastersService" class="org.egov.masters.services.MastersService" scope="prototype">
 	 </bean> 

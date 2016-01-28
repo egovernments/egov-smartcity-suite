@@ -69,7 +69,7 @@
 			list="dropdownData.accNumList" listKey="id"
 			listValue="accountnumber+'-'+accounttype" headerKey=""
 			headerValue="----Choose----"
-			onChange="populateNarration(this);populateAvailableBalance(this);" />
+			onChange="populateNarration(this);" />
 		<s:textfield name="accnumnar" id="accnumnar"
 			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" /></td>
 	<td class="bluebox" id="balanceText" style="display: none" width="18%"><s:text
