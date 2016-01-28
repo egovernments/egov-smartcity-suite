@@ -190,6 +190,7 @@ $(document).ready(function(){
 			  { "data" : "applicationFromDate", "title": "Application Date"},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
+			  { "data" : "id", "visible": false},
 			  { "data" : "", "target":-1,"defaultContent": '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span><span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>'},
 			  ]
 		});
@@ -211,7 +212,7 @@ $(document).ready(function(){
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
-			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'},
+			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'}			 
 			  ]
 		});
 		e.stopPropagation();
@@ -229,7 +230,8 @@ $(document).ready(function(){
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
 		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("viewLegacy/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),5);
+		window.open("view/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#adtax_search").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {

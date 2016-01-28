@@ -115,6 +115,7 @@ $(document).ready(function(){
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 						  { "data" : "permissionNumber", "visible": false},
 						  { "data" : "permitStatus", "visible": false},
+						  { "data" : "id", "visible": false},
 						  {"title" : "Actions","sortable":false,
 				        	   render : function(data, type, row) {
 				        			   if (undefined != row.permissionNumber && (row.permitStatus=="ADTAXPERMITGENERATED" || row.permitStatus=="ADTAXAMTPAYMENTPAID")) {
@@ -135,20 +136,21 @@ $(document).ready(function(){
 
 	$("#adtax_search").on('change','tbody tr td .dropchange',
 			function() {
-			var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
-			var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
+			//var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 8);
+			//var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
 						if (this.value == 0) {
-							var url = '/adtax/advertisement/permitOrder/'+ applicationNumber;
+							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 1) {
-							var url = '/adtax/advertisement/demandNotice/'+ applicationNumber;
+							var url = '/adtax/advertisement/demandNotice/'+ adtaxid;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 2) {
-							var url = '/adtax/hoarding/adView/'+ applicationNumber;
+							var url = '/adtax/hoarding/view/'+ adtaxid;
 							$('#adtaxsearchform').attr('method', 'get');
 							$('#adtaxsearchform').attr('action', url);
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');

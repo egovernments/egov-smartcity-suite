@@ -216,19 +216,19 @@ public class ReportController {
         return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/demandNotice/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final String applicationNumber,
+    @RequestMapping(value = "/demandNotice/{id}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final String id,
             final HttpSession session,HttpServletRequest request) {
         final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
-                .findByApplicationNumber(applicationNumber);
+                .findBy(Long.valueOf(id));
         return generateDemandNotice(request,advertisementPermitDetails, session, null);
     }
 
-    @RequestMapping(value = "/permitOrder/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewPermitOrderReport(@PathVariable final String applicationNumber,
+    @RequestMapping(value = "/permitOrder/{id}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> viewPermitOrderReport(@PathVariable final String id,
             final HttpSession session,HttpServletRequest request) {
         final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
-                .findByApplicationNumber(applicationNumber);
+                .findBy(Long.valueOf(id));
         if (!AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED
                 .equalsIgnoreCase(advertisementPermitDetails.getStatus().getCode()))
             advertisementPermitDetailService.updateStateTransition(advertisementPermitDetails, Long.valueOf(0), "",

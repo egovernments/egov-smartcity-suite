@@ -73,7 +73,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         return null;
     }
 
-    @RequestMapping(value = "viewLegacy/{id}")
+    /*@RequestMapping(value = "viewLegacy/{id}")
     public String viewHoarding(@PathVariable final String id, final Model model) {
         Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
         if(advertisement!=null){
@@ -85,7 +85,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
             model.addAttribute("message", "msg.invalid.request");
             return "collectAdvtax-error";
         }
-    }
+    }*/
     
     @RequestMapping(value = "/updateLegacy/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {

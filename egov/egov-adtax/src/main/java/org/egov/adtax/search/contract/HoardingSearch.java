@@ -62,7 +62,7 @@ public class HoardingSearch {
     private int totalHoardingInAgency;
     private String hordingIdsSearchedByAgency;
     private String permitStatus;
-
+    private Long id;
     public String getAdvertisementNumber() {
         return advertisementNumber;
     }
@@ -205,6 +205,14 @@ public class HoardingSearch {
 
     public void setPermitStatus(final String permitStatus) {
         this.permitStatus = permitStatus;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

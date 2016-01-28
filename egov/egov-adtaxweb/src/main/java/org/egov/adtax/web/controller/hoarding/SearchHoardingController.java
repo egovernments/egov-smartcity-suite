@@ -143,11 +143,4 @@ public class SearchHoardingController extends GenericController {
         return "hoarding-view";
     }
 
-    @RequestMapping(value = "adView/{applicationNumber}", method = GET)
-    public String viewHoardingByApplicationNumber(@PathVariable final String applicationNumber, final Model model) {
-        model.addAttribute("advertisementPermitDetail",
-                advertisementPermitDetailService.findByApplicationNumber(applicationNumber));
-        return "hoarding-view";
-    }
-
 }

@@ -135,7 +135,7 @@
 								<form:hidden path="status" id="status" value="${status.id}" /> 
 								 --%>
 										<form:input type="text"  cssClass="form-control patternvalidation" 
-                        	      data-pattern="alphanumericwithhyphen" path="applicationNumber" maxlength="25" id="applicationNumber" />
+                        	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" />
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
@@ -155,14 +155,14 @@
 										</label>
 									<div class="col-sm-3 add-margin">
 										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="alphanumericwithhyphen" maxlength="25"  path="permissionNumber" id="permissionNumber" />
+	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" />
 	                               		<form:errors path="permissionNumber" cssClass="error-msg" />
 									</div>
 									<label class="col-sm-2 control-label text-right">
 									<spring:message code="lbl.advertisement.no"/></label>
 									<div class="col-sm-3 add-margin">
 										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
+	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
 	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 									</div>
 								</c:when>
@@ -309,7 +309,7 @@
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="taxAmount" id="taxAmount" required="required"/>
-                               		<form:errors path="taxAmount" class="error-msg" />
+                               		<form:errors path="taxAmount" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.advertisement.enc.fee"/>

@@ -222,6 +222,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
             hoardingSearchResult.setPermitStatus(result.getStatus().getCode());
             hoardingSearchResult.setPermissionNumber(result.getPermissionNumber());
+            hoardingSearchResult.setId(result.getId());
             if (result.getAdvertisement().getDemandId() != null)
                 if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
@@ -301,6 +302,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setAgencyName(result.getAgency() != null ? result.getAgency().getName() : "");
             hoardingSearchResult.setStatus(result.getAdvertisement().getStatus());
             hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
+            hoardingSearchResult.setId(result.getId());
             hoardingSearchResults.add(hoardingSearchResult);
         });
         return hoardingSearchResults;
