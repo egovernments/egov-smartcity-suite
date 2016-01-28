@@ -726,10 +726,9 @@ function autocompleteEntities1By20(obj)
 	   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	   oAutoCompEntityForJV.useIFrame = true;
 	   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
-		   clearWaitingImage();
 	           var pos = YAHOO.util.Dom.getXY(oTextbox);
 	           pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
-	           oContainer.style.width=100;
+	           oContainer.style.width=300;
 	           YAHOO.util.Dom.setXY(oContainer,pos);
 	           return true;
 	   };
@@ -771,10 +770,14 @@ function autocompletecode(obj,myEvent)
 				codeObj.applyLocalFilter = true;
 				codeObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
-				oAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-					var data = oResultData.toString();
-				    return data.split("`~`")[0];
-				};
+				oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+					 var pos = YAHOO.util.Dom.getXY(oTextbox);
+					 pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
+					 oContainer.style.width=300;
+					 YAHOO.util.Dom.setXY(oContainer,pos);
+					 return true;
+
+				 };  
 			}
 		}
 		yuiflag[currRow] = 1;
@@ -875,10 +878,14 @@ function autocompletecodeFunction(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
-				oAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-					var data = oResultData.toString();
-				    return data.split("`~`")[0];
-				};
+				oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
+					 var pos = YAHOO.util.Dom.getXY(oTextbox);
+					 pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 6;
+					 oContainer.style.width=300;
+					 YAHOO.util.Dom.setXY(oContainer,pos);
+					 return true;
+
+				 };  
 			}
 		}
 		//yuiflagFunc[currRow] = 1;

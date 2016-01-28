@@ -1571,10 +1571,7 @@ public class CreateVoucher {
             if (headerdetails.containsKey(VoucherConstant.STATUS) && null != headerdetails.get(VoucherConstant.STATUS))
                 cVoucherHeader.setStatus(Integer.valueOf(headerdetails.get(VoucherConstant.STATUS).toString()));
             else {
-                // This fix is for Phoenix Migration.
-                final List list = null;// new
-                                       // GenericHibernateDaoFactory().getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF",
-                // "DEFAULTVOUCHERCREATIONSTATUS");
+                final List list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","DEFAULTVOUCHERCREATIONSTATUS");
                 cVoucherHeader.setStatus(Integer.parseInt(((AppConfigValues) list.get(0)).getValue()));
             }
 

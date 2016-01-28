@@ -551,26 +551,9 @@ function printVoucher(){
 		</s:if>	
 	</s:if>	
 	
-		
-	
-		
-	
-		
-</SCRIPT>
+</script>
 
 				<s:if test="%{showApprove}">
-
-					<s:if test="%{paymentheader.state.value != 'NEW'}">
-						<s:if test="%{paymentheader.state.id!=null}">
-							<div id="labelAD" align="center">
-								<h5>
-									<a href="#"
-										onclick="showHistory(<s:property value='paymentheader.state.id'/>); ">Show
-										History</a>
-								</h5>
-							</div>
-						</s:if>
-					</s:if>
 					<s:if test="%{showMode!='create' && showMode!='view' }">
 						<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 						<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
