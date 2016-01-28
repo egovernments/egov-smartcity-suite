@@ -131,11 +131,18 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
     private static final Logger LOGGER = Logger.getLogger(VoucherService.class);
+    @Autowired
+    @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("eisCommonService")
     protected EisCommonService eisCommonService;
+    @Autowired
+    @Qualifier("budgetDetailsDAO")
     private BudgetDetailsDAO budgetDetailsDAO;
     private @Autowired AppConfigValueService appConfigValuesService;
-    @Qualifier("voucherHibernateDAO")
+    @Autowired
+    @Qualifier("voucherHibDAO")
     private VoucherHibernateDAO voucherHibDAO;
     @Autowired
     private ChartOfAccountsDAO coaDAO;
@@ -149,17 +156,25 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private VoucherHeaderDAO voucherHeaderDAO;
     @Autowired
     private CommonsServiceImpl commonsService;
+    @Autowired
+    @Qualifier("voucherHelper")
     private VoucherHelper voucherHelper;
-
+    @Autowired
+    @Qualifier("mastersService")
     private MastersService masters;
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     @Autowired
     private SequenceGenerator sequenceGenerator;
+    @Autowired
+    @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearDAO;
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
+    }
+    public VoucherService() {
+        super(CVoucherHeader.class);
     }
 
     private EISServeable eisService;

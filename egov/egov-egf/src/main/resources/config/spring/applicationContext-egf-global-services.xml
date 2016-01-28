@@ -1,81 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
+	accountability and the service delivery of the government organizations. 
+	Copyright (C) <2015> eGovernments Foundation The updated version of eGov 
+	suite of products as by eGovernments Foundation is available at http://www.egovernments.org 
+	This program is free software: you can redistribute it and/or modify it under 
+	the terms of the GNU General Public License as published by the Free Software 
+	Foundation, either version 3 of the License, or any later version. This program 
+	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU General Public License for more details. You should 
+	have received a copy of the GNU General Public License along with this program. 
+	If not, see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html 
+	. In addition to the terms of the GPL license to be adhered to in using this 
+	program, the following additional terms are to be complied with: 1) All versions 
+	of this program, verbatim or modified must carry this Legal Notice. 2) Any 
+	misrepresentation of the origin of the material is prohibited. It is required 
+	that all modified versions of this material be marked in reasonable ways 
+	as different from the original version. 3) This license does not grant any 
+	rights to any user of the program with regards to rights under trademark 
+	law for use of the trade names or trademarks of eGovernments Foundation. 
+	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context" 
-       xmlns:aop="http://www.springframework.org/schema/aop" 
-       xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" default-lazy-init="true">
-		
-	<bean id="instrumentTypeService" parent="persistenceService" scope="prototype">
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	default-lazy-init="true">
+	<context:component-scan
+		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
+
+
+	<bean id="instrumentTypeService" parent="persistenceService"
+		scope="prototype">
 		<property name="type" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
-	
-	<bean id="bankService" class="org.egov.services.masters.BankService" scope="prototype" autowire-candidate="default">
+
+	<bean id="bankService" class="org.egov.services.masters.BankService"
+		scope="prototype" autowire-candidate="default">
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
-	
-	<bean id="instrumentVouherService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+
+	<bean id="instrumentVouherService" class="org.egov.infstr.services.PersistenceService"
+		scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.model.instrument.InstrumentVoucher" />
 	</bean>
-	
-	<bean id="bankreconciliationService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+
+	<bean id="bankreconciliationService" class="org.egov.infstr.services.PersistenceService"
+		scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.commons.Bankreconciliation" />
 	</bean>
-	
-	<bean id="instrumentOtherDetailsService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+
+	<bean id="instrumentOtherDetailsService" class="org.egov.infstr.services.PersistenceService"
+		scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type"
 			value="org.egov.model.instrument.InstrumentOtherDetails" />
 	</bean>
-	
-	<bean id="instrumentHeaderService" parent="persistenceService" scope="prototype">
+
+	<bean id="instrumentHeaderService" parent="persistenceService"
+		scope="prototype">
 		<property name="type" value="org.egov.model.instrument.InstrumentHeader" />
 	</bean>
-	
-	<bean id="instrumentService" class="org.egov.services.instrument.InstrumentService" scope="prototype">
+
+	<bean id="instrumentService" class="org.egov.services.instrument.InstrumentService"
+		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="instrumentTypeService" ref="instrumentTypeService" />
 		<property name="instrumentVouherService" ref="instrumentVouherService" />
@@ -83,49 +75,209 @@
 		<property name="instrumentOtherDetailsService" ref="instrumentOtherDetailsService" />
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
 	</bean>
-	
-	<!-- <bean id="vdPersitSer" class="org.egov.infstr.services.PersistenceService" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="type" value="org.egov.commons.VoucherDetail" />
-	</bean>-->
-	
-	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+
+
+	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService"
+		scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
 	</bean>
-	
-	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+
+	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService"
+		scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="type" value="org.egov.commons.Bankreconciliation" /> 
+		<property name="type" value="org.egov.commons.Bankreconciliation" />
 	</bean>
-	
-	<bean id="contraService" class="org.egov.services.contra.ContraService"  parent="persistenceService" scope="prototype">
-	 	<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
-		<property name="persistenceService" ref="persistenceService"/>
-		<property name="contrajournalService" ref="contrajournalService"/>
-		<property name="bankReconService" ref="bankReconService"/>
-	<!-- 	<property name="vdPersitSer" ref="vdPersitSer"/> -->
-		<property name="instrumentService" ref="instrumentService"/>
+
+	<bean id="contraService" class="org.egov.services.contra.ContraService"
+		parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="contrajournalService" ref="contrajournalService" />
+		<property name="bankReconService" ref="bankReconService" />
+		<!-- <property name="vdPersitSer" ref="vdPersitSer"/> -->
+		<property name="instrumentService" ref="instrumentService" />
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
-		</bean>
-	
-	<bean id="createVoucher" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype">
 	</bean>
-	
-	<bean id="voucherHeaderPersistenceService" parent="persistenceService" >
-        <property name="type" value="org.egov.commons.CVoucherHeader" />
-    </bean>
-        
-    <bean id="CVoucherHeaderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" >
-         <constructor-arg index="0" ref="voucherHeaderPersistenceService"/>
-    </bean>
-    
-    <bean id="paymentHeaderPersistenceService" parent="persistenceService" >
-        <property name="type" value="org.egov.model.payment.Paymentheader" />
-    </bean>
-        
-    <bean id="PaymentheaderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" >
-         <constructor-arg index="0" ref="paymentHeaderPersistenceService"/>
-    </bean>
-    
+
+	<bean id="createVoucher" class="org.egov.billsaccounting.services.CreateVoucher"
+		scope="prototype">
+	</bean>
+
+	<bean id="voucherHeaderPersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.commons.CVoucherHeader" />
+	</bean>
+
+	<bean id="CVoucherHeaderInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="voucherHeaderPersistenceService" />
+	</bean>
+
+	<bean id="paymentHeaderPersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.model.payment.Paymentheader" />
+	</bean>
+
+	<bean id="PaymentheaderInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="paymentHeaderPersistenceService" />
+	</bean>
+
+
+	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
+		<constructor-arg index="0"
+			value="org.egov.commons.CFinancialYear" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="egwStatusHibernateDAO" class="org.egov.commons.dao.EgwStatusHibernateDAO">
+		<constructor-arg index="0" value="org.egov.commons.EgwStatus" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="functionaryDAO" class="org.egov.commons.dao.FunctionaryHibernateDAO">
+		<constructor-arg index="0" value="org.egov.commons.Functionary" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="fundSourceDAO" class="org.egov.commons.dao.FundSourceHibernateDAO">
+		<constructor-arg index="0" value="org.egov.commons.Fundsource" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="chartOfAccountsHibernateDAO" class="org.egov.commons.dao.ChartOfAccountsHibernateDAO">
+		<constructor-arg index="0"
+			value="org.egov.commons.CChartOfAccounts" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="fiscalPeriodHibernateDAO" class="org.egov.commons.dao.FiscalPeriodHibernateDAO">
+	</bean>
+
+	<bean id="functionHibernateDAO" class="org.egov.commons.dao.FunctionHibernateDAO">
+		<constructor-arg index="0" value="org.egov.commons.CFunction" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService">
+		<constructor-arg index="0"
+			value="org.egov.model.budget.BudgetDetail">
+		</constructor-arg>
+	</bean>
+	<bean id="budgetService" class="org.egov.services.budget.BudgetService"
+		scope="prototype">
+		<property name="eisCommonService" ref="eisCommonService" />
+		<property name="budgetDetailService" ref="budgetDetailService" />
+		<constructor-arg index="0" value="org.egov.model.budget.Budget" />
+	</bean>
+	<bean id="budgetGroupService" class="org.egov.services.budget.BudgetGroupService">
+		<constructor-arg index="0"
+			value="org.egov.model.budget.BudgetGroup" />
+	</bean>
+	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"
+		scope="prototype">
+		<property name="budgetService" ref="budgetService" />
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	<bean id="budgetDetailHelper" class="org.egov.utils.BudgetDetailHelper">
+		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
+		<property name="financialYearDAO" ref="financialYearDAO" />
+	</bean>
+	<bean id="financialYearService" class="org.egov.commons.service.FinancialYearService">
+		<constructor-arg index="0"
+			value="org.egov.commons.CFinancialYear" />
+	</bean>
+
+	<bean id="budgetDetailConfig" class="org.egov.utils.BudgetDetailConfig"
+		scope="prototype">
+		<constructor-arg ref="persistenceService" />
+	</bean>
+	<bean id="voucherHeaderService" class="org.egov.services.voucher.VoucherHeaderService">
+		<constructor-arg index="0"
+			value="org.egov.commons.CVoucherHeader" />
+	</bean>
+
+	<bean id="accountEntityService" class="org.egov.masters.services.AccountEntityService">
+		<constructor-arg index="0"
+			value="org.egov.masters.model.AccountEntity" />
+	</bean>
+	<bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO"
+		scope="prototype">
+
+	</bean>
+	<bean id="mastersService" class="org.egov.masters.services.MastersService"
+		scope="prototype">
+	</bean>
+	<bean id="billsService" class="org.egov.services.bills.BillsService"
+		scope="prototype">
+	</bean>
+	<bean id="voucherHelper" class="org.egov.utils.VoucherHelper"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="eisCommonService" ref="eisCommonService" />
+		<property name="eGovernCommon" ref="eGovernCommon" />
+		<property name="fiscalPeriodHibernateDAO" ref="fiscalPeriodHibernateDAO" />
+	</bean>
+	<bean id="eGovernCommon" class="com.exilant.eGov.src.common.EGovernCommon"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	<bean id="chartOfAccounts" class="com.exilant.GLEngine.ChartOfAccounts" >
+	</bean>
+
+	<bean id="chartOfAccountsService" class="org.egov.commons.service.ChartOfAccountsService">
+		<constructor-arg index="0"
+			value="org.egov.commons.CChartOfAccounts" />
+	</bean>
+	<bean id="chartOfAccountDetailService" class="org.egov.commons.service.ChartOfAccountDetailService">
+		<constructor-arg index="0"
+			value="org.egov.commons.CChartOfAccountDetail" />
+	</bean>
+
+	<bean id="scriptService" class="org.egov.infra.script.service.ScriptService" />
+	<bean id="contraBean" class="org.egov.model.contra.ContraBean"
+		scope="prototype" />
+	<bean id="voucherTypeBean" class="org.egov.model.voucher.VoucherTypeBean"
+		scope="prototype" />
+	<bean id="contraVoucher" class="org.egov.model.contra.ContraJournalVoucher"
+		scope="prototype" />
+	<bean id="egovCommon" class="org.egov.egf.commons.EgovCommon"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="fundFlowService" ref="fundFlowService" />
+	</bean>
+
+	<bean id="commonBean" class="org.egov.model.voucher.CommonBean"
+		scope="prototype" />
+	<bean id="voucherSearchUtil" class="org.egov.egf.commons.VoucherSearchUtil"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="financialYearDAO" ref="financialYearDAO" />
+	</bean>
+	<bean id="commonMethodsImpl" class="com.exilant.eGov.src.transactions.CommonMethodsImpl"
+		scope="prototype" />
+	<bean id="baseForm" class="org.egov.infra.web.struts.actions.BaseFormAction">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	<bean id="financingSourceService"
+		class="org.egov.services.financingsource.FinancingSourceService">
+		<constructor-arg index="0" value="org.egov.commons.Fundsource" />
+	</bean>
+	<bean id="fundFlowService" class="org.egov.services.report.FundFlowService" />
+	<bean id="accountdetailkeyService" class="org.egov.services.masters.AccountdetailkeyService">
+		<property name="type" value="org.egov.commons.Accountdetailkey" />
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+
 </beans>

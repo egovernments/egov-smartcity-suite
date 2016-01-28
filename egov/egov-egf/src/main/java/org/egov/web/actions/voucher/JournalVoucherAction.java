@@ -71,6 +71,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "journalVoucher-new.jsp") })
@@ -82,6 +83,8 @@ public class JournalVoucherAction extends BaseVoucherAction
     private List<VoucherDetails> subLedgerlist;
     private String target;
     protected String showMode;
+    @Autowired
+    @Qualifier("voucherService")
     private VoucherService voucherService;
     private VoucherTypeBean voucherTypeBean;
     private String buttonValue;
@@ -224,6 +227,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                 errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
                 throw new ValidationException(errors);
             } catch (final Exception e) {
+                e.printStackTrace();
                 clearMessages();
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
@@ -277,13 +281,6 @@ public class JournalVoucherAction extends BaseVoucherAction
         this.target = target;
     }
 
-    public VoucherService getVoucherService() {
-        return voucherService;
-    }
-
-    public void setVoucherService(final VoucherService voucherService) {
-        this.voucherService = voucherService;
-    }
 
     public VoucherTypeBean getVoucherTypeBean() {
         return voucherTypeBean;
