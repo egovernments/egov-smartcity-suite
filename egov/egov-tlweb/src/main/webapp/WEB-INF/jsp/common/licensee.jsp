@@ -40,7 +40,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	<div class="panel-heading custom_form_panel_heading">
-	    <div class="panel-title">Trade Owner Details</div>
+	    <div class="panel-title"><s:text name='license.title.applicantdetails' /></div>
 	</div>
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
@@ -67,7 +67,7 @@
 	    <div class="col-sm-3 add-margin">
 	        <s:textfield    name="licensee.emailId" id="emailId" onBlur="validateEmail(this);checkLength(this,32)" maxlength="32" cssClass="form-control" />
 	    </div>
-	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.applicantAddress' /><span class="mandatory"></span></label>
+	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.address' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
 	        <s:textarea name="licensee.address"  id="licenseeAddress" maxlength="250" cssClass="form-control" />
 	    </div>

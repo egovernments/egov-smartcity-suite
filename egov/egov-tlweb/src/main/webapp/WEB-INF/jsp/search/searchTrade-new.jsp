@@ -46,13 +46,12 @@
 		<script type="text/javascript" src="/tl/resources/javascript/license/searchTrade.js"></script>
 	</head>
 	<body onload="init()">
-		<table align="center" width="100%">
+		<table width="100%">
 			<tbody>
 				<tr>
 					<td>
-						<div align="center">
-							<center>
-								<div class="formmainbox">
+						<div>
+							<div class="formmainbox">
 									<div class="subheadnew">
 										<s:text name="license.search" />
 									</div>
@@ -76,7 +75,6 @@
 									</s:push>
 								</div>
 								<%@ include file='searchTrade-result.jsp'%>
-							</center>
 						</div>
 					</td>
 				</tr>

@@ -77,7 +77,7 @@ function getUom(){
     <div class="panel-title"><s:text name='license.details.lbl' /></div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.nameOfEst.lbl' /></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname' /></label>
     <div class="col-sm-3 add-margin">
          	<s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation"  data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="32" onBlur="checkLength(this,32)"/>
     </div>
@@ -120,10 +120,10 @@ function getUom(){
          <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="500" class="form-control"/>
     </div>
     
-	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /></label>
+	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 	<s:date name="startDate" id="formattedStartDate" format="dd/MM/yyyy" />
-	<s:textfield name="startDate" cssClass="form-control datepicker" data-date-end-date="0d" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
+	<s:textfield name="startDate" cssClass="form-control datepicker" required="true" data-date-end-date="0d" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
 	    
 		<%--<s:date name="startDate" id="startdate" format="dd/MM/yyyy" />
 		 <s:textfield name="startDate" id="startDate" onfocus="waterMarkTextIn('startDate','dd/mm/yyyy');" onblur="validateDateFormat(this);waterMarkTextOut('startDate','dd/mm/yyyy'); lessThanOrEqualToCurrentDate(this);" maxlength="10" size="10" value="%{startdate}" tabindex="4" onkeyup="DateFormat(this,this.value,event,false,'3')" />

@@ -50,7 +50,7 @@ String path = request.getContextPath();
 		</legend>
 		
 		<s:if test="(noticeNumber==null && docNumber==null && noticeType=='-1' && noticeFromDate==null && noticeToDate==null) || (noticeNumber=='' && docNumber=='' && noticeType=='-1' && noticeFromDate==null && noticeToDate==null)">
-			<display:table class="its" name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="true" requestURI="searchTrade!search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
+			<display:table class="its" name="pagedResults" uid="license" style="background-color:#e8edf1;width:98%;padding:0px;margin:10 0 0 5px;" pagesize="20" export="true" requestURI="searchTrade-search.action?reportSize=${reportSize}" excludedParams="reportSize" cellpadding="0" cellspacing="0">
 				<display:column class="blueborderfortd" title="S.No" style="border-left:1px solid #E9E9E9">
 					<s:property value="%{#attr.license_rowNum+(page == 0  ? 0: (page-1))*10}" />
 				</display:column>
