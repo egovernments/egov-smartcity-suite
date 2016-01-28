@@ -58,6 +58,7 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
+<td style="width: 5%"></td>
 	<%} %>
 
 
@@ -78,6 +79,7 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
+<td style="width: 5%"></td>
 	<%} %>
 
 	<s:if test="%{shouldShowHeaderField('scheme')}">
@@ -98,12 +100,13 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
+<td style="width: 5%"></td>
 	<%} %>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
 		<% count++; %>
 		<egov:ajaxdropdown id="subschemeid" fields="['Text','Value']"
 			dropdownId="subschemeid"
-			url="voucher/common!ajaxLoadSubSchemes.action" />
+			url="voucher/common-ajaxLoadSubSchemes.action" />
 		<td class="greybox"><s:text name="voucher.subscheme" /> <s:if
 				test="%{isFieldMandatory('subscheme')}">
 				<span class="mandatory1">*</span>
@@ -117,6 +120,7 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
+<td style="width: 5%"></td>
 	<%} %>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
 		<% count++; %>
@@ -133,6 +137,7 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
+<td style="width: 5%"></td>
 	<%} %>
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<% count++; %>
@@ -149,6 +154,7 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
+<td style="width: 5%"></td>
 	<%} %>
 	<s:if test="%{shouldShowHeaderField('field')}">
 		<% count++; %>
