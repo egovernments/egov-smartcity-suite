@@ -61,11 +61,9 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     List<UsageType> findByActiveTrueOrderByIdAsc();
 
-    @Query("select PU.usagetype from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id=:propertyType ")
+    @Query("select PU.usageType from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id=:propertyType ")
     List<UsageType> getAllUsageTypesByPropertyType(@Param("propertyType") Long propertyType);
 
-    @Query("select PU from org.egov.wtms.masters.entity.WaterPropertyUsage PU where PU.propertyType.id in(select PT.id from PropertyType PT where PT.code =:propertyType) and PU.usagetype.code=:usageTypeCode")
-    WaterPropertyUsage getAllUsageTypesByPropertyTypeAndUsageType(@Param("propertyType") String propertyType,
-            @Param("usageTypeCode") String usageTypeCode);
+    
 
 }

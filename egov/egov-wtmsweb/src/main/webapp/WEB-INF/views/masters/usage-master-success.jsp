@@ -64,7 +64,7 @@
 											<spring:message code="lbl.usagetype"/> 
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${waterPropertyUsage.usagetype.name}"/>
+											<c:out value="${waterPropertyUsage.usageType.name}"/>
 										</div>
 										
 										<div class="col-md-3 col-xs-6 add-margin">

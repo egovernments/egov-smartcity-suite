@@ -60,6 +60,7 @@ import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -74,6 +75,9 @@ public class RestWaterConnectionValidationService {
 
     @Autowired
     private UsageTypeService usageTypeService;
+    
+    @Autowired
+    private WaterPropertyUsageService waterPropertyUsageService;
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
@@ -92,14 +96,14 @@ public class RestWaterConnectionValidationService {
     
     @Autowired
     private PropertyCategoryService propertyCategoryService;
-
+ 
     @Autowired
     private NewConnectionService newConnectionService;
 
     public ErrorDetails validateCreateRequest(final WaterConnectionInfo connectionInfo) {
         ErrorDetails errorDetails = null;
         if (connectionInfo.getPropertyType() != null) {
-            final WaterPropertyUsage usageTypesList = usageTypeService.getAllUsageTypesByPropertyTypeAndUsageType(
+            final WaterPropertyUsage usageTypesList = waterPropertyUsageService.findByPropertyTypecodeAndUsageTypecode(
                     connectionInfo.getPropertyType(), connectionInfo.getUsageType());
 
             if (usageTypesList == null) {

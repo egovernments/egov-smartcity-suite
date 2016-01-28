@@ -96,14 +96,14 @@ public class UsageTypeMasterController {
         WaterPropertyUsage waterpropertyUsage = new WaterPropertyUsage();
         waterpropertyUsage = waterPropertyUsageService.findByPropertyTypeAndUsageType(
                 waterPropertyUsage.getPropertyType(),
-                waterPropertyUsage.getUsagetype().getName().toUpperCase()
+                waterPropertyUsage.getUsageType().getName().toUpperCase()
                         .trim());
         if (waterpropertyUsage != null) {
             redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyUsage);
             model.addAttribute("message", "Entered Usage Type for the Chosen Property Type is already Exists");
         } else {
             UsageType usagetype = new UsageType();
-            usagetype = waterPropertyUsage.getUsagetype();
+            usagetype = waterPropertyUsage.getUsageType();
             usagetype.setName(usagetype.getName().trim());
             usagetype.setActive(true);
             usagetype.setCode(usagetype.getName().toUpperCase());

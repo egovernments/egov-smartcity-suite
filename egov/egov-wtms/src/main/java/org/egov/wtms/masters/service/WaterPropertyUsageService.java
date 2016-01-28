@@ -41,7 +41,6 @@ package org.egov.wtms.masters.service;
 
 
 import org.egov.wtms.masters.entity.PropertyType;
-
 import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.repository.WaterPropertyUsageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,11 +69,13 @@ public class WaterPropertyUsageService {
         waterPropertyUsageRepository.save(waterPropertyUsage);
     }
     
-
+    
+    public WaterPropertyUsage findByPropertyTypecodeAndUsageTypecode(final String propertyType,final String usageTypeCode) {
+        return waterPropertyUsageRepository.findByPropertyType_codeAndUsageType_code(propertyType,usageTypeCode);
+    }
     
     public WaterPropertyUsage findByPropertyTypeAndUsageType(final PropertyType propertyType,
             final String usagetype) {
-       
-            return waterPropertyUsageRepository.findByPropertyTypeAndUsageType(propertyType,usagetype);
+            return waterPropertyUsageRepository.findByPropertyTypeAndUsageType_nameIgnoreCase(propertyType,usagetype);
     }
 }

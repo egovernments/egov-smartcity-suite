@@ -71,9 +71,9 @@
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.usagetype" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin"  id="usagediv">
 					<form:input class="form-control patternvalidation"  data-pattern="alphabetwithspace"  maxlength="24" id="usageTypeName"
-						path="usagetype.name" required="required" />
+						path="usageType.name" required="required" />
 						
-					<form:errors path="usagetype.name"
+					<form:errors path="usageType.name"
 						cssClass="add-margin error-msg" />
 				</div>
 
