@@ -115,7 +115,7 @@ public class ApplicationSearchController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<Document> searchComplaints(@ModelAttribute final ApplicationSearchRequest searchRequest) {
+    public List<Document> searchApplication(@ModelAttribute final ApplicationSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
         final Sort sort = Sort.by().field("searchable.applicationdate", SortOrder.DESC);
