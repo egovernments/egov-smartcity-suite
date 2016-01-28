@@ -93,7 +93,6 @@ import org.springframework.transaction.annotation.Transactional;
                         "text/html" })
 })
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class JournalVoucherPrintAction extends BaseFormAction {
     String jasperpath = "/reports/templates/journalVoucherReport.jasper";
     private static final long serialVersionUID = 1L;
@@ -165,8 +164,9 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     private void populateVoucher() {
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
+        	
             final Long id = Long.valueOf(parameters.get("id")[0]);
-            final CVoucherHeader voucherHeader = (CVoucherHeader) HibernateUtil.getCurrentSession().get(CVoucherHeader.class, id);
+            final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id =?",id);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
                 generateVoucherReportList();
@@ -177,13 +177,15 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     private void generateVoucherReportList() {
         if (voucher != null) {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.equals(vd.getCreditAmount())) {
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue()))==0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd);
                     voucherReportList.add(voucherReport);
                 }
+            
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.equals(vd.getDebitAmount())) {
+                	 if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue()))==0)
+                {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd);
                     voucherReportList.add(voucherReport);
@@ -194,7 +196,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     public String getFundName() {
         if (voucher != null && voucher.getFundId() != null) {
             //persistenceService.setType(Fund.class);
-            final Fund fund = (Fund) persistenceService.findById(voucher.getFundId().getId(), false);
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=? ",voucher.getFundId().getId());
             return fund == null ? "" : fund.getName();
         }
         return "";
@@ -203,8 +205,8 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     public String getDepartmentName() {
         if (voucher != null && voucher.getVouchermis() != null && voucher.getVouchermis().getDepartmentid() != null) {
             //persistenceService.setType(Department.class);
-            final Department dept = (Department) persistenceService.findById(voucher.getVouchermis().getDepartmentid().getId(),
-                    false);
+            final Department dept = (Department) persistenceService.find("from Department where id=? ",voucher.getVouchermis().getDepartmentid().getId()
+                    );
             return dept == null ? "" : dept.getName();
         }
         return "";
@@ -238,7 +240,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
             loadHistory(voucher.getState().getId());
         paramMap.put("workFlowHistory", inboxHistory);
         paramMap.put("workFlowJasper",
-                reportHelper.getClass().getResourceAsStream("/org/egov/web/actions/voucher/workFlowHistoryReport.jasper"));
+                reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
         final HttpServletRequest request = ServletActionContext.getRequest();
         final HttpSession session = request.getSession();
         final City cityWebsite = cityService.getCityByURL((String) session.getAttribute("cityurl"));

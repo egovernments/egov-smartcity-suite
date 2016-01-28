@@ -78,6 +78,7 @@
 			</tr>
 
 			<tr>
+			<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.fromdate" /></td>
 				<td class="greybox"><s:date name="fromDate" id="fromDateId"
 						format="dd/MM/yyyy" /> <s:textfield name="fromDate" id="fromDate"
@@ -97,6 +98,7 @@
 						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
+			<td style="width: 5%"></td>
 				<td class="bluebox"><s:text name="bill.expenditure.type" /></td>
 				<td class="bluebox"><s:select name="exptype" id="exptype"
 						list="dropdownData.expenditureList" headerKey=""
@@ -107,6 +109,7 @@
 						headerValue="----Choose----" /></td>
 			</tr>
 			<tr>
+			<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.number" /></td>
 				<td class="greybox"><s:textfield name="voucherNumber"
 						id="voucherNumber" maxlength="30" value="%{voucherNumber}" /></td>
