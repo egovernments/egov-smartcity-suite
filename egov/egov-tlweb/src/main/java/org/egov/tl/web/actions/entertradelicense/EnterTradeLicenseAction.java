@@ -84,10 +84,6 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
     private Map<Integer, BigDecimal> legacyInstallmentwiseFees = new TreeMap<>();
-    private Long feeTypeId;
-    @Autowired
-    @Qualifier("feeTypeService")
-    private FeeTypeService feeTypeService;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -129,8 +125,6 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
                 : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
-        feeTypeId=feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId(); 
-
     }
 
     @Override
@@ -171,13 +165,4 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void setLegacyInstallmentwiseFees(final Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
     }
-
-    public Long getFeeTypeId() {
-        return feeTypeId;
-    }
-
-    public void setFeeTypeId(Long feeTypeId) {
-        this.feeTypeId = feeTypeId;
-    }
-
 }

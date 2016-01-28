@@ -45,11 +45,11 @@
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
 	    <div class="col-sm-3 add-margin">
-	           <s:textfield name="licensee.uid"  onBlur="checkLength(this,12)" onKeyPress="return numbersonly(this, event)"  maxlength="12" cssClass="form-control patternvalidation"  data-pattern="number" />
+	           <s:textfield name="licensee.uid" onBlur="return checkMinLength(this,12);"  onKeyPress="return numbersonly(this, event)"  maxlength="12" cssClass="form-control patternvalidation"  data-pattern="number" />
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number" />
+	             <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkMinLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number" />
 	    </div>
 	</div>
 	<div class="form-group">

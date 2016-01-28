@@ -91,10 +91,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
-    private Long feeTypeId;
-    @Autowired
-    @Qualifier("feeTypeService")
-    private FeeTypeService feeTypeService;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -159,9 +155,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-        return super.create(tradeLicense);
+        try {
+            return super.create(tradeLicense);
+        } catch (RuntimeException e) {
+            ValidationError vr=new ValidationError(e.getMessage(), e.getMessage());
+            throw new ValidationException(Arrays.asList(vr) ); 
+        }
     }
-
+    
     @Override
     public void prepareNewForm() {
         super.prepareNewForm();
@@ -179,7 +180,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
                 licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
-        feeTypeId=feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId(); 
     }
 
     @Override
@@ -267,13 +267,5 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     public void setMode(String mode) {
         this.mode = mode;
-    }
-
-    public Long getFeeTypeId() {
-        return feeTypeId;
-    }
-
-    public void setFeeTypeId(Long feeTypeId) {
-        this.feeTypeId = feeTypeId;
     }
 }

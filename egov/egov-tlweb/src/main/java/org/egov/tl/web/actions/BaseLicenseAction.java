@@ -84,6 +84,7 @@ import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
@@ -132,6 +133,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     protected Integer reportId = -1;
+    private Long feeTypeId;
 
     @Autowired
     protected LicenseUtils licenseUtils;
@@ -160,6 +162,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected UnitOfMeasurementService unitOfMeasurementService;
     @Autowired
     private ReportService reportService;
+    @Autowired
+    @Qualifier("feeTypeService")
+    private FeeTypeService feeTypeService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -412,6 +417,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                             .getSimpleName()));
 
         setupWorkflowDetails();
+        feeTypeId=feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId(); 
     }
 
     public void prepareShowForApproval() {
@@ -676,6 +682,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setReportId(Integer reportId) {
         this.reportId = reportId;
+    }
+    
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
     }
 
 }

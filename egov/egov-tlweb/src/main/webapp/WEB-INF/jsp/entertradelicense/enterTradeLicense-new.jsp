@@ -230,12 +230,11 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.uom.null" />');
 					document.getElementById("uom").focus();
 					return false;
-				} else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
-						 document.getElementById("workersCapacity").value == 0) {
-					showMessage('enterLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
-					document.getElementById("workersCapacity").focus();
+				}  else if (document.getElementById("startDate").value == '' || document.getElementById("startDate").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.startDate.null" />');
+					window.scroll(0, 0);  
 					return false;
-				} else{
+				}  else{
 					clearMessage('enterLicense_error');
 					toggleFields(false,"");
 					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';

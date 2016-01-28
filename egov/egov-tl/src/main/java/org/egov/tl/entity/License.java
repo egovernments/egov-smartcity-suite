@@ -122,7 +122,6 @@ public abstract class License extends StateAware {
     private String ownershipType;
     private String address;
     private LicenseCategory category;
-    private BigDecimal workersCapacity;
 
     private BigDecimal tradeArea_weight;
 
@@ -553,14 +552,6 @@ public abstract class License extends StateAware {
 
     public void setBuildingType(NatureOfBusiness buildingType) {
         this.buildingType = buildingType;
-    }
-
-    public BigDecimal getWorkersCapacity() {
-        return this.workersCapacity;
-    }
-
-    public void setWorkersCapacity(BigDecimal workersCapacity) {
-        this.workersCapacity = workersCapacity;
     }
 
     public LicenseAppType getLicenseAppType() {

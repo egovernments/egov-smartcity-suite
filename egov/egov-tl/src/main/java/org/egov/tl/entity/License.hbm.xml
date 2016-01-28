@@ -145,13 +145,6 @@
 					cascade="all" />
 
 		<subclass name="org.egov.tl.entity.TradeLicense" discriminator-value="tradelicense">
-			<bag name="installedMotorList" inverse="true" table="EGTL_MOTOR_DETAILS" cascade="all,delete-orphan" fetch="select">
-				<key>
-					<column name="ID_LICENSE"></column>
-				</key>
-				<one-to-many class="org.egov.tl.entity.MotorDetails" />
-			</bag>
-			
 			<bag name="documents" table="egtl_tradelicense_docs" cascade="all" order-by="document">
 				<key column="license" not-null="true"/>			
 				<many-to-many class="org.egov.tl.entity.LicenseDocument" column="document"/>
@@ -159,8 +152,6 @@
 
 			<join table="EGTL_TRADE_LICENSE">
 				<key column="ID" />
-				<property name="motorInstalled" column="ISMOTORINSTALLED" type="boolean" />
-				<property name="totalHP" column="TOTAL_HP" type="java.math.BigDecimal" />
 				<property name="hotelGrade" column="HOTEL_GRADE" type="java.lang.String" />
 				<property name="sandBuckets" column="SAND_BUCKETS"  />
 				<property name="waterBuckets" column="WATER_BUCKETS"  />
