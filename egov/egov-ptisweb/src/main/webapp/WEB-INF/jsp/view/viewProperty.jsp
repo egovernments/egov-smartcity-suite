@@ -535,7 +535,7 @@
 			<div class="col-xs-3 add-margin view-content">
 					Rs.
 					<s:text name="format.money">
-						<s:param value="viewMap.vacantLandTax" /> hi
+						<s:param value="viewMap.vacantLandTax" />
 					</s:text>
 				</div></s:else>
 		</div>
