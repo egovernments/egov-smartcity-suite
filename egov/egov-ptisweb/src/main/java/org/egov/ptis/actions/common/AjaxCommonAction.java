@@ -431,7 +431,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         LOGGER.debug("Entered into checkIfCategoryExists ");
         Category existingCategory = (Category) getPersistenceService().find(
                 "select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? ",
+                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.isActive = true ",
                 zoneId, usageId, structureClassId, categoryFromDate);
         if (existingCategory != null) {
             categoryExists = "yes";

@@ -129,7 +129,7 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-newForm")
     public String newForm() {
         if (roleName.contains(ROLE_PTADMINISTRATOR.toUpperCase())) {
-            if (mode.equals(EDIT)) {
+            if (mode.equals(EDIT) || mode.equals("deactivate")) {
                 if (categoryId != null && categoryId != -1) {
                     category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
                     setUsageId(category.getPropUsage().getId());
@@ -156,7 +156,7 @@ public class UnitRateAction extends BaseFormAction {
     public String create() {
         Category existingCategory = (Category) getPersistenceService()
                 .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? ",
+                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.isActive = true ",
                         zoneId, usageId, structureClassId, category.getFromDate());
 
         // If category exists for the combination of zone, usage,structure and
@@ -176,6 +176,7 @@ public class UnitRateAction extends BaseFormAction {
             category.setPropUsage(usage);
             category.setStructureClass(structureClass);
             category.setIsHistory('N');
+            category.setIsActive(true);
             category.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
                     .concat("-").concat(category.getCategoryAmount().toString()));
 
@@ -223,7 +224,7 @@ public class UnitRateAction extends BaseFormAction {
             if (structureClassId != null && structureClassId != -1) {
                 mainStr.append(" and bndryCat.category.structureClass.id=:stucture");
             }
-            mainStr.append(" and bndryCat.category.IsHistory = 'N'");
+            mainStr.append(" and bndryCat.category.IsHistory = 'N' and bndryCat.category.isActive = true ");
             final Query query = getPersistenceService().getSession().createQuery(mainStr.toString());
             query.setLong("zone", zoneId);
             if (usageId != null && usageId != -1) {
@@ -288,6 +289,7 @@ public class UnitRateAction extends BaseFormAction {
             categoryObj.setStructureClass(structureClass);
             categoryObj.setIsHistory('N');
             categoryObj.setToDate(catFromDb.getToDate());
+            categoryObj.setIsActive(true);
             categoryObj.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
                     .concat("-").concat(categoryObj.getCategoryAmount().toString()));
 
@@ -306,6 +308,18 @@ public class UnitRateAction extends BaseFormAction {
             setAckMessage("Unit Rate is updated successfully!");
             return RESULT_ACK;
         }
+    }
+
+    @SkipValidation
+    @Action(value = "/unitRate-deactivate")
+    public String deactivate() {
+        if (categoryId != null && categoryId != -1) {
+            category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+            category.setIsActive(false);
+            setAckMessage("Unit Rate deactivated successfully!");
+            getPersistenceService().update(category);
+        }
+        return RESULT_ACK;
     }
 
     @Override

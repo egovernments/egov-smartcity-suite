@@ -42,12 +42,52 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+<title><s:text name="unit.rate.search.title"/></title>
 <script type="text/javascript">
 	function submitForm() {
 		document.forms[0].action = 'unitRate-search.action';
 		document.forms[0].submit;       
 		return true;
 	}
+
+	function confirmClose(categoryId,bndryId) {
+		/* var result = confirm("Do you really want to Deactivate selected record?"); */
+		bootbox.dialog({ 
+          message: "Do you really want to Deactivate selected record ?",
+		  show: true,
+		  backdrop: true,
+		  closeButton: true,
+		  animate: true,
+		  className: "my-modal",
+		  buttons: {
+		    success: {   
+		      label: "Yes",
+		      className: "btn-primary",
+		      callback: function() {
+		    	  document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-deactivate.action?categoryId='+categoryId;
+				  document.unitRateForm.submit(); 
+			  }
+		    },
+		    "No": {
+		      className: "btn-default",
+		      callback: function() {
+		    	  document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-search.action';
+				  document.unitRateForm.submit(); 
+			  }
+		    }
+		  }
+		});
+		
+		
+		/* 
+	    if (result == true) {
+	    	document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-deactivate.action?categoryId='+categoryId;
+		    document.unitRateForm.submit(); 
+		} else {
+			document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-search.action';
+			document.unitRateForm.submit(); 
+		} */
+	} 
 	
 </script>
 </head>
@@ -63,7 +103,7 @@
 	  </s:if>
 		<s:push value="model">
 			<s:token />
-			<s:hidden name="mode" value="%{mode}" />
+			<s:hidden name="mode" id="mode" value="%{mode}" />
 			<div class="formmainbox">
 				<div class="headingbg">
 					<s:text name="unit.rate.search.title" />
@@ -144,6 +184,11 @@
 									style="text-align:center">
 									<a href="../admin/unitRate-newForm.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=edit"> Edit</a>
 									</display:column> 
+									<display:column title=""media="html"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="text-align:center">
+									<a onclick="confirmClose('${currentRowObject.category.id}','${currentRowObject.bndry.id}');">Deactivate</a>
+									</display:column>
 									</s:if>
 							<s:if test="%{mode == 'view'}">
 							 <display:column title=""
