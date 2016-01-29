@@ -245,8 +245,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", license.getAddress());
-        reportParams.put("subCategory", license.getTradeName().getName());
-        reportParams.put("appType", "New");
+        reportParams.put("subCategory", (license.getTradeName()!=null ?license.getTradeName().getName():null));
+        reportParams.put("appType", (license.getLicenseAppType() !=null ?license.getLicenseAppType().getName():"New"));
         if(EgovThreadLocals.getMunicipalityName().contains("Corporation"))
         {
             reportParams.put("carporationulbType", Boolean.TRUE);
