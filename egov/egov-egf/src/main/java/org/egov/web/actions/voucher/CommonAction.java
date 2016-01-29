@@ -3399,11 +3399,13 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadFunctionCodes() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadFunctionCodes...");
-        if (function == null)
+      if (function == null)
             functionCodesList = new ArrayList<CFunction>();
-        else
+        else{
+        	String funCodeName="%"+function.toLowerCase()+"%";
             functionCodesList = persistenceService.findAllBy("select f from CFunction f where" +
-                    " isActive = 1 and isNotLeaf = 0 and name like ?", function + "%");
+                    " isActive = 1 and isNotLeaf = 0 and lower(name) like ? or lower(code) like ? ",funCodeName,funCodeName);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadFunctionCodes.");
         return "functionCodes";
