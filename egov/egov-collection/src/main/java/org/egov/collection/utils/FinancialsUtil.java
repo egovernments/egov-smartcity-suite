@@ -62,6 +62,7 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Utility class for interfacing with financials. This class should be used for calling any financials APIs from erp collections.
@@ -70,7 +71,8 @@ public class FinancialsUtil {
     private InstrumentService instrumentService;
     public PersistenceService<InstrumentHeader, Long> instrumentHeaderService;
     private ContraService contraService;
-    private CreateVoucher voucherCreator;
+    @Autowired
+    private CreateVoucher createVoucher;
     private CollectionsUtil collectionsUtil;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
@@ -149,7 +151,7 @@ public class FinancialsUtil {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)
-                voucherHeaders = voucherCreator.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
+                voucherHeaders = createVoucher.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error("Exception while creating voucher!", e);
@@ -167,7 +169,7 @@ public class FinancialsUtil {
 
                 // fetch from eg_modules once have master data in place
                 headerdetails.put(VoucherConstant.MODULEID, "10");
-                voucherHeaders = voucherCreator.createVoucher((HashMap<String, Object>) headerdetails,
+                voucherHeaders = createVoucher.createVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
             }
         } catch (final ApplicationRuntimeException e) {
@@ -187,7 +189,7 @@ public class FinancialsUtil {
     public CVoucherHeader getReversalVoucher(final List<HashMap<String, Object>> paramList) {
         CVoucherHeader voucherHeaders = null;
         try {
-            voucherHeaders = voucherCreator.reverseVoucher(paramList);
+            voucherHeaders = createVoucher.reverseVoucher(paramList);
         } catch (final ApplicationRuntimeException re) {
             LOGGER.error("Runtime Exception while creating reversal voucher!", re);
             throw re;
@@ -265,24 +267,10 @@ public class FinancialsUtil {
     }
 
     /**
-     * @return the contraService
-     */
-    public ContraService getContraService() {
-        return contraService;
-    }
-
-    /**
      * @param contraService the contraService to set
      */
     public void setContraService(final ContraService contraService) {
         this.contraService = contraService;
-    }
-
-    /**
-     * @param voucherCreator the Voucher Creator to set
-     */
-    public void setVoucherCreator(final CreateVoucher voucherCreator) {
-        this.voucherCreator = voucherCreator;
     }
 
     /**
