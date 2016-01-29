@@ -87,6 +87,10 @@ public class UsageTypeService {
         return usageTypeRepository.findByNameContainingIgnoreCase(name);
     }
 
+    public UsageType findByNameIgnoreCase(final String name) {
+        return usageTypeRepository.findByNameIgnoreCase(name);
+    }
+    
     public UsageType findByName(final String name) {
         return usageTypeRepository.findByName(name);
     }

@@ -89,7 +89,7 @@ public class UsageTypeMasterController {
     }
 
     @RequestMapping(value = "/usageTypeMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final WaterPropertyUsage waterPropertyUsage,
+    public String addUsageTypeMasterData(@Valid @ModelAttribute final WaterPropertyUsage waterPropertyUsage,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "usage-type-master";
@@ -104,12 +104,25 @@ public class UsageTypeMasterController {
         } else {
             UsageType usagetype = new UsageType();
             usagetype = waterPropertyUsage.getUsageType();
-            usagetype.setName(usagetype.getName().trim());
-            usagetype.setActive(true);
-            usagetype.setCode(usagetype.getName().toUpperCase());
-            usageTypeService.createUsageType(usagetype);
-            waterPropertyUsageService.createPropertyCategory(waterPropertyUsage);
-            redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
+            UsageType usagetypeobj = new UsageType();
+            usagetypeobj= usageTypeService.findByNameIgnoreCase(usagetype.getName().trim());
+            if (usagetypeobj == null)
+            {
+                usagetype.setName(usagetype.getName().trim());
+                usagetype.setActive(true);
+                usagetype.setCode(usagetype.getName().toUpperCase());
+                usageTypeService.createUsageType(usagetype);
+                waterPropertyUsageService.createPropertyCategory(waterPropertyUsage);
+                redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
+            }
+            else
+            {
+                WaterPropertyUsage  waterpropertyusage = new WaterPropertyUsage();
+                waterpropertyusage.setPropertyType(waterPropertyUsage.getPropertyType());
+                waterpropertyusage.setUsageType(usagetypeobj);
+                waterPropertyUsageService.createPropertyCategory(waterpropertyusage);
+                redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyusage);
+            }
             model.addAttribute("message", "Usage Type Data created successfully");
         }
         return "usage-master-success";

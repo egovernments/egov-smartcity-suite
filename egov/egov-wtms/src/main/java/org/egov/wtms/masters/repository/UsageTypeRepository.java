@@ -52,6 +52,8 @@ import org.springframework.stereotype.Repository;
 public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
     UsageType findByName(String name);
+    
+    UsageType findByNameIgnoreCase(String name);
 
     List<UsageType> findByNameContainingIgnoreCase(String name);
 
