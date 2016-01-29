@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -65,7 +66,6 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.AbstractLicenseService;
-import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
@@ -75,6 +75,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @ParentPackage("egov")
 @Results({
         @Result(name = EnterTradeLicenseAction.NEW, location = "enterTradeLicense-new.jsp"),
+        @Result(name = "update", location = "enterTradeLicense-update.jsp"),
         @Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense-view", params = { "namespace",
                 "/viewtradelicense", "model.id", "${model.id}" }) })
 public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
@@ -84,6 +85,8 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
     private Map<Integer, BigDecimal> legacyInstallmentwiseFees = new TreeMap<>();
+    private String licenseNumber;
+    
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -112,11 +115,30 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         }
     }
 
+    @SkipValidation
+    @Action(value="/entertradelicense/update-form")
+    public String showLegacyUpdateForm() {
+        this.tradeLicense = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
+        commonFormPrepare();
+        return "update";
+    }
+    
+    @Action(value="/entertradelicense/update")
+    public String updateLegacyLicense() {
+        tradeLicenseService.licensePersitenceService().persist(tradeLicense);
+        return "viewlicense";
+    }
+    
     @Override
     public void prepareNewForm() {
-        super.prepareNewForm();
-        if (license() != null && license().getId() != null)
+        if (!license().isNew())
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        commonFormPrepare();
+       
+    }
+
+    public void commonFormPrepare() {
+        super.prepareNewForm();
         setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
         addDropdownData("localityList", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
@@ -126,7 +148,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
                 : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
     }
-
+    
     @Override
     public TradeLicense getModel() {
         return tradeLicense;
@@ -164,5 +186,13 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setLegacyInstallmentwiseFees(final Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 }

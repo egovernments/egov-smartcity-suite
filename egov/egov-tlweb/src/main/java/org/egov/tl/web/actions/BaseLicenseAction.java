@@ -214,6 +214,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     // sub class should get the object of the model and set to license()
     public String approve() {
+        //TODO All this should go to service 
+        //<<FROM HERE
         processWorkflow(NEW);
         if(license().getEgwStatus()!=null && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE))
         {
@@ -222,8 +224,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             license().setEgwStatus(statusChange);
         }
         licenseService().licensePersitenceService().persist(license());
+        license().generateLicenseNumber(licenseService().getNextRunningLicenseNumber("egtl_license_number"));
         this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license(), workflowBean.getWorkFlowAction());
         this.updateIndexService.updateTradeLicenseIndexes(license());
+        //<<TO HERE
+        
         // Generate PFA Certificate on final approval
         if (Constants.GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             reportId = ReportViewerUtil.addReportToSession(reportService.createReport(prepareReportInputData(license())), getSession());

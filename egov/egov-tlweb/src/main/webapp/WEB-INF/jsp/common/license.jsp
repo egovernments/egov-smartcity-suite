@@ -106,7 +106,7 @@ function getUom(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.uom.lbl' /><span class="mandatory"></span></label>
      <div class="col-sm-3 add-margin">
-        <s:textfield name="uom" maxlength="8" id="uom" value="%{uom}"  readOnly="true" class="form-control"  />
+        <s:textfield name="uom" maxlength="8" id="uom" value="%{tradeName.licenseSubCategoryDetails[0].uom.name}"  readOnly="true" class="form-control"  />
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.premises.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
