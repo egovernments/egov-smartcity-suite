@@ -86,6 +86,7 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
+import org.egov.tl.service.TradeLicenseUpdateIndexService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
@@ -165,6 +166,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("feeTypeService")
     private FeeTypeService feeTypeService;
+    
+    @Autowired
+    private TradeLicenseUpdateIndexService updateIndexService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -187,6 +191,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                     .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_CREATED_CODE);
             license().setEgwStatus(statusChange);
             licenseService().create(license, workflowBean);
+            this.updateIndexService.updateTradeLicenseIndexes(license);
         } catch (RuntimeException e) {
             loadAjaxedDropDowns();
             throw e;
@@ -215,6 +220,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         }
         licenseService().licensePersitenceService().persist(license());
         this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license(), workflowBean.getWorkFlowAction());
+        this.updateIndexService.updateTradeLicenseIndexes(license());
         // Generate PFA Certificate on final approval
         if (Constants.GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             reportId = ReportViewerUtil.addReportToSession(reportService.createReport(prepareReportInputData(license())), getSession());
@@ -236,6 +242,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", license.getAddress());
+        reportParams.put("subCategory", license.getTradeName().getName());
+        reportParams.put("appType", "New");
         if(EgovThreadLocals.getMunicipalityName().contains("Corporation"))
         {
             reportParams.put("carporationulbType", Boolean.TRUE);

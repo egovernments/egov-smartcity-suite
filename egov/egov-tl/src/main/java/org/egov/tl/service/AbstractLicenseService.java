@@ -185,6 +185,10 @@ public abstract class AbstractLicenseService<T extends License> {
     public T getLicenseById(Long id) {
         return licensePersitenceService.findById(id, false);
     }
+    public T getLicenseByApplicationNumber(String applicationNumber) {
+        return  (T) persistenceService.find(
+                "from License where applicationNumber=?", applicationNumber);
+    }
 
     @Transactional
     public void create(T license, WorkflowBean workflowBean) {
