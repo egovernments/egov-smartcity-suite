@@ -917,7 +917,8 @@ public class PaymentAction extends BasePaymentAction {
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting sendForApproval...");
-        paymentheader = getPayment();
+        if (paymentheader.getId() == null)
+            paymentheader = getPayment();
         getPaymentBills();
         populateWorkflowBean();
         transitionWorkFlow(paymentheader, workflowBean);
@@ -1657,19 +1658,12 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getPayment...");
         String paymentid = null;
-        // System.out.println("Payment id is"+parameters.get(PAYMENTID));
-        if (parameters.get(PAYMENTID) == null || "".equals(parameters.get(PAYMENTID)))
-        {
-            final Object obj = getSession().get(PAYMENTID);
-            if (obj != null)
-                paymentid = (String) obj;
-        } else
-            paymentid = parameters.get(PAYMENTID)[0];
-        if (paymentheader == null && paymentid != null && !"".equals(paymentid)
-                || paymentheader != null && null == paymentheader.getId())
+        paymentid = parameters.get(PAYMENTID)[0];
+        if (paymentid != null)
             paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
         if (paymentheader == null)
             paymentheader = new Paymentheader();
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed getPayment.");
         return paymentheader;

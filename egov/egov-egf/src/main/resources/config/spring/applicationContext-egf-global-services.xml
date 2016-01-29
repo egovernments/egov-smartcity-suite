@@ -214,7 +214,7 @@
 	</bean>
 	<bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO"
 		scope="prototype">
-
+		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 	<bean id="mastersService" class="org.egov.masters.services.MastersService"
 		scope="prototype">
@@ -233,7 +233,7 @@
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-	<bean id="chartOfAccounts" class="com.exilant.GLEngine.ChartOfAccounts" >
+	<bean id="chartOfAccounts" class="com.exilant.GLEngine.ChartOfAccounts">
 	</bean>
 
 	<bean id="chartOfAccountsService" class="org.egov.commons.service.ChartOfAccountsService">

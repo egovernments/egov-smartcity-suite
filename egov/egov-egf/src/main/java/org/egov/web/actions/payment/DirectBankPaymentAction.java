@@ -931,7 +931,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @Action(value = "/payment/directBankPayment-sendForApproval")
     public String sendForApproval() {
 
-        paymentheader = getPayment();
+        if (paymentheader.getId() == null)
+            paymentheader = getPayment();
 
         if (paymentheader != null && paymentheader.getState() != null) {
             if (!validateOwner(paymentheader.getState())) {
@@ -947,7 +948,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         paymentService.persist(paymentheader);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("payment.voucher.rejected"));
+            addActionMessage(getText("payment.voucher.rejected",
+                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
+                            .getOwnerPosition()) }));
         if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
                     .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
@@ -1002,14 +1005,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     public Paymentheader getPayment() {
         String paymentid = null;
-        // System.out.println("Payment id is"+parameters.get(PAYMENTID));
-        if (parameters.get(PAYMENTID) == null)
-        {
-            final Object obj = getSession().get(PAYMENTID);
-            if (obj != null)
-                paymentid = (String) obj;
-        } else
-            paymentid = parameters.get(PAYMENTID)[0];
+        paymentid = parameters.get(PAYMENTID)[0];
         if (paymentid != null)
             paymentheader = paymentService.findById(Long.valueOf(paymentid), false);
         if (paymentheader == null)

@@ -44,8 +44,10 @@ package org.egov.web.actions.payment;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
@@ -62,25 +64,28 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author mani
  */
-
+@ParentPackage("egov")
+@Validations
 @Results({
-        @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace", "/payment"
+        @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace", "/payment",
+                "paymentid", "${paymentid}"
         }),
         @Result(name = "advancepayment", type = "redirectAction", location = "payment-advanceView", params = { "namespace",
-                "/payment"
+                "/payment", "paymentid", "${paymentid}"
         }),
         @Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment-viewInboxItem", params = {
-                "namespace", "/payment"
+                "namespace", "/payment", "paymentid", "${paymentid}"
         }),
         @Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery-viewInboxItem", params = {
-                "namespace", "/deduction"
+                "namespace", "/deduction", "paymentid", "${paymentid}"
         }),
         @Result(name = "contractoradvancepayment", type = "redirectAction", location = "advancePayment-viewInboxItem", params = {
-                "namespace", "/payment"
+                "namespace", "/payment", "paymentid", "${paymentid}"
         })
 })
 public class BasePaymentAction extends BaseVoucherAction {
@@ -127,6 +132,7 @@ public class BasePaymentAction extends BaseVoucherAction {
 
     protected String showMode;
 
+    @SkipValidation
     @Action(value = "/payment/basePayment-viewInboxItems")
     public String viewInboxItems() {
 
