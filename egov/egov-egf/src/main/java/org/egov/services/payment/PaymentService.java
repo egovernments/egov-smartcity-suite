@@ -82,11 +82,14 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.Miscbilldetail;
@@ -96,6 +99,7 @@ import org.egov.model.payment.ChequeAssignment;
 import org.egov.model.payment.PaymentBean;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.recoveries.Recovery;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.cheque.ChequeAssignmentService;
@@ -105,6 +109,7 @@ import org.egov.services.report.FundFlowService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -169,6 +174,12 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private EntityManager entityManager;
     @Autowired
     ChartOfAccounts chartOfAccounts;
+    
+    @Autowired
+	private SecurityUtils securityUtils;
+	
+	@Autowired
+    private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
 
     public PaymentService(Class<Paymentheader> type) {
         super(type);
@@ -237,7 +248,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 
     @Transactional
     public Paymentheader createPayment(final Map<String, String[]> parameters, final List<PaymentBean> billList,
-            final EgBillregister billregister)
+            final EgBillregister billregister, WorkflowBean workflowBean)
             throws ApplicationRuntimeException, ValidationException
     {
         if (LOGGER.isDebugEnabled())
@@ -344,6 +355,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 
             paymentheader.getVoucherheader().getVouchermis()
                     .setSourcePath("/EGF/payment/payment-view.action?" + PAYMENTID + "=" + paymentheader.getId());
+            paymentheader=  transitionWorkFlow(paymentheader,workflowBean);
+            applyAuditing(paymentheader);
             update(paymentheader);
             entityManager.flush();
         } catch (final ValidationException e)
@@ -362,6 +375,69 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         return paymentheader;
     }
 
+    protected Assignment getWorkflowInitiator(final Paymentheader paymentheader) {
+        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(paymentheader.getCreatedBy().getId());
+        return wfInitiator;
+    }
+    
+    @Transactional
+	  public Paymentheader transitionWorkFlow(final Paymentheader paymentheader, WorkflowBean workflowBean) {
+	        final DateTime currentDate = new DateTime();
+	        final User user = securityUtils.getCurrentUser();
+	        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+	        Position pos = null;
+	        Assignment wfInitiator = null;
+
+	        if (null != paymentheader.getId())
+	            wfInitiator = getWorkflowInitiator(paymentheader);
+
+	        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+	            if (wfInitiator.equals(userAssignment)) {
+	                paymentheader.transition(true).end().withSenderName(user.getName())
+	                        .withComments(workflowBean.getApproverComments())
+	                        .withDateInfo(currentDate.toDate());
+	            } else {
+	                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
+	                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+	                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+	                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
+	            }
+
+	        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+	            paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
+	            paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+	                    .withDateInfo(currentDate.toDate());
+	        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+	            paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
+	            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+	                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+	                    .withDateInfo(currentDate.toDate());
+	        } else {
+	            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+	                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+	            if (null == paymentheader.getState()) {
+	                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
+	                        null, null, workflowBean.getCurrentState(), null);
+	                paymentheader.transition().start().withSenderName(user.getName())
+	                        .withComments(workflowBean.getApproverComments())
+	                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+	                        .withNextAction(wfmatrix.getNextAction());
+	            } else if (paymentheader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+	                paymentheader.transition(true).end().withSenderName(user.getName())
+	                        .withComments(workflowBean.getApproverComments())
+	                        .withDateInfo(currentDate.toDate());
+	            else {
+	                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
+	                        null, null, paymentheader.getCurrentState().getValue(), null);
+	                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+	                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+	                        .withNextAction(wfmatrix.getNextAction());
+	            }
+	        }
+	        
+	        return paymentheader;
+	    }
+    
     @SkipValidation
     public void getPaymentBills(Paymentheader paymentheader)
     {
@@ -2845,6 +2921,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         return payeeName;
     }
 
+    @Transactional
     public Paymentheader createPaymentHeader(final CVoucherHeader voucherHeader, final Integer bankaccountId, final String type,
             final BigDecimal amount)
     {

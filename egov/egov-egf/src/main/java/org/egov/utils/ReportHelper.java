@@ -1041,12 +1041,17 @@ public class ReportHelper {
                                     .setSubtitleStyle(getAmountSubTitleStyle())
                                     .setPageSizeAndOrientation(Page.Page_A4_Landscape())
                                     .setSubtitleHeight(30).setUseFullPageWidth(true);
-            // if(expType!=null && expType.equals("xls"))
-            // drb.setIgnorePagination(true);
+             if(expType!=null && expType.equals("xls"))
+             drb.setIgnorePagination(true);
+             
             dr = drb.build();
+            
+            JRXlsExporter exporter = new JRXlsExporter();
             ds = new JRBeanCollectionDataSource(al);
             return DynamicJasperHelper.generateJasperPrint(dr,
                     new ClassicLayoutManager(), ds);
+            
+            
         } catch (final ColumnBuilderException e) {
             LOGGER.error(e, e);
         } catch (final ClassNotFoundException e) {

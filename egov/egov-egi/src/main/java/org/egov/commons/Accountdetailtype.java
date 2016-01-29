@@ -52,11 +52,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name="ACCOUNTDETAILTYPE")
 @SequenceGenerator(name = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, sequenceName = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, allocationSize = 1)
+@Unique(id = "id", tableName = "accountdetailtype", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
 public class Accountdetailtype extends AbstractPersistable<Integer> implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;

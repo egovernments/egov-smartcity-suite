@@ -112,7 +112,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final Logger LOGGER = Logger.getLogger(BaseVoucherAction.class);
     // sub class should add getter and setter this workflowBean
-    protected WorkflowBean workflowBean = new WorkflowBean();
+    public WorkflowBean workflowBean = new WorkflowBean();
     public CVoucherHeader voucherHeader = new CVoucherHeader();
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
@@ -210,7 +210,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         mandatoryFields.add("voucherdate");
     }
 
-    protected void populateWorkflowBean() {
+    public void populateWorkflowBean() {
         workflowBean.setApproverPositionId(approverPositionId);
         workflowBean.setApproverComments(approverComments);
         workflowBean.setWorkFlowAction(workFlowAction);

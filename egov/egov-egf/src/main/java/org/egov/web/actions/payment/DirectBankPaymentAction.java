@@ -101,11 +101,14 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.services.contra.ContraService;
+import org.egov.services.payment.MiscbilldetailService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -165,6 +168,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private BigDecimal balance;
     private ScriptService scriptService;
     private ChartOfAccounts chartOfAccounts;
+    @Autowired
+    @Qualifier("miscbilldetailService")
+    private MiscbilldetailService miscbilldetailService;
 
     public BigDecimal getBalance() {
         return balance;
@@ -255,9 +261,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
                 voucherHeader = createVoucherAndledger();
+                populateWorkflowBean();
                 paymentheader = paymentService.createPaymentHeader(voucherHeader,
                         Integer.valueOf(commonBean.getAccountNumberId()), commonBean
                                 .getModeOfPayment(), commonBean.getAmount());
+                paymentService.transitionWorkFlow(paymentheader, workflowBean);
                 if (commonBean.getDocumentId() != null)
                     billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
                             commonBean.getDocumentId());
@@ -421,10 +429,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     voucherDetail.setDetailType((Accountdetailtype) HibernateUtil.getCurrentSession().load(
                             Accountdetailtype.class, voucherDetail.getDetailType()
                                     .getId()));
-                    if (voucherDetail.getDetailType().getName().equalsIgnoreCase("creditor")) {
-                        rel = (Relation) entity;
-                        type = rel.getRelationtype().getName();
-                    }
 
                     // type will be null in case of DBP
                     if (type.equalsIgnoreCase("Contractor")
@@ -473,8 +477,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPayVoucherHeader(voucherHeader);
         miscbillDetail.setBillVoucherHeader(billVhId);
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        // persistenceService.setType(Miscbilldetail.class);
-        persistenceService.persist(miscbillDetail);
+        miscbilldetailService.persist(miscbillDetail);
 
     }
 
@@ -491,8 +494,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         miscbillDetail.setPassedamount(commonBean.getAmount());
         miscbillDetail.setPaidamount(commonBean.getAmount());
         miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        // persistenceService.setType(Miscbilldetail.class);
-        persistenceService.persist(miscbillDetail);
+        miscbilldetailService.persist(miscbillDetail);
     }
 
     @SkipValidation
@@ -933,20 +935,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
         if (paymentheader.getId() == null)
             paymentheader = getPayment();
-
-        if (paymentheader != null && paymentheader.getState() != null) {
-            if (!validateOwner(paymentheader.getState())) {
-                List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("exp", "Invalid Access"));
-                throw new ValidationException(errors);
-            }
+       
+        if(paymentheader.getState().getCreatedBy().getId()!=securityUtils.getCurrentUser().getId())
+        {
+        	populateWorkflowBean();
+        	paymentService.transitionWorkFlow(paymentheader, workflowBean);
         }
-
-        populateWorkflowBean();
-        transitionWorkFlow(paymentheader, workflowBean);
-        paymentService.applyAuditing(paymentheader.getState());
-        paymentService.persist(paymentheader);
-
+              
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected",
                     new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()

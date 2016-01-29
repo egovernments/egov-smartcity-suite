@@ -107,5 +107,30 @@
 	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-search.jsp"/>
 </definition>
 
+<definition name="relation-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-new.jsp"/>
+</definition>
+
+<definition name="relation-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-view.jsp"/>
+</definition>
+
+<definition name="relation-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-edit.jsp"/>
+</definition>
+
+<definition name="relation-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-result.jsp"/>
+</definition>
+
+<definition name="relation-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.relation.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/relation/relation-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>

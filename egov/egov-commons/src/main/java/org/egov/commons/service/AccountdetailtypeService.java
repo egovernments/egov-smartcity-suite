@@ -45,6 +45,19 @@ public class AccountdetailtypeService  {
 		return accountdetailtypeRepository.findOne(id);
 	}
 	public List<Accountdetailtype> search(Accountdetailtype accountdetailtype){
+		if(accountdetailtype.getName()!=null && accountdetailtype.getDescription()!=null)
+		{
+			return accountdetailtypeRepository.findByNameContainingIgnoreCaseAndDescriptionContainingIgnoreCase(accountdetailtype.getName(),accountdetailtype.getDescription());
+		}else if(accountdetailtype.getName()!=null)
+		{
+			return accountdetailtypeRepository.findByNameContainingIgnoreCase(accountdetailtype.getName());
+		}else if(accountdetailtype.getDescription()!=null)
+		{
+			return accountdetailtypeRepository.findByDescriptionContainingIgnoreCase(accountdetailtype.getDescription());
+		}
+		else
+		{
 		return accountdetailtypeRepository.findAll();
+		}
 	}
 }
