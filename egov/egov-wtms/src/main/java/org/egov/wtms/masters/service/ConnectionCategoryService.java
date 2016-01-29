@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +82,10 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
+    public ConnectionCategory findByNameIgnoreCase(final String name) {
+        return connectionCategoryRepository.findByNameIgnoreCase(name);
+    }
+
     public List<ConnectionCategory> findAllByNameLike(final String name) {
         return connectionCategoryRepository.findByNameContainingIgnoreCase(name);
     }
@@ -116,9 +119,9 @@ public class ConnectionCategoryService {
             return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
     }
 
-    
     public List<ConnectionCategory> getConnectionCategoryListForRest() {
-        final List<ConnectionCategory> connectionCategoryList = connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
+        final List<ConnectionCategory> connectionCategoryList = connectionCategoryRepository
+                .findByActiveTrueOrderByNameAsc();
         final List<ConnectionCategory> prepareListForRest = new ArrayList<ConnectionCategory>(0);
 
         for (final ConnectionCategory connectionCategory : connectionCategoryList) {

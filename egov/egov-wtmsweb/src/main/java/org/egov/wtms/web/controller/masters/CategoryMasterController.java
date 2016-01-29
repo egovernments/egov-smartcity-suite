@@ -102,12 +102,22 @@ public class CategoryMasterController {
         } else {
             ConnectionCategory category = new ConnectionCategory();
             category = propertyCategory.getConnectionCategory();
-            category.setName(category.getName().trim());
-            category.setActive(true);
-            category.setCode(category.getName().toUpperCase());
-            connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
-            propertyCategoryService.createPropertyCategory(propertyCategory);
-            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+            ConnectionCategory connectioncategory = new ConnectionCategory();
+            connectioncategory = connectionCategoryService.findByNameIgnoreCase(category.getName().trim());
+            if (connectioncategory == null) {
+                category.setName(category.getName().trim());
+                category.setActive(true);
+                category.setCode(category.getName().toUpperCase());
+                connectionCategoryService.createConnectionCategory(propertyCategory.getConnectionCategory());
+                propertyCategoryService.createPropertyCategory(propertyCategory);
+                redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+            } else {
+                final PropertyCategory propertycategoryobj = new PropertyCategory();
+                propertycategoryobj.setPropertyType(propertyCategory.getPropertyType());
+                propertycategoryobj.setConnectionCategory(connectioncategory);
+                propertyCategoryService.createPropertyCategory(propertycategoryobj);
+                redirectAttrs.addFlashAttribute("propertyCategory", propertycategoryobj);
+            }
             model.addAttribute("message", "Category Data created successfully");
         }
         return "category-master-success";
