@@ -223,7 +223,12 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setPermitStatus(result.getStatus().getCode());
             hoardingSearchResult.setPermissionNumber(result.getPermissionNumber());
             hoardingSearchResult.setId(result.getId());
-            if (result.getAdvertisement().getDemandId() != null)
+            hoardingSearchResult.setCategoryName(result.getAdvertisement().getCategory().getName());
+            hoardingSearchResult.setSubCategoryName(result.getAdvertisement().getSubCategory().getDescription());
+            hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : "");
+            if (result.getAdvertisement().getDemandId() != null) {
+                hoardingSearchResult
+                        .setFinancialYear(result.getAdvertisement().getDemandId().getEgInstallmentMaster().getDescription());
                 if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
@@ -262,6 +267,7 @@ public class AdvertisementPermitDetailService {
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                     hoardingSearchResults.add(hoardingSearchResult);
                 }
+            }
         });
         if (agencyWiseHoardingList.size() > 0) {
             final List<HoardingSearch> agencyWiseFinalHoardingList = new ArrayList<HoardingSearch>();

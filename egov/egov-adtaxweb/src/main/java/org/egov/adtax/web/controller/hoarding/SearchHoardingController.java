@@ -143,4 +143,17 @@ public class SearchHoardingController extends GenericController {
         return "hoarding-view";
     }
 
+    @RequestMapping(value = "/renewal-search", method = GET)
+    public String renewalSearchForm() {
+        return "renewal-search";
+    }
+
+    @RequestMapping(value = "/renewal-search-result", method = GET)
+    public @ResponseBody void renewSearchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, "Advertisement"))
+                + "}", response.getWriter());
+    }
 }

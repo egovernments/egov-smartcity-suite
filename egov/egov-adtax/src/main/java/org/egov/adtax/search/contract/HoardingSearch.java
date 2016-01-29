@@ -63,6 +63,11 @@ public class HoardingSearch {
     private String hordingIdsSearchedByAgency;
     private String permitStatus;
     private Long id;
+    private String categoryName;
+    private String subCategoryName;
+    private String financialYear;
+    private String ownerDetail;
+
     public String getAdvertisementNumber() {
         return advertisementNumber;
     }
@@ -211,8 +216,40 @@ public class HoardingSearch {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(final String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getSubCategoryName() {
+        return subCategoryName;
+    }
+
+    public void setSubCategoryName(final String subCategoryName) {
+        this.subCategoryName = subCategoryName;
+    }
+
+    public String getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(final String financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public String getOwnerDetail() {
+        return ownerDetail;
+    }
+
+    public void setOwnerDetail(final String ownerDetail) {
+        this.ownerDetail = ownerDetail;
     }
 
 }
