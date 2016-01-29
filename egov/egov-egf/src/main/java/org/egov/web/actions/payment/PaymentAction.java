@@ -889,9 +889,13 @@ public class PaymentAction extends BasePaymentAction {
             populateWorkflowBean();
             paymentheader = paymentService.createPayment(parameters, billList, billregister,workflowBean);
             miscBillList=  paymentActionHelper.getPaymentBills(paymentheader);
-            sendForApproval();
+            //sendForApproval();// this should not be called here as it is public method which is called from jsp submit
             addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                     .getVoucherNumber() }));
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getMessage("payment.voucher.approved",
+                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+            
         } catch (final ValidationException e) {
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationRuntimeException e) {
@@ -922,12 +926,10 @@ public class PaymentAction extends BasePaymentAction {
         if (paymentheader.getId() == null)
             paymentheader = getPayment();
         //this is to check if is not the create mode 
-        if(paymentheader.getState().getCreatedBy().getId()!=securityUtils.getCurrentUser().getId())
-        {
+       
         	populateWorkflowBean();
         	paymentService.transitionWorkFlow(paymentheader, workflowBean);
-        }
-        
+              
         
         paymentActionHelper.getPaymentBills(paymentheader);
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
