@@ -178,7 +178,7 @@ function checkValue(obj){
 	var tbl = document.getElementById('result');
 	var uomToval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value;
 	var uomFromval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomFrom').value;
-	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>eval(uomToval))){
+	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>=eval(uomToval))){
 		bootbox.alert("\"UOM To\" should be greater than \"UOM From\".");
 		getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value="";
 		return false;
@@ -261,7 +261,7 @@ function validateDetailsBeforeSubmit(){
     for(var i=1;i<=tabLength;i++){
     	uomFromval=getControlInBranch(tbl.rows[i],'uomFrom').value;
     	uomToval=getControlInBranch(tbl.rows[i],'uomTo').value;
-    	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>eval(uomToval))){
+    	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>=eval(uomToval))){
     		bootbox.alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
     		getControlInBranch(tbl.rows[i],'uomTo').value="";
     		getControlInBranch(tbl.rows[i],'uomTo').focus();
