@@ -187,7 +187,7 @@
 									<display:column title=""media="html"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center">
-									<a onclick="confirmClose('${currentRowObject.category.id}','${currentRowObject.bndry.id}');">Deactivate</a>
+									<a href="javascript:void(0);" onclick="confirmClose('${currentRowObject.category.id}','${currentRowObject.bndry.id}');">Deactivate</a>
 									</display:column>
 									</s:if>
 							<s:if test="%{mode == 'view'}">

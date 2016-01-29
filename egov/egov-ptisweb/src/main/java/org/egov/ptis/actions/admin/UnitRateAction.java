@@ -162,11 +162,9 @@ public class UnitRateAction extends BaseFormAction {
         // If category exists for the combination of zone, usage,structure and
         // from date, update the existing category's rate
         if (existingCategory != null) {
-            existingCategory.setCategoryName(existingCategory.getPropUsage().getUsageCode().concat("-")
-                    .concat(existingCategory.getStructureClass().getConstrTypeCode()).concat("-")
-                    .concat(category.getCategoryAmount().toString()));
-            existingCategory.setCategoryAmount(category.getCategoryAmount());
-            getPersistenceService().update(existingCategory);
+            addActionError(getText("unit.rate.exists.for.combination"));
+            mode = NEW;
+            return RESULT_NEW;
         } else {
             PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
                     usageId);
