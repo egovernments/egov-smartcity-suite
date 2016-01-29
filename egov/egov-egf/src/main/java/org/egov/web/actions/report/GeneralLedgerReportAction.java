@@ -208,7 +208,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
                     Long.parseLong(generalLedgerReportBean.getDepartmentId()));
-            heading = heading + " under " + dept.getName() + " ";
+            heading = heading + " under " + dept.getName() + " Department ";
         }
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
         {
