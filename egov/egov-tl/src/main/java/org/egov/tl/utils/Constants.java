@@ -739,4 +739,6 @@ public class Constants {
         public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONAMOUNTPAID";
         public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNUPDATED";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
+        
+        public static final String REVENUE_HIERARCHYTYPE = "REVENUE";
 }

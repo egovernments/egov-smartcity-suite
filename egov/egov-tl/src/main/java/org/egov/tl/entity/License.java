@@ -70,6 +70,7 @@ public abstract class License extends StateAware {
     protected String applicationNumber;
     protected EgwStatus egwStatus;
     protected Boundary boundary;
+    protected Boundary parentBoundary;
     //this should be NatureOfBusiness only which means it is Permanent or temporary.
     protected NatureOfBusiness buildingType;
     protected Date dateOfCreation;
@@ -804,6 +805,14 @@ public abstract class License extends StateAware {
 
     public void setEgwStatus(EgwStatus egwStatus) {
         this.egwStatus = egwStatus;
+    }
+
+    public Boundary getParentBoundary() {
+        return parentBoundary;
+    }
+
+    public void setParentBoundary(Boundary parentBoundary) {
+        this.parentBoundary = parentBoundary;
     }
     
 }

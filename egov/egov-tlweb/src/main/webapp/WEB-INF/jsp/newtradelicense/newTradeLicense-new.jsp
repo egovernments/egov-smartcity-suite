@@ -275,6 +275,7 @@
 							<s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}" />
 							<s:hidden name="id" id="id" />
 							<s:hidden name="feeTypeId" id="feeTypeId" />
+							<s:hidden name="parentBndryId" id="parentBndryId" value="%{parentBndryId}" />
 							
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">

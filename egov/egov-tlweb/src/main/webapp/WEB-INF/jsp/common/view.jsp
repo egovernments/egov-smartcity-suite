@@ -83,9 +83,9 @@
 	
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.zone' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{zoneName}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{parentBoundary.parent.name}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.division' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{wardName}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{parentBoundary.name}" /></div>
 	</div>
 	
 	<div class="row">

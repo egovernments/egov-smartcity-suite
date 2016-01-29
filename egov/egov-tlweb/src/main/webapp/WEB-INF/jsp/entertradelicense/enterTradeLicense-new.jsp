@@ -72,9 +72,10 @@
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden name="id" id="id" />
 							<s:hidden name="feeTypeId" id="feeTypeId" />
+							<s:hidden name="parentBndryId" id="parentBndryId" value="%{parentBndryId}" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
-								<div class="panel-title" style="text-align:center">
+								<div class="panel-title" style="text-align:center"> 
 										<s:text name='page.title.entertrade' /> 
 								</div>
                                 <ul class="nav nav-tabs" id="settingstab">

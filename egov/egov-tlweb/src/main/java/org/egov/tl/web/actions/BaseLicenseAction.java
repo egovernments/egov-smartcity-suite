@@ -135,6 +135,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     protected Integer reportId = -1;
     private Long feeTypeId;
+    private Long parentBndryId;
 
     @Autowired
     protected LicenseUtils licenseUtils;
@@ -190,6 +191,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             EgwStatus statusChange = (EgwStatus) persistenceService
                     .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_CREATED_CODE);
             license().setEgwStatus(statusChange);
+            license().setParentBoundary(boundaryService.getBoundaryById(parentBndryId));
             licenseService().create(license, workflowBean);
             this.updateIndexService.updateTradeLicenseIndexes(license);
         } catch (RuntimeException e) {
@@ -203,6 +205,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @ValidationErrorPage(Constants.NEW)
     public String enterExisting(T license, Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
         this.setCheckList();
+        license().setParentBoundary(boundaryService.getBoundaryById(parentBndryId)); 
         licenseService().enterExistingLicense(license, legacyInstallmentwiseFees);
         addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
 
@@ -698,6 +701,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setFeeTypeId(Long feeTypeId) {
         this.feeTypeId = feeTypeId;
+    }
+
+    public Long getParentBndryId() {
+        return parentBndryId;
+    }
+
+    public void setParentBndryId(Long parentBndryId) {
+        this.parentBndryId = parentBndryId;
     }
 
 }

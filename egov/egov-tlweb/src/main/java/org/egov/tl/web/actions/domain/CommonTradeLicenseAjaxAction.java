@@ -65,6 +65,7 @@ import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -138,16 +139,16 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     public void blockByLocality() throws IOException, NoSuchObjectException {
         LOGGER.debug("Entered into blockByLocality, locality: " + locality);
 
-        final Boundary blockBoundary = (Boundary) getPersistenceService().find(
-                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
-        final Boundary wardBoundary = blockBoundary.getParent();
-        final Boundary zoneBoundary = wardBoundary.getParent();
+        final Boundary wardBoundary = (Boundary) getPersistenceService().find(
+                "select CH.parent from CrossHierarchy CH where CH.child.id = ? and CH.parentType.hierarchyType.name= ? and CH.parentType.name=?", getLocality(),Constants.REVENUE_HIERARCHYTYPE,Constants.DIVISION);
+        final Boundary zoneBoundary = wardBoundary.getParent();  
 
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("zoneName", zoneBoundary.getName());
         jsonObject.put("wardName", wardBoundary.getName());
+        jsonObject.put("wardId", wardBoundary.getId());
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE); 
         IOUtils.write(jsonObject.toString(), response.getWriter());
     }
     

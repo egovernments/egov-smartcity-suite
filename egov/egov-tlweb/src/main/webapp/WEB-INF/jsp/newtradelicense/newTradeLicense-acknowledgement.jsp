@@ -44,27 +44,6 @@
 <head>
 <title>Acknowledgement Slip for Trade License</title>
 <script>
-	jQuery(document).ready(function(){
-		jQuery.ajax({
-			url: "../domain/commonTradeLicenseAjax-blockByLocality.action",
-			type: "GET",
-			data: {
-				locality : '<s:property value="boundary.id"/>'
-			},
-			cache: false,
-			dataType: "json",
-			success: function (response) {
-				jQuery('#zoneName').html(response.zoneName);
-				jQuery('#wardName').html(response.wardName);
-			}, 
-			error: function (response) {
-				console.log("failed");
-				jQuery('#zoneName').html('');
-				jQuery('#wardName').html('');
-			}
-		});
-	});
-
 	function printDiv(divName) {
 	    var printContents = document.getElementById(divName).innerHTML;
 	    var originalContents = document.body.innerHTML;
@@ -114,7 +93,7 @@
 								<s:text name="license.zone" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<div id="zoneName"></div>
+								<s:property value="parentBoundary.parent.name" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -122,7 +101,7 @@
 								<s:text name="license.division" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content"> 
-								<div id="wardName"></div>
+								<s:property value="parentBoundary.name" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin">
 								<s:text name="licensee.applicantname" />
