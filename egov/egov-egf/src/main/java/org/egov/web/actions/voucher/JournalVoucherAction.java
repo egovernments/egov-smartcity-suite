@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,15 +60,14 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
+import org.egov.services.voucher.JournalVoucherActionHelper;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -86,6 +84,9 @@ public class JournalVoucherAction extends BaseVoucherAction
     @Autowired
     @Qualifier("voucherService")
     private VoucherService voucherService;
+    @Autowired
+    @Qualifier("journalVoucherActionHelper")
+    private JournalVoucherActionHelper journalVoucherActionHelper;
     private VoucherTypeBean voucherTypeBean;
     private String buttonValue;
     private String message = "";
@@ -154,8 +155,6 @@ public class JournalVoucherAction extends BaseVoucherAction
     @SkipValidation
     @Action(value = "/voucher/journalVoucher-create")
     public String create() throws Exception {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(false);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherAction | create Method | Start");
         removeEmptyRowsAccoutDetail(billDetailslist);
@@ -170,34 +169,13 @@ public class JournalVoucherAction extends BaseVoucherAction
             LOGGER.debug("Sub ledger details List size  : " + subLedgerlist.size());
         loadSchemeSubscheme();
         validateFields();
-        voucherHeader.setName(voucherTypeBean.getVoucherName());
-        voucherHeader.setType(voucherTypeBean.getVoucherType());
-        voucherHeader.setVoucherSubType(voucherTypeBean.getVoucherSubType());
-
-        // String autoVoucherType
-        // =EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME,voucherTypeBean.getVoucherNumType().toLowerCase(),"",FinancialConstants.CATEGORYFORVNO);
-        /*
-         * for (VoucherDetails voucherDetail : billDetailslist) {
-         * voucherDetail.setFunctionIdDetail(voucherHeader.getVouchermis().getFunction().getId()); } for (VoucherDetails
-         * voucherDetail : subLedgerlist) {
-         * voucherDetail.setFunctionDetail(voucherHeader.getVouchermis().getFunction().getCode()); }
-         */
         if (!validateData(billDetailslist, subLedgerlist))
             try {
-
-                createVoucherAndledger(billDetailslist, subLedgerlist);
                 if (!"JVGeneral".equalsIgnoreCase(voucherTypeBean.getVoucherName())) {
-                    final String totalamount = parameters.get("totaldbamount")[0];
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug(" Journal Voucher Action | Bill create | voucher name = " + voucherTypeBean.getVoucherName());
-                    voucherService.createBillForVoucherSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,
-                            new BigDecimal(totalamount));
+                    voucherTypeBean.setTotalAmount(parameters.get("totaldbamount")[0]);
                 }
                 populateWorkflowBean();
-                transitionWorkFlow(voucherHeader, workflowBean);
-                persistenceService.applyAuditing(voucherHeader.getState());
-                voucherService.create(voucherHeader);
-                //addActionMessage(voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
+                voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean, workflowBean);
                 message = "Voucher  "
                         + voucherHeader.getVoucherNumber()
                         + " Created Sucessfully"
@@ -206,9 +184,6 @@ public class JournalVoucherAction extends BaseVoucherAction
                                 new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
                                         .getOwnerPosition()) });
                 target = "success";
-
-                // billDetailslist.clear();
-                // subLedgerlist.clear();
                 if (voucherHeader.getVouchermis().getBudgetaryAppnumber() != null)
                     addActionMessage(getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
                             .getBudgetaryAppnumber() }));
@@ -244,7 +219,6 @@ public class JournalVoucherAction extends BaseVoucherAction
         return NEW;
     }
 
-
     public Position getPosition() throws ApplicationRuntimeException
     {
         Position pos;
@@ -255,7 +229,6 @@ public class JournalVoucherAction extends BaseVoucherAction
             LOGGER.debug("position===" + pos.getId());
         return pos;
     }
-
 
     public List<VoucherDetails> getBillDetailslist() {
         return billDetailslist;
@@ -280,7 +253,6 @@ public class JournalVoucherAction extends BaseVoucherAction
     public void setTarget(final String target) {
         this.target = target;
     }
-
 
     public VoucherTypeBean getVoucherTypeBean() {
         return voucherTypeBean;
