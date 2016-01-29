@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-01-28T14:01:00 -->
+<!-- 2016-01-29T14:48:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalVoucherReport" pageWidth="599" pageHeight="842" orientation="Landscape" columnWidth="559" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6d8f2d9-355e-4afe-bfb2-72df572b464f">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -46,9 +46,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="81" splitType="Stretch">
+		<band height="159" splitType="Stretch">
 			<frame>
-				<reportElement key="frame" x="-15" y="2" width="574" height="79" uuid="6d395499-cf24-4fab-bde6-7432356ccace"/>
+				<reportElement key="frame" x="-15" y="-9" width="574" height="168" uuid="7bac26e2-f951-4b14-81fe-8f25ae4ffa92"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -57,62 +57,62 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField" x="170" y="13" width="256" height="40" uuid="a2cf57f0-8498-410b-845b-747db7d9a3e7"/>
-					<textElement textAlignment="Left">
-						<font size="12" isBold="true"/>
+					<reportElement key="staticText" x="101" y="11" width="355" height="20" uuid="99ee80b6-7f14-47b1-b71a-2175414557c2"/>
+					<textElement textAlignment="Center">
+						<font size="16" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="155" y="41" width="225" height="20" uuid="2f3914ea-f0f2-44be-af37-aa0e1df2e819"/>
+					<textElement textAlignment="Center">
+						<font size="13" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{voucherName}]]></textFieldExpression>
+				</textField>
 				<staticText>
-					<reportElement key="staticText" x="0" y="13" width="74" height="20" uuid="1c109041-a10e-4668-b304-60dc8cf36345"/>
-					<text><![CDATA[DEPARTMENT:]]></text>
+					<reportElement key="staticText" x="0" y="90" width="74" height="20" uuid="1c109041-a10e-4668-b304-60dc8cf36345"/>
+					<text><![CDATA[Department:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" x="0" y="53" width="41" height="20" uuid="b47ff603-7743-44c5-9b20-f77e6a28b762"/>
-					<text><![CDATA[FUND:]]></text>
+					<reportElement key="staticText" x="0" y="130" width="41" height="20" uuid="b47ff603-7743-44c5-9b20-f77e6a28b762"/>
+					<text><![CDATA[Fund:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement key="textField" x="74" y="13" width="93" height="37" uuid="c8ffd169-ec4c-473b-8f9b-1a536c1f716e"/>
+					<reportElement key="textField" x="74" y="90" width="93" height="37" uuid="c8ffd169-ec4c-473b-8f9b-1a536c1f716e"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{departmentName}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField" x="41" y="53" width="126" height="26" uuid="af361d78-e828-4aae-b281-d9da941f37e9"/>
+					<reportElement key="textField" x="41" y="130" width="126" height="26" uuid="af361d78-e828-4aae-b281-d9da941f37e9"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{fundName}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement key="staticText" x="426" y="16" width="91" height="17" uuid="ef11521d-cdf4-4586-a8eb-f47177a813b8"/>
+					<reportElement x="256" y="90" width="92" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
 					<text><![CDATA[Voucher Number:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" x="428" y="53" width="32" height="20" uuid="a00cee35-15df-4fd2-a6d8-80732a10f6ad"/>
-					<text><![CDATA[DATE:]]></text>
+					<reportElement x="256" y="130" width="50" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
+					<text><![CDATA[Date:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField" x="517" y="16" width="53" height="37" uuid="24e0aa8d-6dd6-4eaf-a28d-bebab7656fc9"/>
+					<reportElement x="350" y="90" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{voucherNumber}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField" x="496" y="53" width="62" height="20" uuid="b0f7587c-6dfb-4c80-93f5-f346cb788998"/>
+					<reportElement x="320" y="130" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{voucherDate}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="170" y="53" width="256" height="20" uuid="13ff3a8a-a363-44b8-9a94-bf4b7bc051ef"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{voucherName}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -268,7 +268,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="45" splitType="Stretch">
+		<band height="43" splitType="Stretch">
 			<frame>
 				<reportElement key="frame" x="-15" y="0" width="25" height="43" uuid="e24cf87f-3a36-4d2d-8a88-f86c4ca40051"/>
 				<box>
@@ -404,7 +404,7 @@
 	<summary>
 		<band height="276" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText" x="-15" y="0" width="413" height="29" uuid="b3379f9d-c583-49ea-87e5-2029766f4006"/>
+				<reportElement key="staticText" x="-15" y="0" width="413" height="28" uuid="b3379f9d-c583-49ea-87e5-2029766f4006"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
@@ -414,7 +414,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<frame>
-				<reportElement key="frame" x="398" y="0" width="77" height="29" uuid="ae5f5ba3-2c62-416a-82d3-5d6eff365ccb"/>
+				<reportElement key="frame" x="398" y="0" width="77" height="28" uuid="ae5f5ba3-2c62-416a-82d3-5d6eff365ccb"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -423,13 +423,13 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textField pattern="###0.00" isBlankWhenNull="true">
-					<reportElement key="textField" x="5" y="0" width="69" height="20" uuid="4dcc8879-5080-4075-8bc4-58794a1690f9"/>
+					<reportElement key="textField" x="-1" y="0" width="75" height="20" uuid="4dcc8879-5080-4075-8bc4-58794a1690f9"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$V{debitTotal}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement key="frame" x="475" y="0" width="84" height="29" uuid="c7f9842a-c41e-4660-aa53-e5f34d627791"/>
+				<reportElement key="frame" x="475" y="0" width="84" height="28" uuid="c7f9842a-c41e-4660-aa53-e5f34d627791"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
