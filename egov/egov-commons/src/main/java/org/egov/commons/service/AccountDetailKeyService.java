@@ -40,15 +40,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AccountDetailKeyService {
 
-    private final AccountDetailKeyRepository accountDetailKeyRepository;
+	private final AccountDetailKeyRepository accountDetailKeyRepository;
 
-    @Autowired
-    public AccountDetailKeyService(final AccountDetailKeyRepository accountDetailKeyRepository) {
-        this.accountDetailKeyRepository = accountDetailKeyRepository;
-    }
+	@Autowired
+	public AccountDetailKeyService(final AccountDetailKeyRepository accountDetailKeyRepository) {
+		this.accountDetailKeyRepository = accountDetailKeyRepository;
+	}
 
-    @Transactional
-    public void createAccountDetailKey(final Accountdetailkey accountDetailKey) {
-        accountDetailKeyRepository.save(accountDetailKey);
-    }
+	@Transactional
+	public void createAccountDetailKey(final Accountdetailkey accountDetailKey) {
+		accountDetailKeyRepository.save(accountDetailKey);
+	}
+	@Transactional
+	public Accountdetailkey create(Accountdetailkey ac) {
+		return	accountDetailKeyRepository.save(ac);
+
+	}
 }

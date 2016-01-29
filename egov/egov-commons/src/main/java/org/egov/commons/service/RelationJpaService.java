@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Bank;
 import org.egov.commons.Relation;
 import org.egov.commons.repository.RelationRepository;
@@ -22,13 +23,27 @@ public class RelationJpaService {
 	private EntityManager entityManager;
 
 	@Autowired
+	AccountDetailKeyService accountDetailKeyService;
+	
+	@Autowired
+	AccountdetailtypeService accountdetailtypeService;
+	@Autowired
 	public RelationJpaService(final RelationRepository relationRepository) {
 		this.relationRepository = relationRepository;
 	}
 
 	@Transactional
-	public Relation create(final Relation relation) {
-		return relationRepository.save(relation);
+	public Relation create(Relation relation) {
+		 relation =relationRepository.save(relation);
+		 
+		 Accountdetailkey ac=new Accountdetailkey();
+		 ac.setDetailkey(relation.getId());
+		 ac.setDetailname(relation.getName());
+		 ac.setGroupid(1);
+		 ac.setAccountdetailtype(accountdetailtypeService.findByName("Supplier"));
+		 accountDetailKeyService.create(ac);
+		 
+		 return relation;
 	}
 
 	@Transactional
