@@ -142,6 +142,9 @@ label.error {
   color: #ff0000;
   font-size: 13px;
 }
+.form-control.error {
+  border-color: #ff0000;
+}
 .modal {
   z-index: 10001;
 }

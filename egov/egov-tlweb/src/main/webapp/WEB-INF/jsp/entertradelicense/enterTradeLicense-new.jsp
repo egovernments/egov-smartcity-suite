@@ -90,7 +90,7 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">
-											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
+											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="100" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>
 											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
 											     <div class="col-sm-3 add-margin">
@@ -254,10 +254,14 @@
 						type:"GET",
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
+							console.log(JSON.stringify(data));
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 								bootbox.alert(data.errorDetails.errorMessage);
+								jQuery('#propertyNo').val('');
+								jQuery('#boundary, #address').prop("disabled", false);
 							} else{
 								if(data.boundaryDetails!=null){
+									jQuery("#boundary").val(data.boundaryDetails.localityId);
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
 									jQuery("#address").val(data.propertyAddress);

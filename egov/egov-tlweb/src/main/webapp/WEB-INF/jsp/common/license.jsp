@@ -79,7 +79,7 @@ function getUom(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname' /></label>
     <div class="col-sm-3 add-margin">
-         	<s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation"  data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="32" onBlur="checkLength(this,32)"/>
+         	<s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation"  data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,32)"/>
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl' /><span class="mandatory"></span></label>
@@ -117,7 +117,7 @@ function getUom(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.remarks.lbl' /></label>
     <div class="col-sm-3 add-margin">
-         <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="500" class="form-control"/>
+         <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="250" class="form-control"/>
     </div>
     
 	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /><span class="mandatory"></span></label>
