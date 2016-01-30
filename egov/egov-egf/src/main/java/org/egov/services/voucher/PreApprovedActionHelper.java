@@ -49,7 +49,9 @@ import org.egov.model.voucher.WorkflowBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 public class PreApprovedActionHelper {
     @Autowired
@@ -59,6 +61,7 @@ public class PreApprovedActionHelper {
     @Qualifier("voucherService")
     private VoucherService voucherService;
 
+    @Transactional
     public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, WorkflowBean workflowBean)
     {
         try {

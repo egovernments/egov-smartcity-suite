@@ -174,11 +174,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private EntityManager entityManager;
     @Autowired
     ChartOfAccounts chartOfAccounts;
-    
+
     @Autowired
-	private SecurityUtils securityUtils;
-	
-	@Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
 
     public PaymentService(Class<Paymentheader> type) {
@@ -355,13 +355,18 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 
             paymentheader.getVoucherheader().getVouchermis()
                     .setSourcePath("/EGF/payment/payment-view.action?" + PAYMENTID + "=" + paymentheader.getId());
-            paymentheader=  transitionWorkFlow(paymentheader,workflowBean);
+            paymentheader = transitionWorkFlow(paymentheader, workflowBean);
+            applyAuditing(paymentheader.getState());
             applyAuditing(paymentheader);
             update(paymentheader);
             entityManager.flush();
         } catch (final ValidationException e)
         {
-            throw e;
+            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("createPayment", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e)
         {
             e.printStackTrace();
@@ -379,65 +384,65 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(paymentheader.getCreatedBy().getId());
         return wfInitiator;
     }
-    
+
     @Transactional
-	  public Paymentheader transitionWorkFlow(final Paymentheader paymentheader, WorkflowBean workflowBean) {
-	        final DateTime currentDate = new DateTime();
-	        final User user = securityUtils.getCurrentUser();
-	        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-	        Position pos = null;
-	        Assignment wfInitiator = null;
+    public Paymentheader transitionWorkFlow(final Paymentheader paymentheader, WorkflowBean workflowBean) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
 
-	        if (null != paymentheader.getId())
-	            wfInitiator = getWorkflowInitiator(paymentheader);
+        if (null != paymentheader.getId())
+            wfInitiator = getWorkflowInitiator(paymentheader);
 
-	        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-	            if (wfInitiator.equals(userAssignment)) {
-	                paymentheader.transition(true).end().withSenderName(user.getName())
-	                        .withComments(workflowBean.getApproverComments())
-	                        .withDateInfo(currentDate.toDate());
-	            } else {
-	                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-	                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-	                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-	                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
-	            }
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (wfInitiator.equals(userAssignment)) {
+                paymentheader.transition(true).end().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            } else {
+                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
+                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
+            }
 
-	        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-	            paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
-	            paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-	                    .withDateInfo(currentDate.toDate());
-	        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-	            paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-	            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
-	                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-	                    .withDateInfo(currentDate.toDate());
-	        } else {
-	            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-	                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
-	            if (null == paymentheader.getState()) {
-	                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
-	                        null, null, workflowBean.getCurrentState(), null);
-	                paymentheader.transition().start().withSenderName(user.getName())
-	                        .withComments(workflowBean.getApproverComments())
-	                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-	                        .withNextAction(wfmatrix.getNextAction());
-	            } else if (paymentheader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-	                paymentheader.transition(true).end().withSenderName(user.getName())
-	                        .withComments(workflowBean.getApproverComments())
-	                        .withDateInfo(currentDate.toDate());
-	            else {
-	                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
-	                        null, null, paymentheader.getCurrentState().getValue(), null);
-	                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-	                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-	                        .withNextAction(wfmatrix.getNextAction());
-	            }
-	        }
-	        
-	        return paymentheader;
-	    }
-    
+        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
+            paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
+        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
+            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
+        } else {
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            if (null == paymentheader.getState()) {
+                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                paymentheader.transition().start().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            } else if (paymentheader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                paymentheader.transition(true).end().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
+                        null, null, paymentheader.getCurrentState().getValue(), null);
+                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+
+        return paymentheader;
+    }
+
     @SkipValidation
     public void getPaymentBills(Paymentheader paymentheader)
     {
@@ -491,7 +496,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                     generateMiscBill(egBillregister, billList.get(i + conBillIdlength).getPaymentAmt(),
                             billList.get(i + conBillIdlength).getNetAmt());
                 gl = getPayableAccount(ids[i], glcodeList, "getGeneralLedger");
-
+                if(gl==null)
+                throw new ValidationException("Voucher is created with invalid netpayble code so payment is not allowed for this bill ","Voucher is created with invalid netpayble code so payment is not allowed for this bill");
                 tmp = gl.getGlcodeId().getGlcode() + DELIMETER + gl.getGlcodeId().getName();
                 if (tmpaccdetailsMap.get(tmp) == null)
                     tmpaccdetailsMap.put(tmp, billList.get(i + conBillIdlength).getPaymentAmt());

@@ -74,6 +74,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 public class JournalVoucherActionHelper {
     final private static Logger LOGGER = Logger.getLogger(JournalVoucherActionHelper.class);
@@ -121,7 +122,7 @@ public class JournalVoucherActionHelper {
         }
         return voucherHeader;
     }
-
+    @Transactional
     public CVoucherHeader transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
@@ -143,7 +144,7 @@ public class JournalVoucherActionHelper {
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
             }
 
-        }else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
@@ -177,12 +178,12 @@ public class JournalVoucherActionHelper {
         return voucherHeader;
     }
 
-    protected Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
+    private Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
         Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(voucherHeader.getCreatedBy().getId());
         return wfInitiator;
     }
 
-    protected HashMap<String, Object> createHeaderAndMisDetails(CVoucherHeader voucherHeader) throws ValidationException
+    private HashMap<String, Object> createHeaderAndMisDetails(CVoucherHeader voucherHeader) throws ValidationException
     {
         final HashMap<String, Object> headerdetails = new HashMap<String, Object>();
         headerdetails.put(VoucherConstant.VOUCHERNAME, voucherHeader.getName());
@@ -211,7 +212,7 @@ public class JournalVoucherActionHelper {
         return headerdetails;
     }
 
-    public CVoucherHeader createVoucherAndledger(final List<VoucherDetails> billDetailslist,
+    private CVoucherHeader createVoucherAndledger(final List<VoucherDetails> billDetailslist,
             final List<VoucherDetails> subLedgerlist, CVoucherHeader voucherHeader) {
         try {
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails(voucherHeader);

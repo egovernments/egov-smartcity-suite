@@ -883,21 +883,23 @@ public class PaymentAction extends BasePaymentAction {
     public String create() {
         try {
             // billregister.getEgBillregistermis().setFunction(functionSel);
-        	paymentActionHelper.setbillRegisterFunction(billregister, cFunctionobj);
+            paymentActionHelper.setbillRegisterFunction(billregister, cFunctionobj);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");
             populateWorkflowBean();
-            paymentheader = paymentService.createPayment(parameters, billList, billregister,workflowBean);
-            miscBillList=  paymentActionHelper.getPaymentBills(paymentheader);
-            //sendForApproval();// this should not be called here as it is public method which is called from jsp submit
+            paymentheader = paymentService.createPayment(parameters, billList, billregister, workflowBean);
+            miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
+            // sendForApproval();// this should not be called here as it is public method which is called from jsp submit
             addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                     .getVoucherNumber() }));
             if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
                 addActionMessage(getMessage("payment.voucher.approved",
                         new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
-            
+
         } catch (final ValidationException e) {
-            throw new ValidationException(e.getErrors());
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exception", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage());
 
@@ -925,12 +927,9 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("Starting sendForApproval...");
         if (paymentheader.getId() == null)
             paymentheader = getPayment();
-        //this is to check if is not the create mode 
-       
-        	populateWorkflowBean();
-        	paymentService.transitionWorkFlow(paymentheader, workflowBean);
-              
-        
+        // this is to check if is not the create mode
+        populateWorkflowBean();
+        paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
         paymentActionHelper.getPaymentBills(paymentheader);
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected"));
@@ -947,7 +946,7 @@ public class PaymentAction extends BasePaymentAction {
                         new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         }
         if (Constants.ADVANCE_PAYMENT.equalsIgnoreCase(paymentheader.getVoucherheader().getName())) {
-           advanceRequisitionList.addAll(paymentActionHelper.getAdvanceRequisitionDetails(paymentheader));
+            advanceRequisitionList.addAll(paymentActionHelper.getAdvanceRequisitionDetails(paymentheader));
             return "advancePaymentView";
         }
         if (LOGGER.isDebugEnabled())
@@ -976,7 +975,7 @@ public class PaymentAction extends BasePaymentAction {
                 LOGGER.debug("Completed view.");
             return modify();
         }
-        miscBillList=  paymentActionHelper.getPaymentBills(paymentheader);
+        miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
         getChequeInfo(paymentheader);
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view"))
             // if user is drilling down form source , parameter showMode is passed with value view, in this case we do not show
@@ -1007,7 +1006,6 @@ public class PaymentAction extends BasePaymentAction {
         return "advancePaymentView";
     }
 
-   
     public void getChequeInfo(Paymentheader paymentheader)
     {
         // if(LOGGER.isInfoEnabled()) LOGGER.info("Inside getChequeInfo");
@@ -1019,8 +1017,6 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Retrived cheque info details for the paymentheader");
     }
-
-  
 
     @SkipValidation
     public boolean validateUser(final String purpose) throws ParseException
@@ -1290,7 +1286,7 @@ public class PaymentAction extends BasePaymentAction {
             if (getFieldErrors().isEmpty())
             {
                 paymentheader = paymentService.updatePayment(parameters, billList, paymentheader);
-                miscBillList= paymentActionHelper.getPaymentBills(paymentheader); 
+                miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
                 sendForApproval();
                 addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                         .getVoucherNumber() }));

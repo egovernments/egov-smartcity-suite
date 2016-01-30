@@ -99,6 +99,7 @@ import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
+import org.egov.payment.services.PaymentActionHelper;
 import org.egov.pims.commons.Designation;
 import org.egov.services.contra.ContraService;
 import org.egov.services.payment.MiscbilldetailService;
@@ -137,6 +138,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private static final long serialVersionUID = 1L;
     private CreateVoucher createVoucher;
     private PaymentService paymentService;
+    @Autowired
+    private PaymentActionHelper paymentActionHelper;
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public Map<String, String> modeOfPaymentMap;
@@ -260,25 +263,17 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
-                voucherHeader = createVoucherAndledger();
                 populateWorkflowBean();
-                paymentheader = paymentService.createPaymentHeader(voucherHeader,
-                        Integer.valueOf(commonBean.getAccountNumberId()), commonBean
-                                .getModeOfPayment(), commonBean.getAmount());
-                paymentService.transitionWorkFlow(paymentheader, workflowBean);
-                if (commonBean.getDocumentId() != null)
-                    billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
-                            commonBean.getDocumentId());
-                createMiscBillDetail(billVhId);
+                paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader,voucherHeader,billVhId, commonBean, billDetailslist, subLedgerlist,workflowBean);
                 showMode = "create";
-                sendForApproval();
-                addActionMessage(getText("directbankpayment.transaction.success") + voucherHeader.getVoucherNumber());
+                addActionMessage(getText("directbankpayment.transaction.success") + paymentheader.getVoucherheader().getVoucherNumber());
+                addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
+                        .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             } else
                 throw new ValidationException(Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
 
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
-            clearMessages();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
@@ -467,19 +462,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     }
 
-    private void createMiscBillDetail(final CVoucherHeader billVhId) {
-        final Miscbilldetail miscbillDetail = new Miscbilldetail();
-        miscbillDetail.setBillnumber(commonBean.getDocumentNumber());
-        miscbillDetail.setBilldate(commonBean.getDocumentDate());
-        miscbillDetail.setBillamount(commonBean.getAmount());
-        miscbillDetail.setPaidamount(commonBean.getAmount());
-        miscbillDetail.setPassedamount(commonBean.getAmount());
-        miscbillDetail.setPayVoucherHeader(voucherHeader);
-        miscbillDetail.setBillVoucherHeader(billVhId);
-        miscbillDetail.setPaidto(commonBean.getPaidTo().trim());
-        miscbilldetailService.persist(miscbillDetail);
-
-    }
+  
 
     private void updateMiscBillDetail(final CVoucherHeader billVhId) {
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
@@ -658,86 +641,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return REVERSE;
     }
 
-    private CVoucherHeader createVoucherAndledger() {
-        try {
-            final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
-            // update DirectBankPayment source path
-            headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/payment/directBankPayment-beforeView.action?voucherHeader.id=");
-            HashMap<String, Object> detailMap = null;
-            HashMap<String, Object> subledgertDetailMap = null;
-            final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
-            final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
-
-            detailMap = new HashMap<String, Object>();
-            detailMap.put(VoucherConstant.CREDITAMOUNT, commonBean.getAmount().toString());
-            detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-            final Bankaccount account = (Bankaccount) HibernateUtil.getCurrentSession().load(Bankaccount.class,
-                    Long.valueOf(commonBean.getAccountNumberId()));
-            detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
-            accountdetails.add(detailMap);
-            final Map<String, Object> glcodeMap = new HashMap<String, Object>();
-            for (final VoucherDetails voucherDetail : billDetailslist)
-
-            {
-                detailMap = new HashMap<String, Object>();
-                if (voucherDetail.getFunctionIdDetail() != null) {
-                    final CFunction function = (CFunction) HibernateUtil.getCurrentSession().load(CFunction.class,
-                            voucherDetail.getFunctionIdDetail());
-                    detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
-                }
-                if (voucherDetail.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0) {
-
-                    detailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getDebitAmountDetail().toString());
-                    detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
-                    detailMap.put(VoucherConstant.GLCODE, voucherDetail.getGlcodeDetail());
-                    accountdetails.add(detailMap);
-                    glcodeMap.put(voucherDetail.getGlcodeDetail(), VoucherConstant.DEBIT);
-                }
-                else {
-                    detailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getCreditAmountDetail().toString());
-                    detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-                    detailMap.put(VoucherConstant.GLCODE, voucherDetail.getGlcodeDetail());
-                    accountdetails.add(detailMap);
-                    glcodeMap.put(voucherDetail.getGlcodeDetail(), VoucherConstant.CREDIT);
-                }
-
-            }
-
-            for (final VoucherDetails voucherDetail : subLedgerlist) {
-                subledgertDetailMap = new HashMap<String, Object>();
-                final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null ? glcodeMap.get(
-                        voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
-                if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
-                    subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
-                else if (null != amountType)
-                    subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getAmount());
-                subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, voucherDetail.getDetailType().getId());
-                subledgertDetailMap.put(VoucherConstant.DETAILKEYID, voucherDetail.getDetailKeyId());
-                subledgertDetailMap.put(VoucherConstant.GLCODE, voucherDetail.getSubledgerCode());
-                subledgerDetails.add(subledgertDetailMap);
-            }
-
-            voucherHeader = createVoucher.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
-
-        } catch (final HibernateException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
-        } catch (final ApplicationRuntimeException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
-        } catch (final ValidationException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw e;
-        } catch (final Exception e) {
-            // handle engine exception
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Posted to Ledger " + voucherHeader.getId());
-        return voucherHeader;
-
-    }
+  
 
     private void reCreateLedger() {
         final CreateVoucher createVoucher = new CreateVoucher();
@@ -936,11 +840,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (paymentheader.getId() == null)
             paymentheader = getPayment();
        
-        if(paymentheader.getState().getCreatedBy().getId()!=securityUtils.getCurrentUser().getId())
-        {
-        	populateWorkflowBean();
-        	paymentService.transitionWorkFlow(paymentheader, workflowBean);
-        }
+        populateWorkflowBean();
+        paymentheader =  paymentActionHelper.sendForApproval(paymentheader,workflowBean);
               
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected",
