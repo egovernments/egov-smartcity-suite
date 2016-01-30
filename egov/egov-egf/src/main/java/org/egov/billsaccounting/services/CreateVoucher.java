@@ -143,7 +143,7 @@ import com.exilant.exility.common.TaskFailedException;
  */
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class CreateVoucher {
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -275,12 +275,12 @@ public class CreateVoucher {
         try
         {
 
-           // generalLedgerService = new PersistenceService<CGeneralLedger, Long>();
-            //generalLedgerService.setType(CGeneralLedger.class);
+            // generalLedgerService = new PersistenceService<CGeneralLedger, Long>();
+            // generalLedgerService.setType(CGeneralLedger.class);
             // generalLedgerService.setSessionFactory(new SessionFactory());
 
-            //generalLedgerDetailService = new PersistenceService<CGeneralLedgerDetail, Long>();
-            //generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
+            // generalLedgerDetailService = new PersistenceService<CGeneralLedgerDetail, Long>();
+            // generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
             // generalLedgerDetailService.setSessionFactory(new SessionFactory());
 
         } catch (final Exception e)
@@ -291,8 +291,6 @@ public class CreateVoucher {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Initialization completed");
     }
-
-   
 
     /**
      * creates voucher From billId
@@ -337,7 +335,7 @@ public class CreateVoucher {
                 if (billMis.getVoucherHeader() != null) {
                     result = (CVoucherHeader) persistenceService.find(
                             "select vh from CVoucherHeader vh where vh.id = ? and vh.status!=?", billMis.getVoucherHeader()
-                            .getId(), FinancialConstants.CANCELLEDVOUCHERSTATUS);
+                                    .getId(), FinancialConstants.CANCELLEDVOUCHERSTATUS);
                     if (result != null)
                         throw new ApplicationRuntimeException("Voucher " + result.getVoucherNumber()
                                 + " already exists for this bill ");
@@ -515,7 +513,7 @@ public class CreateVoucher {
                         .getCurrentSession()
                         .createQuery(
                                 "select glcode from CChartOfAccounts where id = " + egBilldetails.getGlcodeid().longValue())
-                                .list().get(0).toString();
+                        .list().get(0).toString();
                 detailMap.put(VoucherConstant.GLCODE, glcode);
                 accountdetails.add(detailMap);
                 subLedgerlist = egBilldetails.getEgBillPaydetailes();
@@ -524,8 +522,8 @@ public class CreateVoucher {
                     subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT,
                             egBillPayeedetails.getDebitAmount() == null ? BigDecimal.ZERO : egBillPayeedetails.getDebitAmount());
                     subledgertDetailMap
-                    .put(VoucherConstant.CREDITAMOUNT, egBillPayeedetails.getCreditAmount() == null ? BigDecimal.ZERO
-                            : egBillPayeedetails.getCreditAmount());
+                            .put(VoucherConstant.CREDITAMOUNT, egBillPayeedetails.getCreditAmount() == null ? BigDecimal.ZERO
+                                    : egBillPayeedetails.getCreditAmount());
                     subledgertDetailMap.put(VoucherConstant.DETAILTYPEID, egBillPayeedetails.getAccountDetailTypeId());
                     subledgertDetailMap.put(VoucherConstant.DETAILKEYID, egBillPayeedetails.getAccountDetailKeyId());
                     subledgertDetailMap.put(VoucherConstant.GLCODE, glcode);
@@ -727,7 +725,7 @@ public class CreateVoucher {
      */
     public CVoucherHeader createPreApprovedVoucher(final HashMap<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-                    throws ApplicationRuntimeException, ValidationException {
+            throws ApplicationRuntimeException, ValidationException {
         final AppConfig appConfig = appConfigService.findBykeyName("PREAPPROVEDVOUCHERSTATUS");
         if (null != appConfig && null != appConfig.getAppDataValues())
             for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
@@ -764,7 +762,7 @@ public class CreateVoucher {
             final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
                     "classpath:org/serviceconfig-Bean.xml", "classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml",
                     "classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml",
-            "classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
+                    "classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
             if (voucherheader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)
                     || voucherheader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT))
             {
@@ -775,7 +773,7 @@ public class CreateVoucher {
                 if (billtype == null)
                 {
                     applicationContext
-                    .getBean("voucherWorkflowService");
+                            .getBean("voucherWorkflowService");
                     voucherheader.start().withOwner(getPosition());
                     // voucherWorkflowService.transition("aa_approve", voucherheader, "Created"); // action name need to pass
                     // Position position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
@@ -785,7 +783,7 @@ public class CreateVoucher {
                             .getBean("persistenceService");
                     final Position nextPosition = getNextPosition(voucherheader, vs, persistenceService, null);
                     voucherheader.transition(true).withStateValue("WORKFLOW INITIATED").withOwner(nextPosition)
-                    .withComments("WORKFLOW STARTED");
+                            .withComments("WORKFLOW STARTED");
                 }
             }
             /*
@@ -895,9 +893,9 @@ public class CreateVoucher {
                         "classpath:org/serviceconfig-Bean.xml",
                         "classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml",
                         "classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml",
-                "classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
+                        "classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
                 applicationContext
-                .getBean("voucherWorkflowService");
+                        .getBean("voucherWorkflowService");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("completed voucherWorkflowService from application context.......");
                 cjv.getVoucherHeaderId().start().withOwner(getPosition());
@@ -910,7 +908,7 @@ public class CreateVoucher {
                         .getBean("persistenceService");
                 final Position nextPosition = getNextPosition(cjv.getVoucherHeaderId(), vs, persistenceService, null);
                 cjv.transition(true).withStateValue("WORKFLOW INITIATED").withOwner(nextPosition)
-                .withComments("WORKFLOW STARTED");
+                        .withComments("WORKFLOW STARTED");
             }
         } catch (final Exception e)
         {
@@ -941,9 +939,9 @@ public class CreateVoucher {
             final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
                     "classpath:org/serviceconfig-Bean.xml", "classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml",
                     "classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml",
-            "classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
+                    "classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
             applicationContext
-            .getBean("voucherWorkflowService");
+                    .getBean("voucherWorkflowService");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("completed voucherWorkflowService from application context.......");
             voucherHeader.start().withOwner(getPosition());
@@ -1066,8 +1064,8 @@ public class CreateVoucher {
             mis = createVouchermis(headerdetails);
             mis.setVoucherheaderid(vh);
             vh.setVouchermis(mis);
-            //insertIntoVoucherHeader(vh);
-            
+            // insertIntoVoucherHeader(vh);
+
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("start | insertIntoVoucherHeader");
             final String vdt = formatter.format(vh.getVoucherDate());
@@ -1131,16 +1129,13 @@ public class CreateVoucher {
             }
 
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("End | insertIntoVoucherHeader"); 
-            
-            
-            
-            
+                LOGGER.debug("End | insertIntoVoucherHeader");
+
             // insertIntoRecordStatus(vh);
             final List<Transaxtion> transactions = createTransaction(headerdetails, accountcodedetails, subledgerdetails, vh);
             HibernateUtil.getCurrentSession().flush();
-         //   engine = ChartOfAccounts.getInstance();
-           // setChartOfAccounts();
+            // engine = ChartOfAccounts.getInstance();
+            // setChartOfAccounts();
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
@@ -1229,7 +1224,7 @@ public class CreateVoucher {
             // 2. Check if function is passed in Details
             for (final HashMap<String, Object> accDetailMap : accountcodedetails)
                 if (null != accDetailMap.get(VoucherConstant.FUNCTIONCODE)
-                && "" != accDetailMap.get(VoucherConstant.FUNCTIONCODE))
+                        && "" != accDetailMap.get(VoucherConstant.FUNCTIONCODE))
                 {
                     functionCodeInDetail = accDetailMap.get(VoucherConstant.FUNCTIONCODE).toString();
                     functionMap.put(functionCodeInDetail, functionCodeInDetail);
@@ -1258,7 +1253,7 @@ public class CreateVoucher {
             if (atLeastOneMissing)
                 for (final HashMap<String, Object> accDetailMap : accountcodedetails)
                     if (null == accDetailMap.get(VoucherConstant.FUNCTIONCODE)
-                    || "" == accDetailMap.get(VoucherConstant.FUNCTIONCODE))
+                            || "" == accDetailMap.get(VoucherConstant.FUNCTIONCODE))
                         accDetailMap.put(VoucherConstant.FUNCTIONCODE, headerdetails.get(VoucherConstant.FUNCTIONCODE));
         }
 
@@ -1488,7 +1483,7 @@ public class CreateVoucher {
     @Transactional
     @SuppressWarnings("deprecation")
     public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException,
-    Exception {
+            Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("START | createVoucherHeader");
         // Connection con = null;
@@ -1571,7 +1566,7 @@ public class CreateVoucher {
             if (headerdetails.containsKey(VoucherConstant.STATUS) && null != headerdetails.get(VoucherConstant.STATUS))
                 cVoucherHeader.setStatus(Integer.valueOf(headerdetails.get(VoucherConstant.STATUS).toString()));
             else {
-                final List list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","DEFAULTVOUCHERCREATIONSTATUS");
+                final List list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");
                 cVoucherHeader.setStatus(Integer.parseInt(((AppConfigValues) list.get(0)).getValue()));
             }
 
@@ -1718,6 +1713,7 @@ public class CreateVoucher {
         return voucherNumberPrefix;
 
     }
+
     @Transactional
     public Vouchermis createVouchermis(final HashMap<String, Object> headerdetails) throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
@@ -1852,7 +1848,7 @@ public class CreateVoucher {
 
             final Query query = HibernateUtil.getCurrentSession().createQuery(
                     "from CChartOfAccountDetail cd,CChartOfAccounts c where " +
-                    "cd.glCodeId = c.id and c.glcode=:glcode");
+                            "cd.glCodeId = c.id and c.glcode=:glcode");
 
             query.setString(VoucherConstant.GLCODE, glcode);
             query.setCacheable(true);
@@ -1938,12 +1934,12 @@ public class CreateVoucher {
     public List<Transaxtion> createTransaction(final HashMap<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails,
             final CVoucherHeader vh)
-                    throws ApplicationRuntimeException {
+            throws ApplicationRuntimeException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Start | createTransaction ");
         final List<Transaxtion> transaxtionList = new ArrayList<Transaxtion>();
         try {
-
+            Integer voucherLineId = 1;
             for (final HashMap<String, Object> accDetailMap : accountcodedetails) {
                 final String glcode = accDetailMap.get(VoucherConstant.GLCODE).toString();
 
@@ -1972,7 +1968,7 @@ public class CreateVoucher {
                 final Transaxtion transaction = new Transaxtion();
                 transaction.setGlCode(chartOfAcc.getGlcode());
                 transaction.setGlName(chartOfAcc.getName());
-                // transaction.setVoucherLineId(String.valueOf(voucherDetail.getId()));
+                transaction.setVoucherLineId(String.valueOf(voucherLineId++));
                 transaction.setVoucherHeaderId(vh.getId().toString());
                 transaction.setCrAmount(creditAmount);
                 transaction.setDrAmount(debitAmount);
@@ -1996,7 +1992,7 @@ public class CreateVoucher {
                             reqData.setGlcodeId(chartOfAcc.getId().toString());
                             if (null != sublegDetailMap.get(VoucherConstant.DEBITAMOUNT)
                                     && !new BigDecimal(sublegDetailMap.get(VoucherConstant.DEBITAMOUNT).toString())
-                            .equals(BigDecimal.ZERO))
+                                            .equals(BigDecimal.ZERO))
                                 reqData.setDetailAmt(sublegDetailMap.get(VoucherConstant.DEBITAMOUNT).toString());
                             else
                                 reqData.setDetailAmt(sublegDetailMap.get(VoucherConstant.CREDITAMOUNT).toString());
@@ -2014,7 +2010,7 @@ public class CreateVoucher {
                         reqData.setGlcodeId(chartOfAcc.getId().toString());
                         if (null != sublegDetailMap.get(VoucherConstant.DEBITAMOUNT)
                                 && !new BigDecimal(sublegDetailMap.get(VoucherConstant.DEBITAMOUNT).toString())
-                        .equals(BigDecimal.ZERO))
+                                        .equals(BigDecimal.ZERO))
                             reqData.setDetailAmt(sublegDetailMap.get(VoucherConstant.DEBITAMOUNT).toString());
                         else
                             reqData.setDetailAmt(sublegDetailMap.get(VoucherConstant.CREDITAMOUNT).toString());
@@ -2045,7 +2041,7 @@ public class CreateVoucher {
         PersistenceService<Functionary, Integer> functionarySer;
         functionarySer = new PersistenceService<Functionary, Integer>();
         // functionarySer.setSessionFactory(new SessionFactory());
-        //functionarySer.setType(Functionary.class);
+        // functionarySer.setType(Functionary.class);
         final Functionary functionary = functionarySer.find("from Functionary where code=?", code);
         return functionary;
 
@@ -2389,7 +2385,7 @@ public class CreateVoucher {
      */
 
     public CVoucherHeader reverseVoucher(final List<HashMap<String, Object>> paramList) throws ApplicationRuntimeException,
-    ParseException
+            ParseException
     {
         // -- Reversal Voucher date check ----
         final CVoucherHeader reversalVoucherObj = new CVoucherHeader();

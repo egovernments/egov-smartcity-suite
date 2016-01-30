@@ -72,7 +72,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
-import org.egov.egf.bills.model.Cbill;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -95,7 +94,6 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
-import org.egov.pims.commons.Designation;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,9 +109,9 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  */
 @ParentPackage("egov")
 @Results({
-    @Result(name = ContingentBillAction.NEW, location = "contingentBill-new.jsp"),
-    @Result(name = "messages", location = "contingentBill-messages.jsp"),
-    @Result(name = ContingentBillAction.VIEW, location = "contingentBill-view.jsp")
+        @Result(name = ContingentBillAction.NEW, location = "contingentBill-new.jsp"),
+        @Result(name = "messages", location = "contingentBill-messages.jsp"),
+        @Result(name = ContingentBillAction.VIEW, location = "contingentBill-view.jsp")
 })
 public class ContingentBillAction extends BaseBillAction {
     public class COAcomparator implements Comparator<CChartOfAccounts> {
@@ -280,7 +278,7 @@ public class ContingentBillAction extends BaseBillAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contingent Bill Action  | update | start");
         Integer userId = -1;
-        final Cbill cbill = (Cbill) getPersistenceService().find(" from Cbill where id=?",
+        final EgBillregister cbill = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
                 Long.valueOf(parameters.get("billRegisterId")[0]));
         if (cbill != null && cbill.getState() != null)
             if (!validateOwner(cbill.getState()))
@@ -288,7 +286,7 @@ public class ContingentBillAction extends BaseBillAction {
         if (null == cbill.getEgBillregistermis().getSourcePath()) {
             cbill.getEgBillregistermis().setSourcePath(
                     "/EGF/bill/contingentBill!beforeView.action?billRegisterId=" + cbill.getId());
-            //persistenceService.setType(Cbill.class);
+            // persistenceService.setType(Cbill.class);
             persistenceService.update(cbill);
         }
         if (parameters.get(ACTION_NAME)[0].contains(APPROVE))
@@ -300,8 +298,10 @@ public class ContingentBillAction extends BaseBillAction {
         }
         else if (parameters.get(ACTION_NAME)[0].contains("reject"))
             userId = cbill.getCreatedBy().getId().intValue();
-        billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0] + "|" + userId, cbill,
-                parameters.get("comments")[0]);
+        /*
+         * billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0] + "|" + userId, cbill,
+         * parameters.get("comments")[0]);
+         */
         if (parameters.get(ACTION_NAME)[0].contains("aa_reject"))
             addActionMessage(getText("billVoucher.file.canceled"));
         else if (parameters.get(ACTION_NAME)[0].contains(APPROVE))
@@ -340,8 +340,8 @@ public class ContingentBillAction extends BaseBillAction {
             @RequiredFieldValidator(fieldName = "commonBean.billDate", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.billSubType", message = "", key = REQUIRED),
             @RequiredFieldValidator(fieldName = "commonBean.payto", message = "", key = REQUIRED)
-    // Commenting function to revert onefunction center mandatory option
-    // @RequiredFieldValidator(fieldName = "commonBean.functionName",message="",key=REQUIRED)
+            // Commenting function to revert onefunction center mandatory option
+            // @RequiredFieldValidator(fieldName = "commonBean.functionName",message="",key=REQUIRED)
     })
     @Transactional
     @ValidationErrorPage(value = NEW)
@@ -350,7 +350,7 @@ public class ContingentBillAction extends BaseBillAction {
     {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(billDetailsTableCreditFinal);
-        Cbill cbill = null;
+        EgBillregister cbill = null;
 
         try {
             voucherHeader.setVoucherDate(commonBean.getBillDate());
@@ -402,12 +402,12 @@ public class ContingentBillAction extends BaseBillAction {
     @ValidationErrorPage(value = EDIT)
     public String edit()
     {
-        Cbill cbill = null;
+        EgBillregister cbill = null;
         if (getButton().toLowerCase().contains("cancel"))
             cancelBill();
         else
             try {
-                cbill = (Cbill) persistenceService.find("from Cbill where id=?", billRegisterId);
+                cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?", billRegisterId);
                 if (cbill != null && cbill.getState() != null)
                     if (!validateOwner(cbill.getState()))
                         throw new ApplicationRuntimeException("Invalid Aceess");
@@ -443,8 +443,8 @@ public class ContingentBillAction extends BaseBillAction {
      */
     private void cancelBill() {
 
-        Cbill cbill = null;
-        cbill = (Cbill) persistenceService.find("from Cbill where id=?", billRegisterId);
+        EgBillregister cbill = null;
+        cbill = (EgBillregister) persistenceService.find("from Cbill where id=?", billRegisterId);
         if (cbill != null && cbill.getState() != null)
             if (!validateOwner(cbill.getState()))
                 throw new ApplicationRuntimeException("Invalid Aceess");
@@ -457,7 +457,7 @@ public class ContingentBillAction extends BaseBillAction {
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(statusQury);
         cbill.setStatus(egwStatus);
         cbill.setBillstatus(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
-        //persistenceService.setType(Cbill.class);
+        // persistenceService.setType(Cbill.class);
         persistenceService.persist(cbill);
         HibernateUtil.getCurrentSession().flush();
         addActionMessage(getText("cbill.cancellation.succesful"));
@@ -539,7 +539,7 @@ public class ContingentBillAction extends BaseBillAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
-    private void recreateCheckList(final Cbill bill) {
+    private void recreateCheckList(final EgBillregister bill) {
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
                 "from org.egov.infstr.models.EgChecklists where objectid=?",
                 billRegisterId);
@@ -549,7 +549,7 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @Transactional
-    private Cbill updateBill(Cbill bill) {
+    private EgBillregister updateBill(EgBillregister bill) {
         final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
         headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
         Boolean recreateBillnumber = false;
@@ -562,7 +562,7 @@ public class ContingentBillAction extends BaseBillAction {
         EgBilldetails billDet = null;
         for (; billDetItr.hasNext();)
             try {
-                billDet =  (EgBilldetails) billDetItr.next();
+                billDet = (EgBilldetails) billDetItr.next();
                 // if(LOGGER.isDebugEnabled()) LOGGER.debug(" billDet "+ billDet.getId());
                 billDetItr.remove();
             } catch (final Exception e) {
@@ -574,19 +574,19 @@ public class ContingentBillAction extends BaseBillAction {
         EgBillSet.addAll(updateBillDetails(bill));
         checkBudgetandGenerateNumber(bill);
         HibernateUtil.getCurrentSession().refresh(bill);
-        //persistenceService.setType(Cbill.class);
+        // persistenceService.setType(Cbill.class);
         persistenceService.persist(bill);
         HibernateUtil.getCurrentSession().flush();
         return bill;
     }
 
-    private Cbill checkBudgetandGenerateNumber(final Cbill bill) {
+    private EgBillregister checkBudgetandGenerateNumber(final EgBillregister bill) {
         final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill", bill);
         scriptService.executeScript("egf.bill.budgetcheck", scriptContext);
         return bill;
     }
 
-    private void forwardBill(final Cbill cbill)
+    private void forwardBill(final EgBillregister cbill)
     {
         Integer userId = null;
         if (null != parameters.get(APPROVER_USER_ID) && Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]) != -1)
@@ -595,8 +595,10 @@ public class ContingentBillAction extends BaseBillAction {
             userId = EgovThreadLocals.getUserId().intValue();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("User selected id is : " + userId);
-        billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0] + "|" + userId, cbill,
-                parameters.get("comments")[0]);
+        /*
+         * billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0] + "|" + userId, cbill,
+         * parameters.get("comments")[0]);
+         */
         addActionMessage(getText("pjv.voucher.approved",
                 new String[] { voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) }));
     }
@@ -760,7 +762,7 @@ public class ContingentBillAction extends BaseBillAction {
                     cbill.getPassedamount().toString() });
             sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
         }
-        //persistenceService.setType(EgChecklists.class);
+        // persistenceService.setType(EgChecklists.class);
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
                 "from org.egov.infstr.models.EgChecklists where objectid=?",
                 billRegisterId);
@@ -875,12 +877,12 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @SuppressWarnings("unchecked")
-    private Cbill createBill() {
+    private EgBillregister createBill() {
 
         final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
         // update DirectBankPayment source path
         headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill-beforeView.action?billRegisterId=");
-        Cbill bill = new Cbill();
+        EgBillregister bill = new EgBillregister();
         final EgBillregistermis mis = new EgBillregistermis();
         bill = setBillDetailsFromHeaderDetails(bill, mis, true);
         bill = createBillDetails(bill);
@@ -896,7 +898,7 @@ public class ContingentBillAction extends BaseBillAction {
         return bill;
     }
 
-    private Cbill createBillDetails(final Cbill bill) {
+    private EgBillregister createBillDetails(final EgBillregister bill) {
         EgBilldetails billdetails;
         EgBillPayeedetails payeedetails;
         Set<EgBillPayeedetails> payeedetailsSet;
@@ -1021,7 +1023,7 @@ public class ContingentBillAction extends BaseBillAction {
         return bill;
     }
 
-    private Set<EgBilldetails> updateBillDetails(final Cbill bill)
+    private Set<EgBilldetails> updateBillDetails(final EgBillregister bill)
     {
         EgBilldetails billdetails;
         EgBillPayeedetails payeedetails;
@@ -1165,7 +1167,8 @@ public class ContingentBillAction extends BaseBillAction {
      * @param bill
      * @param headerDetails
      */
-    private Cbill setBillDetailsFromHeaderDetails(final Cbill bill, final EgBillregistermis mis, final boolean generateBill)
+    private EgBillregister setBillDetailsFromHeaderDetails(final EgBillregister bill, final EgBillregistermis mis,
+            final boolean generateBill)
     {
 
         mis.setEgDepartment(voucherHeader.getVouchermis().getDepartmentid());
@@ -1210,7 +1213,7 @@ public class ContingentBillAction extends BaseBillAction {
      * @param bill
      * @return
      */
-    private String getNextBillNumber(final Cbill bill) {
+    private String getNextBillNumber(final EgBillregister bill) {
         String billNumber = null;
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(bill.getBilldate());
         final String year = financialYear != null ? financialYear.getFinYearRange() : "";

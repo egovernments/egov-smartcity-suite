@@ -161,10 +161,6 @@
 			value="org.egov.model.bills.EgBillregister" />
 	</bean>
 
-	<bean id="cbillService" class="org.egov.services.bills.CbillService">
-		<constructor-arg index="0"
-			value="org.egov.egf.bills.model.Cbill" />
-	</bean>
 
 	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService">
 		<constructor-arg index="0"

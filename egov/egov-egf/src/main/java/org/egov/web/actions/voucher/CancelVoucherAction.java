@@ -396,8 +396,8 @@ public class CancelVoucherAction extends BaseFormAction {
 
     private void cancelBill(final Long vhId) {
         final StringBuffer billQuery = new StringBuffer();
-        final String statusQuery = "(select stat.id from  EgwStatus  stat where stat.moduletype=:module and stat.description=:description)";
-        final String cancelQuery = "Update EgBillregister set billstatus=:billstatus , status.id =" + statusQuery
+        final String statusQuery = "(select stat.id from  egw_status  stat where stat.moduletype=:module and stat.description=:description)";
+        final String cancelQuery = "Update eg_billregister set billstatus=:billstatus , statusid =" + statusQuery
                 + " where  id=:billId";
         String moduleType = "", description = "", billstatus = "";
         final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
@@ -450,7 +450,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     moduleType = FinancialConstants.PENSIONBILL;
                 }
 
-            final Query billQry = HibernateUtil.getCurrentSession().createQuery(cancelQuery.toString());
+            final Query billQry = HibernateUtil.getCurrentSession().createSQLQuery(cancelQuery.toString());
             billQry.setString("module", moduleType);
             billQry.setString("description", description);
             billQry.setString("billstatus", billstatus);
