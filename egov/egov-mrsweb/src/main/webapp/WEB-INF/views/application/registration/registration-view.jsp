@@ -90,9 +90,13 @@
  --><div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
-
-		<form:form role="form" action="/mrs/registration/workflow"
-			modelAttribute="registration" id="form-registration"
+		
+		<c:set value="/mrs/registration/workflow" var="actionUrl"></c:set>
+		<c:if test="${registration.status == 'Approved'}">
+			<c:set value="/mrs/certificate/registration?registrationId=${registration.id}" var="actionUrl"></c:set>
+		</c:if>
+		<form:form role="form" action="${actionUrl}"
+			modelAttribute="registration" id="form-registrationview"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -100,7 +104,7 @@
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="title.registration" />
-						<input type="hidden" name="id" value="${registration.id}" />
+						<input id="registrationId"type="hidden" name="id" value="${registration.id}" />
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
@@ -134,12 +138,27 @@
 					  </div>
 				</div>
 			</div>
+			stateValue : <c:out value="${stateValue}"></c:out>
 			<c:choose>
 				<c:when test="${mode != 'view'}">			
 					<c:set value="${registration.currentState.value}" var="stateValue"></c:set>
-					<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected'}">
+					<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected' && stateValue != 'Revenue Clerk Approved'}">
 						<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 					</c:if>
+					<c:choose>
+						<c:when test="${registration.currentState.nextAction == 'Asst. Engineer Approval Pending'}">
+							<div class="row">
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
+								<div class="col-sm-8 add-margin">
+									<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent"/><br />
+									<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+								</div>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+						</c:otherwise>
+					</c:choose>
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>

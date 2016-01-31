@@ -39,6 +39,11 @@
 
 package org.egov.mrs.domain.entity;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -50,15 +55,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.mrs.domain.enums.RelationStatus;
+import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.masters.entity.Religion;
 import org.hibernate.validator.constraints.Length;
@@ -104,7 +113,7 @@ public class Applicant extends AbstractAuditable {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "relationstatus")
-    private RelationStatus presentRelation;
+    private MaritalStatus maritalStatus;
 
     @NotNull
     @SafeHtml
@@ -115,6 +124,7 @@ public class Applicant extends AbstractAuditable {
     @Length(max = 20)
     private String aadhaarNo;
 
+    @Length(min = 1)
     private byte[] photo;
     private byte[] signature;
 
@@ -126,6 +136,14 @@ public class Applicant extends AbstractAuditable {
 
     @Embedded
     private Contact contactInfo;
+    
+    @NotNull
+    @Valid
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
+    private List<ApplicantDocument> applicantDocuments = new ArrayList<ApplicantDocument>();
+    
+    @Transient
+    private List<Document> documents;
 
     @Override
     public Long getId() {
@@ -177,14 +195,14 @@ public class Applicant extends AbstractAuditable {
         this.ageInMonthsAsOnMarriage = ageInMonthsAsOnMarriage;
     }
 
-    public RelationStatus getPresentRelation() {
-        return presentRelation;
+    public MaritalStatus getMaritalStatus() {
+        return maritalStatus;
     }
-
-    public void setPresentRelation(final RelationStatus presentRelation) {
-        this.presentRelation = presentRelation;
+    
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
-
+    
     public String getOccupation() {
         return occupation;
     }
@@ -239,5 +257,35 @@ public class Applicant extends AbstractAuditable {
 
     public void setContactInfo(final Contact contactInfo) {
         this.contactInfo = contactInfo;
+    }
+    
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
+
+    public List<ApplicantDocument> getApplicantDocuments() {
+        return applicantDocuments;
+    }
+    
+    public void setApplicantDocuments(List<ApplicantDocument> applicantDocuments) {
+        this.applicantDocuments = applicantDocuments;
+    }
+    
+    public void addApplicantDocument(ApplicantDocument applicantDocument) {
+        applicantDocument.setApplicant(this);
+        getApplicantDocuments().add(applicantDocument);
+    }
+    
+    public String getFullName() {
+        String fullName = this.getName().getFirstName();
+        
+        fullName += this.getName().getMiddleName() == null ? "" : " " + this.getName().getMiddleName();
+        fullName += this.getName().getLastName() == null ? "" : " " + this.getName().getLastName();
+        
+        return fullName;
     }
 }

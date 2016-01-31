@@ -47,8 +47,8 @@ public class SearchResult {
     
     private Long registrationId;
     private String registrationNo;
-    private Date registrationDate;
-    private Date dateOfMarriage;
+    private String registrationDate;
+    private String dateOfMarriage;
     private String husbandName;
     private String wifeName;
     private boolean certificateIssued;
@@ -72,19 +72,19 @@ public class SearchResult {
         this.registrationNo = registrationNo;
     }
     
-    public Date getRegistrationDate() {
+    public String getRegistrationDate() {
         return registrationDate;
     }
     
-    public void setRegistrationDate(Date registrationDate) {
+    public void setRegistrationDate(String registrationDate) {
         this.registrationDate = registrationDate;
     }
     
-    public Date getDateOfMarriage() {
+    public String getDateOfMarriage() {
         return dateOfMarriage;
     }
     
-    public void setDateOfMarriage(Date dateOfMarriage) {
+    public void setDateOfMarriage(String dateOfMarriage) {
         this.dateOfMarriage = dateOfMarriage;
     }
     

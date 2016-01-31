@@ -50,18 +50,37 @@
 
 		console.log('rejectbutton=' + rejectbutton);
 		console.log('workFlorAction= ' + $("#workFlowAction").val());
-		
+
 		if (rejectbutton != null ) {
-			if (rejectbutton == 'Reject' || rejectbutton == 'Approve') {
+			if (rejectbutton == 'Approve' || rejectbutton == 'Print Rejection Certificate' || rejectbutton == 'Close Registration') {
 				$('#approvalDepartment').removeAttr('required');
 				$('#approvalDesignation').removeAttr('required');
 				$('#approvalPosition').removeAttr('required');
-			} else if (rejectbutton == 'Forward'){
+			} else if (rejectbutton == 'Forward') {
 				$('#approvalDepartment').attr('required', 'required');
 				$('#approvalDesignation').attr('required', 'required');
 				$('#approvalPosition').attr('required', 'required');
 				$('#approvalComent').removeAttr('required');
+
+				$('input[id$="photo"').each( function (field) {
+					console.log('field=' + field);
+					var val = $(this).val();
+					if (val == '') {
+						var span = $(this).siblings('span'); 
+						$(span).addClass('error-msg');
+				    	$(span).text("Photo is required");
+				    	return false;
+					}
+				})
+				
+				if (!validateChecklists()) {
+					return false;
+				}
 			} 
+
+			if (rejectbutton == 'Print Rejection Certificate') {
+				$('#form-registration').prop('action', '../certificate/rejection?registrationId='+$('#registrationId').val());
+			}  
 
 			if (rejectbutton == 'Reject') {
 				$('#approvalComent').attr('required', 'required');
@@ -69,8 +88,8 @@
 				$('#approvalComent').removeAttr('required');
 			}
 		}
-		 
-	   document.forms[0].submit;
+
+		document.forms[0].submit;
 	   return true;
 	}
 </script>
@@ -87,7 +106,7 @@
 					</c:if>
 				</c:if>
 				<c:forEach items="${validActionList}" var="validButtons">
-					<form:button type="submit" id="${validButtons}" class="btn btn-primary ${disabledClass}" value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');" >
+					<form:button type="submit" id="${validButtons}" class="btn btn-primary" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');" >
 						<c:out value="${validButtons}" /> 
 					</form:button>
 				</c:forEach>

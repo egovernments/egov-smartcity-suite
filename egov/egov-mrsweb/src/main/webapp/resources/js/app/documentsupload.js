@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,10 +36,28 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-
-msg.religion.create.success = Successfully created the religion;
-
-msg.newregistration.sms = Dear {0} and {1}, Your marriage registration is successful and the registration no is {2}.
-msg.newregistration.mail = Dear {0} and {1}, \n\n Your marriage registration is successful and the registration no is {2}. \n\n Thanks and regards,
-msg.newregistration.mail.subject = Marriage registration
+#-------------------------------------------------------------------------------*/
+$(document).ready(function(){
+	
+	var fileformatsinclude = ['pdf','jpeg','jpg','png']; 
+	
+	$('.upload-file').change( function(e) {		
+		/*validation for file upload*/
+		myfile= $( this ).val();
+		var ext = myfile.split('.').pop();
+		if($.inArray(ext.toLowerCase(), fileformatsinclude) > -1){
+			//do something    
+		}
+		else{
+			alert("Please upload .pdf, jpeg, .jpg and .png format documents only");
+			$( this ).val('');
+			return false;
+		}	
+		
+		var fileInput = $(this);
+   		var maxSize = 2097152; //file size  in bytes(2MB)
+		var inMB = maxSize/1024/1024;
+		
+	});
+	
+});

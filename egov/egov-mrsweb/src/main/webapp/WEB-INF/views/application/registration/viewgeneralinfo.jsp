@@ -92,7 +92,7 @@
 	<jsp:param value="${registration.husband.religionPractice}" name="appReligionPractice"/>
 	<jsp:param value="${registration.husband.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
 	<jsp:param value="${registration.husband.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
-	<jsp:param value="${registration.husband.presentRelation}" name="appPresentRelation"/>
+	<jsp:param value="${registration.husband.maritalStatus}" name="appPresentRelation"/>
 	<jsp:param value="${registration.husband.occupation}" name="appOccupation"/>
 	<jsp:param value="${registration.husband.contactInfo.residenceAddress}" name="appResidenceAddress"/>
 	<jsp:param value="${registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
@@ -111,7 +111,7 @@
 	<jsp:param value="${registration.wife.religionPractice}" name="appReligionPractice"/>
 	<jsp:param value="${registration.wife.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
 	<jsp:param value="${registration.wife.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
-	<jsp:param value="${registration.wife.presentRelation}" name="appPresentRelation"/>
+	<jsp:param value="${registration.wife.maritalStatus}" name="appPresentRelation"/>
 	<jsp:param value="${registration.wife.occupation}" name="appOccupation"/>
 	<jsp:param value="${registration.wife.contactInfo.residenceAddress}" name="appResidenceAddress"/>
 	<jsp:param value="${registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>

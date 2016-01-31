@@ -45,15 +45,16 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<span class="bold"><spring:message code="subheading.priest.info"/></span>
+<div class="row add-margin view-content">
+	<div class="col-sm-3 text-center"><spring:message code="subheading.priest.info"/></div>
+	<div class="col-sm-9 text-center"></div>
 </div>
 <div class="row">
 	<div class="col-sm-7">
 	<div class="row">
 	<div class="form-group">
 		<label class="col-sm-5 text-right" style="padding-right: 5px;">
-			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
+			<spring:message code="lbl.fullname"/>
 		</label>
 		<div class="col-sm-5" style="padding-left: 26px;">
 			<form:input path="priest.name.firstName" id="txt-priest-firstName" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="First Name" autocomplete="off" />

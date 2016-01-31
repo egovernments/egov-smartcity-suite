@@ -44,5 +44,8 @@ public class Constants {
     public static final String MODULE_NAME = "Marriage Registration";
     public static final String BOUNDARY_TYPE = "Zone";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    
+    public static final String APPROVER_ROLE_NAME = "ULB Operator";
+    public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
 
 }

@@ -45,8 +45,10 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
+<br />
 <div class="row add-margin view-content">
-	<div class="col-sm-12"><spring:message code="${param.header}"/></div>
+	<div class="col-sm-3 text-center"><spring:message code="${param.header}"/></div>
+	<div class="col-sm-9 text-center"></div>
 </div>
 <div class="row">
 	<div class="col-sm-7">
@@ -108,7 +110,7 @@
 				<spring:message code="lbl.age"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${witness}.age" id="txt-witness-age" type="text" class="form-control low-width" data-pattern="number" maxlength="30" placeholder="" autocomplete="off"  required="required"/>
+				<form:input path="${witness}.age" id="txt-witness-age" type="text" class="form-control low-width patternvalidation" maxlength="2" data-pattern="number" placeholder="" autocomplete="off"  required="required"/>
 	            <form:errors path="${witness}.age" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -120,7 +122,7 @@
 				<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
+				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required" />
                 <form:errors path="${witness}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -132,7 +134,7 @@
 				<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
+				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required" />
                 <form:errors path="${witness}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>

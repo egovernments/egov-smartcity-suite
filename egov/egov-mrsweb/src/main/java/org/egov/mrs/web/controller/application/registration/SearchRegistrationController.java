@@ -39,6 +39,8 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.entity.SearchResult;
 import org.egov.mrs.domain.enums.ApplicationStatus;
@@ -92,22 +95,21 @@ public class SearchRegistrationController {
     public @ResponseBody Map<String, List<SearchResult>> search(@RequestBody final SearchModel searchModel) {
         final Map<String, List<SearchResult>> registrations = new HashMap<String, List<SearchResult>>();
         registrations.put("data", prepareSearchResult(searchModel));
-
         return registrations;
     }
 
     private List<SearchResult> prepareSearchResult(final SearchModel searchModel) {
         final List<SearchResult> results = new ArrayList<SearchResult>();
-
+        final DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
         registrationService.searchRegistration(searchModel).stream().forEach(registration -> {
             final SearchResult searchResult = new SearchResult();
             searchResult.setRegistrationId(registration.getId());
             searchResult.setRegistrationNo(registration.getRegistrationNo() == null ? "NA" : registration.getRegistrationNo());
-            searchResult.setRegistrationDate(registration.getCreatedDate());
-            searchResult.setDateOfMarriage(registration.getDateOfMarriage());
+            searchResult.setRegistrationDate(formatter.format(registration.getCreatedDate()));
+            searchResult.setDateOfMarriage(formatter.format(registration.getDateOfMarriage()));
             searchResult.setWifeName(registration.getWife().getName().getFirstName());
             searchResult.setHusbandName(registration.getHusband().getName().getFirstName());
-            searchResult.setCertificateIssued(false);
+            searchResult.setCertificateIssued(registration.isCertificateIssued());
             searchResult.setStatus(registration.getStatus().name());
             searchResult.setFeePaid(registration.getFeePaid());
 

@@ -282,3 +282,15 @@
 	</div>
 	<div class="col-sm-4"></div>
 </div>
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="form-group">
+		<label class="col-sm-4 add-margin">
+			<spring:message code="lbl.same.place"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="coupleFromSamePlace" value="${coupleFromSamePlace}" cssClass="disbled" disabled="true" />
+		</div>
+	</div>
+	<div class="col-sm-4"></div>
+</div>

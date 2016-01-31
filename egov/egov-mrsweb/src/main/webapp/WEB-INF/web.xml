@@ -41,7 +41,7 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
-    <display-name>e-governments wtms web</display-name>
+    <display-name>e-governments mrs web</display-name>
 
     <!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
     <context-param>
@@ -93,6 +93,12 @@
 	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
+	<servlet>
+		<servlet-name>reportViewer</servlet-name>
+		<servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>
+		<load-on-startup>5</load-on-startup>
+	</servlet>
+	
 	<filter-mapping>
 	    <filter-name>springSessionRepositoryFilter</filter-name>
 	    <url-pattern>/*</url-pattern>
@@ -122,6 +128,11 @@
 		<filter-name>mdcLoggingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>reportViewer</servlet-name>
+		<url-pattern>/reportViewer</url-pattern>
+	</servlet-mapping>
 	
     <!-- Processes application requests -->
     <servlet>

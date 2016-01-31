@@ -37,59 +37,21 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.masters.service;
+package org.egov.mrs.domain.repository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 
-import org.egov.mrs.masters.entity.Fee;
-import org.egov.mrs.masters.repository.FeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.mrs.domain.entity.Document;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class FeeService {
+@Repository
+public interface DocumentRepository extends JpaRepository<Document, Long> {
 
-    private final FeeRepository feeRepository;
+    Document findById(Long id);
 
-    @Autowired
-    public FeeService(final FeeRepository feeRepository) {
-        this.feeRepository = feeRepository;
-    }
+    Document findByName(String ame);
 
-    @Transactional
-    public void create(final Fee fee) {
-        feeRepository.save(fee);
-    }
-
-    @Transactional
-    public Fee update(final Fee fee) {
-        return feeRepository.saveAndFlush(fee);
-    }
-
-    public Fee getFee(final Long id) {
-        return feeRepository.findById(id);
-    }
-
-    public List<Fee> getAll() {
-        return feeRepository.findAll();
-    }
-    
-    public Fee getFeeForDays(Long days) {
-        return feeRepository.findByToDaysLessThanEqual(days);
-    }
-    
-    public Fee getFeeForDate(Date date) {
-        Long daysAfterMarriage = ChronoUnit.DAYS.between(
-                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                LocalDateTime.now());
-        
-        return getFeeForDays(daysAfterMarriage);
-    }
-
+    @Override
+    List<Document> findAll();
 }

@@ -87,47 +87,56 @@ public class RegistrationWorkflowService {
         final User user = securityUtils.getCurrentUser();
         final String natureOfTask = "Marriage Registration :: New Registration";
 
-        /*
-         * String currentStateValue = stateAware.getCurrentState() == null ? null : stateAware.getCurrentState().getValue();
-         * currentStateValue = workflowContainer.getWorkFlowAction().equalsIgnoreCase("reject") ? "Rejected" : currentStateValue;
-         */
-
         WorkFlowMatrix workflowMatrix = null;
         Position nextStateOwner = null;
+        String nextState = null;
+        String nextAction = null;
 
         if (workflowContainer == null) {
             nextStateOwner = assignmentService.getPrimaryAssignmentForUser(itemInWorkflow.getCreatedBy().getId()).getPosition();
             workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
                     REGISTRATION_ADDNL_RULE, itemInWorkflow.getCurrentState().getValue(), null);
+            nextState = workflowMatrix.getNextState();
+            nextAction = workflowMatrix.getNextAction();
         } else {
 
             if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_FORWARD)) {
                 // FORWARD case, 2 states, when workflow is not started then NEW else next level user
 
                 nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
-
+                
                 if (itemInWorkflow.getCurrentState() == null)
                     workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
                             REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
                 else
                     workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
-                            REGISTRATION_ADDNL_RULE, "Clerk approved", workflowContainer.getPendingActions());
+                            REGISTRATION_ADDNL_RULE, itemInWorkflow.getCurrentState().getValue(), workflowContainer.getPendingActions());
+                
+                nextState = workflowMatrix.getNextState();
+                nextAction = workflowMatrix.getNextAction();
 
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_REJECT)) {
 
                 // Whatever the level of workflow, whenever rejected should come back to the initiator i.e., from where the
                 // workflow
                 // started
+                
+                // As there is only one step approval, following line would not work, 
+                //nextStateOwner = assignmentService
+                //      .getPrimaryAssignmentForUser(itemInWorkflow.getStateHistory().get(0).getCreatedBy().getId()).getPosition();
                 nextStateOwner = assignmentService
-                        .getPrimaryAssignmentForUser(itemInWorkflow.getStateHistory().get(0).getCreatedBy().getId()).getPosition();
-                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, STATE_REJECTED, workflowContainer.getPendingActions());
-
+                      .getPrimaryAssignmentForUser(itemInWorkflow.getCreatedBy().getId()).getPosition();
+                
+                nextState = "Assistant Engineer Rejected";
+                nextAction = "Revenue Clerk Approval Pending";
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
 
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(itemInWorkflow.getCreatedBy().getId()).getPosition();
                 workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
                         REGISTRATION_ADDNL_RULE, itemInWorkflow.getCurrentState().getValue(), null);
+                
+                nextState = workflowMatrix.getNextState();
+                nextAction = workflowMatrix.getNextAction();
             }
         }
 
@@ -135,10 +144,10 @@ public class RegistrationWorkflowService {
             itemInWorkflow.transition().start()
                     .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
-                    .withStateValue(workflowMatrix.getNextState())
+                    .withStateValue(nextState)
                     .withDateInfo(new Date())
                     .withOwner(nextStateOwner)
-                    .withNextAction(workflowMatrix.getNextAction())
+                    .withNextAction(nextAction)
                     .withNatureOfTask(natureOfTask);
         else if (itemInWorkflow.getCurrentState().getNextAction().equalsIgnoreCase(STATE_END))
             itemInWorkflow.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
@@ -147,10 +156,10 @@ public class RegistrationWorkflowService {
             itemInWorkflow.transition(true)
                     .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
-                    .withStateValue(workflowMatrix.getNextState())
+                    .withStateValue(nextState)
                     .withDateInfo(new Date())
                     .withOwner(nextStateOwner)
-                    .withNextAction(workflowMatrix.getNextAction())
+                    .withNextAction(nextAction)
                     .withNatureOfTask(natureOfTask);
 
     }

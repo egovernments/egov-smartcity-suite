@@ -159,6 +159,8 @@ public class Registration extends StateAware {
     @Length(max = 256)
     private String remarks;
     
+    private boolean certificateIssued;
+    
     @Transient
     private Long approvalDepartment;
 
@@ -377,6 +379,14 @@ public class Registration extends StateAware {
 
     public void setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
+    }
+
+    public boolean isCertificateIssued() {
+        return certificateIssued;
+    }
+
+    public void setCertificateIssued(boolean certificateIssued) {
+        this.certificateIssued = certificateIssued;
     }
 
     @Override

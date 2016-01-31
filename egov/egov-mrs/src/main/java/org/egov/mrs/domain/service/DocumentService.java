@@ -37,8 +37,41 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.enums;
+package org.egov.mrs.domain.service;
 
-public enum RelationStatus {
-    Divorced, Unmarried, Widower, Married
+import java.util.List;
+
+import org.egov.mrs.domain.entity.Document;
+import org.egov.mrs.domain.repository.DocumentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class DocumentService {
+
+    private final DocumentRepository documentRepository;
+
+    @Autowired
+    public DocumentService(final DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
+    }
+
+    @Transactional
+    public void create(final Document document) {
+        documentRepository.save(document);
+    }
+
+    public Document get(final Long id) {
+        return documentRepository.findById(id);
+    }
+
+    public Document get(final String docuementName) {
+        return documentRepository.findByName(docuementName);
+    }
+
+    public List<Document> getAll() {
+        return documentRepository.findAll();
+    }
 }

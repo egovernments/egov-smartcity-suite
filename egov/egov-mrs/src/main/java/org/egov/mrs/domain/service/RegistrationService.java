@@ -40,22 +40,39 @@
 package org.egov.mrs.domain.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.mrs.application.Constants;
 import org.egov.mrs.application.service.RegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Applicant;
+import org.egov.mrs.domain.entity.ApplicantDocument;
+import org.egov.mrs.domain.entity.Document;
 import org.egov.mrs.domain.entity.Registration;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.enums.ApplicationStatus;
+import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.RegistrationRepository;
-import org.egov.mrs.masters.entity.Fee;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.masters.service.FeeService;
 import org.egov.mrs.masters.service.ReligionService;
@@ -65,21 +82,37 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
 public class RegistrationService {
 
+    private final String MSG_KEY_SMS_REGISTRATION_NEW = "msg.newregistration.sms";
+    private final String MSG_KEY_SMS_REGISTRATION_REJECTION = "msg.rejectregistration.sms";
+    private final String MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL = "msg.newregistration.mail";
+    private final String MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT = "msg.newregistration.mail.subject";
+    private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL = "msg.rejectionregistration.mail";
+    private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
     private final RegistrationRepository registrationRepository;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Session getCurrentSession() {
-            return entityManager.unwrap(Session.class);
-    }
+    @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private MessagingService messagingService;
+
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @Autowired
     private ReligionService religionService;
@@ -106,8 +139,21 @@ public class RegistrationService {
     private MarriageRegistrationNoGenerator registrationNoGenerator;
 
     @Autowired
+    private ApplicationIndexService applicationIndexService;
+
+    @Autowired
+    private FileStoreService fileStoreService;
+    
+    @Autowired
+    private DocumentService documentService;
+
+    @Autowired
     public RegistrationService(final RegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
+    }
+
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
@@ -116,33 +162,32 @@ public class RegistrationService {
     }
 
     @Transactional
-    public Registration update(final Registration registraion) {
-        return registrationRepository.saveAndFlush(registraion);
+    public Registration update(final Registration registration) {
+        return registrationRepository.saveAndFlush(registration);
     }
 
     public Registration get(Long id) {
         return registrationRepository.findById(id);
     }
-    
+
     public Registration get(String registrationNo) {
         return registrationRepository.findByRegistrationNo(registrationNo);
     }
 
     @Transactional
-    public void createRegistration(final Registration registration, WorkflowContainer workflowContainer) {
+    public String createRegistration(final Registration registration, WorkflowContainer workflowContainer) {
 
-        if (StringUtils.isBlank(registration.getApplicationNo()))
+        if (StringUtils.isBlank(registration.getApplicationNo())) {
             registration.setApplicationNo(applicationNumberGenerator.generate());
+            registration.setApplicationDate(new Date());
+        }
 
+        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
-        // final Fee fee = feeService.getFeeForDate(registration.getDateOfMarriage());
-        final Fee fee = feeService.getFee(1L);
-        registration.setFeeCriteria(fee.getCriteria());
-        registration.setFeePaid(fee.getFees());
-        registration.setDemand(registrationDemandService.createDemand(new BigDecimal(fee.getFees())));
+        registration.setDemand(registrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
         registration.setStatus(ApplicationStatus.Created);
 
         if (registration.getPriest().getReligion().getId() != null)
@@ -151,15 +196,64 @@ public class RegistrationService {
             registration.setPriest(null);
 
         registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
-
+        
+        Map<Long, Document> documentAndId = new HashMap<Long, Document>();
+        documentService.getAll().forEach(document -> documentAndId.put(document.getId(), document));
+        
+        addDocumentsToFileStore(registration.getHusband(), documentAndId);
+        addDocumentsToFileStore(registration.getWife(), documentAndId);
+                
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
 
         create(registration);
+
+        return registration.getApplicationNo();
+    }
+    
+    /**
+     * Adds the uploaded document to file store and associates with the applicant
+     * 
+     * @param applicant
+     */
+    private void addDocumentsToFileStore(Applicant applicant, Map<Long, Document> documentAndId) {
+        applicant.getDocuments().stream()
+                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                .map(document -> {
+                    ApplicantDocument applicantDocument = new ApplicantDocument();
+                    applicantDocument.setDocument(documentAndId.get(document.getId()));
+                    applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                    return applicantDocument;
+                }).collect(Collectors.toList())
+         .forEach(doc -> applicant.addApplicantDocument(doc));
     }
 
     @Transactional
-    public Registration forwardRegistration(Long id, WorkflowContainer workflowContainer) {
+    public Registration forwardRegistration(Long id, Registration regModel, WorkflowContainer workflowContainer) {
         Registration registration = get(id);
+
+        registration.setDateOfMarriage(regModel.getDateOfMarriage());
+        registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
+        registration.setFeeCriteria(regModel.getFeeCriteria());
+        registration.setFeePaid(regModel.getFeePaid());
+        registration.setHusband(regModel.getHusband());
+        registration.setWife(regModel.getWife());
+
+        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
+        registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
+        registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
+        registration.setDemand(registrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+        registration.setStatus(ApplicationStatus.Created);
+
+        registration.getWitnesses().clear();
+
+        regModel.getWitnesses().stream().forEach(witness -> {
+            witness.setRegistration(registration);
+            registration.getWitnesses().add(witness);
+        });
+
+        registration.getHusband().setProofsAttached(regModel.getHusband().getProofsAttached());
+        registration.getWife().setProofsAttached(regModel.getWife().getProofsAttached());
+
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         return update(registration);
     }
@@ -170,54 +264,108 @@ public class RegistrationService {
         registration.setStatus(ApplicationStatus.Approved);
         registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-
+        sendSMS(registration);
+        sendEmail(registration);
+        createRegistrationAppIndex(registration);
         return update(registration);
+    }
+
+    private void createRegistrationAppIndex(Registration registration) {
+        User user = securityUtils.getCurrentUser();
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(Constants.MODULE_NAME,
+                registration.getApplicationNo(),
+                registration.getApplicationDate(), FeeType.REGISTRATION.name(),
+                registration.getHusband().getFullName().concat(registration.getWife().getFullName()),
+                registration.getStatus().name(),
+                "/mrs/registration/" + registration.getId(),
+                registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName())
+                        .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
+
+        applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
+    }
+
+    private void sendSMS(Registration registration) {
+        String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
+
+        if (registration.getStatus() == ApplicationStatus.Rejected)
+            msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
+
+        String message = messageSource.getMessage(msgKey,
+                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
+                        registration.getRegistrationNo() },
+                null);
+        messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
+        messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
+    }
+
+    private void sendEmail(Registration registration) {
+        String msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL;
+        String msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT;
+
+        if (registration.getStatus() == ApplicationStatus.Rejected) {
+            msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL;
+            msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
+        }
+
+        String message = messageSource.getMessage(msgKeyMail,
+                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
+                        registration.getRegistrationNo() },
+                null);
+
+        String subject = messageSource.getMessage(msgKeyMailSubject, null, null);
+        messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
+        messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
     }
 
     @Transactional
     public Registration rejectRegistration(Long id, WorkflowContainer workflowContainer) {
         Registration registration = get(id);
-        // Capture the reason for rejection
         registration.setStatus(ApplicationStatus.Rejected);
         registration.setRejectionReason(workflowContainer.getApproverComments());
+        sendSMS(registration);
+        sendEmail(registration);
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
 
         return update(registration);
     }
-    
+
     public List<Registration> getRegistrations() {
         return registrationRepository.findAll();
     }
 
     public List<Registration> searchRegistration(SearchModel searchModel) {
         Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
-        Criteria husbandCriteria = getCurrentSession().createCriteria(Applicant.class, "husband");
-        
+
         if (StringUtils.isNotBlank(searchModel.getRegistrationNo()))
             criteria.add(Restrictions.eq("registrationNo", searchModel.getRegistrationNo()));
-        
+
         if (searchModel.getDateOfMarriage() != null)
             criteria.add(Restrictions.eq("dateOfMarriage", searchModel.getDateOfMarriage()));
-        
-       // criteria.add(Restrictions.eq("husbandName.firstName", searchModel.getHusbandName()));
-        
-        if (StringUtils.isNotBlank(searchModel.getHusbandName())) 
-            criteria.createCriteria("husband").add(Restrictions.like("name.firstName", searchModel.getHusbandName()));
-        
+
+        if (StringUtils.isNotBlank(searchModel.getHusbandName()))
+            criteria.createCriteria("husband").add(Restrictions.ilike("name.firstName", searchModel.getHusbandName()));
+
         if (StringUtils.isNotBlank(searchModel.getWifeName()))
-            criteria.createCriteria("wife").add(Restrictions.like("name.firstName", searchModel.getWifeName()));
-        
+            criteria.createCriteria("wife").add(Restrictions.ilike("name.firstName", searchModel.getWifeName()));
+
         return criteria.list();
     }
 
-    /*private static class RegistrationExpressions {
-        public static Expression withRegistrationNo(String registrationNo) {
-            return QRegistration.registration.registrationNo.eq(registrationNo);
+    private FileStoreMapper addToFileStore(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper = null;
+        try {
+            fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                    file.getContentType(), Constants.MODULE_NAME);
+        } catch (final Exception e) {
+            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }
+        return fileStoreMapper;
+    }
 
-        public static Expression withDateOfMarrige(Date dateOfMarriage) {
-            return QRegistration.registration.dateOfMarriage.eq(dateOfMarriage);
-        }
-    }*/
+    /*
+     * private static class RegistrationExpressions { public static Expression withRegistrationNo(String registrationNo) { return
+     * QRegistration.registration.registrationNo.eq(registrationNo); } public static Expression withDateOfMarrige(Date
+     * dateOfMarriage) { return QRegistration.registration.dateOfMarriage.eq(dateOfMarriage); } }
+     */
 
 }

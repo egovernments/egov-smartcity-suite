@@ -37,30 +37,46 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<form:form  id="registrationsuccess-form" method ="post" class="form-horizontal form-groups-bordered">
-	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-			<div class="panel-title text-center">
-			</div>
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="form-group">
+		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.indi.docs"/>
+		</label>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.husband"/>
 		</div>
-		<div class="row">
-			<div class="col-md-12 text-center">
-				<c:choose>
-					<c:when test="${registration.applicationNo != 'null'}">
-						Marriage is registered with application no : <c:out value="${registration.applicationNo}"></c:out>, <br /> Please use this for your any future references.
-					</c:when>
-					<c:otherwise>
-						Registration is successfull...!!
-					</c:otherwise>
-				</c:choose>
-				<strong>Registration is successfull...!!</strong>
-			</div>
+		<div class="col-sm-1"></div>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.wife"/>
 		</div>
 	</div>
-</form:form>
+	<div class="col-sm-1"></div>
+</div>
+
+<c:forEach var="doc" items="${documents}" varStatus="status">	
+	
+	<div class="form-group">	
+		<div class="col-sm-2"></div>
+		<form:hidden id="husband.documents[${status.index}].id" path="husband.documents[${status.index}].id" value="${doc.id}" /> 
+		<form:hidden id="wife.documents[${status.index}].id" path="wife.documents[${status.index}].id" value="${doc.id}" /> 
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out>
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="file${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
+		</div>
+		<div class="col-sm-1"></div>
+	</div>
+</c:forEach> 
+
+<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>

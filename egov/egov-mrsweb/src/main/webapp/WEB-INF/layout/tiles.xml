@@ -85,8 +85,13 @@
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search.jsp"/>
     </definition>
     
-     <definition name="registrationCollection-view" extends="base_layout">
+    <definition name="registrationCollection-view" extends="base_layout">
         <put-attribute name="page-title" value="title.registration" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/collection/registrationCollection-view.jsp"/>
+    </definition>
+    
+    <definition name="registration-certificate" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-certificate.jsp"/>
     </definition>
 </tiles-definitions>

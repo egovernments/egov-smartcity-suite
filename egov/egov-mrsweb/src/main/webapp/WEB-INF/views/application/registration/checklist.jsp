@@ -132,6 +132,8 @@
 			<spring:message code="lbl.photograph"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-1 text-center">
+			<form:hidden path="husband.proofsAttached.id"/>
+			<form:hidden path="wife.proofsAttached.id"/>
 			<form:checkbox path="husband.proofsAttached.photograph" value="false" />
 			<form:errors path="husband.proofsAttached.photograph" cssClass="add-margin error-msg"/>
 		</div>
@@ -161,11 +163,11 @@
 			<spring:message code="lbl.school.leaving.certificate"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.schoolLeavingCertificate" value="false"  />
+			<form:checkbox path="husband.proofsAttached.schoolLeavingCertificate" value="${husband.proofsAttached.schoolLeavingCertificate}"  id="ageProofHLC"/>
 			<form:errors path="husband.proofsAttached.schoolLeavingCertificate" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">			
-			<form:checkbox path="wife.proofsAttached.schoolLeavingCertificate" value="false" />
+			<form:checkbox path="wife.proofsAttached.schoolLeavingCertificate" value="${wife.proofsAttached.schoolLeavingCertificate}" id="ageProofWLC"/>
 			<form:errors path="wife.proofsAttached.schoolLeavingCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -178,11 +180,11 @@
 			<spring:message code="lbl.birth.certificate"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.birthCertificate" value="false" />
+			<form:checkbox path="husband.proofsAttached.birthCertificate" value="${husband.proofsAttached.birthCertificate}" id="ageProofHBC" />
 			<form:errors path="husband.proofsAttached.birthCertificate" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.birthCertificate" value="false" />			
+			<form:checkbox path="wife.proofsAttached.birthCertificate" value="${wife.proofsAttached.birthCertificate}" id="ageProofWBC"/>			
 			<form:errors path="wife.proofsAttached.birthCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -195,11 +197,11 @@
 			<spring:message code="lbl.divorce.certificate"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.divorceCertificate" value="false" />
+			<form:checkbox path="husband.proofsAttached.divorceCertificate" value="${husband.proofsAttached.divorceCertificate}" id="ageProofHDC"/>
 			<form:errors path="husband.proofsAttached.divorceCertificate" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.divorceCertificate" value="false" />
+			<form:checkbox path="wife.proofsAttached.divorceCertificate" value="${wife.proofsAttached.divorceCertificate}" id="ageProofWDC"/>
 			<form:errors path="wife.proofsAttached.divorceCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -212,11 +214,11 @@
 			<spring:message code="lbl.death.certificate"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.deaceasedDeathCertificate" value="false" />
+			<form:checkbox path="husband.proofsAttached.deaceasedDeathCertificate" value="${husband.proofsAttached.deaceasedDeathCertificate}" id="ageProofHDDC"/>
 			<form:errors path="husband.proofsAttached.deaceasedDeathCertificate" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.deaceasedDeathCertificate" value="false" />
+			<form:checkbox path="wife.proofsAttached.deaceasedDeathCertificate" value="${wife.proofsAttached.deaceasedDeathCertificate}" id="ageProofWDDC"/>
 			<form:errors path="wife.proofsAttached.deaceasedDeathCertificate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -225,7 +227,7 @@
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
-		<label class="col-sm-4 text-left view-content">
+		<label class="col-sm-4 control-label text-left view-content">
 			<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
 			<spring:message code="lbl.proof.note"/>
 		</label>
@@ -238,14 +240,14 @@
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
-			<spring:message code="lbl.school.leaving.certificate"/>
+			<spring:message code="lbl.passport"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.passport" value="false" />
+			<form:checkbox path="husband.proofsAttached.passport" value="${husband.proofsAttached.passport}" id="resProofHPassport"/>
 			<form:errors path="husband.proofsAttached.passport" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.passport" value="false" />
+			<form:checkbox path="wife.proofsAttached.passport" value="${wife.proofsAttached.passport}" id="resProofWPassport"/>
 			<form:errors path="wife.proofsAttached.passport" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -255,14 +257,14 @@
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
-			<spring:message code="lbl.birth.certificate"/>
+			<spring:message code="lbl.ration.card"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.rationCard" value="false" />
+			<form:checkbox path="husband.proofsAttached.rationCard" value="${husband.proofsAttached.rationCard}" id="resProofHRC"/>
 			<form:errors path="husband.proofsAttached.rationCard" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.rationCard" value="false" />
+			<form:checkbox path="wife.proofsAttached.rationCard" value="${wife.proofsAttached.rationCard}" id="resProofWRC"/>
 			<form:errors path="wife.proofsAttached.rationCard" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -272,14 +274,14 @@
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
-			<spring:message code="lbl.school.leaving.certificate"/>
+			<spring:message code="lbl.mseb.bill"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.msebBill" value="false" />
+			<form:checkbox path="husband.proofsAttached.msebBill" value="${husband.proofsAttached.msebBill}" id="resProofHMsebBill"/>
 			<form:errors path="husband.proofsAttached.msebBill" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.msebBill" value="false" />
+			<form:checkbox path="wife.proofsAttached.msebBill" value="${wife.proofsAttached.msebBill}" id="resProofWMsebBill"/>
 			<form:errors path="wife.proofsAttached.msebBill" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
@@ -289,16 +291,31 @@
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 control-label text-right">
-			<spring:message code="lbl.birth.certificate"/>
+			<spring:message code="lbl.telephone.bill"/>
 		</label>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="husband.proofsAttached.telephoneBill" value="false" />
+			<form:checkbox path="husband.proofsAttached.telephoneBill" value="${husband.proofsAttached.telephoneBill}" id="resProofHTeleBill"/>
 			<form:errors path="husband.proofsAttached.telephoneBill" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-1 text-center">
-			<form:checkbox path="wife.proofsAttached.telephoneBill" value="false" />
+			<form:checkbox path="wife.proofsAttached.telephoneBill" value="${wife.proofsAttached.telephoneBill}" id="resProofWTeleBill"/>
 			<form:errors path="wife.proofsAttached.telephoneBill" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 	<div class="col-sm-4"></div>
 </div>
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="form-group">
+		<label class="col-sm-4 add-margin">
+			<spring:message code="lbl.same.place"/>
+		</label>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="coupleFromSamePlace" value="${coupleFromSamePlace}" />
+			<form:errors path="coupleFromSamePlace" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+	<div class="col-sm-4"></div>
+</div>
+
+<jsp:include page="documentdetails.jsp"></jsp:include>

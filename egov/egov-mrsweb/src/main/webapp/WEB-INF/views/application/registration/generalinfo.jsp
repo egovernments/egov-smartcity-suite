@@ -45,10 +45,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
+<br />
 <div class="row add-margin view-content">
-	<div class="co-sm-12"><spring:message code="subheading.general.info"/></div>
+	<div class="col-sm-3 text-center"><spring:message code="subheading.general.info"/></div>
+	<div class="col-sm-9 text-center"></div>
 </div>
-<div class="row">
+<%-- <div class="row">
 	<div class="form-group">
 		<label class="col-sm-3 control-label">
 			<spring:message code="lbl.application.no"/><span class="mandatory"></span>
@@ -65,7 +67,8 @@
             <form:errors path="applicationDate" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-</div>
+</div> --%>
+<form:hidden path="id"/>
 <div class="row">
 	<div class="form-group">
 		<label class="col-sm-3 control-label">
@@ -79,7 +82,7 @@
 			<spring:message code="lbl.zone"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="zone.id" id="select-marriageAct" cssClass="form-control" 
+			<form:select path="zone.id" id="select-zones" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                  <form:options items="${zones}" itemValue="id" itemLabel="name"/>
@@ -105,18 +108,41 @@
 			<spring:message code="lbl.place.of.marriage"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+			<form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="placeOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 </div>
-
+<div class="row">
+	<div class="form-group">
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.fee.criteria"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:select path="feePaid" id="select-marriagefees" cssClass="form-control" 
+						cssErrorClass="form-control error" required="required">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${feesList}" itemValue="fees" itemLabel="criteria"/>
+             </form:select>
+             <form:hidden path="feeCriteria" name="feeCriteria" id="txt_feecriteria"/>
+		</div>
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.fee"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="feePaid" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="feePaid" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+</div>
 <c:set value="husband" var="applicant" scope="request"></c:set>
+<form:hidden path="husband.id" />
 <jsp:include page="applicantinfo.jsp">
 	<jsp:param value="subheading.husband.info" name="header" />
 </jsp:include>
 
 <c:set value="wife" var="applicant" scope="request"></c:set>
+<form:hidden path="wife.id" />
 <jsp:include page="applicantinfo.jsp">
 	<jsp:param value="subheading.wife.info" name="header" />
 </jsp:include>

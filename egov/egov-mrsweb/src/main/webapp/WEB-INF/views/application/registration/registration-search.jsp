@@ -47,7 +47,6 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" />
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
@@ -103,6 +102,7 @@
 						</div>
 					</div>
 					<div class="row">
+
 						<div class="form-group">
 							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.date.of.marriage" /></label>
 	
@@ -135,7 +135,7 @@
 	    	<thead>
 	    		<tr>
 	    			<th>id</th><th>Registration No</th><th>Registration Date</th><th>Marriage Date</th><th>Husband Name</th><th>Wife Name</th>
-	    			<th>Is Certificate issued?</th><th>Status</th><th>Fee</th>
+	    			<th>Is Certificate issued?</th><th>Status</th><th>Marriage Fee</th><th>Is fee collected?</th><th>Action</th>
 	    		</tr>
 	    	</thead>
 	    	<tbody>
@@ -143,14 +143,14 @@
 		</table>
 	</div>
 </div>
-<div class="row hidden" id="btn_searchresults">
+<%-- <div class="row hidden" id="btn_searchresults">
 	<div class="text-center">					
 		<button type="submit" class="btn btn-primary disabled" id="btn_viewdetails"><spring:message code="lbl.view.details"/></button>
 		<c:if test="${isCollectionOperator}">
 			<button type="submit" class="btn btn-primary disabled" id="btn_collectfee"><spring:message code="lbl.collect.fee"/></button>
 		</c:if>
 	</div>
-</div>
+</div> --%>
 						
 						
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
