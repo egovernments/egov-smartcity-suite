@@ -40,7 +40,6 @@
 package org.egov.mrs.domain.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +52,6 @@ import javax.persistence.PersistenceContext;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -74,7 +72,6 @@ import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.RegistrationRepository;
 import org.egov.mrs.masters.service.ActService;
-import org.egov.mrs.masters.service.FeeService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.elasticsearch.common.lang3.StringUtils;
@@ -103,9 +100,6 @@ public class RegistrationService {
     private EntityManager entityManager;
 
     @Autowired
-    private ModuleService moduleService;
-
-    @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
@@ -119,9 +113,6 @@ public class RegistrationService {
 
     @Autowired
     private ActService actService;
-
-    @Autowired
-    private FeeService feeService;
 
     @Autowired
     private RegistrationDemandService registrationDemandService;
@@ -143,7 +134,7 @@ public class RegistrationService {
 
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     private DocumentService documentService;
 
@@ -166,16 +157,16 @@ public class RegistrationService {
         return registrationRepository.saveAndFlush(registration);
     }
 
-    public Registration get(Long id) {
+    public Registration get(final Long id) {
         return registrationRepository.findById(id);
     }
 
-    public Registration get(String registrationNo) {
+    public Registration get(final String registrationNo) {
         return registrationRepository.findByRegistrationNo(registrationNo);
     }
 
     @Transactional
-    public String createRegistration(final Registration registration, WorkflowContainer workflowContainer) {
+    public String createRegistration(final Registration registration, final WorkflowContainer workflowContainer) {
 
         if (StringUtils.isBlank(registration.getApplicationNo())) {
             registration.setApplicationNo(applicationNumberGenerator.generate());
@@ -196,40 +187,41 @@ public class RegistrationService {
             registration.setPriest(null);
 
         registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
-        
-        Map<Long, Document> documentAndId = new HashMap<Long, Document>();
+
+        final Map<Long, Document> documentAndId = new HashMap<Long, Document>();
         documentService.getAll().forEach(document -> documentAndId.put(document.getId(), document));
-        
+
         addDocumentsToFileStore(registration.getHusband(), documentAndId);
         addDocumentsToFileStore(registration.getWife(), documentAndId);
-                
+
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
 
         create(registration);
 
         return registration.getApplicationNo();
     }
-    
+
     /**
      * Adds the uploaded document to file store and associates with the applicant
-     * 
+     *
      * @param applicant
      */
-    private void addDocumentsToFileStore(Applicant applicant, Map<Long, Document> documentAndId) {
+    private void addDocumentsToFileStore(final Applicant applicant, final Map<Long, Document> documentAndId) {
         applicant.getDocuments().stream()
-                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-                .map(document -> {
-                    ApplicantDocument applicantDocument = new ApplicantDocument();
-                    applicantDocument.setDocument(documentAndId.get(document.getId()));
-                    applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-                    return applicantDocument;
-                }).collect(Collectors.toList())
-         .forEach(doc -> applicant.addApplicantDocument(doc));
+        .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+        .map(document -> {
+            final ApplicantDocument applicantDocument = new ApplicantDocument();
+            applicantDocument.setDocument(documentAndId.get(document.getId()));
+            applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+            return applicantDocument;
+        }).collect(Collectors.toList())
+                .forEach(doc -> applicant.addApplicantDocument(doc));
     }
 
     @Transactional
-    public Registration forwardRegistration(Long id, Registration regModel, WorkflowContainer workflowContainer) {
-        Registration registration = get(id);
+    public Registration forwardRegistration(final Long id, final Registration regModel,
+            final WorkflowContainer workflowContainer) {
+        final Registration registration = get(id);
 
         registration.setDateOfMarriage(regModel.getDateOfMarriage());
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
@@ -259,8 +251,8 @@ public class RegistrationService {
     }
 
     @Transactional
-    public Registration approveRegistration(Long id, WorkflowContainer workflowContainer) {
-        Registration registration = get(id);
+    public Registration approveRegistration(final Long id, final WorkflowContainer workflowContainer) {
+        final Registration registration = get(id);
         registration.setStatus(ApplicationStatus.Approved);
         registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
@@ -270,8 +262,8 @@ public class RegistrationService {
         return update(registration);
     }
 
-    private void createRegistrationAppIndex(Registration registration) {
-        User user = securityUtils.getCurrentUser();
+    private void createRegistrationAppIndex(final Registration registration) {
+        final User user = securityUtils.getCurrentUser();
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(Constants.MODULE_NAME,
                 registration.getApplicationNo(),
                 registration.getApplicationDate(), FeeType.REGISTRATION.name(),
@@ -279,26 +271,26 @@ public class RegistrationService {
                 registration.getStatus().name(),
                 "/mrs/registration/" + registration.getId(),
                 registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName())
-                        .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
+        .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
 
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
     }
 
-    private void sendSMS(Registration registration) {
+    private void sendSMS(final Registration registration) {
         String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
 
         if (registration.getStatus() == ApplicationStatus.Rejected)
             msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
 
-        String message = messageSource.getMessage(msgKey,
+        final String message = messageSource.getMessage(msgKey,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
-                        registration.getRegistrationNo() },
+                registration.getRegistrationNo() },
                 null);
         messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
         messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
     }
 
-    private void sendEmail(Registration registration) {
+    private void sendEmail(final Registration registration) {
         String msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL;
         String msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT;
 
@@ -307,19 +299,19 @@ public class RegistrationService {
             msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
         }
 
-        String message = messageSource.getMessage(msgKeyMail,
+        final String message = messageSource.getMessage(msgKeyMail,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
-                        registration.getRegistrationNo() },
+                registration.getRegistrationNo() },
                 null);
 
-        String subject = messageSource.getMessage(msgKeyMailSubject, null, null);
+        final String subject = messageSource.getMessage(msgKeyMailSubject, null, null);
         messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
         messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
     }
 
     @Transactional
-    public Registration rejectRegistration(Long id, WorkflowContainer workflowContainer) {
-        Registration registration = get(id);
+    public Registration rejectRegistration(final Long id, final WorkflowContainer workflowContainer) {
+        final Registration registration = get(id);
         registration.setStatus(ApplicationStatus.Rejected);
         registration.setRejectionReason(workflowContainer.getApproverComments());
         sendSMS(registration);
@@ -333,8 +325,8 @@ public class RegistrationService {
         return registrationRepository.findAll();
     }
 
-    public List<Registration> searchRegistration(SearchModel searchModel) {
-        Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
+    public List<Registration> searchRegistration(final SearchModel searchModel) {
+        final Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
 
         if (StringUtils.isNotBlank(searchModel.getRegistrationNo()))
             criteria.add(Restrictions.eq("registrationNo", searchModel.getRegistrationNo()));
