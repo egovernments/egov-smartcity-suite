@@ -409,7 +409,7 @@ public class ChallanAction extends BaseFormAction {
             // Start work flow for all newly created receipts This might
             // internally
             // create vouchers also based on configuration
-            receiptHeaderService.startWorkflow(receiptHeader, Boolean.FALSE);
+            receiptHeaderService.startWorkflow(receiptHeader);
             receiptHeaderService.getSession().flush();
             LOGGER.info("Workflow started for newly created receipts");
 

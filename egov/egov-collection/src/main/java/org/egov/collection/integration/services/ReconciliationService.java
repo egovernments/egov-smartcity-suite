@@ -110,7 +110,7 @@ public class ReconciliationService {
         boolean updateToSystems = true;
 
         try {
-            receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader, Boolean.FALSE);
+            receiptHeaderService.createVoucherForReceipt(onlinePaymentReceiptHeader);
             LOGGER.debug("Updated financial systems and created voucher.");
         } catch (final ApplicationRuntimeException ex) {
             updateToSystems = false;

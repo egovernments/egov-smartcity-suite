@@ -471,7 +471,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         LOGGER.info("Miscellaneous Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
 
         try {
-            receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.FALSE);
+            receiptHeaderService.createVoucherForReceipt(receiptHeader);
             LOGGER.debug("Updated financial systems and created voucher.");
         } catch (final ApplicationRuntimeException ex) {
             errors.add(new ValidationError(
