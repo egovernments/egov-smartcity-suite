@@ -49,6 +49,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
@@ -65,6 +67,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_REJECTED;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -73,13 +76,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
@@ -89,6 +96,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
@@ -100,6 +108,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -143,7 +152,13 @@ public class VacancyRemissionService {
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
+    @Autowired
+    private MessagingService messagingService;
+    
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
     }
@@ -211,6 +226,7 @@ public class VacancyRemissionService {
             vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected");
+            buildSMS(vacancyRemission, workFlowAction);
         } else {
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_FORWARD))
                 vacancyRemission.setStatus(VR_STATUS_WORKFLOW);
@@ -227,6 +243,8 @@ public class VacancyRemissionService {
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION);
                 vacancyRemission.getBasicProperty().setUnderWorkflow(true);
+                //to be enabled once acknowledgement feature is developed
+                //buildSMS(vacancyRemission, workFlowAction);
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemission.getStateType(), null, null,
                         additionalRule, vacancyRemission.getCurrentState().getValue(), null);
@@ -243,6 +261,8 @@ public class VacancyRemissionService {
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
+	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+	            		buildSMS(vacancyRemission, workFlowAction);
             }
 
         }
@@ -424,6 +444,30 @@ public class VacancyRemissionService {
             final Boolean propertyByEmployee, final HashMap<String, String> meesevaParams) {
         return saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, additionalRule, workFlowAction,
                 propertyByEmployee);
+
+    }
+    
+    public void buildSMS(VacancyRemission vacancyRemission, String workFlowAction) {
+        final User user = vacancyRemission.getBasicProperty().getPrimaryOwner();
+        final String assessmentNo = vacancyRemission.getBasicProperty().getUpicNo();
+        final String mobileNumber = user.getMobileNumber();
+        final String applicantName = user.getName();
+        String smsMsg = "";
+        if (workFlowAction.equals(WFLOW_ACTION_STEP_FORWARD)) {
+        	//to be enabled once acknowledgement feature is developed
+            /*smsMsg = messageSource.getMessage("vacancyremission.ack.sms",
+                    new String[] { applicantName, assessmentNo }, null);*/
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
+            smsMsg = messageSource.getMessage("vacancyremission.rejection.sms", new String[] { applicantName, assessmentNo,
+                    EgovThreadLocals.getMunicipalityName() }, null);
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
+            smsMsg = messageSource.getMessage("vacancyremission.approval.sms", new String[] { applicantName, assessmentNo,
+                    EgovThreadLocals.getMunicipalityName() },null);
+        }
+
+        if (StringUtils.isNotBlank(mobileNumber)) {
+            messagingService.sendSMS(mobileNumber, smsMsg);
+        }
 
     }
 }
