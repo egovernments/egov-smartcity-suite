@@ -932,7 +932,8 @@ public class PaymentAction extends BasePaymentAction {
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
         paymentActionHelper.getPaymentBills(paymentheader);
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("payment.voucher.rejected"));
+            addActionMessage(getText("payment.voucher.rejected",
+                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getMessage("payment.voucher.approved",
                     new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
@@ -1176,12 +1177,6 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting modify...");
         paymentheader = getPayment();
-        if (paymentheader != null && paymentheader.getState() != null)
-            if (!validateOwner(paymentheader.getState())) {
-                final List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("exp", "Invalid Access"));
-                throw new ValidationException(errors);
-            }
         final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode))
         {

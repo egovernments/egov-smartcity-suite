@@ -1009,8 +1009,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         final List<CChartOfAccounts> list = glCodeList.get(type);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Calling getDeductionAmt..................................$$$$$$$$$$$$$$$$$$$$$$ " + list.size());
-        if (LOGGER.isDebugEnabled())
-            for (final CChartOfAccounts coa : list)
+       for (final CChartOfAccounts coa : list)
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("#################################" + coa.getGlcode() + ":::::" + coa.getPurposeId());
         populateDeductionData(billList, deductionAmtMap, type, glCodeList.get(type));
@@ -1034,8 +1033,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             if (dedList != null && dedList.size() != 0)
                 for (final Object[] obj : dedList) {
                     final BigInteger id = ((BigInteger) obj[0]);
-                    if (billIds.contains(id))
-                        deductionAmtMap.put(id.longValue(), obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
+                    if (billIds.contains(id.longValue()))
+                        deductionAmtMap.put(id.longValue(), obj[1] == null ? BigDecimal.ZERO : BigDecimal.valueOf((Double)obj[1]));
                 }
         }
         if (LOGGER.isDebugEnabled())
