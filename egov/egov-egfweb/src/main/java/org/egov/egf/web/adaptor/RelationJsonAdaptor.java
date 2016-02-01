@@ -20,7 +20,11 @@ public class RelationJsonAdaptor implements JsonSerializer<Relation>
 			jsonObject.addProperty("isactive", relation.getIsactive());
 			jsonObject.addProperty("panno", relation.getPanno());
 			jsonObject.addProperty("bankaccount", relation.getBankaccount());
+			if(relation.getBank()!=null)
 			jsonObject.addProperty("bank", relation.getBank().getName());
+			else
+			jsonObject.addProperty("bank", "");
+				
 			jsonObject.addProperty("id", relation.getId());    
 		} 
 		return jsonObject;  }

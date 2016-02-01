@@ -39,7 +39,6 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -72,32 +71,32 @@ public class Relation extends AbstractPersistable<Integer>implements java.io.Ser
 	private Integer id;
 	
 	
-	//@SearchResult
-	//@SearchField
+	
+	
 	@Column(unique = true)
 	@NotNull
 	@Length(max=50)
 	private String code;
-	//@SearchResult
-	//@SearchField
+	
+	
 	@NotNull
 	@Length(max=50)
 	private String name;
 
 	@Length(max=300)
 	private String address;
-	//@SearchResult
-	//@SearchField
+	
+	
 	@Length(max=10)
 	private String mobile;
 	@Length(max=25)
 	private String email;
 	@Length(max=250)
 	private String narration;
-	//@SearchResult
+	
 	private Boolean isactive;
-	//@SearchResult
-	//@SearchField
+	
+	
 	@Length(max=10)
 	private String panno;
 
@@ -108,13 +107,13 @@ public class Relation extends AbstractPersistable<Integer>implements java.io.Ser
 	
 	@Length(max=25)
 	private String regno;
-	//@SearchResult
+	
 	@Length(max=25)
 	private String bankaccount;
 	
 	@Length(max=12)
 	private String ifsccode;
-	//@SearchResult
+	
 	@ManyToOne
 	@JoinColumn(name="bank")
 	private Bank bank;

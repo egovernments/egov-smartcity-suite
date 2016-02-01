@@ -68,53 +68,7 @@ public class MastersService
     @Autowired
     private static AccountdetailkeyHibernateDAO accntDtlKeyDAO;
 
-    @Transactional
-    public AccountEntity createAccountEntity(final AccountEntity accountEntity)
-    {
-        AccountEntity accEntity = null;
-        Accountdetailkey adk = null;
-        // String[] attrName=null;
-        try
-        {
-
-            final AccountEntityHibernateDAO accEntDao = MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
-            if (accountEntity.getAccountDetailKeyId() != null
-                    && (accountEntity.getAccountdetailtype().getName().equalsIgnoreCase("Creditor") || accountEntity
-                            .getAccountdetailtype().getName().equalsIgnoreCase("Employee")))
-            {
-                final Accountdetailtype accountdetailtype = getAccountdetailtypeByName(accountEntity.getAccountdetailtype()
-                        .getName());
-                adk = new Accountdetailkey();
-                adk.setGroupid(1);
-                adk.setDetailkey(accountEntity.getAccountDetailKeyId());
-                adk.setDetailname(accountdetailtype.getAttributename());
-                adk.setAccountdetailtype(accountdetailtype);
-                accntDtlKeyDAO.create(adk);
-                return accountEntity;
-            }
-            else
-            {
-                accEntity = (AccountEntity) accEntDao.create(accountEntity);
-                if (accEntity.getCode() == null)
-                    accEntity.setCode(accEntity.getId().toString());
-                final Accountdetailtype accountdetailtype = getAccountdetailtypeByName(accountEntity.getAccountdetailtype()
-                        .getName());
-                adk = new Accountdetailkey();
-                adk.setGroupid(1);
-                adk.setDetailkey(accEntity.getId());
-                adk.setDetailname(accountdetailtype.getAttributename());
-                adk.setAccountdetailtype(accountdetailtype);
-                accntDtlKeyDAO.create(adk);
-                return accEntity;
-            }
-
-        } catch (final Exception ex)
-        {
-            LOGGER.error("Exp=" + ex.getMessage());
-            //
-            throw new ApplicationRuntimeException("Exception: " + ex.getMessage());
-        }
-    }
+   
 
     @Transactional
     public void updateAccountEntity(final AccountEntity accountEntity)

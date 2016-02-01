@@ -56,6 +56,10 @@ public class RelationJpaService {
 		Bank bank = entityManager.find(Bank.class, id);
 		relation.setBank(bank);
 		}
+		else
+		{
+			relation.setBank(null);
+		}
 		return relationRepository.save(relation);
 	}
 
