@@ -592,20 +592,21 @@ public class CollectionsUtil {
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
             final ReceiptHeader receiptHeaderObj) {
-        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDESIGNATIONS);
-        return null;/*
-                     * (List<Designation>) scripts.get(0).eval( Script.createContext("departmentId", departmentId, "collUtil",
-                     * this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
-                     */
+        List<Designation> designations = new ArrayList();
+        designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
+        return designations;
     }
 
     public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
             final ReceiptHeader receiptHeaderObj) {
-        scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDEPARTMENTS);
-        return null; /*
-                      * (List<Department>) scripts.get(0).eval( Script.createContext("loggedInUser", loggedInUser, "collUtil",
-                      * this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
-                      */
+        List<Department> departments = new ArrayList();
+      /*  Department department;
+        if (receiptHeaderObj.getChallan().getState()==null)
+                department=getDepartmentOfUser(loggedInUser);
+        else
+                department=receiptHeaderObj.getReceiptMisc().getDepartment();*/
+        departments.addAll(departmentService.getAllDepartments());
+        return departments; 
     }
 
     public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {

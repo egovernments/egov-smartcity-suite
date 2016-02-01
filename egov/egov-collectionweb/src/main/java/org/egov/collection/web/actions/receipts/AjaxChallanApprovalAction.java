@@ -43,6 +43,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.EmployeeView;
@@ -50,9 +54,12 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+@ParentPackage("egov")
+@Results({
+        @Result(name = "userList", location = "ajaxChallanApproval-userList.jsp"),
+        @Result(name = "designationList", location = "ajaxChallanApproval-designationList.jsp")
+})
 public class AjaxChallanApprovalAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String USERLIST = "userList";
@@ -71,6 +78,7 @@ public class AjaxChallanApprovalAction extends BaseFormAction {
         return null;
     }
 
+    @Action(value = "/receipts/ajaxChallanApproval-positionUserList")
     public String positionUserList() {
         if (designationId != null && approverDeptId != null)
             try
@@ -84,6 +92,7 @@ public class AjaxChallanApprovalAction extends BaseFormAction {
 
     }
 
+    @Action(value = "/receipts/ajaxChallanApproval-approverDesignationList")
     public String approverDesignationList() {
         if (approverDeptId != null)
             designationMasterList = collectionsUtil.getDesignationsAllowedForChallanApproval(

@@ -52,4 +52,5 @@
 		<aop:aspectj-autoproxy proxy-target-class="true"/>
 		<import resource="applicationSecurityContext-collection.xml"/>
 	    <import resource="applicationQuartzContext-collection.xml"/>
+	    <import resource="classpath*:config/spring/applicationContext-collection.xml"/>
 </beans>

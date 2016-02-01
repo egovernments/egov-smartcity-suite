@@ -389,13 +389,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     public void startWorkflow(final ReceiptHeader receiptHeader, final Boolean receiptBulkUpload)
             throws ApplicationRuntimeException {
-        Boolean createVoucherForBillingService = Boolean.TRUE;
+        Boolean createVoucherForBillingService = Boolean.FALSE;
         if (receiptHeader.getService().getVoucherCutOffDate() != null
                 && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
-            if (receiptHeader.getService().getVoucherCreation() != null)
+            if (receiptHeader.getService().getVoucherCreation())
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation() != null)
+            if (receiptHeader.getService().getVoucherCreation())
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         Position position = null;
         if (receiptHeader.getState() == null) {
@@ -416,7 +416,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                         .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
         }
-        if (createVoucherForBillingService) {
+        else  if (createVoucherForBillingService) {
             createVouchers(receiptHeader, receiptBulkUpload);
             receiptHeader
                     .transition()
