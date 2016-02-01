@@ -113,6 +113,7 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -1503,8 +1504,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                                 +
                                 " where mb.payvhid=" + header.getVoucherheader().getId()
                                 + " and br.id= mis.billid and mis.voucherheaderid=billvhid order by mb.paidto,mb.BILLDATE")
-                .addScalar("billId").addScalar("billNumber").addScalar("billDate").addScalar("payTo").addScalar("netAmt")
-                .addScalar("passedAmt").addScalar("paymentAmt").addScalar("expType")
+                .addScalar("billId",BigDecimalType.INSTANCE).addScalar("billNumber").addScalar("billDate").addScalar("payTo").addScalar("netAmt",BigDecimalType.INSTANCE)
+                .addScalar("passedAmt",BigDecimalType.INSTANCE).addScalar("paymentAmt",BigDecimalType.INSTANCE).addScalar("expType")
                 .setResultTransformer(Transformers.aliasToBean(PaymentBean.class));
         paymentBeanList = query.list();
         BigDecimal earlierAmt;

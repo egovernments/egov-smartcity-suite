@@ -969,13 +969,13 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting view...");
         paymentheader = getPayment();
-        if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty()
+       /* if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty()
                 && paymentheader.getState().getValue().contains("Rejected"))
         {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Completed view.");
             return modify();
-        }
+        }*/
         miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
         getChequeInfo(paymentheader);
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view"))
