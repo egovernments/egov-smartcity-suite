@@ -1094,10 +1094,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             paidList = getEarlierPaymentAmtList(type);
             if (paidList != null && paidList.size() != 0)
                 for (final Object[] obj : paidList) {
-                    final long id = ((BigDecimal) obj[0]).longValue();
+                    final long id = ((BigInteger) obj[0]).longValue();
                     if (billIds.contains(id))
-                        paymentAmtMap.put(((BigDecimal) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
-                                : (BigDecimal) obj[1]);
+                        paymentAmtMap.put(((BigInteger) obj[0]).longValue(), obj[1] == null ? BigDecimal.ZERO
+                                : BigDecimal.valueOf((Double)obj[1]));
                 }
         }
         if (LOGGER.isDebugEnabled())
