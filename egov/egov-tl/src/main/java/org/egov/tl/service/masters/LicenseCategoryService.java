@@ -66,7 +66,7 @@ public class LicenseCategoryService{
      * @return
      */
     public LicenseCategory findCategoryByName(final String name) {
-        return licenseCategoryRepository.findByNameContainingIgnoreCase(name); 
+        return licenseCategoryRepository.findByNameIgnoreCase(name); 
     }
 
     /**
@@ -75,7 +75,7 @@ public class LicenseCategoryService{
      * @return
      */
     public LicenseCategory findCategoryByCode(final String code) {
-        return licenseCategoryRepository.findByCodeContainingIgnoreCase(code);
+        return licenseCategoryRepository.findByCodeIgnoreCase(code);
     }
     
     
