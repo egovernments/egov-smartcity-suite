@@ -221,7 +221,7 @@ public class CancelVoucherAction extends BaseFormAction {
             final String uncancelledRemittances = " SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, Generalledgerdetail gld, "
                     + " CGeneralLedger gl, EgRemittance rd, CVoucherHeader vh ,Vouchermis billmis, CVoucherHeader remittedvh  WHERE "
                     + " r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld AND gld.generalledger=gl AND r.egRemittance=rd AND"
-                    + " rd.voucherheader=remittedvh AND gl.voucherHeaderId =vh  and vh.isConfirmed != 1 AND "
+                    + " rd.voucherheader=remittedvh AND gl.voucherHeaderId =vh  AND "
                     + " remittedvh =billmis.voucherheaderid and remittedvh.status!="
                     + FinancialConstants.CANCELLEDVOUCHERSTATUS
                     + " ";
@@ -258,7 +258,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     + ","
                     + FinancialConstants.CANCELLEDVOUCHERSTATUS
                     +
-                    ") and vh.isConfirmed != 1  "
+                    ")  "
                     + filter
                     + "  and not Exists(select 'true' from InstrumentVoucher iv where iv.voucherHeaderId=vh.id) order by vh.voucherNumber)";
             voucherList.addAll(persistenceService.findAllBy(noChequePaymentQry));
@@ -272,7 +272,7 @@ public class CancelVoucherAction extends BaseFormAction {
                                     + ", voucherheader vh 	"
                                     + " LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID"
                                     + "	LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID INNER JOIN (SELECT MAX(iv1.instrumentheaderid) AS maxihid,"
-                                    + " iv1.voucherheaderid               AS iv1vhid   FROM egf_instrumentvoucher iv1 GROUP BY iv1.voucherheaderid) ON maxihid=IH.ID "
+                                    + " iv1.voucherheaderid               AS iv1vhid   FROM egf_instrumentvoucher iv1 GROUP BY iv1.voucherheaderid)as INST ON maxihid=IH.ID "
                                     + " WHERE	IV.VOUCHERHEADERID  IS NOT NULL	AND status.description   IN ('"
                                     + FinancialConstants.INSTRUMENT_CANCELLED_STATUS + "','" +
                                     FinancialConstants.INSTRUMENT_SURRENDERED_STATUS + "','"
@@ -280,7 +280,7 @@ public class CancelVoucherAction extends BaseFormAction {
                                     + " and status.id=ih.id_status and vh.status not in ("
                                     + FinancialConstants.PREAPPROVEDVOUCHERSTATUS + ","
                                     + FinancialConstants.CANCELLEDVOUCHERSTATUS +
-                                    ") and vh.isConfirmed != 1 " + VoucherMisJoin + filterQuerySql);
+                                    ") " + VoucherMisJoin + filterQuerySql);
             final Iterator<BigDecimal> payList = query1.list().iterator();
             //persistenceService.setType(CVoucherHeader.class);
             while (payList.hasNext())
