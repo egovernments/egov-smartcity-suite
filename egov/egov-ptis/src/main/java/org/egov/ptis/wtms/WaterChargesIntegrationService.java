@@ -40,10 +40,14 @@
 
 package org.egov.ptis.wtms;
 
+import org.egov.ptis.domain.model.AssessmentDetails;
+
 public interface WaterChargesIntegrationService {
 
-    public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(String PropertyId);
+    public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(String propertyId);
 
-    public boolean updateBillNo(String Propertyid, String Billno);
+    public boolean updateBillNo(String propertyId, String billNumber);
+
+    public void updateConsumerIndex(final AssessmentDetails assessmentDetails);
 
 }

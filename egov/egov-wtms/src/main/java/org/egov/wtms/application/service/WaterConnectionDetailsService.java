@@ -264,7 +264,7 @@ public class WaterConnectionDetailsService {
         }
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        updateConsmerIndex(savedWaterConnectionDetails);
+        updateConsumerIndex(savedWaterConnectionDetails);
         // TODO Updation of Demand should be done here also fixupdate indexes
         return savedWaterConnectionDetails;
     }
@@ -683,7 +683,7 @@ public class WaterConnectionDetailsService {
         return approvalPosition;
     }
 
-    public void updateConsmerIndex(final WaterConnectionDetails waterConnectionDetails) {
+    public void updateConsumerIndex(final WaterConnectionDetails waterConnectionDetails) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
