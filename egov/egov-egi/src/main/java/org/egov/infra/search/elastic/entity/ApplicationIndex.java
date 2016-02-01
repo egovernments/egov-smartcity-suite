@@ -42,6 +42,8 @@ package org.egov.infra.search.elastic.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,6 +52,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
+import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
@@ -137,8 +141,22 @@ public class ApplicationIndex extends AbstractAuditable {
     @Searchable(name = "aadharnumber", group = Searchable.Group.SEARCHABLE)
     private String aadharNumber;
 
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(name = "elapseddays", group = Searchable.Group.CLAUSES)
     private Integer elapsedDays;
+    
+    @Length(max = 50)
+    @Enumerated(EnumType.STRING)
+    @Searchable(name = "closed", group = Searchable.Group.CLAUSES)
+    private ClosureStatus closed;
+    
+    @Length(max = 50)
+    @Enumerated(EnumType.STRING)
+    @Searchable(name = "approved", group = Searchable.Group.CLAUSES)
+    private ApprovalStatus approved;
+    
+    @Length(max = 50)
+    @Searchable(name = "channel", group = Searchable.Group.CLAUSES)
+    private String channel;
 
     @Override
     public Long getId() {
@@ -276,6 +294,30 @@ public class ApplicationIndex extends AbstractAuditable {
 
     public void setElapsedDays(final Integer elapsedDays) {
         this.elapsedDays = elapsedDays;
+    }
+
+    public ClosureStatus getClosed() {
+        return closed;
+    }
+
+    public void setClosed(ClosureStatus closed) {
+        this.closed = closed;
+    }
+
+    public ApprovalStatus getApproved() {
+        return approved;
+    }
+
+    public void setApproved(ApprovalStatus approved) {
+        this.approved = approved;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
 }
