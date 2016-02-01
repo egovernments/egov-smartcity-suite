@@ -166,7 +166,7 @@ today = dd+'/'+mm+'/'+yyyy;
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value='trialbalancereport' />
 			</jsp:include>
-			<span class="mandatory" id="error"> <s:actionerror /> <s:fielderror />
+			<span class="mandatory1" id="error"> <s:actionerror /> <s:fielderror />
 				<s:actionmessage />
 			</span>
 			<div class="subheadsmallnew">

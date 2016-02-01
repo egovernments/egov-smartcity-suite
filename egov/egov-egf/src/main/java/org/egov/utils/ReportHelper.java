@@ -1046,7 +1046,7 @@ public class ReportHelper {
              
             dr = drb.build();
             
-            JRXlsExporter exporter = new JRXlsExporter();
+          // JRXlsExporter exporter = new JRXlsExporter();
             ds = new JRBeanCollectionDataSource(al);
             return DynamicJasperHelper.generateJasperPrint(dr,
                     new ClassicLayoutManager(), ds);
