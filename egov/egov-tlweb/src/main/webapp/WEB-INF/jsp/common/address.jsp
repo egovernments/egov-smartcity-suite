@@ -64,11 +64,13 @@ function getZoneWard(){
 		success: function (response) {
 			jQuery('#zoneName').val(response.zoneName);
 			jQuery('#wardName').val(response.wardName);
+			jQuery('#parentBndryId').val(response.wardId);
 		}, 
 		error: function (response) {
 			console.log("failed");
 			jQuery('#zoneName').val('');
 			jQuery('#wardName').val('');
+			jQuery('#parentBndryId').val('');
 			bootbox.alert("No boundary details mapped for locality")
 		}
 	});

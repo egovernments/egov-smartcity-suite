@@ -238,7 +238,7 @@ function makeReadyOnly() {
 				<td class="greybox" width="30%"><s:text name="unit.rate.fromDate"/> <span class="mandatory1">*</span> :</td>
 				<td class="greybox" width="30%">
 				    <s:date name="fromDate" var="efffromDate" format="dd/MM/yyyy" /> 
-					<s:textfield name="fromDate"  cssClass="form-control datepicker" id="fromDate" size="12" autocomplete="off" maxlength="12" value="%{#efffromDate}" onchange="checkIfCategoryExists();"></s:textfield>
+					<s:textfield name="fromDate"  cssClass="form-control datepicker" id="fromDate" size="12" autocomplete="off" maxlength="12" value="%{#efffromDate}"></s:textfield>
 				<td class="greybox" width="20%">&nbsp;</td>
 			</tr>
 			

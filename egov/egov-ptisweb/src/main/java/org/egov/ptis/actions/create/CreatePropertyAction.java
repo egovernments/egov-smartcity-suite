@@ -702,7 +702,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final List<WallType> wallTypeList = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypeList = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-                "from PropertyTypeMaster order by orderNo");
+                "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
         final List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
                 "from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);

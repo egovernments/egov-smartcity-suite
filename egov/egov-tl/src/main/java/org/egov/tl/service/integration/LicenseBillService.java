@@ -57,6 +57,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -445,26 +446,24 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * TODO -- Fix this while implementing work flow
      */
     @Transactional
-    protected void updateWorkflowState(final TradeLicense license2) {
-        if (license2.getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE))
+    protected void updateWorkflowState(final TradeLicense licenseObj) {
+        if (licenseObj.getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE))
             // license2.changeState(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE +
             // Constants.WORKFLOW_STATE_COLLECTED,
             // license2.getState().getow(), "Amount Collected ");
-            license2.updateExpiryDate(new Date());
+            licenseObj.updateExpiryDate(new Date());
         else {
-            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license2.getCreatedBy()
+            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy()
                     .getId());
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
-            /*
-             * LicenseStatus activeStatus = (LicenseStatus) persistenceService
-             * .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-             * license2.setStatus(activeStatus);
-             */
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_COLLECTION_CODE);
+            licenseObj.setEgwStatus(statusChange);
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                     Constants.WF_STATE_COLLECTION_PENDING, null);
-            license2.getState();
-            license2.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
+           
+            licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
             .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());
 

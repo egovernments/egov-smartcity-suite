@@ -39,15 +39,27 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 jQuery(document).ready(function ($) {
+
 	if ($('#mode').val() == 'dataFound') {
 		jQuery('#schedleOfrateDiv').removeClass('hidden');
 	}
+	
+	$("#addnewsche").click(function() {
+		
+		alert('called!');
+		console.log($('#noscheduleofrateDataFoundDiv').html());
+		$('div[id="noscheduleofrateDataFoundDiv"]').addClass('hidden');
+		$('div[id="schedleOfrateDiv"]').removeClass('hidden');
+		
+		return false;
+	});
+	
 	$("#addnewscheduleofrate").click(function() {
 		$("#noscheduleofrateDataFoundDiv").hide();
 		$("#schedleOfrateDiv").show();
 		jQuery('#schedleOfrateDiv').removeClass('hidden');
 	});
-	
+
 	$('#category').change(function(){
 		$.ajax({
 			url: "/adtax/ajax-subCategories",    
@@ -71,29 +83,60 @@ jQuery(document).ready(function ($) {
 		});
 	});
 	
-	$(".btn-add")
-	.click(
-			function() {
+	$(".btn-add").click(function() {
 				var currentIndex = $("#schedleOfrateTable tr").length;
 				    	addNewRowToTable(currentIndex);
 			});
 
 	
-	$('#schedleOfrateBtn').click(function() {
+/*	$('#unitrate').keypress(function(e) {
+		var k = e.charCode;
+		return(k == 0 || (k >= 48 && k <= 57));
+	});*/
+	
+	$('#schedleOfrateBtn').click(function() {  
 			$('#scheduleOfRateformResult').attr('method', 'post');
 	 	$('#scheduleOfRateformResult').attr('action', '/adtax/rates/create');
-	 //	$('#viewEscalation').submit(); 
 	});
-	$('#scheduleOfRateSearch').click(function() {
+	$('#scheduleOfRateSearch').click(function() {  
 		$('#scheduleOfRateform').attr('method', 'post');
  	$('#scheduleOfRateform').attr('action', '/adtax/rates/search');
 
 	});
 	
 	$('#scheduleOfRateSearchAgain').click(function() {
-		$('#scheduleOfRateform').attr('method', 'GET');
- 	$('#scheduleOfRateform').attr('action', '/adtax/rates/search');
+		$('#scheduleOfRateSearchform').attr('method', 'get');
+ 	$('#scheduleOfRateSearchform').attr('action', '/adtax/rates/search');
 
+	});
+		
+	var datadcbtbl = $('#search-scheduleofrate-table');
+	$('#searchScheduleOfRate').click(function(e){
+		datadcbtbl.dataTable({
+			"ajax": {url:"/adtax/rates/search-for-scheduleofrate",
+				type:"POST",
+				data : {
+					category : $('#category').val(),
+	        		subCategory : $('#subCategory').val(),
+	        		uom : $('#unitofmeasure').val(),
+	        		rateClass :$('#rateClass').val(),
+	        		finyear : $('#financialyear').val(),
+	        	}
+			},
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"bDestroy": true,
+			"autoWidth": false,
+			"columns" : [
+		      { "data" : "unitFrom", "title":"Unit From"},
+			  { "data" : "unitTo", "title": "Unit To"},
+			  { "data" : "amount", "title": "Unit Of Measure"}
+			  
+			  ]
+		});
+		e.stopPropagation();
+		e.preventDefault();
 	});
 
 });
@@ -143,7 +186,6 @@ function addNewRowToTable(currentIndex)
 				patternvalidation();
 				
 				$('#advertisementRatesDetailsUnitFrom'+(currentIndex - 1)).val($('#advertisementRatesDetailsUnitTo'+(currentIndex - 2)).val());
-				
 				
 	    	}
 }

@@ -99,7 +99,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
      */
     private static final long serialVersionUID = 1658431423915247237L;
     private static final Logger LOGGER = Logger.getLogger(BudgetAppropriationRegisterReportAction.class);
-    String jasperpath = "/org/egov/web/actions/report/BudgetAppReport.jasper";
+    String jasperpath = "/reports/templates/BudgetAppReport.jasper";
     private Department department = new Department();
     private CFunction function = new CFunction();
     private Fund fund = new Fund();

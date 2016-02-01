@@ -39,12 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -56,7 +53,6 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -64,18 +60,16 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.model.voucher.WorkflowBean;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.services.voucher.JournalVoucherActionHelper;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "journalVoucher-new.jsp") })
@@ -87,7 +81,12 @@ public class JournalVoucherAction extends BaseVoucherAction
     private List<VoucherDetails> subLedgerlist;
     private String target;
     protected String showMode;
+    @Autowired
+    @Qualifier("voucherService")
     private VoucherService voucherService;
+    @Autowired
+    @Qualifier("journalVoucherActionHelper")
+    private JournalVoucherActionHelper journalVoucherActionHelper;
     private VoucherTypeBean voucherTypeBean;
     private String buttonValue;
     private String message = "";
@@ -123,7 +122,6 @@ public class JournalVoucherAction extends BaseVoucherAction
         billDetailslist.add(new VoucherDetails());
         subLedgerlist.add(new VoucherDetails());
         // setting the typa as default for reusing billvoucher.nextdesg workflow
-        loadApproverUser("default");
         showMode = NEW;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherAction | new | End");
@@ -157,8 +155,6 @@ public class JournalVoucherAction extends BaseVoucherAction
     @SkipValidation
     @Action(value = "/voucher/journalVoucher-create")
     public String create() throws Exception {
-        HibernateUtil.getCurrentSession().setDefaultReadOnly(false);
-        HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherAction | create Method | Start");
         removeEmptyRowsAccoutDetail(billDetailslist);
@@ -173,34 +169,13 @@ public class JournalVoucherAction extends BaseVoucherAction
             LOGGER.debug("Sub ledger details List size  : " + subLedgerlist.size());
         loadSchemeSubscheme();
         validateFields();
-        voucherHeader.setName(voucherTypeBean.getVoucherName());
-        voucherHeader.setType(voucherTypeBean.getVoucherType());
-        voucherHeader.setVoucherSubType(voucherTypeBean.getVoucherSubType());
-
-        // String autoVoucherType
-        // =EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME,voucherTypeBean.getVoucherNumType().toLowerCase(),"",FinancialConstants.CATEGORYFORVNO);
-        /*
-         * for (VoucherDetails voucherDetail : billDetailslist) {
-         * voucherDetail.setFunctionIdDetail(voucherHeader.getVouchermis().getFunction().getId()); } for (VoucherDetails
-         * voucherDetail : subLedgerlist) {
-         * voucherDetail.setFunctionDetail(voucherHeader.getVouchermis().getFunction().getCode()); }
-         */
         if (!validateData(billDetailslist, subLedgerlist))
             try {
-
-                createVoucherAndledger(billDetailslist, subLedgerlist);
                 if (!"JVGeneral".equalsIgnoreCase(voucherTypeBean.getVoucherName())) {
-                    final String totalamount = parameters.get("totaldbamount")[0];
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug(" Journal Voucher Action | Bill create | voucher name = " + voucherTypeBean.getVoucherName());
-                    voucherService.createBillForVoucherSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,
-                            new BigDecimal(totalamount));
+                    voucherTypeBean.setTotalAmount(parameters.get("totaldbamount")[0]);
                 }
                 populateWorkflowBean();
-                transitionWorkFlow(voucherHeader, workflowBean);
-                persistenceService.applyAuditing(voucherHeader.getState());
-                voucherService.create(voucherHeader);
-                //addActionMessage(voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
+                voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean, workflowBean);
                 message = "Voucher  "
                         + voucherHeader.getVoucherNumber()
                         + " Created Sucessfully"
@@ -209,9 +184,6 @@ public class JournalVoucherAction extends BaseVoucherAction
                                 new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
                                         .getOwnerPosition()) });
                 target = "success";
-
-                // billDetailslist.clear();
-                // subLedgerlist.clear();
                 if (voucherHeader.getVouchermis().getBudgetaryAppnumber() != null)
                     addActionMessage(getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
                             .getBudgetaryAppnumber() }));
@@ -230,6 +202,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                 errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
                 throw new ValidationException(errors);
             } catch (final Exception e) {
+                e.printStackTrace();
                 clearMessages();
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
@@ -238,32 +211,12 @@ public class JournalVoucherAction extends BaseVoucherAction
                 errors.add(new ValidationError("exp", e.getMessage()));
                 throw new ValidationException(errors);
             } finally {
-                loadApproverUser("default");
             }
         else if (subLedgerlist.size() == 0)
             subLedgerlist.add(new VoucherDetails());
-        loadApproverUser("default");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherAction | create Method | End");
         return NEW;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void loadApproverUser(final String type) {
-        final String scriptName = "billvoucher.nextDesg";
-        departmentId = voucherService.getCurrentDepartment().getId().intValue();
-        final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        final Map<String, Object> map = voucherService.getDesgByDeptAndType(type, scriptName);
-        if (null == map.get("wfitemstate")) {
-            // If the department is mandatory show the logged in users assigned department only.
-            if (mandatoryFields.contains("department"))
-                addDropdownData("approvaldepartmentList", voucherHelper.getAllAssgnDeptforUser());
-            else
-                addDropdownData("approvaldepartmentList", masterCache.get("egi-department"));
-            addDropdownData("designationList", (List<Designation>) map.get("designationList"));
-            wfitemstate = "";
-        } else
-            wfitemstate = map.get("wfitemstate").toString();
     }
 
     public Position getPosition() throws ApplicationRuntimeException
@@ -276,24 +229,6 @@ public class JournalVoucherAction extends BaseVoucherAction
             LOGGER.debug("position===" + pos.getId());
         return pos;
     }
-
-/*    public List<Action> getValidActions(final String purpose) {
-        final List<Action> validButtons = new ArrayList<Action>();
-        final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "pjv.validbuttons")
-                .get(0);
-        final List<String> list = (List<String>) scriptService.executeScript(validScript, ScriptService.createContext(
-                "eisCommonServiceBean", eisCommonService, "userId", EgovThreadLocals.getUserId().intValue(), "date", new Date(),
-                "purpose", purpose));
-        for (final Object s : list)
-        {
-            if ("invalid".equals(s))
-                break;
-            final Action action = (Action) getPersistenceService().find(
-                    " from org.egov.infstr.workflow.Action where type='CVoucherHeader' and name=?", s.toString());
-            validButtons.add(action);
-        }
-        return validButtons;
-    }*/
 
     public List<VoucherDetails> getBillDetailslist() {
         return billDetailslist;
@@ -317,14 +252,6 @@ public class JournalVoucherAction extends BaseVoucherAction
 
     public void setTarget(final String target) {
         this.target = target;
-    }
-
-    public VoucherService getVoucherService() {
-        return voucherService;
-    }
-
-    public void setVoucherService(final VoucherService voucherService) {
-        this.voucherService = voucherService;
     }
 
     public VoucherTypeBean getVoucherTypeBean() {

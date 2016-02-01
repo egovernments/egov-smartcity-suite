@@ -60,10 +60,7 @@ import org.joda.time.LocalDate;
 public class TradeLicense extends License {
     private static final Logger LOGGER = Logger.getLogger(TradeLicense.class);
     private static final long serialVersionUID = 1L;
-    private List<MotorDetails> installedMotorList;
-    private Boolean motorInstalled;
     private List<MotorMaster> motorMasterList;
-    private BigDecimal totalHP;
     private List<String> hotelGradeList;
     private String hotelGrade;
     private List hotelSubCatList;
@@ -87,8 +84,6 @@ public class TradeLicense extends License {
         for (final MotorMaster mm : getMotorMasterList()) {
             if (mm.getMotorHpFrom().compareTo(BigDecimal.ZERO) == 0 && mm.getMotorHpTo().compareTo(BigDecimal.ZERO) == 0)
                 baseMotorFee = mm.getUsingFee();
-            if (getTotalHP() == null || mm.getMotorHpFrom().compareTo(getTotalHP()) <= 0
-                    && mm.getMotorHpTo().compareTo(getTotalHP()) >= 0)
                 actualMotorFee = mm.getUsingFee();
         }
         LOGGER.debug("Adding Motor Fee Details...");
@@ -97,15 +92,9 @@ public class TradeLicense extends License {
                 for (final EgDemandReason reason : dm.getEgDemandReasons())
                     if (reason.getEgInstallmentMaster().getId().equals(installment.getId()))
                         // check for current year installment only
-                        if (getTotalHP() == null || getTotalHP().compareTo(BigDecimal.ZERO) == 0) {
                             addtionalDemandDetails.add(EgDemandDetails
                                     .fromReasonAndAmounts(baseMotorFee, reason, BigDecimal.ZERO));
                             amountToaddBaseDemand = baseMotorFee;
-                        } else {
-                            addtionalDemandDetails.add(EgDemandDetails.fromReasonAndAmounts(actualMotorFee, reason,
-                                    BigDecimal.ZERO));
-                            amountToaddBaseDemand = actualMotorFee;
-                        }
         LOGGER.debug("Adding Motor Fee completed.");
         LOGGER.debug("Addtional Demand Details size." + addtionalDemandDetails.size());
         LOGGER.debug("Adding additinal Demand Details done.");
@@ -143,22 +132,6 @@ public class TradeLicense extends License {
         return nocNumber.toString();
     }
 
-    public List<MotorDetails> getInstalledMotorList() {
-        return installedMotorList;
-    }
-
-    public Boolean getMotorInstalled() {
-        return motorInstalled;
-    }
-
-    public List<MotorMaster> getMotorMasterList() {
-        return motorMasterList;
-    }
-
-    public List<String> getHotelGradeList() {
-        return hotelGradeList;
-    }
-
     @Override
     public String getStateDetails() {
         final StringBuffer details = new StringBuffer();
@@ -167,47 +140,7 @@ public class TradeLicense extends License {
         details.append(getApplicationNumber());
         return details.toString();
     }
-
-    public BigDecimal getTotalHP() {
-        return totalHP;
-    }
-
-    public Boolean isMotorInstalled() {
-        return motorInstalled;
-    }
-
-    public void setInstalledMotorList(final List<MotorDetails> installedMotorList) {
-        this.installedMotorList = installedMotorList;
-    }
-
-    public void setMotorInstalled(final Boolean motorInstalled) {
-        this.motorInstalled = motorInstalled;
-    }
-
-    public void setMotorMasterList(final List<MotorMaster> motorMasterList) {
-        this.motorMasterList = motorMasterList;
-    }
-
-    public void setTotalHP(final BigDecimal totalHP) {
-        this.totalHP = totalHP;
-    }
-
-    public void setHotelGradeList(final List<String> hotelGradeList) {
-        this.hotelGradeList = hotelGradeList;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("TradeLicense={");
-        str.append(super.toString());
-        str.append("  motorInstalled=").append(motorInstalled);
-        str.append("  totalHP=").append(totalHP == null ? "null" : totalHP.toString());
-        str.append("  installedMotorList=").append(installedMotorList == null ? "null" : installedMotorList.toString());
-        str.append("}");
-        return str.toString();
-    }
-
+    
     @Override
     public void setCreationAndExpiryDate() {
         setDateOfCreation(new Date());
@@ -252,6 +185,49 @@ public class TradeLicense extends License {
         for (final String element : HOTELGRADE)
             hotelGradeList.add(element);
         return hotelGradeList;
+    }
+    
+    // TODO: Reviewed by Satyam, suggested to rename the variable name, committing after changes
+    public Boolean disablePrintCertificate() {
+        Boolean disablePrintCert = false;
+        if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {
+            final Calendar instance = Calendar.getInstance();
+            final Date newDate = new Date();
+            if (getDateOfCreation() != null) {
+                instance.setTime(getDateOfCreation());
+                instance.add(Calendar.MONTH, 10);
+                if (newDate.before(instance.getTime()))
+                    disablePrintCert = true;
+            }
+        }
+        return disablePrintCert;
+    }
+
+    @Override
+    public String getAuditDetails() {
+        return new StringBuffer("[Name of the Establishment : ").
+                append(getNameOfEstablishment()).append(", Applicant Name : ").append(getLicensee().getApplicantName()).
+                append(", Application Date : ").append(DateUtils.toDefaultDateFormat(new LocalDate(getApplicationDate()))).
+                append(", Address : ").append(licensee.getAddress())
+                .append(", Trade Name : ").append(getTradeName().getName()).append(" ]").toString();
+
+    }
+    
+    public List<MotorMaster> getMotorMasterList() {
+        return motorMasterList;
+    }
+
+    public List<String> getHotelGradeList() {
+        return hotelGradeList;
+    }
+
+    public void setMotorMasterList(final List<MotorMaster> motorMasterList) {
+        this.motorMasterList = motorMasterList;
+    }
+
+
+    public void setHotelGradeList(final List<String> hotelGradeList) {
+        this.hotelGradeList = hotelGradeList;
     }
 
     public String getHotelGrade() {
@@ -316,32 +292,6 @@ public class TradeLicense extends License {
 
     public void setIsCertificateGenerated(final Boolean isCertificateGenerated) {
         this.isCertificateGenerated = isCertificateGenerated;
-    }
-
-    // TODO: Reviewed by Satyam, suggested to rename the variable name, committing after changes
-    public Boolean disablePrintCertificate() {
-        Boolean disablePrintCert = false;
-        if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {
-            final Calendar instance = Calendar.getInstance();
-            final Date newDate = new Date();
-            if (getDateOfCreation() != null) {
-                instance.setTime(getDateOfCreation());
-                instance.add(Calendar.MONTH, 10);
-                if (newDate.before(instance.getTime()))
-                    disablePrintCert = true;
-            }
-        }
-        return disablePrintCert;
-    }
-
-    @Override
-    public String getAuditDetails() {
-        return new StringBuffer("[Name of the Establishment : ").
-                append(getNameOfEstablishment()).append(", Applicant Name : ").append(getLicensee().getApplicantName()).
-                append(", Application Date : ").append(DateUtils.toDefaultDateFormat(new LocalDate(getApplicationDate()))).
-                append(", Address : ").append(licensee.getAddress())
-                .append(", Trade Name : ").append(getTradeName().getName()).append(" ]").toString();
-
     }
 
     @Override

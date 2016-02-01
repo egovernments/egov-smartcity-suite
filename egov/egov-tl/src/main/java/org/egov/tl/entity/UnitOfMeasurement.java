@@ -39,15 +39,18 @@
  */
 package org.egov.tl.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 /**
  * The Class UnitOfMeasurement.
  */
-public class UnitOfMeasurement extends BaseModel {
+public class UnitOfMeasurement extends AbstractAuditable {
     private static final long serialVersionUID = 1L;
+    
+    private Long id;
+    
     @Required(message = "tradelic.uommaster.name.null")
     @Length(max = 50, message = "tradelic.uommaster.name.length")
     private String name;
@@ -80,6 +83,14 @@ public class UnitOfMeasurement extends BaseModel {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+            this.id = id;
     }
 
 }

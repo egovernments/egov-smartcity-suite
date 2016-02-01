@@ -60,7 +60,7 @@ public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("chairPerson", chairPerson.getName());
         jsonObject.addProperty("fromDate", dateformat.format(chairPerson.getFromDate()));
-        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? dateformat.format(chairPerson.getFromDate())
+        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? dateformat.format(chairPerson.getToDate())
                 : "Till Date");
         jsonObject.addProperty("status", chairPerson.isActive() ? WaterTaxConstants.MASTERSTATUSACTIVE : WaterTaxConstants.MASTERSTATUSINACTIVE);
         return jsonObject;

@@ -93,7 +93,7 @@
 								<s:text name="license.zone" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="boundary.parent.name" />
+								<s:property value="parentBoundary.parent.name" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -101,7 +101,7 @@
 								<s:text name="license.division" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content"> 
-								<s:property value="boundary.parent.parent.name" />
+								<s:property value="parentBoundary.name" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin">
 								<s:text name="licensee.applicantname" />

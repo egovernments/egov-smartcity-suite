@@ -78,7 +78,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Results({
     @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "generalLedgerReport-"
             + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp"),
-            @Result(name = "results", location = "generalLedgerReport-results.jsp")
+            @Result(name = "results", location = "generalLedgerReport-results.jsp"),
+            @Result(name = "searchResult", location = "generalLedgerReport-searchDrilldown.jsp")
 })
 public class GeneralLedgerReportAction extends BaseFormAction {
 
@@ -172,6 +173,25 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         return "results";
     }
 
+    @Action(value = "/report/generalLedgerReport-searchDrilldown")
+    public String searchDrilldown()
+    {
+    	HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
+    HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+    if (LOGGER.isDebugEnabled())
+        LOGGER.debug("GeneralLedgerAction | Search | start");
+    try {
+        generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
+    } catch (final Exception e) {
+        e.printStackTrace();
+    }
+    if (LOGGER.isDebugEnabled())
+        LOGGER.debug("GeneralLedgerAction | list | End");
+    heading = getGLHeading();
+    generalLedgerReportBean.setHeading(getGLHeading());
+    prepareNewForm();
+    	return "searchResult";
+    }
     private String getGLHeading() {
 
         String heading = "";
@@ -187,8 +207,8 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))
         {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
-                    Integer.parseInt(generalLedgerReportBean.getDepartmentId()));
-            heading = heading + " under " + dept.getName() + " ";
+                    Long.parseLong(generalLedgerReportBean.getDepartmentId()));
+            heading = heading + " under " + dept.getName() + " Department ";
         }
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
         {
@@ -207,7 +227,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getFieldId()))
         {
             final Boundary ward = (Boundary) persistenceService.find("from Boundary where id = ?",
-                    Integer.parseInt(generalLedgerReportBean.getFieldId()));
+                    Long.parseLong(generalLedgerReportBean.getFieldId()));
             heading = heading + " in " + ward.getName() + " Field ";
         }
         return heading;

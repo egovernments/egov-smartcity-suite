@@ -72,7 +72,7 @@ public class WaterSource extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(min = 3, max = 50)
+    @Length(min = 3, max = 100)
     @Column(name = "watersourcetype", unique = true)
     private String waterSourceType;
 

@@ -42,11 +42,8 @@ package org.egov.tl.web.actions.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -125,15 +122,15 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 	        licenseFee=Constants.LICENSE_FEE_TYPE;
-		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
+		setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAll()));
 		addDropdownData("feeTypeList", feeTypeService.findAll());
 		addDropdownData("rateTypeList", Arrays.asList(RateTypeEnum.values()));
 		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
 		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAllBy("from org.egov.tl.entity.LicenseSubCategory order by id")));
+			setLicenseSubCategoryMap(getFormattedSubCategoryMap(licenseSubCategoryService.findAll()));
 		if (getId() != null){
-			subCategory = licenseSubCategoryService.find("from org.egov.tl.entity.LicenseSubCategory where id=?", getId());
+			subCategory = licenseSubCategoryService.findById(getId());
 			setCategoryId(subCategory.getCategory().getId());
 			// To check whether fee is defined for the subcategory
 			if(userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT))){
@@ -213,11 +210,11 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public String save() throws NumberFormatException, ApplicationException {
 		try {
 			if(categoryId!=null){
-				subCategory.setCategory(licenseCategoryService.find("from LicenseCategory where id=?", categoryId));
+				subCategory.setCategory(licenseCategoryService.findById(categoryId));
 			}
 			subCategory.getLicenseSubCategoryDetails().clear();
 			populateSubCategoryDetails();
-			subCategory = licenseSubCategoryService.persist(subCategory);
+			subCategory = licenseSubCategoryService.create(subCategory);
 		} catch (final ValidationException valEx) {
 			LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
 			throw new ValidationException(valEx.getErrors());
@@ -236,7 +233,7 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	                scDetails.setSubCategory(subCategory);
 	                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
 	                scDetails.setRateType(scDetails.getRateType());
-	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId(), true)); 
+	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId())); 
         	        subCategory.addLicenseSubCategoryDetails(scDetails);
 	            }
 	        } 

@@ -87,6 +87,10 @@ public class UsageTypeService {
         return usageTypeRepository.findByNameContainingIgnoreCase(name);
     }
 
+    public UsageType findByNameIgnoreCase(final String name) {
+        return usageTypeRepository.findByNameIgnoreCase(name);
+    }
+    
     public UsageType findByName(final String name) {
         return usageTypeRepository.findByName(name);
     }
@@ -108,12 +112,10 @@ public class UsageTypeService {
         return usageTypeRepository.findByActiveTrueOrderByIdAsc();
     }
 
-    public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
+   public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
         return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
     }
-    public WaterPropertyUsage getAllUsageTypesByPropertyTypeAndUsageType(final String propertyType,final String usageTypeCode) {
-        return usageTypeRepository.getAllUsageTypesByPropertyTypeAndUsageType(propertyType,usageTypeCode);
-    }
+   
 
     public List<UsageType> getUsageTypeListForRest() {
         final List<UsageType> usageTypeList = usageTypeRepository.findByActiveTrueOrderByIdAsc();

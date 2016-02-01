@@ -112,8 +112,6 @@ import org.egov.infstr.utils.StringUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
     @Result(name = ReceiptAction.EDIT, location = "receipt-edit.jsp"),
@@ -167,9 +165,9 @@ public class ReceiptAction extends BaseFormAction {
      */
     private Long oldReceiptId;
 
-    private Boolean overrideAccountHeads;
+    private Boolean overrideAccountHeads=Boolean.FALSE;
     private Boolean partPaymentAllowed;
-    private Boolean callbackForApportioning;
+    private Boolean callbackForApportioning=Boolean.FALSE;
     private BigDecimal totalAmountToBeCollected;
 
     private Boolean cashAllowed = Boolean.TRUE;

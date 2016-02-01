@@ -133,7 +133,6 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
-    document.getElementById("voucherDate").disabled=true;
     if(document.getElementById("deptId")!=null){
         document.getElementById("deptId").disabled=true;
     }
@@ -647,9 +646,9 @@ var totaldbamt=0,totalcramt=0;
                   <s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/>
           <td width="24%" class="bluebox2">
                 <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-               <!--  <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;" >
+                <a href="javascript:show_calendar('forms[0].voucherDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
                 <img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-                </a> --><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
+                </a><div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
           </td>
                
            <s:if test="%{shouldShowHeaderField('field')}">

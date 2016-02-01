@@ -39,6 +39,9 @@
  */
 package org.egov.tl.web.actions.viewtradelicense;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -77,6 +80,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     private String rejectreason;
     private HttpSession session;
     private HttpServletRequest requestObj;
+    private String applicationNo;
     private Long userId;
 
     @Autowired
@@ -111,8 +115,13 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
 
     @Action(value = "/viewtradelicense/viewTradeLicense-view")
     public String view() {
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
-        return Constants.VIEW;
+        if (this.license() !=null && this.license().getId() != null ){
+            this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+            }
+            else if (applicationNo != null && !applicationNo.isEmpty()) {
+                this.tradeLicense=this.tradeLicenseService.getLicenseByApplicationNumber(applicationNo);
+             }
+            return Constants.VIEW;
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-viewCitizen")
@@ -257,5 +266,18 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     public void setServletRequest(HttpServletRequest arg0) {
         this.requestObj = arg0;
     }
+    
+    public Map<String, Map<String,BigDecimal>> getOutstandingFee(){
+        return this.tradeLicenseService.getOutstandingFee(this.license());
+    }
 
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
+
+    
 }

@@ -61,7 +61,7 @@
 <body>
 	<s:form action="billRegisterReport" name="billRegisterReport"
 		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
 		</span>
 		<font style='color: red; font-weight: bold'>
 			<p class="error-block" id="lblError"></p>
@@ -70,7 +70,7 @@
 			<div class="subheadnew">
 				<s:text name="bill.register.report" />
 			</div>
-		</div>
+		
 		<table align="center" width="100%" cellpadding="0" cellspacing="0">
 			<tr>
 				<jsp:include page="../voucher/voucher-filter.jsp" />
@@ -78,6 +78,7 @@
 			</tr>
 
 			<tr>
+			<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.fromdate" /></td>
 				<td class="greybox"><s:date name="fromDate" id="fromDateId"
 						format="dd/MM/yyyy" /> <s:textfield name="fromDate" id="fromDate"
@@ -97,6 +98,7 @@
 						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
+			<td style="width: 5%"></td>
 				<td class="bluebox"><s:text name="bill.expenditure.type" /></td>
 				<td class="bluebox"><s:select name="exptype" id="exptype"
 						list="dropdownData.expenditureList" headerKey=""
@@ -107,6 +109,7 @@
 						headerValue="----Choose----" /></td>
 			</tr>
 			<tr>
+			<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.number" /></td>
 				<td class="greybox"><s:textfield name="voucherNumber"
 						id="voucherNumber" maxlength="30" value="%{voucherNumber}" /></td>
@@ -117,6 +120,8 @@
 			</tr>
 
 		</table>
+		</div>
+		
 		<div class="buttonbottom">
 			<s:submit method="billSearch" value="Search" cssClass="buttonsubmit"
 				onclick="return validate();" />
@@ -174,12 +179,12 @@
 								property="paymentVoucherNumber" />
 							<display:column title="Cheque No and Date"
 								style="width:11%;text-align:center" property="chequeNumAndDate" />
-							<display:column title="Remittance Payment voucher number"
+							<%-- <display:column title="Remittance Payment voucher number"
 								style="width:11%;text-align:center"
 								property="remittanceVoucherNumber" />
 							<display:column title="Remittance Cheque No and Date"
 								style="width:11%;text-align:center"
-								property="remittanceChequeNumberAndDate" />
+								property="remittanceChequeNumberAndDate" /> --%>
 							<display:column title="Status"
 								style="width:10%;text-align:center" property="status" />
 							<display:caption media="pdf">

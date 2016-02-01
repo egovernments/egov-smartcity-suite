@@ -27,7 +27,7 @@
 	<!-- Context Params Starts -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:config/spring/applicationContext-egfweb.xml</param-value>
+		<param-value>classpath:config/spring/applicationContext-egfweb.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
@@ -121,9 +121,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>applicationTenantResolverFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-		<url-pattern>*.do</url-pattern>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
@@ -158,9 +156,6 @@
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>*.do</url-pattern>
 		<url-pattern>*.jsp</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Execute</filter-name>
@@ -237,6 +232,7 @@
             <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
             <taglib-location>/WEB-INF/tags/tiles-jsp.tld</taglib-location>
         </taglib>
+        
         <taglib>
             <taglib-uri>http://www.springframework.org/tags</taglib-uri>
             <taglib-location>/WEB-INF/tags/spring.tld</taglib-location>

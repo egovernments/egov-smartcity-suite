@@ -97,7 +97,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
     BankAdviceReportInfo bankAdviceInfo;
     private InputStream inputStream;
     private ReportHelper reportHelper;
-    String jasperpath = "/org/egov/web/actions/report/rtgsIssueRegisterReportAction.jasper";
+    String jasperpath = "/reports/templates/rtgsIssueRegisterReportAction.jasper";
     private StringBuffer header = new StringBuffer();
     List<BankAdviceReportInfo> rtgsDisplayList = new ArrayList<BankAdviceReportInfo>();
     List<Object> rtgsReportList = new ArrayList<Object>();

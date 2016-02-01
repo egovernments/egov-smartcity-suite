@@ -121,7 +121,7 @@ function populateApprover() {
 				<s:text name="title.approval.information"/>
 			</div>
 		</div>
-		
+		<div class="row show-row"  id="approverDetailHeading">
 		<div class="form-group">
              <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.department"/><span class="mandatory"></span></label>
              <div class="col-sm-3 add-margin">
@@ -148,7 +148,7 @@ function populateApprover() {
 			  			value="%{approverPositionId}" cssClass="form-control" />
              </div>
          </div>
-         
+         </div>
 </s:if>
 
  <div id="workflowCommentsDiv" align="center">

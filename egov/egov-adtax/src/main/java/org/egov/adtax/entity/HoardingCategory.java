@@ -81,6 +81,7 @@ public class HoardingCategory extends AbstractAuditable {
     private String name;
 
     private boolean active;
+    private boolean propertyMandatory;
 
     @Override
     public Long getId() {
@@ -115,5 +116,14 @@ public class HoardingCategory extends AbstractAuditable {
     public void setActive(final boolean active) {
         this.active = active;
     }
+
+	public boolean isPropertyMandatory() {
+		return propertyMandatory;
+	}
+
+	public void setPropertyMandatory(final boolean propertyMandatory) {
+		this.propertyMandatory = propertyMandatory;
+	}
+
 
 }

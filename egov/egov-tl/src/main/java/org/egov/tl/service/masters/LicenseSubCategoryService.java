@@ -41,15 +41,22 @@ package org.egov.tl.service.masters;
 
 import java.util.List;
 
-import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.repository.LicenseSubCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class LicenseSubCategoryService extends PersistenceService<LicenseSubCategory, Integer> {
-
-    public LicenseSubCategoryService() {
-        setType(LicenseSubCategory.class);
+@Transactional(readOnly = true)
+public class LicenseSubCategoryService {
+    
+    @Autowired
+    private LicenseSubCategoryRepository licenseSubCategoryRepository;
+    
+    @Transactional
+    public LicenseSubCategory create(LicenseSubCategory licenseSubCategory){
+        return  licenseSubCategoryRepository.save(licenseSubCategory);
     }
 
     /**
@@ -58,7 +65,7 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      * @return
      */
     public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {
-        return findAllBy("From org.egov.tl.entity.LicenseSubCategory where category.id=?", categoryId);
+        return licenseSubCategoryRepository.findAllByCategoryId(categoryId);
     }
     
     
@@ -68,7 +75,7 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      * @return
      */
     public LicenseSubCategory findSubCategoryByName(final String name) {
-        return this.find("From org.egov.tl.entity.LicenseSubCategory where upper(name)=?", name.toUpperCase());
+        return licenseSubCategoryRepository.findByName(name);
     }
 
     /**
@@ -77,7 +84,15 @@ public class LicenseSubCategoryService extends PersistenceService<LicenseSubCate
      * @return
      */
     public LicenseSubCategory findSubCategoryByCode(final String code) {
-        return this.find("From org.egov.tl.entity.LicenseSubCategory where upper(code)=?", code.toUpperCase());
+        return licenseSubCategoryRepository.findByCode(code);
+    }
+    
+    public LicenseSubCategory findById(Long subCategoryId){
+        return licenseSubCategoryRepository.findOne(subCategoryId);
+    }
+    
+    public List<LicenseSubCategory> findAll(){
+        return licenseSubCategoryRepository.findAll();
     }
 
 }

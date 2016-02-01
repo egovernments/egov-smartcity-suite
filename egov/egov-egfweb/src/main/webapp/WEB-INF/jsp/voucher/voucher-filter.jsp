@@ -39,9 +39,13 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%!
+       int count = -1;
+   %>
 <tr>
 	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
+		<% count++; %>
 		<td class="bluebox"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<span class="mandatory1">*</span>
@@ -51,7 +55,15 @@
 				headerKey="-1" headerValue="----Choose----"
 				onChange="getSchemelist(this)" value="%{fundId.id}" /></td>
 	</s:if>
+	<%if(count % 2 == 1) {%>
+</tr>
+<tr>
+<td style="width: 5%"></td>
+	<%} %>
+
+
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
+		<% count++; %>
 		<td class="bluebox"><s:text name="voucher.fundsource" /> <s:if
 				test="%{isFieldMandatory('fundsource')}">
 				<span class="mandatory1">*</span>
@@ -61,10 +73,17 @@
 				listValue="name" headerKey="-1" headerValue="----Choose----"
 				value="%{vouchermis.fundsource.id}" /></td>
 	</s:if>
+
+
+
+	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
-	<td style="width: 5%"></td>
+<td style="width: 5%"></td>
+	<%} %>
+
 	<s:if test="%{shouldShowHeaderField('scheme')}">
+		<% count++; %>
 		<egov:ajaxdropdown id="schemeid" fields="['Text','Value']"
 			dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
 		<td class="greybox"><s:text name="voucher.scheme" /> <s:if
@@ -76,10 +95,18 @@
 				listValue="name" headerKey="-1" headerValue="----Choose----"
 				onChange="getSubSchemelist(this)" value="%{vouchermis.schemeid.id}" /></td>
 	</s:if>
+
+
+	<%if(count % 2 == 1) {%>
+</tr>
+<tr>
+<td style="width: 5%"></td>
+	<%} %>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
+		<% count++; %>
 		<egov:ajaxdropdown id="subschemeid" fields="['Text','Value']"
 			dropdownId="subschemeid"
-			url="voucher/common!ajaxLoadSubSchemes.action" />
+			url="voucher/common-ajaxLoadSubSchemes.action" />
 		<td class="greybox"><s:text name="voucher.subscheme" /> <s:if
 				test="%{isFieldMandatory('subscheme')}">
 				<span class="mandatory1">*</span>
@@ -89,10 +116,14 @@
 				listValue="name" headerKey="-1" headerValue="----Choose----"
 				value="%{vouchermis.subschemeid.id}" /></td>
 	</s:if>
+	
+	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
-	<td style="width: 5%"></td>
+<td style="width: 5%"></td>
+	<%} %>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
+		<% count++; %>
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">
 				<span class="mandatory1">*</span>
@@ -102,7 +133,14 @@
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="----Choose----" value="%{vouchermis.functionary.id}" /></td>
 	</s:if>
+
+	<%if(count % 2 == 1) {%>
+</tr>
+<tr>
+<td style="width: 5%"></td>
+	<%} %>
 	<s:if test="%{shouldShowHeaderField('department')}">
+		<% count++; %>
 		<td class="bluebox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="mandatory1">*</span>
@@ -113,21 +151,33 @@
 				headerValue="----Choose----" value="%{vouchermis.departmentid.id}" /></td>
 	</s:if>
 
+	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
-	<td style="width: 5%"></td>
+<td style="width: 5%"></td>
+	<%} %>
 	<s:if test="%{shouldShowHeaderField('field')}">
+		<% count++; %>
 		<td class="greybox"><s:text name="voucher.field" /> <s:if
 				test="%{isFieldMandatory('field')}">
 				<span class="mandatory1">*</span>
-			</s:if><br>
-		<br></td>
+			</s:if><br> <br></td>
 		<td class="greybox"><s:select name="vouchermis.divisionid"
 				id="vouchermis.divisionid" list="dropdownData.fieldList"
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="----Choose----" value="%{vouchermis.divisionid.id}" /></td>
 	</s:if>
+
+	<%if(count % 2 == 1) {%>
 </tr>
+<%} else {%>
+<td></td>
+<td></td>
+</tr>
+<%} %>
+
+
+
 
 <script>
 	function getSchemelist(obj)

@@ -47,38 +47,27 @@
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
 		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
-		modelAttribute="hoarding" commandName="hoarding" enctype="multipart/form-data">
+		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
 					<li class="active"><a data-toggle="tab"
-						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.hoarding.details"/></a></li>
-					<li class=""><a data-toggle="tab" href="#hoardingattachments"
-						data-tabidx="1" aria-expanded="false"><spring:message code="lbl.hoarding.enclosure"/></a></li>
+						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.advertisement.details"/></a></li>
+					<%-- <li class=""><a data-toggle="tab" href="#hoardingattachments"
+						data-tabidx="1" aria-expanded="false"><spring:message code="lbl.advertisement.enclosure"/></a></li> --%>
 				</ul>
 			</div>
 			<div class="panel-body custom-form">
 				<div class="tab-content">
 					<div class="tab-pane fade active in" id="hoardingdetails">
-		
-				<jsp:include page="createHoarding.jsp"></jsp:include>
-				
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.pendingtax"/>
-									<span class="mandatory"></span>
-								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="pendingTax" id="pendingTax" required="required"/>
-                               		<form:errors path="pendingTax" cssClass="error-msg" />
-								</div>
-							</div>
+							<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
+							<jsp:include page="document-create.jsp"></jsp:include>
 			</div>
 			</div>
 
 		</div>					
 		<div class="text-center">
-			<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+			<button type="submit" class="btn btn-primary" id = "submit"><spring:message code="lbl.submit"/></button>
 			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 		</div>
@@ -87,9 +76,21 @@
 </div>
 <script>
 //this is to reset the sub combobox upon field error
-var subcategory = '${hoarding.subCategory.id}';
-var adminBoundry = '${hoarding.ward.id}';
-var revenueBoundary = '${hoarding.locality.id}';
+var subcategory = '${advertisement.subCategory.id}';
+var adminBoundry = '${advertisement.ward.id}';
+var revenueBoundary = '${advertisement.locality.id}';
+
+$('#submit').click(function(e){
+	if($('#hoardingform').valid()){
+			if($('#measurement').val() <= 0){
+				bootbox.alert('Please enter valid measurement');
+				e.preventDefault();
+			}else 
+				document.forms['hoardingform'].submit();
+	}
+	else 
+		return false;
+});
 </script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/hoarding.js'/>"></script>
+<script src="<c:url value='/resources/app/js/legacyAdvertisement.js'/>"></script>

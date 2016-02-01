@@ -131,14 +131,23 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
     private static final Logger LOGGER = Logger.getLogger(VoucherService.class);
+    @Autowired
+    @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("eisCommonService")
     protected EisCommonService eisCommonService;
+    @Autowired
+    @Qualifier("budgetDetailsDAO")
     private BudgetDetailsDAO budgetDetailsDAO;
     private @Autowired AppConfigValueService appConfigValuesService;
-    @Qualifier("voucherHibernateDAO")
+    @Autowired
+    @Qualifier("voucherHibDAO")
     private VoucherHibernateDAO voucherHibDAO;
     @Autowired
     private ChartOfAccountsDAO coaDAO;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
     @Autowired
     private FunctionDAO functionDAO;
     @Autowired
@@ -147,17 +156,25 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private VoucherHeaderDAO voucherHeaderDAO;
     @Autowired
     private CommonsServiceImpl commonsService;
+    @Autowired
+    @Qualifier("voucherHelper")
     private VoucherHelper voucherHelper;
-
+    @Autowired
+    @Qualifier("mastersService")
     private MastersService masters;
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     @Autowired
     private SequenceGenerator sequenceGenerator;
+    @Autowired
+    @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearDAO;
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
+    }
+    public VoucherService() {
+        super(CVoucherHeader.class);
     }
 
     private EISServeable eisService;
@@ -526,7 +543,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("autoVoucherType FOR MODIFIED VOUCHER :" + autoVoucherType);
 
-        final String vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherNumType);
+        final String vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherNumType);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("new fund id :" + voucherHeader.getFundId().getId());
         if (LOGGER.isDebugEnabled())
@@ -708,9 +725,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         String vNumGenMode = null;
         if (null != voucherHeader.getType()
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+            vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
         else
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherTypeBean.getVoucherNumType());
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherTypeBean.getVoucherNumType());
         final String autoVoucherType = EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME, voucherTypeBean
                 .getVoucherNumType()
                 .toLowerCase(), "", FinancialConstants.CATEGORYFORVNO);
@@ -730,9 +747,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         String vNumGenMode = null;
         if (null != voucherHeader.getType()
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes("Journal");
+            vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
         else
-            vNumGenMode = new VoucherTypeForULB().readVoucherTypes(voucherTypeBean.getVoucherNumType());
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherTypeBean.getVoucherNumType());
         final String autoVoucherType = EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME, voucherTypeBean
                 .getVoucherNumType()
                 .toLowerCase(), "", FinancialConstants.CATEGORYFORVNO);

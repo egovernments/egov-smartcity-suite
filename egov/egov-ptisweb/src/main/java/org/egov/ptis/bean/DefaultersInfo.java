@@ -42,105 +42,77 @@ package org.egov.ptis.bean;
 import java.math.BigDecimal;
 
 public class DefaultersInfo {
-		
-	private String zoneNo;
-	private String wardNo;
-	private String partNo;
-	private String indexNo;
+	
+	private Integer slNo;
+	private String assessmentNo;
 	private String ownerName;
+	private String wardName;
 	private String houseNo;
+	private String locality;
+	private String mobileNumber;
 	private BigDecimal arrearsDue;
 	private BigDecimal currentDue;
-	private BigDecimal total;
-	private Integer fromYear;
-	private Integer toYear;
-		
-	public String getZoneNo() {
-		return zoneNo;
-	}
-
-	public void setZoneNo(String zoneNo) {
-		this.zoneNo = zoneNo;
-	}
-
-	public String getWardNo() {
-		return wardNo;
-	}
-
-	public void setWardNo(String wardNo) {
-		this.wardNo = wardNo;
-	}
-
-	public String getPartNo() {
-		return partNo;
-	}
-
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
-	}
-
-	public String getIndexNo() {
-		return indexNo;
-	}
+	private BigDecimal totalDue;
 	
-	public void setIndexNo(String indexNo) {
-		this.indexNo = indexNo;
+	public Integer getSlNo() {
+		return slNo;
 	}
-	
+	public void setSlNo(Integer slNo) {
+		this.slNo = slNo;
+	}
+	public String getAssessmentNo() {
+		return assessmentNo;
+	}
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
+	}
 	public String getOwnerName() {
 		return ownerName;
 	}
-	
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
 	}
-	
+	public String getWardName() {
+		return wardName;
+	}
+	public void setWardName(String wardName) {
+		this.wardName = wardName;
+	}
 	public String getHouseNo() {
 		return houseNo;
 	}
-	
 	public void setHouseNo(String houseNo) {
 		this.houseNo = houseNo;
 	}
-	
+	public String getLocality() {
+		return locality;
+	}
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
 	public BigDecimal getArrearsDue() {
 		return arrearsDue;
 	}
-
 	public void setArrearsDue(BigDecimal arrearsDue) {
 		this.arrearsDue = arrearsDue;
 	}
-
 	public BigDecimal getCurrentDue() {
 		return currentDue;
 	}
-
 	public void setCurrentDue(BigDecimal currentDue) {
 		this.currentDue = currentDue;
 	}
-
-	public BigDecimal getTotal() {
-		return total;
+	public BigDecimal getTotalDue() {
+		return totalDue;
 	}
-
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-
-	public Integer getFromYear() {
-		return fromYear;
-	}
-
-	public void setFromYear(Integer fromYear) {
-		this.fromYear = fromYear;
-	}
-
-	public Integer getToYear() {
-		return toYear;
-	}
-
-	public void setToYear(Integer toYear) {
-		this.toYear = toYear;
+	public void setTotalDue(BigDecimal totalDue) {
+		this.totalDue = totalDue;
 	}
 	
 }

@@ -101,7 +101,7 @@ public class SearchLicenseAction extends BaseFormAction {
     @ValidationErrorPage(value = SearchLicenseAction.COMMON_FORM)
     @Action(value = "/search/searchLicense-commonSearch")
     public String commonSearch() {
-        TradeLicense tradeLicense = this.tradeLicenseService.getTradeLicenseByLicenseNum(this.licenseNumber);
+        TradeLicense tradeLicense = this.tradeLicenseService.getLicenseByLicenseNumber(this.licenseNumber);
         if (tradeLicense == null) {
             this.addActionError(this.getText("validation.license.doesnot.exists"));
             return SearchLicenseAction.COMMON_FORM;

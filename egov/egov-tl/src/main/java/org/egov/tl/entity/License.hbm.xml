@@ -74,9 +74,6 @@
 			<column name="ID_CATEGORY" precision="22" scale="0" />
 		</many-to-one>
 		<property name="tradeArea_weight" column="TRADE_AREA_WEIGHT"  not-null="true" type="java.math.BigDecimal" />
-		<many-to-one name="uom" class="org.egov.tl.entity.UnitOfMeasurement" fetch="select" not-null="true" >
-			<column name="ID_UOM" precision="22" scale="0" />
-		</many-to-one>
 		<property  name="address" column="address" type="java.lang.String"  length="250" not-null="true" />
 		<bag name="objections" inverse="true" table="EGTL_OBJECTION" fetch="select">
 			<key>
@@ -84,7 +81,7 @@
 			</key>
 			<one-to-many class="org.egov.tl.entity.objection.LicenseObjection" />
 		</bag>
-
+		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="egwStatusId" fetch="select" />		
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />
 		</property>
@@ -109,6 +106,7 @@
 
 		<property name="tinNumber" column="TIN_NUM" />
 		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="parentBoundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_PARENT_BNDRY" not-null="true" unique="true" />
 		<many-to-one name="tradeName" class="org.egov.tl.entity.LicenseSubCategory" fetch="select" unique="true">
 			<column name="ID_SUB_CATEGORY" precision="22" scale="0" />
 		</many-to-one>
@@ -148,13 +146,6 @@
 					cascade="all" />
 
 		<subclass name="org.egov.tl.entity.TradeLicense" discriminator-value="tradelicense">
-			<bag name="installedMotorList" inverse="true" table="EGTL_MOTOR_DETAILS" cascade="all,delete-orphan" fetch="select">
-				<key>
-					<column name="ID_LICENSE"></column>
-				</key>
-				<one-to-many class="org.egov.tl.entity.MotorDetails" />
-			</bag>
-			
 			<bag name="documents" table="egtl_tradelicense_docs" cascade="all" order-by="document">
 				<key column="license" not-null="true"/>			
 				<many-to-many class="org.egov.tl.entity.LicenseDocument" column="document"/>
@@ -162,8 +153,6 @@
 
 			<join table="EGTL_TRADE_LICENSE">
 				<key column="ID" />
-				<property name="motorInstalled" column="ISMOTORINSTALLED" type="boolean" />
-				<property name="totalHP" column="TOTAL_HP" type="java.math.BigDecimal" />
 				<property name="hotelGrade" column="HOTEL_GRADE" type="java.lang.String" />
 				<property name="sandBuckets" column="SAND_BUCKETS"  />
 				<property name="waterBuckets" column="WATER_BUCKETS"  />

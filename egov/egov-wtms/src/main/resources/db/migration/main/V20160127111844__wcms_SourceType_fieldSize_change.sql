@@ -1,0 +1,1 @@
+ALTER TABLE egwtr_water_source ALTER COLUMN watersourcetype TYPE character varying(100);

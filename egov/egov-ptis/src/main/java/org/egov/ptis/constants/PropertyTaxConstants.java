@@ -225,6 +225,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335 = "CENTRAL_GOVT_33.5";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50 = "CENTRAL_GOVT_50";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75 = "CENTRAL_GOVT_75";
+    public static final String OWNERSHIP_TYPE_EWSHS = "EWSHS";
 
     // Ownership type string
     public static final String OWNERSHIP_TYPE_VAC_LAND_STR = "Vacant Land";

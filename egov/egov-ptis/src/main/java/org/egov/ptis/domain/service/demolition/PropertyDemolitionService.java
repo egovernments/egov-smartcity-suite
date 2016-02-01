@@ -13,28 +13,39 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_FULL_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -57,6 +68,7 @@ import org.hibernate.FlushMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -91,6 +103,18 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
     @Autowired
     private PtDemandDao ptDemandDAO;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
+
+    @Autowired
+    private MessagingService messagingService;
+    
+    @Autowired
+    private InstallmentDao installmentDao;
+    
+    @Autowired
+    private ModuleService moduleDao;
 
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
@@ -177,6 +201,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                         .withOwner(
                                 assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId())
                                         .getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                buildSMS(property, workFlowAction);
         	}
         } else {
             if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
@@ -192,6 +217,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_DEMOLITION);
+                //to be enabled once acknowledgement feature is developed
+                //buildSMS(property, workFlowAction);
             } else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), null);
@@ -206,6 +233,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
                     }
+                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                		buildSMS(property, workFlowAction);
                 }
             }
         }
@@ -277,6 +306,39 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 model.addAttribute("showUnauthorisedPenalty", "no");
             }
         }
+    }
+    
+    public void buildSMS(Property property, String workFlowAction) {
+        final User user = property.getBasicProperty().getPrimaryOwner();
+        final String assessmentNo = property.getBasicProperty().getUpicNo();
+        final String mobileNumber = user.getMobileNumber();
+        final String applicantName = user.getName();
+        String smsMsg = "";
+        if (workFlowAction.equals(WFLOW_ACTION_STEP_FORWARD)) {
+        	//to be enabled once acknowledgement feature is developed
+            /*smsMsg = messageSource.getMessage("demolition.ack.sms",
+                    new String[] { applicantName, assessmentNo }, null);*/
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
+            smsMsg = messageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
+                    EgovThreadLocals.getMunicipalityName() }, null);
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
+        	Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
+            Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
+            Module module = moduleDao.getModuleByName(PTMODULENAME);
+            Installment nextInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+            final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,nextInstallment);
+            BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
+                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
+                            : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+            smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
+            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate),EgovThreadLocals.getMunicipalityName() },
+                    null);
+        }
+
+        if (StringUtils.isNotBlank(mobileNumber)) {
+            messagingService.sendSMS(mobileNumber, smsMsg);
+        }
+
     }
 
 }

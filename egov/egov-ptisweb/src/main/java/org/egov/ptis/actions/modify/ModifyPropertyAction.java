@@ -813,7 +813,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-                "from PropertyTypeMaster order by orderNo");
+                "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
         List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");

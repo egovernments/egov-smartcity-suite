@@ -44,8 +44,10 @@ package org.egov.web.actions.payment;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
@@ -62,26 +64,30 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author mani
  */
-
+@ParentPackage("egov")
+@Validations
 @Results({
-        @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace", "/payment"
+        @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace", "/payment",
+                "paymentid", "${paymentid}"
         }),
         @Result(name = "advancepayment", type = "redirectAction", location = "payment-advanceView", params = { "namespace",
-                "/payment"
+                "/payment", "paymentid", "${paymentid}"
         }),
         @Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment-viewInboxItem", params = {
-                "namespace",
-                "/payment", "method", "viewInboxItem" }),
+                "namespace", "/payment", "paymentid", "${paymentid}"
+        }),
         @Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery-viewInboxItem", params = {
-                "namespace",
-                "/deduction" }),
+                "namespace", "/deduction", "paymentid", "${paymentid}"
+        }),
         @Result(name = "contractoradvancepayment", type = "redirectAction", location = "advancePayment-viewInboxItem", params = {
-                "namespace",
-                "/payment" }) })
+                "namespace", "/payment", "paymentid", "${paymentid}"
+        })
+})
 public class BasePaymentAction extends BaseVoucherAction {
     /**
      *
@@ -91,6 +97,8 @@ public class BasePaymentAction extends BaseVoucherAction {
     private static Logger LOGGER = Logger.getLogger(BasePaymentAction.class);
     @Autowired
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
@@ -124,6 +132,7 @@ public class BasePaymentAction extends BaseVoucherAction {
 
     protected String showMode;
 
+    @SkipValidation
     @Action(value = "/payment/basePayment-viewInboxItems")
     public String viewInboxItems() {
 
@@ -161,7 +170,7 @@ public class BasePaymentAction extends BaseVoucherAction {
     public boolean shouldshowVoucherNumber()
     {
         String vNumGenMode = "Manual";
-        vNumGenMode = new VoucherTypeForULB().readVoucherTypes(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        vNumGenMode = voucherTypeForULB.readVoucherTypes(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
             mandatoryFields.add("vouchernumber");
             return true;
@@ -169,64 +178,9 @@ public class BasePaymentAction extends BaseVoucherAction {
             return false;
     }
 
-    public void transitionWorkFlow(final Paymentheader paymentheader, WorkflowBean workflowBean) {
-        final DateTime currentDate = new DateTime();
-        final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        Position pos = null;
-        Assignment wfInitiator = null;
+  
 
-        if (null != paymentheader.getId())
-            wfInitiator = getWorkflowInitiator(paymentheader);
-
-        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment)) {
-                paymentheader.transition(true).end().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withDateInfo(currentDate.toDate());
-            } else {
-                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
-            }
-
-        } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
-        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-            .withDateInfo(currentDate.toDate());
-        } else {
-            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
-            if (null == paymentheader.getState()) {
-                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
-                        null, null, workflowBean.getCurrentState(), null);
-                paymentheader.transition().start().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            } else if (paymentheader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                paymentheader.transition(true).end().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withDateInfo(currentDate.toDate());
-            else {
-                final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
-                        null, null, paymentheader.getCurrentState().getValue(), null);
-                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            }
-        }
-    }
-
-    protected Assignment getWorkflowInitiator(final Paymentheader paymentheader) {
-        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(paymentheader.getCreatedBy().getId());
-        return wfInitiator;
-    }
-
+    
     public String getAction() {
         return action;
     }

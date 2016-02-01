@@ -2176,14 +2176,14 @@ public class PropertyTaxUtil {
      */
     public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
             final Long areaId, final Long localityId) {
-        // Get current financial year
-        final CFinancialYear finYear = financialYearDAO.getFinYearByDate(new Date());
+        // Get current installment
+        final Installment currentInst = getCurrentInstallment();
         final StringBuffer query = new StringBuffer(300);
 
         // Query that retrieves all the properties that has arrears.
         query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
                 + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and idc.installment.fromDate not between  ('"
-                + finYear.getStartingDate() + "') and ('" + finYear.getEndingDate() + "') ");
+                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
         if (localityId != null && localityId != -1)
             query.append(" and pmv.locality.id= :localityId ");
@@ -2431,5 +2431,37 @@ public class PropertyTaxUtil {
     	String grade=(request.getSession().getAttribute("cityGrade")!=null?
                 request.getSession().getAttribute("cityGrade").toString():null);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
+    }
+    
+    /**
+     * Prepare query for Defaulters report
+     * @param wardId
+     * @param fromDemand
+     * @param toDemand
+     * @param limit
+     * @return
+     */
+    public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand,
+            final String toDemand, final Integer limit) {
+        final StringBuffer query = new StringBuffer(300);
+        
+        query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null ");
+        String arrearBalanceCond = " (pmv.aggrArrDmd - pmv.aggrArrColl) ";
+        String orderByClause = " order by ";
+        if(StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)){
+        	query.append(" and "+arrearBalanceCond+" >= ").append(fromDemand);
+        	query.append(" and "+arrearBalanceCond+" <= ").append(toDemand);
+        }
+        if(wardId != null && wardId != -1){
+        	query.append(" and pmv.ward.id = ").append(wardId);
+        }
+        	
+        orderByClause = orderByClause.concat(" pmv.ward.id asc, "+arrearBalanceCond+" desc ");
+        query.append(orderByClause);
+
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        if(limit != null && limit != -1)
+        	qry.setMaxResults(limit);
+        return qry;
     }
 }

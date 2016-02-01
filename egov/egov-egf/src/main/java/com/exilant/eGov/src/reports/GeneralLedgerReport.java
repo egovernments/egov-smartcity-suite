@@ -246,7 +246,7 @@ public class GeneralLedgerReport {
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
                 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(sqlString);
-                pstmt.setString(1, glCode1);
+                pstmt.setString(0, glCode1);
                 final List res = pstmt.list();
                 String aName = "";
                 if(res!=null)
@@ -945,7 +945,7 @@ public class GeneralLedgerReport {
         {
             deptCondition = "DEPARTMENTID = ? AND ";
             deptFromCondition = ", vouchermis mis";
-            deptWhereCondition = " mis.voucherheaderid=vh.id  and mis.DepartmentId = ? and ";
+            deptWhereCondition = " mis.voucherheaderid =vh.id   and mis.DepartmentId = ? and ";
         }
         if (!fundSourceId.equalsIgnoreCase(""))
             fundSourceCondition = "fundSourceId = ? AND ";
@@ -1100,9 +1100,12 @@ public class GeneralLedgerReport {
             }
             else
             {
-                pstmt.setString(i++, glCode);
+                
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
+                {
                 	pstmt.setLong(i++, Long.parseLong(deptId));
+                }
+                pstmt.setString(i++, glCode);
                 if (!fundId.equalsIgnoreCase(""))
                 	pstmt.setLong(i++, Long.parseLong(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
@@ -1113,7 +1116,8 @@ public class GeneralLedgerReport {
                 pstmt.setString(i++, tillDate);
             }
             resultset = null;
-            resultset = pstmt.list();
+            List<Object[]> list= pstmt.list();
+            resultset =list;
             for (final Object[] element : resultset) {
                 if (element[0] != null)
                     opDebit = opDebit + Double.parseDouble(element[0].toString());

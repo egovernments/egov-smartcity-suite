@@ -52,6 +52,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -81,9 +82,11 @@ import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.service.TradeLicenseSmsAndEmailService;
+import org.egov.tl.service.TradeLicenseUpdateIndexService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
@@ -128,7 +131,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected List<String> selectedCheckList;
     protected List<LicenseChecklistHelper> checkList;
     protected String roleName;
+    @Autowired
+    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     protected Integer reportId = -1;
+    private Long feeTypeId;
+    private Long parentBndryId;
 
     @Autowired
     protected LicenseUtils licenseUtils;
@@ -157,13 +164,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected UnitOfMeasurementService unitOfMeasurementService;
     @Autowired
     private ReportService reportService;
+    @Autowired
+    @Qualifier("feeTypeService")
+    private FeeTypeService feeTypeService;
+    
+    @Autowired
+    private TradeLicenseUpdateIndexService updateIndexService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("licensee.boundary", Boundary.class);
         this.addRelatedEntity("buildingType", NatureOfBusiness.class);
         this.addRelatedEntity("category", LicenseCategory.class);
-        this.addRelatedEntity("uom", UnitOfMeasurement.class);
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
     }
 
@@ -176,7 +188,12 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         try {
             this.setCheckList();
             populateWorkflowBean();
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_CREATED_CODE);
+            license().setEgwStatus(statusChange);
+            license().setParentBoundary(boundaryService.getBoundaryById(parentBndryId));
             licenseService().create(license, workflowBean);
+            this.updateIndexService.updateTradeLicenseIndexes(license);
         } catch (RuntimeException e) {
             loadAjaxedDropDowns();
             throw e;
@@ -186,8 +203,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(T license, Map<Integer, Double> legacyInstallmentwiseFees) {
+    public String enterExisting(T license, Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
         this.setCheckList();
+        license().setParentBoundary(boundaryService.getBoundaryById(parentBndryId)); 
         licenseService().enterExistingLicense(license, legacyInstallmentwiseFees);
         addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
 
@@ -196,8 +214,21 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     // sub class should get the object of the model and set to license()
     public String approve() {
+        //TODO All this should go to service 
+        //<<FROM HERE
         processWorkflow(NEW);
+        if(license().getEgwStatus()!=null && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+        {
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_GENECERT_CODE);
+            license().setEgwStatus(statusChange);
+        }
         licenseService().licensePersitenceService().persist(license());
+        license().generateLicenseNumber(licenseService().getNextRunningLicenseNumber("egtl_license_number"));
+        this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license(), workflowBean.getWorkFlowAction());
+        this.updateIndexService.updateTradeLicenseIndexes(license());
+        //<<TO HERE
+        
         // Generate PFA Certificate on final approval
         if (Constants.GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             reportId = ReportViewerUtil.addReportToSession(reportService.createReport(prepareReportInputData(license())), getSession());
@@ -216,8 +247,15 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
+        reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", license.getAddress());
+        reportParams.put("subCategory", (license.getTradeName()!=null ?license.getTradeName().getName():null));
+        reportParams.put("appType", (license.getLicenseAppType() !=null ?license.getLicenseAppType().getName():"New"));
+        if(EgovThreadLocals.getMunicipalityName().contains("Corporation"))
+        {
+            reportParams.put("carporationulbType", Boolean.TRUE);
+        }
         reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
         List<LicenseDemand> licDemandList = new ArrayList<LicenseDemand>(license.getDemandSet());
         String startYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
@@ -225,6 +263,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         String installMentYear = startYear + "-" + EndYear;
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+        reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
         BigDecimal demandamt = BigDecimal.ZERO;
 
         for (EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails()) {
@@ -394,6 +433,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                             .getSimpleName()));
 
         setupWorkflowDetails();
+        feeTypeId=feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId(); 
     }
 
     public void prepareShowForApproval() {
@@ -407,10 +447,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public void processWorkflow(String processType) {
         populateWorkflowBean();
         if (processType.equalsIgnoreCase(NEW)) {
-            if(!Constants.BUTTONSAVE.equals(workFlowAction))
+            if(!Constants.BUTTONSUBMIT.equals(workFlowAction))
             licenseService().transitionWorkFlow(license(), workflowBean);
         } else if (processType.equalsIgnoreCase("Renew")) {
-           if(! Constants.BUTTONSAVE.equals(workFlowAction))
+           if(! Constants.BUTTONSUBMIT.equals(workFlowAction))
             licenseService().processWorkflowForRenewLicense(license(), workflowBean);
 
         }
@@ -658,6 +698,22 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setReportId(Integer reportId) {
         this.reportId = reportId;
+    }
+    
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
+    }
+
+    public Long getParentBndryId() {
+        return parentBndryId;
+    }
+
+    public void setParentBndryId(Long parentBndryId) {
+        this.parentBndryId = parentBndryId;
     }
 
 }

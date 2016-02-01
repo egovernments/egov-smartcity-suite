@@ -4,8 +4,8 @@
 "ResultSet": {
     "Result":[
 	<s:iterator var="s" value="designationMasterList" status="status">  
-    {"Value":"<s:property value="%{designationId}" />",
-    "Text":"<s:property value="%{designationName}" />"
+    {"Value":"<s:property value="%{id}" />",
+    "Text":"<s:property value="%{name}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]

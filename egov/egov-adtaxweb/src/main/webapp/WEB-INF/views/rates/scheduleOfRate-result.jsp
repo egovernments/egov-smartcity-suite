@@ -85,7 +85,7 @@
 </script>	
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="scheduleOfRateform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="rate" commandName="rate">
+		<form:form id="scheduleOfRateSearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="rate" commandName="rate">
 				<c:if test="${not empty message}">
                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
             </c:if>
@@ -125,15 +125,28 @@
 									<c:out value="${rate.classtype.description}"></c:out>
 			
 						</div>
+						
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message
+								code="lbl.financial.year" /></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+									<c:out value="${rate.financialyear.finYearRange}"></c:out>
+			
+						</div>
+						
+						
 				</div>
 			
+			<div>
 			    	<div class="form-group">
-						<div class="text-center">
+						<div class="text-center" >
 							<button type="submit" id="scheduleOfRateSearchAgain" class="btn btn-primary">Search Again</button>
 						    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 						</div>
 					</div>
-			
+					
+				</div>
+				
+
 			<div id="noscheduleofrateDataFoundDiv" class="container-msgs">
 				<c:if test="${mode == 'noDataFound'}">
 					<div class="panel-heading custom_form_panel_heading">
@@ -154,9 +167,36 @@
 			</div>
 	</form:form>
 	<form:form id="scheduleOfRateformResult" method="post" class="form-horizontal form-groups-bordered" modelAttribute="rate" commandName="rate">
+		
+
+		<div  id="schedleOfrateDiv" class="hidden">
+			<div class="form-group">
+			<div >
 			
-		<div id="schedleOfrateDiv" class="hidden">	
-					<table id="schedleOfrateTable" table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered">
+						<label for="field-1" class="col-sm-1 control-label"> <spring:message
+								code="lbl.unit.rate" /><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"	maxlength="5" path="unitrate"  id="unitrate"  required="required"/>
+						</div> 
+			</div>
+			
+			<div>
+			<label for="field-1" class="col-sm-3 control-label" >
+			<spring:message  code="lbl.financial.year" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin" >
+			<form:select path="financialyear" disabled="true" data-first-option="false" id="financialyear">
+			<form:option value=""><spring:message code="lbl.select" /></form:option>
+			<form:options items="${financialYears}" itemLabel="finYearRange" itemValue="id" />
+			</form:select>
+			</div>
+			
+			</div>
+			
+			</div>
+								 
+				<table id="schedleOfrateTable"  style="clear:both" table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered">
 					<thead>
 						<tr>
 							<th><spring:message code="lbl.scheduleorrate.unitfrom" /></th>
@@ -165,6 +205,8 @@
 							<th><spring:message code="lbl.scheduleorrate.action" /></th>
 										</tr>
 					</thead>
+					
+				
 				<tbody>
 					    
 					    <form:hidden path="id" id="id" value="${rate.id}"/>
@@ -172,6 +214,9 @@
 						<form:hidden path="subCategory" id="subCategory" value="${rate.subCategory.id}"/> 
 						<form:hidden path="unitofmeasure" id="unitofmeasure" value="${rate.unitofmeasure.id}"/>
 						<form:hidden path="classtype" id="classtype" value="${rate.classtype.id}"/>
+						<form:hidden path="financialyear" id="financialyear" value="${rate.financialyear.id}"/>
+					
+
 				
 						<c:forEach var="contact" items="${rate.advertisementRatesDetails}" varStatus="status">
 						<tr>
@@ -187,15 +232,21 @@
 									name="advertisementRatesDetails[${status.index}].unitFrom"
 									 autocomplete="off" required="required"  readonly="readonly">
 							</c:if>	
-							<c:if test="${mode == 'dataFound'}">		 
+							<c:if test="${mode == 'dataFound'}">	
+							
+			
 							<input type="text" class="form-control patternvalidation unit-from" data-pattern="decimalvalue"
 									id="advertisementRatesDetailsUnitFrom${status.index}"
 									value="${contact.unitFrom}"  maxlength="10"
 									name="advertisementRatesDetails[${status.index}].unitFrom"
 									 autocomplete="off" required="required"  readonly="readonly">
 									 
-									</c:if>	 		 
+									</c:if>	 
+									
 								</td>	
+								
+				
+								
 							<td>	 <input type="text" class="form-control patternvalidation unit-to" data-pattern="decimalvalue"
 									id="advertisementRatesDetailsUnitTo${status.index}"
 									value="${contact.unitTo}"  maxlength="10"
@@ -233,10 +284,11 @@
 					</div>
 				</div>
 			</div>
+			
 		</form:form>
 			  
-		
+		</div>
 			  
-	</div>
+	
 </div>
 <script src="<c:url value='/resources/app/js/scheduleOfRates.js'/>"></script>

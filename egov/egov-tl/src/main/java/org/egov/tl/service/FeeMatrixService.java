@@ -135,7 +135,7 @@ public class FeeMatrixService<T extends License>  {
 		List<FeeType> allFees = feeTypeService.findAll();
 	 
 		
-	    Long uomId = license.getUom().getId();
+	    Long uomId = license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId();
 	    // Make decision is charges for NEW and Renew Same
 	    
 	    // Make decision is charges for Permanent  and Temporary are Same

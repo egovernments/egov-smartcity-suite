@@ -46,24 +46,45 @@ import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.UnitOfMeasure;
+import org.egov.commons.CFinancialYear;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 @Repository
 public interface AdvertisementRateDetailRepository extends JpaRepository<AdvertisementRatesDetails, Long> {
 
-    @Query("select A from AdvertisementRatesDetails A where A.advertisementRate.category=:category and A.advertisementRate.classtype=:ratesClass and A.advertisementRate.unitofmeasure=:uom and A.advertisementRate.subCategory=:subCategory and A.advertisementRate.active=true")
-    List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
-            @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure, @Param("ratesClass") RatesClass ratesClass);
+    @Query("select A from AdvertisementRatesDetails A where A.advertisementRate.category=:category and A.advertisementRate.classtype=:ratesClass and A.advertisementRate.unitofmeasure=:uom and A.advertisementRate.subCategory=:subCategory and A.advertisementRate.active=true and A.advertisementRate.financialyear=:financialYear")
+    List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(
+            @Param("category") HoardingCategory category,
+            @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure,
+            @Param("ratesClass") RatesClass ratesClass, @Param("financialYear") CFinancialYear financialYear);
 
-    @Query("select A.amount from AdvertisementRatesDetails A where A.advertisementRate.category=:category and A.unitFrom < :units and A.unitTo >= :units  and A.advertisementRate.classtype=:ratesClass and A.advertisementRate.unitofmeasure=:uom and A.advertisementRate.subCategory=:subCategory and A.advertisementRate.active=true")
-   Double getAmountByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
-            @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure, @Param("ratesClass") RatesClass ratesClass
-            , @Param("units") Double units);
-   
+    @Query("select A.amount from AdvertisementRatesDetails A where A.advertisementRate.category=:category and A.unitFrom < :units and A.unitTo >= :units  and A.advertisementRate.classtype=:ratesClass and A.advertisementRate.unitofmeasure=:uom and A.advertisementRate.subCategory=:subCategory and A.advertisementRate.active=true and A.advertisementRate.financialyear=:financialYear")
+    Double getAmountByCategorySubcategoryUomAndClass(@Param("category") HoardingCategory category,
+            @Param("subCategory") SubCategory subCategory, @Param("uom") UnitOfMeasure unitOfMeasure,
+            @Param("ratesClass") RatesClass ratesClass, @Param("units") Double units,
+            @Param("financialYear") CFinancialYear financialYear);
+
     @Query("select A.amount from AdvertisementRatesDetails A where  A.unitFrom < :units and A.unitTo >= :units  and A.advertisementRate.classtype.id=:ratesClass and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true")
-    Double getAmountBySubcategoryUomClassAndMeasurement(  @Param("units") Double measurement,   @Param("subCategory")  Long subCategoryId,  @Param("uom") Long unitOfMeasureId,
+    Double getAmountBySubcategoryUomClassAndMeasurement(@Param("units") Double measurement,
+            @Param("subCategory") Long subCategoryId, @Param("uom") Long unitOfMeasureId,
             @Param("ratesClass") Long rateClassId);
 
+    @Query("select A from AdvertisementRatesDetails A where A.advertisementRate.category.id=:category and A.advertisementRate.classtype.id=:ratesClass and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true and A.advertisementRate.financialyear.id=:financialYear")
+    List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClassId(
+            @Param("category") Long category,
+            @Param("subCategory") Long subCategory, @Param("uom") Long unitOfMeasure,
+            @Param("ratesClass") Long classtype, @Param("financialYear") Long financialYear);
+    
+    @Query("select A from AdvertisementRatesDetails A where  A.advertisementRate.classtype.id=:ratesClass and A.unitFrom < :units and A.unitTo >= :units and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true and A.advertisementRate.financialyear.id=:financialYear")
+    List<AdvertisementRatesDetails> getRatesBySubcategoryUomClassFinancialYearAndMeasurement(@Param("units") Double units,
+            @Param("subCategory") Long subCategoryId, @Param("uom") Long unitOfMeasureId,
+            @Param("ratesClass") Long rateClassId,  @Param("financialYear")  Long cfinancialYear);
+    
+    @Query("select A from AdvertisementRatesDetails A where  A.advertisementRate.classtype.id=:ratesClass and A.unitFrom < :units and A.unitTo >= :units and A.advertisementRate.unitofmeasure.id=:uom and A.advertisementRate.subCategory.id=:subCategory and A.advertisementRate.active=true  and A.advertisementRate.financialyear.startingDate < current_date  order by  A.advertisementRate.financialyear.startingDate desc ")
+    List<AdvertisementRatesDetails> getRatesBySubcategoryUomClassMeasurementLessthanCurrentFinancialYearAndFinancialYearInDecendingOrder(@Param("units") Double units,
+            @Param("subCategory") Long subCategoryId, @Param("uom") Long unitOfMeasureId,
+            @Param("ratesClass") Long rateClassId);
 }

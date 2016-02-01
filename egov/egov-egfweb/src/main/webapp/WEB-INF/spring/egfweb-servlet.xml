@@ -68,16 +68,7 @@
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="formatters">
-            <set>
-                <ref bean="cFunctionFormatter"/>
-                <ref bean="functionaryFormatter"/>
-                <ref bean="fundFormatter"/>
-                <ref bean="gradeMasterFormatter"/>
-            </set>
-        </property>
-    </bean>
+	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
 	
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>
@@ -123,6 +114,6 @@
     </bean>
 
     <!-- Imports user-defined @Controller beans that process client requests -->
-    <context:component-scan base-package="org.egov.egf.controller"/>
+    <context:component-scan base-package="org.egov.egf.web.controller"/>
 
 </beans>

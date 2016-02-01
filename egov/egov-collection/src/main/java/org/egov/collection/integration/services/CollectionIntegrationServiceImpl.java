@@ -95,10 +95,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     private PersistenceService persistenceService;
 
-    @Autowired
     private CollectionsUtil collectionsUtil;
 
-    @Autowired
     private ReceiptHeaderService receiptHeaderService;
 
     @Autowired

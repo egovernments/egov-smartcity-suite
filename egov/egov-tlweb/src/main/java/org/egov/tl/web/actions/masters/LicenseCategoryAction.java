@@ -40,7 +40,6 @@
 
 package org.egov.tl.web.actions.masters;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -57,6 +56,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = LicenseCategoryAction.NEW, location = "licenseCategory-new.jsp"),
@@ -78,7 +78,7 @@ public class LicenseCategoryAction extends BaseFormAction {
 	@Qualifier("licenseCategoryService")
 	private LicenseCategoryService licenseCategoryService;
 
-	private static final Logger LOGGER = Logger.getLogger(LicenseCategoryAction.class);
+	private static final Logger LOGGER = Logger.getLogger(LicenseCategoryAction.class); 
 
 	// UI field
 	private String userMode;
@@ -93,9 +93,9 @@ public class LicenseCategoryAction extends BaseFormAction {
 	public void prepare() {
 		// IN Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
-			setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAllBy("from LicenseCategory order by id")));
+			setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAll()));
 		if (getId() != null)
-			licenseCategory = licenseCategoryService.find("from LicenseCategory where id=?", getId());
+			licenseCategory = licenseCategoryService.findById(getId());
 	}
 
 	/**
@@ -151,7 +151,8 @@ public class LicenseCategoryAction extends BaseFormAction {
 	@Action(value = "/masters/licenseCategory-save")
 	public String save() throws NumberFormatException, ApplicationException {
 		try {
-			licenseCategory = licenseCategoryService.persist(licenseCategory);
+			licenseCategory = licenseCategoryService.create(licenseCategory);
+			//licenseCategoryService.findById(licenseCategory.getId(), false);
 		} catch (final ValidationException valEx) {
 			LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
 			throw new ValidationException(valEx.getErrors());

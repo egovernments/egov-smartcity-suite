@@ -150,10 +150,11 @@ table.its {
 
 table.its th, table.its td{
  border-left:0px solid #000000; 	     /*            ********LEFT MARGIN FOR ALL*********          */
-	padding: 2px 4px 2px 4px;
+	padding: 10px 5px;
 	text-align: left;
 	vertical-align: top;
 	font-size: 14px;
+	border: 1px solid #ddd;
 }
 table.its th,table.its td.textAlign2 {
 border-right:0px solid #000000; 		/*    ********RIGHT MARGIN FOR CREDIT*********          */
@@ -342,7 +343,7 @@ div.exportlinks {
 	background-color: #eee;
 	border: 1px dotted #999;
 	padding: 2px 4px 2px 4px;
-	margin: 10px;
+	margin-top: 10px;
 	width: 98%;
 }
 

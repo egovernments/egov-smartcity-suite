@@ -97,7 +97,7 @@ public class UnitOfMeasurementAction extends BaseFormAction {
         if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
             setLicenseUomMap(getFormattedUOMMap(unitOfMeasurementService.findAll()));
         if (getId() != null)
-            unitOfMeasurement = unitOfMeasurementService.findById(getId(), false);
+            unitOfMeasurement = unitOfMeasurementService.findById(getId());
     }
 
     /**
@@ -155,7 +155,7 @@ public class UnitOfMeasurementAction extends BaseFormAction {
         try {
             if (userMode.equalsIgnoreCase(EDIT))
                 unitOfMeasurement.setActive(uomActive);
-            unitOfMeasurement = unitOfMeasurementService.persist(unitOfMeasurement);
+            unitOfMeasurement = unitOfMeasurementService.create(unitOfMeasurement);
         } catch (final ValidationException valEx) {
             LOGGER.error("Exception found while persisting Unit of Measurement: " + valEx.getErrors());
             throw new ValidationException(valEx.getErrors());

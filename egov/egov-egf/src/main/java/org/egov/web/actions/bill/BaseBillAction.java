@@ -52,7 +52,6 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.commons.utils.EntityType;
-import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -98,9 +97,9 @@ public class BaseBillAction extends BaseVoucherAction {
     protected List<VoucherDetails> billDetailsTableNetFinal;
     protected List<VoucherDetails> billDetailsTableCreditFinal;
     protected List<CheckListHelper> checkListsTable;
-    protected SimpleWorkflowService<Cbill> billRegisterWorkflowService;
+    protected SimpleWorkflowService<EgBillregister> billRegisterWorkflowService;
     protected PersistenceService<EgBillregister, Long> billRegisterService;
-    protected PersistenceService<Cbill, Long> cbillService;
+    protected PersistenceService<EgBillregister, Long> cbillService;
     protected EgovCommon egovCommon;
     protected @Autowired AppConfigValueService appConfigValuesService;
     protected CChartOfAccounts defaultNetPayCode;
@@ -338,19 +337,19 @@ public class BaseBillAction extends BaseVoucherAction {
         this.detailTypeIdandName = detailTypeIdandName;
     }
 
-    public SimpleWorkflowService<Cbill> getBillRegisterWorkflowService() {
+    public SimpleWorkflowService<EgBillregister> getBillRegisterWorkflowService() {
         return billRegisterWorkflowService;
     }
 
-    public void setBillRegisterWorkflowService(final SimpleWorkflowService<Cbill> billRegisterWorkflowService) {
+    public void setBillRegisterWorkflowService(final SimpleWorkflowService<EgBillregister> billRegisterWorkflowService) {
         this.billRegisterWorkflowService = billRegisterWorkflowService;
     }
 
-    public PersistenceService<Cbill, Long> getCbillService() {
+    public PersistenceService<EgBillregister, Long> getCbillService() {
         return cbillService;
     }
 
-    public void setCbillService(final PersistenceService<Cbill, Long> cbillService) {
+    public void setCbillService(final PersistenceService<EgBillregister, Long> cbillService) {
         this.cbillService = cbillService;
     }
 

@@ -43,7 +43,7 @@
 	<head>
 		<title><s:text name="page.title.entertrade" /></title>
  	</head>
-	<body onload="onBodyLoad()">
+	<body>
 		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
                 <div class="row">
                     <div class="col-md-12">
@@ -71,9 +71,11 @@
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden name="id" id="id" />
+							<s:hidden name="feeTypeId" id="feeTypeId" />
+							<s:hidden name="parentBndryId" id="parentBndryId" value="%{parentBndryId}" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
-								<div class="panel-title" style="text-align:center">
+								<div class="panel-title" style="text-align:center"> 
 										<s:text name='page.title.entertrade' /> 
 								</div>
                                 <ul class="nav nav-tabs" id="settingstab">
@@ -89,7 +91,7 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">
-											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
+											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="100" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>
 											    <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
 											     <div class="col-sm-3 add-margin">
@@ -114,11 +116,15 @@
 													</tr>
 												</thead>
 												<tbody>
-												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="status">
+												<c:set value="" var="startfinyear"/>
+												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="stat">
 													<tr>
-														<c:set value="${LIFee.key}-${fn:substring(LIFee.key+1,2, 4)}" var="finyear"/>
-														<td><s:textfield  name="" cssClass="form-control" readonly="true" value="%{#attr.finyear}" tabindex="-1"/></td>
-														<td><s:textfield name="legacyInstallmentwiseFees[%{#attr.LIFee.key}]" cssClass="form-control patternvalidation" value="%{#attr.LIFee.value}" data-pattern="decimalvalue"/> </td>
+														<c:set value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}" var="finyear"/>
+														<s:if test="#stat.index == 0">
+															<c:set value="${finyear}" var="startfinyear"/>
+														</s:if>
+														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>
@@ -126,7 +132,7 @@
 													<tr>
 														<td class="error-msg" colspan="2">
 															<s:text  name="license.legacy.info">
-																<s:param>${finyear}</s:param>
+																<s:param>${startfinyear}</s:param>
 															</s:text>
 														</td>
 													</tr>
@@ -221,16 +227,15 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
 					document.getElementById("tradeArea_weight").focus();
 					return false;
-				}	else if (document.getElementById("uom").value == '-1'){
+				}	else if (document.getElementById("uom").value == ""){
 					showMessage('enterLicense_error', '<s:text name="newlicense.uom.null" />');
 					document.getElementById("uom").focus();
 					return false;
-				} else if (document.getElementById("workersCapacity").value == '' ||  document.getElementById("workersCapacity").value == null ||
-						 document.getElementById("workersCapacity").value == 0) {
-					showMessage('enterLicense_error', '<s:text name="newlicense.workerscapacity.null" />');
-					document.getElementById("workersCapacity").focus();
+				}  else if (document.getElementById("startDate").value == '' || document.getElementById("startDate").value == null){
+					showMessage('enterLicense_error', '<s:text name="newlicense.startDate.null" />');
+					window.scroll(0, 0);  
 					return false;
-				} else{
+				}  else{
 					clearMessage('enterLicense_error');
 					toggleFields(false,"");
 					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
@@ -250,10 +255,14 @@
 						type:"GET",
 						contentType:"application/x-www-form-urlencoded",
 						success:function(data){
+							console.log(JSON.stringify(data));
 							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
 								bootbox.alert(data.errorDetails.errorMessage);
+								jQuery('#propertyNo').val('');
+								jQuery('#boundary, #address').prop("disabled", false);
 							} else{
 								if(data.boundaryDetails!=null){
+									jQuery("#boundary").val(data.boundaryDetails.localityId);
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
 									jQuery("#address").val(data.propertyAddress);

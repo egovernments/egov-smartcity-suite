@@ -61,7 +61,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.egov.commons.CGeneralLedger;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Vouchermis;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.search.annotations.DocumentId;
@@ -124,8 +126,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @ManyToOne
     @JoinColumn(name = "statusid", nullable = true)
     private EgwStatus status;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
     private EgBillregistermis egBillregistermis;
 
     private String worksdetailId;
@@ -134,7 +135,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     private Date approvedOn;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
     private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
 
     /**

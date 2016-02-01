@@ -42,33 +42,68 @@ package org.egov.commons;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Accountdetailtype implements java.io.Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name="ACCOUNTDETAILTYPE")
+@SequenceGenerator(name = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, sequenceName = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, allocationSize = 1)
+@Unique(id = "id", tableName = "accountdetailtype", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
+public class Accountdetailtype extends AbstractPersistable<Integer> implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
+	public static final String SEQ_ACCOUNTDETAILTYPE = "SEQ_ACCOUNTDETAILTYPE";
 
+	@Id
+	@GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
 	private Integer id;
-
+	
+	
+	@Column(nullable=false, unique=true)
+	@Length(max=50)
 	private String name;
-
+	
+	@NotNull
+	@Length(max=50)
 	private String description;
 
+
+	@Length(max=25)
 	private String tablename;
 
+	@Length(max=25)
 	private String columnname;
 
+	@Column(nullable=false, unique=true)
+	@Length(max=50)
 	private String attributename;
 
+	@NotNull
 	private BigDecimal nbroflevels;
-
+	
 	private Boolean isactive;
 
+	
+	@Column(name="FULL_QUALIFIED_NAME")
+	@Length(max=250)
+	private String fullQualifiedName;
+	
 	private Date created;
 
 	private Date lastmodified;
 
 	private Long modifiedby;
 
-	private String fullQualifiedName;
 
 	//private Accountdetailtype accountdetailtype;
 
@@ -83,7 +118,7 @@ public class Accountdetailtype implements java.io.Serializable {
 		this.nbroflevels = nbroflevels;
 	}
 
-	public Accountdetailtype(String name, String description, String tablename, String columnname, String attributename, BigDecimal nbroflevels, Boolean isactive, Date created, Date lastmodified, Long modifiedby) {
+	public Accountdetailtype(String name, String description, String tablename, String columnname, String attributename, BigDecimal nbroflevels, Boolean isactive) {
 		this.name = name;
 		this.description = description;
 		this.tablename = tablename;
@@ -91,9 +126,6 @@ public class Accountdetailtype implements java.io.Serializable {
 		this.attributename = attributename;
 		this.nbroflevels = nbroflevels;
 		this.isactive = isactive;
-		this.created = created;
-		this.lastmodified = lastmodified;
-		this.modifiedby = modifiedby;
 	}
 
 	public Integer getId() {
@@ -160,38 +192,7 @@ public class Accountdetailtype implements java.io.Serializable {
 		this.isactive = isactive;
 	}
 
-	public Date getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getLastmodified() {
-		return this.lastmodified;
-	}
-
-	public void setLastmodified(Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-
-	public Long getModifiedby() {
-		return this.modifiedby;
-	}
-
-	public void setModifiedby(Long modifiedby) {
-		this.modifiedby = modifiedby;
-	}
-
-	/*public Accountdetailtype getAccountdetailtype() {
-		return this.accountdetailtype;
-	}
-
-	public void setAccountdetailtype(Accountdetailtype accountdetailtype) {
-		this.accountdetailtype = accountdetailtype;
-	}*/
-
+	
 	public String getFullQualifiedName() {
 		return fullQualifiedName;
 	}
@@ -199,5 +200,31 @@ public class Accountdetailtype implements java.io.Serializable {
 	public void setFullQualifiedName(String fullQualifiedName) {
 		this.fullQualifiedName = fullQualifiedName;
 	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getLastmodified() {
+		return lastmodified;
+	}
+
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
+	}
+
+	public Long getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(Long modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+
+	
 
 }

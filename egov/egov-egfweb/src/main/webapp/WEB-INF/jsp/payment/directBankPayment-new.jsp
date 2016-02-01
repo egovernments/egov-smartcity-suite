@@ -48,14 +48,15 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript"
 	src="/EGF/resources/javascript/calendar.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
-
+<script type="text/javascript"
+	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
@@ -112,7 +113,7 @@
 			<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>                                   
 			var voucherDetailColumns = [                   
 				{key:"functionid",hidden:true,width:90,  formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
-				{key:"function",hidden:true,label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},    
+				{key:"function",hidden:true,label:'Function Name',width:100, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},    
 				{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
 				{key:"glcode",label:'Account Code <span class="mandatory1">*</span>',width:100,   formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
 				{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
@@ -301,136 +302,67 @@
 				<jsp:param value="Direct Bank Payment" name="heading" />
 			</jsp:include>
 			<div class="formmainbox">
-				<div class="formheading" />
 				<div class="subheadnew">Create Direct Bank Payment</div>
+
+				<div align="center">
+					<font style='color: red;'>
+						<p class="error-block" id="lblError"></p>
+					</font>
+				</div>
+				<span class="mandatory1">
+					<div id="Errors">
+						<s:actionerror />
+						<s:fielderror />
+					</div> <s:actionmessage />
+				</span>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="10%" class="bluebox"></td>
+						<s:if test="%{shouldshowVoucherNumber()}">
+							<td class="bluebox" width="22%"><s:text
+									name="voucher.number" /><span class="mandatory1">*</span></td>
+							<td class="bluebox" width="22%"><s:textfield
+									name="voucherNumber" id="voucherNumber" /></td>
+						</s:if>
+						<s:hidden name="id" />
+
+						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+							class="mandatory1">*</span></td>
+						<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
+						<td class="bluebox" width="34%">
+							<div name="daterow">
+								<s:textfield name="voucherDate" id="voucherDate" maxlength="10"
+									onkeyup="DateFormat(this,this.value,event,false,'3')" size="15"
+									value="%{voucherDateId}" />
+								<a
+									href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');"
+									style="text-decoration: none" align="left"> <img img
+									width="18" height="18" border="0" align="absmiddle" alt="Date"
+									src="/egi/resources/erp2/images/calendaricon.gif" /></a>
+							</div>
+						</td>
+					</tr>
+					<%@include file="directBankPayment-form.jsp"%>
+
+
+					<div class="subheadsmallnew"></div>
+					<div align="left" class="mandatory1">* Mandatory Fields</div>
+					<s:hidden name="typeOfAccount" id="typeOfAccount"
+						value="%{typeOfAccount}" />
+
+					</br>
+				</table>
+				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 			</div>
 			<div align="center">
-				<font style='color: red;'>
-					<p class="error-block" id="lblError"></p>
-				</font>
-			</div>
-			<span class="mandatory1">
-				<div id="Errors">
-					<s:actionerror />
-					<s:fielderror />
-				</div> <s:actionmessage />
-			</span>
-			<table border="0" width="100%" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="10%" class="bluebox"></td>
-					<s:if test="%{shouldshowVoucherNumber()}">
-						<td class="bluebox" width="22%"><s:text name="voucher.number" /><span
-							class="mandatory1">*</span></td>
-						<td class="bluebox" width="22%"><s:textfield
-								name="voucherNumber" id="voucherNumber" /></td>
-					</s:if>
-					<s:hidden name="id" />
-
-					<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
-						class="mandatory1">*</span></td>
-					<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
-					<td class="bluebox" width="34%">
-						<div name="daterow">
-							<s:textfield name="voucherDate" id="voucherDate" maxlength="10"
-								onkeyup="DateFormat(this,this.value,event,false,'3')" size="15"
-								value="%{voucherDateId}" />
-							<a
-								href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');"
-								style="text-decoration: none" align="left"> <img img
-								width="18" height="18" border="0" align="absmiddle" alt="Date"
-								src="/egi/resources/erp2/images/calendaricon.gif" /></a>
-						</div>
-					</td>
-				</tr>
-				<%@include file="directBankPayment-form.jsp"%>
-
-
-				<div class="subheadsmallnew"></div>
-				<div align="left" class="mandatory1">* Mandatory Fields</div>
-				<s:hidden name="typeOfAccount" id="typeOfAccount"
-					value="%{typeOfAccount}" />
-
-				<tr>
-					<td colspan="6"><s:if
-							test='%{! wfitemstate.equalsIgnoreCase("END")}'>
-							<%@include file="../voucher/workflowApproval.jsp"%>
-						</s:if></td>
-				</tr>
-				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><strong>Comments</strong></td>
-					<td class="bluebox" colspan="4"><s:textarea name="comments"
-							id="comments" cols="100" rows="3" onblur="checkLength(this)"
-							value="%{getComments()}" /></td>
-				</tr>
-			</table>
-			<div align="center" class="buttonbottom" id="buttondiv">
-				<s:hidden name="actionname" id="actionName" value="%{action}" />
-				<s:iterator value="%{getValidActions()}" var="p" status="s">
-					<s:submit type="submit" cssClass="buttonsubmit"
-						value="%{description}" id="wfBtn%{#s.index}" name="%{name}"
-						method="create"
-						onclick="return validate('%{name}','%{description}')" />
-				</s:iterator>
-				<input type="submit" class="buttonsubmit" value="Save And Forward"
-					id="wfBtn%{#s.index}" name="uac_asst_approve" method="create"
-					onclick="return validate('uac_asst_approve','Save And Forward')" />
-				<input type="button" value="Close"
-					onclick="javascript:window.close()" class="button" />
+				<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
 			</div>
 		</s:push>
 		<s:hidden name="showMode" />
 		<s:token />
 	</s:form>
-	<s:if test="%{!validateUser('createpayment')}">
-		<script>
-			//document.getElementById('searchBtn').disabled=true;
-			document.getElementById('Errors').innerHTML='<s:text name="payment.invalid.user"/>';
-			if(document.getElementById('vouchermis.departmentid'))
-			{
-				var d = document.getElementById('vouchermis.departmentid');
-				d.options[d.selectedIndex].text='----Choose----';
-				d.options[d.selectedIndex].text.value=-1;
-			}
-			disableControls(0,true);
-			document.getElementById("closeButton").disabled=false;
-		</script>
-	</s:if>
-	<s:if test="%{validateUser('deptcheck')}">
-		<script>
-					if(document.getElementById('vouchermis.departmentid'))
-						document.getElementById('vouchermis.departmentid').disabled=true;
-				</script>
-	</s:if>
-
-
-
-
-	<SCRIPT type="text/javascript">
-
-function validateAppoveUser(name,value){
-			//document.getElementById('lblError').innerHTML ="";
-			document.getElementById("actionName").value= name;
-
-			<s:if test="%{wfitemstate =='END'}">
-				if(value == 'Approve' || value == 'Reject') {
-					document.getElementById("approverUserId").value=-1;
-					return true;
-				}
-			</s:if>
-			<s:else>
-				if( (value == 'Approve' || value == 'Forward' || value=='Save And Forward' ) && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-					bootbox.alert("please select User");
-					//document.getElementById('lblError').innerHTML ="Please Select the user";
-					return false;
-				}
-			</s:else>
-			
-			return true;
-		}
-		
-
-function	onLoadTask_new()
+<script type="text/javascript">
+function onLoadTask_new()
 {
 	//bootbox.alert(showMode);                                                      
 	if(button!=null && button!="")
@@ -470,13 +402,6 @@ function	onLoadTask_new()
 		</s:if>
  	}
  	
-		 <s:if test="%{validateUser('balancecheck')}">
-					if(document.getElementById('balanceText'))
-					{
-						document.getElementById('balanceText').style.display='block';
-						document.getElementById('balanceAvl').style.display='block';
-					}
-		</s:if>
 		
 		if(showMode=='nonbillPayment')
 		{
@@ -497,7 +422,10 @@ function populateAccNum(branch){
 	
 	populateaccountNumber({fundId: fundObj.options[fundObj.selectedIndex].value,bankId:bankId,branchId:brId,typeOfAccount:vTypeOfAccount})
 }
-
+function onSubmit()
+{
+	return validate();
+}
 </SCRIPT>
 </body>
 </html>

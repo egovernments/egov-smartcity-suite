@@ -39,24 +39,36 @@
  ******************************************************************************/
 package com.exilant.eGov.src.transactions;
 
-import org.apache.log4j.Logger;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.utils.EGovConfig;
+import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class VoucherTypeForULB {
 
     private static final Logger LOGGER = Logger.getLogger(VoucherTypeForULB.class);
-
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    
     public String readVoucherTypes(final String vType)
     {
-        final String cityName = EgovThreadLocals.getDomainName();
+        String voucherType = "N";
+        String keyName = "Autogenerate_"+vType.toLowerCase()+"_vouchernumber";
+        final List<AppConfigValues> configValues = appConfigValuesService.
+                getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, keyName);
+
+        for (final AppConfigValues appConfigVal : configValues)
+            voucherType = appConfigVal.getValue();
+        
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("ULB Name is-->" + cityName);
-        final String VoucherType = EGovConfig.getProperty("egf_config.xml", vType, "Manual",
-                new StringBuilder(String.valueOf(cityName)).append(".VoucherTypes").toString());
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("VoucherType is-->" + VoucherType);
-        return VoucherType;
+            LOGGER.info("VoucherType is-->" + voucherType);
+        return voucherType.equalsIgnoreCase("Y")?"Auto":"Manual";
     }
 
     public String readIsDepartmentMandtory()
@@ -64,5 +76,6 @@ public class VoucherTypeForULB {
         final String deptMandatory = EGovConfig.getProperty("egf_config.xml", "deptRequired", "", "general");
         return deptMandatory;
     }
+
 
 }

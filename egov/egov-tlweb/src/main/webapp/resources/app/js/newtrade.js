@@ -40,6 +40,13 @@ function checkLength(obj,val){
 	}
 }	
 
+function checkMinLength(obj,val){ 
+	if(obj.value.length<val) {  
+		bootbox.alert('Cannot be less than '+val+' digits')
+		obj.value = "";
+	}   
+}  
+
 function formatCurrency(obj) {
 		if(obj.value=="") {
 		return;

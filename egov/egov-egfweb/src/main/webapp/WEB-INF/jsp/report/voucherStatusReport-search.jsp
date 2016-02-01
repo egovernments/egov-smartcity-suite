@@ -37,10 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
-<%@taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <link href="<egov:url path='/resources/css/displaytagFormatted.css'/>"
 	rel="stylesheet" type="text/css" />
@@ -53,155 +50,156 @@
 <body onload="activeModeOfPayment()">
 	<s:form action="voucherStatusReport" name="voucherStatusReport"
 		theme="simple">
-		
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:text name="voucher.title" />
 			</div>
-	
-		<table align="center" width="100%" cellpadding="0" cellspacing="0">
-			<tr>
-				<jsp:include page="../voucher/voucher-filter.jsp" />
-			</tr>
-				<br/><br/>
-			<tr>
-				<td style="width: 5%"></td>
-				<td class="greybox"><s:text name="voucher.type" /></td>
-				<td class="greybox"><s:select name="type" id="type"
-						list="dropdownData.typeList" headerKey="-1"
-						headerValue="----Choose----"
-						onchange="loadVoucherNames(this.value);activeModeOfPayment()" /></td>
-				<td class="greybox"><s:text name="voucher.name" /></td>
-				<td class="greybox"><s:select name="name" id="name"
-						list="%{nameMap}" headerKey="-1" headerValue="----Choose----" /></td>
-						
-			</tr>
-			
-			<tr id="modeofpayment">
-				<td style="width: 5%"></td>
-				<td class="bluebox"><s:text name="voucher.modeOfPayment" /></td>
-				<td class="bluebox"><s:select name="modeOfPayment"
-						id="modeOfPayment" list="dropdownData.modeOfPaymentList"
-						headerKey="-1" headerValue="----Choose----" /></td>
-				<td class="bluebox"></td>
-				<td class="bluebox"></td>
-			</tr>
-			<tr>
-				<td style="width: 5%"></td>
-				<td class="greybox"><s:text name="voucher.fromdate" /><span
-					class="mandatory1">*</span></td>
-				<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
-				<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-						maxlength="20"
-						onkeyup="DateFormat(this,this.value,event,false,'3')"
-						value="%{tempFromDate}" /><a
-					href="javascript:show_calendar('forms[0].fromDate');"
-					style="text-decoration: none">&nbsp;<img
-						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
-				<td class="greybox"><s:text name="voucher.todate" /><span
-					class="mandatory1">*</span></td>
-					<%-- <s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" /> --%>
-				<td class="greybox"><s:textfield name="toDate" id="toDate"
-						maxlength="20"
-						onkeyup="DateFormat(this,this.value,event,false,'3')"
-						value="%{tempToDate}" /><a
-					href="javascript:show_calendar('forms[0].toDate');"
-					style="text-decoration: none">&nbsp;<img
-						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
-			</tr>
-			<tr>
-				<td style="width: 5%"></td>
-				<td class="greybox"><s:text name="voucher.status" /></td>
-				<td class="greybox"><s:select name="status" id="status"
-						list="%{statusMap}" headerKey="-1" headerValue="----Choose----"
-						value="%{status}" /></td>
-				<td class="greybox"></td>
-				<td class="greybox"></td>
-			</tr>
-		</table>
-		<div class="buttonbottom">
-			<s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="return validateSearch();"/>
-			<s:submit method="beforeSearch" value="Reset" cssClass="button"  onclick="return resetAndSubmit();"/>
-			<input type="button" value="Close"
-				onclick="javascript:window.close()" class="button" />
 
-		</div>
-
-
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<s:if test="%{pagedResults!=null}">
+			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="100%"><display:table name="pagedResults"
-							uid="currentRowObject" cellpadding="0" cellspacing="0"
-							requestURI="" class="its"
-							style=" border-left: 1px solid #C5C5C5; border-top: 1px solid #C5C5C5;border-right: 1px solid #C5C5C5;border-bottom: 1px solid #C5C5C5;">
-							<display:column title=" Sl No" style="text-align:center;">
-								<s:property
-									value="%{#attr.currentRowObject_rowNum+ (page-1)*pageSize}" />
-							</display:column>
-							<display:column title="Department Name"
-								style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.name}" />
-							</display:column>
-							<display:column title="Voucher Number" style="text-align:center;">
-
-								<a href="#"
-									onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>');"><s:property
-										value="%{#attr.currentRowObject.vouchernumber}" />
-							</display:column>
-						
-							<display:column title="Voucher Type" style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.type}" />
-							</display:column>
-							<display:column title="Voucher Name" style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.name}" />
-							</display:column>
-							<display:column title="Voucher Date" style="text-align:center;">
-								<s:date name="%{#attr.currentRowObject.voucherdate}"
-									format="dd/MM/yyyy" />
-							</display:column>
-							<display:column title="Source" style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.source}" />
-							</display:column>
-							<display:column title="Total Amount" style="text-align:right;">
-								<s:property value="%{#attr.currentRowObject.amount}" />
-							</display:column>
-							<display:column title="Owner" style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.owner}" />
-							</display:column>
-							<display:column title="Status" style="text-align:center;">
-								<s:property value="%{#attr.currentRowObject.status}" />
-							</display:column>
-
-						</display:table></td>
+					<jsp:include page="../voucher/voucher-filter.jsp" />
+				</tr>
+				<br />
+				<br />
 				<tr>
-					<td>
-						<div id="exportButton" class="buttonbottom">
-							<s:submit method="generatePdf" value="Save As Pdf"
-								cssClass="buttonsubmit" id="generatePdf" onclick="return generatePdfsubmit();"/>
-							<s:submit method="generateXls" value="Save As Xls"
-								cssClass="buttonsubmit" id="generateXls" onclick="return generateXlsSubmit();"/>
-						</div>
+					<td style="width: 5%"></td>
+					<td class="greybox"><s:text name="voucher.type" /></td>
+					<td class="greybox"><s:select name="type" id="type"
+							list="dropdownData.typeList" headerKey="-1"
+							headerValue="----Choose----"
+							onchange="loadVoucherNames(this.value);activeModeOfPayment()" /></td>
+					<td class="greybox"><s:text name="voucher.name" /></td>
+					<td class="greybox"><s:select name="name" id="name"
+							list="%{nameMap}" headerKey="-1" headerValue="----Choose----" /></td>
 
-					</td>
 				</tr>
 
-			</s:if>
-		</table>
+				<tr id="modeofpayment">
+					<td style="width: 5%"></td>
+					<td class="bluebox"><s:text name="voucher.modeOfPayment" /></td>
+					<td class="bluebox"><s:select name="modeOfPayment"
+							id="modeOfPayment" list="dropdownData.modeOfPaymentList"
+							headerKey="-1" headerValue="----Choose----" /></td>
+					<td class="bluebox"></td>
+					<td class="bluebox"></td>
+				</tr>
+				<tr>
+					<td style="width: 5%"></td>
+					<td class="greybox"><s:text name="voucher.fromdate" /><span
+						class="mandatory1">*</span></td>
+					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
+					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
+							maxlength="20"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value="%{tempFromDate}" /><a
+						href="javascript:show_calendar('forms[0].fromDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+					<td class="greybox"><s:text name="voucher.todate" /><span
+						class="mandatory1">*</span></td>
+					 <s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />  
+					<td class="greybox"><s:textfield name="toDate" id="toDate"
+							maxlength="20"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							value="%{tempToDate}" /><a
+						href="javascript:show_calendar('forms[0].toDate');"
+						style="text-decoration: none">&nbsp;<img
+							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+				</tr>
+				<tr>
+					<td style="width: 5%"></td>
+					<td class="greybox"><s:text name="voucher.status" /></td>
+					<td class="greybox"><s:select name="status" id="status"
+							list="%{statusMap}" headerKey="-1" headerValue="----Choose----"
+							value="%{status}" /></td>
+					<td class="greybox"></td>
+					<td class="greybox"></td>
+				</tr>
+			</table>
+			<div class="buttonbottom">
+				<s:submit method="search" value="Search" cssClass="buttonsubmit"
+					onclick="return validateSearch();" />
+				<s:submit method="beforeSearch" value="Reset" cssClass="button"
+					onclick="return resetAndSubmit();" />
+				<input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
+
+			</div>
+
+
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<s:if test="%{pagedResults!=null}">
+					<tr>
+						<td width="100%"><display:table name="pagedResults"
+								uid="currentRowObject" cellpadding="0" cellspacing="0"
+								requestURI="" class="its"
+								style=" border-left: 1px solid #C5C5C5; border-top: 1px solid #C5C5C5;border-right: 1px solid #C5C5C5;border-bottom: 1px solid #C5C5C5;">
+								<display:column title=" Sl No" style="text-align:center;">
+									<s:property
+										value="%{#attr.currentRowObject_rowNum+ (page-1)*pageSize}" />
+								</display:column>
+								<display:column title="Department Name"
+									style="text-align:center;">
+									<s:property value="%{#attr.currentRowObject.deptName}" />
+								</display:column>
+								<display:column title="Voucher Number"
+									style="text-align:center;">
+
+									<a href="#"
+										onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>');"><s:property
+											value="%{#attr.currentRowObject.vouchernumber}" />
+								</display:column>
+
+								<display:column title="Voucher Type" style="text-align:center;">
+									<s:property value="%{#attr.currentRowObject.type}" />
+								</display:column>
+								<display:column title="Voucher Name" style="text-align:center;">
+									<s:property value="%{#attr.currentRowObject.name}" />
+								</display:column>
+								<display:column title="Voucher Date" style="text-align:center;">
+									<s:date name="%{#attr.currentRowObject.voucherdate}"
+										format="dd/MM/yyyy" />
+								</display:column>
+								<display:column title="Source" style="text-align:center;">
+									<s:property value="%{#attr.currentRowObject.source}" />
+								</display:column>
+								<display:column title="Total Amount" style="text-align:right;">
+									<s:property value="%{#attr.currentRowObject.amount}" />
+								</display:column>
+								<display:column title="Owner" style="text-align:center;">
+									<s:property value="%{#attr.currentRowObject.owner}" />
+								</display:column>
+								<display:column title="Status" style="text-align:center;">
+									<s:property value="%{#attr.currentRowObject.status}" />
+								</display:column>
+
+							</display:table></td>
+					<tr>
+						<td><s:if test="%{!voucherList.size==0}">
+								<div id="exportButton" class="buttonbottom">
+									<s:submit method="generatePdf" value="Save As Pdf"
+										cssClass="buttonsubmit" id="generatePdf"
+										onclick="return generatePdfsubmit();" />
+									<s:submit method="generateXls" value="Save As Xls"
+										cssClass="buttonsubmit" id="generateXls"
+										onclick="return generateXlsSubmit();" />
+								</div>
+							</s:if></td>
+					</tr>
+
+				</s:if>
+			</table>
 
 
 
-		<script>
+			<script>
 
 	
-		<s:if test="%{voucherList.size==0}">
-			dom.get('exportButton').style.display='none';	
-		</s:if>
-
-
 		function loadVoucherNames(selected)
 		{
 			var s="";  
@@ -266,7 +264,7 @@
 			window.open(url,'','width=900, height=700');
 		}
 		</script>
-  </div>
+		</div>
 	</s:form>
 
 </body>

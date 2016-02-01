@@ -41,11 +41,11 @@
 	<tr>
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="20%"><strong><s:text
-					name="function.code" /><span class="mandatory">*</span></strong></td>
+					name="function.code" /><span class="mandatory1">*</span></strong></td>
 		<td class="bluebox"><s:textfield id="code" name="code"
 				value="%{code}" /></td>
 		<td class="bluebox" width="20%"><strong><s:text
-					name="function.funcname" /><span class="mandatory">*</span></strong></td>
+					name="function.funcname" /><span class="mandatory1">*</span></strong></td>
 		<td class="bluebox"><s:textfield id="funcNameActual"
 				name="funcNameActual" value="%{funcNameActual}" /></td>
 	</tr>

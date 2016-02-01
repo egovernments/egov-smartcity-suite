@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-01-20T20:03:09 -->
+<!-- 2016-01-29T12:52:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="430"/>
+	<property name="ireport.y" value="145"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
 	<parameter name="wardName" class="java.lang.String"/>
@@ -15,6 +15,12 @@
 	<parameter name="nameOfEstablishment" class="java.lang.String"/>
 	<parameter name="municipality" class="java.lang.String"/>
 	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="nameOfTradeSubCat" class="java.lang.String"/>
+	<parameter name="cscNumber" class="java.lang.String"/>
+	<parameter name="demandUpdateDate" class="java.lang.String"/>
+	<parameter name="carporationulbType" class="java.lang.String"/>
+	<parameter name="subCategory" class="java.lang.String"/>
+	<parameter name="appType" class="java.lang.String"/>
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
@@ -27,16 +33,9 @@
 			<staticText>
 				<reportElement x="0" y="103" width="555" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Provisional Trade License]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="145" width="555" height="28" isPrintInFirstWholeBand="true" uuid="9c885161-6278-4c9d-9de3-a797c8252b15"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Issued Under Section 521 & 622 of HMC Act 1955]]></text>
+				<text><![CDATA[TRADE  LICENSE]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="124" width="555" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
@@ -52,10 +51,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1" y="144" width="555" height="30" uuid="7250628c-58c0-4d79-87e3-2480bba3e774"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="12" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{carporationulbType}==true ? "(Issued under Section 521 & 622 of A.P. Municipal Corporation Act, 1994 (Formerly GHMC Act))" :"(Issued under Section 263, 264, 272. 275 & 288 etc., of APM Act, 1965)"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
-		<band height="254">
+		<band height="227">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="68" y="17" width="126" height="20" uuid="3f3b5796-18d3-4cdb-8e10-f1307fc22c96"/>
 				<box leftPadding="5" rightPadding="5">
@@ -71,39 +77,11 @@
 				<textFieldExpression><![CDATA[$P{applicationnumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="394" y="17" width="161" height="20" isPrintWhenDetailOverflows="true" uuid="20a49dbd-9584-4c72-a2d6-1d455a621d67"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{wardName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="315" y="17" width="79" height="20" uuid="427d9e0a-7d12-4760-8ddf-50cb810d3539"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[Ward Name:]]></text>
-			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="51" width="555" height="57" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
+				<reportElement x="0" y="47" width="555" height="39" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               Provisional Trade License is given to "+$P{applicantName}+" to carry on the Trade/Operation of "+$P{applicationnumber}+", in the name & style of M/S "+$P{nameOfEstablishment}+" at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+"Subject to condition to submit the following marked documents within (3) three months from the date of issue of this license."+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["               Trade License is issued to "+$P{applicantName}+" to carry on the Trade / Operation of M/s "+$P{nameOfTradeSubCat}+ " "+$P{subCategory}+ "at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="17" width="68" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
@@ -120,62 +98,120 @@
 				<text><![CDATA[File No:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="110" width="555" height="78" isPrintInFirstWholeBand="true" uuid="bd00e390-a498-4c91-9325-38c9cc726ac6"/>
+				<reportElement x="0" y="144" width="555" height="83" isPrintInFirstWholeBand="true" uuid="bd00e390-a498-4c91-9325-38c9cc726ac6"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[1. GHMC Building Occupancy Certificate
-3. Property Tax Receipt
-5. Parking Plan with agreement
-2. Building Sanction Plan
-4. Rental Agreement / Sale deed / Lease Deed
-6. Location Plan
-]]></text>
+				<text><![CDATA[1. Exclusive container (Dust-bin) for storing the waste generated within the premises shall be installed and maintained by the Trader.
+2. Street littering is to be avoided by the Trader
+3. Plastic carry bags less than 40 microns thickness shall not be used by the Trader for any purposes.
+4. In case of eating establishments, the conditions attached herewith on over leaf are to be followed by the Trader scrupulously. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="188" width="555" height="64" isPrintInFirstWholeBand="true" uuid="9549ce6c-8843-4532-b67d-c7d05839976d"/>
+				<reportElement x="1" y="115" width="555" height="29" isPrintInFirstWholeBand="true" uuid="9549ce6c-8843-4532-b67d-c7d05839976d"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[	Under the provision of relevant sections of HMC Act 1955, in conformity with terms and condition set-forth in relevant bye-laws, and subject to the factuality of the particulars furnished in the application / self assessment form / undertaking / documents and subject to the revision and fixing of License fee as per future verification of Yard stick parameter.]]></text>
+				<text><![CDATA[		The trader shall fulfill the following conditions, otherwise the trade license will be cancelled by the undersigned without giving any further notice.]]></text>
 			</staticText>
-		</band>
-		<band height="222">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="383" y="17" width="59" height="20" uuid="c67c6385-263a-4696-9626-aca81e907863"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="-1" width="555" height="41" uuid="8186071d-2604-4011-a65b-e8ff41af7e0b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="442" y="17" width="113" height="20" uuid="25037863-19fe-4b9b-a3c7-2eef74de2758"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{applicationdate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="86" width="555" height="29" uuid="8186071d-2604-4011-a65b-e8ff41af7e0b"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               License Fee Rs: "+$P{demandTotalamt}+" Paid for the year " +$P{installMentYear}+" Dt "+$P{applicationdate}+" for running New Trade / Renewal of Trade License for the financial year "+$P{installMentYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["               License Fee Rs: "+$P{demandTotalamt}+" is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ "of Trade License for the financial year " +$P{installMentYear}]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="133">
 			<staticText>
-				<reportElement x="0" y="41" width="555" height="33" isPrintInFirstWholeBand="true" uuid="399465de-7a00-441f-918c-2f0d9459a449"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[The trader shall fulfill the following conditions, or the trade license will be cancelled]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="75" width="555" height="147" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="aa7d1ca1-7f27-4dc2-a775-3596aa694eaa"/>
+				<reportElement x="0" y="0" width="555" height="60" isPrintInFirstWholeBand="true" uuid="399465de-7a00-441f-918c-2f0d9459a449"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[1. This Provisional is deemed to be suspended / cancelled if any of the applicable terms and conditions are found to have been contravened or any situation arises out of this trade so as to cause nuisance / damage / harm to property or health of the public or if documents / grounds furnished in the application are found to be false and un-true or if there is a change in GHMC policy of Licensing.
-2. In case of eating establishments the conditions attached herewith are to be followed.
-3. This License is invalid if the building structure is un-authorized constructed / running the business in other than zones prescribed or effecting the road widening or not fulfilling the provisions or rules of the GHMC Act, the License is to deemed to be cancelled.
-4. This license is only for TRADE PURPOSE: It does not cofer any power of permission for either temporary or permanent exemption from the provision's of any other section of HMC Act bye-laws or rules in force. Mere payment of License fee will not be entitled an applicant to the grant of License and such payment shall not be construed as if license has been granted.]]></text>
+				<text><![CDATA[3.	This notice is deemed to be suspended / cancelled, if the undersigned considers such action necessary on the grounds of public health convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation, revoke, suspend or cancel a license.]]></text>
 			</staticText>
-		</band>
-		<band height="120">
 			<staticText>
-				<reportElement x="0" y="0" width="555" height="22" isPrintInFirstWholeBand="true" uuid="38c8681b-a6cd-425d-9c10-572fcc36ccc5"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="1" y="90" width="555" height="43" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="aa7d1ca1-7f27-4dc2-a775-3596aa694eaa"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[(Issued as per delegation of powers under section 119 of HMC Act 1955)]]></text>
+				<text><![CDATA[5.	This license is only for TRADE PURPOSE. It does not confer any power of permission for either temporary or permanent exemption from the provisions of any other section of the A.P. Municipal Corporation Act, 1994 (Formerly GHMC Act), bye-laws or rules in force.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="80" y="53" width="164" height="34" uuid="8f7279b3-bb3c-4e32-b46e-392f203de216"/>
+				<reportElement x="1" y="60" width="555" height="30" uuid="a6796b42-7083-4ff4-a936-7cece08d1895"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["4.     The License is invalid if the building structure is un-authorisedly constructed / effecting the road widening or not fulfilling the provisions or rules of the " +$P{carporationulbType}==true ? "A.P. Municipal Corporations Act, 1994 (Formerly GHMC Act, 1955)" :"APM Act, 1965"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="91">
+			<staticText>
+				<reportElement x="331" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[for Commissioner
+]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="331" y="56" width="224" height="34" uuid="100e876f-d70f-4f36-936d-25d8657e34b5"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="34" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="47" y="35" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -189,7 +225,7 @@
 				<textFieldExpression><![CDATA[$P{applicationdate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="53" width="79" height="34" uuid="b3e81284-6e3c-40ca-ba96-1dca820bebe7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="12" width="125" height="23" uuid="64d9a1f0-1075-4800-acfd-4365319e9c9a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -200,18 +236,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Date:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="331" y="32" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[for Commissioner
-]]></text>
+				<text><![CDATA[CSC / eSeva  Tran No.:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="331" y="53" width="224" height="34" uuid="100e876f-d70f-4f36-936d-25d8657e34b5"/>
+				<reportElement stretchType="RelativeToTallestObject" x="126" y="12" width="164" height="23" uuid="bf30a81d-5375-4570-a183-9cfe8438ade5"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -222,7 +250,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cscNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

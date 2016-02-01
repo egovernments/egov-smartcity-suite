@@ -69,11 +69,9 @@
 			list="dropdownData.accNumList" listKey="id"
 			listValue="accountnumber+'-'+accounttype" headerKey=""
 			headerValue="----Choose----"
-			onChange="populateNarration(this);populateAvailableBalance(this);" />
+			onChange="populateNarration(this);" />
 		<s:textfield name="accnumnar" id="accnumnar"
 			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" /></td>
-	<egov:updatevalues id="availableBalance" fields="['Text']"
-		url="/payment/payment-ajaxGetAccountBalance.action" />
 	<td class="bluebox" id="balanceText" style="display: none" width="18%"><s:text
 			name="balance.available" /></td>
 	<td class="bluebox" id="balanceAvl" style="display: none" width="32%"><s:textfield

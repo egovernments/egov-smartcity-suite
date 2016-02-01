@@ -203,7 +203,11 @@
 		<!-- REPORTS START -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-fonts</artifactId>
+			<artifactId>jasperreports-fonts</artifactId>  
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -220,11 +224,11 @@
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
-			<version>3.0.13</version>
+			<version>5.0.2</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jasperreports</artifactId>
-					<groupId>jasperreports</groupId>
+					<groupId>net.sf.jasperreports</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -263,6 +267,7 @@
 			<artifactId>cglib</artifactId>
 		</dependency>
 	</dependencies>
+	
 	<build>
         <resources>
             <resource>

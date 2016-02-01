@@ -90,10 +90,10 @@
 							<form:options items="${subCategoryList}"  />  
 						</form:select>
 						</div>
-				</div>
-				 <div class="form-group">			
+					</div>
+					 <div class="form-group">			
 						<label for="field-1" class="col-sm-3 control-label"> <spring:message
-								code="lbl.unitofmeasure.name" /><span class="mandatory"></span></label>
+							code="lbl.unitofmeasure.name" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select name="unitofmeasure" path="unitofmeasure"
 								data-first-option="false" id="unitofmeasure" cssClass="form-control" required="true">
@@ -101,44 +101,44 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<c:forEach items="${unitOfMeasures}" var="uom">
-								 <option  value="${uom.id}">${uom.description} </option>
+									<option  value="${uom.id}">${uom.description} </option>
 								</c:forEach>
 							</form:select>
 						</div>
-						
 						<label for="field-1" class="col-sm-2 control-label"> <spring:message
-								code="lbl.rateClass.name" /><span class="mandatory"></span></label>
+							code="lbl.rateClass.name" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select name="rateClass" path="classtype"
 								data-first-option="false" id="rateClass" cssClass="form-control" required="true" >
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<c:forEach items="${ratesClasses}" var="rateClass">
-								 <option  value="${rateClass.id}">${rateClass.description} </option>
+									<option  value="${rateClass.id}">${rateClass.description} </option>
 								</c:forEach>
 							</form:select>
 						</div>
-				</div>
-			
-			    	<div class="row">
-						<div class="text-center">
-							<button type="submit" id="scheduleOfRateSearch" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-						    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-						</div>
 					</div>
-			
-			<div id="noscheduleofrateDataFoundDiv" class="row container-msgs">
+					<div class="form-group">	
+						<label for="field-1" class="col-sm-3 control-label">
+						<spring:message code="lbl.financial.year" /><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="financialyear" data-first-option="false"	id="financialyear" cssClass="form-control" required="true" >
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${financialYears}" itemLabel="finYearRange" itemValue="id"/>
+							</form:select>
+						</div>	
+					</div>
+				</div>	
+		    	<div class="row">
+					<div class="text-center">
+						<button type="submit" id="scheduleOfRateSearch" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+					    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					</div>
+				</div>
+				<div id="noscheduleofrateDataFoundDiv" class="row container-msgs"></div>
+				<div id="schedleOfrateDiv" class="hidden"></div>
 			</div>
-			
-		<div id="schedleOfrateDiv" class="hidden">
-			</div>
-			</div>
-</div>
 		</form:form>
-			  
-		
-			  
 	</div>
 </div>
 <script src="<c:url value='/resources/app/js/scheduleOfRates.js'/>"></script>

@@ -40,6 +40,7 @@
 package org.egov.tl.web.actions.domain;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,7 +62,10 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -87,6 +91,8 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     public static final String SUBCATEGORY = "subCategory";
     private Long locality;
     private HttpServletResponse response;
+    private Long subCategoryId; 
+    private Long feeTypeId;
 
     /**
      * Populate wards.
@@ -133,14 +139,40 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     public void blockByLocality() throws IOException, NoSuchObjectException {
         LOGGER.debug("Entered into blockByLocality, locality: " + locality);
 
-        final Boundary blockBoundary = (Boundary) getPersistenceService().find(
-                "select CH.parent from CrossHierarchy CH where CH.child.id = ? ", getLocality());
-        final Boundary wardBoundary = blockBoundary.getParent();
-        final Boundary zoneBoundary = wardBoundary.getParent();
+        final Boundary wardBoundary = (Boundary) getPersistenceService().find(
+                "select CH.parent from CrossHierarchy CH where CH.child.id = ? and CH.parentType.hierarchyType.name= ? and CH.parentType.name=?", getLocality(),Constants.REVENUE_HIERARCHYTYPE,Constants.DIVISION);
+        final Boundary zoneBoundary = wardBoundary.getParent();  
 
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("zoneName", zoneBoundary.getName());
         jsonObject.put("wardName", wardBoundary.getName());
+        jsonObject.put("wardId", wardBoundary.getId());
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE); 
+        IOUtils.write(jsonObject.toString(), response.getWriter());
+    }
+    
+    /**
+     * @throws IOException
+     * @throws NoSuchObjectException
+     * @return uom for a subcategory
+     */
+    @Action(value="/domain/commonTradeLicenseAjax-ajaxLoadUomName")   
+    public void ajaxLoadUomName() throws IOException, NoSuchObjectException { 
+        LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
+        List<UnitOfMeasurement> uomList = new ArrayList<UnitOfMeasurement>();
+        if(subCategory!=null){
+            if(!subCategory.getLicenseSubCategoryDetails().isEmpty()){
+                for(LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails()){
+                    if(scd.getFeeType().getId()==feeTypeId){
+                      uomList.add(scd.getUom());   
+                    }
+                }
+            }
+        }
+
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("uom", uomList.get(0).getName());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(jsonObject.toString(), response.getWriter());
@@ -221,6 +253,22 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
 
     public LicenseSubCategoryService getLicenseSubCategoryService() {
         return licenseSubCategoryService;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public Long getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Long feeTypeId) {
+        this.feeTypeId = feeTypeId;
     }
 
 }

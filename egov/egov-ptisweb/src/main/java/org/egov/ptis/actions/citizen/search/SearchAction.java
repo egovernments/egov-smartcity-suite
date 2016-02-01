@@ -113,6 +113,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     @SkipValidation
     @Action(value = "/citizen/search/search-searchForm")
     public String searchForm() {
+        setAssessmentNum("");
         return NEW;
     }
 

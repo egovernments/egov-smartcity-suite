@@ -62,7 +62,6 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -78,10 +77,8 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.VoucherSearchAction;
-import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -89,9 +86,9 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=VoucherStatusReport.pdf" }),
-                @Result(name = "search", location = "voucherStatusReport-search.jsp"),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=VoucherStatusReport.xls" })
+        @Result(name = "search", location = "voucherStatusReport-search.jsp"),
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=VoucherStatusReport.xls" })
 })
 @ParentPackage("egov")
 @Validation
@@ -122,11 +119,9 @@ public class VoucherStatusReportAction extends BaseFormAction
     private String countQry;
     private String modeOfPayment;
     @Autowired
-    
-private FinancialYearDAO financialYearDAO;
-    
+    private FinancialYearDAO financialYearDAO;
 
-	List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
+    List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
 
     @Override
@@ -263,7 +258,7 @@ private FinancialYearDAO financialYearDAO;
         for (final CVoucherHeader voucherheader : list)
         {
             voucherMap = new HashMap<String, Object>();
-            BigDecimal amt = BigDecimal.ZERO;
+            Double amt = new Double(0);
             voucherHeaderId = voucherheader.getId();
             voucherMap.put("id", voucherHeaderId);
             voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
@@ -272,7 +267,7 @@ private FinancialYearDAO financialYearDAO;
             voucherMap.put("voucherdate", voucherheader.getVoucherDate());
             voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
             for (final CGeneralLedger detail : voucherheader.getGeneralledger())
-                amt = amt.add(new BigDecimal(detail.getDebitAmount()));
+                amt = amt+detail.getDebitAmount();
             voucherMap.put("amount", amt);
             voucherMap.put("status", getVoucherStatus(voucherheader.getStatus()));
             voucherMap.put("source", getVoucherModule(voucherheader.getModuleId()));
@@ -300,8 +295,8 @@ private FinancialYearDAO financialYearDAO;
                 dropdownData.put("schemeList", Collections.emptyList());
         if (headerFields.contains("subscheme"))
             if (voucherHeader.getVouchermis() != null
-            && voucherHeader.getVouchermis().getSchemeid() != null
-            && voucherHeader.getVouchermis().getSchemeid().getId() != -1)
+                    && voucherHeader.getVouchermis().getSchemeid() != null
+                    && voucherHeader.getVouchermis().getSchemeid().getId() != -1)
                 dropdownData.put("subSchemeList", persistenceService.findAllBy(
                         "from SubScheme where isactive=1 and scheme.id=?",
                         voucherHeader.getVouchermis().getSchemeid().getId()));
@@ -521,8 +516,8 @@ private FinancialYearDAO financialYearDAO;
     }
 
     private String getUserNameForPosition(final Integer posId) {
-        final String query = "select 	emp.username  from org.egov.pims.model.EmployeeView emp where emp.position.id = ? ";
-        final String userName = (String) persistenceService.find(query, posId);
+        final String query = "select emp.userName  from org.egov.eis.entity.EmployeeView emp where emp.position.id = ? ";
+        final String userName = (String) persistenceService.find(query, posId.longValue());
         return userName;
     }
 
@@ -541,6 +536,7 @@ private FinancialYearDAO financialYearDAO;
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
+
     @SkipValidation
     @Action(value = "/report/voucherStatusReport-generatePdf")
     public String generatePdf() throws Exception {
@@ -548,6 +544,7 @@ private FinancialYearDAO financialYearDAO;
         inputStream = reportHelper.exportPdf(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "PDF";
     }
+
     @SkipValidation
     @Action(value = "/report/voucherStatusReport-generateXls")
     public String generateXls() throws Exception {
@@ -560,7 +557,7 @@ private FinancialYearDAO financialYearDAO;
         return paramMap;
     }
 
-	public void setPagedResults(final EgovPaginatedList pagedResults) {
+    public void setPagedResults(final EgovPaginatedList pagedResults) {
         this.pagedResults = pagedResults;
     }
 
@@ -633,20 +630,19 @@ private FinancialYearDAO financialYearDAO;
     }
 
     public FinancialYearDAO getFinancialYearDAO() {
-		return financialYearDAO;
-	}
+        return financialYearDAO;
+    }
 
-	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
-		this.financialYearDAO = financialYearDAO;
-	}
+    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+        this.financialYearDAO = financialYearDAO;
+    }
 
-	public InputStream getInputStream() {
-		return inputStream;
-	}
+    public InputStream getInputStream() {
+        return inputStream;
+    }
 
-	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
-	
-	
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
 }

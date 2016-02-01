@@ -64,10 +64,14 @@ import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
+    @Autowired
+    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    
     public TradeLicenseService(final PersistenceService<TradeLicense, Long> licensePersitenceService) {
         super(licensePersitenceService);
     }
@@ -93,6 +97,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         tl.setMotorMasterList(motorMasterList);
         tl.additionalDemandDetails(egDemandReasonMasters, installment);
         return tl;
+    }
+    
+    @Override
+    protected void sendEmailAndSMS(TradeLicense license, String currentAction) {
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, currentAction);
     }
 
     @Transactional
@@ -251,5 +260,4 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 .findAllBy("select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
         return subCategory;
     }
-
 }

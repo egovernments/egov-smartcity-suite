@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -68,6 +69,7 @@ import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
@@ -89,7 +91,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
-
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -103,6 +104,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-newForm")
     public String newForm() {
         tradeLicense.setApplicationDate(new Date());
+      
         return super.newForm();
     }
 
@@ -112,7 +114,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public String approve() {
 
         tradeLicense = this.tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-       if (Constants.BUTTONSAVE.equals(workFlowAction) && mode.equalsIgnoreCase(VIEW) &&  license().getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null && !tradeLicense.isPaid() &&
+      if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW) &&  tradeLicense.getState().getValue().equals(Constants.WF_STATE_COLLECTION_PENDING) && tradeLicense != null && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
             ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
@@ -126,11 +128,20 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 license().generateLicenseNumber(nextRunningLicenseNumber);
               
              }
-            if(BUTTONAPPROVE.equals(workFlowAction) &&(Constants.BUTTONFORWARD.equals(workFlowAction) && license().getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) ))
-            {
-              LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                        .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
-                license().setStatus(activeStatus);
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_APPROVED_CODE);
+            license().setEgwStatus(statusChange);
+            
+        }
+        if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && tradeLicense.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
+        {
+          LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                    .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
+            license().setStatus(activeStatus);
+            if(Constants.BUTTONFORWARD.equals(workFlowAction) && license().getEgwStatus()!=null && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE) ){
+                EgwStatus statusChange = (EgwStatus) persistenceService
+                        .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_INSPE_CODE);
+                license().setEgwStatus(statusChange);
             }
         }
         if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
@@ -144,9 +155,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-        return super.create(tradeLicense);
+        try {
+            return super.create(tradeLicense);
+        } catch (RuntimeException e) {
+            ValidationError vr=new ValidationError(e.getMessage(), e.getMessage());
+            throw new ValidationException(Arrays.asList(vr) ); 
+        }
     }
-
+    
     @Override
     public void prepareNewForm() {
         super.prepareNewForm();
