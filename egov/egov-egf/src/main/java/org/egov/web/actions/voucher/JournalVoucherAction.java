@@ -194,13 +194,13 @@ public class JournalVoucherAction extends BaseVoucherAction
             }
 
             catch (final ValidationException e) {
-                clearMessages();
+              //  clearMessages();
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
                 voucherHeader.setVoucherNumber(voucherNumber);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
-                throw new ValidationException(errors);
+                throw new ValidationException("Voucher creation failed","Voucher creation failed");
             } catch (final Exception e) {
                 e.printStackTrace();
                 clearMessages();
