@@ -163,11 +163,13 @@ import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
@@ -178,6 +180,10 @@ import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.BoundaryDetails;
+import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -218,7 +224,7 @@ public class PropertyService {
     private InstallmentDao installmentDao;
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -1403,7 +1409,8 @@ public class PropertyService {
             if (FLOOR_MAP.get(floor.getFloorNo()).equals(unitTax.getFloorNumber())
                     && floor.getPropertyUsage().getUsageCode().equalsIgnoreCase(unitTax.getUnitUsage())
                     && floor.getPropertyOccupation().getOccupancyCode().equalsIgnoreCase(unitTax.getUnitOccupation())
-                    && floor.getStructureClassification().getConstrTypeCode().equalsIgnoreCase(unitTax.getUnitStructure())
+                    && floor.getStructureClassification().getConstrTypeCode()
+                            .equalsIgnoreCase(unitTax.getUnitStructure())
                     && floor.getBuiltUpArea().getArea().equals(Float.valueOf(unitTax.getFloorArea().toString())))
                 setFloorDmdCalTax(unitTax, floorDmdCalc);
         }
@@ -2291,8 +2298,7 @@ public class PropertyService {
         if (position == null) {
             user = stateAwareObject.getState().getCreatedBy();
         } else {
-            user = assignmentService.getAssignmentsForPosition(
-                    position.getId(), new Date()).get(0).getEmployee();
+            user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
         }
         Map<String, String> ownerMap = new HashMap<String, String>();
         if (applictionType != null
@@ -2307,9 +2313,9 @@ public class PropertyService {
             ownerMap = property.getBasicProperty().getOwnerMap();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
-                        property.getApplicationNo(), new Date(), applictionType, ownerMap.get("OWNERNAME"), 
-                        property.getState().getValue(), url, property.getBasicProperty()
-                                .getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
+                        property.getApplicationNo(), new Date(), applictionType, ownerMap.get("OWNERNAME"), property
+                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
+                        (user.getUsername() + "::" + user.getName()));
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
                 applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
@@ -2335,8 +2341,9 @@ public class PropertyService {
                 ownerMap = property.getBasicProperty().getOwnerMap();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
-                                : new Date(), applictionType, ownerMap.get("OWNERNAME"), property
-                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
+                                : new Date(), applictionType, ownerMap.get("OWNERNAME"),
+                        property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
+                        (user.getUsername() + "::" + user.getName()));
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
                 applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
@@ -2356,8 +2363,9 @@ public class PropertyService {
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
-                                : new Date(), applictionType, ownerMap.get("OWNERNAME"), property
-                                .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),(user.getUsername() + "::"+ user.getName()));
+                                : new Date(), applictionType, ownerMap.get("OWNERNAME"),
+                        property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
+                        (user.getUsername() + "::" + user.getName()));
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
                 applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
@@ -2651,7 +2659,6 @@ public class PropertyService {
 
     }
 
-
     /**
      * @param fromDemand
      * @param toDemand
@@ -2820,6 +2827,109 @@ public class PropertyService {
             }
         }
         return historyTable;
+    }
+
+    public AssessmentDetails loadAssessmentDetails(BasicProperty basicProperty) {
+        AssessmentDetails assessmentDetail = new AssessmentDetails();
+        assessmentDetail.setPropertyID(basicProperty.getUpicNo());
+        if (basicProperty.getLatitude() != null && basicProperty.getLongitude() != null) {
+            assessmentDetail.setLatitude(basicProperty.getLatitude());
+            assessmentDetail.setLongitude(basicProperty.getLongitude());
+        }
+        assessmentDetail.setFlag(0);
+        assessmentDetail.setHouseNo(basicProperty.getAddress().getHouseNoBldgApt());
+        assessmentDetail.setPropertyAddress(basicProperty.getAddress().toString());
+        Property property = (PropertyImpl) basicProperty.getProperty();
+        final PropertyDetails propertyDetails = new PropertyDetails();
+        assessmentDetail.setPropertyDetails(propertyDetails);
+        PropertyDetail propertyDetail = null;
+        if (property != null) {
+            assessmentDetail.setOwnerNames(prepareOwnerInfo(property));
+            propertyDetail = property.getPropertyDetail();
+            loadPropertyDues(property, assessmentDetail);
+        }
+        if (null != propertyDetail) {
+            assessmentDetail.setBoundaryDetails(prepareBoundaryInfo(basicProperty));
+            assessmentDetail.getPropertyDetails().setPropertyType(propertyDetail.getPropertyTypeMaster().getType());
+            if (propertyDetail.getPropertyUsage() != null)
+                assessmentDetail.getPropertyDetails()
+                        .setPropertyUsage(propertyDetail.getPropertyUsage().getUsageName());
+            if (null != propertyDetail.getNoofFloors())
+                assessmentDetail.getPropertyDetails().setNoOfFloors(propertyDetail.getNoofFloors());
+            else
+                assessmentDetail.getPropertyDetails().setNoOfFloors(0);
+        }
+        return assessmentDetail;
+
+    }
+
+    private Set<OwnerName> prepareOwnerInfo(final Property property) {
+        final List<PropertyOwnerInfo> propertyOwners = property.getBasicProperty().getPropertyOwnerInfo();
+        final Set<OwnerName> ownerNames = new HashSet<OwnerName>(0);
+        if (propertyOwners != null && !propertyOwners.isEmpty())
+            for (final PropertyOwnerInfo propertyOwner : propertyOwners) {
+                final OwnerName ownerName = new OwnerName();
+                ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber());
+                ownerName.setOwnerName(propertyOwner.getOwner().getName());
+                ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber());
+                ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
+                ownerNames.add(ownerName);
+            }
+        return ownerNames;
+    }
+
+    private BoundaryDetails prepareBoundaryInfo(final BasicProperty basicProperty) {
+        final BoundaryDetails boundaryDetails = new BoundaryDetails();
+        final PropertyID propertyID = basicProperty.getPropertyID();
+        if (null != propertyID) {
+            if (null != propertyID.getZone()) {
+                boundaryDetails.setZoneId(propertyID.getZone().getId());
+                boundaryDetails.setZoneNumber(propertyID.getZone().getBoundaryNum());
+                boundaryDetails.setZoneName(propertyID.getZone().getName());
+                boundaryDetails.setZoneBoundaryType(propertyID.getZone().getBoundaryType().getName());
+            }
+            if (null != propertyID.getWard()) {
+                boundaryDetails.setWardId(propertyID.getWard().getId());
+                boundaryDetails.setWardNumber(propertyID.getWard().getBoundaryNum());
+                boundaryDetails.setWardName(propertyID.getWard().getName());
+                boundaryDetails.setWardBoundaryType(propertyID.getWard().getBoundaryType().getName());
+            }
+            if (null != propertyID.getElectionBoundary()) {
+                boundaryDetails.setAdminWardId(propertyID.getElectionBoundary().getId());
+                boundaryDetails.setAdminWardNumber(propertyID.getElectionBoundary().getBoundaryNum());
+                boundaryDetails.setAdminWardName(propertyID.getElectionBoundary().getName());
+                boundaryDetails.setAdminWardBoundaryType(propertyID.getElectionBoundary().getBoundaryType().getName());
+            }
+            if (null != propertyID.getArea()) {
+                boundaryDetails.setBlockId(propertyID.getArea().getId());
+                boundaryDetails.setBlockNumber(propertyID.getArea().getBoundaryNum());
+                boundaryDetails.setBlockName(propertyID.getArea().getName());
+            }
+            if (null != propertyID.getLocality()) {
+                boundaryDetails.setLocalityId(propertyID.getLocality().getId());
+                boundaryDetails.setLocalityName(propertyID.getLocality().getName());
+            }
+            if (null != propertyID.getStreet()) {
+                boundaryDetails.setStreetId(propertyID.getStreet().getId());
+                boundaryDetails.setStreetName(propertyID.getStreet().getName());
+            }
+        }
+        return boundaryDetails;
+    }
+
+    private void loadPropertyDues(Property property, AssessmentDetails assessmentDetail) {
+        final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
+        if (null != resultmap && !resultmap.isEmpty()) {
+            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_DMD_STR);
+            final BigDecimal arrDmd = resultmap.get(PropertyTaxConstants.ARR_DMD_STR);
+            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_COLL_STR);
+            final BigDecimal arrColelection = resultmap.get(PropertyTaxConstants.ARR_COLL_STR);
+
+            final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);
+            assessmentDetail.getPropertyDetails().setTaxDue(taxDue);
+            assessmentDetail.getPropertyDetails().setCurrentTax(currDmd);
+            assessmentDetail.getPropertyDetails().setArrearTax(arrDmd);
+        }
     }
 
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
