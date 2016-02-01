@@ -81,15 +81,20 @@ public class PaymentActionHelper {
             List<VoucherDetails> billDetailslist, List<VoucherDetails> subLedgerlist, WorkflowBean workflowBean)
     {
         try {
-        voucherHeader = createVoucherAndledger(voucherHeader, commonBean, billDetailslist, subLedgerlist);
-        paymentheader = paymentService.createPaymentHeader(voucherHeader,
-                Integer.valueOf(commonBean.getAccountNumberId()), commonBean
-                        .getModeOfPayment(), commonBean.getAmount());
-        if (commonBean.getDocumentId() != null)
-            billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
-                    commonBean.getDocumentId());
-        createMiscBillDetail(billVhId, commonBean, voucherHeader);
-        paymentheader = sendForApproval(paymentheader,workflowBean);
+            voucherHeader = createVoucherAndledger(voucherHeader, commonBean, billDetailslist, subLedgerlist);
+            paymentheader = paymentService.createPaymentHeader(voucherHeader,
+                    Integer.valueOf(commonBean.getAccountNumberId()), commonBean
+                            .getModeOfPayment(), commonBean.getAmount());
+            if (commonBean.getDocumentId() != null)
+                billVhId = (CVoucherHeader) HibernateUtil.getCurrentSession().load(CVoucherHeader.class,
+                        commonBean.getDocumentId());
+            createMiscBillDetail(billVhId, commonBean, voucherHeader);
+            paymentheader = sendForApproval(paymentheader, workflowBean);
+        } catch (final ValidationException e) {
+            LOGGER.error(e.getMessage(), e);
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -274,7 +279,9 @@ public class PaymentActionHelper {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
-            throw e;
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         } catch (final Exception e) {
             // handle engine exception
             LOGGER.error(e.getMessage(), e);
