@@ -106,7 +106,6 @@
 		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
 		<div class="col-xs-3 add-margin view-content">
 		<s:date  name="startDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" /></div>
-		
 	</div>
 
 	<div class="row add-border">
@@ -129,8 +128,25 @@
 	</div>
 	
 </div>
+
+<s:if test="%{agreementDate!=null}">
 <div class="panel-heading  custom_form_panel_heading subheadnew">
-    <div class="panel-title"><s:text name='license.details.lbl' /></div>
+    <div class="panel-title"><s:text name='license.AgreementDetails.lbl' /></div>
+</div>
+<div class="panel-body">
+<div class="row add-border">
+		<div class="col-xs-3 add-margin"><s:text name='license.agreementDate.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content">
+		<s:date  name="agreementDate" id="agreementdate" format="dd-MMM-yyyy" /><s:property value="%{agreementdate}" /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.agreementDocNo.lbl' /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{agreementDocNo}" /></div>
+	</div>
+</div>
+</s:if>
+
+
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='license.title.feedetail' /></div>
 </div>
 <table class="table table-bordered" style="width:97%;margin:0 auto;">
 	<thead>

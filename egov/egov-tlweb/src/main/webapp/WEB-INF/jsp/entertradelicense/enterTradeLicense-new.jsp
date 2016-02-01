@@ -235,7 +235,17 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.startDate.null" />');
 					window.scroll(0, 0);  
 					return false;
-				}  else{
+				}  else if(document.getElementById("showAgreementDtl").checked){
+					 if (document.getElementById("agreementDate").value == '' || document.getElementById("agreementDate").value == null){
+							showMessage('enterLicense_error', '<s:text name="newlicense.agreementDate.null" />');
+							window.scroll(0, 0);  
+							return false;
+					 } else if(document.getElementById("agreementDocNo").value == '' || document.getElementById("agreementDocNo").value == null){
+						 	showMessage('enterLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
+							window.scroll(0, 0);  
+							return false;
+					}
+				} else{
 					clearMessage('enterLicense_error');
 					toggleFields(false,"");
 					document.registrationForm.action='${pageContext.request.contextPath}/entertradelicense/enterTradeLicense-enterExisting.action';
@@ -279,6 +289,16 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.propertyNo.null" />');
                 }
             }
+
+    		function showHideAgreement(){
+				if(document.getElementById("showAgreementDtl").checked){
+					document.getElementById("agreementSec").style.display="";
+				} else {
+					document.getElementById("agreementSec").style.display="none";
+					document.getElementById("agreementDate").value="";
+					document.getElementById("agreementDocNo").value="";
+				}
+            } 
 
  		</script>
     </body>

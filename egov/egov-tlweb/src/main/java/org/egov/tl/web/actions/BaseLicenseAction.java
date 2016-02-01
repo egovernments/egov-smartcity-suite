@@ -136,6 +136,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected Integer reportId = -1;
     private Long feeTypeId;
     private Long parentBndryId;
+    protected boolean showAgreementDtl; 
 
     @Autowired
     protected LicenseUtils licenseUtils;
@@ -714,6 +715,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setParentBndryId(Long parentBndryId) {
         this.parentBndryId = parentBndryId;
+    }
+
+    public boolean isShowAgreementDtl() {
+        return showAgreementDtl;
+    }
+
+    public void setShowAgreementDtl(boolean showAgreementDtl) {
+        this.showAgreementDtl = showAgreementDtl;
     }
 
 }

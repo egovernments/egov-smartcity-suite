@@ -153,6 +153,9 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         this.addDropdownData("uomList", this.unitOfMeasurementService.findAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
                 licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        if(license() != null && license().getAgreementDate()!=null){
+            setShowAgreementDtl(true);
+        }
 
     }
 

@@ -102,7 +102,17 @@
 					showMessage('newLicense_error', '<s:text name="newlicense.startDate.null" />');
 					window.scroll(0, 0);  
 					return false;
-				}	
+				}	else if(document.getElementById("showAgreementDtl").checked){
+					 if (document.getElementById("agreementDate").value == '' || document.getElementById("agreementDate").value == null){
+							showMessage('newLicense_error', '<s:text name="newlicense.agreementDate.null" />');
+							window.scroll(0, 0);  
+							return false;
+					 } else if(document.getElementById("agreementDocNo").value == '' || document.getElementById("agreementDocNo").value == null){
+						 	showMessage('newLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
+							window.scroll(0, 0);  
+							return false;
+					}
+				} 
 				if(!verifyDocAttachment()){
 					return false;
 				}
@@ -132,6 +142,7 @@
 
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
+  				showHideAgreement();
 				if(currentState=='Create License:Commissioner Approved')	
 					{
 					toggleFields(true,['Submit','Reject','button2','Approve','approverComments']); 
@@ -240,6 +251,16 @@
             	document.getElementById("wardName").value="";
             	document.getElementById("address").value="";
             }
+
+            function showHideAgreement(){
+				if(document.getElementById("showAgreementDtl").checked){
+					document.getElementById("agreementSec").style.display="";
+				} else {
+					document.getElementById("agreementSec").style.display="none";
+					document.getElementById("agreementDate").value="";
+					document.getElementById("agreementDocNo").value="";
+				}
+            } 
         	
  		</script>
  		

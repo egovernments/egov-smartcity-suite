@@ -131,6 +131,9 @@
 
 		<property name="rentPaid" column="RENT_PAID" />
 		<property name="feeTypeStr" column="FEETYPETEXT" />
+		<property name="agreementDocNo" column="AGREEMENT_DOCUMENT_NO" type="java.lang.String"/>
+		<property name="agreementDate" column="AGREEMENT_DATE" type="java.util.Date"/>
+		
 		<set name="demandSet" cascade="all,delete,delete-orphan" inverse="true" fetch="select">
 			<key>
 				<column name="ID_LICENSE" precision="22" scale="0" />

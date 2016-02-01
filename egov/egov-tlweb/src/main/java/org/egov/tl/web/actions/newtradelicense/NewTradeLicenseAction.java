@@ -87,7 +87,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
 
-    private TradeLicense tradeLicense = new TradeLicense();
+    private TradeLicense tradeLicense = new TradeLicense(); 
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
@@ -180,6 +180,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
                 licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        if(license() != null && license().getAgreementDate()!=null){
+            setShowAgreementDtl(true);
+        }
     }
 
     @Override

@@ -128,6 +128,8 @@ public abstract class License extends StateAware {
 
     private boolean legacy;
     private Date startDate;
+    private Date agreementDate;
+    private String agreementDocNo;
 
     public abstract String generateApplicationNumber(String runningNumber);
 
@@ -813,6 +815,22 @@ public abstract class License extends StateAware {
 
     public void setParentBoundary(Boundary parentBoundary) {
         this.parentBoundary = parentBoundary;
+    }
+
+    public Date getAgreementDate() {
+        return agreementDate;
+    }
+
+    public void setAgreementDate(Date agreementDate) {
+        this.agreementDate = agreementDate;
+    }
+
+    public String getAgreementDocNo() {
+        return agreementDocNo;
+    }
+
+    public void setAgreementDocNo(String agreementDocNo) {
+        this.agreementDocNo = agreementDocNo;
     }
     
 }
