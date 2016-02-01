@@ -43,7 +43,7 @@
 	<head>
 		<title><s:text name="page.title.entertrade" /></title>
  	</head>
-	<body>
+	<body onload="initDetails();">
 		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
                 <div class="row">
                     <div class="col-md-12">
@@ -169,6 +169,10 @@
 				</script>
         <script src="../resources/app/js/newtrade.js"></script>
         <script>
+
+        	function initDetails(){
+        		showHideAgreement();
+            }
 	
 			function validateForm() {
 				if (document.getElementById("oldLicenseNumber").value == '' || document.getElementById("oldLicenseNumber").value == null){
