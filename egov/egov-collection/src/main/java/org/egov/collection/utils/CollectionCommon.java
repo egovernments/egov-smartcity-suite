@@ -100,7 +100,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class CollectionCommon {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionCommon.class);
@@ -264,7 +266,8 @@ public class CollectionCommon {
     /**
      * Updates the billing system with receipt information
      */
-    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader) {
+    @Transactional
+    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException{
 
         String serviceCode = null;
         // ReceiptHeader rh =
