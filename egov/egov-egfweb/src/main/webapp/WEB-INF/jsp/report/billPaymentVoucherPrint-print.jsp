@@ -71,7 +71,15 @@
 	}
 }
 </style>
+<script>
+function exportXls(){
+	window.open('/EGF/report/billPaymentVoucherPrint-exportXls.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+}
 
+function exportPdf(){
+	window.open('/EGF/report/billPaymentVoucherPrint-exportPdf.action?id=<s:property value="id"/>','','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+}
+</script>
 <body>
 	<div id="container">
 		<iframe id="report" name="report"
@@ -83,11 +91,10 @@
 		<div id="buttons">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="Print"
-				class="button" />
-			<s:submit cssClass="button" value="Save as PDF" method="exportPdf"
-				id="printPDF" />
-			<s:submit cssClass="button" value="Save as Excel" method="exportXls"
-				id="printXLS" />
+				class="button" /> <input type="button" id="printPDF"
+				onclick="return exportPdf();" value="Save as PDF" class="button" />
+			<input type="button" id="printXLS" onclick="return exportXls();"
+				value="Save as Excel" class="button" />
 		</div>
 	</s:form>
 </body>

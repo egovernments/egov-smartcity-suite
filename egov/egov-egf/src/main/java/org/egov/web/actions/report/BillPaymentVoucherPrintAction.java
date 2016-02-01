@@ -387,6 +387,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         return voucher == null || voucher.getDescription() == null ? "" : voucher.getDescription();
     }
 
+    @Action(value = "/report/billPaymentVoucherPrint-exportPdf")
     public String exportPdf() throws JRException, IOException {
         populateVoucher();
         inputStream = reportHelper.exportPdf(inputStream, jasperpath, getParamMap(), voucherReportList);
@@ -399,6 +400,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         return "HTML";
     }
 
+    @Action(value = "/report/billPaymentVoucherPrint-exportXls")
     public String exportXls() throws JRException, IOException {
         populateVoucher();
         inputStream = reportHelper.exportXls(inputStream, jasperpath, getParamMap(), voucherReportList);
