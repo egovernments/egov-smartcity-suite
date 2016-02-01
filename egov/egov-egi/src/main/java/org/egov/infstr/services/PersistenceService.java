@@ -284,7 +284,6 @@ public class PersistenceService<T, ID extends Serializable> {
     }
 
     @Transactional
-  
     public T update(final T entity) {
         validate(entity);
         getSession().update(entity);

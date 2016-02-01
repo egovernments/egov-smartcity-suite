@@ -70,6 +70,7 @@
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden name="id" id="id" />
+							<s:hidden name="licenseNumber"/>
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
 								<div class="panel-title" style="text-align:center">
@@ -114,14 +115,14 @@
 												</thead>
 												<tbody>
 												<c:set value="" var="startfinyear"/>
-												<s:iterator value="demandSet" var="demand" status="stat">
+												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="stat">
 													<tr>
-														<c:set value="${fn:substring(demand.egInstallmentMaster.installmentNumber,0, 4)}-${fn:substring(demand.egInstallmentMaster.installmentNumber,2, 4)+1}" var="finyear"/>
+														<c:set value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}" var="finyear"/>
 														<s:if test="#stat.index == 0">
 															<c:set value="${finyear}" var="startfinyear"/>
 														</s:if>
 														<td><input type="text"  name="" class="form-control" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${demand.egInstallmentMaster.installmentNumber}]" class="form-control patternvalidation"  value="${demand.baseDemand}" data-pattern="decimalvalue"/> </td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation"  value="${LIFee.value}" data-pattern="decimalvalue"/> </td>
 													</tr>
 												</s:iterator>
 												</tbody>

@@ -62,6 +62,7 @@ import org.egov.commons.Installment;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
@@ -86,7 +87,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
     private Map<Integer, BigDecimal> legacyInstallmentwiseFees = new TreeMap<>();
     private String licenseNumber;
-    
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
@@ -116,28 +117,37 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @SkipValidation
-    @Action(value="/entertradelicense/update-form")
+    @Action(value = "/entertradelicense/update-form")
     public String showLegacyUpdateForm() {
-        this.tradeLicense = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
-        commonFormPrepare();
+        prepareUpdate();
+        if (license().getDemandSet() != null && !license().getDemandSet().isEmpty())
+            for (final LicenseDemand licenseDemand : license().getDemandSet())
+                legacyInstallmentwiseFees.put(licenseDemand.getEgInstallmentMaster().getInstallmentNumber(),
+                        licenseDemand.getBaseDemand());
         return "update";
     }
-    
-    @Action(value="/entertradelicense/update")
-    public String updateLegacyLicense() {
-        tradeLicenseService.licensePersitenceService().persist(tradeLicense);
+
+    @Action(value = "/entertradelicense/update")
+    public String update() {
+        super.setCheckList();
+        tradeLicenseService.updateLegacyLicense(tradeLicense, legacyInstallmentwiseFees);
         return "viewlicense";
     }
-    
+
+    public void prepareUpdate() {
+        commonFormPrepare();
+    }
+
     @Override
     public void prepareNewForm() {
-        if (!license().isNew())
-            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         commonFormPrepare();
-       
     }
 
     public void commonFormPrepare() {
+        if (StringUtils.isNotBlank(licenseNumber))
+            tradeLicense = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
+        else if (!license().isNew())
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         super.prepareNewForm();
         setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
         setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
@@ -147,11 +157,10 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
                 : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
-        if(license() != null && license().getAgreementDate()!=null){
+        if (license().getAgreementDate() != null)
             setShowAgreementDtl(true);
-        }
     }
-    
+
     @Override
     public TradeLicense getModel() {
         return tradeLicense;
@@ -195,7 +204,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return licenseNumber;
     }
 
-    public void setLicenseNumber(String licenseNumber) {
+    public void setLicenseNumber(final String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 }

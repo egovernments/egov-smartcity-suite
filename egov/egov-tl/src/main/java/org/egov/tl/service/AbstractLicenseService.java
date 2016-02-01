@@ -164,7 +164,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected abstract Module getModuleName();
 
     protected abstract NatureOfBusiness getNatureOfBusiness();
-    
+
     protected abstract void sendEmailAndSMS(T license, String currentAction);
 
     public PersistenceService<T, Long> licensePersitenceService() {
@@ -316,6 +316,18 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setLegacy(true);
         license.setActive(true);
         license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
+        this.licensePersitenceService.persist(license);
+    }
+
+    @Transactional
+    public void updateLegacyLicense(final T license, final Map<Integer, BigDecimal> updatedInstallmentFees) {
+        for (final LicenseDemand demand : license.getDemandSet()) {
+            final BigDecimal updatedFee = updatedInstallmentFees.get(demand.getEgInstallmentMaster().getInstallmentNumber());
+            demand.setBaseDemand(updatedFee);
+            demand.getEgDemandDetails().iterator().next().setAmount(updatedFee);
+        }
+        this.processAndStoreDocument(license.getDocuments());
+        setAuditEntries(license);
         this.licensePersitenceService.persist(license);
     }
 
