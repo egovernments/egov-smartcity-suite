@@ -45,8 +45,20 @@
 </style>
 
 <script type="text/javascript">
+function checkPanNumber() {
+	var panNumber = document.getElementById('panNumber').value.length;
+    if(panNumber<10)
+        {
+    	showMessage('contractor_error', '<s:text name="contractor.panNumber.length" />');
+        window.scroll(0,0);
+        return false;
+        }
+    return true;
+}
 function validateContractorFormAndSubmit() {
-    clearMessage('contractor_error')
+	if(!checkPanNumber())
+		return false;
+	clearMessage('contractor_error');
 	links=document.contractor.getElementsByTagName("span");
 	errors=false;
 	for(i=0;i<links.length;i++) {
@@ -61,8 +73,7 @@ function validateContractorFormAndSubmit() {
     	document.getElementById("contractor_error").innerHTML='<s:text name="contractor.validate_x.message" />';
     	return false;
     }
- }
-
+}
 var departmentDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="dropdownData.departmentList" status="status">  
     {"label":"<s:property value="%{name}"/>" ,
@@ -185,6 +196,7 @@ var makeContractorDataTable = function() {
 }
 
 </script>
+
 <div class="errorstyle" id="contractor_error" class="alert alert-danger" style="display: none;"></div>
 <div class="new-page-header">
 	<s:text name="contractor.master.title" />
@@ -263,7 +275,7 @@ var makeContractorDataTable = function() {
 					name="contractor.panNo" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="panNumber" id="panNumber" maxlength="14"
+				<s:textfield name="panNumber" id="panNumber" maxlength="10"
 					cssClass="form-control" value="%{panNumber}" />
 			</div>
 			<label class="col-sm-2 control-label text-right"> <s:text

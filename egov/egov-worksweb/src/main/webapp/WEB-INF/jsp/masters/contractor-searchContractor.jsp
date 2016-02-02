@@ -110,9 +110,10 @@
 	</div>
 </div>
 			
+			<s:hidden name="id" id="id" />
 <div class="row">
 	<div class="col-xs-12 text-center buttonholdersearch">
-		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" onClick="validate()" />&nbsp;
+		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" name="button" onClick="return validate()" />&nbsp;
 		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 	</div>
 </div>
@@ -134,7 +135,7 @@
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:2%;" titleKey="column.title.select">
 						<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setContractorId('<s:property value='%{#attr.currentRow.id}'/>');" />
-						<s:hidden name="id" id="id" />
+						
 					</display:column>
 
 					<display:column headerClass="pagetableth"  class="pagetabletd" title="${slNo}"  style="width:4%;text-align:right">

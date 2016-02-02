@@ -86,7 +86,7 @@ body {
 		</s:if>
 			<s:if test="%{model.id==null}">
 				<s:submit type="submit" cssClass="btn btn-primary" value="Save"
-					id="saveButton" name="button" method="save" />&nbsp;
+					id="saveButton" name="button" method="save" onclick="return validateContractorFormAndSubmit();"/>&nbsp;
 
 				<input type="button" class="btn btn-default" value="Clear"
 					id="button" name="clear" onclick="this.form.reset();">&nbsp;
