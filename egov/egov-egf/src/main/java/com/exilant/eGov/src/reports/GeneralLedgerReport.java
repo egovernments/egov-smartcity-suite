@@ -1244,11 +1244,23 @@ public class GeneralLedgerReport {
         {
             final String query = "select name  as \"name\" from fund where id=?";
             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
-            pst.setLong(0, Long.valueOf(fundId));
-             List list = pst.list();
+            if(fundId.isEmpty())
+            {
+            pst.setInteger(0, 0);
+            }
+            else
+            {
+            	pst.setInteger(0, Integer.valueOf(fundId));
+            }
+             List<Object[]> list = pst.list();
             System.err.println(000);
            Object[] objects = list.toArray();
            System.err.println(111);
+           if(objects.length==0)
+           {
+        	   fundName="";
+           }
+           else
            fundName=objects[0].toString();
           
         } catch (final Exception e)
