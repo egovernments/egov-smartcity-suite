@@ -1,18 +1,22 @@
 package org.egov.commons.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
 import org.egov.commons.repository.AccountEntityRepository;
+import org.egov.commons.utils.EntityType;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.masters.model.AccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service 
 @Transactional(readOnly = true)
-public class AccountEntityService  {
+public class AccountEntityService implements  EntityTypeService {
 
 	private final AccountEntityRepository accountEntityRepository;
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	private AccountdetailtypeService accountdetailtypeService;
 
 	@Autowired
 	public AccountEntityService(final AccountEntityRepository accountEntityRepository) {
@@ -76,5 +83,41 @@ public class AccountEntityService  {
 		  
 		entityManager.createQuery(criteriaQuery);*/
 		return accountEntityRepository.findAll();
+	}
+	@Override
+	public List<? extends EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
+		Accountdetailtype	accountdetailtype=	accountdetailtypeService.findOne(accountDetailTypeId);
+		List<AccountEntity> activeEntityList = accountEntityRepository.findByAccountdetailtypeAndIsactive(accountdetailtype, true);
+		return activeEntityList;
+	}
+	@Override
+	public List<? extends EntityType> filterActiveEntities(String filterKey, int maxRecords,
+			Integer accountDetailTypeId) {
+		//final Integer pageSize = maxRecords > 0 ? maxRecords : null;
+		//Pageable pageable= new PageRequest(1, maxRecords);
+        final List<EntityType> entities = new ArrayList<EntityType>();
+        filterKey = "%" + filterKey + "%";
+        List<AccountEntity>  pagedEntities=    accountEntityRepository.findBy20(accountDetailTypeId,filterKey);
+       entities.addAll(pagedEntities);
+        return entities;
+	}
+	@Override
+	public List getAssetCodesForProjectCode(Integer accountdetailkey) throws ValidationException {
+		return null;
+	}
+	@Override
+	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList) throws ValidationException {
+	 
+		return null;
+	}
+	@Override
+	public List<? extends EntityType> getEntitiesById(List<Long> idsList) throws ValidationException {
+		/*Iterable<Integer> it;
+		for(Long l:idsList)
+		{
+		
+		}
+		return accountEntityRepository.findAll(it);  */
+		return null;
 	}
 }
