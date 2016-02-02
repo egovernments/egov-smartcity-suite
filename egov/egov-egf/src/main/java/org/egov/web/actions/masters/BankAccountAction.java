@@ -127,10 +127,10 @@ public class BankAccountAction extends JQueryGridActionSupport {
         if (COA == null)
             throw new ApplicationRuntimeException("Given glcode does not exist");
         if (glCode != null) {
-            List<CGeneralLedger> glList = (List<CGeneralLedger>) persistenceService
+            CGeneralLedger glList = (CGeneralLedger) persistenceService
                     .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
                             glCode);
-            if (glList != null && glList.isEmpty())
+            if (glList != null )
                 throw new ApplicationRuntimeException("Transaction already exist for given glcode");
 
         }
@@ -176,8 +176,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
     private void populateBankAccountDetail(final Bankaccount bankAccount) {
         final HttpServletRequest request = ServletActionContext.getRequest();
         bankAccount.setAccountnumber(request.getParameter("accountnumber"));
-        bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
-                "accounttype").split("#")[1]);
+        /*bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
+                "accounttype").split("#")[1]);*/
         if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("fundname"))) {
             final Fund fund = (Fund) persistenceService.getSession().load(Fund.class,
                     Integer.valueOf(request.getParameter("fundname")));
