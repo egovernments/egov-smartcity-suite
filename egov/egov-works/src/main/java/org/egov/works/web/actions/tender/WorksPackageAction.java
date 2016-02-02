@@ -78,6 +78,7 @@ import org.egov.works.models.tender.WorksPackageDetails;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
+import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +140,14 @@ public class WorksPackageAction extends GenericWorkFlowAction {
                     packageNumber);
         setupDropdownDataExcluding("department");
 
+        if (worksPackage.getId() == null || worksPackage.getId() != null
+                && (worksPackage.getEgwStatus().getCode()
+                        .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage
+                                .getEgwStatus().getCode().equalsIgnoreCase("NEW")))
+            addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
+        else
+            addDropdownData(DEPARTMENT_LIST, Arrays.asList(worksPackage.getDepartment()));
+
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
             approverDepartment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
@@ -146,8 +155,6 @@ public class WorksPackageAction extends GenericWorkFlowAction {
             if (worksPackage.getDepartment() == null)
                 worksPackage.setDepartment(latestAssignment.getDepartment());
         }
-
-        addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
     }
 
     @Action(value = "/tender/worksPackage-newform")
@@ -190,8 +197,8 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         if (worksPackage.getId() == null && worksPackage.getEgwStatus() == null && abstractEstimateList.size() > 0) {
             validateFinancingSource(abstractEstimateList);
             validateEstimateForUniqueness();
-
         }
+        validateWorksPackageDate();
         transitionWorkFlow(worksPackage);
         abstractEstimateService.applyAuditing(worksPackage.getState());
         workspackageService.setWorksPackageNumber(worksPackage,
@@ -207,6 +214,11 @@ public class WorksPackageAction extends GenericWorkFlowAction {
             sourcepage = "inbox";
 
         return WorksConstants.SAVE_ACTION.equals(workFlowAction) ? EDIT : SUCCESS;
+    }
+
+    private void validateWorksPackageDate() {
+        if (worksPackage.getWpDate() != null && DateConversionUtil.isBeforeByDate(new Date(), worksPackage.getWpDate()))
+            throw new ValidationException(Arrays.asList(new ValidationError("invalid.wpDate", "invalid.wpDate")));
     }
 
     private void validateFinancingSource(final List<AbstractEstimate> estimateList) {

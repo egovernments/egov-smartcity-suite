@@ -58,7 +58,7 @@ function gotoPage(obj)
 	}
 	if(showActions[3]!=null && obj.value==showActions[3].value)
 	{
-		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue="+
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId="+
 		packageStateId.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	}
 	if(showActions[4]!=null && obj.value==showActions[4].value)
@@ -213,7 +213,7 @@ function validateCancel() {
 					<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize"/>
 				</display:column>
 
-				<display:column title="Package Number" titleKey='wp.No'
+				<display:column title="Works Package Number" titleKey='wp.No'
 					property="wpNumber" headerClass="pagetableth" class="pagetabletd"
 					style="width:5%;text-align:center"></display:column>
 
@@ -222,7 +222,7 @@ function validateCancel() {
 					style="width:14%;text-align:left">
 				</display:column>
 
-				<display:column title="WorksPackage Date" titleKey='wp.date'
+				<display:column title="Works Package Date" titleKey='wp.date'
 					headerClass="pagetableth" class="pagetabletd" style="width:5%;text-align:center">
 					<s:date name="#attr.currentRow.wpDate" format="dd/MM/yyyy" />
 				</display:column>

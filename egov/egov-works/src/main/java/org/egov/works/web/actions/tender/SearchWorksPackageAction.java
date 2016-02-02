@@ -521,7 +521,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
         getPositionAndUser();
         if (searchResult.getFullListSize() == 0)
-            addFieldError("search.result.empty", "search.result.empty");
+            addFieldError("search.result.empty", getText("search.result.empty"));
         return retVal;
     }
 

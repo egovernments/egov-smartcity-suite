@@ -137,7 +137,7 @@ function setEstimateId(elem){
 		title="WorkFlow History" titleKey="estimate.wrokflow.history"
 		style="width:8%;text-align:left">
 		<a href="#"
-			onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateValue=<s:property value='%{#attr.currentRow.state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
+			onclick="window.open('${pageContext.request.contextPath}/estimate/abstractEstimate-workflowHistory.action?stateId=<s:property value='%{#attr.currentRow.state.id}'/>', '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
 			History </a>
 	</display:column>
 

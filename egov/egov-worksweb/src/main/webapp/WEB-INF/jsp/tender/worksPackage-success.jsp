@@ -41,7 +41,7 @@
 <html>
 
 <title>Works Package</title>
-<body onload="refreshInbox();">
+<body>
 <script>
 function refreshInbox(){
         var x=opener.top.opener;
