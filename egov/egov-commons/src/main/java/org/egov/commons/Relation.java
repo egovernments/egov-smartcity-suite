@@ -245,7 +245,7 @@ public class Relation extends AbstractPersistable<Integer>implements java.io.Ser
 
 	@Override
 	public String getEntityDescription() {
-		return this.narration;
+		return this.name;
 	}
 
 	@Override

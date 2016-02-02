@@ -115,11 +115,11 @@ function onSubmit()
 				<div align="center">
 					<table border="0" width="100%" cellspacing="0">
 						<tr>
-							<td width="25%" class="greybox"><s:property value="type" />
-								Journal Voucher Number</td>
+							<td width="10%" class="greybox"><s:property value="type" />
+								Journal Voucher Number :</td>
 							<td width="25%" class="greybox"><s:property
 									value="%{voucherHeader.voucherNumber}" /></td>
-							<td width="25%" class="greybox">Date</td>
+							<td width="10%" class="greybox">Date :</td>
 							<td width="25%" class="greybox"><s:date
 									name="voucherHeader.voucherDate" format="dd/MM/yyyy" /></td>
 						</tr>
@@ -129,11 +129,11 @@ function onSubmit()
 				<div align="center">
 					<table border="0" width="100%" cellspacing="0">
 						<tr>
-							<td width="25%" class="<c:out value='${tdclass}' />">Bill
-								Number</td>
+							<td width="10%" class="<c:out value='${tdclass}' />">Bill
+								Number :</td>
 							<td width="25%" class="<c:out value='${tdclass}' />"><s:property
 									value="%{getMasterName('billnumber')}" /></td>
-							<td width="25%"></td>
+							<td width="10%"></td>
 							<td width="25%"></td>
 						</tr>
 					</table>
