@@ -36,20 +36,36 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.repository;
 
-import java.util.List;
+package org.egov.adtax.service.scheduler.jobs;
 
-import org.egov.adtax.entity.Advertisement;
-import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.commons.Installment;
+import org.apache.log4j.Logger;
+import org.egov.adtax.service.AdvertisementBatchDemandGenService;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface AdvertisementRepositoryCustom {
+@Transactional
+public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
 
-    List<Advertisement> fetchAdvertisementLike(HoardingSearch hoarding);
+    private static final long serialVersionUID = 603128245038844916L;
 
-    List<Object[]> fetchAdvertisementBySearchType(Advertisement hoarding, String searchType);
-    List<Advertisement> fetchAdvertisementBySearchParams(Advertisement hoarding);
-    int findActivePermanentAdvertisementsByCurrentInstallment(Installment installment);
-    List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(Installment installment,int noOfResultToFetch);
+    private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
+
+    @Autowired
+    private AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
+
+    @Override
+    public void executeJob() {
+
+        int totalRecordsProcessed = 0;
+        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
+
+        totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
+
+        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
+                + totalRecordsProcessed);
+
+    }
+
 }

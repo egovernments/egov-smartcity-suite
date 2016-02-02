@@ -1,4 +1,5 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -40,16 +41,15 @@ package org.egov.adtax.repository;
 
 import java.util.List;
 
-import org.egov.adtax.entity.Advertisement;
-import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.commons.Installment;
+import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-public interface AdvertisementRepositoryCustom {
+@Repository
+public interface AdvertisementBatchDemandGenRepository extends JpaRepository<AdvertisementBatchDemandGenerate, Long> {
 
-    List<Advertisement> fetchAdvertisementLike(HoardingSearch hoarding);
+    @Query("select A from AdvertisementBatchDemandGenerate A where A.active is true order by createdDate asc ")
+    List <AdvertisementBatchDemandGenerate> findActiveBatchDemands();
 
-    List<Object[]> fetchAdvertisementBySearchType(Advertisement hoarding, String searchType);
-    List<Advertisement> fetchAdvertisementBySearchParams(Advertisement hoarding);
-    int findActivePermanentAdvertisementsByCurrentInstallment(Installment installment);
-    List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(Installment installment,int noOfResultToFetch);
 }

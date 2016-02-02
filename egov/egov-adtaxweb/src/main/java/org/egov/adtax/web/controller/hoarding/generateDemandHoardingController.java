@@ -39,97 +39,70 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.egov.adtax.entity.AdvertisementPermitDetail;
-import org.egov.adtax.entity.SubCategory;
-import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
-import org.egov.adtax.service.AdvertisementDemandService;
-import org.egov.adtax.service.AdvertisementPermitDetailService;
-import org.egov.adtax.service.AdvertisementService;
-import org.egov.adtax.service.SubCategoryService;
+import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
+import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.adtax.service.AdvertisementBatchDemandGenService;
+import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.repository.CFinancialYearRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/hoarding")
 public class generateDemandHoardingController extends GenericController {
 
     @Autowired
-    private AdvertisementPermitDetailService advertisementPermitDetailService;
-    @Autowired
-    private ApplicationProperties applicationProperties;
-    @Autowired
-    private AdvertisementDemandService advertisementDemandService;
+    private AdvertisementRateService advertisementRateService;
 
+    private @Autowired CFinancialYearRepository cFinancialYearRepository;
     @Autowired
-    private SubCategoryService subCategoryService;
-    private @Autowired AdvertisementService advertisementService;
-    private @Autowired AdvertisementPermitDetailRepository advertisementPermitDetailRepository;
+    private AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
 
-    @ModelAttribute
-    public AdvertisementPermitDetail advertisementPermitDetail() {
-        return new AdvertisementPermitDetail();
-    }
+    public @ModelAttribute("financialYears") List<CFinancialYear> financialyear() {
 
-    @RequestMapping(value = "/11subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
-        return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
+        return advertisementRateService.getAllFinancialYears();
     }
 
     @RequestMapping(value = "/generate-search", method = GET)
-    public String search() {
+    public String search(@ModelAttribute final HoardingSearch hoardingSearch) {
         return "hoarding-generate";
     }
 
-    @RequestMapping(value = "/genareteDemand-list", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        request.getParameter("searchType");
-        IOUtils.write(
-                "{ \"data\":"
-                        + new GsonBuilder()
-                                .setDateFormat(applicationProperties.defaultDatePattern())
-                                .create()
-                                .toJson(advertisementPermitDetailService
-                                        .getAdvertisementSearchResult(advertisementPermitDetail,null)) + "}",
-                response.getWriter());
-    }
+    @RequestMapping(value = "generate-search", method = POST)
+    public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch,
+            final RedirectAttributes redirectAttributes, final BindingResult resultBinder) {
 
-    @RequestMapping(value = "/generateDemand/{hoardingId}", method = GET)
-    public String payTaxOnline(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetail,
-            final RedirectAttributes redirectAttributes, @PathVariable final Long hoardingId, final Model model) {
-        advertisementPermitDetail = advertisementPermitDetailService.findBy(hoardingId);
-        return generateDemandAndUpdateAdTax(advertisementPermitDetail, model,redirectAttributes);
-    }
+        CFinancialYear cFinancialYear = null;
 
-    public String generateDemandAndUpdateAdTax(final AdvertisementPermitDetail advertisementPermitDetail,
-            final Model model,RedirectAttributes redirectAttributes) {
-        final EgDemand updateddemand = advertisementDemandService
-                .generateNextYearDemandForAdvertisement(advertisementPermitDetail);
-        advertisementPermitDetail.getAdvertisement().setDemandId(updateddemand);
-        advertisementPermitDetailRepository.save(advertisementPermitDetail);
-        redirectAttributes.addFlashAttribute("message","Demand Updated Successfully");
+        if (hoardingSearch.getFinancialYear() != null) {
+            cFinancialYear = cFinancialYearRepository.getOne(Long.valueOf(hoardingSearch.getFinancialYear()));
+        } else {
+            resultBinder.rejectValue("financialYear", "*");
+            return "hoarding-generate";
+        }
+
+        if (cFinancialYear != null) {
+            AdvertisementBatchDemandGenerate advBatchDmdGenerate = new AdvertisementBatchDemandGenerate();
+            advBatchDmdGenerate.setActive(true);
+            advBatchDmdGenerate.setFinancialYear(cFinancialYear);
+            advBatchDmdGenerate.setJobName("Generate Demand For " + cFinancialYear.getFinYearRange() + new Date());
+            advertisementBatchDemandGenService.createAdvertisementBatchDemandGenerate(advBatchDmdGenerate);
+        }
+
+        redirectAttributes.addFlashAttribute("message", "msg.demand.Scheduled");
+
         return "generateDemand-success";
     }
 

@@ -69,7 +69,7 @@
 	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-success.jsp"/>
     </definition>
     <definition name="generateDemand-success" extends="base_layout">
-	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+	    <put-attribute name="page-title" value="title.adtax.generateDemand" cascade="true"/>
 	    <put-attribute name="body" value="/WEB-INF/views/hoarding/generateDemand-success.jsp"/>
     </definition>
     <definition name="error/*" extends="error">
@@ -106,7 +106,7 @@
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-search-for-update.jsp"/>
     </definition>
     <definition name="hoarding-generate" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+    	<put-attribute name="page-title" value="title.adtax.generateDemand" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-generateDemand.jsp"/>
     </definition>
     
