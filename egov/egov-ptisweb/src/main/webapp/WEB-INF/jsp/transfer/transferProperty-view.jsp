@@ -24,7 +24,7 @@
 #     In addition to the terms of the GPL license to be adhered to in using this
 #     program, the following additional terms are to be complied with:
 # 
-# 	1) All versions of this program, verbatim or modified must carry this 
+# 	1) All versions of this program, verbatim or modified must carry this
 # 	   Legal Notice.
 # 
 # 	2) Any misrepresentation of the origin of the material is prohibited. It 
@@ -49,14 +49,13 @@
 	jQuery("#loadingMask").remove();
 	function generateMutationCertificate(actionName) {
 		if (actionName == 'Preview') {
-			var params = [
-	   			'height='+screen.height,
-	   		    'width='+screen.width,
-	   		    'fullscreen=yes' 
-	   		].join(',');
-			window.open("printNotice.action?mutationId=" + mutationId.value + "&actionType=" + actionName, 'NoticeWindow', params);
+			var params = [ 'height=' + screen.height, 'width=' + screen.width,
+					'fullscreen=yes' ].join(',');
+			window.open("printNotice.action?mutationId=" + mutationId.value
+					+ "&actionType=" + actionName, 'NoticeWindow', params);
 		} else {
-			window.location = "printNotice.action?mutationId=" + mutationId.value + "&actionType=" + actionName;
+			window.location = "printNotice.action?mutationId="
+					+ mutationId.value + "&actionType=" + actionName;
 		}
 	}
 
@@ -79,327 +78,336 @@
 <script
 	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </head>
-<div class="formmainbox">
-	<s:if test="%{hasErrors()}">
-		<div class="errorstyle" id="property_error_area">
-			<s:actionerror />
-		</div>
-	</s:if>
-
-	<s:form action="" name="transferform" theme="simple">
-		<s:push value="model">
-			<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
-			<s:hidden name="mutationId" id="mutationId" value="%{mutationId}"></s:hidden>
-			<s:hidden name="basicPropId" id="basicPropId"
-				value="%{basicproperty.id}"></s:hidden>
-			<div class="headingbg">
-				<s:text name="transferProperty" />
+<body>
+	<div class="formmainbox">
+		<s:if test="%{hasErrors()}">
+			<div class="errorstyle" id="property_error_area">
+				<s:actionerror />
 			</div>
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		</s:if>
+		<s:if
+			test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT)}">
+			<div id="mutationFeeError" style="color: red; font-size: 15px;"
+				align="center">
+				<s:text name="error.mutation.feeNotPaid"></s:text>
+			</div>
+		</s:if>
+		<s:form action="" name="transferform" theme="simple">
+			<s:push value="model">
+				<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
+				<s:hidden name="mutationId" id="mutationId" value="%{mutationId}"></s:hidden>
+				<s:hidden name="basicPropId" id="basicPropId"
+					value="%{basicproperty.id}"></s:hidden>
+				<div class="headingbg">
+					<s:text name="transferProperty" />
+				</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td class="bluebox2" style="width: 5%;">&nbsp;</td>
-						<td class="bluebox" style="width: 20%"><s:text name="prop.Id"></s:text>
-							:</td>
-						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
-								name="assessmentNo" value="%{basicproperty.upicNo}" /></td>
-						<td class="bluebox">&nbsp;</td>
-						<td style="width: 25%;">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="bluebox2">&nbsp;</td>
-						<td class="bluebox"><s:text name="PropertyAddress"></s:text>
-							:</td>
-						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.address" default="N/A" /></span></td>
-						<td class="bluebox"><s:text name="Zone"></s:text> :</td>
-						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.propertyID.zone.name" default="N/A" /></span></td>
-					</tr>
-
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="Ward" /> :</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.ward.name" default="N/A" /></span></td>
-						<td class="greybox"><s:text name="block" /> :</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.area.name" default="N/A" /></span></td>
-					</tr>
-
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="currentpropertytax" /> :</td>
-						<td class="greybox"><span class="bold">Rs. <s:property
-									value="currentPropertyTax" /> /-
-						</span></td>
-					</tr>
-					<tr>
-						<td colspan="5">
-							<div class="headingsmallbg">
-								<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="5">
-							<table class="tablebottom" id="" width="100%" border="0"
-								cellpadding="0" cellspacing="0">
-								<tbody>
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
-									<s:iterator value="basicproperty.propertyOwnerInfo"
-										status="status">
-										<tr>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{owner.aadhaarNumber == ""}'>
-								        				N/A
-								        			</s:if> <s:else>
-														<s:property value="%{owner.aadhaarNumber}" default="N/A" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.mobileNumber" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.name" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.gender" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if test='%{owner.emailId == ""}'>N/A</s:if>
-													<s:else>
-														<s:property value="%{owner.emailId}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="owner.guardianRelation" default="N/A" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property value="owner.guardian"
-														default="N/A" /></span></td>
-										</tr>
-									</s:iterator>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td colspan="5">
-								<div class="headingsmallbg">
-									<s:text name="transferDtls" />
-								</div>
-							</td>
+							<td class="bluebox2" style="width: 5%;">&nbsp;</td>
+							<td class="bluebox" style="width: 20%"><s:text
+									name="prop.Id"></s:text> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
+									name="assessmentNo" value="%{basicproperty.upicNo}" /></td>
+							<td class="bluebox">&nbsp;</td>
+							<td style="width: 25%;">&nbsp;</td>
 						</tr>
-						<tr>
-							<td colspan="5">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0"
-									class="tablebottom" id="nameTable">
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-											+91)</th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
-									<s:iterator value="transfereeInfos" status="ownerStatus">
-										<tr>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transfereeInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfos[#ownerStatus.index].mobileNumber}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfos[#ownerStatus.index].name}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfos[#ownerStatus.index].gender}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transfereeInfos[#ownerStatus.index].emailId == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transfereeInfos[#ownerStatus.index].emailId}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfos[#ownerStatus.index].guardianRelation}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfos[#ownerStatus.index].guardian}" /></span></td>
-										</tr>
-									</s:iterator>
-								</table>
-							</td>
-						</tr>
-					</s:if>
-					<s:else>
-						<tr>
-							<td colspan="5">
-								<div class="headingsmallbg">
-									<s:text name="transferorDetails" />
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="5">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0"
-									class="tablebottom" id="nameTable">
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-											+91)</th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
-									<s:iterator value="transfereeInfos" status="ownerStatus">
-										<tr>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transferorInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transferorInfos[#ownerStatus.index].aadhaarNumber}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transferorInfos[#ownerStatus.index].mobileNumber}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transferorInfos[#ownerStatus.index].name}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transferorInfos[#ownerStatus.index].gender}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transferorInfos[#ownerStatus.index].emailId == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transferorInfos[#ownerStatus.index].emailId}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transferorInfos[#ownerStatus.index].guardianRelation}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transferorInfos[#ownerStatus.index].guardian}" /></span></td>
-										</tr>
-									</s:iterator>
-								</table>
-							</td>
-						</tr>
-					</s:else>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="transferreason"></s:text> :</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="%{mutationReason.mutationName}" /></span></td>
-						<td class="greybox"><s:text name="saleDetls" /> :</td>
-						<td class="greybox"><span class="bold"> <s:if
-									test="%{saleDetail == ''}">N/A</s:if> <s:else>
-									<s:property value="%{saleDetail}" />
-								</s:else>
-						</span></td>
-					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="docNum" />:</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="%{deedNo}" /></span></td>
-						<td class="greybox"><s:text name="docDate" />:</td>
-						<td class="greybox"><s:date name="deedDate" var="docDate"
-								format="dd/MM/yyyy" /> <span class="bold"><s:property
-									value="%{#docDate}" /></span></td>
-					</tr>
-					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
-							<td class="bluebox"><s:text name="docValue" /> :</td>
+							<td class="bluebox"><s:text name="PropertyAddress"></s:text>
+								:</td>
 							<td class="bluebox"><span class="bold"><s:property
-										value="%{marketValue}" default="N/A" /></span></td>
-							<td class="bluebox"><s:text name="payablefee" />:</td>
+										value="basicproperty.address" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="Zone"></s:text> :</td>
 							<td class="bluebox"><span class="bold"><s:property
-										value="%{mutationFee}" default="N/A" /></span></td>
+										value="basicproperty.propertyID.zone.name" default="N/A" /></span></td>
 						</tr>
-					</s:if>
-					<s:if test="%{!documentTypes.isEmpty()}">
+
 						<tr>
-							<%@ include file="../common/DocumentUploadView.jsp"%>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="Ward" /> :</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="basicproperty.propertyID.ward.name" default="N/A" /></span></td>
+							<td class="greybox"><s:text name="block" /> :</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="basicproperty.propertyID.area.name" default="N/A" /></span></td>
 						</tr>
-					</s:if>
-					<s:if test="%{state != null}">
+
 						<tr>
-							<%@ include file="../common/workflowHistoryView.jsp"%>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="currentpropertytax" /> :</td>
+							<td class="greybox"><span class="bold">Rs. <s:property
+										value="currentPropertyTax" /> /-
+							</span></td>
+						</tr>
 						<tr>
-					</s:if>
-				</table>
-				<br/>
-				<s:if
-					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
+							<td colspan="5">
+								<div class="headingsmallbg">
+									<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<table class="tablebottom" id="" width="100%" border="0"
+									cellpadding="0" cellspacing="0">
+									<tbody>
+										<tr>
+											<th class="bluebgheadtd"><s:text name="adharno" /></th>
+											<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
+											<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
+											<th class="bluebgheadtd"><s:text name="gender" /></th>
+											<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
+											<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
+											<th class="bluebgheadtd"><s:text name="Guardian" /></th>
+										</tr>
+										<s:iterator value="basicproperty.propertyOwnerInfo"
+											status="status">
+											<tr>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"> <s:if
+															test='%{owner.aadhaarNumber == ""}'>
+								        				N/A
+								        			</s:if> <s:else>
+															<s:property value="%{owner.aadhaarNumber}" default="N/A" />
+														</s:else>
+												</span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property value="owner.mobileNumber" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property value="owner.name" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property value="owner.gender" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"> <s:if test='%{owner.emailId == ""}'>N/A</s:if>
+														<s:else>
+															<s:property value="%{owner.emailId}" />
+														</s:else>
+												</span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="owner.guardianRelation" default="N/A" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property value="owner.guardian"
+															default="N/A" /></span></td>
+											</tr>
+										</s:iterator>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<s:if
+							test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
+							<tr>
+								<td colspan="5">
+									<div class="headingsmallbg">
+										<s:text name="transferDtls" />
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5">
+									<table width="100%" border="0" cellspacing="0" cellpadding="0"
+										class="tablebottom" id="nameTable">
+										<tr>
+											<th class="bluebgheadtd"><s:text name="adharno" /></th>
+											<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
+												+91)</th>
+											<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
+											<th class="bluebgheadtd"><s:text name="gender" /></th>
+											<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
+											<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
+											<th class="bluebgheadtd"><s:text name="Guardian" /></th>
+										</tr>
+										<s:iterator value="transfereeInfos" status="ownerStatus">
+											<tr>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"> <s:if
+															test='%{transfereeInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
+														<s:else>
+															<s:property
+																value="%{transfereeInfos[#ownerStatus.index].aadhaarNumber}" />
+														</s:else>
+												</span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transfereeInfos[#ownerStatus.index].mobileNumber}" /></span>
+												</td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transfereeInfos[#ownerStatus.index].name}" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transfereeInfos[#ownerStatus.index].gender}" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"> <s:if
+															test='%{transfereeInfos[#ownerStatus.index].emailId == ""}'>N/A</s:if>
+														<s:else>
+															<s:property
+																value="%{transfereeInfos[#ownerStatus.index].emailId}" />
+														</s:else>
+												</span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transfereeInfos[#ownerStatus.index].guardianRelation}" /></span>
+												</td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transfereeInfos[#ownerStatus.index].guardian}" /></span></td>
+											</tr>
+										</s:iterator>
+									</table>
+								</td>
+							</tr>
+						</s:if>
+						<s:else>
+							<tr>
+								<td colspan="5">
+									<div class="headingsmallbg">
+										<s:text name="transferorDetails" />
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5">
+									<table width="100%" border="0" cellspacing="0" cellpadding="0"
+										class="tablebottom" id="nameTable">
+										<tr>
+											<th class="bluebgheadtd"><s:text name="adharno" /></th>
+											<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
+												+91)</th>
+											<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
+											<th class="bluebgheadtd"><s:text name="gender" /></th>
+											<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
+											<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
+											<th class="bluebgheadtd"><s:text name="Guardian" /></th>
+										</tr>
+										<s:iterator value="transfereeInfos" status="ownerStatus">
+											<tr>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"> <s:if
+															test='%{transferorInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
+														<s:else>
+															<s:property
+																value="%{transferorInfos[#ownerStatus.index].aadhaarNumber}" />
+														</s:else>
+												</span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transferorInfos[#ownerStatus.index].mobileNumber}" /></span>
+												</td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transferorInfos[#ownerStatus.index].name}" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transferorInfos[#ownerStatus.index].gender}" /></span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"> <s:if
+															test='%{transferorInfos[#ownerStatus.index].emailId == ""}'>N/A</s:if>
+														<s:else>
+															<s:property
+																value="%{transferorInfos[#ownerStatus.index].emailId}" />
+														</s:else>
+												</span></td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transferorInfos[#ownerStatus.index].guardianRelation}" /></span>
+												</td>
+												<td class="blueborderfortd" align="center"><span
+													class="bold"><s:property
+															value="%{transferorInfos[#ownerStatus.index].guardian}" /></span></td>
+											</tr>
+										</s:iterator>
+									</table>
+								</td>
+							</tr>
+						</s:else>
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="transferreason"></s:text>
+								:</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="%{mutationReason.mutationName}" /></span></td>
+							<td class="greybox"><s:text name="saleDetls" /> :</td>
+							<td class="greybox"><span class="bold"> <s:if
+										test="%{saleDetail == ''}">N/A</s:if> <s:else>
+										<s:property value="%{saleDetail}" />
+									</s:else>
+							</span></td>
+						</tr>
+						<tr>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="docNum" />:</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="%{deedNo}" /></span></td>
+							<td class="greybox"><s:text name="docDate" />:</td>
+							<td class="greybox"><s:date name="deedDate" var="docDate"
+									format="dd/MM/yyyy" /> <span class="bold"><s:property
+										value="%{#docDate}" /></span></td>
+						</tr>
+						<s:if
+							test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
+							<tr>
+								<td class="bluebox2">&nbsp;</td>
+								<td class="bluebox"><s:text name="docValue" /> :</td>
+								<td class="bluebox"><span class="bold"><s:property
+											value="%{marketValue}" default="N/A" /></span></td>
+								<td class="bluebox"><s:text name="payablefee" />:</td>
+								<td class="bluebox"><span class="bold"><s:property
+											value="%{mutationFee}" default="N/A" /></span></td>
+							</tr>
+						</s:if>
+						<s:if test="%{!documentTypes.isEmpty()}">
+							<tr>
+								<%@ include file="../common/DocumentUploadView.jsp"%>
+							</tr>
+						</s:if>
+						<s:if test="%{state != null}">
+							<tr>
+								<%@ include file="../common/workflowHistoryView.jsp"%>
+							<tr>
+						</s:if>
+					</table>
+					<br />
+					<s:if
+						test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
-					<div>
-						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-					</div>
-					<div>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</div>
-				</s:if>
-				<s:elseif test="%{(model.receiptNum != '' && model.receiptDate != null) || 
-				model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)}">  
-					<div id="workflowCommentsDiv" align="center">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
-								<td class="${approverEvenCSS}" width="13%">Approver
-									Remarks:</td>
-								<td class="${approverEvenTextCSS}"><textarea
-										id="approverComments" name="approverComments" rows="2"
-										value="#approverComments" cols="35"></textarea></td>
-								<td class="${approverEvenCSS}">&nbsp;</td>
-								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-								<td class="${approverEvenCSS}">&nbsp;</td>
-							</tr>
+						<div>
+							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+						</div>
+						<div>
+							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+						</div>
+					</s:if>
+					<s:elseif
+						test="%{(model.receiptNum != '' && model.receiptDate != null) || 
+				model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)}">
+						<div id="workflowCommentsDiv" align="center">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
+									<td class="${approverEvenCSS}" width="13%">Approver
+										Remarks:</td>
+									<td class="${approverEvenTextCSS}"><textarea
+											id="approverComments" name="approverComments" rows="2"
+											value="#approverComments" cols="35"></textarea></td>
+									<td class="${approverEvenCSS}">&nbsp;</td>
+									<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+									<td class="${approverEvenCSS}">&nbsp;</td>
+								</tr>
 							</table>
-					</div>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
-				</s:elseif>
-		<%-- 		<s:else>
+						</div>
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+						</tr>
+					</s:elseif>
+					<%-- 		<s:else>
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
@@ -419,8 +427,9 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
 				</s:else> --%>
-			</table>
-		</s:push>
-	</s:form>
-</div>
+				</table>
+			</s:push>
+		</s:form>
+	</div>
+</body>
 </html>
