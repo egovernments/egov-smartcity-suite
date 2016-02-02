@@ -117,22 +117,13 @@ String path = request.getContextPath();
 					<c:out value="${license.address}" />
 				</display:column>
 				<display:column class="blueborderfortd" title="Zone">
-					<s:if test="%{#attr.license.boundary.boundaryType.name!='Ward'}">
-						<c:out value="${license.boundary.name}" />
+					<s:if test="%{#attr.license.parentBoundary.boundaryType.name!='Zone'}">
+						<c:out value="${license.parentBoundary.parent.name}" />
 					</s:if>
-					<s:elseif test="%{#attr.license.boundary.parent.name == null || #attr.license.boundary.parent.name ==''}">
-						&nbsp;
-					</s:elseif>
-					<s:else>
-						<c:out value="${license.boundary.parent.name}" />
-				   </s:else>
 				</display:column>
 				<display:column class="blueborderfortd" title="Ward">
-					<c:if test="${license.boundary.name == null || license.boundary.name ==''}">
-						&nbsp;
-					</c:if>
-					<c:if test="${license.boundary.boundaryType.name =='Ward'  }">
-					<c:out value="${license.boundary.name}" />
+					<c:if test="${license.parentBoundary.boundaryType.name =='Ward'  }">
+					<c:out value="${license.parentBoundary.name}" />
 					</c:if>
 				</display:column>
 				<display:column class="blueborderfortd" title="Trade Name">
@@ -222,6 +213,12 @@ String path = request.getContextPath();
 			                    <option value="/viewtradelicense/viewTradeLicense-duplicateNoc.action?model.id=">
 									<s:text name="Reprint NOC" />
 								</option>
+		                    </s:if>
+		                    <s:if test="%{#attr.license.isLegacy() && #attr.license.isPaid() != true}">
+			                    	<option value="/entertradelicense/update-form.action?model.id=">
+										<s:text name="Modify Legacy License" />
+									</option>
+							
 		                    </s:if>
 	                    </s:if>
 					</select>
