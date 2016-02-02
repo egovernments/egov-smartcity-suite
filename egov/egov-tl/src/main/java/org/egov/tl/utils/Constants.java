@@ -56,6 +56,8 @@ public class Constants {
 	public static final String TEMP_LICENSE_NUMBER = "TLNT_LICENSE_NUMBER";
 	public static final String TEMP_LICENSE_NUMBER_PREFIX = "TLNT";
 	public static final String NOTICE_NUMBER = "NOTICE_NUMBER";
+	public static final String SOURCE_TYPE = "SYSTEM";
+	
 
 	public static final String GENDER_MALE = "Male";
 	public static final String GENDER_FEMALE = "Female";
@@ -91,6 +93,7 @@ public class Constants {
 	public static final String WF_STATE_ZO_Approval_Pending = "ZO Approval Pending";
 	public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
 	public static final String WF_STATE_INSPECTION_PENDING="Create License:Sanitary inspector Approve pending";
+	public static final String WF_STATE_GENERATE_CERTIFICATE="Create License:generate Certificate";
 	public static final String WF_STATE_LICENSE_NOT_APPROVED = "License Not Approved";
 	public static final String WF_STATE_RENEWAL_PRINT_PENDING = "Renewal Print Pending";
 	public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";

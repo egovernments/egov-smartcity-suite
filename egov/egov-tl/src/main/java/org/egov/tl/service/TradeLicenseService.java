@@ -42,19 +42,31 @@ package org.egov.tl.service;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
+import java.math.BigDecimal;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.LicenseStatusValues;
 import org.egov.tl.entity.MotorMaster;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -71,6 +83,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    
+    @Autowired
+    private TradeLicenseUpdateIndexService updateIndexService;
     
     public TradeLicenseService(final PersistenceService<TradeLicense, Long> licensePersitenceService) {
         super(licensePersitenceService);
@@ -103,6 +118,86 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     protected void sendEmailAndSMS(TradeLicense license, String currentAction) {
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, currentAction);
     }
+    public void updateTradeLicense(TradeLicense license,WorkflowBean workflowBean) {
+        
+        if(license.getEgwStatus()!=null && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+        {
+            EgwStatus statusChange = (EgwStatus) persistenceService
+                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_GENECERT_CODE);
+            license.setEgwStatus(statusChange);
+        }
+        licensePersitenceService().persist(license);
+        this.tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
+       this.updateIndexService.updateTradeLicenseIndexes(license);
+    }
+ 
+ public ReportRequest prepareReportInputData(License license) {
+     String LICENSECERTIFICATE = "licenseCertificate";
+     Map<String, Object> reportParams = new HashMap<String, Object>();
+      SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+      Format formatterYear = new SimpleDateFormat("YYYY");
+      reportParams.put("applicationnumber", license.getApplicationNumber());
+      reportParams.put("applicantName", license.getLicensee().getApplicantName());
+      reportParams.put("licencenumber", license.getLicenseNumber());
+      reportParams.put("wardName", license.getBoundary().getName());
+      reportParams.put("cscNumber", "");
+      reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+      reportParams.put("licenceAddress", license.getAddress());
+      reportParams.put("subCategory", (license.getTradeName()!=null ?license.getTradeName().getName():null));
+      reportParams.put("appType", (license.getLicenseAppType() !=null ?license.getLicenseAppType().getName():"New"));
+      if(EgovThreadLocals.getMunicipalityName().contains("Corporation"))
+      {
+          reportParams.put("carporationulbType", Boolean.TRUE);
+      }
+      reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
+      List<LicenseDemand> licDemandList = new ArrayList<LicenseDemand>(license.getDemandSet());
+      String startYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getFromDate());
+      String EndYear = formatterYear.format(licDemandList.get(0).getEgInstallmentMaster().getToDate());
+      String installMentYear = startYear + "-" + EndYear;
+      reportParams.put("installMentYear", installMentYear);
+      reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
+      reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
+      BigDecimal demandamt = BigDecimal.ZERO;
+
+      for (EgDemandDetails deDet : license.getCurrentDemand().getEgDemandDetails()) {
+          if (deDet.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+              demandamt = demandamt.add(deDet.getAmount());
+          }
+
+      }
+      reportParams.put("demandTotalamt", demandamt);
+      return new ReportRequest(LICENSECERTIFICATE, license, reportParams);
+  }
+ 
+ public void updateStatusInWorkFlowProgress(TradeLicense license, String workFlowAction) {
+     if (BUTTONAPPROVE.equals(workFlowAction)) {
+         license.setCreationAndExpiryDate();
+         if (license.getTempLicenseNumber() == null) {
+             license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
+           
+          }
+         EgwStatus statusChange = (EgwStatus) persistenceService
+                 .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_APPROVED_CODE);
+         license.setEgwStatus(statusChange);
+         
+     }
+     if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && license.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
+     {
+       LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                 .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
+         license.setStatus(activeStatus);
+         if(Constants.BUTTONFORWARD.equals(workFlowAction) && license.getEgwStatus()!=null && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE) ){
+             EgwStatus statusChange = (EgwStatus) persistenceService
+                     .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_INSPE_CODE);
+             license.setEgwStatus(statusChange);
+         }
+     }
+     if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
+         LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                 .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
+         license.setStatus(activeStatus);
+         }
+ }
 
     @Transactional
     public void transferLicense(final TradeLicense tl, final LicenseTransfer licenseTransfer) {

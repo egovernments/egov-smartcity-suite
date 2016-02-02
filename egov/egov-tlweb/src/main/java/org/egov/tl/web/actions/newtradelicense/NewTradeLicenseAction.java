@@ -104,7 +104,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-newForm")
     public String newForm() {
         tradeLicense.setApplicationDate(new Date());
-      
         return super.newForm();
     }
 
@@ -120,37 +119,11 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
-        if (BUTTONAPPROVE.equals(workFlowAction)) {
-            license().setCreationAndExpiryDate();
-            if (license().getTempLicenseNumber() == null) {
-                String nextRunningLicenseNumber = tradeLicenseService.getNextRunningLicenseNumber(
-                        "egtl_license_number").toString();
-                license().generateLicenseNumber(nextRunningLicenseNumber);
-              
-             }
-            EgwStatus statusChange = (EgwStatus) persistenceService
-                    .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_APPROVED_CODE);
-            license().setEgwStatus(statusChange);
-            
-        }
-        if(BUTTONAPPROVE.equals(workFlowAction) || ((Constants.BUTTONFORWARD.equals(workFlowAction) && tradeLicense.getState().getValue().equals(Constants.WF_STATE_INSPECTION_PENDING) )))
-        {
-          LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
-            license().setStatus(activeStatus);
-            if(Constants.BUTTONFORWARD.equals(workFlowAction) && license().getEgwStatus()!=null && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE) ){
-                EgwStatus statusChange = (EgwStatus) persistenceService
-                        .find("from org.egov.commons.EgwStatus where moduletype=? and code=?",Constants.TRADELICENSEMODULE,Constants.APPLICATION_STATUS_INSPE_CODE);
-                license().setEgwStatus(statusChange);
-            }
-        }
-        if(Constants.GENERATECERTIFICATE.equals(workFlowAction)){
-            LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-            license().setStatus(activeStatus);
-            }
+          tradeLicenseService.updateStatusInWorkFlowProgress(tradeLicense,workFlowAction);
         return super.approve();
     }
+
+   
 
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")

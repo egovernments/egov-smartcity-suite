@@ -15,8 +15,12 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
+import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.hibernate.Query;
@@ -82,6 +86,26 @@ public class TradeLicenseUpdateIndexService
                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
                 if (license.getLicenseNumber() != null)
                     applicationIndex.setConsumerCode(license.getLicenseNumber());
+                int noofDays=0;
+                applicationIndex.setClosed(ClosureStatus.UNKNOWN); 
+                applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
+                Date endDate=null;
+                if(license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE)){
+                    final List<StateHistory> stateHistoryList = license.getState().getHistory();
+                    for(StateHistory  stateHisObj:stateHistoryList ){
+                        if(stateHisObj.getValue().equalsIgnoreCase(Constants.WF_STATE_GENERATE_CERTIFICATE))
+                            endDate= stateHisObj.getLastModifiedDate();
+                      
+                    }
+                    Date startDate=new Date("01/01/2016");
+                    if(endDate ==null){
+                     endDate= license.getLastModifiedDate();
+                    }
+                    noofDays=DateUtils.noOfDays(startDate, endDate);
+                    applicationIndex.setElapsedDays(noofDays);
+                    applicationIndex.setClosed(ClosureStatus.YES); 
+                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
+                }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
         } else {
@@ -101,10 +125,10 @@ public class TradeLicenseUpdateIndexService
                                 url, license.getAddress()
                                 .toString(), user.getUsername() + "::" + user.getName());
 
-                // applicationIndexBuilder.disposalDate(license.getDisposalDate());
                 applicationIndexBuilder.mobileNumber(license.getLicensee().getMobilePhoneNumber().toString());
                 applicationIndexBuilder.aadharNumber(license.getLicensee().getUid());
-
+                applicationIndexBuilder.closed(ClosureStatus.NO);
+                applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
                 applicationIndex = applicationIndexBuilder.build();
                 if (!license.getIsActive())
                     applicationIndexService.createApplicationIndex(applicationIndex);

@@ -59,6 +59,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
@@ -108,6 +109,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractLicenseService.class);
 
+
     @Autowired
     @Qualifier("feeService")
     protected FeeService feeService;
@@ -137,6 +139,11 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     @Qualifier("licenseDocumentTypeService")
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
+    
+    
+
+    @Autowired
+    private TradeLicenseUpdateIndexService updateIndexService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -190,6 +197,10 @@ public abstract class AbstractLicenseService<T extends License> {
         license.getLicensee().setLicense(license);
         license.updateStatus((LicenseStatus) persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
                 Constants.LICENSE_STATUS_ACKNOWLEDGED));
+        final EgwStatus statusChange = (EgwStatus) persistenceService.find(
+                "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
+                Constants.APPLICATION_STATUS_CREATED_CODE);
+        license.setEgwStatus(statusChange);
         license.setApplicationNumber(applicationNumberGenerator.generate());
         setAuditEntries(license);
         this.processAndStoreDocument(license.getDocuments());
@@ -200,6 +211,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.getState().setLastModifiedDate(new Date());
         this.licensePersitenceService.persist(license);
         this.sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+        this.updateIndexService.updateTradeLicenseIndexes(license);
 
     }
 
@@ -641,7 +653,9 @@ public abstract class AbstractLicenseService<T extends License> {
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
         return wfInitiator;
     }
-
+    
+   
+   
     @Transactional
     public void processAndStoreDocument(final List<LicenseDocument> documents) {
         documents.forEach(document -> {
