@@ -139,9 +139,10 @@
 				<spring:message code="lbl.photo"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-6">
-				<img class="add-border attach-photo" height="150" width="130" name="${applicant}.photo">
+				<img class="add-border" height="150" width="130" name="${applicant}.photo">
 				<span></span>
 				<input type="hidden" name="${applicant}.photo" id="${applicant}.photo">
+				<input type="file" id="${applicant}.photo" name="${applicant}.photoFile" class="file-ellipsis upload-file">
 			</div>
 		</div>
 	</div>

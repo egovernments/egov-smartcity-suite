@@ -39,6 +39,14 @@
 
 package org.egov.mrs.domain.entity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,21 +59,22 @@ import org.egov.mrs.application.Constants;
 
 /**
  * A Bean class which is being used as input the certificate jrxml
- * @author NPathan
+ * @author nayeem
  *
  */
 public class RegistrationCertificate {
-    
+
+    private static Path tempFilePath = Paths.get(System.getProperty("user.home") + File.separator + "testtmpr");
     public static final String STYLE_TAG_BEGIN = "<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"SansSerif\" pdfEncoding=\"Cp1252\">";
     public static final String STYLE_TAG_END = "</style>";
-    private DateFormat dateFormatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
+    private final DateFormat dateFormatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
     private Registration registration;
     private User user;
-    
+
     public RegistrationCertificate() {
     }
-    
-    public RegistrationCertificate(Registration registration, User user) {
+
+    public RegistrationCertificate(final Registration registration, final User user) {
         this.registration = registration;
         this.user = user;
     }
@@ -73,74 +82,105 @@ public class RegistrationCertificate {
     public Registration getRegistration() {
         return registration;
     }
-    
-    public void setRegistration(Registration registration) {
+
+    public void setRegistration(final Registration registration) {
         this.registration = registration;
     }
-    
+
     public String getZoneName() {
-        return this.registration.getZone().getName();
+        return registration.getZone().getName();
     }
-    
+
     public String getHusbandName() {
-        return this.registration.getHusband().getFullName();
-        //return String.join(" ", STYLE_TAG_BEGIN, this.registration.getHusband().getFullName(), STYLE_TAG_END);
+        return registration.getHusband().getFullName();
+        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getHusband().getFullName(), STYLE_TAG_END);
     }
-    
+
     public String getHusbandAddress() {
-        return this.registration.getHusband().getContactInfo().getResidenceAddress();
-        //return String.join(" ", STYLE_TAG_BEGIN, this.registration.getHusband().getContactInfo().getResidenceAddress(), STYLE_TAG_END);
+        return registration.getHusband().getContactInfo().getResidenceAddress();
+        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getHusband().getContactInfo().getResidenceAddress(),
+        // STYLE_TAG_END);
     }
-    
+
     public String getWifeName() {
-        return this.registration.getWife().getFullName();
-        //return String.join(" ", STYLE_TAG_BEGIN, this.registration.getWife().getFullName(), STYLE_TAG_END);
+        return registration.getWife().getFullName();
+        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getWife().getFullName(), STYLE_TAG_END);
     }
-    
+
     public String getWifeAddress() {
-        return this.registration.getWife().getContactInfo().getResidenceAddress();
-//        return String.join(" ", STYLE_TAG_BEGIN, this.registration.getWife().getContactInfo().getResidenceAddress(), STYLE_TAG_END);
+        return registration.getWife().getContactInfo().getResidenceAddress();
+        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getWife().getContactInfo().getResidenceAddress(),
+        // STYLE_TAG_END);
     }
-    
+
     public String getDateOfMarriage() {
-        return dateFormatter.format(this.registration.getDateOfMarriage());
-        //return String.join(" ", STYLE_TAG_BEGIN, dateFormatter.format(this.registration.getDateOfMarriage()), STYLE_TAG_END);
+        return dateFormatter.format(registration.getDateOfMarriage());
+        // return String.join(" ", STYLE_TAG_BEGIN, dateFormatter.format(this.registration.getDateOfMarriage()), STYLE_TAG_END);
     }
-    
+
     public String getPlaceOfMarriage() {
-        return this.registration.getPlaceOfMarriage();
-        //return String.join(" ", STYLE_TAG_BEGIN, this.registration.getPlaceOfMarriage(), STYLE_TAG_END);
+        return registration.getPlaceOfMarriage();
+        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getPlaceOfMarriage(), STYLE_TAG_END);
     }
-    
+
     public String getDateOfRegistration() {
-        return dateFormatter.format(this.registration.getCreatedDate());
-        //return String.join(" ", STYLE_TAG_BEGIN, dateFormatter.format(this.registration.getCreatedDate()), STYLE_TAG_END);
+        return dateFormatter.format(registration.getCreatedDate());
+        // return String.join(" ", STYLE_TAG_BEGIN, dateFormatter.format(this.registration.getCreatedDate()), STYLE_TAG_END);
     }
-    
-    public String getWifePhoto() {
-        return Base64.getEncoder().encodeToString(this.registration.getWife().getPhoto());
+
+    public InputStream getWifePhoto() {
+        return new java.io.ByteArrayInputStream(registration.getWife().getPhoto());
     }
-    
-    public byte[] getHusbandPhoto() {
-        return this.registration.getHusband().getPhoto();
-        //new java.io.ByteArrayInputStream(javax.xml.DatatypeConverter.parseBase64Binary($F{ImageField}))
-        //return Base64.getEncoder().encodeToString(this.registration.getHusband().getPhoto());
+
+    public InputStream getHusbandPhoto() {
+        return new java.io.ByteArrayInputStream(registration.getHusband().getPhoto());
     }
-    
+
     public String getRoleName() {
         return new ArrayList<Role>(user.getRoles()).get(0).getName();
     }
-    
+
+    public static InputStream decodePhoto(final String encodedString) throws IOException {
+
+        final OutputStream os = new ByteArrayOutputStream();
+        os.write(0xFF);
+        os.write(216);
+        final byte[] orginalFileData = Base64.getDecoder().decode(encodedString);
+        final byte[] fileData = new byte[orginalFileData.length + 2];
+        fileData[0] = (byte) 0xFF;
+        fileData[1] = (byte) 216;
+        int j = 2;
+
+        for (int i = 0; i < orginalFileData.length - 1; i++)
+            fileData[j++] = orginalFileData[i];
+
+        return new ByteArrayInputStream(fileData);
+        // final File imageFile = Files.createTempFile(tempFilePath, "mrphoto", ".jpg").toFile();
+        // FileUtils.writeByteArrayToFile(imageFile, fileData);
+        // System.out.println("===== " + imageFile.getAbsolutePath() + "============");
+        // return imageFile.getAbsolutePath();
+
+        /*
+         * bais.mark(2); int byte1; try { byte1 = bais.read(); while(byte1 != -1) { if (byte1 == 0xFF || byte1 == 216) {
+         * //System.out.println("Is a jpeg image.."); System.out.print( "  " + byte1); } byte1 = bais.read(); } } catch
+         * (IOException e1) { // TODO Auto-generated catch block e1.printStackTrace(); } bais.reset();
+         */
+        /*
+         * Image image = null; try { image = ImageIO.read(bais); } catch (Exception e) { System.out.println("decodePhoto --- " +
+         * e); } return image;
+         */
+    }
+
     public String getUserName() {
-        String salutation = user.getSalutation() == null ? "" : user.getSalutation().concat(" ");
+        final String salutation = user.getSalutation() == null ? "" : user.getSalutation().concat(" ");
         return salutation.concat(WordUtils.capitalizeFully(user.getName()));
     }
-    
+
     public String getRejectionDate() {
         return dateFormatter.format(registration.getState().getCreatedDate());
     }
-    
+
     public String getRejectionReason() {
         return registration.getRejectionReason();
     }
- } 
+}

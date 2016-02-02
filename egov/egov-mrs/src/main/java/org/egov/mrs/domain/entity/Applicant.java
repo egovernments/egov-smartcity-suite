@@ -40,9 +40,7 @@
 package org.egov.mrs.domain.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,7 +53,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -65,13 +62,13 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.masters.entity.Religion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egmrs_applicant")
@@ -136,14 +133,17 @@ public class Applicant extends AbstractAuditable {
 
     @Embedded
     private Contact contactInfo;
-    
+
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
     private List<ApplicantDocument> applicantDocuments = new ArrayList<ApplicantDocument>();
-    
+
     @Transient
     private List<Document> documents;
+
+    @Transient
+    private MultipartFile photoFile;
 
     @Override
     public Long getId() {
@@ -198,11 +198,11 @@ public class Applicant extends AbstractAuditable {
     public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
-    
-    public void setMaritalStatus(MaritalStatus maritalStatus) {
+
+    public void setMaritalStatus(final MaritalStatus maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
-    
+
     public String getOccupation() {
         return occupation;
     }
@@ -258,34 +258,42 @@ public class Applicant extends AbstractAuditable {
     public void setContactInfo(final Contact contactInfo) {
         this.contactInfo = contactInfo;
     }
-    
+
     public List<Document> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<Document> documents) {
+    public void setDocuments(final List<Document> documents) {
         this.documents = documents;
     }
 
     public List<ApplicantDocument> getApplicantDocuments() {
         return applicantDocuments;
     }
-    
-    public void setApplicantDocuments(List<ApplicantDocument> applicantDocuments) {
+
+    public void setApplicantDocuments(final List<ApplicantDocument> applicantDocuments) {
         this.applicantDocuments = applicantDocuments;
     }
-    
-    public void addApplicantDocument(ApplicantDocument applicantDocument) {
+
+    public void addApplicantDocument(final ApplicantDocument applicantDocument) {
         applicantDocument.setApplicant(this);
         getApplicantDocuments().add(applicantDocument);
     }
-    
+
+    public MultipartFile getPhotoFile() {
+        return photoFile;
+    }
+
+    public void setPhotoFile(final MultipartFile photoFile) {
+        this.photoFile = photoFile;
+    }
+
     public String getFullName() {
-        String fullName = this.getName().getFirstName();
-        
-        fullName += this.getName().getMiddleName() == null ? "" : " " + this.getName().getMiddleName();
-        fullName += this.getName().getLastName() == null ? "" : " " + this.getName().getLastName();
-        
+        String fullName = getName().getFirstName();
+
+        fullName += getName().getMiddleName() == null ? "" : " " + getName().getMiddleName();
+        fullName += getName().getLastName() == null ? "" : " " + getName().getLastName();
+
         return fullName;
     }
 }

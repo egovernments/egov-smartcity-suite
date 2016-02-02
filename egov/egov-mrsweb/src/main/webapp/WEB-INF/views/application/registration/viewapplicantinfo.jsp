@@ -107,7 +107,7 @@
 						strData = '<c:out value="${wifePhoto}" />';
 					}
 
-					$('#'+applicant+'-photo').prop('src', atob(strData));
+					$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + toBinaryString(strData));
 					
 				</script>
 				<span></span>

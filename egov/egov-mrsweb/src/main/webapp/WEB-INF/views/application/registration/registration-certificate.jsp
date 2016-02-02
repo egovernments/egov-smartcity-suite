@@ -39,7 +39,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<iframe src='../../mrs/reportViewer?reportId=<c:out value="${reportId}" />' width="98%" height="70%">
+<iframe src='../../mrs/reportViewer?reportId=<c:out value="${reportId}" />' width="98%" height="70%" style="height: 700px;">
 	<p>Your browser does not support iframes.</p>
 </iframe>
 <br /> <br />

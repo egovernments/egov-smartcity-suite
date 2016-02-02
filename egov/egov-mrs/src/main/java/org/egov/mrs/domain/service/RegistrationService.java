@@ -39,6 +39,7 @@
 
 package org.egov.mrs.domain.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -82,6 +84,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -94,6 +97,8 @@ public class RegistrationService {
     private final String MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT = "msg.newregistration.mail.subject";
     private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL = "msg.rejectionregistration.mail";
     private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
+
+    private static final Logger LOG = Logger.getLogger(RegistrationService.class);
     private final RegistrationRepository registrationRepository;
 
     @PersistenceContext
@@ -191,6 +196,15 @@ public class RegistrationService {
         final Map<Long, Document> documentAndId = new HashMap<Long, Document>();
         documentService.getAll().forEach(document -> documentAndId.put(document.getId(), document));
 
+        try {
+            registration.getHusband()
+                    .setPhoto(FileCopyUtils.copyToByteArray(registration.getHusband().getPhotoFile().getInputStream()));
+            registration.getWife()
+                    .setPhoto(FileCopyUtils.copyToByteArray(registration.getWife().getPhotoFile().getInputStream()));
+        } catch (final IOException e) {
+            LOG.error("Error in attached photo", e);
+        }
+
         addDocumentsToFileStore(registration.getHusband(), documentAndId);
         addDocumentsToFileStore(registration.getWife(), documentAndId);
 
@@ -208,14 +222,14 @@ public class RegistrationService {
      */
     private void addDocumentsToFileStore(final Applicant applicant, final Map<Long, Document> documentAndId) {
         applicant.getDocuments().stream()
-        .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-        .map(document -> {
-            final ApplicantDocument applicantDocument = new ApplicantDocument();
-            applicantDocument.setDocument(documentAndId.get(document.getId()));
-            applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-            return applicantDocument;
-        }).collect(Collectors.toList())
-                .forEach(doc -> applicant.addApplicantDocument(doc));
+                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                .map(document -> {
+                    final ApplicantDocument applicantDocument = new ApplicantDocument();
+                    applicantDocument.setDocument(documentAndId.get(document.getId()));
+                    applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                    return applicantDocument;
+                }).collect(Collectors.toList())
+        .forEach(doc -> applicant.addApplicantDocument(doc));
     }
 
     @Transactional
@@ -271,7 +285,7 @@ public class RegistrationService {
                 registration.getStatus().name(),
                 "/mrs/registration/" + registration.getId(),
                 registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName())
-        .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
+                        .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
 
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
     }
@@ -284,7 +298,7 @@ public class RegistrationService {
 
         final String message = messageSource.getMessage(msgKey,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
-                registration.getRegistrationNo() },
+                        registration.getRegistrationNo() },
                 null);
         messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
         messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
@@ -301,7 +315,7 @@ public class RegistrationService {
 
         final String message = messageSource.getMessage(msgKeyMail,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
-                registration.getRegistrationNo() },
+                        registration.getRegistrationNo() },
                 null);
 
         final String subject = messageSource.getMessage(msgKeyMailSubject, null, null);

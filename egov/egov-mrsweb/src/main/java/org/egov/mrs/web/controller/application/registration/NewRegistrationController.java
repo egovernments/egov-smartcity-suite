@@ -42,6 +42,7 @@ package org.egov.mrs.web.controller.application.registration;
 import static org.egov.mrs.application.Constants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.Constants.REVENUE_HIERARCHY_TYPE;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -92,7 +93,7 @@ public class NewRegistrationController extends GenericWorkFlowController {
 
     @Autowired
     private Utils utils;
-    
+
     @Autowired
     private DocumentService documentService;
 
@@ -134,7 +135,7 @@ public class NewRegistrationController extends GenericWorkFlowController {
             return "registration-form";
 
         obtainWorkflowParameters(workflowContainer, request);
-        String appNo = registrationService.createRegistration(registration, workflowContainer);
+        final String appNo = registrationService.createRegistration(registration, workflowContainer);
         model.addAttribute("ackNumber", appNo);
 
         return "registration-ack";
@@ -142,30 +143,28 @@ public class NewRegistrationController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
-            final Model model) {
+            final Model model) throws IOException {
         final Registration registration = registrationService.get(registrationId);
 
         model.addAttribute("registration", registration);
         model.addAttribute("husbandPhoto", Base64.getEncoder().encodeToString(registration.getHusband().getPhoto()));
         model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
         model.addAttribute("mode", mode);
-        
+
         String screen = null;
-        
+
         if (registration.getStatus() != ApplicationStatus.Approved) {
-            if (mode == null) 
-                mode = utils.isLoggedInUserApprover() ? "view" : mode; 
-            
+            if (mode == null)
+                mode = utils.isLoggedInUserApprover() ? "view" : mode;
+
             screen = mode != null && mode.equalsIgnoreCase("view") ? "registration-view" : "registration-form";
 
-        } else {
+        } else
             screen = "registration-view";
-        }
-                
+
         int i = 0;
-        for (Witness witness : registration.getWitnesses()) {
-            model.addAttribute("witness" + (i++) + "Photo", Base64.getEncoder().encodeToString(witness.getPhoto()));
-        }
+        for (final Witness witness : registration.getWitnesses())
+            model.addAttribute("witness" + i++ + "Photo", Base64.getEncoder().encodeToString(witness.getPhoto()));
 
         prepareWorkflow(model, registration, new WorkflowContainer());
         return screen;
@@ -184,7 +183,7 @@ public class NewRegistrationController extends GenericWorkFlowController {
 
         obtainWorkflowParameters(workflowContainer, request);
         Registration result = null;
-        
+
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
             result = registrationService.forwardRegistration(id, registration, workflowContainer);
