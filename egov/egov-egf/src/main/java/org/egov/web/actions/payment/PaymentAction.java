@@ -899,16 +899,18 @@ public class PaymentAction extends BasePaymentAction {
         } catch (final ValidationException e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getErrors().get(0).getMessage()));
+            loadbankBranch(billregister.getEgBillregistermis().getFund());
             throw new ValidationException(errors);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage());
-
+            loadbankBranch(billregister.getEgBillregistermis().getFund());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
+            loadbankBranch(billregister.getEgBillregistermis().getFund());
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         }
