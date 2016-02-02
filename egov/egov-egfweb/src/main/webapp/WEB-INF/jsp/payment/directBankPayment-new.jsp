@@ -55,8 +55,6 @@
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
@@ -361,7 +359,7 @@
 		<s:hidden name="showMode" />
 		<s:token />
 	</s:form>
-<script type="text/javascript">
+	<script type="text/javascript">
 function onLoadTask_new()
 {
 	//bootbox.alert(showMode);                                                      
@@ -424,7 +422,14 @@ function populateAccNum(branch){
 }
 function onSubmit()
 {
-	return validate();
+	if(!validate()){
+		//undoLoadingMask();
+		return false;
+		}else{
+			document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+			document.dbpform.submit();
+			
+			}
 }
 </SCRIPT>
 </body>
