@@ -1290,4 +1290,10 @@ public interface PropertyTaxConstants {
     public static final String STR_REALIZATION = " subject to the realization of instrument.";
     public static final String STR_FOR_CASH = "We have received a property tax cash payment of Rs.";
     public static final String STR_FOR_CASH_ADJUSTMENT = "/- and it would be adjusted against your assessment no.";
+    
+    public static final String GUARDIAN_RELATION_FATHER = "FATHER";
+    public static final String GUARDIAN_RELATION_MOTHER = "MOTHER";
+    public static final String GUARDIAN_RELATION_HUSBAND = "HUSBAND";
+    public static final String GUARDIAN_RELATION_WIFE = "WIFE";
+    public static final String GUARDIAN_RELATION_OTHERS = "OTHERS";
 }

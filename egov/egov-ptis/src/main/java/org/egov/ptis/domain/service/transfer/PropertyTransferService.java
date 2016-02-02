@@ -361,7 +361,7 @@ public class PropertyTransferService {
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
-            noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
+            noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
             noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
             noticeBean.setRegDocNo(propertyMutation.getDeedNo());
             noticeBean.setAssessmentNo(basicProp.getUpicNo());
