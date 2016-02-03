@@ -197,6 +197,12 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                  .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
          license.setStatus(activeStatus);
          }
+     if (BUTTONREJECT.equals(workFlowAction) && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+     {
+         LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                 .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
+         license.setStatus(activeStatus);
+    }
  }
 
     @Transactional

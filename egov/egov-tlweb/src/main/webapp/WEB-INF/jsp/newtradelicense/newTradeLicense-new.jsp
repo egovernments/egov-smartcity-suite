@@ -182,12 +182,18 @@
         	}
 
     		function onSubmit() {
-    			<s:if test="%{mode!=null && mode=='view'}">
+    			<s:if test="%{mode!=null && (mode=='view' && mode!='editForReject')}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
 					document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
 					document.newTradeLicense.submit();
 				</s:if>
+				<s:elseif  test="%{mode!=null && mode=='editForReject'}">
+				clearMessage('newLicense_error');
+				toggleFields(false,"");
+				document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+				document.newTradeLicense.submit();
+			</s:elseif>
 				<s:elseif test="%{mode!=null && mode=='edit'}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");

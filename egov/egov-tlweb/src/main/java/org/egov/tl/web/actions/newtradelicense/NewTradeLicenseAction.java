@@ -195,6 +195,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 ||license().getStatus().getName().equals(Constants.LICENSE_STATUS_UNDERWORKFLOW)){
         mode = VIEW;
         }
+        if(license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)){
+        mode = "editForReject";
+        }
         return super.showForApproval();
     }
 

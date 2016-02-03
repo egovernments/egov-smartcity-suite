@@ -73,14 +73,15 @@ public class TradeLicenseUpdateIndexService
             user = securityUtils.getCurrentUser();
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license
                 .getApplicationNumber());
-        if (applicationIndex != null && null != license.getId() && license.getEgwStatus() != null
-                && !license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE)) {
-            if (license.getEgwStatus() != null
+        if (applicationIndex !=null ) {
+            if (applicationIndex != null && null != license.getId() && license.getEgwStatus() != null && license.getEgwStatus() != null
                     && (license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_INSPE_CODE)
                             || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
                             || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE)
                             || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE) || license
-                            .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))) {
+                            .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
+                            || license.getStatus().getStatusCode().equals(Constants.STATUS_CANCELLED)
+                            ||(license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE) && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))) {
                 applicationIndex.setStatus(license.getEgwStatus().getDescription());
                 applicationIndex.setApplicantAddress(license.getAddress());
                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
@@ -97,7 +98,7 @@ public class TradeLicenseUpdateIndexService
                             endDate= stateHisObj.getLastModifiedDate();
                       
                     }
-                    Date startDate=new Date("01/01/2016");
+                    Date startDate=license.getApplicationDate();
                     if(endDate ==null){
                      endDate= license.getLastModifiedDate();
                     }
@@ -106,6 +107,11 @@ public class TradeLicenseUpdateIndexService
                     applicationIndex.setClosed(ClosureStatus.YES); 
                     applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 }
+                if(license.getStatus().getStatusCode().equals(Constants.STATUS_CANCELLED)){
+                    applicationIndex.setApproved(ApprovalStatus.REJECTED);
+                    applicationIndex.setClosed(ClosureStatus.YES); 
+                }
+                
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
         } else {

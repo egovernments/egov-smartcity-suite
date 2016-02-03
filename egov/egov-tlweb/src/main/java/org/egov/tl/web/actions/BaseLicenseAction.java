@@ -459,7 +459,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
                 result = "tl_generateCertificate";
             else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                result = "tl_editlicense";
+                result = "approve";
             else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
                 result = "tl_generateRejCertificate";
             else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATENOC))
