@@ -1,3 +1,8 @@
+
+
+delete from eg_roleaction where actionid in (select id from eg_action where url like '%/transactionsummary/%' );
+delete from eg_action where url like '%/transactionsummary/%';
+
 Insert into EG_ACTION (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (nextval('seq_eg_action'),'Opening Balance Entry','/transactionsummary/new',null,309,null,'Opening Balance Entry','true','EGF',0,1,'2015-07-15 19:14:54.980736',1,'2015-07-15 19:14:54.980736',302);
 
 insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Super User'), (select id from eg_action where name = 'Opening Balance Entry'));
