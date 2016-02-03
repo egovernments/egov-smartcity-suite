@@ -47,7 +47,7 @@
 <script type="text/javascript">
 function checkPanNumber() {
 	var panNumber = document.getElementById('panNumber').value.length;
-    if(panNumber<10)
+    if(panNumber<10 && panNumber!='')
         {
     	showMessage('contractor_error', '<s:text name="contractor.panNumber.length" />');
         window.scroll(0,0);

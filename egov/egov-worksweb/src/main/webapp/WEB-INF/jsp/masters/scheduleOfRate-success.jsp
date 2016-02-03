@@ -58,15 +58,11 @@ list-style-type: none;
 
 <div class="row text-center">
 	<div class="add-margin">
-		<s:if test="%{mode=='edit'}">
-			<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
-			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-		</s:if>
-		<s:elseif test="%{mode!='edit'}">
-			<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
+		<s:if test="%{mode!='edit'}">
 			<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNew();" />
+		</s:if>
+			<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
 			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-		</s:elseif>
 	</div>
 </div>
 
