@@ -823,7 +823,7 @@ public class FileUploadAction extends BaseFormAction {
          * ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
          * receiptPayee.addReceiptHeader(receiptHeader); receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
          */
-        receiptHeaderService.persistChallan(receiptHeader);
+        //receiptHeaderService.persistChallan(receiptHeader);
         receiptHeaderService.getSession().flush();
         LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 

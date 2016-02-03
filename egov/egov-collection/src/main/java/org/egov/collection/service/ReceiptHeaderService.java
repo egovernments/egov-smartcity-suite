@@ -43,7 +43,9 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -111,6 +113,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     private EmployeeService employeeService;
     @Autowired
     private DepartmentService departmentService;
+    
+    private ChallanService challanService;
 
     /**
      * @param statusCode
@@ -397,24 +401,21 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getService().getVoucherCreation())
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         Position position = null;
-        if (receiptHeader.getState() == null) {
 
-            if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))
-                position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc()
-                        .getBoundary());
-            else
-                position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
-            if (receiptHeader.getState() == null && !createVoucherForBillingService)
-                receiptHeader
-                .transition()
-                .start()
-                .withSenderName(
-                        receiptHeader.getCreatedBy().getUsername() + "::"
-                                + receiptHeader.getCreatedBy().getName())
-                                .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
-                                .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
-                                .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
-        } else if (createVoucherForBillingService) {
+        if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))
+            position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
+        else
+            position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
+        if (receiptHeader.getState() == null && !createVoucherForBillingService)
+            receiptHeader
+            .transition()
+            .start()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                    .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
+                    .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
+                    .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
+        else if (createVoucherForBillingService) {
             createVouchers(receiptHeader);
             receiptHeader
             .transition()
@@ -1329,26 +1330,32 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * already present.
      */
 
-    public ReceiptHeader persistChallan(final ReceiptHeader entity) {
-        for (final ReceiptHeader receiptHeader : entity.getReceiptHeaders()) {
-            Integer.valueOf(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                    CollectionConstants.APPCONFIG_VALUE_CHALLANVALIDUPTO));
+    @Transactional
+    public ReceiptHeader persistChallan(final ReceiptHeader receiptHeader, Position position, String actionName, String approvalRemarks) throws ApplicationRuntimeException {
+        Integer validUpto = Integer.valueOf(collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_CHALLANVALIDUPTO));
 
-            final Challan challan = receiptHeader.getChallan();
+        final Challan challan = receiptHeader.getChallan();
+        /*
+         * challan.setValidUpto(eisService.getPriorOrAfterWorkingDate(challan.
+         * getChallanDate(), validUpto, DATE_ORDER.AFTER));
+         */
+        final Calendar c = new GregorianCalendar();
+        c.add(Calendar.DATE, validUpto);
+        challan.setValidUpto(c.getTime());
 
-            if (challan.getCreatedDate() == null)
-                challan.setCreatedDate(new Date());
+        /*if (challan.getCreatedDate() == null)*/
+           /* challan.setCreatedDate(new Date());*/
 
-            if (challan.getChallanNumber() == null)
-                setChallanNumber(challan);
+        if (challan.getChallanNumber() == null)
+            setChallanNumber(challan);
 
-            challan.setReceiptHeader(receiptHeader);
-            receiptHeader.setChallan(challan);
-
-            LOGGER.info("Persisting challan with challan number " + challan.getChallanNumber());
-        }
-
-        return super.persist(entity);
+        challan.setReceiptHeader(receiptHeader);
+        receiptHeader.setChallan(challan);
+        super.persist(receiptHeader);
+        LOGGER.info("Persisting challan with challan number " + challan.getChallanNumber());
+        challanService.workflowtransition(receiptHeader.getChallan(), position, actionName, approvalRemarks);
+        return receiptHeader;
     }
 
     /**
@@ -1392,7 +1399,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     private void setChallanNumber(final Challan challan) {
-        final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(challan.getCreatedDate());
+        final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
         challan.setChallanNumber(collectionsNumberGenerator.generateChallanNumber(challan, financialYear));
     }
 
@@ -1556,7 +1563,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return instrumentDepositeMap;
     }
 
-    public void performWorkflow(final String actionName, final ReceiptHeader receiptHeader, final String remarks) throws ApplicationRuntimeException{
+    public void performWorkflow(final String actionName, final ReceiptHeader receiptHeader, final String remarks)
+            throws ApplicationRuntimeException {
         try {
             Position operatorPosition;
             Employee employee = null;
@@ -1685,7 +1693,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * screen
      */
     @Transactional
-    public void populateAndPersistReceipts(final ReceiptHeader receiptHeader, final List<InstrumentHeader> receiptInstrList) {
+    public void populateAndPersistReceipts(final ReceiptHeader receiptHeader,
+            final List<InstrumentHeader> receiptInstrList) {
         try {
             // Persist the receipt payee details which will internally persist
             // all
@@ -1721,7 +1730,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             LOGGER.error("Receipt Service Exception while persisting ReceiptHeader!", e);
         }
     }// end of method
-    
 
     /**
      * This method sets the status of the receipt to be cancelled as CANCELLED
@@ -1730,7 +1738,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      *
      * @param receiptHeaderToBeCancelled
      */
-
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -1743,5 +1750,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
+    
+    public void setChallanService(final ChallanService challanService) {
+        this.challanService = challanService;
+    }
+
 
 }

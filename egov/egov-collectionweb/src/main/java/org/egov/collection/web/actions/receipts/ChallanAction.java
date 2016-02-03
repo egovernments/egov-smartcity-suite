@@ -70,14 +70,19 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bank;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.entity.Source;
-import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -100,8 +105,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Results({ @Result(name = ChallanAction.NEW, location = "challan-new.jsp"),
     @Result(name = CollectionConstants.CREATERECEIPT, location = "challan-createReceipt.jsp"),
-    @Result(name = ChallanAction.SUCCESS, location = "challan-sucess.jsp"),
-    @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp") })
+    @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
+    @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
 public class ChallanAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ChallanAction.class);
@@ -114,10 +120,9 @@ public class ChallanAction extends BaseFormAction {
     private List<ReceiptDetailInfo> billDetailslist;
 
     private ReceiptHeader receiptHeader = new ReceiptHeader();
-    private ChallanService challanService;
+
     private CollectionsUtil collectionsUtil;
     private FinancialsUtil financialsUtil;
-    private CommonsServiceImpl commonsServiceImpl;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -209,6 +214,26 @@ public class ChallanAction extends BaseFormAction {
 
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
+    @Autowired
+    private BankHibernateDAO bankDAO;
+
+    @Autowired
+    private FundHibernateDAO fundDAO;
+
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+
+    @Autowired
+    private FunctionHibernateDAO functionDAO;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+
+    private Long serviceCategoryId;
+
+    private Long serviceId;
+    private ChallanService challanService;
+
     /**
      * An array of <code>ReceiptHeader</code> instances which have to be
      * displayed for view/print/cancel purposes
@@ -268,8 +293,8 @@ public class ChallanAction extends BaseFormAction {
                 || actionName.equals(CollectionConstants.WF_ACTION_NAME_MODIFY_CHALLAN)
                 || actionName.equals(CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN))
             return saveChallan();
-
-        challanService.workflowtransition(receiptHeader.getChallan(), position, actionName, approvalRemarks);
+        else
+            challanService.workflowtransition(receiptHeader.getChallan(), position, actionName, approvalRemarks);
 
         return SUCCESS;
     }
@@ -323,13 +348,13 @@ public class ChallanAction extends BaseFormAction {
 
         populateAndPersistChallanReceipt();
 
-        challanService.workflowtransition(receiptHeader.getChallan(), position, actionName, approvalRemarks);
-
         addActionMessage(getText("challan.savechallan.success", new String[] { receiptHeader.getChallan()
                 .getChallanNumber() }));
 
         if (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
             return SUCCESS;
+        if (CollectionConstants.WF_ACTION_NAME_MODIFY_CHALLAN.equals(actionName))
+            setSourcePage("");
 
         return viewChallan();
     }
@@ -455,6 +480,7 @@ public class ChallanAction extends BaseFormAction {
      *
      * @return
      */
+    @Action(value = "/receipts/challan-printChallan")
     public String printChallan() {
 
         try {
@@ -640,9 +666,10 @@ public class ChallanAction extends BaseFormAction {
             else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
-            if (instrumentHeader.getBankId() != null)
-                instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId()
-                        .getId())));
+            if (instrumentHeader.getBankId() != null) {
+                final Bank bank = (Bank) bankDAO.findById(instrumentHeader.getBankId().getId(), false);
+                instrumentHeader.setBankId(bank);
+            }
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
             instrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
             instrumentHeaderList.add(instrumentHeader);
@@ -668,8 +695,12 @@ public class ChallanAction extends BaseFormAction {
             receiptHeader.getChallan().setVoucherHeader(voucherHeader);
         }
 
-        receiptHeader.setService((ServiceDetails) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS));
+        /*
+         * receiptHeader.setService((ServiceDetails)
+         * getPersistenceService().findByNamedQuery(
+         * CollectionConstants.QUERY_SERVICE_BY_CODE,
+         * CollectionConstants.SERVICE_CODE_COLLECTIONS));
+         */
         receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
 
@@ -680,12 +711,14 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_CHALLAN);
         receiptHeader.setPaidBy(CollectionConstants.CHAIRPERSON);
         receiptHeader.setSource(Source.SYSTEM.toString());
+        receiptHeader.setReceiptdate(new Date());
+        receiptHeader.setService(serviceDetailsService.findById(serviceId, false));
+        receiptHeader.getService().setServiceCategory(serviceCategoryService.findById(serviceCategoryId, false));
 
-        receiptHeader.getReceiptMisc().setFund(
-                commonsServiceImpl.fundById(receiptHeader.getReceiptMisc().getFund().getId()));
+        receiptHeader.getReceiptMisc().setFund(fundDAO.fundById(receiptHeader.getReceiptMisc().getFund().getId()));
 
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_DEPARTMENT_BY_ID, Integer.valueOf(deptId));
+                CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
         receiptHeader.getReceiptMisc().setDepartment(dept);
         if (boundaryId != null)
             receiptHeader.getReceiptMisc().setBoundary(boundaryService.getBoundaryById(boundaryId));
@@ -701,17 +734,18 @@ public class ChallanAction extends BaseFormAction {
         BigDecimal totalAmt = BigDecimal.ZERO;
 
         for (final ReceiptDetailInfo rDetails : billDetailslist) {
-            final CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(rDetails.getGlcodeDetail());
+            final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(rDetails.getGlcodeDetail());
             CFunction function = null;
             if (rDetails.getFunctionIdDetail() != null)
-                function = commonsServiceImpl.getFunctionById(rDetails.getFunctionIdDetail());
+                function = functionDAO.getFunctionById(rDetails.getFunctionIdDetail());
             ReceiptDetail receiptDetail = new ReceiptDetail(account, function, rDetails.getCreditAmountDetail(),
                     rDetails.getDebitAmountDetail(), null, Long.valueOf(m), null, null, receiptHeader);
             receiptDetail.setCramount(rDetails.getCreditAmountDetail());
 
             totalAmt = totalAmt.add(receiptDetail.getCramount()).subtract(receiptDetail.getDramount());
 
-            final CFinancialYear financialYear = commonsServiceImpl.getFinancialYearById(rDetails.getFinancialYearId());
+            final CFinancialYear financialYear = (CFinancialYear) financialYearDAO.findById(
+                    rDetails.getFinancialYearId(), false);
             receiptDetail.setFinancialYear(financialYear);
 
             if (rDetails.getCreditAmountDetail() == null)
@@ -733,8 +767,11 @@ public class ChallanAction extends BaseFormAction {
 
         receiptHeader.setTotalAmount(totalAmt);
 
-        if (receiptHeader.getChallan().getCreatedBy() == null)
-            receiptHeader.getChallan().setCreatedBy(collectionsUtil.getLoggedInUser());
+        /*
+         * if (receiptHeader.getChallan().getCreatedBy() == null)
+         * receiptHeader.getChallan
+         * ().setCreatedBy(collectionsUtil.getLoggedInUser());
+         */
 
         receiptHeader.getChallan().setStatus(
                 collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
@@ -744,14 +781,7 @@ public class ChallanAction extends BaseFormAction {
             receiptHeader.getChallan().setService(
                     (ServiceDetails) getPersistenceService().findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_ID,
                             receiptHeader.getChallan().getService().getId()));
-        receiptHeaderService.persistChallan(receiptHeader);
-        /*
-         * ReceiptPayeeDetails receiptPayee =
-         * receiptHeader.getReceiptPayeeDetails();
-         * receiptPayee.addReceiptHeader(receiptHeader);
-         * receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
-         * receiptHeader=receiptPayee.getReceiptHeaders().iterator().next();
-         */
+        receiptHeaderService.persistChallan(receiptHeader, position, actionName, approvalRemarks);
         receiptId = receiptHeader.getId();
 
         LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
@@ -909,6 +939,15 @@ public class ChallanAction extends BaseFormAction {
         setDeptId(receiptHeader.getReceiptMisc().getDepartment().getId().toString());
         setDept(receiptHeader.getReceiptMisc().getDepartment());
         setBoundary(receiptHeader.getReceiptMisc().getBoundary());
+        setServiceCategoryId(receiptHeader.getService().getServiceCategory().getId());
+        setServiceId(receiptHeader.getService().getId());
+        if (null != receiptHeader.getService() && null != receiptHeader.getService().getServiceCategory()
+                && receiptHeader.getService().getServiceCategory().getId() != -1)
+            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
+                    receiptHeader.getService().getServiceCategory().getId(),
+                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+        else
+            addDropdownData("serviceList", Collections.EMPTY_LIST);
         setBillDetailslist(collectionCommon.setReceiptDetailsList(receiptHeader,
                 CollectionConstants.COLLECTIONSAMOUNTTPE_BOTH));
         setSubLedgerlist(collectionCommon.setAccountPayeeList(receiptHeader));
@@ -963,12 +1002,6 @@ public class ChallanAction extends BaseFormAction {
                 receiptHeader.getChallan().setService(null);
         }
 
-        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
-        if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
-            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
-                    service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
-        else
-            addDropdownData("serviceList", Collections.EMPTY_LIST);
         final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
 
         addDropdownData("designationMasterList", new ArrayList());
@@ -997,6 +1030,12 @@ public class ChallanAction extends BaseFormAction {
             setupDropdownDataExcluding("receiptMisc.fund");
             addDropdownData("fundList", collectionsUtil.getAllFunds());
         }
+        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
+            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
+                    service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+        else
+            addDropdownData("serviceList", Collections.EMPTY_LIST);
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
@@ -1158,10 +1197,6 @@ public class ChallanAction extends BaseFormAction {
 
     public void setReceiptHeader(final ReceiptHeader receiptHeader) {
         this.receiptHeader = receiptHeader;
-    }
-
-    public void setChallanService(final ChallanService challanService) {
-        this.challanService = challanService;
     }
 
     public void setReceiptId(final Long receiptId) {
@@ -1396,8 +1431,27 @@ public class ChallanAction extends BaseFormAction {
         this.serviceDetailsService = serviceDetailsService;
     }
 
-    public void setChallanWorkflowService(SimpleWorkflowService<Challan> challanWorkflowService) {
+    public void setChallanWorkflowService(final SimpleWorkflowService<Challan> challanWorkflowService) {
         this.challanWorkflowService = challanWorkflowService;
     }
 
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(final Long serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public Long getServiceCategoryId() {
+        return serviceCategoryId;
+    }
+
+    public void setServiceCategoryId(final Long serviceCategoryId) {
+        this.serviceCategoryId = serviceCategoryId;
+    }
+
+    public void setChallanService(final ChallanService challanService) {
+        this.challanService = challanService;
+    }
 }

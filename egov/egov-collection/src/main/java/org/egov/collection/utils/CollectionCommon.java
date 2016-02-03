@@ -129,42 +129,49 @@ public class CollectionCommon {
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
 
     /**
-     * @param receiptHeaderService the receipt header Service to be set
+     * @param receiptHeaderService
+     *            the receipt header Service to be set
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
     }
 
     /**
-     * @param persistenceService the persistenceService to set
+     * @param persistenceService
+     *            the persistenceService to set
      */
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
     /**
-     * @param reportService the reportService to set
+     * @param reportService
+     *            the reportService to set
      */
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }
 
     /**
-     * @param collectionsUtil the collectionsUtil to set
+     * @param collectionsUtil
+     *            the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }
 
     /**
-     * @param FinancialsUtil the FinancialsUtil to set
+     * @param FinancialsUtil
+     *            the FinancialsUtil to set
      */
     public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
         this.financialsUtil = financialsUtil;
     }
 
     /**
-     * @param serviceCode Billing service code for which the receipt template is to be returned
+     * @param serviceCode
+     *            Billing service code for which the receipt template is to be
+     *            returned
      * @return Receipt template to be used for given billing service code.
      */
     private String getReceiptTemplateName(final char receiptType, final String serviceCode) {
@@ -173,7 +180,7 @@ public class CollectionCommon {
         switch (receiptType) {
         case CollectionConstants.RECEIPT_TYPE_BILL:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
+                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
             if (!reportService.isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -196,7 +203,7 @@ public class CollectionCommon {
             break;
         case CollectionConstants.RECEIPT_TYPE_ADHOC:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-            + CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;
             if (!reportService.isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -240,14 +247,14 @@ public class CollectionCommon {
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
             if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
                 newReceiptDetail
-                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_CASH));
+                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                                CollectionConstants.INSTRUMENTTYPE_CASH));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD))
                 newReceiptDetail
-                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_CARD));
+                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                                CollectionConstants.INSTRUMENTTYPE_CARD));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK))
                 newReceiptDetail.setAccounthead(receiptHeader.getReceiptInstrument().iterator().next()
                         .getBankAccountId().getChartofaccounts());
@@ -267,7 +274,8 @@ public class CollectionCommon {
      * Updates the billing system with receipt information
      */
     @Transactional
-    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException{
+    public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader)
+            throws ApplicationRuntimeException {
 
         String serviceCode = null;
         // ReceiptHeader rh =
@@ -296,8 +304,9 @@ public class CollectionCommon {
     }
 
     /**
-     * This method initialises the model, a list of <code>ReceiptPayeeDetails</code> objects with the information contained in the
-     * unmarshalled <code>BillCollection</code> instance.
+     * This method initialises the model, a list of
+     * <code>ReceiptPayeeDetails</code> objects with the information contained
+     * in the unmarshalled <code>BillCollection</code> instance.
      */
     public ReceiptHeader initialiseReceiptModelWithBillInfo(final BillInfo collDetails, final Fund fund,
             final Department dept) {
@@ -368,7 +377,8 @@ public class CollectionCommon {
     }
 
     /**
-     * This method returns the payment response object for the given response string.
+     * This method returns the payment response object for the given response
+     * string.
      *
      * @param paymentServiceDetails
      * @param response
@@ -385,9 +395,15 @@ public class CollectionCommon {
     /**
      * This method generates a report for the given array of receipts
      *
-     * @param receipts an array of <code>ReceiptHeader</code> objects for which the report is to be generated
-     * @param session a <code>Map</code> of String and Object key- value pairs containing the session information
-     * @param flag a boolean value indicating if the generated report should also have the print option
+     * @param receipts
+     *            an array of <code>ReceiptHeader</code> objects for which the
+     *            report is to be generated
+     * @param session
+     *            a <code>Map</code> of String and Object key- value pairs
+     *            containing the session information
+     * @param flag
+     *            a boolean value indicating if the generated report should also
+     *            have the print option
      * @return an integer representing the report id
      */
     public Integer generateReport(final ReceiptHeader[] receipts, final Map<String, Object> session, final boolean flag) {
@@ -428,15 +444,20 @@ public class CollectionCommon {
     /**
      * This method generates a challan for the given receipt
      *
-     * @param receipt <code>ReceiptHeader</code> object for which the report is to be generated
-     * @param session a <code>Map</code> of String and Object key- value pairs containing the session information
-     * @param flag a boolean value indicating if the generated challan should also have the print option
+     * @param receipt
+     *            <code>ReceiptHeader</code> object for which the report is to
+     *            be generated
+     * @param session
+     *            a <code>Map</code> of String and Object key- value pairs
+     *            containing the session information
+     * @param flag
+     *            a boolean value indicating if the generated challan should
+     *            also have the print option
      * @return an integer representing the report id
      */
     public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
-        // receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new
-        // ReceiptHeader()));
+        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader()));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         final Map reportParams = new HashMap<String, Object>();
@@ -467,7 +488,8 @@ public class CollectionCommon {
     }
 
     /* *//**
-     * @param egovCommon the egovCommon to set
+     * @param egovCommon
+     *            the egovCommon to set
      */
     public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
@@ -546,10 +568,12 @@ public class CollectionCommon {
     }
 
     /**
-     * This method cancels the receipt against a challan. The reason for cancellation is set and the staus is changed to
-     * CANCELLED.
+     * This method cancels the receipt against a challan. The reason for
+     * cancellation is set and the staus is changed to CANCELLED.
      *
-     * @param receiptHeader the <code>ReceiptHeader</code> which contains a reference to the receipt to be cancelled.
+     * @param receiptHeader
+     *            the <code>ReceiptHeader</code> which contains a reference to
+     *            the receipt to be cancelled.
      */
 
     public void cancelChallanReceiptOnCreation(final ReceiptHeader receiptHeader) {
@@ -563,10 +587,13 @@ public class CollectionCommon {
     }
 
     /**
-     * This method create a new receipt header object with details contained in given receipt header object. Both the receipt
-     * header objects are added to the same parent <code>ReceiptPayeeDetail</code> object .
+     * This method create a new receipt header object with details contained in
+     * given receipt header object. Both the receipt header objects are added to
+     * the same parent <code>ReceiptPayeeDetail</code> object .
      *
-     * @param oldReceiptHeader the instance of <code>ReceiptHeader</code> whose data is to be copied
+     * @param oldReceiptHeader
+     *            the instance of <code>ReceiptHeader</code> whose data is to be
+     *            copied
      */
 
     public ReceiptHeader createPendingReceiptFromCancelledChallanReceipt(final ReceiptHeader oldReceiptHeader) {
@@ -588,7 +615,7 @@ public class CollectionCommon {
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(),
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
-                .getDepartment(), newReceiptHeader, null, null, null);
+                        .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
 
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
@@ -622,18 +649,24 @@ public class CollectionCommon {
     }
 
     /**
-     * This method cancels the given receipt. The voucher for the instrument is reversed. The instrument may be cancelled based on
-     * the input parameter. (For post remittance cancellation of a receipt for a challan which has become invalid, the instrument
-     * should not be cancelled)
+     * This method cancels the given receipt. The voucher for the instrument is
+     * reversed. The instrument may be cancelled based on the input parameter.
+     * (For post remittance cancellation of a receipt for a challan which has
+     * become invalid, the instrument should not be cancelled)
      *
-     * @param receiptHeader the <code>ReceiptHeader</code> instance which has to be cancelled
-     * @param cancelInstrument a boolean value indicating if the instrument should be cancelled
+     * @param receiptHeader
+     *            the <code>ReceiptHeader</code> instance which has to be
+     *            cancelled
+     * @param cancelInstrument
+     *            a boolean value indicating if the instrument should be
+     *            cancelled
      */
 
     public void cancelChallanReceipt(final ReceiptHeader receiptHeader, final boolean cancelInstrument) {
         String instrumentType = "";
         /**
-         * The receipt header to be cancelled is the object retrieved in the prepare method
+         * The receipt header to be cancelled is the object retrieved in the
+         * prepare method
          */
 
         receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
@@ -677,7 +710,8 @@ public class CollectionCommon {
     public InstrumentHeader validateAndConstructCashInstrument(final PaymentInfoCash paytInfoCash) {
         if (paytInfoCash.getInstrumentAmount() == null
                 || paytInfoCash.getInstrumentAmount().compareTo(BigDecimal.ZERO) == 0)
-            throw new ApplicationRuntimeException("Invalid Cash Instrument Amount[" + paytInfoCash.getInstrumentAmount() + "]");
+            throw new ApplicationRuntimeException("Invalid Cash Instrument Amount["
+                    + paytInfoCash.getInstrumentAmount() + "]");
 
         final InstrumentHeader instrHeaderCash = new InstrumentHeader();
         instrHeaderCash.setInstrumentType(financialsUtil
@@ -688,42 +722,70 @@ public class CollectionCommon {
     }
 
     /**
-     * Checks if the card instrument amount, transaction number, transaction date, bank branch, bank account number are valid
+     * Checks if the card instrument amount, transaction number, transaction
+     * date, bank branch, bank account number are valid
      *
      * @param paytInfoBank
      * @return
      */
     /*
-     * public InstrumentHeader validateAndConstructCardInstrument(PaymentInfoCard paytInfoCard,ReceiptHeader receiptHeader) {
-     * String invalidCardPaytMsg=""; if(paytInfoCard.getInstrumentAmount()==null ||
-     * paytInfoCard.getInstrumentAmount().compareTo(BigDecimal.ZERO)<=0){ invalidCardPaytMsg+="Invalid Bank Instrument Amount[" +
-     * paytInfoCard.getInstrumentAmount() + "] \n"; } if(paytInfoCard.getInstrumentNumber()==null ||
-     * CollectionConstants.BLANK.equals(paytInfoCard.getInstrumentNumber()) || paytInfoCard.getInstrumentNumber().length()<4){
-     * invalidCardPaytMsg+="Invalid Card Instrument Number[" + paytInfoCard.getInstrumentNumber() + ". \n"; }
-     * if(!(CollectionConstants.BLANK.equals(invalidCardPaytMsg))) throw new ApplicationRuntimeException(invalidCardPaytMsg);
-     * //Process Card Payment by invoking BillDesk API MerchantInfo merchantInfo = processCardPayment(paytInfoCard,receiptHeader);
-     * InstrumentHeader instrHeaderCard = new InstrumentHeader(); if(merchantInfo.getAuthStatus().equals(CollectionConstants.
-     * PGI_AUTHORISATION_CODE_SUCCESS)) { instrHeaderCard.setInstrumentType(financialsUtil.getInstrumentTypeByType(
-     * CollectionConstants.INSTRUMENTTYPE_CARD)); instrHeaderCard.setInstrumentAmount(new
-     * BigDecimal(merchantInfo.getTxnAmount())); instrHeaderCard.setIsPayCheque(CollectionConstants.ZERO_INT); //this value has to
-     * be captured from bill desk instrHeaderCard.setTransactionNumber(merchantInfo.getTxnReferenceNo()); //instrument number is
-     * last 4 char of card number instrHeaderCard.setInstrumentNumber(merchantInfo.getCcno().substring(
-     * paytInfoCard.getInstrumentNumber().length()-4)); SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",
-     * Locale.getDefault()); Date transactionDate = null; try { transactionDate = sdf.parse(merchantInfo.getTxnDate()); } catch
-     * (ParseException e) { LOGGER.error("Error occured in parsing the transaction date [" + merchantInfo.getTxnDate() + "]", e);
-     * throw new ApplicationRuntimeException("Error in parsing date"); } instrHeaderCard.setTransactionDate(transactionDate);
-     * OnlinePayment onlinePayment = new OnlinePayment(); onlinePayment.setReceiptHeader(receiptHeader); onlinePayment.setStatus(
-     * collectionsUtil.getEgwStatusForModuleAndCode( CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-     * CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)); onlinePayment.setService
-     * ((ServiceDetails)persistenceService.findByNamedQuery (CollectionConstants.QUERY_SERVICE_BY_CODE,
-     * CollectionConstants.SERVICECODE_PGI_BILLDESK)); onlinePayment.setTransactionNumber(merchantInfo.getTxnReferenceNo());
-     * onlinePayment.setTransactionAmount(new BigDecimal(merchantInfo.getTxnAmount()));
-     * onlinePayment.setTransactionDate(transactionDate); onlinePayment.setAuthorisationStatusCode(merchantInfo.getAuthStatus());
-     * receiptHeader.setOnlinePayment(onlinePayment); } return instrHeaderCard; }
+     * public InstrumentHeader
+     * validateAndConstructCardInstrument(PaymentInfoCard
+     * paytInfoCard,ReceiptHeader receiptHeader) { String invalidCardPaytMsg="";
+     * if(paytInfoCard.getInstrumentAmount()==null ||
+     * paytInfoCard.getInstrumentAmount().compareTo(BigDecimal.ZERO)<=0){
+     * invalidCardPaytMsg+="Invalid Bank Instrument Amount[" +
+     * paytInfoCard.getInstrumentAmount() + "] \n"; }
+     * if(paytInfoCard.getInstrumentNumber()==null ||
+     * CollectionConstants.BLANK.equals(paytInfoCard.getInstrumentNumber()) ||
+     * paytInfoCard.getInstrumentNumber().length()<4){
+     * invalidCardPaytMsg+="Invalid Card Instrument Number[" +
+     * paytInfoCard.getInstrumentNumber() + ". \n"; }
+     * if(!(CollectionConstants.BLANK.equals(invalidCardPaytMsg))) throw new
+     * ApplicationRuntimeException(invalidCardPaytMsg); //Process Card Payment
+     * by invoking BillDesk API MerchantInfo merchantInfo =
+     * processCardPayment(paytInfoCard,receiptHeader); InstrumentHeader
+     * instrHeaderCard = new InstrumentHeader();
+     * if(merchantInfo.getAuthStatus().equals(CollectionConstants.
+     * PGI_AUTHORISATION_CODE_SUCCESS)) {
+     * instrHeaderCard.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+     * CollectionConstants.INSTRUMENTTYPE_CARD));
+     * instrHeaderCard.setInstrumentAmount(new
+     * BigDecimal(merchantInfo.getTxnAmount()));
+     * instrHeaderCard.setIsPayCheque(CollectionConstants.ZERO_INT); //this
+     * value has to be captured from bill desk
+     * instrHeaderCard.setTransactionNumber(merchantInfo.getTxnReferenceNo());
+     * //instrument number is last 4 char of card number
+     * instrHeaderCard.setInstrumentNumber(merchantInfo.getCcno().substring(
+     * paytInfoCard.getInstrumentNumber().length()-4)); SimpleDateFormat sdf =
+     * new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()); Date
+     * transactionDate = null; try { transactionDate =
+     * sdf.parse(merchantInfo.getTxnDate()); } catch (ParseException e) {
+     * LOGGER.error("Error occured in parsing the transaction date [" +
+     * merchantInfo.getTxnDate() + "]", e); throw new
+     * ApplicationRuntimeException("Error in parsing date"); }
+     * instrHeaderCard.setTransactionDate(transactionDate); OnlinePayment
+     * onlinePayment = new OnlinePayment();
+     * onlinePayment.setReceiptHeader(receiptHeader); onlinePayment.setStatus(
+     * collectionsUtil.getEgwStatusForModuleAndCode(
+     * CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+     * CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
+     * onlinePayment.setService
+     * ((ServiceDetails)persistenceService.findByNamedQuery
+     * (CollectionConstants.QUERY_SERVICE_BY_CODE,
+     * CollectionConstants.SERVICECODE_PGI_BILLDESK));
+     * onlinePayment.setTransactionNumber(merchantInfo.getTxnReferenceNo());
+     * onlinePayment.setTransactionAmount(new
+     * BigDecimal(merchantInfo.getTxnAmount()));
+     * onlinePayment.setTransactionDate(transactionDate);
+     * onlinePayment.setAuthorisationStatusCode(merchantInfo.getAuthStatus());
+     * receiptHeader.setOnlinePayment(onlinePayment); } return instrHeaderCard;
+     * }
      */
 
     /**
-     * Checks if the bank instrument number, transaction number, transaction date, bank branch, bank account number are valid
+     * Checks if the bank instrument number, transaction number, transaction
+     * date, bank branch, bank account number are valid
      *
      * @param paytInfoBank
      * @return
@@ -740,7 +802,7 @@ public class CollectionCommon {
             invalidBankPaytMsg += "Missing Bank Transaction Date \n";
         if (new Date().compareTo(paytInfoBank.getTransactionDate()) == -1)
             invalidBankPaytMsg += "Bank Transaction Date[" + paytInfoBank.getTransactionDate()
-            + "] cannot be a future date \n";
+                    + "] cannot be a future date \n";
         Bankaccount account = null;
         if (paytInfoBank.getBankAccountId() == null)
             invalidBankPaytMsg += "Missing Bank Account Id \n";
@@ -749,7 +811,7 @@ public class CollectionCommon {
 
             if (account == null)
                 invalidBankPaytMsg += "No account found for bank account id[" + paytInfoBank.getBankAccountId()
-                + "] \n";
+                        + "] \n";
         }
 
         if (!CollectionConstants.BLANK.equals(invalidBankPaytMsg))
@@ -772,8 +834,10 @@ public class CollectionCommon {
     }
 
     /**
-     * Checks if the cheque/DD instrument number, instrument date, are valid. An exception is thrown if the payment details are
-     * invalid, else an InstrumentHeader object is created from the payment details, and returned.
+     * Checks if the cheque/DD instrument number, instrument date, are valid. An
+     * exception is thrown if the payment details are invalid, else an
+     * InstrumentHeader object is created from the payment details, and
+     * returned.
      *
      * @param paytInfoBank
      * @return
@@ -783,18 +847,18 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg += "Invalid cheque/DD Instrument Amount[" + paytInfoChequeDD.getInstrumentAmount()
-            + "] \n";
+                    + "] \n";
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg += "Invalid Cheque/DD Instrument Number[" + paytInfoChequeDD.getInstrumentNumber()
-            + "]. \n";
+                    + "]. \n";
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg += "Missing Cheque/DD Transaction Date \n";
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg += "Cheque/DD Transaction Date[" + paytInfoChequeDD.getInstrumentDate()
-            + "] cannot be a future date \n";
+                    + "] cannot be a future date \n";
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = (Bank) bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
@@ -831,29 +895,44 @@ public class CollectionCommon {
     }
 
     /**
-     * Validate and construct InstrumentHeader object for Instrument type ATM Checks if the bank instrument number, transaction
-     * number, transaction date, bank branch, bank account number are valid
+     * Validate and construct InstrumentHeader object for Instrument type ATM
+     * Checks if the bank instrument number, transaction number, transaction
+     * date, bank branch, bank account number are valid
      *
      * @param paytInfoATM
      * @return
      */
     /*
-     * public InstrumentHeader validateAndConstructATMInstrument(PaymentInfoATM paytInfoATM) { String invalidATMPaytMsg="";
-     * if(paytInfoATM.getInstrumentAmount()==null || paytInfoATM.getInstrumentAmount().compareTo(BigDecimal.ZERO)<=0){
-     * invalidATMPaytMsg+="Invalid Bank Instrument Amount[" + paytInfoATM.getInstrumentAmount() + "] \n"; }
-     * if(paytInfoATM.getTransactionNumber()==null || paytInfoATM.getTransactionNumber()<0){
-     * invalidATMPaytMsg+="Invalid Bank Transaction Number[" + paytInfoATM.getInstrumentAmount() + "] \n"; }
-     * if(paytInfoATM.getTransactionDate()==null){ invalidATMPaytMsg+="Missing Bank Transaction Date \n"; } if(new
-     * Date().compareTo(paytInfoATM.getTransactionDate())==-1){ invalidATMPaytMsg
-     * +="Bank Transaction Date["+paytInfoATM.getTransactionDate ()+"] cannot be a future date \n"; } Bank bank = null; if
-     * (paytInfoATM.getBankId() != null) { bank=commonsServiceImpl.getBankById(paytInfoATM.getBankId().intValue());
-     * if(bank==null){ invalidATMPaytMsg+="No bank present for bank id ["+ paytInfoATM.getBankId()+"] \n"; } }
-     * if(!(CollectionConstants.BLANK.equals(invalidATMPaytMsg))) throw new ApplicationRuntimeException(invalidATMPaytMsg);
-     * InstrumentHeader instrHeaderATM = new InstrumentHeader();
-     * instrHeaderATM.setInstrumentType(financialsUtil.getInstrumentTypeByType( CollectionConstants.INSTRUMENTTYPE_ATM));
-     * instrHeaderATM.setBankId(bank); instrHeaderATM.setTransactionNumber(String .valueOf(paytInfoATM.getTransactionNumber()));
+     * public InstrumentHeader validateAndConstructATMInstrument(PaymentInfoATM
+     * paytInfoATM) { String invalidATMPaytMsg="";
+     * if(paytInfoATM.getInstrumentAmount()==null ||
+     * paytInfoATM.getInstrumentAmount().compareTo(BigDecimal.ZERO)<=0){
+     * invalidATMPaytMsg+="Invalid Bank Instrument Amount[" +
+     * paytInfoATM.getInstrumentAmount() + "] \n"; }
+     * if(paytInfoATM.getTransactionNumber()==null ||
+     * paytInfoATM.getTransactionNumber()<0){
+     * invalidATMPaytMsg+="Invalid Bank Transaction Number[" +
+     * paytInfoATM.getInstrumentAmount() + "] \n"; }
+     * if(paytInfoATM.getTransactionDate()==null){
+     * invalidATMPaytMsg+="Missing Bank Transaction Date \n"; } if(new
+     * Date().compareTo(paytInfoATM.getTransactionDate())==-1){
+     * invalidATMPaytMsg
+     * +="Bank Transaction Date["+paytInfoATM.getTransactionDate
+     * ()+"] cannot be a future date \n"; } Bank bank = null; if
+     * (paytInfoATM.getBankId() != null) {
+     * bank=commonsServiceImpl.getBankById(paytInfoATM.getBankId().intValue());
+     * if(bank==null){ invalidATMPaytMsg+="No bank present for bank id ["+
+     * paytInfoATM.getBankId()+"] \n"; } }
+     * if(!(CollectionConstants.BLANK.equals(invalidATMPaytMsg))) throw new
+     * ApplicationRuntimeException(invalidATMPaytMsg); InstrumentHeader
+     * instrHeaderATM = new InstrumentHeader();
+     * instrHeaderATM.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+     * CollectionConstants.INSTRUMENTTYPE_ATM)); instrHeaderATM.setBankId(bank);
+     * instrHeaderATM.setTransactionNumber(String
+     * .valueOf(paytInfoATM.getTransactionNumber()));
      * instrHeaderATM.setInstrumentAmount(paytInfoATM.getInstrumentAmount());
      * instrHeaderATM.setTransactionDate(paytInfoATM.getTransactionDate());
-     * instrHeaderATM.setIsPayCheque(CollectionConstants.ZERO_INT); return instrHeaderATM; }
+     * instrHeaderATM.setIsPayCheque(CollectionConstants.ZERO_INT); return
+     * instrHeaderATM; }
      */
 }

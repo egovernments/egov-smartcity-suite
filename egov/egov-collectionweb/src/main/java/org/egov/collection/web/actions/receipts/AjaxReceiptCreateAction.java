@@ -413,10 +413,10 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxFinAccDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final Integer deptId = Integer.valueOf(parameters.get("deptId")[0]);
+        final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
         final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
                 "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and " +
-                        " service.id=" + serviceId, deptId);
+                        " service.id=",  deptId, serviceId);
 
         accountDetails = new ArrayList<ServiceAccountDetails>();
 
@@ -432,10 +432,10 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService")
     public String ajaxFinSubledgerByService() {
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final Integer deptId = Integer.valueOf(parameters.get("deptId")[0]);
+        final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
         final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
                 "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and " +
-                        " service.id=" + serviceId, deptId);
+                        " service.id=",  deptId, serviceId);
         subledgerDetails = new ArrayList<ServiceSubledgerInfo>();
         if (null != service)
             for (final ServiceAccountDetails account : service.getServiceAccountDtls())

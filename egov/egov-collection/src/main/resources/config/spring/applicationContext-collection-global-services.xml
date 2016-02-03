@@ -65,6 +65,7 @@
 		id="receiptHeaderService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.ReceiptHeader" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="challanService" ref="challanService" />
 		<property name="financialsUtil" ref="financialsUtil" />
 		<property name="collectionsNumberGenerator" ref="collectionsNumberGenerator" />
 		<property name="persistenceService" ref="persistenceService" />
@@ -117,6 +118,11 @@
     <bean id="ReceiptHeaderInboxRenderService" class="org.egov.collection.workflow.renderer.CollectionsWorkflowRenderService">
          <constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
    </bean>
+   
+    <bean id="ChallanInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="challanPersistenceService"/>
+   </bean>
+   
    <bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.Challan" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
