@@ -51,6 +51,23 @@ $('#baseRegisterReportSearch').click(function(e){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ 
+				               {
+					             "sExtends": "pdf",
+                                 "sTitle": "Base Register Report",
+                                 "sPdfOrientation": "landscape"
+				                },
+				                {
+						             "sExtends": "xls",
+	                                 "sTitle": "Base Register Report"
+					             },{
+						             "sExtends": "print",
+	                                 "sTitle": "Base Register Report"
+					               }],
+				
+			},
 			ajax : {
 				url : "/ptis/report/baseRegister/result",
 				data : {

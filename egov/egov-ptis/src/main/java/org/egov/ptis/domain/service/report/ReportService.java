@@ -209,6 +209,11 @@ public class ReportService {
                 count++;
             } else {
                 baseRegisterResultObj = new BaseRegisterResult();
+                baseRegisterResultObj.setAssessmentNo("");
+                baseRegisterResultObj.setOwnerName("");
+                baseRegisterResultObj.setDoorNO("");
+                baseRegisterResultObj.setCourtCase("");
+                baseRegisterResultObj.setArrearPeriod("");
                 baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
                 baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage());
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
