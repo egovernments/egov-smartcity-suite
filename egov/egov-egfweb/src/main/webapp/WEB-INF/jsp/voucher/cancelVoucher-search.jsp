@@ -159,14 +159,9 @@ function loadNamesForSelectedType()
 		<input type="button" value="Close" onclick="javascript:window.close()"
 			class="button" />
 	</div>
-	<div id="loading" class="loading"
-		style="width: 700; height: 700; display: none" align="center">
-		<blink style="color: red">Searching processing, Please wait...</blink>
-	</div>
 	<s:if test="%{voucherSearchList.size!=0}">
 		<div id="listid">
 			<script>             
-				document.getElementById('loading').style.display ='none';	
 			</script>
 			<table width="100%" border="0" align="center" cellpadding="0"
 				cellspacing="0" class="tablebottom">
@@ -278,7 +273,6 @@ function viewVoucher(vid){
 }
 
 function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
 }
 
 var callback = {
@@ -287,12 +281,10 @@ var callback = {
 			document.getElementById('listid').style.display ='none';
 			},
 		failure: function(o) {
-			document.getElementById('loading').style.display ='none';
 			bootbox.alert("Search failed! Please try again");
 			}
 }
 function loadSearch(){
-	document.getElementById('loading').style.display ='block';
 	document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-search.action";
 	document.cancelVoucher.submit();
 	}

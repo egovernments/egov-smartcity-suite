@@ -101,7 +101,7 @@ function exportPdf(){
 	<s:form name="journalVoucherPrint" action="journalVoucherPrint"
 		theme="simple">
 		<input type="hidden" name="id" value='<s:property value="id"/>' />
-		<div id="buttons">
+		<div id="buttons" class="buttonbottom">
 			<input type="button" id="btnPrint"
 				onclick="javascript:parent.report.print();" value="Print"
 				class="button" /> <input type="button" id="printPDF"
