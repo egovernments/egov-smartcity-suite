@@ -38,13 +38,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.mrs.domain.entity;
 
-import java.util.Date;
-
+/**
+ * Bean to hold the search results
+ *
+ * @author nayeem
+ *
+ */
 public class SearchResult {
-    
+
     private Long registrationId;
     private String registrationNo;
     private String registrationDate;
@@ -55,84 +58,102 @@ public class SearchResult {
     private String status;
     private Double feePaid;
     private boolean feeCollectionPending;
-    
+    private String applicationType;
+    private String remrks;
+
     public Long getRegistrationId() {
         return registrationId;
     }
-    
-    public void setRegistrationId(Long registrationId) {
+
+    public void setRegistrationId(final Long registrationId) {
         this.registrationId = registrationId;
     }
-    
+
     public String getRegistrationNo() {
         return registrationNo;
     }
-    
-    public void setRegistrationNo(String registrationNo) {
+
+    public void setRegistrationNo(final String registrationNo) {
         this.registrationNo = registrationNo;
     }
-    
+
     public String getRegistrationDate() {
         return registrationDate;
     }
-    
-    public void setRegistrationDate(String registrationDate) {
+
+    public void setRegistrationDate(final String registrationDate) {
         this.registrationDate = registrationDate;
     }
-    
+
     public String getDateOfMarriage() {
         return dateOfMarriage;
     }
-    
-    public void setDateOfMarriage(String dateOfMarriage) {
+
+    public void setDateOfMarriage(final String dateOfMarriage) {
         this.dateOfMarriage = dateOfMarriage;
     }
-    
+
     public String getHusbandName() {
         return husbandName;
     }
-    
-    public void setHusbandName(String husbandName) {
+
+    public void setHusbandName(final String husbandName) {
         this.husbandName = husbandName;
     }
-    
+
     public String getWifeName() {
         return wifeName;
     }
-    
-    public void setWifeName(String wifeName) {
+
+    public void setWifeName(final String wifeName) {
         this.wifeName = wifeName;
     }
-    
+
     public boolean isCertificateIssued() {
         return certificateIssued;
     }
-    
-    public void setCertificateIssued(boolean certificateIssued) {
+
+    public void setCertificateIssued(final boolean certificateIssued) {
         this.certificateIssued = certificateIssued;
     }
-    
+
     public String getStatus() {
         return status;
     }
-    
-    public void setStatus(String status) {
+
+    public void setStatus(final String status) {
         this.status = status;
     }
-    
+
     public Double getFeePaid() {
         return feePaid;
     }
-    
-    public void setFeePaid(Double feePaid) {
+
+    public void setFeePaid(final Double feePaid) {
         this.feePaid = feePaid;
     }
 
     public boolean isFeeCollectionPending() {
         return feeCollectionPending;
     }
-    
-    public void setFeeCollectionPending(boolean feeCollectionPending) {
+
+    public void setFeeCollectionPending(final boolean feeCollectionPending) {
         this.feeCollectionPending = feeCollectionPending;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getRemrks() {
+        return remrks;
+    }
+
+    public void setRemrks(final String remrks) {
+        this.remrks = remrks;
     }
 }

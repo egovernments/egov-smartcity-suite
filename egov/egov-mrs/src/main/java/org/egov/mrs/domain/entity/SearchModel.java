@@ -42,7 +42,7 @@ package org.egov.mrs.domain.entity;
 import java.util.Date;
 
 /**
- * Model used in Search Registration
+ * Model used in Search Registration and Reports
  *
  * @author NPathan
  *
@@ -54,6 +54,10 @@ public class SearchModel {
     private String husbandName;
     private String wifeName;
     private Date registrationDate;
+    private Date fromDate;
+    private Date toDate;
+    private boolean registrationApproved;
+    private boolean registrationRejected;
     
     public String getRegistrationNo() {
         return registrationNo;
@@ -94,4 +98,37 @@ public class SearchModel {
     public void setRegistrationDate(final Date registrationDate) {
         this.registrationDate = registrationDate;
     }
+    
+    public Date getFromDate() {
+        return fromDate;
+    }
+    
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+    
+    public Date getToDate() {
+        return toDate;
+    }
+    
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public boolean isRegistrationApproved() {
+        return registrationApproved;
+    }
+    
+    public void setRegistrationApproved(boolean registrationApproved) {
+        this.registrationApproved = registrationApproved;
+    }
+    
+    public boolean isRegistrationRejected() {
+        return registrationRejected;
+    }
+    
+    public void setRegistrationRejected(boolean registrationRejected) {
+        this.registrationRejected = registrationRejected;
+    }
+    
 }
