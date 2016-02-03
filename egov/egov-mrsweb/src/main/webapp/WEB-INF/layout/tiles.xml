@@ -94,4 +94,9 @@
         <put-attribute name="page-title" value="title.registration" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-certificate.jsp"/>
     </definition>
+    
+    <definition name="registration-correction" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-correction.jsp"/>
+    </definition>
 </tiles-definitions>

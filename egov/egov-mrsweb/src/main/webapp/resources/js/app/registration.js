@@ -99,12 +99,12 @@ $(document).ready( function () {
 	    	console.log('target' + e.target.id);
 	    	var imgAttach = e.target.id;
 	    	
-	    	if (imgAttach.search('.photo') > 0) {
+	    	/*if (imgAttach.search('.photo') > 0) {
 	    		var span = $(e.target).siblings('span'); 
 		    	//$(span).css({'color' : 'red'});
 		    	$(span).addClass('error-msg');
 		    	$(span).text("Photo is required");
-	    	}	    		    	
+	    	}	 */   		    	
 	    }  
 	});
 
@@ -170,6 +170,14 @@ $(document).ready( function () {
 		}
 	});
 	
+	$('.month-field').blur( function () {
+		var month = parseInt( $(this).val() );
+		if (month != null && month != undefined && (month < 0 || month > 12)) {
+			bootbox.alert("Invalid month(s)..!!");
+			$(this).val('');
+		}
+	})
+	
 })
 
 var reg_table = null;
@@ -203,7 +211,7 @@ $('#btnregistrationsearch').click( function () {
 			console.log('searchResults = ' + searchResults);
 			$.each(searchResults, function (index, result) {
 				var certificateIssued = result.certificateIssued ? 'Yes' : 'No';
-				var action = '<select class="form-control" id="select-actions'+index+'" style="width:125px;" onchange="performSelectedAction(this);"><option value="default">select</option><option value="view">view</option>';
+				var action = '<select class="form-control" id="select-actions'+index+'" style="width:125px;" onchange="performSelectedAction(this);"><option value="default">select</option><option value="view">View</option><option value="correction">Data Entry</option>';
 				if (result.feeCollectionPending) {
 					action += '<option value="collectfee">Collect Fee</option>';
 				}
@@ -233,6 +241,8 @@ function performSelectedAction(dropdown) {
 		url = '/mrs/registration/' + registrationId + '?mode=view';
 	} else if (optionSelected === 'collectfee') {
 		url = '/mrs/collection/bill/' + registrationId;
+	} else if (optionSelected === 'correction') {
+		url = '/mrs/registration/update/' + registrationId;
 	}
     window.open(url);
 }

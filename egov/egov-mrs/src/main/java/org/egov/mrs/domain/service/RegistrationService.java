@@ -195,14 +195,12 @@ public class RegistrationService {
 
         final Map<Long, Document> documentAndId = new HashMap<Long, Document>();
         documentService.getAll().forEach(document -> documentAndId.put(document.getId(), document));
-
+        
         try {
-            registration.getHusband()
-                    .setPhoto(FileCopyUtils.copyToByteArray(registration.getHusband().getPhotoFile().getInputStream()));
-            registration.getWife()
-                    .setPhoto(FileCopyUtils.copyToByteArray(registration.getWife().getPhotoFile().getInputStream()));
-        } catch (final IOException e) {
-            LOG.error("Error in attached photo", e);
+            registration.getHusband().copyPhotoAndSignatureToByteArray();
+            registration.getWife().copyPhotoAndSignatureToByteArray();
+        } catch (IOException e) {
+            LOG.error("Error while copying Multipart file bytes", e);
         }
 
         addDocumentsToFileStore(registration.getHusband(), documentAndId);
@@ -237,6 +235,13 @@ public class RegistrationService {
             final WorkflowContainer workflowContainer) {
         final Registration registration = get(id);
 
+        updateRegistrationData(regModel, registration);
+
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        return update(registration);
+    }
+
+    private void updateRegistrationData(final Registration regModel, final Registration registration) {
         registration.setDateOfMarriage(regModel.getDateOfMarriage());
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
         registration.setFeeCriteria(regModel.getFeeCriteria());
@@ -259,9 +264,6 @@ public class RegistrationService {
 
         registration.getHusband().setProofsAttached(regModel.getHusband().getProofsAttached());
         registration.getWife().setProofsAttached(regModel.getWife().getProofsAttached());
-
-        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-        return update(registration);
     }
 
     @Transactional
@@ -349,7 +351,7 @@ public class RegistrationService {
             criteria.add(Restrictions.eq("dateOfMarriage", searchModel.getDateOfMarriage()));
 
         if (StringUtils.isNotBlank(searchModel.getHusbandName()))
-            criteria.createCriteria("husband").add(Restrictions.ilike("name.firstName", searchModel.getHusbandName()));
+            criteria.createCriteria("husband").add(Restrictions.like("name.firstName", searchModel.getHusbandName()));
 
         if (StringUtils.isNotBlank(searchModel.getWifeName()))
             criteria.createCriteria("wife").add(Restrictions.ilike("name.firstName", searchModel.getWifeName()));
@@ -368,10 +370,12 @@ public class RegistrationService {
         return fileStoreMapper;
     }
 
-    /*
-     * private static class RegistrationExpressions { public static Expression withRegistrationNo(String registrationNo) { return
-     * QRegistration.registration.registrationNo.eq(registrationNo); } public static Expression withDateOfMarrige(Date
-     * dateOfMarriage) { return QRegistration.registration.dateOfMarriage.eq(dateOfMarriage); } }
-     */
+   
+    @Transactional
+    public Registration updateRegistration(final Long id, final Registration regModel) {
+        final Registration registration = get(id);
+        updateRegistrationData(regModel, registration);
+        return update(registration);
+    }
 
 }

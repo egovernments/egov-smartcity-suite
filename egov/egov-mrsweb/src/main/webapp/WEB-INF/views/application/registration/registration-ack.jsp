@@ -52,14 +52,20 @@
 		<div class="row">
 			<div class="col-md-12 text-center">
 				<c:choose>
-					<c:when test="${registration.applicationNo != 'null'}">
-						Marriage is registered with application no : <c:out value="${registration.applicationNo}"></c:out>, <br /> Please use this for your any future references.
-					</c:when>
-					<c:otherwise>
-						Registration is successfull...!!
-					</c:otherwise>
+					<c:when test="${not empty message}">
+	                    <spring:message code="${message}"/>
+	                </c:when>
+	                <c:otherwise>
+	                	<c:choose>
+							<c:when test="${registration.applicationNo != 'null'}">
+								Marriage is registered with application no : <strong><c:out value="${registration.applicationNo}"></c:out></strong>, <br /> Please use this for your any future references.
+							</c:when>
+							<c:otherwise>
+								Registration is successful...!!
+							</c:otherwise>
+						</c:choose>
+	                </c:otherwise>
 				</c:choose>
-				<strong>Registration is successfull...!!</strong>
 			</div>
 		</div>
 	</div>

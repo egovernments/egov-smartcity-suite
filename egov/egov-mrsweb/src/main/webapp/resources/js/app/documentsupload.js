@@ -54,6 +54,16 @@ $(document).ready(function(){
 			return false;
 		}	
 		
+		var image = $( this ).prop('files')[0];
+		var fileReader = new FileReader();
+		var inputUpload = $(this);
+
+		fileReader.onload = function(e) {   
+           $( $(inputUpload).siblings('img') ).prop('src', e.target.result);
+		}
+       
+		fileReader.readAsDataURL(image);
+		
 		var fileInput = $(this);
    		var maxSize = 2097152; //file size  in bytes(2MB)
 		var inMB = maxSize/1024/1024;

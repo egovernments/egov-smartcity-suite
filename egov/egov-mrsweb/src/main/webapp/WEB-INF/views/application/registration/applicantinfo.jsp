@@ -70,10 +70,15 @@
 	</div>
 	<div class="col-sm-5">
 	<div class="row">
-		<div class="col-sm-6">
-		</div>		
-		<div class="col-sm-6">
+		<div class="form-group">
+		<label class="col-sm-5 text-right" style="padding-right: 25px;">
+			<spring:message code="lbl.signature"/>
+		</label>
+		<div class="col-sm-5">
+			<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file">
 		</div>
+		<div class="col-sm-2"></div>
+	</div>
 	</div>
 	</div>
 </div>
@@ -124,8 +129,8 @@
 				<spring:message code="lbl.ageason.marriage"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${applicant}.ageInYearsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" />
-				<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Months" autocomplete="off" />
+				<form:input path="${applicant}.ageInYearsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" required="required"/>
+				<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation month-field" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Months" autocomplete="off" required="required"/>
 	            <form:errors path="${applicant}.ageInYearsAsOnMarriage" cssClass="add-margin error-msg"/>
 	            <form:errors path="${applicant}.ageInMonthsAsOnMarriage" cssClass="add-margin error-msg"/>
 			</div>
@@ -141,8 +146,7 @@
 			<div class="col-sm-6">
 				<img class="add-border" height="150" width="130" name="${applicant}.photo">
 				<span></span>
-				<input type="hidden" name="${applicant}.photo" id="${applicant}.photo">
-				<input type="file" id="${applicant}.photo" name="${applicant}.photoFile" class="file-ellipsis upload-file">
+				<input type="file" id="${applicant}.photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" required="required">
 			</div>
 		</div>
 	</div>

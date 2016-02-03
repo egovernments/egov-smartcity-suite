@@ -39,6 +39,7 @@
 
 package org.egov.mrs.domain.entity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,7 @@ import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.masters.entity.Religion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -144,6 +146,9 @@ public class Applicant extends AbstractAuditable {
 
     @Transient
     private MultipartFile photoFile;
+
+    @Transient
+    private MultipartFile signatureFile;
 
     @Override
     public Long getId() {
@@ -288,6 +293,14 @@ public class Applicant extends AbstractAuditable {
         this.photoFile = photoFile;
     }
 
+    public MultipartFile getSignatureFile() {
+        return signatureFile;
+    }
+
+    public void setSignatureFile(final MultipartFile signatureFile) {
+        this.signatureFile = signatureFile;
+    }
+
     public String getFullName() {
         String fullName = getName().getFirstName();
 
@@ -295,5 +308,17 @@ public class Applicant extends AbstractAuditable {
         fullName += getName().getLastName() == null ? "" : " " + getName().getLastName();
 
         return fullName;
+    }
+
+    /**
+     * Copies MultipartFile bytes to persistent byte array
+     * 
+     * @throws IOException
+     */
+    public void copyPhotoAndSignatureToByteArray() throws IOException {
+        setPhoto(FileCopyUtils.copyToByteArray(getPhotoFile().getInputStream()));
+
+        if (getSignatureFile() != null)
+            setSignature(FileCopyUtils.copyToByteArray(getSignatureFile().getInputStream()));
     }
 }
