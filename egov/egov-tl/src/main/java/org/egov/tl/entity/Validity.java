@@ -53,85 +53,98 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 @Entity
 @Table(name = "egtl_validity")
-@SequenceGenerator(name = Validity.SEQ, sequenceName = Validity.SEQ)
-public class Validity extends AbstractPersistable<Long>{
-	public static final String SEQ = "seq_egtl_validity";
-	private static final long serialVersionUID = -6303436329433049423L;
+@SequenceGenerator(name = Validity.SEQ, sequenceName = Validity.SEQ, allocationSize = 1)
+@CompositeUnique(fields = {"natureOfBusiness", "licenseCategory"}, enableDfltMsg = true, message = "{license.validity.exist}")
+public class Validity extends AbstractPersistable<Long> {
+    public static final String SEQ = "seq_egtl_validity";
+    private static final long serialVersionUID = -6303436329433049423L;
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
-	
-	@NotNull
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "natureOfBusiness", nullable = false)
-	private NatureOfBusiness natureOfBusiness;
-	
-	
-	@ManyToOne
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "natureOfBusiness", nullable = false)
+    private NatureOfBusiness natureOfBusiness;
+
+    @ManyToOne
     @JoinColumn(name = "licenseCategory")
-	private LicenseCategory licenseCategory;
-	
-	@Max(31) 
-	private Integer day=0;
+    private LicenseCategory licenseCategory;
 
-	@Max(3) 
-	private Integer week=0;
-	@Max(11) 
-	
-	private Integer month=0;
-	@Max(99) 
-	
-	private Integer year=0;
-	public NatureOfBusiness getNatureOfBusiness() {
-		return natureOfBusiness;
-	}
-	public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
-		this.natureOfBusiness = natureOfBusiness;
-	}
-	public LicenseCategory getLicenseCategory() {
-		return licenseCategory;
-	}
-	public void setLicenseCategory(LicenseCategory licenseCategory) {
-		this.licenseCategory = licenseCategory;
-	}
-	public Integer getDay() {
-		return day;
-	}
-	public void setDay(Integer day) {
-		this.day = day;
-	}
-	public Integer getWeek() {
-		return week;
-	}
-	public void setWeek(Integer week) {
-		this.week = week;
-	}
-	public Integer getMonth() {
-		return month;
-	}
-	public void setMonth(Integer month) {
-		this.month = month;
-	}
-	public Integer getYear() {
-		return year;
-	}
-	public void setYear(Integer year) {
-		this.year = year;
-	}
-	@Override
-	protected void setId(Long id) {
-		this.id=id;
+    @Max(6)
+    private Integer day = 0;
 
-	}
-	@Override
-	public Long getId() {
-		return this.id;
-	}
+    @Max(3)
+    private Integer week = 0;
+    
+    @Max(11)
+    private Integer month = 0;
 
+    @Max(99)
+    private Integer year = 0;
+
+    public NatureOfBusiness getNatureOfBusiness() {
+        return natureOfBusiness;
+    }
+
+    public void setNatureOfBusiness(final NatureOfBusiness natureOfBusiness) {
+        this.natureOfBusiness = natureOfBusiness;
+    }
+
+    public LicenseCategory getLicenseCategory() {
+        return licenseCategory;
+    }
+
+    public void setLicenseCategory(final LicenseCategory licenseCategory) {
+        this.licenseCategory = licenseCategory;
+    }
+
+    public Integer getDay() {
+        return day;
+    }
+
+    public void setDay(final Integer day) {
+        this.day = day;
+    }
+
+    public Integer getWeek() {
+        return week;
+    }
+
+    public void setWeek(final Integer week) {
+        this.week = week;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(final Integer month) {
+        this.month = month;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(final Integer year) {
+        this.year = year;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
 
 }

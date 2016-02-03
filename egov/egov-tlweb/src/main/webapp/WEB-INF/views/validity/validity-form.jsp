@@ -37,19 +37,18 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0">
         <div class="panel-heading">
-          <div class="panel-title">Validity</div>
+          <div class="panel-title"><spring:message code="title.validity"/></div>
         </div>
         <div class="panel-body">
           <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness" /> <span
               class="mandatory"></span> </label>
             <div class="col-sm-3 add-margin">
-              <form:select path="natureOfBusiness.id" id="natureOfBusiness.id" cssClass="form-control"
+              <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
                 cssErrorClass="form-control error">
                 <form:option value="">
                   <spring:message code="lbl.select" />
@@ -60,7 +59,7 @@
             </div>
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
             <div class="col-sm-3 add-margin">
-              <form:select path="licenseCategory.id" id="licenseCategory.id" cssClass="form-control"
+              <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
                 cssErrorClass="form-control error">
                 <form:option value="">
                   <spring:message code="lbl.select" />
@@ -95,3 +94,7 @@
             </div>
           </div>
           <input type="hidden" name="validity" value="${validity.id}" />
+           </div>
+  </div>
+  </div>
+  </div>
