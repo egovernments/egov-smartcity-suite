@@ -540,7 +540,12 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
         final Map<String, BigDecimal> subledAmtmap = new HashMap<String, BigDecimal>();
         final Map<String, String> subLedgerMap = new HashMap<String, String>();
-        for (final VoucherDetails voucherDetails : subLedgerlist)
+        for (final VoucherDetails voucherDetails : subLedgerlist) {
+            if (voucherDetails.getGlcode() == null) {
+                addActionError(getText("journalvoucher.acccode.missing",
+                        new String[] { voucherDetails.getSubledgerCode() }));
+                return true;
+            }
             if (voucherDetails.getGlcode().getId() != 0) {
                 final String function = repeatedglCodes.contains(voucherDetails.getGlcode().getId().toString()) ? voucherDetails
                         .getFunctionDetail() : "0";
@@ -573,6 +578,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 }
 
             }
+        }
         if (subLegAccMap.size() > 0)
             for (final Map<String, Object> map : subLegAccMap) {
                 final String glcodeIdAndFuncId = map.get("glcodeId-funcId").toString();
