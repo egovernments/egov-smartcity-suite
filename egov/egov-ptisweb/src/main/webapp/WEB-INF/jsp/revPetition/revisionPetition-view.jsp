@@ -360,7 +360,7 @@
 				</s:if>
 				<tr>
 					<td>
-						<div id="approval_header">
+						<div id="approval_header" class="formmainbox" style="box-shadow:none;">
 							<div id="wfHistoryDiv">
 								<%--    <jsp:include page="../workflow/workflowHistory.jsp"/>
 	  		 --%>
