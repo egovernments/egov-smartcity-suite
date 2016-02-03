@@ -505,7 +505,7 @@ public class ConnectionDemandService {
      */
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
-            final WaterConnectionDetails waterConnectionDetails) {
+            final WaterConnectionDetails waterConnectionDetails,final String sourceChannel) {
         EgDemand demandObj = null;
         if (waterConnectionDetails.getDemand() == null)
             demandObj = new EgDemand();
@@ -534,7 +534,7 @@ public class ConnectionDemandService {
         if (demandObj.getCreateDate() == null)
             demandObj.setCreateDate(new Date());
         waterConnectionDetails.setDemand(demandObj);
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails,sourceChannel);
         return waterConnectionDetails;
     }
 

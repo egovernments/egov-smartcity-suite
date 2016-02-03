@@ -170,7 +170,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.transition(true).end().withSenderName(user.getUsername() + "::"+ user.getName())
                 .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
                 waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
-                waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+                waterConnectionDetailsService.updateIndexes(waterConnectionDetails,null);
             } else {
                 final String stateValue = WF_STATE_REJECTED;
                 waterConnectionDetails.transition(true).withSenderName(user.getUsername() + "::"+ user.getName()).withComments(approvalComent)
@@ -208,7 +208,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         PropertyExternalService.FLAG_FULL_DETAILS);
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
-                waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+                waterConnectionDetailsService.updateIndexes(waterConnectionDetails,null);
                 if (waterConnectionDetails.getApplicationType().getCode()
                         .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)) {
                     BigDecimal amountTodisplayInIndex=waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);

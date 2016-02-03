@@ -132,6 +132,7 @@ public class DigitalSignatureConnectionController {
         final String fileStoreIds = request.getParameter("fileStoreId");
         final String[] fileStoreIdArr = fileStoreIds.split(",");
         HttpSession session = request.getSession();
+        String sourceChannel = request.getParameter("Source");
         Long approvalPosition = (Long)session.getAttribute(WaterTaxConstants.APPROVAL_POSITION);
         String approvalComent = (String)session.getAttribute(WaterTaxConstants.APPROVAL_COMMENT);
         Map<String, String> appNoFileStoreIdsMap = (Map<String, String>)session.getAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER);
@@ -150,7 +151,7 @@ public class DigitalSignatureConnectionController {
                 }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), WaterTaxConstants.SIGNWORKFLOWACTION, "",
-                        null);
+                        null,sourceChannel);
             }
         }
         model.addAttribute("successMessage", "Digitally Signed Successfully");

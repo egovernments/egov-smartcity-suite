@@ -133,7 +133,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             @RequestParam String workFlowAction, final HttpServletRequest request, final BindingResult errors) {
-
+        String sourceChannel = request.getParameter("Source");
         final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
@@ -211,7 +211,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         }
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent,
-                addConnection.getApplicationType().getCode(), workFlowAction);
+                addConnection.getApplicationType().getCode(), workFlowAction,sourceChannel);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
         String nextDesign = "";

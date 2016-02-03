@@ -131,16 +131,16 @@ public class CloserConnectionService {
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+            final String workFlowAction,final String sourceChannel) {
         
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails,workFlowAction,"");
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails,workFlowAction,"",sourceChannel);
        final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
        
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
-        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails,sourceChannel);
         return savedwaterConnectionDetails;
     }
 }

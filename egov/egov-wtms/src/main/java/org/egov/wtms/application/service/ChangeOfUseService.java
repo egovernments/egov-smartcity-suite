@@ -32,6 +32,7 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 
+
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -152,7 +153,7 @@ public class ChangeOfUseService {
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+            final String workFlowAction,final String sourceChannel) {
         if (changeOfUse.getApplicationNumber() == null)
             changeOfUse.setApplicationNumber(applicationNumberGenerator.generate());
 
@@ -169,7 +170,7 @@ public class ChangeOfUseService {
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
-        waterConnectionDetailsService.updateIndexes(savedChangeOfUse);
+        waterConnectionDetailsService.updateIndexes(savedChangeOfUse,sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(changeOfUse, workFlowAction);
         return savedChangeOfUse;
     }
