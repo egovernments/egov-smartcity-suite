@@ -303,8 +303,14 @@ today = dd+'/'+mm+'/'+yyyy;
 							</tr>
 							<s:iterator var="p" value="al" status="s">
 								<tr>
-									<td style="text-align: center" class="blueborderfortd"><s:property
-											value="#s.index+1" /></td>
+								
+									<td style="text-align: center" class="blueborderfortd"><s:if 	test='%{accCode != "   Total  "}'>
+									<s:property value="#s.index+1" />
+											</s:if>
+											<s:else>
+											<s:property value="" />
+											</s:else></td>
+											
 									<td style="text-align: center" class="blueborderfortd"><s:if
 											test='%{accCode != "   Total  "}'>
 											<a href="javascript:void(0);"
@@ -341,8 +347,12 @@ today = dd+'/'+mm+'/'+yyyy;
 
 							<s:iterator var="p" value="al" status="s">
 								<tr>
-									<td style="text-align: center" class="blueborderfortd"><s:property
-											value="#s.index+1" /></td>
+									<td style="text-align: center" class="blueborderfortd"><s:if 	test='%{accCode != "Total"}'>
+									<s:property value="#s.index+1" />
+											</s:if>
+											<s:else>
+											<s:property value="" />
+											</s:else></td>
 									<td style="text-align: center" class="blueborderfortd"><s:if
 											test='%{accCode != "Total"}'>
 											<a href="javascript:void(0);"
