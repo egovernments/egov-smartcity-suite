@@ -42,6 +42,7 @@ package org.egov.services.voucher;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +127,7 @@ public class JournalVoucherActionHelper {
     public CVoucherHeader transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(),new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
         if (null != voucherHeader.getId())
@@ -179,7 +180,7 @@ public class JournalVoucherActionHelper {
     }
 
     private Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
-        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(voucherHeader.getCreatedBy().getId());
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(voucherHeader.getCreatedBy().getId(),new Date()).get(0);
         return wfInitiator;
     }
 

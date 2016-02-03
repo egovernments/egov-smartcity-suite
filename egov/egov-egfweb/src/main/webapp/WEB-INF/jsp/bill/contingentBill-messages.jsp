@@ -56,11 +56,13 @@
 		<span class="mandatory"> <s:actionmessage />
 		</span>
 		<br />
+		<div class="buttonbottom" align="center">
 		<input type="submit" value="Close" onclick="javascript:window.close()"
 			class="button" />
 
 		<input type="button" id="print" value="Print Preview"
 			onclick="printPreview()" class="button" />
+			</div>
 	</s:form>
 	<script>
 	function refreshInbox()

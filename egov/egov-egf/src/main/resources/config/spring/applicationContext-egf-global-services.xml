@@ -124,6 +124,16 @@
 			ref="paymentHeaderPersistenceService" />
 	</bean>
 
+	<bean id="billRegisterPersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.model.bills.EgBillregister" />
+	</bean>
+
+	<bean id="EgBillregisterInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="billRegisterPersistenceService" />
+	</bean>
+
 
 	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
 		<constructor-arg index="0"

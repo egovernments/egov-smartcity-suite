@@ -59,6 +59,8 @@
 	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript"
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"> </script>
+<script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js"></script>
 
 
@@ -494,10 +496,22 @@ function printPreview(){
 	document.forms[0].action='../bill/expenseBillPrint-print.action?id=<s:property value="billRegisterId"/>';
 	document.forms[0].submit();
 }
-
+function load(){
+	jQuery('.tabber').find('input, textarea, select').attr('readonly', 'readonly');
+	jQuery('.tabbertab').find('input, textarea, select').attr('readonly', 'readonly');
+	jQuery('.commentsTab').find('input, textarea, select').attr('readonly', 'readonly');
+	
+}
+function onSubmit()
+{
+	document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-update.action';
+    document.cbill.submit();
+			
+		
+}
 </script>
 </head>
-<body>
+<body onload="load();">
 	<s:form action="contingentBill" theme="css_xhtml" name="cbill">
 		<s:token />
 		<s:push value="model">
@@ -514,7 +528,7 @@ function printPreview(){
 						</div>
 					</div>
 					<center>
-						<span class="mandatory">
+						<span class="mandatory1">
 							<div id="Errors">
 								<s:actionerror />
 								<s:fielderror />
@@ -569,14 +583,7 @@ function printPreview(){
 						<p class="error-block" id="lblError" style="font: bold"></p>
 					</font>
 				</div>
-
-				<div id="apporoverSelection" style="display: none">
-					<s:if test='%{! nextLevel.equalsIgnoreCase("END")}'>
-						<%@include file="../voucher/workflowApproval-contingent.jsp"%>
-					</s:if>
-				</div>
-
-				<div align="center">
+				<div class="commentsTab" align="center">
 					<table border="0" width="100%">
 						<tr>
 							<td class="bluebox">Comments</td>
@@ -587,12 +594,19 @@ function printPreview(){
 						<br />
 					</table>
 				</div>
-				<div id="wfHistoryDiv">
+				</br>
+				<div id="apporoverSelection">
+					<%@ include file='../bill/commonWorkflowMatrix.jsp'%>
+					<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+				</div>
+
+
+				<%-- <div id="wfHistoryDiv">
 					<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp"
 						context="/egi">
 						<c:param name="stateId" value="${commonBean.stateId}"></c:param>
 					</c:import>
-				</div>
+				</div> --%>
 				<s:hidden name="nextLevel" id="nextLevel"></s:hidden>
 				<s:hidden name="actionName" id="actionName"></s:hidden>
 				<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
@@ -601,16 +615,11 @@ function printPreview(){
 					<table border="0" cellspacing="0" align="center">
 						<tr></tr>
 						<tr>
-
-							<s:iterator value="%{validButtons}" var="p">
-								<td><s:submit type="submit" cssClass="buttonsubmit"
-										value="%{description}" id="%{name}" name="%{name}"
-										method="update"
-										onclick="return validate('%{name}','%{description}');  " /></td>
-							</s:iterator>
 							<td></td>
-							<td><input type="button" id="closeButton" value="Close"
-								onclick="javascript:window.close()" class="button" /></td>
+							<s:if test="%{!mode=='approve'}">
+								<td><input type="button" name="button2" id="button2"
+									value="Close" class="button" onclick="window.close();" /></td>
+							</s:if>
 						</tr>
 					</table>
 				</div>
@@ -626,8 +635,8 @@ function printPreview(){
 					<tr>
 						<td><input type="button" id="print" value="Print Preview"
 							onclick="printPreview()" class="button" /> <input type="button"
-							id="closeButton" value="Close"
-							onclick="javascript:window.close()" class="button" /></td>
+							name="button2" id="button2" value="Close" class="button"
+							onclick="window.close();" /></td>
 					</tr>
 				</table>
 			</s:else>

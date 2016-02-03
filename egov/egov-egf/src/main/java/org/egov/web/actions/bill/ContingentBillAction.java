@@ -81,19 +81,21 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.workflow.Action;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,7 +124,7 @@ public class ContingentBillAction extends BaseBillAction {
         }
 
     }
-
+    private final static String FORWARD = "Forward";
     private static final String ACCOUNT_DETAIL_TYPE_LIST = "accountDetailTypeList";
     private static final String BILL_SUB_TYPE_LIST = "billSubTypeList";
     private static final String USER_LIST = "userList";
@@ -136,7 +138,8 @@ public class ContingentBillAction extends BaseBillAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ContingentBillAction.class);
     private BigDecimal debitSum = BigDecimal.ZERO;
-    BigDecimal billAmount = BigDecimal.ZERO;
+    private BigDecimal billAmount = BigDecimal.ZERO;
+    private EgBillregister bill = new EgBillregister();
     private boolean showPrintPreview;
     private String sanctionedMessge;
     private Department primaryDepartment;
@@ -166,15 +169,8 @@ public class ContingentBillAction extends BaseBillAction {
         if (mandatoryFields.contains("department")) {
             List<Department> deptList;
             final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-            deptList = masterCache.get("egi-department");// voucherHelper.getAllAssgnDeptforUser();
+            deptList = masterCache.get("egi-department");
             addDropdownData("departmentList", deptList);
-            /*
-             * if(deptList == null || deptList.isEmpty()) { LOGGER.error("User is not assigned any departments! "); throw new
-             * ValidationException(Arrays.asList(new
-             * ValidationError("User is not assigned any departments","User is not assigned any departments"))); }
-             */
-
-            // primaryDepartment = deptList.get(0);//need to fix Phoenix
             addDropdownData("billDepartmentList", persistenceService.findAllBy("from Department order by name"));
         }
     }
@@ -243,32 +239,7 @@ public class ContingentBillAction extends BaseBillAction {
         commonBean.setBillDate(getDefaultDate());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("bigllDetailslist.............................." + billDetailslist.size());
-        /*
-         * if(getValidActions("authentication",null).size()==0) { addActionMessage(getText("cbill.user.authenticate")); } else {
-         * Map<String, Object> map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",null,null);
-         * addDropdownData(DESIGNATION_LIST, (List<Designation>)map.get(DESIGNATION_LIST)); addDropdownData(USER_LIST,
-         * Collections.EMPTY_LIST); nextLevel = map.get(WFITEMSTATE)!=null?map.get(WFITEMSTATE).toString():null; }
-         */// Phoenix
         return NEW;
-    }
-
-    private List<Action> getValidActions(final String purpose, final EgBillregister cbill) {
-        validButtons = new ArrayList<Action>();
-        getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "cbill.validation").get(0);
-        final List<String> list = null;/*
-                                        * (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean",
-                                        * eisCommonService,"userId",Integer.valueOf(EgovThreadLocals.getUserId().trim()),
-                                        * "date",new Date(),"purpose",purpose,"wfitem",cbill));
-                                        */// This fix is for Phoenix Migration.
-        for (final Object s : list)
-        {
-            if ("invalid".equals(s))
-                break;
-            final Action action = (Action) getPersistenceService().find(
-                    " from org.egov.infstr.workflow.Action where type='EgBillregister' and name=?", s.toString());
-            validButtons.add(action);
-        }
-        return validButtons;
     }
 
     @Transactional
@@ -278,44 +249,44 @@ public class ContingentBillAction extends BaseBillAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contingent Bill Action  | update | start");
         Integer userId = -1;
-        final EgBillregister cbill = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
-                Long.valueOf(parameters.get("billRegisterId")[0]));
-        if (cbill != null && cbill.getState() != null)
-            if (!validateOwner(cbill.getState()))
-                throw new ApplicationRuntimeException("Invalid Aceess");
-        if (null == cbill.getEgBillregistermis().getSourcePath()) {
-            cbill.getEgBillregistermis().setSourcePath(
-                    "/EGF/bill/contingentBill!beforeView.action?billRegisterId=" + cbill.getId());
-            // persistenceService.setType(Cbill.class);
-            persistenceService.update(cbill);
+        try {
+            bill = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
+                    Long.valueOf(parameters.get("billRegisterId")[0]));
+            if (null == bill.getEgBillregistermis().getSourcePath()) {
+                bill.getEgBillregistermis().setSourcePath(
+                        "/EGF/bill/contingentBill!beforeView.action?billRegisterId=" + bill.getId());
+            }
+            populateWorkflowBean();
+            bill = egBillRegisterService.sendForApproval(bill, workflowBean);
+            if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("bill.rejected",
+                        new String[] { voucherService.getEmployeeNameForPositionId(bill.getState()
+                                .getOwnerPosition()) }));
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("bill.forwarded",
+                        new String[] { voucherService.getEmployeeNameForPositionId(bill.getState().getOwnerPosition()) }));
+            if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                addActionMessage(getText("cbill.cancellation.succesful"));
+            else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if ("Closed".equals(bill.getState().getValue()))
+                    addActionMessage(getText("bill.final.approval", new String[] { "The File has been approved" }));
+                else
+                    addActionMessage(getText("bill.approved",
+                            new String[] { voucherService.getEmployeeNameForPositionId(bill.getState()
+                                    .getOwnerPosition()) }));
+            }
+        } catch (final ValidationException e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
         }
-        if (parameters.get(ACTION_NAME)[0].contains(APPROVE))
-        {
-            if (nextLevel.equalsIgnoreCase(END))
-                userId = EgovThreadLocals.getUserId().intValue();
-            else
-                userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
-        }
-        else if (parameters.get(ACTION_NAME)[0].contains("reject"))
-            userId = cbill.getCreatedBy().getId().intValue();
-        /*
-         * billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0] + "|" + userId, cbill,
-         * parameters.get("comments")[0]);
-         */
-        if (parameters.get(ACTION_NAME)[0].contains("aa_reject"))
-            addActionMessage(getText("billVoucher.file.canceled"));
-        else if (parameters.get(ACTION_NAME)[0].contains(APPROVE))
-        {
-            if (END.equals(cbill.getState().getValue()))
-            {
-                showPrintPreview = true;
-                addActionMessage(getText("pjv.voucher.final.approval", new String[] { "The File has been approved" }));
-            } else
-                addActionMessage(getText("pjv.voucher.approved",
-                        new String[] { voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) }));
-        } else
-            addActionMessage(getText("pjv.voucher.rejected",
-                    new String[] { voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) }));
+
         return "messages";
     }
 
@@ -343,18 +314,23 @@ public class ContingentBillAction extends BaseBillAction {
             // Commenting function to revert onefunction center mandatory option
             // @RequiredFieldValidator(fieldName = "commonBean.functionName",message="",key=REQUIRED)
     })
-    @Transactional
     @ValidationErrorPage(value = NEW)
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-create")
     public String create()
     {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(billDetailsTableCreditFinal);
-        EgBillregister cbill = null;
-
         try {
             voucherHeader.setVoucherDate(commonBean.getBillDate());
             voucherHeader.setVoucherNumber(commonBean.getBillNumber());
+            final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
+            // update DirectBankPayment source path
+            headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill-beforeView.action?billRegisterId=");
+            final EgBillregistermis mis = new EgBillregistermis();
+            bill = setBillDetailsFromHeaderDetails(bill, mis, true);
+            bill = createBillDetails(bill);
+            validateLedgerAndSubledger();
+            bill = checkBudgetandGenerateNumber(bill);
             // this code should be removed when we enable single function centre change
             /*
              * if(commonBean.getFunctionId()!=null){ //CFunction function=(CFunction)
@@ -367,34 +343,63 @@ public class ContingentBillAction extends BaseBillAction {
                 if (!isBillNumUnique(commonBean.getBillNumber()))
                     throw new ValidationException(Arrays.asList(new ValidationError("bill number", "Duplicate Bill Number : "
                             + commonBean.getBillNumber())));
-
-            cbill = createBill();
-            // createCheckList(cbill);
-            // cbill.start().withOwner(getPosition());
-            addActionMessage(getText("cbill.transaction.succesful") + cbill.getBillnumber());
-            billRegisterId = cbill.getId();
-            // forwardBill(cbill); Phoenix
-            if (cbill.getEgBillregistermis().getBudgetaryAppnumber() != null)
-                addActionMessage(getText("budget.recheck.sucessful", new String[] { cbill.getEgBillregistermis()
+            populateWorkflowBean();
+            bill = egBillRegisterService.createBill(bill, workflowBean);
+            addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
+            billRegisterId = bill.getId();
+            if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
+                addActionMessage(getText("budget.recheck.sucessful", new String[] { bill.getEgBillregistermis()
                         .getBudgetaryAppnumber() }));
+            addActionMessage(getText("bill.forwarded",
+                    new String[] { voucherService.getEmployeeNameForPositionId(bill.getState().getOwnerPosition()) }));
         } catch (final ValidationException e) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Inside catch block");
-            /*
-             * Map<String, Object> map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",cbill,null);
-             * addDropdownData(DESIGNATION_LIST, (List<Designation>)map.get(DESIGNATION_LIST));
-             */// Phoenix
-               // getValidActions("authentication",cbill);
             if (billDetailsTableSubledger == null)
                 billDetailsTableSubledger = new ArrayList<VoucherDetails>();
             if (billDetailsTableSubledger.size() == 0)
                 billDetailsTableSubledger.add(new VoucherDetails());
             prepare(); // session gets closed due to the transaction roll back while creating the sequence for the 1st time
             // required to call the prepare method again to populate the data to the screen.
-            throw e;
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
+            throw new ValidationException(errors);
         }
 
         return "messages";
+    }
+
+    public List<String> getValidActions() {
+        List<String> validActions = Collections.emptyList();
+        if (null == bill || null == bill.getId() || bill.getCurrentState().getValue().endsWith("NEW")) {
+            validActions = Arrays.asList(FORWARD);
+        } else {
+            if (bill.getCurrentState() != null) {
+                validActions = this.customizedWorkFlowService.getNextValidActions(bill
+                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        getAdditionalRule(), bill.getCurrentState().getValue(),
+                        getPendingActions(), bill.getCreatedDate());
+            }
+        }
+        return validActions;
+    }
+
+    public String getNextAction() {
+        WorkFlowMatrix wfMatrix = null;
+        if (bill.getId() != null) {
+            if (bill.getCurrentState() != null) {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(bill.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), bill
+                                .getCurrentState().getValue(), getPendingActions(), bill
+                                .getCreatedDate());
+            } else {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(bill.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), bill
+                                .getCreatedDate());
+            }
+        }
+        return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
     @Transactional
@@ -595,29 +600,23 @@ public class ContingentBillAction extends BaseBillAction {
             userId = EgovThreadLocals.getUserId().intValue();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("User selected id is : " + userId);
-        /*
-         * billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0] + "|" + userId, cbill,
-         * parameters.get("comments")[0]);
-         */
-        addActionMessage(getText("pjv.voucher.approved",
+        addActionMessage(getText("bill.forwarded",
                 new String[] { voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) }));
     }
 
     @SkipValidation
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-beforeView")
     public String beforeView() throws ClassNotFoundException {
-        EgBillregister cbill = billRegisterService.find("from EgBillregister where id=?", billRegisterId);
-        if (cbill.getState() != null && cbill.getState().getValue() != null)
-            if ((cbill.getState().getValue().contains("REJECT") || cbill.getState().getValue().contains("reject"))
-                    && null != parameters.get(MODE) && parameters.get(MODE)[0].equalsIgnoreCase(APPROVE))
-                return beforeEdit();
-        cbill = prepareForViewModifyReverse();
+        bill = egBillRegisterService.find("from EgBillregister where id=?", billRegisterId);
+        /*
+         * if (cbill.getState() != null && cbill.getState().getValue() != null) if
+         * ((cbill.getState().getValue().contains("REJECT") || cbill.getState().getValue().contains("reject")) && null !=
+         * parameters.get(MODE) && parameters.get(MODE)[0].equalsIgnoreCase(APPROVE)) return beforeEdit();
+         */
+        bill = prepareForViewModifyReverse();
         addDropdownData(USER_LIST, Collections.EMPTY_LIST);
         addDropdownData("billDepartmentList", persistenceService.findAllBy("from Department order by name"));
         if (null != parameters.get(MODE) && parameters.get(MODE)[0].equalsIgnoreCase(APPROVE)) {
-            if (!validateOwner(cbill.getState()))
-                throw new ApplicationRuntimeException("Invalid Aceess");
-            beforeViewWF(cbill);
             mode = APPROVE;
         } else
             mode = VIEW;
@@ -641,7 +640,6 @@ public class ContingentBillAction extends BaseBillAction {
         addDropdownData(DESIGNATION_LIST, (List<Map<String, Object>>) map.get(DESIGNATION_LIST));
         addDropdownData(USER_LIST, Collections.EMPTY_LIST);
         nextLevel = map.get(WFITEMSTATE) != null ? map.get(WFITEMSTATE).toString() : null;
-        getValidActions("", cbill);
     }
 
     private EgBillregister prepareForViewModifyReverse() throws ClassNotFoundException {
@@ -651,7 +649,7 @@ public class ContingentBillAction extends BaseBillAction {
         billDetailsTableSubledger = new ArrayList<VoucherDetails>();
         checkListsTable = new ArrayList<CheckListHelper>();
         // getNetPayableCodes();
-        final EgBillregister cbill = billRegisterService.find("from EgBillregister where id=?", billRegisterId);
+        final EgBillregister cbill = egBillRegisterService.find("from EgBillregister where id=?", billRegisterId);
         getHeadersFromBill(cbill);
         billAmount = cbill.getBillamount();
         final Set<EgBilldetails> egBilldetailes = cbill.getEgBilldetailes();
@@ -707,30 +705,25 @@ public class ContingentBillAction extends BaseBillAction {
                         "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
                 final String table = detailType.getFullQualifiedName();
                 final Class<?> service = Class.forName(table);
-                String simpleName = service.getSimpleName();
-                // simpleName=simpleName.toLowerCase()+"Service";
-                simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
-                final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                        .getServletContext());
-                // EntityTypeService entityService= (EntityTypeService)wac.getBean(simpleName);
-                final PersistenceService entityPersistenceService = (PersistenceService) wac.getBean(simpleName);
-                // it may give error since it is finding from session
-                // entityPersistenceService.
+                String tableName = service.getSimpleName();
+                EntityType entity = null;
                 String dataType = "";
+                
                 try {
-                    final Class aClass = Class.forName(table);
-                    final java.lang.reflect.Method method = aClass.getMethod("getId");
+                    final java.lang.reflect.Method method = service.getMethod("getId");
+
                     dataType = method.getReturnType().getSimpleName();
+                    if (dataType.equals("Long"))
+                        entity = (EntityType) persistenceService.find(
+                                "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId().longValue());
+                    else
+                        entity = (EntityType) persistenceService.find(
+                                "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
                 } catch (final Exception e) {
                     LOGGER.error("prepareForViewModifyReverse" + e.getMessage(), e);
                     throw new ApplicationRuntimeException(e.getMessage());
                 }
-                EntityType entity = null;
-                if (dataType.equals("Long"))
-                    entity = (EntityType) entityPersistenceService.findById(
-                            Long.valueOf(payeedetail.getAccountDetailKeyId().toString()), false);
-                else
-                    entity = (EntityType) entityPersistenceService.findById(payeedetail.getAccountDetailKeyId(), false);
+                
                 subVd.setDetailName(entity.getName());
                 subVd.setDetailCode(entity.getCode());
                 if (detail.getCreditamount() != null && !detail.getCreditamount().equals(BigDecimal.ZERO))
@@ -822,8 +815,6 @@ public class ContingentBillAction extends BaseBillAction {
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-beforeEdit")
     public String beforeEdit() throws ClassNotFoundException {
         final EgBillregister cbill = prepareForViewModifyReverse();
-        if (getValidActions("authentication", cbill).size() == 0)
-            addActionMessage(getText("cbill.user.authenticate"));
         addDropdownData(USER_LIST, Collections.EMPTY_LIST);
         if (null != parameters.get(MODE) && parameters.get(MODE)[0].equalsIgnoreCase(APPROVE)) {
             beforeViewWF(cbill);
@@ -874,28 +865,6 @@ public class ContingentBillAction extends BaseBillAction {
         billDetailslist.add(new VoucherDetails());
         billDetailslist.add(new VoucherDetails());
         return NEW;
-    }
-
-    @SuppressWarnings("unchecked")
-    private EgBillregister createBill() {
-
-        final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
-        // update DirectBankPayment source path
-        headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill-beforeView.action?billRegisterId=");
-        EgBillregister bill = new EgBillregister();
-        final EgBillregistermis mis = new EgBillregistermis();
-        bill = setBillDetailsFromHeaderDetails(bill, mis, true);
-        bill = createBillDetails(bill);
-        validateLedgerAndSubledger();
-        bill = checkBudgetandGenerateNumber(bill);
-        // billsManager.createBillRegister(bill);
-        // billRegisterService.persist(bill);
-        cbillService.applyAuditing(bill);
-        cbillService.persist(bill);
-        // Setting the sourcepath
-        bill.getEgBillregistermis().setSourcePath(
-                "/EGF/bill/contingentBill-beforeView.action?billRegisterId=" + bill.getId().toString());
-        return bill;
     }
 
     private EgBillregister createBillDetails(final EgBillregister bill) {
@@ -1281,6 +1250,18 @@ public class ContingentBillAction extends BaseBillAction {
 
     public Integer getPrimaryDepartment() {
         return primaryDepartment.getId().intValue();
+    }
+
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
+
+    public String getCurrentState() {
+        return bill.getState().getValue();
     }
 
 }

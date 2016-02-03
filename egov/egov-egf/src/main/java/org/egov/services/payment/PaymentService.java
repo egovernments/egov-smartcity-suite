@@ -382,7 +382,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     }
 
     protected Assignment getWorkflowInitiator(final Paymentheader paymentheader) {
-        Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(paymentheader.getCreatedBy().getId());
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(paymentheader.getCreatedBy().getId(),new Date()).get(0);
         return wfInitiator;
     }
 
@@ -390,7 +390,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     public Paymentheader transitionWorkFlow(final Paymentheader paymentheader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(),new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
 
