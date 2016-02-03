@@ -39,6 +39,7 @@
 #-------------------------------------------------------------------------------  -->
 <%@ page language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <link href="<egov:url path='/resources/css/displaytagFormatted.css'/>"
 	rel="stylesheet" type="text/css" />
 <html>
@@ -180,7 +181,7 @@
 
 							</display:table></td>
 					<tr>
-						<td><s:if test="%{!voucherList.size==0}">
+						<td><s:if test="%{#attr.currentRowObject.size!=0}">
 								<div id="exportButton" class="buttonbottom">
 									<s:submit method="generatePdf" value="Save As Pdf"
 										cssClass="buttonsubmit" id="generatePdf"
