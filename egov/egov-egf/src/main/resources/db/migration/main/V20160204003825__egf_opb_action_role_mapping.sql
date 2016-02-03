@@ -37,6 +37,6 @@ insert into eg_roleaction (roleid,actionid) values ((select id from eg_role wher
 
 update financialyear set lastmodified =now();
 update financialyear set created =now();
-alter table trnasactionsummary add column version numeric;
+alter table transactionsummary add column version numeric;
  ALTER TABLE TransactionSummary  ADD COLUMN createdby bigint;
  ALTER TABLE TransactionSummary  ADD COLUMN createdDate timestamp;
