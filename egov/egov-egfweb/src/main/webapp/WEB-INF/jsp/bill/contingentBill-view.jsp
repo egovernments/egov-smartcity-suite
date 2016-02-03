@@ -597,7 +597,7 @@ function onSubmit()
 				</br>
 				<div id="apporoverSelection">
 					<%@ include file='../bill/commonWorkflowMatrix.jsp'%>
-					<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
+					<%@ include file='../bill/commonWorkflowMatrix-button.jsp'%>
 				</div>
 
 
