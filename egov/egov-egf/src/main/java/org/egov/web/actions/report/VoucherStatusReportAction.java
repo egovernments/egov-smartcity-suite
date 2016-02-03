@@ -150,6 +150,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         else
             fromDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
                     Long.parseLong(financialYearId));
+        toDate = null;
 
     }
 
