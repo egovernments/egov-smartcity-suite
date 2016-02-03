@@ -42,7 +42,7 @@ package org.egov.infra.search.elastic.entity.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum ClosureStatus {
-    YES, NO, UNKNOWN;
+    YES, NO;
 
     @Override
     public String toString() {

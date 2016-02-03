@@ -87,7 +87,7 @@ public class TradeLicenseUpdateIndexService
                 if (license.getLicenseNumber() != null)
                     applicationIndex.setConsumerCode(license.getLicenseNumber());
                 int noofDays=0;
-                applicationIndex.setClosed(ClosureStatus.UNKNOWN); 
+                applicationIndex.setClosed(ClosureStatus.NO); 
                 applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
                 Date endDate=null;
                 if(license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE)){
