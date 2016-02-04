@@ -175,3 +175,4 @@
 
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/registration.js'/> "></script>
+<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>

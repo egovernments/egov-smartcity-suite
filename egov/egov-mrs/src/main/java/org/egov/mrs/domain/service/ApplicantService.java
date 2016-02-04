@@ -39,17 +39,29 @@
 
 package org.egov.mrs.domain.service;
 
+import java.io.File;
+import java.util.Base64;
+
+import org.apache.log4j.Logger;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.repository.ApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
 
 @Service
 @Transactional(readOnly = true)
 public class ApplicantService {
 
+    private static final Logger LOG = Logger.getLogger(RegistrationService.class);
+
     private final ApplicantRepository applicantRepository;
+
+    @Autowired
+    private FileStoreService fileStoreService;
 
     @Autowired
     public ApplicantService(final ApplicantRepository applicantRepository) {
@@ -68,5 +80,16 @@ public class ApplicantService {
 
     public Applicant getApplicant(final Long id) {
         return applicantRepository.findById(id);
+    }
+
+    public void prepareDocumentsForView(final Applicant applicant) {
+        applicant.getApplicantDocuments().forEach(appDoc -> {
+            final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
+            try {
+                appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            } catch (final Exception e) {
+                LOG.error("Error while preparing the document for view", e);
+            }
+        });
     }
 }

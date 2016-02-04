@@ -41,6 +41,7 @@ package org.egov.mrs.domain.entity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -312,7 +313,7 @@ public class Applicant extends AbstractAuditable {
 
     /**
      * Copies MultipartFile bytes to persistent byte array
-     * 
+     *
      * @throws IOException
      */
     public void copyPhotoAndSignatureToByteArray() throws IOException {
@@ -320,5 +321,9 @@ public class Applicant extends AbstractAuditable {
 
         if (getSignatureFile() != null)
             setSignature(FileCopyUtils.copyToByteArray(getSignatureFile().getInputStream()));
+    }
+
+    public String getEncodePhotoToString() {
+        return Base64.getEncoder().encodeToString(getPhoto());
     }
 }

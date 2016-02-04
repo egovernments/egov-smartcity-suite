@@ -82,7 +82,7 @@ public class Document extends AbstractAuditable {
 
     @Transient
     private MultipartFile file;
-
+    
     @Override
     public Long getId() {
         return id;
@@ -124,5 +124,4 @@ public class Document extends AbstractAuditable {
     public void setFile(final MultipartFile file) {
         this.file = file;
     }
-
 }

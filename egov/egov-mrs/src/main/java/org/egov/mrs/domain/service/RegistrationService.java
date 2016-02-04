@@ -84,7 +84,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -355,7 +354,14 @@ public class RegistrationService {
 
         if (StringUtils.isNotBlank(searchModel.getWifeName()))
             criteria.createCriteria("wife").add(Restrictions.ilike("name.firstName", searchModel.getWifeName()));
-
+        /*QRegistration registration QRegistration.registration;
+        LocalDate today = new LocalDate();
+        BooleanExpression customerHasBirthday = customer.birthday.eq(today);
+        BooleanExpression isLongTermCustomer = customer.createdAt.lt(today.minusYears(2));
+        BooleanExpression customerHasBirthday = customer.birthday.eq(today);
+        BooleanExpression isLongTermCustomer = customer.createdAt.lt(today.minusYears(2));
+        customerRepository.findAll(customerHasBirthday.and(isLongTermCustomer));*/
+        
         return criteria.list();
     }
 
@@ -376,6 +382,11 @@ public class RegistrationService {
         final Registration registration = get(id);
         updateRegistrationData(regModel, registration);
         return update(registration);
+    }
+    
+    public List<Registration> searchRegistrationBetweenDateAndStatus(final SearchModel searchModel) {
+        ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved : ApplicationStatus.Rejected;
+        return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(), searchModel.getToDate(), status);
     }
 
 }

@@ -97,16 +97,18 @@
 			<div class="col-sm-5 add-margin"><spring:message code="lbl.photo"/></div>
 			<div class="col-sm-6 add-margin">
 				<img class="add-border" id="${applicant}-photo" height="150" width="130" src="">
+				<c:set value="${applicant}.getEncodePhotoToString()" var="photoString" />
 				<script>
 					var applicant = '<c:out value="${applicant}" />';
-					var strData = '';
+					 var strData = '';
 
 					if (applicant == 'husband') {
 						strData = '<c:out value="${husbandPhoto}" />';
 					} else {
 						strData = '<c:out value="${wifePhoto}" />';
-					}
+					} 
 
+					//var strData = '<c:out value="${photoString}" />';
 					$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + toBinaryString(strData));
 					
 				</script>

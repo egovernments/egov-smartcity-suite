@@ -39,19 +39,25 @@
 
 package org.egov.mrs.domain.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RegistrationRepository extends JpaRepository<Registration, Long>  {
+public interface RegistrationRepository extends JpaRepository<Registration, Long> { //, QueryDslPredicateExecutor<Registration> {
     Registration findById(Long id);
 
     Registration findByApplicationNo(String applicationNo);
 
     Registration findByRegistrationNo(String registrationNo);
+    
+    //List<Registration> findByRegistrationNoAndDateOfMarriageAndHusbandNameFirstName();
+    
+    List<Registration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, ApplicationStatus status);
 
     @Override
     List<Registration> findAll();

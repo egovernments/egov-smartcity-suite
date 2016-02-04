@@ -51,6 +51,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -59,7 +60,7 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 
 /**
  * Entity which stores applicant's uploaded document information
- * 
+ *
  * @author nayeem
  *
  */
@@ -89,12 +90,14 @@ public class ApplicantDocument extends AbstractPersistable<Long> {
     private Document document;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "egmrs_proofdocs", 
-        joinColumns = @JoinColumn(name = "applicantdocument", referencedColumnName = "id"), 
-        inverseJoinColumns = @JoinColumn(name = "filestore") 
-    )
+    @JoinTable(name = "egmrs_proofdocs", joinColumns = @JoinColumn(name = "applicantdocument", referencedColumnName = "id") , inverseJoinColumns = @JoinColumn(name = "filestore") )
     private FileStoreMapper fileStoreMapper;
+
+    /**
+     * Used in view screen to allow downloading of attached document
+     */
+    @Transient
+    private String base64EncodedFile;
 
     @Override
     public Long getId() {
@@ -130,4 +133,11 @@ public class ApplicantDocument extends AbstractPersistable<Long> {
         this.fileStoreMapper = fileStoreMapper;
     }
 
+    public String getBase64EncodedFile() {
+        return base64EncodedFile;
+    }
+
+    public void setBase64EncodedFile(final String base64EncodedFile) {
+        this.base64EncodedFile = base64EncodedFile;
+    }
 }
