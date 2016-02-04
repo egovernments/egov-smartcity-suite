@@ -124,13 +124,11 @@ public class GenericBillGeneratorController {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        if (assessmentDetails != null && assessmentDetails.isStatus() == false)
-            throw new ValidationException("invalid.property");
-        else
+        if (assessmentDetails != null )
             return generateBillAndRedirectToCollection(waterConnectionDetails, applicationCode, applicationTypeCode,
                     model);
-        
-
+        else
+            throw new ValidationException("invalid.property");
     }
 
     @RequestMapping(value = "/generatebillOnline/{applicationCode}", method = GET)
@@ -141,11 +139,12 @@ public class GenericBillGeneratorController {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        if (assessmentDetails != null && assessmentDetails.isStatus() == false)
-            throw new ValidationException("invalid.property");
-        else
+        if (assessmentDetails != null )
             return generateBillAndRedirectToCollection(waterConnectionDetails, applicationCode, applicationTypeCode,
                     model);
+        else
+            throw new ValidationException("invalid.property");
+            
     }
 
     private String generateBillAndRedirectToCollection(WaterConnectionDetails waterConnectionDetails,
