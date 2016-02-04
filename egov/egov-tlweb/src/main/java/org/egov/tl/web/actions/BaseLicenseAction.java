@@ -49,7 +49,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -197,7 +196,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(final T license, final Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
+    public String enterExisting(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
         this.setCheckList();
         licenseService().enterExistingLicense(license, legacyInstallmentwiseFees);
         addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());

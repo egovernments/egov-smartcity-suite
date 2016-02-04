@@ -109,7 +109,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractLicenseService.class);
 
-
     @Autowired
     @Qualifier("feeService")
     protected FeeService feeService;
@@ -139,8 +138,6 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     @Qualifier("licenseDocumentTypeService")
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
-    
-    
 
     @Autowired
     private TradeLicenseUpdateIndexService updateIndexService;
@@ -313,7 +310,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void enterExistingLicense(final T license, final Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
+    public void enterExistingLicense(final T license, final Map<Integer, Double> legacyInstallmentwiseFees) {
         if (!this.licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber())
                 .isEmpty())
             throw new ApplicationRuntimeException("license.number.exist");
@@ -332,22 +329,24 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void updateLegacyLicense(final T license, final Map<Integer, BigDecimal> updatedInstallmentFees) {
+    public void updateLegacyLicense(final T license, final Map<Integer, Double> updatedInstallmentFees) {
         for (final LicenseDemand demand : license.getDemandSet()) {
-            final BigDecimal updatedFee = updatedInstallmentFees.get(demand.getEgInstallmentMaster().getInstallmentNumber());
-            demand.setBaseDemand(updatedFee);
-            demand.getEgDemandDetails().iterator().next().setAmount(updatedFee);
+            final Double updatedFee = updatedInstallmentFees.get(demand.getEgInstallmentMaster().getInstallmentNumber());
+            if (updatedFee != null) {
+                demand.setBaseDemand(BigDecimal.valueOf(updatedFee));
+                demand.getEgDemandDetails().iterator().next().setAmount(BigDecimal.valueOf(updatedFee));
+            }
         }
         this.processAndStoreDocument(license.getDocuments());
         setAuditEntries(license);
         this.licensePersitenceService.persist(license);
     }
 
-    private void addLegacyDemand(final Map<Integer, BigDecimal> legacyInstallmentwiseFees, final T license) {
+    private void addLegacyDemand(final Map<Integer, Double> legacyInstallmentwiseFees, final T license) {
         final Module module = getModuleName();
         license.setDemandSet(new HashSet<>());
-        for (final Map.Entry<Integer, BigDecimal> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
-            if (legacyInstallmentwiseFee.getValue().doubleValue() > 0) {
+        for (final Map.Entry<Integer, Double> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
+            if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         legacyInstallmentwiseFee.getKey());
                 final EgDemandReasonMaster reasonMaster = demandGenericDao.getDemandReasonMasterByCode("License Fee", module);
@@ -361,10 +360,11 @@ public abstract class AbstractLicenseService<T extends License> {
                     licenseDemand.setCreateDate(new Date());
                     licenseDemand.setLicense(license);
                     licenseDemand.setIsLateRenewal('0');
+                    final BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue());
                     licenseDemand.getEgDemandDetails()
-                            .add(EgDemandDetails.fromReasonAndAmounts(legacyInstallmentwiseFee.getValue(), reason,
+                            .add(EgDemandDetails.fromReasonAndAmounts(demandAmount, reason,
                                     BigDecimal.ZERO));
-                    licenseDemand.setBaseDemand(legacyInstallmentwiseFee.getValue());
+                    licenseDemand.setBaseDemand(demandAmount);
                     license.getDemandSet().add(licenseDemand);
                 }
 
@@ -653,9 +653,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
         return wfInitiator;
     }
-    
-   
-   
+
     @Transactional
     public void processAndStoreDocument(final List<LicenseDocument> documents) {
         documents.forEach(document -> {

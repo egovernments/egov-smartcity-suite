@@ -43,7 +43,6 @@ import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -85,7 +84,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private TradeLicense tradeLicense = new TradeLicense();
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap = new HashMap<>();
-    private Map<Integer, BigDecimal> legacyInstallmentwiseFees = new TreeMap<>();
+    private Map<Integer, Double> legacyInstallmentwiseFees = new TreeMap<>();
     private String licenseNumber;
 
     @Autowired
@@ -102,7 +101,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String enterExistingForm() {
         tradeLicense.setApplicationDate(new Date());
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
-            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), BigDecimal.ZERO);
+            legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0d);
         return super.newForm();
     }
 
@@ -123,7 +122,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (license().getDemandSet() != null && !license().getDemandSet().isEmpty())
             for (final LicenseDemand licenseDemand : license().getDemandSet())
                 legacyInstallmentwiseFees.put(licenseDemand.getEgInstallmentMaster().getInstallmentNumber(),
-                        licenseDemand.getBaseDemand());
+                        licenseDemand.getBaseDemand().doubleValue());
         return "update";
     }
 
@@ -192,11 +191,11 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.ownerShipTypeMap = ownerShipTypeMap;
     }
 
-    public Map<Integer, BigDecimal> getLegacyInstallmentwiseFees() {
+    public Map<Integer, Double> getLegacyInstallmentwiseFees() {
         return legacyInstallmentwiseFees;
     }
 
-    public void setLegacyInstallmentwiseFees(final Map<Integer, BigDecimal> legacyInstallmentwiseFees) {
+    public void setLegacyInstallmentwiseFees(final Map<Integer, Double> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
     }
 
