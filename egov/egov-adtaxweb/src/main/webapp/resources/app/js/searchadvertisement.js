@@ -180,10 +180,10 @@ $(document).ready(function(){
 						  { "data" : "ownerDetail", "title": "Owner"},
 						  { "data" : "financialYear", "title": "Financial Year"},
 						  { "data" : "id", "visible": false},
-						  { "data" : "","title": "Actions","sortable":false,
+						  {"title" : "Actions","sortable":false,
 				        	   render : function(data, type, row) {
-			        					   return ('<select class="dropchange" id="renewdropdown" ><option>Select from Below</option><option value="0">Renew Advertisement</option></select>');   
-			        				}}],
+return ('<select class="dropchange" id="renewdropdown" ><option>Select from Below</option><option value="0">Adtax Renewal</option></select>');   
+				        			   }}],
 						  "aaSorting": [[1, 'asc']] 
 				});
 		e.stopPropagation();
@@ -192,9 +192,9 @@ $(document).ready(function(){
 	
 	$("#renew_search").on('change','tbody tr td .dropchange',
 			function() {
-			var adtaxid= oTable.fnGetData($(this).parent().parent(), 8);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 6);
 						if (this.value == 0) {
-							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;
+							var url = '/adtax/advertisement/renewal/'+ adtaxid;
 							$('#renewalsearchform').attr('method', 'get');
 							$('#renewalsearchform').attr('action', url);
 							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');

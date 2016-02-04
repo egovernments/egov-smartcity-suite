@@ -248,4 +248,8 @@
     	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-search.jsp"/>
     </definition>
+    <definition name="renewal-newform" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-newform.jsp"/>
+    </definition>
 </tiles-definitions>

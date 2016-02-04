@@ -153,7 +153,8 @@ public class SearchHoardingController extends GenericController {
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, "Advertisement"))
+                .toJson(advertisementPermitDetailService.getRenewalAdvertisementSearchResult(advertisementPermitDetail,
+                        "Advertisement"))
                 + "}", response.getWriter());
     }
 }
