@@ -122,7 +122,6 @@
 	modelAttribute="transactionSummaryDto" id="transactionSummaryform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<%-- <%@ include file="transactionsummary-form.jsp"%> --%>
 	<jsp:include page="transactionsummary-form.jsp" />
 	</div>
 	</div>
@@ -134,10 +133,8 @@
 									<th><spring:message code="hdr.accountcode" /><span
 									class="mandatory1">*</span></th>
 									<th><spring:message code="hdr.accounthead" /></th>
-									<th><spring:message code="hdr.subledgertype" /><span
-									class="mandatory1">*</span></th>
-									<th><spring:message code="hdr.entity" /><span
-									class="mandatory1">*</span></th>
+									<th><spring:message code="hdr.subledgertype" /></th>
+									<th><spring:message code="hdr.entity" /></th>
 									<th><spring:message code="lbl.openingdebitbalance" /><span
 									class="mandatory1">*</span></th>
 									<th><spring:message code="lbl.openingcreditbalance" /><span
@@ -155,14 +152,14 @@
 										<div id="codescontainer"></div>
 									</td>
 									<td id="transactionSummaryList[0].accounthead"></td>
-									<td><form:select path="transactionSummaryList[0].accountdetailtype.id" id="transactionSummaryList[0].accountdetailtype.id" class="form-control yui-dt-dropdown "><option>---Select---</option></form:select></td>
+									<td><form:select path="transactionSummaryList[0].accountdetailtype.id" id="transactionSummaryList[0].accountdetailtype.id" onchange="changeaccountdetailkey(this)" class="form-control yui-dt-dropdown "><option>---Select---</option></form:select></td>
 									<td><form:input path="transactionSummaryList[0].accountdetailkey" id="transactionSummaryList[0].accountdetailkey" type="hidden" />
-										<input name="transactionSummaryList[0].accountdetailkeyValue" id="transactionSummaryList[0].accountdetailkeyValue" type="text" autocomplete="off"
+										<input name="transactionSummaryList[0].accountdetailkeyValue" id="transactionSummaryList[0].accountdetailkeyValue" type="text" readonly="true" autocomplete="off"
 										class="form-control yui-ac-input " onfocus="onFocusDetailCode(this);autocompleteEntities(this);" onblur="splitEntitiesDetailCode(this)" /></td>
 									<td><form:input path="transactionSummaryList[0].openingdebitbalance" type="text" readonly="false"
-											class="form-control mandatoryField" id="transactionSummaryList[0].openingdebitbalance" onchange="makeOtherReadonly(this)"/></td>
+											class="form-control mandatoryField mandatory" id="transactionSummaryList[0].openingdebitbalance" onchange="makeOtherReadonly(this)"/></td>
 									<td><form:input path="transactionSummaryList[0].openingcreditbalance" type="text" readonly="false"
-											class="form-control mandatoryField" id="transactionSummaryList[0].openingcreditbalance" onchange="makeOtherReadonly(this)"/></td>
+											class="form-control mandatoryField mandatory" id="transactionSummaryList[0].openingcreditbalance" onchange="makeOtherReadonly(this)"/></td>
 									<td><form:textarea path="transactionSummaryList[0].narration" id="transactionSummaryList[0].narration" class="form-control"></form:textarea></td>
 									<td><button type="button" id="remove-row" style="display: none;"
 											class="btn btn-xs btn-secondary delete-row">
@@ -176,35 +173,6 @@
 								</tr>
 							</tbody>
 						</table>
-						<%-- <div id="labelAD" align="center">
-							<table width="80%" border=0 id="labelid">
-								<th>Account Details</th>
-							</table>
-						</div>
-						<div class="yui-skin-sam" align="center">
-							<div id="billDetailTable"></div>
-						</div>
-						<script>
-							makeVoucherDetailTable();
-							document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
-				 		</script>
-				 		<div id="codescontainer"></div>
-						<br />
-						<div id="labelSL" align="center">
-							<table width="80%" border=0 id="labelid">
-								<th>Sub-Ledger Details</th>
-							</table>
-						</div>
-		
-						<div class="yui-skin-sam" align="center">
-							<div id="subLedgerTable"></div>
-						</div>
-						<script>
-					
-							makeSubLedgerTable();
-						
-							document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
-						</script> --%>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='button' class='btn btn-primary' id="buttonSubmit">
