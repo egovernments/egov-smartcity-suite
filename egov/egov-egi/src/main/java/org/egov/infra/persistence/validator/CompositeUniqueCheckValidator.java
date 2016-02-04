@@ -85,8 +85,13 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
         final Criteria criteria = entityManager.unwrap(Session.class)
                 .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
         final Conjunction conjunction = Restrictions.conjunction();
-        for (final String fieldName : unique.fields())
-            conjunction.add(Restrictions.eq(fieldName, FieldUtils.readField(arg0, fieldName, true)));
+        for (final String fieldName : unique.fields()) {
+            final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+            if (fieldValue == null)
+                conjunction.add(Restrictions.isNull(fieldName));
+            else
+                conjunction.add(Restrictions.eq(fieldName, fieldValue));
+        }
         if (id != null)
             conjunction.add(Restrictions.ne(unique.id(), id));
         return criteria.add(conjunction).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
