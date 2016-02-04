@@ -69,6 +69,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.DemandDetail;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
@@ -435,7 +436,7 @@ public class ConnectionDemandService {
                     WaterTaxConstants.MONTHLY, new Date()).getInstallmentYear());
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
@@ -591,7 +592,7 @@ public class ConnectionDemandService {
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());

@@ -31,6 +31,7 @@
 package org.egov.wtms.application.service;
 
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -91,7 +92,7 @@ public class NewConnectionService {
     public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
         String errorMessage = "";
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         errorMessage = validateProperty(assessmentDetails);
         if (errorMessage.isEmpty())
             errorMessage = validatePTDue(asessmentNumber, assessmentDetails);
@@ -101,7 +102,7 @@ public class NewConnectionService {
     public String checkValidPropertyForDataEntry(final String asessmentNumber) {
         String errorMessage = "";
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         errorMessage = validateProperty(assessmentDetails);
         return errorMessage;
     }

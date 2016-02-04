@@ -63,6 +63,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -126,7 +127,7 @@ public class MeterDemandNoticeController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS);
+                    PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
 
             String ownerName = "";
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {

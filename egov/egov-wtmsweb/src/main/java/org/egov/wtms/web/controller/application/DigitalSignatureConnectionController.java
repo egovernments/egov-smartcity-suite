@@ -71,6 +71,7 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
@@ -320,7 +321,7 @@ public class DigitalSignatureConnectionController {
         String ownerName =  "";
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         if(null != assessmentDetails && null != assessmentDetails.getOwnerNames()) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
             if (ownerNameItr.hasNext()) {
@@ -335,7 +336,7 @@ public class DigitalSignatureConnectionController {
         String propAddress =  "";
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         if(null != assessmentDetails) {
             propAddress = assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : propAddress;
         }

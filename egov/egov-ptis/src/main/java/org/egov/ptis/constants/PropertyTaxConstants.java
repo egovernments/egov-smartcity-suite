@@ -622,6 +622,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY = "EDIT_DATA_ENTRY";
     public static final String PROPERTY_MODIFY_REASON_FULL_DEMOLITION = "FULL DEMOLITION";
     public static final String PROPERTY_MODIFY_REASON_TAX_EXEMPTION = "TAX EXEMPTION";
+    public static final String PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION = "GRP";
     public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
             PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
             PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
@@ -1010,11 +1011,16 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_NOT_EXIST_ERR_CODE = "PTAX100";
     public static final String PROPERTY_DEACTIVATE_ERR_CODE = "PTAX101";
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_CODE = "PTAX102";
+    public static final String PROPERTY_ACTIVE_ERR_CODE = "PTAX103";
+    public static final String PROPERTY_INACTIVE_ERR_CODE = "PTAX104"; 
+    
 
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_PREFIX = "Property with assessment no ";
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
     public static final String PROPERTY_DEACTIVATE_ERR_MSG = "Property is decativated";
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
+    public static final String PROPERTY_ACTIVE_NOT_EXISTS = "Active property does not exists for the given assessment number";
+    public static final String PROPERTY_INACTIVE_ERR_MSG = "Property is not active for the given assessment number";
 
     public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
     public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);

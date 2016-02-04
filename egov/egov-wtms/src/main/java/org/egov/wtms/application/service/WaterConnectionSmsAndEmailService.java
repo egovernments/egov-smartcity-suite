@@ -36,6 +36,7 @@ import java.util.Iterator;
 
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -73,7 +74,7 @@ public class WaterConnectionSmsAndEmailService {
     public String getApplicantNameBYAssessmentDetail(final WaterConnectionDetails waterConnectionDetails) {
         final AssessmentDetails assessmentDetailsfullFlag = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
 
         Iterator<OwnerName> ownerNameItr = null;
         
@@ -98,7 +99,7 @@ public class WaterConnectionSmsAndEmailService {
     public void sendSmsAndEmail(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_MOBILE_EMAIL);
+                PropertyExternalService.FLAG_MOBILE_EMAIL,BasicPropertyStatus.ALL);
         final String email = assessmentDetails.getPrimaryEmail();
         final String mobileNumber = assessmentDetails.getPrimaryMobileNo();
         if (waterConnectionDetails != null && waterConnectionDetails.getApplicationType() != null
@@ -394,7 +395,7 @@ public class WaterConnectionSmsAndEmailService {
                 && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)) {
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_MOBILE_EMAIL);
+                    PropertyExternalService.FLAG_MOBILE_EMAIL,BasicPropertyStatus.ALL);
             final String email = assessmentDetails.getPrimaryEmail();
             final String mobileNumber = assessmentDetails.getPrimaryMobileNo();
             getApplicantNameBYAssessmentDetail(waterConnectionDetails);

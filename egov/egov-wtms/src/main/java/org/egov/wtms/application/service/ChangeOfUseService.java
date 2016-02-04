@@ -37,6 +37,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -91,7 +92,7 @@ public class ChangeOfUseService {
                 .findByConnection_ConsumerCodeAndConnectionStatus(
                         consumerCode, ConnectionStatus.INPROGRESS);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
             validationMessage = messageSource.getMessage("err.validate.primary.connection.holding", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);

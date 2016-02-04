@@ -80,6 +80,7 @@ import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnection;
@@ -690,7 +691,7 @@ public class WaterConnectionDetailsService {
     public void updateConsumerIndex(final WaterConnectionDetails waterConnectionDetails) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         final BigDecimal amountTodisplayInIndex = getTotalAmount(waterConnectionDetails);
         if (waterConnectionDetails.getLegacy())
             consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
@@ -699,7 +700,7 @@ public class WaterConnectionDetailsService {
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS);
+                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
         if (LOG.isDebugEnabled())
             LOG.debug(" updating Indexes Started... ");
         BigDecimal amountTodisplayInIndex = BigDecimal.ZERO;

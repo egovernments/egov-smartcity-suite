@@ -57,6 +57,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -205,7 +206,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
                 final AssessmentDetails assessmentDetailsFullFlag = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS);
+                        PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetailsService.updateIndexes(waterConnectionDetails,null);
