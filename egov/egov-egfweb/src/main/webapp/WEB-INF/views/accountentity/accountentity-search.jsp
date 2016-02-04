@@ -39,7 +39,13 @@
               </div>
               </div>
               <input type="hidden" id="mode" name="mode" value="${mode}" />
-              <div class="form-group">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
                 <div class="text-center">
                   <button type='button' class='btn btn-primary' id="btnsearch">
                     <spring:message code='lbl.search' />
@@ -48,11 +54,6 @@
                       code='lbl.close' /></a>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 </form:form>
 <div class="row display-hide report-section">
   <div class="col-md-12 table-header text-left">User Defined Code Search Result</div>
