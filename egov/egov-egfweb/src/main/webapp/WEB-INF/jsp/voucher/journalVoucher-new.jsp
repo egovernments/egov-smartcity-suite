@@ -56,8 +56,6 @@
 	content="text/html; charset=windows-1252">
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <title>Journal voucher Create</title>
 </head>
 
@@ -226,8 +224,8 @@
 	function onSubmit()
 	{
 		if(validateJV()){
-				document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
-	    		document.forms[0].submit();
+				document.jvcreateform.action='/EGF/voucher/journalVoucher-create.action';
+	    		document.jvcreateform.submit();
 				
 			}else{
 				return false;
