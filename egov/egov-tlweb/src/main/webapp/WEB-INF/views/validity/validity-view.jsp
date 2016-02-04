@@ -39,12 +39,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0">
         <div class="panel-heading">
-          <div class="panel-title">Validity</div>
+          <div class="panel-title"><spring:message code="title.validity"/></div>
         </div>
         <div class="panel-body custom">
           <div class="row add-border">
@@ -57,6 +56,18 @@
             </div>
             <div class="col-sm-3 add-margin view-content">${validity.licenseCategory.name}</div>
           </div>
+          <div class="row add-border">
+            <label class="col-sm-3 add-margin"><spring:message code="lbl.basedon.finyear" /></label>
+            <div class="col-sm-3 add-margin view-content">
+              <c:if test="${validity.basedOnFinancialYear == true}">
+              	Yes
+              </c:if>
+              <c:if test="${validity.basedOnFinancialYear == false}">
+              No
+              </c:if>
+            </div>
+          </div>
+          <c:if test="${validity.basedOnFinancialYear == false}">
           <div class="row add-border">
             <div class="col-xs-3 add-margin">
               <spring:message code="lbl.day" />
@@ -77,6 +88,7 @@
             </div>
             <div class="col-sm-3 add-margin view-content">${validity.year}</div>
           </div>
+          </c:if>
         </div>
       </div>
     </div>

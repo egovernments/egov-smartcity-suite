@@ -53,21 +53,34 @@ function getFormData($form) {
 	return indexed_array;
 }
 
+$('#basedOnFinancialYear').change(function() {
+	if($(this).is(':checked')) {
+		$('.nonfindata').hide();
+		$('#day').val('0');
+		$('#month').val('0');
+		$('#week').val('0');
+		$('#year').val('0');
+	} else
+		$('.nonfindata').show();
+});
+
+$('#basedOnFinancialYear').trigger('change');
+
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/tl/validity/ajaxsearch/" + $('#mode').val(),
-					type : "POST",
-					"data" : getFormData(jQuery('form'))
+					url : "/tl/validity/ajaxsearch/" + $('#mode').val()+"?licenseCategory="+$('#licenseCategory').val()+"&natureOfBusiness="+$("#natureOfBusiness").val(),
+					type : "POST"
 				},
 				"fnRowCallback" : function(row, data, index) {
 
 				},
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
+				"autoWidth": false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
@@ -82,6 +95,10 @@ function callAjaxSearch() {
 					"data" : "licenseCategory",
 					"sClass" : "text-left"
 				}, {
+					"data" : "basedOnFinancialYear",
+					"sClass" : "text-left"
+				},
+				{
 					"data" : "day",
 					"sClass" : "text-right"
 				}, {
@@ -93,6 +110,33 @@ function callAjaxSearch() {
 				}, {
 					"data" : "year",
 					"sClass" : "text-right"
-				} ]
+				},
+				{ "data" : null, "target":-1,
+					
+	                 sortable: false,
+	                 "render": function ( data, type, full, meta ) {
+	                     var mode = $('#mode').val();
+	                	 if(mode == 'edit')
+	                    	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+	                     else
+	                    	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+	                 }
+				}
+				,
+				{ "data": "id", "visible":false }
+				]
 			});
 }
+
+$("#resultTable").on('click','tbody tr td .edit',function(event) {
+	var id = reportdatatable.fnGetData($(this).parent().parent(),8);
+	var url = '/tl/validity/edit/'+id ;
+	window.open(url);
+});
+
+$("#resultTable").on('click','tbody tr td .view',function(event) {
+	var id = reportdatatable.fnGetData($(this).parent().parent(),8);
+	var url = '/tl/validity/view/'+id ;
+	window.open(url,'_blank');
+});
+

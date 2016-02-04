@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -70,10 +71,13 @@ public class ValidityController {
     private final static String VALIDITY_EDIT = "validity-edit";
     private final static String VALIDITY_VIEW = "validity-view";
     private final static String VALIDITY_SEARCH = "validity-search";
+
     @Autowired
     private ValidityService validityService;
+
     @Autowired
     private NatureOfBusinessService natureOfBusinessService;
+
     @Autowired
     private LicenseCategoryService licenseCategoryService;
 
@@ -85,12 +89,14 @@ public class ValidityController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(@ModelAttribute final Validity validity, final Model model) {
         prepareNewForm(model);
-       return VALIDITY_NEW;
+        return VALIDITY_NEW;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Validity validity, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
+        if (!validity.hasValidValues())
+            errors.rejectValue("basedOnFinancialYear", "validity.value.notset");
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return VALIDITY_NEW;
@@ -111,6 +117,8 @@ public class ValidityController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Validity validity, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
+        if (!validity.hasValidValues())
+            errors.rejectValue("basedOnFinancialYear", "validity.value.notset");
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return VALIDITY_EDIT;
@@ -145,9 +153,10 @@ public class ValidityController {
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
-            @ModelAttribute final Validity validity) {
-        final List<Validity> searchResultList = validityService.search(validity);
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode,
+            @RequestParam(required = false) final Long natureOfBusiness,
+            @RequestParam(required = false) final Long licenseCategory) {
+        final List<Validity> searchResultList = validityService.search(natureOfBusiness, licenseCategory);
         final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
                 .toString();
         return result;

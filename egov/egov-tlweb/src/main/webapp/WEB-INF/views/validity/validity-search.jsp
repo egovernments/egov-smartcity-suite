@@ -52,25 +52,23 @@
             <div class="form-group">
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness" /> </label>
               <div class="col-sm-3 add-margin">
-                <form:select path="natureOfBusiness.id" id="natureOfBusiness.id" cssClass="form-control"
+                <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
                   cssErrorClass="form-control error">
                   <form:option value="">
                     <spring:message code="lbl.select" />
                   </form:option>
                   <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" />
                 </form:select>
-                <form:errors path="natureOfBusiness" cssClass="error-msg" />
               </div>
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
               <div class="col-sm-3 add-margin">
-                <form:select path="licenseCategory.id" id="licenseCategory.id" cssClass="form-control"
+                <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
                   cssErrorClass="form-control error">
                   <form:option value="">
                     <spring:message code="lbl.select" />
                   </form:option>
                   <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
                 </form:select>
-                <form:errors path="licenseCategory" cssClass="error-msg" />
               </div>
             </div>
             <input type="hidden" id="mode" name="mode" value="${mode}" />
@@ -97,23 +95,17 @@
         <tr>
           <th><spring:message code="lbl.natureofbusiness" /></th>
           <th><spring:message code="lbl.licensecategory" /></th>
+          <th><spring:message code="lbl.basedon.finyear" /></th>
           <th><spring:message code="lbl.day" /></th>
           <th><spring:message code="lbl.week" /></th>
           <th><spring:message code="lbl.month" /></th>
           <th><spring:message code="lbl.year" /></th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
     </table>
   </div>
 </div>
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"

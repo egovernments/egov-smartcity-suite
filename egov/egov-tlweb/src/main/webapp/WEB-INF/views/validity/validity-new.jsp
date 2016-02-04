@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -40,8 +41,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<form:form role="form" action="create" modelAttribute="validity" commandName="validity" id="validityform"
-  cssClass="form-horizontal form-groups-bordered">
+<form:form role="form" action="create" modelAttribute="validity" commandName="validity" id="validityform"  cssClass="form-horizontal form-groups-bordered">
    <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0">
@@ -49,7 +49,7 @@
           <div class="panel-title"><spring:message code="title.validity"/></div>
         </div>
         <div class="panel-body">
-          <div class="form-group">
+            <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness" /> <span
               class="mandatory"></span> </label>
             <div class="col-sm-3 add-margin">
@@ -60,7 +60,6 @@
                 </form:option>
                 <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" required="required" />
               </form:select>
-              <form:errors path="natureOfBusiness" cssClass="error-msg" />
             </div>
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
             <div class="col-sm-3 add-margin">
@@ -71,34 +70,44 @@
                 </form:option>
                 <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
               </form:select>
-            </div>
+            </div>            
           </div>
           <div class="form-group">
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.basedon.finyear" /></label>
+            <div class="col-sm-3 add-margin">
+              <form:checkbox path="basedOnFinancialYear"  id="basedOnFinancialYear"/>
+            </div>
+          </div>
+          <div class="form-group nonfindata">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.day" /> </label>
             <div class="col-sm-3 add-margin">
-              <form:input path="day" class="form-control text-right patternvalidation" data-pattern="number" />
+              <form:input path="day" id="day" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="day" cssClass="error-msg" />
             </div>
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.week" /> </label>
             <div class="col-sm-3 add-margin">
-              <form:input path="week" class="form-control text-right patternvalidation" data-pattern="number" />
+              <form:input path="week" id="week" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="week" cssClass="error-msg" />
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group nonfindata">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.month" /> </label>
             <div class="col-sm-3 add-margin">
-              <form:input path="month" class="form-control text-right patternvalidation" data-pattern="number" />
+              <form:input path="month" id="month" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="month" cssClass="error-msg" />
             </div>
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.year" /> </label>
             <div class="col-sm-3 add-margin">
-              <form:input path="year" class="form-control text-right patternvalidation" data-pattern="number" />
+              <form:input path="year" id="year" class="form-control text-right patternvalidation" data-pattern="number" />
               <form:errors path="year" cssClass="error-msg" />
             </div>
           </div>
           <input type="hidden" name="validity" value="${validity.id}" />
-           </div>
+          <spring:hasBindErrors name="validity">
+        		<form:errors path="natureOfBusiness" cssClass="error-msg add-margin" /><br/>
+          		<form:errors path="basedOnFinancialYear" cssClass="error-msg add-margin" />
+        	</spring:hasBindErrors>
+        </div>
   </div>
   </div>
   </div>
@@ -111,3 +120,4 @@
     </div>
   </div>
 </form:form>
+<script type="text/javascript" src="<c:url value='/resources/app/js/validityHelper.js'/>"></script>

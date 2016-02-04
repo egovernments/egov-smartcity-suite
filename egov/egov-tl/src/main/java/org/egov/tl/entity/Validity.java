@@ -50,16 +50,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 @Entity
 @Table(name = "egtl_validity")
 @SequenceGenerator(name = Validity.SEQ, sequenceName = Validity.SEQ, allocationSize = 1)
-@CompositeUnique(fields = {"natureOfBusiness", "licenseCategory"}, enableDfltMsg = true, message = "{license.validity.exist}")
-public class Validity extends AbstractPersistable<Long> {
+@CompositeUnique(fields = { "natureOfBusiness", "licenseCategory" }, enableDfltMsg = true, message = "{license.validity.exist}")
+public class Validity extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_validity";
     private static final long serialVersionUID = -6303436329433049423L;
 
@@ -76,17 +77,33 @@ public class Validity extends AbstractPersistable<Long> {
     @JoinColumn(name = "licenseCategory")
     private LicenseCategory licenseCategory;
 
+    @Min(0)
     @Max(6)
     private Integer day = 0;
 
+    @Min(0)
     @Max(3)
     private Integer week = 0;
-    
+
+    @Min(0)
     @Max(11)
     private Integer month = 0;
 
+    @Min(0)
     @Max(99)
     private Integer year = 0;
+
+    private boolean basedOnFinancialYear;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusiness;
@@ -136,15 +153,16 @@ public class Validity extends AbstractPersistable<Long> {
         this.year = year;
     }
 
-    @Override
-    protected void setId(final Long id) {
-        this.id = id;
-
+    public boolean isBasedOnFinancialYear() {
+        return basedOnFinancialYear;
     }
 
-    @Override
-    public Long getId() {
-        return id;
+    public void setBasedOnFinancialYear(final boolean basedOnFinancialYear) {
+        this.basedOnFinancialYear = basedOnFinancialYear;
     }
 
+    public boolean hasValidValues() {
+        return isBasedOnFinancialYear() || (day !=null && day != 0) || (week !=null && week != 0) || (month !=null && month != 0)
+                || (year !=null && year != 0);
+    }
 }
