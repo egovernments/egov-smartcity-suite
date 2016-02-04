@@ -515,18 +515,19 @@ function onSubmit()
 	<s:form action="contingentBill" theme="css_xhtml" name="cbill">
 		<s:token />
 		<s:push value="model">
+			<div class="formmainbox">
+			<div class="formheading" />
+				<div class="subheadnew">
+					<s:text name="contingent.bill" />
+				</div>
+			</div>
 			<div class="tabber" id="main" align="left">
 				<div class="tabbertab" id=maintab>
 					<h2>Header</h2>
 					<jsp:include page="../budget/budgetHeader.jsp">
 						<jsp:param value="Contingent Bill" name="heading" />
 					</jsp:include>
-					<div class="formmaininbox">
-						<div class="formheading" />
-						<div class="subheadnew">
-							<s:text name="contingent.bill" />
-						</div>
-					</div>
+					
 					<center>
 						<span class="mandatory1">
 							<div id="Errors">
@@ -562,21 +563,20 @@ function onSubmit()
 					</div>
 					<br />
 				</div>
-			</div>
-			<div class="tabbertab" id="checkList">
-				<h2>Check List</h2>
-				<div class="yui-skin-sam" align="center">
-					<div id="checkListTable"></div>
+				<div class="tabbertab" id="checkList">
+					<h2>Check List</h2>
+					<div class="yui-skin-sam" align="center">
+						<div id="checkListTable"></div>
+					</div>
+		
+					<script>
+				   	makeCheckListTable();
+				   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
+		</script>
+		
+		
 				</div>
-
-				<script>
-			   	makeCheckListTable();
-			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
-	</script>
-
-
-			</div>
-			</div>
+			
 			<s:if test="%{mode=='approve'}">
 				<div align='center'>
 					<font style='color: red;'>
@@ -640,6 +640,8 @@ function onSubmit()
 					</tr>
 				</table>
 			</s:else>
+			</div>
+			</div>
 		</s:push>
 	</s:form>
 
