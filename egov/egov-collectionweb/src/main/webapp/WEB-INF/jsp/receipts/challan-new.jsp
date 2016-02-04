@@ -42,7 +42,6 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/challan.js?rnd=${app_release_no}"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceiptsService.js"></script>
 <style type="text/css">
 	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
