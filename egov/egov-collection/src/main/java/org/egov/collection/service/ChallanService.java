@@ -113,7 +113,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
         if (CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName)) {
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_CANCELLED));
-            challan.transition(true).withComments(remarks).withStateValue(CollectionConstants.WF_STATE_CANCEL_CHALLAN)
+            challan.transition().withComments(remarks).withStateValue(CollectionConstants.WF_STATE_CANCEL_CHALLAN)
                     .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName()).withDateInfo(new Date()).end();
         }
       //  persist(challan);
@@ -123,7 +123,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
 
         if (CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName)
                 || CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)) {
-            challan.transition(true).withComments("End of challan worklow")
+            challan.transition().withComments("End of challan worklow")
                     .withStateValue(CollectionConstants.WF_STATE_END).withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
                     .withDateInfo(new Date()).end();
             LOGGER.debug("End of Challan Workflow.");

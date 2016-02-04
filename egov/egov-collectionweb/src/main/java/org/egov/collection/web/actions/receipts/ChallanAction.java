@@ -386,6 +386,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @ValidationErrorPage(value = "createReceipt")
+    @Action(value = "/receipts/challan-saveOrupdate")
     public String saveOrupdate() {
         try {
             errors.clear();
@@ -428,32 +429,9 @@ public class ChallanAction extends BaseFormAction {
 
             if (cashOrCardInstrumenttotal != null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
                 receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
-
-            receiptHeaderService.persist(receiptHeader);
-
-            // Start work flow for all newly created receipts This might
-            // internally
-            // create vouchers also based on configuration
-            receiptHeaderService.startWorkflow(receiptHeader);
-            receiptHeaderService.getSession().flush();
-            LOGGER.info("Workflow started for newly created receipts");
-
-            final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
-
-            // If vouchers are created during work flow step, add them to the
-            // list
-            final Set<ReceiptVoucher> receiptVouchers = receiptHeader.getReceiptVoucher();
-            for (final ReceiptVoucher receiptVoucher : receiptVouchers)
-                try {
-                    voucherHeaderList.add(receiptVoucher.getVoucherheader());
-                } catch (final Exception e) {
-                    LOGGER.error("Error in getting voucher header for id [" + receiptVoucher.getVoucherheader() + "]",
-                            e);
-                }
-
-            if (voucherHeaderList != null && receiptInstrList != null)
-                receiptHeaderService.updateInstrument(voucherHeaderList, receiptInstrList);
-
+            receiptHeaderService.setReceiptNumber(receiptHeader);
+            
+            receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
             final ReceiptHeader[] receipts = new ReceiptHeader[1];
             receipts[0] = receiptHeader;
 

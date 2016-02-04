@@ -1306,7 +1306,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * number is not present, the challan number is generated and set into it.
      */
     @Override
-    public ReceiptHeader persist(final ReceiptHeader receiptHeader) {
+    @Transactional
+    public ReceiptHeader persist(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
         if (receiptHeader.getReceipttype() != CollectionConstants.RECEIPT_TYPE_CHALLAN
                 && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())
                 && receiptHeader.getReceiptnumber() == null)
@@ -1730,7 +1731,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             LOGGER.error("Receipt Service Exception while persisting ReceiptHeader!", e);
         }
     }// end of method
-
+    
     /**
      * This method sets the status of the receipt to be cancelled as CANCELLED
      * and persists it A new receipt header object is populated with the data
@@ -1754,6 +1755,4 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void setChallanService(final ChallanService challanService) {
         this.challanService = challanService;
     }
-
-
 }
