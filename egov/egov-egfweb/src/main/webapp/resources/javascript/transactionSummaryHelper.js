@@ -748,8 +748,16 @@ $('#buttonSubmit')
 		.click(
 				function(e) {
 					if (validateInput()) {
+						var myform = $('#transactionSummaryform');
+
+						 // Find disabled inputs, and remove the "disabled" attribute
+						var disabled = myform.find(':input:disabled').removeAttr('disabled');
+						// serialize the form
 						var postData = $("#transactionSummaryform")
-								.serializeArray();
+						.serializeArray();
+						 // re-disabled the set of inputs that you previously enabled
+						disabled.attr('disabled','disabled');
+						console.log(postData);
 						var formURL = $("#transactionSummaryform").attr(
 								"action");
 						$
