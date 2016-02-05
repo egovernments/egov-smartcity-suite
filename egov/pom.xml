@@ -592,6 +592,10 @@
 						<groupId>org.slf4j</groupId>
 						<artifactId>jcl104-over-slf4j</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.apache.poi</groupId>
+       					 <artifactId>poi</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -636,6 +640,11 @@
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports-javaflow</artifactId>
 				<version>${jasper-report-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+      			  <artifactId>poi</artifactId>
+       			  <version>3.10.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>

@@ -227,16 +227,14 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>tomcat</groupId>
-			<artifactId>jasper-compiler-jdt</artifactId>
-			<version>5.5.23</version>
-		</dependency>
+				<groupId>org.apache.poi</groupId>
+      			<artifactId>poi</artifactId> 
+      	</dependency>
 		<dependency>
 			<groupId>tomcat</groupId>
 			<artifactId>jasper-compiler-jdt</artifactId>
 			<version>5.5.23</version>
 		</dependency>
-
 
 		<!-- REPORTS END -->
 
