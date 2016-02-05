@@ -193,8 +193,15 @@ function goToView(obj) {
 function goToAction(obj){
 	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
 	.val(jQuery(obj).data('eleval')); 
+	if(obj.value=='Collect Fees')
+		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+	
 	if(obj.value=='View Trade')
-		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+	else if(obj.value=='Print Certificate')
+		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+	
+	
 	else
 		alert("Need to add Link.. In Progress...");
 }
@@ -278,7 +285,7 @@ function callAjaxForSearchTrade() {
 												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View Trade">View Trade</option><option value="Collect Fees">Collect Fees</option></select>');
 		        				   } else if (row.status==wf_certificateGenerate_status) {
 		        					   return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
-												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View Trade">View Trade</option><option value="Print Certificate">Print Certificate</option></select>');
+												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View ">View Trade</option><option value="Print Certificate">Print Certificate</option></select>');
 		        				   } else {
 		        					   return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
 												+ row.licenseId + '" onChange="goToAction(this);" ><option>Select from Below</option><option value="View Trade">View Trade</option></select>');

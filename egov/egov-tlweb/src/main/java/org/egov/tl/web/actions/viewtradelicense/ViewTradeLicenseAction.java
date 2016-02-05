@@ -52,8 +52,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -70,7 +75,8 @@ import org.springframework.beans.factory.annotation.Autowired;
                 "/egi/auditing", "method", "searchForm", "actionName", "auditReport", "prependServletContext", "false"}),
         @Result(name = "duplicate", location = "viewTradeLicense-duplicate.jsp"),
         @Result(name = Constants.CNCCERTIFICATE, location = "viewTradeLicense-" + Constants.CNCCERTIFICATE + ".jsp"),
-        @Result(name = Constants.PFACERTIFICATE, location = "viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp")
+        @Result(name = Constants.PFACERTIFICATE, location = "viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp"),
+        @Result(name = "report", location = "viewTradeLicense-report.jsp")
 })
 public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> implements ServletRequestAware {
     private static final long serialVersionUID = 1L;
@@ -80,9 +86,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     private String rejectreason;
     private HttpSession session;
     private HttpServletRequest requestObj;
+    protected Integer reportId = -1;
     private String applicationNo;
     private Long userId;
-
+ 
+    @Autowired
+    private ReportService reportService;
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -134,11 +143,10 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
         this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return Constants.VIEW;
     }
-
+    
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
-        String certificate = Constants.CNCCERTIFICATE;
-        this.setLicenseIdIfServletRedirect();
+       this.setLicenseIdIfServletRedirect();
         this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         /*
          * if (this.documentManagerService.getDocumentObject(this.tradeLicense.getApplicationNumber(), "egtradelicense") == null)
@@ -148,14 +156,9 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
          * notice.setNoticeType(this.license().getClass().getSimpleName() + "-Certificate"); notice.setNoticeDate(new Date());
          * this.request.put("noticeObject", notice); }
          */
-        this.tradeLicense.setIsCertificateGenerated(true);
-        if (this.tradeLicense.getFeeTypeStr() != null && this.tradeLicense.getFeeTypeStr().equalsIgnoreCase(Constants.PFA))
-            certificate = Constants.PFACERTIFICATE;
-        else if (this.tradeLicense.getFeeTypeStr() != null && this.tradeLicense.getFeeTypeStr().equalsIgnoreCase(Constants.CNC))
-            certificate = Constants.CNCCERTIFICATE;
-        else
-            certificate = Constants.CNCCERTIFICATE;
-        return certificate;
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+        reportId = ReportViewerUtil.addReportToSession(reportService.createReport(tradeLicenseService.prepareReportInputData((License)license())), getSession());
+        return "report";
     }
 
     public String generateNoc() {
@@ -277,6 +280,14 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
 
     public void setApplicationNo(String applicationNo) {
         this.applicationNo = applicationNo;
+    }
+
+    public Integer getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Integer reportId) {
+        this.reportId = reportId;
     }
 
     
