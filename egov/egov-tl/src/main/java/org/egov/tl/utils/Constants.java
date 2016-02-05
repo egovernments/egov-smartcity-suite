@@ -742,6 +742,12 @@ public class Constants {
         public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONAMOUNTPAID";
         public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNUPDATED";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
+        public static final String STR_WITH_APPLICANT_NAME = " Dear ";
         
+        public static final String STR_WITH_LICENCE_NUMBER=" Trade License with TIN No.";
+        public static final String STR_FOR_SUBMISSION = "/- and the Amount is Collected  @ Rs. ";
+        public static final String STR_FOR_SUBMISSION_DATE="/- per year w.e.f ";
+        public static final String STR_FOR_CITYMSG=". \nThanks,\n";
         public static final String REVENUE_HIERARCHYTYPE = "REVENUE";
+        public static final String STR_FOR_EMAILSUBJECT="Trade License application Amount Collected for TIN No.";
 }

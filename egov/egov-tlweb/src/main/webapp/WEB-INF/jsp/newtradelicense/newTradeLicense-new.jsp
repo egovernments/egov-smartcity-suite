@@ -116,9 +116,9 @@
 				if(!verifyDocAttachment()){
 					return false;
 				}
-    			if(validateForm_newTradeLicense()==false) { 
+    			/* if(validateForm_newTradeLicense()==false) { 
     				return false;
-    			} else { 
+    			}  */else { 
 					return true;    	              
     			 } 
   			}

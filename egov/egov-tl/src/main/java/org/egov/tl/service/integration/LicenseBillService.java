@@ -41,6 +41,7 @@
 package org.egov.tl.service.integration;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -83,7 +84,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -94,6 +97,7 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.ObjectNotFoundException;
+import org.hibernate.search.bridge.builtin.StringBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,8 +116,13 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private SimpleWorkflowService<License> transferWorkflowService;
+    
+    
     @Autowired
     protected SecurityUtils securityUtils;
+    
+    @Autowired
+    private MessagingService messagingService;
 
     @Autowired
     private EgBillReceiptDao egBillReceiptDao;
@@ -131,6 +140,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
 
     private LicenseUtils licenseUtils;
 
@@ -277,13 +287,24 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                 }
                     }
                 }
+                StringBuilder smsMsg=new StringBuilder();
+                StringBuilder  emailSubject=new StringBuilder(); 
                 demand.setAmtCollected(amtCollected);
                 persistenceService.update(demand);
                 final TradeLicense tradeLicense = (TradeLicense) persistenceService.find(
                         "from TradeLicense where id=?", ld.getLicense().getId());
                 // update only if it is new License
                 updateWorkflowState(tradeLicense);
-
+                smsMsg.append(Constants.STR_WITH_APPLICANT_NAME).append(tradeLicense.getLicensee().getApplicantName()).append(Constants.STR_WITH_LICENCE_NUMBER)
+                .append(tradeLicense.getLicenseNumber()).append(Constants.STR_FOR_SUBMISSION).append(demand.getAmtCollected()).append(Constants.STR_FOR_SUBMISSION_DATE).
+                append(new SimpleDateFormat("dd/MM/yyyy").format(billReceipt.getReceiptDate()))
+                .append(Constants.STR_FOR_CITYMSG).append(EgovThreadLocals.getMunicipalityName());
+                 emailSubject.append(Constants.STR_FOR_EMAILSUBJECT).append(tradeLicense.getLicenseNumber());
+                if (tradeLicense.getLicensee().getMobilePhoneNumber() != null && smsMsg != null)
+                    messagingService.sendSMS(tradeLicense.getLicensee().getMobilePhoneNumber(), smsMsg.toString());
+                if (tradeLicense.getLicensee().getEmailId() != null && smsMsg != null)
+                    messagingService.sendEmail(tradeLicense.getLicensee().getEmailId(), emailSubject.toString(),smsMsg.toString());
+                
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
@@ -466,7 +487,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             licenseObj.transition(true).withSenderName(user.getName()).withComments(Constants.WORKFLOW_STATE_COLLECTED)
             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
             .withOwner(wfInitiator.getPosition()).withNextAction(wfmatrix.getNextAction());
-
+          
         }
 
     }
