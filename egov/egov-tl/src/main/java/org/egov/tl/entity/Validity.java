@@ -59,7 +59,8 @@ import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 @Entity
 @Table(name = "egtl_validity")
 @SequenceGenerator(name = Validity.SEQ, sequenceName = Validity.SEQ, allocationSize = 1)
-@CompositeUnique(fields = { "natureOfBusiness", "licenseCategory" }, enableDfltMsg = true, message = "{license.validity.exist}")
+@CompositeUnique(fields = { "natureOfBusiness",
+        "licenseCategory" }, enableDfltMsg = true, checkForNull = true, message = "{license.validity.exist}")
 public class Validity extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_validity";
     private static final long serialVersionUID = -6303436329433049423L;
@@ -162,7 +163,7 @@ public class Validity extends AbstractAuditable {
     }
 
     public boolean hasValidValues() {
-        return isBasedOnFinancialYear() || (day !=null && day != 0) || (week !=null && week != 0) || (month !=null && month != 0)
-                || (year !=null && year != 0);
+        return isBasedOnFinancialYear() || day != null && day != 0 || week != null && week != 0 || month != null && month != 0
+                || year != null && year != 0;
     }
 }
