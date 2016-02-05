@@ -72,7 +72,6 @@
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden name="id" id="id" />
 							<s:hidden name="feeTypeId" id="feeTypeId" />
-							<s:hidden name="parentBndryId" id="parentBndryId" value="%{parentBndryId}" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
 								<div class="panel-title" style="text-align:center"> 
@@ -279,6 +278,7 @@
 									jQuery("#boundary").val(data.boundaryDetails.localityId);
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
+									jQuery('#parentBoundary').val(data.boundaryDetails.wardId);
 									jQuery("#address").val(data.propertyAddress);
 								}
 							}
