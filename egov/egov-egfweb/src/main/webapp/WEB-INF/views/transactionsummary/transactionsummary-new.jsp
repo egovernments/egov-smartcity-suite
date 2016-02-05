@@ -171,10 +171,9 @@
 					class="mandatory1">*</span></th>
 				<th width="15%"><spring:message code="lbl.narration" /></th>
 				<th width="2%"><button type="button" id="add-row"
-					class="btn btn-xs btn-secondary add-row">
-					<span class="glyphicon glyphicon-plus"></span>
-				</button>
-				</th>
+						class="btn btn-xs btn-secondary add-row">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -205,10 +204,12 @@
 					readonly="true" autocomplete="off"
 					class="form-control yui-ac-input "
 					onfocus="onFocusDetailCode(this);autocompleteEntities(this);"
-					onblur="splitEntitiesDetailCode(this)" /></td>
-				<td><form:input
-						path="transactionSummaryList[0].openingdebitbalance" type="text"
-						readonly="false" style="text-align:right;"
+					onblur="splitEntitiesDetailCode(this)" />
+					<img src="/egi/resources/erp2/images/plus1.gif" id="transactionSummaryList[0].search" name="transactionSummaryList[0].search" style="width:15px;" onclick="openSearchWindowFromOB(this)">
+					<%-- <div id = "transactionSummaryList[0].search" name = "transactionSummaryList[0].search" onclick="openSearchWindowFromOB(this)"><span 
+					class="glyphicon glyphicon-search"></span></div> --%></td>
+				<td><form:input path="transactionSummaryList[0].openingdebitbalance"
+						type="text" readonly="false" style="text-align:right;"
 						class="form-control mandatoryField patternvalidation mandatory "
 						data-pattern="decimalvalue"
 						id="transactionSummaryList[0].openingdebitbalance"

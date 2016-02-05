@@ -921,7 +921,10 @@ $('#major').change(
 						$('#minor').append(output);
 					});
 		});
-
+$('#accountdetailkeyValue').change(
+		function() {
+		    console.log("accountdetailkeyValue");
+		});
 function makeMandatory(obj) {
 	var id = $(obj).attr('id');
 	var rowCount = getRowIndex(obj);
@@ -937,6 +940,37 @@ function makeMandatory(obj) {
 					.getElementById('transactionSummaryList[' + rowCount
 							+ '].openingdebitbalance');
 			$(openingdebitbalance).removeClass("mandatory");
+		}
+	}
+}
+var acctTypeCurrRow ;
+function openSearchWindowFromOB(obj) {
+	var index = getRowIndex(obj);
+	acctTypeCurrRow = index;
+	var element = document.getElementById('transactionSummaryList'+'['+index+']'+'.accountdetailtype.id');
+	var detailtypeid = element.options[element.selectedIndex].value;
+	if( detailtypeid != null && detailtypeid != 0) {
+		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailtypeid;
+		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
+	} else {
+		bootbox.alert("Select the subledger type.");
+	}
+}
+
+function popupCallback(arg0, srchType) {
+	var entity_array = arg0.split("^#");
+	if(srchType == 'EntitySearch' ) {
+		if(entity_array.length==3)
+		{
+			document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkey').value=entity_array[2];
+			var accountdetailkeyValue = document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkeyValue');
+			$(accountdetailkeyValue).val(entity_array[0]).blur();
+		}
+		else
+		{
+			bootbox.alert("Invalid entity selected.");
+			document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkeyValue').value="";
+			document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkey').value="";
 		}
 	}
 }
