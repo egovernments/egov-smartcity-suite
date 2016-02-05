@@ -53,8 +53,6 @@ public class TransactionSummaryController {
     private AccountdetailtypeService accountdetailtypeService;
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    // @Autowired
-    // private FundSourceHibernateDAO fundsourceService;
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
     @Autowired
@@ -73,8 +71,7 @@ public class TransactionSummaryController {
 
     private void prepareNewForm(Model model) {
         model.addAttribute("accountdetailtypes", accountdetailtypeService.findAll());
-        model.addAttribute("cFinancialYears", financialYearDAO.findAll());
-        // model.addAttribute("fundsources", fundsourceService.findAll());
+        model.addAttribute("cFinancialYears", financialYearDAO.getAllActivePostingFinancialYear());
         model.addAttribute("funds", fundHibernateDAO.findAll());
         model.addAttribute("cChartOfAccountss",
                 chartOfAccountsDAO.findAll());
@@ -244,6 +241,7 @@ public class TransactionSummaryController {
         List<TransactionSummary> transactionSummaries = transactionSummaryService
                 .searchTransactionsForNonSubledger(finYear, fund, functn, department, glcodeId);
         for (TransactionSummary ts : transactionSummaries) {
+            amountsMap.put("tsid", BigDecimal.valueOf(ts.getId()));
             amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance());
             amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance());
             result.add(amountsMap);
@@ -266,6 +264,7 @@ public class TransactionSummaryController {
                 .searchTransactionsForSubledger(finYear, fund, functn, department, glcodeId, accountDetailTypeId,
                         accountDetailKeyId);
         for (TransactionSummary ts : transactionSummaries) {
+            amountsMap.put("tsid", BigDecimal.valueOf(ts.getId()));
             amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance());
             amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance());
             result.add(amountsMap);
