@@ -280,6 +280,10 @@ function fillNeibrAfterSplitGlcode(obj) {
 													.getElementById('transactionSummaryList['
 															+ $currRow
 															+ '].openingcreditbalance').value = data[index].openingcreditbalance;
+											document
+													.getElementById('transactionSummaryList['
+															+ $currRow
+															+ '].narration').value = data[index].narration;
 										});
 					},
 					error : function(jqXHR, textStatus, errorThrown) {
@@ -532,8 +536,8 @@ function splitEntitiesDetailCode(obj) {
 						.getElementById('transactionSummaryList[' + $currRow
 								+ ']' + '.accountdetailkeyValue');
 				var subLedgerObj = document
-				.getElementById('transactionSummaryList[' + $currRow
-						+ ']' + '.accountdetailtype.id');
+						.getElementById('transactionSummaryList[' + $currRow
+								+ ']' + '.accountdetailtype.id');
 				$(entityObj).removeClass("mandatory");
 				$(subLedgerObj).removeClass("mandatory");
 			}
@@ -574,6 +578,10 @@ function splitEntitiesDetailCode(obj) {
 														.getElementById('transactionSummaryList['
 																+ $currRow
 																+ '].openingcreditbalance').value = data[index].openingcreditbalance;
+												document
+														.getElementById('transactionSummaryList['
+																+ $currRow
+																+ '].narration').value = data[index].narration;
 											}
 										});
 					},
@@ -586,6 +594,10 @@ function splitEntitiesDetailCode(obj) {
 function changeaccountdetailkey(obj) {
 	document.getElementById('transactionSummaryList[' + $currRow
 			+ '].accountdetailkeyValue').readOnly = false;
+	document.getElementById('transactionSummaryList[' + $currRow
+			+ '].accountdetailkeyValue').value = "";
+	document.getElementById('transactionSummaryList[' + $currRow
+			+ '].accountdetailkey').value = "";
 }
 var oAutoCompEntityForJV;
 function autocompleteEntities(obj) {
@@ -630,6 +642,11 @@ function onFocusDetailCode(obj) {
 	$currRow = getRowIndex(obj);
 	var detailtypeidObj = document.getElementById('transactionSummaryList['
 			+ $currRow + '].accountdetailtype.id');
+	console.log("subledger type id " + detailtypeidObj.value);
+	if (detailtypeidObj.value == null || detailtypeidObj.value == "") {
+		bootbox.alert("Please select subledger type")
+		return false;
+	}
 	if (detailTypeId != detailtypeidObj.value) {
 		detailTypeId = detailtypeidObj.value;
 		loadDropDownCodesForEntities(detailtypeidObj);
@@ -639,8 +656,6 @@ function onFocusDetailCode(obj) {
 function loadDropDownCodesForEntities(obj) {
 	if (entities) {
 		entities = null;
-		if (oAutoCompEntity)
-			oAutoCompEntity.destroy();
 	}
 	var url = "/EGF/voucher/common-ajaxLoadEntites.action?accountDetailType="
 			+ obj.value;
@@ -743,9 +758,11 @@ $('#buttonSubmit')
 									type : "post",
 									data : postData,
 									success : function(data, textStatus, jqXHR) {
-										bootbox.alert('Data Saved Successfully', function() {
-											location.reload();
-										});
+										bootbox.alert(
+												'Data Saved Successfully',
+												function() {
+													location.reload();
+												});
 										$.each(data, function(index) {
 											var obj = $("#result tbody tr")
 													.get(index);
@@ -765,7 +782,23 @@ $('#buttonSubmit')
 						e.preventDefault();
 					}
 				});
-
+$('#buttonProceed').click(function(e) {
+	if (validSearch()) {
+		document.getElementById('errors').innerHTML = "";
+		$('#divProceed').addClass("display-hide");
+		$('#result').removeClass("display-hide");
+		$('#buttonCreate').removeClass("display-hide");
+		$("#type").attr('disabled', 'disabled');
+		var financialyear = document.getElementById('financialyear.id');
+		var departmentid = document.getElementById('departmentid.id');
+		var fund = document.getElementById('fund.id');
+		var functionid = document.getElementById('functionid.id');
+		$(financialyear).attr('disabled', 'disabled');
+		$(departmentid).attr('disabled', 'disabled');
+		$(fund).attr('disabled', 'disabled');
+		$(functionid).attr('disabled', 'disabled');
+	}
+});
 function validateInput() {
 	console.log("length:" + $('#result tr').length);
 	var flag = true;
@@ -805,7 +838,7 @@ function validateInput() {
 		console.log(openingcreditbalance);
 		if (openingdebitbalance > 0 && openingcreditbalance > 0) {
 			bootbox
-					.alert("Opening debitbalance and creditbalance cannot be there for the account code  =  "
+					.alert("Opening debit amount and credit amount cannot be there for the account code   "
 							+ accountCode);
 			return false;
 		}
@@ -825,6 +858,8 @@ function validSearch() {
 	if (finYear == '' || fund == '' || type == '' || functn == ''
 			|| department == '')
 		flag = false;
+	if (!flag)
+		document.getElementById('errors').innerHTML = 'Please select all mandatory fields';
 
 	return flag;
 }

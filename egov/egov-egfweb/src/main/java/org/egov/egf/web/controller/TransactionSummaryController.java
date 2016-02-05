@@ -76,7 +76,7 @@ public class TransactionSummaryController {
         model.addAttribute("cChartOfAccountss",
                 chartOfAccountsDAO.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("cFunctions", functionDAO.findAll());
+        model.addAttribute("cFunctions", functionDAO.getAllActiveFunctions());
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -231,19 +231,20 @@ public class TransactionSummaryController {
     }
 
     @RequestMapping(value = "/ajax/searchTransactionSummariesForNonSubledger", method = RequestMethod.GET)
-    public @ResponseBody List<Map<String, BigDecimal>> searchTransactionSummariesForNonSubledger(
+    public @ResponseBody List<Map<String, String>> searchTransactionSummariesForNonSubledger(
             @RequestParam("finYear") Long finYear, @RequestParam("fund") Long fund,
             @RequestParam("functn") Long functn, @RequestParam("department") Long department,
             @RequestParam("glcodeId") Long glcodeId) {
-        List<Map<String, BigDecimal>> result = new ArrayList<Map<String, BigDecimal>>();
-        Map<String, BigDecimal> amountsMap = new HashMap<String, BigDecimal>();
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        Map<String, String> amountsMap = new HashMap<String, String>();
 
         List<TransactionSummary> transactionSummaries = transactionSummaryService
                 .searchTransactionsForNonSubledger(finYear, fund, functn, department, glcodeId);
         for (TransactionSummary ts : transactionSummaries) {
-            amountsMap.put("tsid", BigDecimal.valueOf(ts.getId()));
-            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance());
-            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance());
+            amountsMap.put("tsid", ts.getId().toString());
+            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance().toString());
+            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance().toString());
+            amountsMap.put("narration", ts.getNarration());
             result.add(amountsMap);
 
         }
@@ -252,21 +253,22 @@ public class TransactionSummaryController {
     }
 
     @RequestMapping(value = "/ajax/searchTransactionSummariesForSubledger", method = RequestMethod.GET)
-    public @ResponseBody List<Map<String, BigDecimal>> searchTransactionSummariesForSubledger(
+    public @ResponseBody List<Map<String, String>> searchTransactionSummariesForSubledger(
             @RequestParam("finYear") Long finYear, @RequestParam("fund") Long fund,
             @RequestParam("functn") Long functn, @RequestParam("department") Long department,
             @RequestParam("glcodeId") Long glcodeId, @RequestParam("accountDetailTypeId") Integer accountDetailTypeId,
             @RequestParam("accountDetailKeyId") Integer accountDetailKeyId) {
-        List<Map<String, BigDecimal>> result = new ArrayList<Map<String, BigDecimal>>();
-        Map<String, BigDecimal> amountsMap = new HashMap<String, BigDecimal>();
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        Map<String, String> amountsMap = new HashMap<String, String>();
 
         List<TransactionSummary> transactionSummaries = transactionSummaryService
                 .searchTransactionsForSubledger(finYear, fund, functn, department, glcodeId, accountDetailTypeId,
                         accountDetailKeyId);
         for (TransactionSummary ts : transactionSummaries) {
-            amountsMap.put("tsid", BigDecimal.valueOf(ts.getId()));
-            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance());
-            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance());
+            amountsMap.put("tsid", ts.getId().toString());
+            amountsMap.put("openingdebitbalance", ts.getOpeningdebitbalance().toString());
+            amountsMap.put("openingcreditbalance", ts.getOpeningcreditbalance().toString());
+            amountsMap.put("narration", ts.getNarration());
             result.add(amountsMap);
 
         }

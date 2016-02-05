@@ -35,7 +35,7 @@
 						<div id="errors"></div>
 					</span>
 				</center>
-				<div class="panel-body">
+				<div class="panel-body" id="mainTSForm">
 					<div class="form-group">
 						<form:input type="hidden" path="id" />
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -126,5 +126,14 @@
 						<div class="col-sm-3 add-margin">
 							<select name="minor" id="minor" class="form-control">
 							</select>
+						</div>
+					</div>
+					<div class="form-group" id="divProceed">
+						<div class="text-center">
+							<button type='button' class='btn btn-primary' id="buttonProceed">
+								<spring:message code='lbl.proceed' />
+							</button>
+							<a href='javascript:void(0)' class='btn btn-default'
+								onclick='self.close()'><spring:message code='lbl.close' /></a>
 						</div>
 					</div>

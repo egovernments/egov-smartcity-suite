@@ -157,20 +157,20 @@
 	</div>
 	</div>
 	</div>
-	<table class="table table-bordered" id="result">
+	<table class="table table-bordered display-hide" id="result">
 		<thead>
 			<tr>
-				<th><spring:message code="hdr.accountcode" /><span
+				<th width="10%"><spring:message code="hdr.accountcode" /><span
 					class="mandatory1">*</span></th>
 				<th><spring:message code="hdr.accounthead" /></th>
-				<th><spring:message code="hdr.subledgertype" /></th>
-				<th><spring:message code="hdr.entity" /></th>
-				<th><spring:message code="lbl.openingdebitbalance" /><span
+				<th width="15%"><spring:message code="hdr.subledgertype" /></th>
+				<th width="10%"><spring:message code="hdr.entity" /></th>
+				<th width="15%"><spring:message code="lbl.openingdebitbalance" /><span
 					class="mandatory1">*</span></th>
-				<th><spring:message code="lbl.openingcreditbalance" /><span
+				<th width="15%"><spring:message code="lbl.openingcreditbalance" /><span
 					class="mandatory1">*</span></th>
-				<th><spring:message code="lbl.narration" /></th>
-				<th><button type="button" id="add-row"
+				<th width="15%"><spring:message code="lbl.narration" /></th>
+				<th width="2%"><button type="button" id="add-row"
 					class="btn btn-xs btn-secondary add-row">
 					<span class="glyphicon glyphicon-plus"></span>
 				</button>
@@ -195,7 +195,7 @@
 						id="transactionSummaryList[0].accountdetailtype.id"
 						onchange="changeaccountdetailkey(this)"
 						class="form-control yui-dt-dropdown ">
-						<option>---Select---</option>
+						<option value="">---Select---</option>
 					</form:select></td>
 				<td><form:input
 						path="transactionSummaryList[0].accountdetailkey"
@@ -208,16 +208,16 @@
 					onblur="splitEntitiesDetailCode(this)" /></td>
 				<td><form:input
 						path="transactionSummaryList[0].openingdebitbalance" type="text"
-						readonly="false"
+						readonly="false" style="text-align:right;"
 						class="form-control mandatoryField patternvalidation mandatory "
-						data-pattern="number"
+						data-pattern="decimalvalue"
 						id="transactionSummaryList[0].openingdebitbalance"
 						onchange="makeMandatory(this)" /></td>
 				<td><form:input
 						path="transactionSummaryList[0].openingcreditbalance" type="text"
-						readonly="false"
+						readonly="false" style="text-align:right;"
 						class="form-control mandatoryField patternvalidation mandatory"
-						data-pattern="number"
+						data-pattern="decimalvalue"
 						id="transactionSummaryList[0].openingcreditbalance"
 						onchange="makeMandatory(this)" /></td>
 				<td><form:textarea path="transactionSummaryList[0].narration"
@@ -225,7 +225,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<div class="form-group">
+	<div class="form-group display-hide" id="buttonCreate">
 		<div class="text-center">
 			<button type='button' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.create' />
