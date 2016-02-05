@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-02-03T18:59:44 -->
+<!-- 2016-02-05T17:46:37 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalVoucherReport" pageWidth="599" pageHeight="842" orientation="Landscape" columnWidth="559" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6d8f2d9-355e-4afe-bfb2-72df572b464f">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -49,9 +49,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="184" splitType="Stretch">
+		<band height="141" splitType="Stretch">
 			<frame>
-				<reportElement key="frame" x="0" y="0" width="559" height="184" uuid="7bac26e2-f951-4b14-81fe-8f25ae4ffa92"/>
+				<reportElement key="frame" x="0" y="0" width="559" height="140" uuid="7bac26e2-f951-4b14-81fe-8f25ae4ffa92"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -74,49 +74,52 @@
 					<textFieldExpression><![CDATA[$P{voucherName}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement key="staticText" x="0" y="116" width="74" height="20" uuid="1c109041-a10e-4668-b304-60dc8cf36345"/>
+					<reportElement key="staticText" x="0" y="91" width="74" height="20" uuid="1c109041-a10e-4668-b304-60dc8cf36345"/>
 					<text><![CDATA[Department:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" x="0" y="156" width="41" height="20" uuid="b47ff603-7743-44c5-9b20-f77e6a28b762"/>
+					<reportElement key="staticText" x="0" y="116" width="41" height="20" uuid="b47ff603-7743-44c5-9b20-f77e6a28b762"/>
 					<text><![CDATA[Fund:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement key="textField" x="74" y="116" width="93" height="37" uuid="c8ffd169-ec4c-473b-8f9b-1a536c1f716e"/>
+					<reportElement key="textField" x="74" y="91" width="156" height="20" uuid="c8ffd169-ec4c-473b-8f9b-1a536c1f716e"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{departmentName}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField" x="41" y="156" width="126" height="26" uuid="af361d78-e828-4aae-b281-d9da941f37e9"/>
+					<reportElement key="textField" x="41" y="116" width="126" height="20" uuid="af361d78-e828-4aae-b281-d9da941f37e9"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{fundName}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="256" y="116" width="92" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
+					<reportElement x="256" y="91" width="92" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
 					<text><![CDATA[Voucher Number:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="256" y="161" width="50" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
+					<reportElement x="256" y="116" width="50" height="20" uuid="54d1591c-4966-4404-9798-3b7e89e0492c"/>
 					<text><![CDATA[Date:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="350" y="116" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
+					<reportElement x="350" y="91" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{voucherNumber}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="320" y="161" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
+					<reportElement x="320" y="116" width="177" height="20" uuid="15d8a9fa-9b2f-430e-bac4-012594419b09"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{voucherDate}]]></textFieldExpression>
 				</textField>
+				<line>
+					<reportElement x="0" y="80" width="559" height="1" uuid="dc4b99e9-40a1-4af6-a523-b0d71aa1c0ed"/>
+				</line>
 			</frame>
 		</band>
 	</title>
@@ -307,7 +310,7 @@
 				</box>
 				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement key="textField" x="5" y="22" width="69" height="20" uuid="63aa9e9d-206e-4a83-a4e9-1811437369e2"/>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{debitAmount}]]></textFieldExpression>
@@ -362,7 +365,7 @@
 				</box>
 				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement key="textField" x="5" y="22" width="63" height="20" uuid="08fa4116-d4fb-407d-ba1f-7e1cdf710006"/>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{creditAmount}]]></textFieldExpression>
