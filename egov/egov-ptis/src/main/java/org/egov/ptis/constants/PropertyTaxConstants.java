@@ -557,6 +557,7 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_NEW = "NEW";
     public static final String WFLOW_ACTION_NAME_DEMOLITION = "Demolition";
     public static final String WFLOW_ACTION_NAME_EXEMPTION = "Exemption";
+    public static final String WFLOW_ACTION_NAME_GRP = "GRP";
 
     // WORKFLOW property states
     public static final String WF_STATE_NEW = "New";
@@ -683,6 +684,7 @@ public interface PropertyTaxConstants {
     public static final String WFOWNER = "WFOWNER";
     public static final String DEMOLITION = "DEMOLITION";
     public static final String EXEMPTION = "EXEMPTION";
+    public static final String GENERAL_REVISION_PETITION = "GENERAL REVISION PETITION";
 
     // GIS
     public static final String GISCITY = "nmc";
@@ -1193,6 +1195,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_DEMOLITION = "Demolition";
     public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy_Remission";
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
+    public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1222,6 +1225,7 @@ public interface PropertyTaxConstants {
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
     public static final String AMALGAMATION_OF_ASSESSMENT = "Amalgamation of Assessment";
+    public static final String GRP_OF_ASSESSMENT = "General Revision Petition of Assessment";
 
     public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAl";
     public static final String CATEGORY_NON_RESIDENTIAL = "NON_RESIDENTIAL";
@@ -1258,6 +1262,7 @@ public interface PropertyTaxConstants {
     public static final String NATURE_DEMOLITION = "Demolition";
     public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
+    public static final String NATURE_GENERAL_REVISION_PETITION = "General Revision Petition";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";

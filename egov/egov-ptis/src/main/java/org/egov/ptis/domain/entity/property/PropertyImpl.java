@@ -45,13 +45,15 @@
 package org.egov.ptis.domain.entity.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE; 
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -622,7 +624,7 @@ public class PropertyImpl extends StateAware implements Property {
         if (getState() != null
                 && getState().getValue() != null
                 && (getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER) || getState().getValue().startsWith(
-                        WFLOW_ACTION_NAME_BIFURCATE)))
+                        WFLOW_ACTION_NAME_BIFURCATE) || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
             url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_STEP_CREATE))

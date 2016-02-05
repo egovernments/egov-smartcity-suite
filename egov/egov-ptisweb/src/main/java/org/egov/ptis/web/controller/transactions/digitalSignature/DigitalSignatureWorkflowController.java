@@ -44,9 +44,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURC
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_PROPERTY_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
@@ -58,14 +60,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import org.apache.commons.io.FileUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -110,6 +110,8 @@ public class DigitalSignatureWorkflowController {
 
     private static final String CREATE = "Create";
 
+    private static final String GRP = "GRP";
+
     private static final String DIGITAL_SIGNATURE_SUCCESS = "digitalSignature-success";
 
     @PersistenceContext
@@ -141,11 +143,11 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private PropertyStatusDAO propertyStatusDAO;
-    
+
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
+
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
@@ -197,14 +199,16 @@ public class DigitalSignatureWorkflowController {
         return applicationType.equals(NEW_ASSESSMENT) ? APPLICATION_TYPE_NEW_ASSESSENT : applicationType
                 .equals(ADDTIONAL_RULE_ALTER_ASSESSMENT) ? APPLICATION_TYPE_ALTER_ASSESSENT : applicationType
                 .equals(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT : applicationType
-                .equals(DEMOLITION) ? PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION : null;
+                .equals(DEMOLITION) ? PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION : applicationType
+                .equals(GENERAL_REVISION_PETITION) ? APPLICATION_TYPE_GRP : null;
     }
 
     private String transitionWorkFlow(final PropertyImpl property) {
         final String applicationType = property.getCurrentState().getValue().startsWith(CREATE) ? NEW_ASSESSMENT
                 : property.getCurrentState().getValue().startsWith(ALTER) ? ADDTIONAL_RULE_ALTER_ASSESSMENT : property
                         .getCurrentState().getValue().startsWith(BIFURCATE) ? ADDTIONAL_RULE_BIFURCATE_ASSESSMENT
-                        : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : null;
+                        : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : property
+                                .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : null;
         if (propertyService.isMeesevaUser(property.getCreatedBy())) {
             property.transition().end();
             property.getBasicProperty().setUnderWorkflow(false);
@@ -262,10 +266,11 @@ public class DigitalSignatureWorkflowController {
         if (propertyService.isEmployee(state.getCreatedBy()))
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
         else if (!state.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getAssignmentsForPosition(state.getStateHistory().get(0)
-                    .getOwnerPosition().getId(),new Date()).get(0);
+            wfInitiator = assignmentService.getAssignmentsForPosition(
+                    state.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
         else
-            wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),new Date()).get(0); 
+            wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),
+                    new Date()).get(0);
         return wfInitiator;
     }
 
@@ -278,10 +283,10 @@ public class DigitalSignatureWorkflowController {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, PropertyTaxConstants.FILESTORE_MODULE_NAME);
         final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-        response.setContentType("application/pdf");  
+        response.setContentType("application/pdf");
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
-        try{
+        try {
             FileInputStream inStream = new FileInputStream(file);
             OutputStream outStream = response.getOutputStream();
             int bytesRead = -1;
@@ -290,10 +295,10 @@ public class DigitalSignatureWorkflowController {
                 outStream.write(buffer, 0, bytesRead);
             }
             inStream.close();
-            outStream.close(); 
-        } catch(FileNotFoundException fileNotFoundExcep) {
+            outStream.close();
+        } catch (FileNotFoundException fileNotFoundExcep) {
             throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
-        } catch(final IOException ioExcep) {
+        } catch (final IOException ioExcep) {
             throw new ApplicationRuntimeException("Exception while downloading notice : " + ioExcep);
         }
     }
