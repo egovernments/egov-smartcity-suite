@@ -75,6 +75,7 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
+import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -360,5 +361,78 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final List subCategory = persistenceService
                 .findAllBy("select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
         return subCategory;
+    }
+    
+    /**
+     * @param paramValue
+     * @param paramType
+     * @return
+     */
+    public List<License> getTradeLicenseForGivenParam(String paramValue, String paramType) {
+        List<License> licenseList = new ArrayList<License>();
+        if (paramType.equals(Constants.SEARCH_BY_APPNO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where upper(applicationNumber) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_LICENSENO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(licenseNumber) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(oldLicenseNumber) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(nameOfEstablishment) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(licensee.applicantName) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  upper(propertyNo) like ?", "%" + paramValue.toUpperCase() + "%");
+        } else if (paramType.equals(Constants.SEARCH_BY_MOBILENO)) {
+            licenseList = persistenceService
+                    .findAllBy("from License where  licensee.mobilePhoneNumber like ?", "%" + paramValue + "%");
+        }
+        return licenseList;
+    }
+
+    /**
+     * @param applicationNumber
+     * @param licenseNumber
+     * @param oldLicenseNumber
+     * @param categoryId
+     * @param subCategoryId
+     * @param tradeTitle
+     * @param tradeOwnerName
+     * @param propertyAssessmentNo
+     * @param mobileNo
+     * @return
+     */
+    public Query prepareQueryforSearchTrade(final String applicationNumber, final String licenseNumber,
+            final String oldLicenseNumber, final Long categoryId,
+            final Long subCategoryId, final String tradeTitle, final String tradeOwnerName, final String propertyAssessmentNo,
+            final String mobileNo) {
+        final StringBuffer query = new StringBuffer(300);
+        query.append("select tl from License tl where tl.applicationNumber is not null ");
+        if (applicationNumber != null && !applicationNumber.isEmpty())
+            query.append(" and upper(tl.applicationNumber) = '" + applicationNumber.toUpperCase() + "'");
+        if (licenseNumber != null && !licenseNumber.isEmpty())
+            query.append(" and upper(tl.licenseNumber) = '" + licenseNumber.toUpperCase() + "'");
+        if (oldLicenseNumber != null && !oldLicenseNumber.isEmpty())
+            query.append(" and upper(tl.oldLicenseNumber) = '" + oldLicenseNumber.toUpperCase() + "'");
+        if (categoryId != null && categoryId != -1)
+            query.append(" and tl.category.id = " + categoryId);
+        if (subCategoryId != null && subCategoryId != -1)
+            query.append(" and tl.tradeName.id = " + subCategoryId);
+        if (tradeTitle != null && !tradeTitle.isEmpty())
+            query.append(" and upper(tl.nameOfEstablishment) = '" + tradeTitle.toUpperCase() + "'");
+        if (tradeOwnerName != null && !tradeOwnerName.isEmpty())
+            query.append(" and upper(tl.licensee.applicantName) = '" + tradeOwnerName.toUpperCase() + "'");
+        if (propertyAssessmentNo != null && !propertyAssessmentNo.isEmpty())
+            query.append(" and upper(tl.propertyNo) = '" + propertyAssessmentNo.toUpperCase() + "'");
+        if (mobileNo != null && !mobileNo.isEmpty())
+            query.append(" and tl.licensee.mobilePhoneNumber = " + mobileNo);
+        query.append(" order by tl.id");
+        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        return qry;
     }
 }

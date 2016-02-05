@@ -61,9 +61,11 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
@@ -74,7 +76,8 @@ import org.springframework.http.MediaType;
     @Result(name = "AJAX_RESULT", type = "redirectAction", location = "returnStream", params = { "contentType", "text/plain" }),
     @Result(name = "ward", location = "commonAjax-ward.jsp"),
     @Result(name = "success", type = "redirectAction", location = "CommonTradeLicenseAjaxAction.action"),
-    @Result(name = CommonTradeLicenseAjaxAction.SUBCATEGORY, location = "commonTradeLicenseAjax-subCategory.jsp")
+    @Result(name = CommonTradeLicenseAjaxAction.SUBCATEGORY, location = "commonTradeLicenseAjax-subCategory.jsp"),
+    @Result(name = "populateData", location = "commonTradeLicenseAjax-autoComplete.jsp")
 })
 @ParentPackage("egov")
 public class CommonTradeLicenseAjaxAction extends BaseFormAction implements ServletResponseAware {
@@ -87,12 +90,17 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
     private List<LicenseSubCategory> subCategoryList = new LinkedList<LicenseSubCategory>();
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
     private LicenseSubCategoryService licenseSubCategoryService;
     public static final String SUBCATEGORY = "subCategory";
     private Long locality;
     private HttpServletResponse response;
     private Long subCategoryId; 
     private Long feeTypeId;
+    private String searchParamValue;
+    private String searchParamType;
+    private List<License> licenseList = new ArrayList<License>();
 
     /**
      * Populate wards.
@@ -170,13 +178,24 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
                 }
             }
         }
-
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("uom", uomList.get(0).getName());
-
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(jsonObject.toString(), response.getWriter());
     }
+    
+    @Action(value = "/domain/commonTradeLicenseAjax-populateData")
+    public String populateData() {
+        try {
+            if (searchParamValue != null)
+                licenseList = tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
+        } catch (final Exception e) {
+            LOGGER.error("populateData() - Error while loading Data ." + e.getMessage());
+            throw new ApplicationRuntimeException("Unable to load Data", e);
+        }
+        return "populateData";
+    }
+
 
     @Override
     public Object getModel() {
@@ -269,6 +288,30 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
 
     public void setFeeTypeId(Long feeTypeId) {
         this.feeTypeId = feeTypeId;
+    }
+
+    public List<License> getLicenseList() {
+        return licenseList;
+    }
+
+    public void setLicenseList(List<License> licenseList) {
+        this.licenseList = licenseList;
+    }
+
+    public String getSearchParamType() {
+        return searchParamType;
+    }
+
+    public void setSearchParamType(String searchParamType) {
+        this.searchParamType = searchParamType;
+    }
+
+    public String getSearchParamValue() {
+        return searchParamValue;
+    }
+
+    public void setSearchParamValue(String searchParamValue) {
+        this.searchParamValue = searchParamValue;
     }
 
 }
