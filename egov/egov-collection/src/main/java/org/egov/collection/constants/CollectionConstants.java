@@ -56,7 +56,6 @@ public final class CollectionConstants {
     public static final String SERVICE_TYPE_BILLING = "B";
     public static final String SERVICE_TYPE_COLLECTION = "C";
     public static final String SERVICE_TYPE_PAYMENT = "P";
-    public static final String CHALLAN_SERVICE_TYPE = "H";
 
     // Dropdown data
     public static final String DROPDOWN_DATA_SERVICE_LIST = "serviceList";

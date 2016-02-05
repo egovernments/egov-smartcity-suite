@@ -46,7 +46,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
@@ -54,17 +57,17 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.DateUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
+@Results({ @Result(name = SearchChallanAction.SUCCESS, location = "searchChallan.jsp") })
 public class SearchChallanAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
-    private Integer serviceId = -1;
+    private Long serviceId = (long) -1;
+    private Long serviceCategoryId = (long) -1;
     private Date fromDate;
     private Date toDate;
-    private Integer status = -1;
-    private Integer departmentId = -1;
+    private Integer status =-1;
+    private Long departmentId = (long) -1;
     private String challanNumber;
     private List<ReceiptHeader> results = new ArrayList<ReceiptHeader>(0);
     private String target = "new";
@@ -79,11 +82,11 @@ public class SearchChallanAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         setupDropdownDataExcluding();
-        addDropdownData("departmentList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
-        addDropdownData(
-                "serviceList",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CHALLAN_SERVICES,
-                        CollectionConstants.CHALLAN_SERVICE_TYPE));
+        addDropdownData("departmentList",
+                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
+        addDropdownData("serviceCategoryList", getPersistenceService().findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceList",getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CHALLAN_SERVICES,
+                        CollectionConstants.SERVICE_TYPE_COLLECTION));
     }
 
     public SearchChallanAction() {
@@ -92,7 +95,8 @@ public class SearchChallanAction extends BaseFormAction {
 
     public String reset() {
         results = null;
-        serviceId = -1;
+        serviceId = (long) -1;
+        serviceCategoryId = (long) -1;
         challanNumber = "";
         fromDate = null;
         toDate = null;
@@ -101,11 +105,10 @@ public class SearchChallanAction extends BaseFormAction {
     }
 
     public List getChallanStatuses() {
-        return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? order by description",
-                Challan.class.getSimpleName());
+        return persistenceService.findAllBy("select distinct s from ReceiptHeader receipt inner join receipt.challan.status s");
     }
 
+    @Action(value = "/receipts/searchChallan-search")
     public String search() {
         final StringBuilder queryString = new StringBuilder(
                 " select distinct receipt from org.egov.collection.entity.ReceiptHeader receipt");
@@ -134,8 +137,12 @@ public class SearchChallanAction extends BaseFormAction {
             params.add(DateUtils.add(toDate, Calendar.DATE, 1));
         }
         if (getServiceId() != -1) {
-            criteria.append(getJoinOperand(criteria)).append(" receipt.challan.service.id = ? ");
-            params.add(Long.valueOf(getServiceId()));
+            criteria.append(getJoinOperand(criteria)).append(" receipt.service.id = ? ");
+            params.add(getServiceId());
+        }
+        if (getServiceCategoryId() != -1) {
+            criteria.append(getJoinOperand(criteria)).append(" receipt.service.serviceCategory.id = ? ");
+            params.add(getServiceCategoryId());
         }
         criteria.append(getJoinOperand(criteria)).append(" receipt.receipttype = ? ");
         params.add(CollectionConstants.RECEIPT_TYPE_CHALLAN);
@@ -146,8 +153,8 @@ public class SearchChallanAction extends BaseFormAction {
         results = getPersistenceService().findAllBy(queryString.toString(), params.toArray());
         if (results.size() > 500) {
             results.clear();
-            throw new ValidationException(Arrays.asList(new ValidationError(
-                    "searchchallan.changecriteria", "More than 500 results found.Please add more search criteria")));
+            throw new ValidationException(Arrays.asList(new ValidationError("searchchallan.changecriteria",
+                    "More than 500 results found.Please add more search criteria")));
 
         }
         target = "searchresult";
@@ -158,11 +165,11 @@ public class SearchChallanAction extends BaseFormAction {
         return StringUtils.isBlank(criteria.toString()) ? "" : " and ";
     }
 
-    public Integer getServiceId() {
+    public Long getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(final Integer serviceId) {
+    public void setServiceId(final Long serviceId) {
         this.serviceId = serviceId;
     }
 
@@ -206,15 +213,23 @@ public class SearchChallanAction extends BaseFormAction {
         return results;
     }
 
-    public Integer getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(final Integer departmentId) {
+    public void setDepartmentId(final Long departmentId) {
         this.departmentId = departmentId;
     }
 
     public String getSourcePage() {
         return sourcePage;
+    }
+
+    public Long getServiceCategoryId() {
+        return serviceCategoryId;
+    }
+
+    public void setServiceCategoryId(final Long serviceCategoryId) {
+        this.serviceCategoryId = serviceCategoryId;
     }
 }

@@ -1020,9 +1020,6 @@ public class ChallanAction extends BaseFormAction {
         if (headerFields.contains(CollectionConstants.FIELD))
             addDropdownData("fieldList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FIELD));
         setupDropdownDataExcluding("challan.service");
-        addDropdownData("serviceList", persistenceService.findAllByNamedQuery(
-                CollectionConstants.QUERY_CHALLAN_SERVICES, CollectionConstants.CHALLAN_SERVICE_TYPE));
-
         addDropdownData("financialYearList",
                 persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_ACTIVE_FINANCIAL_YEAR));
         if (getBillDetailslist() == null) {

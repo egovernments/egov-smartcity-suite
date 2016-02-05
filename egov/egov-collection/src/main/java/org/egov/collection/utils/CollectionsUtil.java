@@ -262,7 +262,7 @@ public class CollectionsUtil {
      */
     public List getChallanServiceList() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
-                CollectionConstants.CHALLAN_SERVICE_TYPE);
+                CollectionConstants.SERVICE_TYPE_COLLECTION);
     }
 
     /**
