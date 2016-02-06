@@ -714,6 +714,15 @@ $('body').on(
 			$(entityObj).removeClass("mandatory");
 			$(detailTypeObj).removeClass("mandatory");
 			$("#result tr:last #remove-row").show();
+			var major = $('#major').val();
+			var minor = $('#minor').val();
+			if (major != "" && major != null)
+				document.getElementById('transactionSummaryList[' + rowCount
+						+ '].glcodeDetail').value = major;
+			if (minor != "" && minor != null)
+				document.getElementById('transactionSummaryList[' + rowCount
+						+ '].glcodeDetail').value = minor;
+
 		});
 
 $('body').on('click', '#remove-row', function() {
@@ -750,13 +759,16 @@ $('#buttonSubmit')
 					if (validateInput()) {
 						var myform = $('#transactionSummaryform');
 
-						 // Find disabled inputs, and remove the "disabled" attribute
-						var disabled = myform.find(':input:disabled').removeAttr('disabled');
+						// Find disabled inputs, and remove the "disabled"
+						// attribute
+						var disabled = myform.find(':input:disabled')
+								.removeAttr('disabled');
 						// serialize the form
 						var postData = $("#transactionSummaryform")
-						.serializeArray();
-						 // re-disabled the set of inputs that you previously enabled
-						disabled.attr('disabled','disabled');
+								.serializeArray();
+						// re-disabled the set of inputs that you previously
+						// enabled
+						disabled.attr('disabled', 'disabled');
 						console.log(postData);
 						var formURL = $("#transactionSummaryform").attr(
 								"action");
@@ -790,23 +802,38 @@ $('#buttonSubmit')
 						e.preventDefault();
 					}
 				});
-$('#buttonProceed').click(function(e) {
-	if (validSearch()) {
-		document.getElementById('errors').innerHTML = "";
-		$('#divProceed').addClass("display-hide");
-		$('#result').removeClass("display-hide");
-		$('#buttonCreate').removeClass("display-hide");
-		$("#type").attr('disabled', 'disabled');
-		var financialyear = document.getElementById('financialyear.id');
-		var departmentid = document.getElementById('departmentid.id');
-		var fund = document.getElementById('fund.id');
-		var functionid = document.getElementById('functionid.id');
-		$(financialyear).attr('disabled', 'disabled');
-		$(departmentid).attr('disabled', 'disabled');
-		$(fund).attr('disabled', 'disabled');
-		$(functionid).attr('disabled', 'disabled');
-	}
-});
+$('#buttonProceed')
+		.click(
+				function(e) {
+					if (validSearch()) {
+						document.getElementById('errors').innerHTML = "";
+						$('#divProceed').addClass("display-hide");
+						$('#result').removeClass("display-hide");
+						$('#buttonCreate').removeClass("display-hide");
+						$("#type").attr('disabled', 'disabled');
+						var financialyear = document
+								.getElementById('financialyear.id');
+						var departmentid = document
+								.getElementById('departmentid.id');
+						var fund = document.getElementById('fund.id');
+						var functionid = document
+								.getElementById('functionid.id');
+						$(financialyear).attr('disabled', 'disabled');
+						$(departmentid).attr('disabled', 'disabled');
+						$(fund).attr('disabled', 'disabled');
+						$(functionid).attr('disabled', 'disabled');
+						var major = $('#major').val();
+						console.log("major --- >", major);
+						if (major != null && major != "")
+							document
+									.getElementById('transactionSummaryList[0].glcodeDetail').value = major;
+						var minor = $('#minor').val();
+						console.log("minor --- >", minor);
+						if (minor != null && minor != "")
+							document
+									.getElementById('transactionSummaryList[0].glcodeDetail').value = minor;
+					}
+				});
 function validateInput() {
 	console.log("length:" + $('#result tr').length);
 	var flag = true;
@@ -897,34 +924,81 @@ $('#type').change(
 			$('#major').trigger('change');
 		});
 
-$('#major').change(
+$('#major')
+		.change(
 
-		function() {
-			// loadDropDownCodes();
-			$.ajax({
-				method : "GET",
-				url : "ajax/getMinorHeads",
-				data : {
-					majorCode : $('#major').val(),
-					classification : 2
-				},
-				async : true
-			}).done(
-					function(msg) {
-						$('#minor').empty();
-						var output = '<option value="">Select</option>';
-						$.each(msg, function(index, value) {
-							output += '<option value=' + value.glcode + '>'
-									+ value.glcode + ' - ' + value.name
-									+ '</option>';
-						});
-						$('#minor').append(output);
-					});
-		});
-$('#accountdetailkeyValue').change(
-		function() {
-		    console.log("accountdetailkeyValue");
-		});
+				function() {
+					// loadDropDownCodes();
+					$
+							.ajax({
+								method : "GET",
+								url : "ajax/getMinorHeads",
+								data : {
+									majorCode : $('#major').val(),
+									classification : 2
+								},
+								async : true
+							})
+							.done(
+									function(msg) {
+										$('#minor').empty();
+										var output = '<option value="">Select</option>';
+										$.each(msg, function(index, value) {
+											output += '<option value='
+													+ value.glcode + '>'
+													+ value.glcode + ' - '
+													+ value.name + '</option>';
+										});
+										$('#minor').append(output);
+									});
+					var major = $('#major').val();
+					var accountCode = document
+							.getElementById('transactionSummaryList[0].glcodeDetail').value;
+					if ((accountCode == ""
+							|| accountCode.length == major.length || accountCode.length == (major.length + 2))
+							&& major != "" && major != null)
+						document
+								.getElementById('transactionSummaryList[0].glcodeDetail').value = major;
+					if ($("#divProceed").hasClass("display-hide")) {
+						var resultLength = $('#result tr').length - 2;
+						console.log("resultLength  " + resultLength);
+						var latestAccountCode = document
+								.getElementById('transactionSummaryList['
+										+ resultLength + '].glcodeDetail').value;
+						if (latestAccountCode == ""
+								|| latestAccountCode.length == major.length
+								|| latestAccountCode.length == (major.length + 2))
+							document.getElementById('transactionSummaryList['
+									+ resultLength + '].glcodeDetail').value = major;
+					}
+
+				});
+$('#minor')
+		.change(
+
+				function() {
+					var minor = $('#minor').val();
+					var major = $('#major').val();
+					var accountCode = document
+							.getElementById('transactionSummaryList[0].glcodeDetail').value;
+					if ((accountCode == major || accountCode.length == minor.length)
+							&& minor != "" && minor != null)
+						document
+								.getElementById('transactionSummaryList[0].glcodeDetail').value = minor;
+					if ($("#divProceed").hasClass("display-hide")) {
+						var resultLength = $('#result tr').length - 2;
+						console.log("resultLength  " + resultLength);
+						var latestAccountCode = document
+								.getElementById('transactionSummaryList['
+										+ resultLength + '].glcodeDetail').value;
+						if (latestAccountCode == ""
+								|| latestAccountCode == major
+								|| latestAccountCode.length == minor.length)
+							document.getElementById('transactionSummaryList['
+									+ resultLength + '].glcodeDetail').value = minor;
+					}
+
+				});
 function makeMandatory(obj) {
 	var id = $(obj).attr('id');
 	var rowCount = getRowIndex(obj);
@@ -943,15 +1017,19 @@ function makeMandatory(obj) {
 		}
 	}
 }
-var acctTypeCurrRow ;
+var acctTypeCurrRow;
 function openSearchWindowFromOB(obj) {
 	var index = getRowIndex(obj);
 	acctTypeCurrRow = index;
-	var element = document.getElementById('transactionSummaryList'+'['+index+']'+'.accountdetailtype.id');
+	var element = document.getElementById('transactionSummaryList' + '['
+			+ index + ']' + '.accountdetailtype.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	if( detailtypeid != null && detailtypeid != 0) {
-		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailtypeid;
-		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
+	if (detailtypeid != null && detailtypeid != 0) {
+		var url = "../voucher/common-searchEntites.action?accountDetailType="
+				+ detailtypeid;
+		window
+				.open(url, 'EntitySearch',
+						'resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
 		bootbox.alert("Select the subledger type.");
 	}
@@ -959,18 +1037,20 @@ function openSearchWindowFromOB(obj) {
 
 function popupCallback(arg0, srchType) {
 	var entity_array = arg0.split("^#");
-	if(srchType == 'EntitySearch' ) {
-		if(entity_array.length==3)
-		{
-			document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkey').value=entity_array[2];
-			var accountdetailkeyValue = document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkeyValue');
+	if (srchType == 'EntitySearch') {
+		if (entity_array.length == 3) {
+			document.getElementById('transactionSummaryList' + '['
+					+ acctTypeCurrRow + ']' + '.accountdetailkey').value = entity_array[2];
+			var accountdetailkeyValue = document
+					.getElementById('transactionSummaryList' + '['
+							+ acctTypeCurrRow + ']' + '.accountdetailkeyValue');
 			$(accountdetailkeyValue).val(entity_array[0]).blur();
-		}
-		else
-		{
+		} else {
 			bootbox.alert("Invalid entity selected.");
-			document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkeyValue').value="";
-			document.getElementById('transactionSummaryList'+'['+acctTypeCurrRow+']'+'.accountdetailkey').value="";
+			document.getElementById('transactionSummaryList' + '['
+					+ acctTypeCurrRow + ']' + '.accountdetailkeyValue').value = "";
+			document.getElementById('transactionSummaryList' + '['
+					+ acctTypeCurrRow + ']' + '.accountdetailkey').value = "";
 		}
 	}
 }
