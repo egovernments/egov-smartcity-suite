@@ -264,7 +264,6 @@ function fillNeibrAfterSplitGlcode(obj) {
 						glcodeId : glcodeid,
 					},
 					success : function(data, textStatus, jqXHR) {
-						console.log(data);
 						$
 								.each(
 										data,
@@ -397,8 +396,6 @@ var postType = {
 						.getElementById('transactionSummaryList[' + $currRow
 								+ '].glcodeDetail').value;
 				var resultLength = $('#result tr').length - 1;
-				console.log("glcodeid " + glcodeid);
-				console.log("accountCode " + accountCode);
 				var index;
 				for (var i = 1; i <= resultLength; i++) {
 					index = i - 1;
@@ -408,8 +405,6 @@ var postType = {
 					var tempaccountCode = document
 							.getElementById('transactionSummaryList[' + index
 									+ '].glcodeDetail').value;
-					console.log("tempglcodeid " + tempglcodeid);
-					console.log("tempaccountCode " + tempaccountCode);
 					if (glcodeid == tempglcodeid
 							&& accountCode == tempaccountCode
 							&& $currRow != index) {
@@ -556,7 +551,6 @@ function splitEntitiesDetailCode(obj) {
 						accountDetailKeyId : accountdetailkey
 					},
 					success : function(data, textStatus, jqXHR) {
-						console.log(data);
 						$
 								.each(
 										data,
@@ -642,7 +636,6 @@ function onFocusDetailCode(obj) {
 	$currRow = getRowIndex(obj);
 	var detailtypeidObj = document.getElementById('transactionSummaryList['
 			+ $currRow + '].accountdetailtype.id');
-	console.log("subledger type id " + detailtypeidObj.value);
 	if (detailtypeidObj.value == null || detailtypeidObj.value == "") {
 		bootbox.alert("Please select subledger type")
 		return false;
@@ -681,48 +674,50 @@ $('body').on(
 		'click',
 		'#add-row',
 		function() {
-			var rowCount = $('#result tr').length - 1;
-			console.log(rowCount);
-			var content = $('#resultrow0').html();
-			resultContent = content.replace(/0/g, rowCount);
-			$(resultContent).find("input").val("");
-			$('#result > tbody:last').append("<tr>" + resultContent + "</tr>");
-			$('#result tr:last').find("input").val("");
-			var obj = document.getElementById('transactionSummaryList['
-					+ rowCount + '].accountdetailtype.id');
-			$(obj).html('');
-			$(obj).append(
-					$("<option></option>").attr("value", '').text(
-							'---Select---'));
-			document.getElementById('transactionSummaryList[' + rowCount
-					+ '].accounthead').innerHTML = '';
-			var openingcreditbalance = document
-					.getElementById('transactionSummaryList[' + rowCount
-							+ '].openingcreditbalance');
-			$(openingcreditbalance).removeAttr("disabled");
-			var openingdebitbalance = document
-					.getElementById('transactionSummaryList[' + rowCount
-							+ '].openingdebitbalance');
-			$(openingdebitbalance).removeAttr("disabled");
-			document.getElementById('transactionSummaryList[' + rowCount
-					+ '].accountdetailkeyValue').readOnly = true;
-			var entityObj = document.getElementById('transactionSummaryList['
-					+ rowCount + ']' + '.accountdetailkeyValue');
-			var detailTypeObj = document
-					.getElementById('transactionSummaryList[' + rowCount + ']'
-							+ '.accountdetailtype.id');
-			$(entityObj).removeClass("mandatory");
-			$(detailTypeObj).removeClass("mandatory");
-			$("#result tr:last #remove-row").show();
-			var major = $('#major').val();
-			var minor = $('#minor').val();
-			if (major != "" && major != null)
+			if (validateInput()) {
+				var rowCount = $('#result tr').length - 1;
+				var content = $('#resultrow0').html();
+				resultContent = content.replace(/0/g, rowCount);
+				$(resultContent).find("input").val("");
+				$('#result > tbody:last').append(
+						"<tr>" + resultContent + "</tr>");
+				$('#result tr:last').find("input").val("");
+				var obj = document.getElementById('transactionSummaryList['
+						+ rowCount + '].accountdetailtype.id');
+				$(obj).html('');
+				$(obj).append(
+						$("<option></option>").attr("value", '').text(
+								'---Select---'));
 				document.getElementById('transactionSummaryList[' + rowCount
-						+ '].glcodeDetail').value = major;
-			if (minor != "" && minor != null)
+						+ '].accounthead').innerHTML = '';
+				var openingcreditbalance = document
+						.getElementById('transactionSummaryList[' + rowCount
+								+ '].openingcreditbalance');
+				$(openingcreditbalance).removeAttr("disabled");
+				var openingdebitbalance = document
+						.getElementById('transactionSummaryList[' + rowCount
+								+ '].openingdebitbalance');
+				$(openingdebitbalance).removeAttr("disabled");
 				document.getElementById('transactionSummaryList[' + rowCount
-						+ '].glcodeDetail').value = minor;
-
+						+ '].accountdetailkeyValue').readOnly = true;
+				var entityObj = document
+						.getElementById('transactionSummaryList[' + rowCount
+								+ ']' + '.accountdetailkeyValue');
+				var detailTypeObj = document
+						.getElementById('transactionSummaryList[' + rowCount
+								+ ']' + '.accountdetailtype.id');
+				$(entityObj).removeClass("mandatory");
+				$(detailTypeObj).removeClass("mandatory");
+				$("#result tr:last #remove-row").show();
+				var major = $('#major').val();
+				var minor = $('#minor').val();
+				if (major != "" && major != null)
+					document.getElementById('transactionSummaryList['
+							+ rowCount + '].glcodeDetail').value = major;
+				if (minor != "" && minor != null)
+					document.getElementById('transactionSummaryList['
+							+ rowCount + '].glcodeDetail').value = minor;
+			}
 		});
 
 $('body').on('click', '#remove-row', function() {
@@ -769,7 +764,6 @@ $('#buttonSubmit')
 						// re-disabled the set of inputs that you previously
 						// enabled
 						disabled.attr('disabled', 'disabled');
-						console.log(postData);
 						var formURL = $("#transactionSummaryform").attr(
 								"action");
 						$
@@ -823,59 +817,54 @@ $('#buttonProceed')
 						$(fund).attr('disabled', 'disabled');
 						$(functionid).attr('disabled', 'disabled');
 						var major = $('#major').val();
-						console.log("major --- >", major);
 						if (major != null && major != "")
 							document
 									.getElementById('transactionSummaryList[0].glcodeDetail').value = major;
 						var minor = $('#minor').val();
-						console.log("minor --- >", minor);
 						if (minor != null && minor != "")
 							document
 									.getElementById('transactionSummaryList[0].glcodeDetail').value = minor;
 					}
 				});
 function validateInput() {
-	console.log("length:" + $('#result tr').length);
 	var flag = true;
-	var elems = document.getElementsByClassName("mandatory");
-	for (var i = 0; i < elems.length; i++) {
-		if (elems[i].id != '') {
-			console.log(elems[i].id);
-			var val = document.getElementById(elems[i].id).value;
-			if (val == null || val == '') {
-				document.getElementById('errors').innerHTML = 'Please check * marked fields are mandatory';
-				flag = false;
-			}
-		}
-	}
-
-	var elems1 = document.getElementsByClassName("mandatoryField");
-	var debit = document.getElementById(elems1[0].id).value;
-	var credit = document.getElementById(elems1[1].id).value;
-	if (debit == '' && credit == '') {
-		document.getElementById('errors').innerHTML = 'Please check * marked fields are mandatory';
-		flag = false;
-	}
 	var resultLength = $('#result tr').length - 1;
 	var index;
 	for (var i = 1; i <= resultLength; i++) {
 		index = i - 1;
-		var openingdebitbalance = document
-				.getElementById('transactionSummaryList[' + index
-						+ '].openingdebitbalance').value;
-		var accountCode = document.getElementById('transactionSummaryList['
-				+ index + '].glcodeDetail').value;
-		var openingcreditbalance = document
-				.getElementById('transactionSummaryList[' + index
-						+ '].openingcreditbalance').value;
-		console.log(accountCode);
-		console.log(openingdebitbalance);
-		console.log(openingcreditbalance);
-		if (openingdebitbalance > 0 && openingcreditbalance > 0) {
+		var glcode = document.getElementById('transactionSummaryList[' + index
+				+ '].glcodeDetail').value;
+		var subledger = document.getElementById('transactionSummaryList['
+				+ index + '].accountdetailtype.id');
+		var subledgerlength = $(subledger).children('option').length;
+
+		var entity = document.getElementById('transactionSummaryList[' + index
+				+ '].accountdetailkeyValue').value;
+		var debit = document.getElementById('transactionSummaryList[' + index
+				+ '].openingdebitbalance').value;
+		var credit = document.getElementById('transactionSummaryList[' + index
+				+ '].openingcreditbalance').value;
+		if (glcode == null || glcode == '') {
+			bootbox.alert('Please select account code for row ' + i);
+			flag = false;
+		} else if (subledgerlength > 1
+				&& (subledger.value == null || subledger.value == '')) {
+			bootbox.alert('Please select subledger type for account code  '
+					+ glcode);
+			flag = false;
+		} else if (entity == null || entity == '') {
+			bootbox.alert('Please select entity for account code  ' + glcode);
+			flag = false;
+		} else if ((debit == '' && credit == '') || (debit < 1 && credit < 1)) {
+			bootbox
+					.alert('Please select debit amount or credit amount for account code  '
+							+ glcode);
+			flag = false;
+		} else if (debit > 0 && credit > 0) {
 			bootbox
 					.alert("Opening debit amount and credit amount cannot be there for the account code   "
-							+ accountCode);
-			return false;
+							+ glcode);
+			flag = false;
 		}
 	}
 
@@ -961,7 +950,6 @@ $('#major')
 								.getElementById('transactionSummaryList[0].glcodeDetail').value = major;
 					if ($("#divProceed").hasClass("display-hide")) {
 						var resultLength = $('#result tr').length - 2;
-						console.log("resultLength  " + resultLength);
 						var latestAccountCode = document
 								.getElementById('transactionSummaryList['
 										+ resultLength + '].glcodeDetail').value;
@@ -987,7 +975,6 @@ $('#minor')
 								.getElementById('transactionSummaryList[0].glcodeDetail').value = minor;
 					if ($("#divProceed").hasClass("display-hide")) {
 						var resultLength = $('#result tr').length - 2;
-						console.log("resultLength  " + resultLength);
 						var latestAccountCode = document
 								.getElementById('transactionSummaryList['
 										+ resultLength + '].glcodeDetail').value;
