@@ -64,7 +64,7 @@ public class OpeningBalance
     private String fundId = "", finYear = "", deptId = "";
     private double grandTotalDr = 0.0, grandTotalCr = 0.0;
     private String fund = "", checkFund = "";
-    private String glcode = "", name = "", narration = "";
+    private String glcode = "", name = "", narration = "" , deptcode= "",functioncode = "";
     private Double debit, credit, balance;
     ArrayList al = new ArrayList();
     EGovernCommon egc = new EGovernCommon();
@@ -108,11 +108,11 @@ public class OpeningBalance
         if (!deptId.equalsIgnoreCase(""))
             deptCondition = " and a.DEPARTMENTID=? ";
         query = "SELECT b.name AS \"fund\",c.glcode AS \"accountcode\",c.name AS \"accountname\",a.narration as \"narration\",SUM(a.openingdebitbalance) AS \"debit\","
-                + " SUM(a.openingcreditbalance)AS \"credit\"  FROM TRANSACTIONSUMMARY a,FUND  b,CHARTOFACCOUNTS c"
-                + " WHERE a.financialyearid=? "
+                + " SUM(a.openingcreditbalance)AS \"credit\",dept.code AS \"deptcode\",fn.code AS \"functioncode\"  FROM TRANSACTIONSUMMARY a,FUND  b,CHARTOFACCOUNTS c, eg_department dept,function fn "
+                + " WHERE a.departmentid= dept.id and fn.id = a.functionid and  a.financialyearid=? "
                 + fundCondition
                 + deptCondition
-                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name, a.narration ORDER BY  b.name,c.glcode";
+                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name,dept.code,fn.code, a.narration ORDER BY  b.name,c.glcode";
        if (LOGGER.isDebugEnabled())
             LOGGER.debug("Opening balance Query ...." + query);
 
@@ -175,11 +175,15 @@ public class OpeningBalance
                     narration = formatStringToFixedLength(element[3].toString(), 30);
                 debit = Double.parseDouble(element[4].toString());
                 credit = Double.parseDouble(element[5].toString());
+                deptcode = element[6].toString();
+                functioncode = element[7].toString();
                 ob = new OpeningBalanceBean();
                 ob.setFund(fund);
                 ob.setAccCode(glcode);
                 ob.setAccName(name);
                 ob.setDescription(narration);
+                ob.setDeptcode(deptcode);
+                ob.setFunctioncode(functioncode);
 
                 if (debit != null && credit != null)
                 {
@@ -216,6 +220,8 @@ public class OpeningBalance
             opeBalDiff.setAccCode("&nbsp;");
             opeBalDiff.setAccName("<b>&nbsp;&nbsp;&nbsp; Difference&nbsp;&nbsp;</b>");
             opeBalDiff.setDescription("&nbsp;");
+            opeBalDiff.setDeptcode("&nbsp;");
+            opeBalDiff.setFunctioncode("&nbsp;");
             final double diff = totalDr - totalCr;
             if (diff > 0)
             {
@@ -233,6 +239,8 @@ public class OpeningBalance
             opeBal.setAccCode("&nbsp;");
             opeBal.setAccName("<b>&nbsp;&nbsp;&nbsp; Total:&nbsp;&nbsp;</b>");
             opeBal.setDescription("&nbsp;");
+            opeBal.setDeptcode("&nbsp;");
+            opeBal.setFunctioncode("&nbsp;");
             if (diff > 0)
             {
                 totalCr = totalCr + diff;
@@ -264,6 +272,8 @@ public class OpeningBalance
         ob.setAccCode("<hr>&nbsp;<hr>");
         ob.setAccName("<hr><b>&nbsp;&nbsp;&nbsp;Grand Total:</b><hr>");
         ob.setDescription("<hr>&nbsp;<hr>");
+        ob.setDeptcode("&nbsp;");
+        ob.setFunctioncode("&nbsp;");
         if (diff > 0)
         {
             grandTotalCr = grandTotalCr + diff;

@@ -53,6 +53,8 @@ public class OpeningBalanceBean
     String debit;
     String credit;
     String description;
+    String deptcode;
+    String functioncode;
 
     public String getFund() {
         return fund;
@@ -107,4 +109,21 @@ public class OpeningBalanceBean
     public void setDescription(final String description) {
         this.description = description;
     }
+
+    public String getDeptcode() {
+        return deptcode;
+    }
+
+    public void setDeptcode(String deptcode) {
+        this.deptcode = deptcode;
+    }
+
+    public String getFunctioncode() {
+        return functioncode;
+    }
+
+    public void setFunctioncode(String functioncode) {
+        this.functioncode = functioncode;
+    }
+    
 }

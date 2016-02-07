@@ -832,19 +832,27 @@ function validateInput() {
 	var index;
 	for (var i = 1; i <= resultLength; i++) {
 		index = i - 1;
+		var glcodeid = document.getElementById('transactionSummaryList['
+				+ index + '].glcodeid.id').value;
 		var glcode = document.getElementById('transactionSummaryList[' + index
 				+ '].glcodeDetail').value;
 		var subledger = document.getElementById('transactionSummaryList['
 				+ index + '].accountdetailtype.id');
 		var subledgerlength = $(subledger).children('option').length;
-
+		console.log(glcode);
 		var entity = document.getElementById('transactionSummaryList[' + index
 				+ '].accountdetailkeyValue').value;
 		var debit = document.getElementById('transactionSummaryList[' + index
 				+ '].openingdebitbalance').value;
 		var credit = document.getElementById('transactionSummaryList[' + index
 				+ '].openingcreditbalance').value;
-		if (glcode == null || glcode == '') {
+		if ((glcode != '')
+				&& (glcodeid == null || glcodeid == '')) {
+			bootbox
+					.alert('Please select account code from auto complete for row '
+							+ i);
+			flag = false;
+		} else if (glcode == null || glcode == '') {
 			bootbox.alert('Please select account code for row ' + i);
 			flag = false;
 		} else if (subledgerlength > 1
@@ -852,7 +860,9 @@ function validateInput() {
 			bootbox.alert('Please select subledger type for account code  '
 					+ glcode);
 			flag = false;
-		} else if (entity == null || entity == '') {
+		} else if (subledgerlength > 1
+				&& (subledger.value != null || subledger.value != '')
+				&& (entity == null || entity == '')) {
 			bootbox.alert('Please select entity for account code  ' + glcode);
 			flag = false;
 		} else if ((debit == '' && credit == '') || (debit < 1 && credit < 1)) {
