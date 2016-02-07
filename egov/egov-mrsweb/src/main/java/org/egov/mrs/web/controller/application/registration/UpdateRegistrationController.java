@@ -39,6 +39,8 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import java.util.Base64;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.mrs.domain.entity.Registration;
@@ -62,10 +64,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/registration")
 public class UpdateRegistrationController extends RegistrationController {
 
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String showRegistration(@PathVariable final Long registrationId, final Model model) {
-        model.addAttribute("registration", registrationService.get(registrationId));
-        return "registration-form";
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+    public String showRegistration(@PathVariable final Long id, final Model model) {
+        Registration registration = registrationService.get(id);
+        model.addAttribute("registration", registration);
+        model.addAttribute("husbandPhoto", Base64.getEncoder().encodeToString(registration.getHusband().getPhoto()));
+        model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
+        return "registration-correction";
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)

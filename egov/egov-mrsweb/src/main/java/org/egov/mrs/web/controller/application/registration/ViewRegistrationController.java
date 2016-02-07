@@ -80,6 +80,7 @@ public class ViewRegistrationController extends RegistrationController {
         model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
         model.addAttribute("mode", mode);
         
+        registrationService.prepareDocumentsForView(registration);
         applicantService.prepareDocumentsForView(registration.getHusband());
         applicantService.prepareDocumentsForView(registration.getWife());
 

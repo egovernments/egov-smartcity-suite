@@ -101,7 +101,7 @@ public class SearchRegistrationController {
     private List<SearchResult> prepareSearchResult(final SearchModel searchModel) {
         final List<SearchResult> results = new ArrayList<SearchResult>();
         final DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
-        registrationService.searchRegistration(searchModel).stream().forEach(registration -> {
+        registrationService.searchRegistration(searchModel).forEach(registration -> {
             final SearchResult searchResult = new SearchResult();
             searchResult.setRegistrationId(registration.getId());
             searchResult.setRegistrationNo(registration.getRegistrationNo() == null ? "NA" : registration.getRegistrationNo());

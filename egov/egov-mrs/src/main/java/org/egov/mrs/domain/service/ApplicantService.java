@@ -40,17 +40,27 @@
 package org.egov.mrs.domain.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.entity.Applicant;
+import org.egov.mrs.domain.entity.ApplicantDocument;
+import org.egov.mrs.domain.entity.Document;
 import org.egov.mrs.domain.repository.ApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,6 +72,9 @@ public class ApplicantService {
 
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private ApplicantDocumentService applicantDocumentService;
 
     @Autowired
     public ApplicantService(final ApplicantRepository applicantRepository) {
@@ -91,5 +104,53 @@ public class ApplicantService {
                 LOG.error("Error while preparing the document for view", e);
             }
         });
+    }
+    
+    public void deleteDocuments(final Applicant applicantModel, final Applicant applicant) {
+        
+        List<ApplicantDocument> toDelete = new ArrayList<ApplicantDocument>();
+        Map<Long, ApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, ApplicantDocument>();
+        applicant.getApplicantDocuments().forEach(appDoc -> documentIdAndApplicantDoc.put(appDoc.getDocument().getId(), appDoc));
+
+        applicantModel.getDocuments().stream()
+            .filter(doc -> doc.getFile().getSize() > 0)
+            .map(doc -> {
+                ApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
+                fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
+                return appDoc;
+            }).collect(Collectors.toList())
+            .forEach(appDoc -> toDelete.add(appDoc));
+        
+        applicantDocumentService.delete(toDelete);
+    }
+    
+    /**
+     * Adds the uploaded applicant document to file store and associates with the applicant
+     *
+     * @param applicant
+     */
+    public void addDocumentsToFileStore(final Applicant applicantModel, final Applicant applicant, final Map<Long, Document> documentAndId) {
+        List<Document> documents = applicantModel == null ? applicant.getDocuments() : applicantModel.getDocuments();
+        documents.stream()
+                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                .map(document -> {
+                    final ApplicantDocument applicantDocument = new ApplicantDocument();
+                    applicantDocument.setApplicant(applicant);
+                    applicantDocument.setDocument(documentAndId.get(document.getId()));
+                    applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                    return applicantDocument;
+                }).collect(Collectors.toList())
+        .forEach(doc -> applicant.addApplicantDocument(doc));
+    }
+    
+    private FileStoreMapper addToFileStore(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper = null;
+        try {
+            fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                    file.getContentType(), Constants.MODULE_NAME);
+        } catch (final Exception e) {
+            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+        }
+        return fileStoreMapper;
     }
 }

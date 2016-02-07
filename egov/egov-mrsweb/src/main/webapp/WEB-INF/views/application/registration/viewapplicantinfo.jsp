@@ -109,7 +109,7 @@
 					} 
 
 					//var strData = '<c:out value="${photoString}" />';
-					$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + toBinaryString(strData));
+					$('#'+applicant+'-photo').prop('src', "data:image/jpeg;base64," + toBinaryString(strData));
 					
 				</script>
 				<span></span>

@@ -45,6 +45,32 @@
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.common.docs"/>
+		</label>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.submitted.by.couple"/>
+		</div>
+	</div>
+	<div class="col-sm-2"></div>
+</div>
+<c:forEach var="doc" items="${generalDocuments}" varStatus="status">	
+	<div class="form-group">	
+		<div class="col-sm-2"></div>
+		<form:hidden id="documents[${status.index}].id" path="documents[${status.index}].id" value="${doc.id}" /> 
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out>
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="documents[${status.index}].file" cssClass="add-margin error-msg" />
+		</div>
+		<div class="col-sm-1"></div>
+	</div>
+</c:forEach>
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="form-group">
+		<label class="col-sm-4 text-left view-content">
 			<spring:message code="lbl.indi.docs"/>
 		</label>
 		<div class="col-sm-1 text-center view-content">
@@ -57,8 +83,7 @@
 	</div>
 	<div class="col-sm-1"></div>
 </div>
-
-<c:forEach var="doc" items="${documents}" varStatus="status">	
+<c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
 	
 	<div class="form-group">	
 		<div class="col-sm-2"></div>

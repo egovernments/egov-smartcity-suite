@@ -39,8 +39,12 @@
 
 package org.egov.mrs.domain.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,10 +69,12 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.mrs.application.Constants;
 import org.egov.mrs.application.service.RegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
+import org.egov.mrs.domain.entity.AbstractDocument;
 import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.entity.ApplicantDocument;
 import org.egov.mrs.domain.entity.Document;
 import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
@@ -84,6 +90,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -141,6 +148,12 @@ public class RegistrationService {
 
     @Autowired
     private DocumentService documentService;
+    
+    @Autowired
+    private ApplicantService applicantService;
+    
+    @Autowired
+    private RegistrationDocumentService registrationDocumentService;
 
     @Autowired
     public RegistrationService(final RegistrationRepository registrationRepository) {
@@ -192,9 +205,6 @@ public class RegistrationService {
 
         registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
 
-        final Map<Long, Document> documentAndId = new HashMap<Long, Document>();
-        documentService.getAll().forEach(document -> documentAndId.put(document.getId(), document));
-        
         try {
             registration.getHusband().copyPhotoAndSignatureToByteArray();
             registration.getWife().copyPhotoAndSignatureToByteArray();
@@ -202,8 +212,16 @@ public class RegistrationService {
             LOG.error("Error while copying Multipart file bytes", e);
         }
 
-        addDocumentsToFileStore(registration.getHusband(), documentAndId);
-        addDocumentsToFileStore(registration.getWife(), documentAndId);
+        final Map<Long, Document> generalDocumentAndId = new HashMap<Long, Document>();
+        documentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
+        
+        addDocumentsToFileStore(null, registration, generalDocumentAndId);
+        
+        final Map<Long, Document> individualDocumentAndId = new HashMap<Long, Document>();
+        documentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
+        
+        applicantService.addDocumentsToFileStore(null, registration.getHusband(), individualDocumentAndId);
+        applicantService.addDocumentsToFileStore(null, registration.getWife(), individualDocumentAndId);
 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
 
@@ -213,20 +231,22 @@ public class RegistrationService {
     }
 
     /**
-     * Adds the uploaded document to file store and associates with the applicant
+     * Adds the uploaded registration document to file store and associates with the registration
      *
-     * @param applicant
+     * @param registration
      */
-    private void addDocumentsToFileStore(final Applicant applicant, final Map<Long, Document> documentAndId) {
-        applicant.getDocuments().stream()
+    private void addDocumentsToFileStore(final Registration registrationModel, final Registration registration, final Map<Long, Document> documentAndId) {
+        List<Document> documents = registrationModel == null ? registration.getDocuments() : registrationModel.getDocuments();
+        documents.stream()
                 .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
                 .map(document -> {
-                    final ApplicantDocument applicantDocument = new ApplicantDocument();
-                    applicantDocument.setDocument(documentAndId.get(document.getId()));
-                    applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-                    return applicantDocument;
+                    final RegistrationDocument registrationDocument = new RegistrationDocument();
+                    registrationDocument.setRegistration(registration);
+                    registrationDocument.setDocument(documentAndId.get(document.getId()));
+                    registrationDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                    return registrationDocument;
                 }).collect(Collectors.toList())
-        .forEach(doc -> applicant.addApplicantDocument(doc));
+        .forEach(doc -> registration.addRegistrationDocument(doc));
     }
 
     @Transactional
@@ -245,6 +265,7 @@ public class RegistrationService {
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
         registration.setFeeCriteria(regModel.getFeeCriteria());
         registration.setFeePaid(regModel.getFeePaid());
+        
         registration.setHusband(regModel.getHusband());
         registration.setWife(regModel.getWife());
 
@@ -260,6 +281,32 @@ public class RegistrationService {
             witness.setRegistration(registration);
             registration.getWitnesses().add(witness);
         });
+        
+       try {
+           if (registration.getHusband().getPhotoFile().getSize() > 0)
+               registration.getHusband().copyPhotoAndSignatureToByteArray();
+           
+           if (registration.getWife().getPhotoFile().getSize() > 0)
+               registration.getWife().copyPhotoAndSignatureToByteArray();
+       } catch (IOException e) {
+           LOG.error("Error while copying Multipart file bytes", e);
+       }
+
+       deleteDocuments(regModel, registration);
+       applicantService.deleteDocuments(regModel.getHusband(), registration.getHusband());
+       applicantService.deleteDocuments(regModel.getWife(), registration.getWife());
+       
+       final Map<Long, Document> generalDocumentAndId = new HashMap<Long, Document>();
+       documentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
+       
+       addDocumentsToFileStore(regModel, registration, generalDocumentAndId);
+       
+       final Map<Long, Document> individualDocumentAndId = new HashMap<Long, Document>();
+       documentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
+       
+       applicantService.addDocumentsToFileStore(regModel.getHusband(), registration.getHusband(), individualDocumentAndId);
+       applicantService.addDocumentsToFileStore(regModel.getWife(), registration.getWife(), individualDocumentAndId);
+
 
         registration.getHusband().setProofsAttached(regModel.getHusband().getProofsAttached());
         registration.getWife().setProofsAttached(regModel.getWife().getProofsAttached());
@@ -337,10 +384,12 @@ public class RegistrationService {
     }
 
     public List<Registration> getRegistrations() {
-        return registrationRepository.findAll();
+        return Collections.emptyList();
+        //return registrationRepository.findAll();
     }
 
     public List<Registration> searchRegistration(final SearchModel searchModel) {
+        
         final Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
 
         if (StringUtils.isNotBlank(searchModel.getRegistrationNo()))
@@ -354,15 +403,36 @@ public class RegistrationService {
 
         if (StringUtils.isNotBlank(searchModel.getWifeName()))
             criteria.createCriteria("wife").add(Restrictions.ilike("name.firstName", searchModel.getWifeName()));
-        /*QRegistration registration QRegistration.registration;
-        LocalDate today = new LocalDate();
-        BooleanExpression customerHasBirthday = customer.birthday.eq(today);
-        BooleanExpression isLongTermCustomer = customer.createdAt.lt(today.minusYears(2));
-        BooleanExpression customerHasBirthday = customer.birthday.eq(today);
-        BooleanExpression isLongTermCustomer = customer.createdAt.lt(today.minusYears(2));
-        customerRepository.findAll(customerHasBirthday.and(isLongTermCustomer));*/
         
-        return criteria.list();
+        /*QRegistration registration = QRegistration.registration;
+        BooleanExpression withRegistrationNo = null;
+        BooleanExpression withDateOfMarriage = null;
+        BooleanExpression withHusbandName = null;
+        BooleanExpression withWifeName = null;
+        
+        BooleanExpression expression = null;
+        
+        if (StringUtils.isNotBlank(searchModel.getRegistrationNo())) {
+            withRegistrationNo = registration.registrationNo.eq(searchModel.getRegistrationNo());
+            expression = withRegistrationNo;
+        }
+
+        if (searchModel.getDateOfMarriage() != null) {
+            withDateOfMarriage = registration.dateOfMarriage.eq(searchModel.getDateOfMarriage());
+            expression.and(withDateOfMarriage);
+        }
+
+        if (StringUtils.isNotBlank(searchModel.getHusbandName())) {
+            withHusbandName = registration.husband().name().firstName.equalsIgnoreCase(searchModel.getHusbandName());
+            expression.and(withHusbandName);
+        }
+            
+        if (StringUtils.isNotBlank(searchModel.getWifeName())) {
+            withWifeName = registration.wife().name().firstName.equalsIgnoreCase(searchModel.getWifeName());
+            expression.and(withWifeName);
+        }*/
+        
+         return criteria.list(); //registrationRepository.findAll(expression);
     }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {
@@ -375,7 +445,23 @@ public class RegistrationService {
         }
         return fileStoreMapper;
     }
+    
+    public void deleteDocuments(final Registration regModel, final Registration registration) {
+        List<RegistrationDocument> toDelete = new ArrayList<RegistrationDocument>();
+        Map<Long, RegistrationDocument> documentIdAndRegistrationDoc = new HashMap<Long, RegistrationDocument>();
+        registration.getRegistrationDocuments().forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
 
+        regModel.getDocuments().stream()
+            .filter(doc -> doc.getFile().getSize() > 0)
+            .map(doc -> {
+                RegistrationDocument regDoc = documentIdAndRegistrationDoc.get(doc.getId());
+                fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
+                return regDoc;
+            }).collect(Collectors.toList())
+            .forEach(regDoc -> toDelete.add(regDoc));
+        
+        registrationDocumentService.delete(toDelete);
+    }
    
     @Transactional
     public Registration updateRegistration(final Long id, final Registration regModel) {
@@ -387,6 +473,17 @@ public class RegistrationService {
     public List<Registration> searchRegistrationBetweenDateAndStatus(final SearchModel searchModel) {
         ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved : ApplicationStatus.Rejected;
         return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(), searchModel.getToDate(), status);
+    }
+    
+    public void prepareDocumentsForView(final Registration registration) {
+        registration.getRegistrationDocuments().forEach(appDoc -> {
+            final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
+            try {
+                appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            } catch (final Exception e) {
+                LOG.error("Error while preparing the document for view", e);
+            }
+        });
     }
 
 }

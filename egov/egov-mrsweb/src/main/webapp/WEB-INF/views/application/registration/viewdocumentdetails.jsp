@@ -45,6 +45,41 @@
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 text-left view-content">
+			<spring:message code="lbl.common.docs"/>
+		</label>
+		<div class="col-sm-1 text-center view-content">
+			<spring:message code="lbl.submitted.by.couple"/>
+		</div>
+	</div>
+	<div class="col-sm-2"></div>
+</div>
+<c:forEach var="doc" items="${generalDocuments}" varStatus="status">	
+	<div class="form-group">	
+		<div class="col-sm-2"></div>
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out>
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${registration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
+				<c:if test="${regdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="registrationfile${status.index}" value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}">
+					<a id="regdoc${status.index}">Click to download</a>
+				</c:if>
+			</c:forEach>
+			<c:if test="${!isDocFound}">
+				NA
+			</c:if>
+		</div>
+	</div>
+
+</c:forEach>
+
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="form-group">
+		<label class="col-sm-4 text-left view-content">
 			<spring:message code="lbl.indi.docs"/>
 		</label>
 		<div class="col-sm-2 text-center view-content">
@@ -57,7 +92,7 @@
 	<div class="col-sm-1"></div>
 </div>
 
-<c:forEach var="doc" items="${documents}" varStatus="status">	
+<c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
 	
 	<div class="form-group">	
 		<div class="col-sm-2"></div>
@@ -69,7 +104,7 @@
 			<c:forEach items="${registration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
-					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.base64EncodedFile}">
+					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
 					<a id="husbanddoc${status.index}">Click to download</a>
 				</c:if>
 			</c:forEach>
@@ -82,7 +117,7 @@
 			<c:forEach items="${registration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
-					<input type="hidden" id="wifefile${status.index}" value="${appdoc.base64EncodedFile}">
+					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
 					<a id="wifedoc${status.index}">Click to download</a>
 				</c:if>
 			</c:forEach>

@@ -51,7 +51,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     Document findById(Long id);
 
     Document findByName(String ame);
+    
+    List<Document> findByIndividual(boolean individual);
 
-    @Override
-    List<Document> findAll();
 }

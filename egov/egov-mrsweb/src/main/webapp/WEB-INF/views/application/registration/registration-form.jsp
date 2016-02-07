@@ -43,6 +43,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>
+
 <!-- <style>
 	ul.nav-tabs > li.active>a:after {
 		background: none !important;
@@ -87,7 +89,8 @@
 
 
 </style>
- --><div class="row">
+ -->
+ <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		
@@ -175,4 +178,3 @@
 
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/registration.js'/> "></script>
-<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>

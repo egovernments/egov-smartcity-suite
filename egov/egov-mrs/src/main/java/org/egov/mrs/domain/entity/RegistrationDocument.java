@@ -39,24 +39,17 @@
 
 package org.egov.mrs.domain.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 
 /**
  * Entity which stores applicant's uploaded document information
@@ -65,23 +58,23 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
  *
  */
 @Entity
-@Table(name = "egmrs_applicantdocument")
-@SequenceGenerator(name = ApplicantDocument.SEQ_APPLICANTDOCUMENT, sequenceName = ApplicantDocument.SEQ_APPLICANTDOCUMENT, allocationSize = 1)
-public class ApplicantDocument extends AbstractDocument {
+@Table(name = "egmrs_registrationdocument")
+@SequenceGenerator(name = RegistrationDocument.SEQ_REGISTRATIONDOCUMENT, sequenceName = RegistrationDocument.SEQ_REGISTRATIONDOCUMENT, allocationSize = 1)
+public class RegistrationDocument extends AbstractDocument {
 
     private static final long serialVersionUID = 6808024071929495513L;
 
-    public static final String SEQ_APPLICANTDOCUMENT = "SEQ_EGMRS_APPLICANTDOCUMENT";
+    public static final String SEQ_REGISTRATIONDOCUMENT = "SEQ_EGMRS_REGISTRATIONDOCUMENT";
 
     @Id
-    @GeneratedValue(generator = SEQ_APPLICANTDOCUMENT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_REGISTRATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
     @Valid
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applicant")
-    private Applicant applicant;
+    @JoinColumn(name = "registration")
+    private Registration registration;
 
     @Override
     public Long getId() {
@@ -93,11 +86,11 @@ public class ApplicantDocument extends AbstractDocument {
         this.id = id;
     }
 
-    public Applicant getApplicant() {
-        return applicant;
+    public Registration getRegistration() {
+        return registration;
     }
 
-    public void setApplicant(final Applicant applicant) {
-        this.applicant = applicant;
+    public void setRegistration(final Registration registration) {
+        this.registration = registration;
     }
 }

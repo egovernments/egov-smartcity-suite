@@ -74,4 +74,12 @@ public class DocumentService {
     public List<Document> getAll() {
         return documentRepository.findAll();
     }
+    
+    public List<Document> getIndividualDocuments() {
+        return documentRepository.findByIndividual(true);
+    }
+    
+    public List<Document> getGeneralDocuments() {
+        return documentRepository.findByIndividual(false);
+    }
 }

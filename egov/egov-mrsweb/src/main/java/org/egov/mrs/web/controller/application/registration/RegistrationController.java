@@ -98,7 +98,8 @@ public abstract class RegistrationController extends GenericWorkFlowController {
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
         model.addAttribute("feesList", feeService.getAll());
-        model.addAttribute("documents", documentService.getAll());
+        model.addAttribute("generalDocuments", documentService.getGeneralDocuments());
+        model.addAttribute("individualDocuments", documentService.getIndividualDocuments());
     }
 
 }

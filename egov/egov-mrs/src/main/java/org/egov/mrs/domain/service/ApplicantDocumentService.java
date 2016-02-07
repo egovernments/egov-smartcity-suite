@@ -36,68 +36,30 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.mrs.domain.service;
 
-package org.egov.mrs.domain.entity;
+import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import org.egov.mrs.domain.entity.ApplicantDocument;
+import org.egov.mrs.domain.repository.ApplicantDocumentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+@Service
+public class ApplicantDocumentService {
 
-/**
- * Entity which stores applicant's uploaded document information
- *
- * @author nayeem
- *
- */
-@Entity
-@Table(name = "egmrs_applicantdocument")
-@SequenceGenerator(name = ApplicantDocument.SEQ_APPLICANTDOCUMENT, sequenceName = ApplicantDocument.SEQ_APPLICANTDOCUMENT, allocationSize = 1)
-public class ApplicantDocument extends AbstractDocument {
+    private final ApplicantDocumentRepository applicantDocumentRepository;
 
-    private static final long serialVersionUID = 6808024071929495513L;
-
-    public static final String SEQ_APPLICANTDOCUMENT = "SEQ_EGMRS_APPLICANTDOCUMENT";
-
-    @Id
-    @GeneratedValue(generator = SEQ_APPLICANTDOCUMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotNull
-    @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applicant")
-    private Applicant applicant;
-
-    @Override
-    public Long getId() {
-        return id;
+    @Autowired
+    public ApplicantDocumentService(final ApplicantDocumentRepository applicantDocumentRepository) {
+        this.applicantDocumentRepository = applicantDocumentRepository;
     }
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
+    public void delete(final List<ApplicantDocument> applicantDocuments) {
+        applicantDocumentRepository.deleteInBatch(applicantDocuments);
     }
 
-    public Applicant getApplicant() {
-        return applicant;
-    }
-
-    public void setApplicant(final Applicant applicant) {
-        this.applicant = applicant;
+    public void delete(final ApplicantDocument applicantDocument) {
+        applicantDocumentRepository.delete(applicantDocument);
     }
 }

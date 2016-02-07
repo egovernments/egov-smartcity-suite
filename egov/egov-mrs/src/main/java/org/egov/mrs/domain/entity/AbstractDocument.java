@@ -40,17 +40,11 @@
 package org.egov.mrs.domain.entity;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -59,45 +53,56 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
 /**
- * Entity which stores applicant's uploaded document information
+ * Abstract entity for document and FileStoreMapper
  *
  * @author nayeem
  *
  */
-@Entity
-@Table(name = "egmrs_applicantdocument")
-@SequenceGenerator(name = ApplicantDocument.SEQ_APPLICANTDOCUMENT, sequenceName = ApplicantDocument.SEQ_APPLICANTDOCUMENT, allocationSize = 1)
-public class ApplicantDocument extends AbstractDocument {
+@MappedSuperclass
+public abstract class AbstractDocument extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 6808024071929495513L;
-
-    public static final String SEQ_APPLICANTDOCUMENT = "SEQ_EGMRS_APPLICANTDOCUMENT";
-
-    @Id
-    @GeneratedValue(generator = SEQ_APPLICANTDOCUMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private static final long serialVersionUID = 3166602483808510536L;
 
     @NotNull
     @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applicant")
-    private Applicant applicant;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "document")
+    protected Document document;
 
-    @Override
-    public Long getId() {
-        return id;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "egmrs_proofdocs", 
+                joinColumns = @JoinColumn(name = "document", referencedColumnName = "id") , 
+                inverseJoinColumns = @JoinColumn(name = "filestore") 
+    )
+    protected FileStoreMapper fileStoreMapper;
+
+    /**
+     * Used in view screen to allow downloading of attached document
+     */
+    @Transient
+    protected String base64EncodedFile;
+
+    public Document getDocument() {
+        return document;
     }
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
+    public void setDocument(final Document document) {
+        this.document = document;
     }
 
-    public Applicant getApplicant() {
-        return applicant;
+    public FileStoreMapper getFileStoreMapper() {
+        return fileStoreMapper;
     }
 
-    public void setApplicant(final Applicant applicant) {
-        this.applicant = applicant;
+    public void setFileStoreMapper(final FileStoreMapper fileStoreMapper) {
+        this.fileStoreMapper = fileStoreMapper;
+    }
+
+    public String getBase64EncodedFile() {
+        return base64EncodedFile;
+    }
+
+    public void setBase64EncodedFile(final String base64EncodedFile) {
+        this.base64EncodedFile = base64EncodedFile;
     }
 }

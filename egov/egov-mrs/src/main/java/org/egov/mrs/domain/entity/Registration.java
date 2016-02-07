@@ -1,9 +1,10 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation
+    The updated version of eGov suite of products as by eGovernments Foundation 
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -17,28 +18,28 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this 
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It 
+           is required that all modified versions of this material be marked in 
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program 
+           with regards to rights under trademark law for use of the trade names 
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.mrs.domain.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +70,8 @@ import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.masters.entity.Act;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import com.mysema.query.annotations.QueryInit;
 
 @Entity
 @Table(name = "egmrs_registration")
@@ -107,12 +110,14 @@ public class Registration extends StateAware {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "husband")
+    @QueryInit("name.firstName")
     private Applicant husband = new Applicant();
 
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "wife")
+    @QueryInit("name.firstName")
     private Applicant wife = new Applicant();
 
     @NotNull
@@ -166,6 +171,14 @@ public class Registration extends StateAware {
 
     @Transient
     private String approvalComent;
+    
+    @NotNull
+    @Valid
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
+    private List<RegistrationDocument> registrationDocuments = new ArrayList<RegistrationDocument>();
+    
+    @Transient
+    private List<Document> documents;
 
     @Override
     public Long getId() {
@@ -388,6 +401,22 @@ public class Registration extends StateAware {
     public void setCertificateIssued(boolean certificateIssued) {
         this.certificateIssued = certificateIssued;
     }
+    
+    public List<RegistrationDocument> getRegistrationDocuments() {
+        return registrationDocuments;
+    }
+    
+    public void setRegistrationDocuments(List<RegistrationDocument> registrationDocuments) {
+        this.registrationDocuments = registrationDocuments;
+    }
+    
+    public List<Document> getDocuments() {
+        return documents;
+    }
+    
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
 
     @Override
     public String getStateDetails() {
@@ -396,5 +425,10 @@ public class Registration extends StateAware {
     
     public boolean isFeeCollected() {
         return this.demand.getBaseDemand().compareTo(this.demand.getAmtCollected()) == 0 ? true : false;
+    }
+    
+    public void addRegistrationDocument(final RegistrationDocument registrationDocument) {
+        registrationDocument.setRegistration(this);
+        getRegistrationDocuments().add(registrationDocument);
     }
 }

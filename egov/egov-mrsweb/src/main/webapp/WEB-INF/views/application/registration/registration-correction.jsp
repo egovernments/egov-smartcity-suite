@@ -43,6 +43,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>
+
 <!-- <style>
 	ul.nav-tabs > li.active>a:after {
 		background: none !important;
@@ -148,7 +150,7 @@
 				</div>
 			</div>
 			<div class="buttonbottom" align="center">
-				<input type="submit" id="btn_regcorrection" class="btn btn-primary"><spring:message code="lbl.update.registration" /></input>
+				<form:button type="submit" id="btn_regcorrection" class="btn btn-primary"><spring:message code="lbl.update.registration"></spring:message></form:button>
 				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>
@@ -158,3 +160,4 @@
 
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/registration.js'/> "></script>
+<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>

@@ -40,10 +40,14 @@
 $(document).ready(function(){
 	
 	$('a[id*="doc"').click( function () {
-		var value = "data:image/jpg;base64," +  $( $(this).siblings('input[type="hidden"]') ).val();
+		var val = $( $(this).siblings('input[type="hidden"]') ).val().split('|');
+		var fileName = val[0];
+		var contentType = val[1]
+		var content = val[2];
+		var value = "data:"+contentType+";base64," + content ;
 		var link = document.createElement('a');
 		link.href = toBinaryString(value);
-		link.download = 'document.jpg';
+		link.download = fileName;
 		link.click();		
 	})
 	
